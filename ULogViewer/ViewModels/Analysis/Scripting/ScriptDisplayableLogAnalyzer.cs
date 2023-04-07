@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 
@@ -68,6 +67,10 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
 
 
     /// <inheritdoc/>
+    protected override bool IsContextualBased => true;
+
+
+    /// <inheritdoc/>
     bool IScriptRunningHost.IsRunningScripts => this.IsProcessing;
 
 
@@ -82,7 +85,7 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     /// <summary>
     /// Get list of log properties to be included in analysis.
     /// </summary>
-    public IList<DisplayableLogProperty> LogProperties { get => this.logProperties; }
+    public IList<DisplayableLogProperty> LogProperties => this.logProperties;
 
 
     // Called whe list of log properties changed.
@@ -167,5 +170,5 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     /// <summary>
     /// Get list of script sets to analyze log.
     /// </summary>
-    public IList<LogAnalysisScriptSet> ScriptSets { get => this.scriptSets; }
+    public IList<LogAnalysisScriptSet> ScriptSets => this.scriptSets;
 }

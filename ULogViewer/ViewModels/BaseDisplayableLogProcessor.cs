@@ -54,7 +54,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Initialize new <see cref="DisplayableLogProcessor"/> instance.
+    /// Initialize new <see cref="BaseDisplayableLogProcessor{TProcessingToken, TProcessingResult}"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
@@ -66,10 +66,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.Id = BaseDisplayableLogProcessors.GetNextId();
 
         // create lists
-        this.sourceLogVersions = sourceLogs.Count.Let(it =>
-        {
-            return new List<byte>(new byte[it]);
-        });
+        this.sourceLogVersions = new(sourceLogs.Count);
         this.unprocessedLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
 
         // setup properties
@@ -148,7 +145,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Get size of ptocessing chunk.
+    /// Get size of processing chunk.
     /// </summary>
     protected virtual int ChunkSize { get; }
 
@@ -212,7 +209,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // detach from settings
         this.Application.Settings.SettingChanged -= this.OnSettingChanged;
 
-        // cancecl processing
+        // cancel processing
         this.CancelProcessing(false);
     }
 
@@ -332,8 +329,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 this.ProcessNextChunk(this.currentProcessingParams);
         }
     }
-
-
+    
+    
     /// <summary>
     /// Invalidate current processing and start new processing later.
     /// </summary>
@@ -350,9 +347,27 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             DisplayableLogProcessingPriority.Realtime => 0,
             _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayBackground),
         };
+        this.InvalidateProcessing(delay);
+    }
+    
+    
+    /// <summary>
+    /// Invalidate current processing and start new processing later.
+    /// </summary>
+    /// <param name="delayMillis">Delay to restart processing in milliseconds.</param>
+    protected void InvalidateProcessing(int delayMillis)
+    {
+#if DEBUG
+        this.VerifyAccess();
+#endif
+        if (this.IsDisposed)
+            return;
         if (this.Application.IsDebugMode && this.currentProcessingParams != null)
+        {
             this.Logger.LogTrace("Invalidate current processing");
-        this.startProcessingLogsAction.Schedule(delay);
+            this.CancelProcessing(true);
+        }
+        this.startProcessingLogsAction.Reschedule(delayMillis);
     }
 
 
@@ -362,7 +377,16 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <param name="token">Token to check.</param>
     /// <returns>True if given token is the token of current processing.</returns>
     protected bool IsCurrentProcessingToken(TProcessingToken token) =>
-        object.ReferenceEquals(this.currentProcessingParams?.Token, token);
+        ReferenceEquals(this.currentProcessingParams?.Token, token);
+
+
+    /// <summary>
+    /// Check whether given log has been processed or not.
+    /// </summary>
+    /// <param name="log">Log to check.</param>
+    /// <returns>True if the log has been processed.</returns>
+    protected bool IsLogProcessed(DisplayableLog log) =>
+        !this.unprocessedLogs.Contains(log);
 
 
     /// <summary>
@@ -380,34 +404,30 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get logger.
     /// </summary>
-    protected ILogger Logger
-    {
-        get => this.logger ?? this.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}").Also(it =>
+    protected ILogger Logger =>
+        this.logger ?? this.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}").Also(it =>
         {
             this.logger = it;
         });
-    }
 
 
     /// <summary>
     /// Get maximum concurrency level of processing.
     /// </summary>
-    protected virtual int MaxConcurrencyLevel { get => 1; }
+    protected virtual int MaxConcurrencyLevel => 1;
 
 
     /// <summary>
     /// Get size of memory currently used by the instance directly in bytes.
     /// </summary>
-    public virtual long MemorySize 
-    { 
-        get => this.baseMemorySize 
-            + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.unprocessedLogs.Count) 
-            + Memory.EstimateCollectionInstanceSize(sizeof(byte), this.sourceLogVersions.Capacity); 
-    }
+    public virtual long MemorySize =>
+        this.baseMemorySize 
+        + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.unprocessedLogs.Count) 
+        + Memory.EstimateCollectionInstanceSize(sizeof(byte), this.sourceLogVersions.Capacity);
 
 
     /// <inheritdoc/>
-    public MemoryUsagePolicy MemoryUsagePolicy { get => this.memoryUsagePolicy; }
+    public MemoryUsagePolicy MemoryUsagePolicy => this.memoryUsagePolicy;
 
 
     /// <summary>
@@ -494,7 +514,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
 
         // recycle list
-        this.RecyceInternalDisplayableLogVersionList(logVersions);
+        this.RecycleInternalDisplayableLogVersionList(logVersions);
 
         // handle processing result
         this.OnChunkProcessed(processingParams.Token, logs, results);
@@ -695,7 +715,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         logVersions.Reverse(); // Reverse back to same order as source list
 
         // recycle list
-        this.RecyceInternalDisplayableLogList(logs);
+        this.RecycleInternalDisplayableLogList(logs);
 
         // wait for previous chunks
         var paddingInterval = this.ProcessingPriority switch
@@ -847,7 +867,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get current progress of processing.
     /// </summary>
-    public double Progress { get; private set; } = 0.0;
+    public double Progress { get; private set; }
 
 
     /// <inheritdoc/>
@@ -961,15 +981,15 @@ static class BaseDisplayableLogProcessors
     /// <summary>
     /// Max concurrency level of processing with background priority.
     /// </summary>
-    public static int MaxProcessingConcurrencyLevelBackground = 1;
+    public static readonly int MaxProcessingConcurrencyLevelBackground = 1;
     /// <summary>
     /// Max concurrency level of processing with default priority.
     /// </summary>
-    public static int MaxProcessingConcurrencyLevelDefault = 2;
+    public static readonly int MaxProcessingConcurrencyLevelDefault = 2;
     /// <summary>
     /// Max concurrency level of processing with realtime priority.
     /// </summary>
-    public static int MaxProcessingConcurrencyLevelRealtime = Math.Min(4, Math.Max(1, Environment.ProcessorCount >> 1));
+    public static readonly int MaxProcessingConcurrencyLevelRealtime = Math.Min(4, Math.Max(1, Environment.ProcessorCount >> 1));
 
 
     // Constants.
@@ -1022,6 +1042,7 @@ static class BaseDisplayableLogProcessors
         };
         if (taskFactory != null)
             return taskFactory;
+        // ReSharper disable NonAtomicCompoundOperator
         return ProcessingTaskFactorySyncLock.Lock(_ => 
         {
             switch (priority)
@@ -1037,12 +1058,14 @@ static class BaseDisplayableLogProcessors
                     return ProcessingTaskFactoryBackground;
             }
         });
+        // ReSharper restore NonAtomicCompoundOperator
     }
     
 
     /// <summary>
     /// Obtain an list of log for internal usage.
     /// </summary>
+    /// <param name="processor">Log processor.</param>
     /// <param name="elements">Initial elements.</param>
     /// <returns>List.</returns>
 #pragma warning disable IDE0060
@@ -1069,6 +1092,7 @@ static class BaseDisplayableLogProcessors
     /// <summary>
     /// Obtain an list of version of log for internal usage.
     /// </summary>
+    /// <param name="processor">Log processor.</param>
     /// <param name="elements">Initial elements.</param>
     /// <returns>List.</returns>
 #pragma warning disable IDE0060
@@ -1095,8 +1119,9 @@ static class BaseDisplayableLogProcessors
     /// <summary>
     /// Recycle the list of log for internal usage.
     /// </summary>
+    /// <param name="processor">Log processor.</param>
     /// <param name="list">List to recycle.</param>
-    public static void RecyceInternalDisplayableLogList(this IDisplayableLogProcessor processor, List<DisplayableLog> list)
+    public static void RecycleInternalDisplayableLogList(this IDisplayableLogProcessor processor, List<DisplayableLog> list)
     {
         list.Clear();
         lock (InternalDisplayableLogListPool)
@@ -1112,8 +1137,9 @@ static class BaseDisplayableLogProcessors
     /// <summary>
     /// Recycle the list of version of log for internal usage.
     /// </summary>
+    /// <param name="processor">Log processor.</param>
     /// <param name="list">List to recycle.</param>
-    public static void RecyceInternalDisplayableLogVersionList(this IDisplayableLogProcessor processor, List<byte> list)
+    public static void RecycleInternalDisplayableLogVersionList(this IDisplayableLogProcessor processor, List<byte> list)
     {
         list.Clear();
         lock (InternalDisplayableLogVersionListPool)

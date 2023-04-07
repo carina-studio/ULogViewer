@@ -52,7 +52,7 @@ class OperationCountingAnalyzer : RuleBasedDisplayableLogAnalyzer<OperationCount
         public override long? Quantity { get; }
 
         // Update message.
-        protected override string? OnUpdateMessage() =>
+        protected override string OnUpdateMessage() =>
             this.operationName;
     }
 
@@ -84,7 +84,11 @@ class OperationCountingAnalyzer : RuleBasedDisplayableLogAnalyzer<OperationCount
     /// <summary>
     /// Get list of log properties to be included in analysis.
     /// </summary>
-    public IList<DisplayableLogProperty> LogProperties { get => this.logProperties; }
+    public IList<DisplayableLogProperty> LogProperties => this.logProperties;
+
+
+    /// <inheritdoc/>
+    protected override bool IsContextualBased => true;
 
 
     // Called whe list of log properties changed.
