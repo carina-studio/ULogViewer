@@ -1,9 +1,9 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 
@@ -19,7 +19,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
 
     
     /// <summary>
-    /// Initialize new <see cref="DisplayableLogAnalyzer{TProcessingToken, TResult}"/> instance.
+    /// Initialize new <see cref="BaseDisplayableLogAnalyzer{TProcessingToken, TResult}"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
@@ -63,13 +63,22 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     }
 
 
+    /// <summary>
+    /// Check whether analysis is contextual-based or not.
+    /// </summary>
+    protected virtual bool IsContextualBased => false;
+
+
     /// <inheritdoc/>
-    public override long MemorySize
-    {
-        get => base.MemorySize 
-            + (this.analysisResults.Count + 1) * IntPtr.Size // analysisResults
-            + this.analysisResultsMemorySize;
-    }
+    protected override int MaxConcurrencyLevel =>
+        this.IsContextualBased ? 1 : base.MaxConcurrencyLevel;
+
+
+    /// <inheritdoc/>
+    public override long MemorySize =>
+        base.MemorySize 
+        + (this.analysisResults.Count + 1) * IntPtr.Size // analysisResults
+        + this.analysisResultsMemorySize;
 
 
     /// <inheritdoc/>
@@ -112,6 +121,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// <inheritdoc/>
     protected override bool OnLogInvalidated(DisplayableLog log)
     {
+        // remove related analysis results
         var results = this.analysisResults;
         var index = results.BinarySearch<TResult, DisplayableLog?>(log, it => it.Log, this.CompareSourceLogs);
         if (index >= 0)
@@ -128,6 +138,12 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
             results.RemoveRange(startIndex, endIndex - startIndex);
             this.OnPropertyChanged(nameof(MemorySize));
         }
+        
+        // restart analysis if needed
+        if (this.IsContextualBased && this.IsLogProcessed(log))
+            this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
+        
+        // complete
         return false;
     }
 
@@ -154,10 +170,20 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     {
         switch (e.Action)
         {
+            case NotifyCollectionChangedAction.Add:
+                if (this.IsContextualBased)
+                {
+                    var sourceLogs = this.SourceLogs;
+                    var endIndex = e.NewStartingIndex + e.NewItems!.Count;
+                    if (endIndex < sourceLogs.Count && this.IsLogProcessed(sourceLogs[endIndex]))
+                        this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
+                }
+                break;
             case NotifyCollectionChangedAction.Remove:
             case NotifyCollectionChangedAction.Replace:
-                e.OldItems!.Cast<DisplayableLog>().Let(oldItems =>
+                var areProcessedLogsRemoved = e.OldItems!.Cast<DisplayableLog>().Let(oldItems =>
                 {
+                    var areProcessedLogsRemoved = false;
                     foreach (var log in oldItems)
                     {
                         if (log.HasAnalysisResult)
@@ -169,8 +195,13 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
                                     this.analysisResults.Remove((TResult)results[i]);
                             }
                         }
+                        if (!areProcessedLogsRemoved && this.IsLogProcessed(log))
+                            areProcessedLogsRemoved = true;
                     }
+                    return areProcessedLogsRemoved;
                 });
+                if (this.IsContextualBased && areProcessedLogsRemoved)
+                    this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
                 break;
             case NotifyCollectionChangedAction.Reset:
                 this.analysisResults.Clear();
@@ -204,7 +235,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
 abstract class BaseDisplayableLogAnalyzer<TProcessingToken> : BaseDisplayableLogAnalyzer<TProcessingToken, DisplayableLogAnalysisResult> where TProcessingToken : class
 {
     /// <summary>
-    /// Initialize new <see cref="DisplayableLogAnalyzer{TProcessingToken}"/> instance.
+    /// Initialize new <see cref="BaseDisplayableLogAnalyzer{TProcessingToken}"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
@@ -233,7 +264,7 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken> : BaseDisplayableLog
 abstract class BaseDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<object>
 {
     /// <summary>
-    /// Initialize new <see cref="DisplayableLogAnalyzer"/> instance.
+    /// Initialize new <see cref="BaseDisplayableLogAnalyzer"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>

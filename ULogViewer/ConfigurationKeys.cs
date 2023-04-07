@@ -17,6 +17,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> DelayToCompileScriptWhenEditing = new(nameof(DelayToCompileScriptWhenEditing), 500);
     /// <summary>
+    /// Delay before restarting contextual-based log analysis in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> DelayToRestartContextualBasedLogAnalysis = new(nameof(DelayToRestartContextualBasedLogAnalysis), 1000);
+    /// <summary>
     /// Interval between each displayable log chunk filtering in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> DisplayableLogChunkFilteringPaddingInterval = new(nameof(DisplayableLogChunkFilteringPaddingInterval), 50);

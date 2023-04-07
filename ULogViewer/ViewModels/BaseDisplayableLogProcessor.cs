@@ -65,7 +65,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Initialize new <see cref="DisplayableLogProcessor"/> instance.
+    /// Initialize new <see cref="BaseDisplayableLogProcessor{TProcessingToken, TProcessingResult}"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
@@ -74,10 +74,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     protected BaseDisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
     {
         // create lists
-        this.sourceLogVersions = sourceLogs.Count.Let(it =>
-        {
-            return new List<byte>(new byte[it]);
-        });
+        this.sourceLogVersions = new(sourceLogs.Count);
         this.unprocessedLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
 
         // setup properties
@@ -144,7 +141,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Get size of ptocessing chunk.
+    /// Get size of processing chunk.
     /// </summary>
     protected virtual int ChunkSize { get; }
 
@@ -205,7 +202,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             this.attachedLogGroup = null;
         }
 
-        // cancecl processing
+        // cancel processing
         this.CancelProcessing();
     }
 
@@ -332,8 +329,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 this.ProcessNextChunk(this.currentProcessingParams);
         }
     }
-
-
+    
+    
     /// <summary>
     /// Invalidate current processing and start new processing later.
     /// </summary>
@@ -350,7 +347,24 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             DisplayableLogProcessingPriority.Realtime => 0,
             _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayBackground),
         };
-        this.startProcessingLogsAction.Schedule(delay);
+        this.InvalidateProcessing(delay);
+    }
+    
+    
+    /// <summary>
+    /// Invalidate current processing and start new processing later.
+    /// </summary>
+    /// <param name="delayMillis">Delay to restart processing in milliseconds.</param>
+    protected void InvalidateProcessing(int delayMillis)
+    {
+#if DEBUG
+        this.VerifyAccess();
+#endif
+        if (this.IsDisposed)
+            return;
+        if (this.Application.IsDebugMode && this.currentProcessingParams != null)
+            this.CancelProcessing();
+        this.startProcessingLogsAction.Reschedule(delayMillis);
     }
 
 
@@ -360,7 +374,16 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <param name="token">Token to check.</param>
     /// <returns>True if given token is the token of current processing.</returns>
     protected bool IsCurrentProcessingToken(TProcessingToken token) =>
-        object.ReferenceEquals(this.currentProcessingParams?.Token, token);
+        ReferenceEquals(this.currentProcessingParams?.Token, token);
+
+
+    /// <summary>
+    /// Check whether given log has been processed or not.
+    /// </summary>
+    /// <param name="log">Log to check.</param>
+    /// <returns>True if the log has been processed.</returns>
+    protected bool IsLogProcessed(DisplayableLog log) =>
+        !this.unprocessedLogs.Contains(log);
 
 
     /// <summary>
@@ -378,13 +401,14 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get maximum concurrency level of processing.
     /// </summary>
-    protected virtual int MaxConcurrencyLevel { get => 1; }
+    protected virtual int MaxConcurrencyLevel => 1;
 
 
     /// <summary>
     /// Get size of memory currently used by the instance directly in bytes.
     /// </summary>
-    public virtual long MemorySize { get => this.unprocessedLogs.Count * IntPtr.Size + this.sourceLogVersions.Capacity; }
+    public virtual long MemorySize => 
+        this.unprocessedLogs.Count * IntPtr.Size + this.sourceLogVersions.Capacity;
 
 
     // Obtain an list of log for internal usage.
@@ -406,7 +430,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         return new List<DisplayableLog>();
     }
 
-
+    
     // Obtain an list of version of log for internal usage.
     static List<byte> ObtainInternalDisplayableLogVersionList(IEnumerable<byte>? elements = null)
     {
@@ -511,7 +535,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
 
         // recycle list
-        RecyceInternalDisplayableLogVersionList(logVersions);
+        RecycleInternalDisplayableLogVersionList(logVersions);
 
         // handle processing result
         this.OnChunkProcessed(processingParams.Token, logs, results);
@@ -676,7 +700,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         logVersions.Reverse(); // Reverse back to same order as source list
 
         // recycle list
-        RecyceInternalDisplayableLogList(logs);
+        RecycleInternalDisplayableLogList(logs);
 
         // wait for previous chunks
         var paddingInterval = this.ProcessingPriority switch
@@ -859,7 +883,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get current progress of processing.
     /// </summary>
-    public double Progress { get; private set; } = 0.0;
+    public double Progress { get; private set; }
 
 
     /// <inheritdoc/>
@@ -867,7 +891,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     // Recycle the list of log for internal usage.
-    static void RecyceInternalDisplayableLogList(List<DisplayableLog> list)
+    static void RecycleInternalDisplayableLogList(List<DisplayableLog> list)
     {
         list.Clear();
         lock (InternalDisplayableLogListPool)
@@ -879,7 +903,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     // Recycle the list of version of log for internal usage.
-    static void RecyceInternalDisplayableLogVersionList(List<byte> list)
+    static void RecycleInternalDisplayableLogVersionList(List<byte> list)
     {
         list.Clear();
         lock (InternalDisplayableLogVersionListPool)

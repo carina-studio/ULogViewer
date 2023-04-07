@@ -79,7 +79,7 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
     /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
     public OperationDurationDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
     { 
-        this.logProperties.CollectionChanged += (_, e) => this.InvalidateProcessing();
+        this.logProperties.CollectionChanged += (_, _) => this.InvalidateProcessing();
         this.ruleSets.CollectionChanged += this.OnRuleSetsChanged;
     }
 
@@ -99,11 +99,14 @@ class OperationDurationDisplayableLogAnalyzer : ContextualBasedDisplayableLogAna
     }
 
 
+    /// <inheritdoc/>
+    protected override bool IsContextualBased => true;
+
+
     /// <summary>
     /// Get list of log properties to be included in analysis.
     /// </summary>
-    public IList<DisplayableLogProperty> LogProperties { get => this.logProperties; }
-
+    public IList<DisplayableLogProperty> LogProperties => this.logProperties;
 
     /// <inheritdoc/>
     protected override bool OnProcessLog(AnalysisContext token, DisplayableLog log, out IList<DisplayableLogAnalysisResult> result)

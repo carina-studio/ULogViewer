@@ -45,12 +45,16 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
         isProcessingNeeded = false;
         return new();
     }
+    
+    
+    /// <inheritdoc/>
+    protected override bool IsContextualBased => true;
 
 
     /// <summary>
     /// Get list of log properties to be included in analysis.
     /// </summary>
-    public IList<DisplayableLogProperty> LogProperties { get => this.logProperties; }
+    public IList<DisplayableLogProperty> LogProperties => this.logProperties;
 
 
     // Called whe list of log properties changed.
@@ -131,5 +135,5 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     /// <summary>
     /// Get list of script sets to analyze log.
     /// </summary>
-    public IList<LogAnalysisScriptSet> ScriptSets { get => this.scriptSets; }
+    public IList<LogAnalysisScriptSet> ScriptSets => this.scriptSets;
 }
