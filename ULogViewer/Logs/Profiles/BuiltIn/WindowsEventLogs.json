@@ -1,0 +1,70 @@
+﻿{
+	"DataSource": {
+		"Name": "WindowsEventLogs"
+	},
+	"Icon": "Windows",
+	"IsAdministratorNeeded": true,
+	"IsTemplate": true,
+	"LogLevelMapForReading": {
+		"e": "Error",
+		"i": "Info",
+		"w": "Warn"
+	},
+	"LogLevelMapForWriting": {
+		"Error": "E",
+		"Info": "I",
+		"Undefined": "U",
+		"Warn": "W"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^\\<Timestamp\\>(?<Timestamp>[^\\<]+)\\</Timestamp\\>"
+		},
+		{
+			"Regex": "^\\<EventId\\>(?<Event>[^\\<]*)\\</EventId\\>"
+		},
+		{
+			"Regex": "^\\<Level\\>(?<Level>[^\\<]+)\\</Level\\>"
+		},
+		{
+			"Regex": "^\\<Source\\>(?<SourceName>[^\\<]*)\\</Source\\>"
+		},
+		{
+			"Regex": "^\\<Message\\>"
+		},
+		{
+			"Regex": "^(?<Message>($|[^\\<]+))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^\\</Message\\>"
+		}
+	],
+	"LogStringEncodingForReading": "Xml",
+	"LogWritingFormats": [
+		"[{Level}] {Timestamp} {Event,-5} {SourceName}:{NewLine}{Message}{NewLine}"
+	],
+	"SortDirection": "Descending",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss",
+	"TimestampFormatsForReading": [
+		"yyyy/MM/dd HH:mm:ss"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 180
+		},
+		{
+			"Name": "SourceName",
+			"Width": 200
+		},
+		{
+			"Name": "Event",
+			"Width": 80
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

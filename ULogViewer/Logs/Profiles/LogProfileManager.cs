@@ -66,6 +66,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         if (Platform.IsWindows)
         {
             builtInProfileIDs.Add("WindowsApplicationEventLogs");
+            builtInProfileIDs.Add("WindowsEventLogs");
             builtInProfileIDs.Add("WindowsSecurityEventLogs");
             builtInProfileIDs.Add("WindowsSetupEventLogs");
             builtInProfileIDs.Add("WindowsSystemEventLogs");
@@ -193,7 +194,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         await base.OnInitializeAsync();
 
         // load list of recently used profiles
-        var recentlyUsedProfileIdList = this.PersistentState.GetValueOrDefault(recentlyUsedProfilesKey)?.Let(json =>
+        var recentlyUsedProfileIdList = this.PersistentState.GetValueOrDefault(recentlyUsedProfilesKey).Let(json =>
         {
             if (!string.IsNullOrWhiteSpace(json))
             {

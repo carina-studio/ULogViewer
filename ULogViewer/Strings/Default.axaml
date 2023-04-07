@@ -127,6 +127,8 @@
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">Windows events belongs to category 'Application' of local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows Event Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">Windows Event Logs stored in one or more files with Windows XML Event Log format (*.evtx).</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs">Windows Event Logs</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs.Description">Windows events belongs to specific category of local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows Event Logs (Security)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">Windows events belongs to category 'Security' of local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows Event Logs (Setup)</sys:String>
