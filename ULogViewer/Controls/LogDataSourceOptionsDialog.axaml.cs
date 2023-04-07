@@ -10,6 +10,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.Windows.Input;
 using System;
@@ -73,6 +74,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	static readonly StyledProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
 	static readonly StyledProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
 	static readonly SettingKey<bool> IsSelectAzureResourcesTutorialShownKey = new("LogDataSourceOptionsDialog.IsSelectAzureResourcesTutorialShown");
+	static readonly StyledProperty<bool> IsSelectingFileNameProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingFileName));
+	static readonly StyledProperty<bool> IsSelectingWorkingDirectoryProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingWorkingDirectory));
 	static readonly StyledProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
 	static readonly StyledProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
 	static readonly StyledProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
@@ -325,6 +328,18 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	bool IsUserNameSupported { get => this.GetValue<bool>(IsUserNameSupportedProperty); }
 	bool IsUriSupported { get => this.GetValue<bool>(IsUriSupportedProperty); }
 	bool IsWorkingDirectorySupported { get => this.GetValue<bool>(IsWorkingDirectorySupportedProperty); }
+
+
+	/// <summary>
+	/// Check whether file name selection is on-going or not.
+	/// </summary>
+	public bool IsSelectingFileName => this.GetValue(IsSelectingFileNameProperty);
+
+
+	/// <summary>
+	/// Check whether working directory selection is on-going or not.
+	/// </summary>
+	public bool IsSelectingWorkingDirectory => this.GetValue(IsSelectingWorkingDirectoryProperty);
 
 
 	/// <summary>
@@ -728,19 +743,26 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public async void SelectFileName()
 	{
-		var fileName = (await this.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions().Also(options =>
+		if (this.IsSelectingFileName)
+			return;
+		this.SetValue(IsSelectingFileNameProperty, true);
+		var options = await new FilePickerOpenOptions().AlsoAsync(async options =>
 		{
-			Path.GetDirectoryName(this.fileNameTextBox.Text?.Trim())?.Let(path =>
+			await (Path.GetDirectoryName(this.fileNameTextBox.Text?.Trim())?.LetAsync(async path =>
 			{
-				options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
-			});
-		})))?.Let(it =>
+				if (path.IsValidFilePath() && await Task.Run(() => Directory.Exists(path)))
+					options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
+			}) ?? Task.CompletedTask);
+		});
+		var fileName = (await this.StorageProvider.OpenFilePickerAsync(options)).Let(it =>
 		{
 			if (it.Count != 1 || !it[0].TryGetUri(out var uri))
 				return null;
 			return uri.LocalPath;
 		});
-		this.fileNameTextBox.Text = fileName;
+		if (!string.IsNullOrEmpty(fileName))
+			this.fileNameTextBox.Text = fileName;
+		this.SetValue(IsSelectingFileNameProperty, false);
 	}
 
 
@@ -764,13 +786,18 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public async void SelectWorkingDirectory()
 	{
-		var dirPath = (await this.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions().Also(options =>
+		if (this.IsSelectingWorkingDirectory)
+			return;
+		this.SetValue(IsSelectingWorkingDirectoryProperty, true);
+		var options = await new FolderPickerOpenOptions().AlsoAsync(async options =>
 		{
-			this.workingDirectoryTextBox.Text?.Trim()?.Let(path =>
+			await (this.workingDirectoryTextBox.Text?.Trim().LetAsync(async path =>
 			{
-				options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
-			});
-		})))?.Let(it =>
+				if (path.IsValidFilePath() && await Task.Run(() => Directory.Exists(path)))
+					options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
+			}) ?? Task.CompletedTask);
+		});
+		var dirPath = (await this.StorageProvider.OpenFolderPickerAsync(options)).Let(it =>
 		{
 			if (it.Count != 1 || !it[0].TryGetUri(out var uri))
 				return null;
@@ -778,6 +805,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		});
 		if (!string.IsNullOrEmpty(dirPath))
 			this.workingDirectoryTextBox.Text = dirPath;
+		this.SetValue(IsSelectingWorkingDirectoryProperty, false);
 	}
 
 

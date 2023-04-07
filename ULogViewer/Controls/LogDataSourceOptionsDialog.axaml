@@ -6,7 +6,6 @@
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogDataSourceOptionsDialog"
@@ -150,7 +149,7 @@
 									<TextBox Name="fileNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.None}"/>
 								</Grid>
 								<Separator Classes="Dialog_Separator_Small"/>
-								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectFileName}" Content="{DynamicResource String/LogDataSourceOptions.SelectFileName}" HorizontalAlignment="Right"/>
+								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectFileName}" Content="{DynamicResource String/LogDataSourceOptions.SelectFileName}" HorizontalAlignment="Right" IsEnabled="{Binding !$parent[Window].IsSelectingFileName}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 							</StackPanel>
 
@@ -161,7 +160,7 @@
 									<TextBox Name="workingDirectoryTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.None}"/>
 								</Grid>
 								<Separator Classes="Dialog_Separator_Small"/>
-								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectWorkingDirectory}" Content="{DynamicResource String/LogDataSourceOptions.SelectWorkingDirectory}" HorizontalAlignment="Right"/>
+								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectWorkingDirectory}" Content="{DynamicResource String/LogDataSourceOptions.SelectWorkingDirectory}" HorizontalAlignment="Right" IsEnabled="{Binding !$parent[Window].IsSelectingWorkingDirectory}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 							</StackPanel>
 
