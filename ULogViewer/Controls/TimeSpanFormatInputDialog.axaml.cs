@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Controls
     partial class TimeSpanFormatInputDialog : InputDialog
     {
         // Static fields.
-        static readonly DirectProperty<TimeSpanFormatInputDialog, string?> SampleResultProperty = AvaloniaProperty.RegisterDirect<TimeSpanFormatInputDialog, string?>("SampleResult", d => d.sampleResult);
+        static readonly DirectProperty<TimeSpanFormatInputDialog, string?> SampleResultProperty = AvaloniaProperty.RegisterDirect<TimeSpanFormatInputDialog, string?>(nameof(SampleResult), d => d.sampleResult);
         static readonly TimeSpan SampleTimeSpan = new(7, 12, 34, 56, 123, 456);
 
 
@@ -92,5 +92,9 @@ namespace CarinaStudio.ULogViewer.Controls
             base.OnValidateInput() 
             && this.formatTextBox.IsTextValid
             && !string.IsNullOrEmpty(this.formatTextBox.Object);
+
+
+        // Sample result to be shown.
+        public string? SampleResult => this.GetValue(SampleResultProperty);
     }
 }

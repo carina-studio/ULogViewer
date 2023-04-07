@@ -2,21 +2,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:sys="using:System"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
 		xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
         xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-        xmlns:appDataSources="clr-namespace:CarinaStudio.ULogViewer.Logs.DataSources;assembly=ULogViewer"
         xmlns:appLogProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
         xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
-		xmlns:cs="using:CarinaStudio"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
         Classes="Dialog"
@@ -157,6 +153,8 @@
 						</Grid>
 						<Separator Classes="Dialog_Separator_Small"/>
 						<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
+							<Separator Classes="Dialog_Separator_Small"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
 								<Button.IsEnabled>
 									<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
@@ -215,6 +213,65 @@
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</ToggleSwitch>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator"/>
+
+						<!-- Log reading window -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogReadingWindow}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogReadingWindow.Description}"/>
+								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#window.IsProVersionActivated}">
+									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
+								</Grid>
+							</StackPanel>
+							<asControls:EnumComboBox Name="logReadingWindowComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogReadingWindow}" Grid.Column="1">
+								<asControls:EnumComboBox.IsEnabled>
+									<MultiBinding Converter="{x:Static BoolConverters.And}">
+										<Binding Path="!IsChecked" ElementName="continuousReadingSwitch"/>
+										<Binding Path="IsProVersionActivated" ElementName="window"/>
+									</MultiBinding>
+								</asControls:EnumComboBox.IsEnabled>
+							</asControls:EnumComboBox>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator"/>
+
+						<!-- Max log reading count -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.MaxLogReadingCount}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.MaxLogReadingCount.Description}">
+									<TextBlock.IsVisible>
+										<MultiBinding Converter="{x:Static BoolConverters.Or}">
+											<Binding Path="IsChecked" ElementName="continuousReadingSwitch"/>
+											<Binding Path="IsTextValid" ElementName="maxLogReadingCountTextBox"/>
+										</MultiBinding>
+									</TextBlock.IsVisible>
+								</TextBlock>
+								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+									<Grid.IsVisible>
+										<MultiBinding Converter="{x:Static BoolConverters.And}">
+											<Binding Path="!IsChecked" ElementName="continuousReadingSwitch"/>
+											<Binding Path="!IsTextValid" ElementName="maxLogReadingCountTextBox"/>
+										</MultiBinding>
+									</Grid.IsVisible>
+									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange}"/>
+								</Grid>
+								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#window.IsProVersionActivated}">
+									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
+								</Grid>
+							</StackPanel>
+							<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" Watermark="{DynamicResource String/Common.None}">
+								<abControls:IntegerTextBox.IsEnabled>
+									<MultiBinding Converter="{x:Static BoolConverters.And}">
+										<Binding Path="!IsChecked" ElementName="continuousReadingSwitch"/>
+										<Binding Path="IsProVersionActivated" ElementName="window"/>
+									</MultiBinding>
+								</abControls:IntegerTextBox.IsEnabled>
+							</abControls:IntegerTextBox>
 						</Grid>
 						<Separator Classes="Dialog_Item_Separator"/>
 
@@ -582,6 +639,49 @@
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCategoryGranularity}"/>
 							<asControls:EnumComboBox Name="timestampCategoryGranularityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appCategorizing:TimestampDisplayableLogCategoryGranularity}" Grid.Column="1"/>
 						</Grid>
+
+					</StackPanel>
+				</Border>
+				<Separator Classes="Dialog_Separator_Large"/>
+
+				<!-- Log analysis -->
+				<Border Classes=" Dialog_ItemsGroup_Header">
+					<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogAnalysis}"/>
+				</Border>
+				<Border Classes="Dialog_ItemsGroup_Container">
+					<StackPanel>
+
+						<!-- Cooperative log analysis script set -->
+						<Border Classes="Dialog_Item_Container">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description}"/>
+								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#window.IsProVersionActivated}">
+									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
+								</Grid>
+							</StackPanel>
+						</Border>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<StackPanel HorizontalAlignment="Right" IsEnabled="{Binding #window.IsProVersionActivated}" Orientation="Horizontal">
+
+							<!-- Delete -->
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.RemoveCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove}" IsVisible="{Binding #window.HasCooperativeLogAnalysisScriptSet}"/>
+							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #window.HasCooperativeLogAnalysisScriptSet}"/>
+
+							<!-- Import existing -->
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.ImportExistingCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting}"/>
+							<Separator Classes="Dialog_Separator_Small"/>
+
+							<!-- Import from file -->
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.ImportCooperativeLogAnalysisScriptFromFile}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile}"/>
+							<Separator Classes="Dialog_Separator_Small"/>
+
+							<!-- Create/Edit -->
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.CreateCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create}" IsVisible="{Binding !#window.HasCooperativeLogAnalysisScriptSet}"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.EditCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit}" IsVisible="{Binding #window.HasCooperativeLogAnalysisScriptSet}"/>
+
+						</StackPanel>
 
 					</StackPanel>
 				</Border>

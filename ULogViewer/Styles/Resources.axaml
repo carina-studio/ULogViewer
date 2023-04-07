@@ -211,7 +211,7 @@
 	<sys:Double x:Key="Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MarkIndicator.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MinSizeToCloseSidePanel">100</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogsProgessingBar.Height">2</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogsProgressBar.Height">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MinHeight">100</sys:Double>

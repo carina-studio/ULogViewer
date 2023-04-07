@@ -197,7 +197,7 @@
 								<asControls:ListBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="*,Auto">
-											<TextBlock Grid.Column="0" Text="{Binding, StringFormat={}{{{0}}}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											<TextBlock Grid.Column="0" Text="{Binding StringFormat={}{{{0}}}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 											<Border Classes="InPlaceAction_Reserved"/>
 											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">

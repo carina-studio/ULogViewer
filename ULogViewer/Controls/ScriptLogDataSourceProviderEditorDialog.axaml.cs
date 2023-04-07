@@ -104,8 +104,8 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		this.addSupportedSourceOptionMenu = ((ContextMenu)this.Resources[nameof(addSupportedSourceOptionMenu)].AsNonNull()).Also(it =>
 		{
 			it.Items = this.unsupportedSourceOptionMenuItems;
-			it.MenuClosed += (_, e) => this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = false);
-			it.MenuOpened += (_, e) =>
+			it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = false);
+			it.MenuOpened += (_, _) =>
 			{
 				ToolTip.SetIsOpen(this.addSupportedSourceOptionButton, false);
 				this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = true);
@@ -159,7 +159,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 	// Create menu item for unsupported log data source option.
 	MenuItem CreateUnsupportedSourceOptionMenuItem(string option) => new MenuItem().Also(menuItem =>
 	{
-		menuItem.Click += (_, e) =>
+		menuItem.Click += (_, _) =>
 		{
 			this.addSupportedSourceOptionMenu.Close();
 			this.AddSupportedSourceOption(menuItem);

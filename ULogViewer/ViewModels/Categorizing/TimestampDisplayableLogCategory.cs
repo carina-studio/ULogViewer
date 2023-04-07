@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -24,7 +23,7 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// <summary>
     /// Initializer new <see cref="TimestampDisplayableLogCategory"/> instance.
     /// </summary>
-    /// <param name="categorizer"><see cref="IDisplayableLogCategorizer{T}>"/> which generate this category.</param>
+    /// <param name="categorizer"><see cref="IDisplayableLogCategorizer{T}"/> which generate this category.</param>
     /// <param name="log"><see cref="DisplayableLog"/> which represents this category.</param>
     /// <param name="timestamp">Timestamp of this category.</param>
     /// <param name="granularity">Granularity of category.</param>
@@ -39,7 +38,6 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     string GetTimestampFormat(string baseFormat)
     {
         // use cached format
-        var format = (string?)null;
         var cache = this.Granularity switch
         {
             TimestampDisplayableLogCategoryGranularity.Day => CachedTimestampFormatsDay,
@@ -47,7 +45,7 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
             TimestampDisplayableLogCategoryGranularity.Minute => CachedTimestampFormatsMinute,
             _ => null,
         };
-        if (cache?.TryGetValue(baseFormat, out format) == true && format != null)
+        if (cache?.TryGetValue(baseFormat, out var format) == true)
             return format;
         
         // remove sub-seconds part
@@ -100,13 +98,13 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
 
 
     /// <inheritdoc/>
-    public override long MemorySize { get => base.MemorySize + 8; }
+    public override long MemorySize => base.MemorySize + 8;
 
 
     /// <inheritdoc/>
-    protected override string? OnUpdateName()
+    protected override string OnUpdateName()
     {
-        var format = this.Log?.Group?.LogProfile?.TimestampFormatForDisplaying?.Let(this.GetTimestampFormat);
+        var format = this.Log?.Group.LogProfile.TimestampFormatForDisplaying?.Let((Func<string, string>)this.GetTimestampFormat);
         if (format != null)
             return this.Timestamp.ToString(format);
         return this.Granularity switch

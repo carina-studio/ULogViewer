@@ -8,10 +8,10 @@
 			 xmlns:aConverters="using:Avalonia.Data.Converters"
 			 xmlns:abControls="using:CarinaStudio.Controls"
 			 xmlns:abConverters="using:CarinaStudio.Data.Converters"
-			 xmlns:as="using:CarinaStudio.AppSuite"
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
 			 xmlns:asInput="using:CarinaStudio.AppSuite.Input"
+			 xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
 			 xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
 			 xmlns:app="using:CarinaStudio.ULogViewer"
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
@@ -20,8 +20,6 @@
              xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
 			 xmlns:appInput="using:CarinaStudio.ULogViewer.Input"
-             xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
-			 xmlns:appNet="using:CarinaStudio.ULogViewer.Net"
              xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 			 xmlns:cs="using:CarinaStudio"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -594,7 +592,7 @@
 						</ComboBox>
 
 						<!-- PID filter -->
-						<Panel Name="logProcessIdFilterTextBoxPanel" Grid.Column="1" IsVisible="{Binding LogFiltering.IsProcessIdFilterEnabled}" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
+						<Panel Name="logProcessIdFilterTextBoxPanel" IsVisible="{Binding LogFiltering.IsProcessIdFilterEnabled}" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox Name="logProcessIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" Value="{Binding LogFiltering.ProcessIdFilter, Mode=TwoWay}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ProcessId}"/>
 							<Panel Classes="TextBox_InPlaceActions">
 								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
@@ -604,7 +602,7 @@
 						</Panel>
 
 						<!-- TID filter -->
-						<Panel Name="logThreadIdFilterTextBoxPanel" Grid.Column="1" IsVisible="{Binding LogFiltering.IsThreadIdFilterEnabled}" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
+						<Panel Name="logThreadIdFilterTextBoxPanel" IsVisible="{Binding LogFiltering.IsThreadIdFilterEnabled}" Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox Name="logThreadIdFilterTextBox" Classes="ToolBar_TextBox_WithInPlaceAction" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" Maximum="2147483647" Minimum="0" ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" Value="{Binding LogFiltering.ThreadIdFilter, Mode=TwoWay}" VerticalAlignment="Center" Watermark="{DynamicResource String/LogProperty.ThreadId}"/>
 							<Panel Classes="TextBox_InPlaceActions">
 								<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
@@ -613,8 +611,8 @@
 							</Panel>
 						</Panel>
 
-						<!-- Filters combinatin mode -->
-						<ToggleButton Name="logFilterCombinationModeButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowLogFiltersCombinationModeMenu}" Grid.Column="3" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
+						<!-- Filters combination mode -->
+						<ToggleButton Name="logFilterCombinationModeButton" Classes="ToolBar_ToggleButton" Command="{Binding $parent[UserControl].ShowLogFiltersCombinationModeMenu}" IsVisible="{Binding $parent[UserControl].CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
 							<Panel>
 								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 									<DrawingImage>
@@ -657,8 +655,8 @@
 						<ToggleButton Name="predefinedLogTextFiltersButton" Classes="ToolBar_ToggleButton" Grid.Column="1" IsEnabled="{Binding $parent[UserControl].HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
 							<Panel>
 								<Panel>
-									<Image Classes="Icon" Source="{StaticResource Image/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=!SelectedItems.Count, FallbackValue=True}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count, FallbackValue=False}"/>
 									<Image Classes="Icon" Source="{StaticResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
 								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
@@ -718,7 +716,7 @@
 												<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
 													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].OpenPredefinedTextFiltersDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 													<Separator Classes="Dialog_Separator"/>
-													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count}"/>
+													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].ClearPredefinedLogTextFilterSelection}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding ElementName=predefinedLogTextFilterListBox, Path=SelectedItems.Count, FallbackValue=False}"/>
 													<Separator Classes="Dialog_Separator_Small"/>
 													<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].CreatePredefinedLogTextFilter}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
 												</StackPanel>
@@ -775,7 +773,7 @@
 			</Border>
 
 			<!-- Progress bar -->
-			<ProgressBar Background="{x:Null}" CornerRadius="0" Grid.ColumnSpan="3" Grid.Row="1" IsIndeterminate="{Binding IsProcessingLogs}" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgessingBar.Height}" VerticalAlignment="Bottom"/>
+			<ProgressBar Background="{x:Null}" CornerRadius="0" IsIndeterminate="{Binding IsProcessingLogs}" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" VerticalAlignment="Bottom"/>
 			
 		</Panel>
 
@@ -1164,7 +1162,7 @@
 					</StackPanel>
 
 					<!-- Selected logs -->
-					<StackPanel Grid.Column="3" IsVisible="{Binding #logListBox.SelectedItems.Count}" Orientation="Horizontal">
+					<StackPanel Grid.Column="3" IsVisible="{Binding #logListBox.SelectedItems.Count, FallbackValue=False}" Orientation="Horizontal">
 						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogSelection.SelectedLogs.Count}" Format="{DynamicResource String/SessionView.SelectedLogCount}" VerticalAlignment="Center"/>
 						<Separator Classes="StatusBar_Separator"/>
 					</StackPanel>
@@ -1276,7 +1274,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,*">
-									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
@@ -1339,12 +1337,11 @@
 										<StackPanel Orientation="Horizontal">
 											<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
 											<Separator Classes="Dialog_Separator_Small"/>
-											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" TextTrimming="CharacterEllipsis"/>
+											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="False" TextTrimming="CharacterEllipsis"/>
 											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.ProVersionOnly}" Format="({0})" TextTrimming="CharacterEllipsis">
 												<abControls:FormattedTextBlock.IsVisible>
 													<MultiBinding Converter="{x:Static BoolConverters.And}">
 														<Binding Path="!IsProVersionActivated"/>
-														<Binding Path="EnableRunningScript" ElementName="root"/>
 													</MultiBinding>
 												</abControls:FormattedTextBlock.IsVisible>
 											</abControls:FormattedTextBlock>
@@ -1353,7 +1350,6 @@
 											<ToggleSwitch.IsEnabled>
 												<MultiBinding Converter="{x:Static BoolConverters.And}">
 													<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-													<Binding Path="EnableRunningScript" ElementName="root"/>
 													<Binding Path="IsProVersionActivated"/>
 												</MultiBinding>
 											</ToggleSwitch.IsEnabled>
@@ -1575,11 +1571,11 @@
 															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #logAnalysisScriptSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
 																<StackPanel Orientation="Horizontal">
 																	<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}" TextTrimming="CharacterEllipsis"/>
-																	<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}"/>
-																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="{Binding !$parent[UserControl].EnableRunningScript}" TextTrimming="CharacterEllipsis"/>
+																	<Separator Classes="Dialog_Separator_Small" IsVisible="False"/>
+																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="False" TextTrimming="CharacterEllipsis"/>
 																</StackPanel>
 															</Border>
-															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="{Binding $parent[UserControl].EnableRunningScript}" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="False" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
 																	<DataTemplate>
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1652,13 +1648,12 @@
 												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ClearLogAnalysisRuleSetSelection}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}">
 													<Button.IsEnabled>
 														<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationCountingAnalysisRuleSetListBox"/>
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="logAnalysisScriptSetListBox"/>
+															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="keyLogAnalysisRuleSetListBox" FallbackValue="False"/>
+															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationDurationAnalysisRuleSetListBox" FallbackValue="False"/>
+															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationCountingAnalysisRuleSetListBox" FallbackValue="False"/>
+															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="logAnalysisScriptSetListBox" FallbackValue="False"/>
 														</MultiBinding>
 													</Button.IsEnabled>
-													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/ClearSelection}"/>
 												</Button>
 												<Separator Classes="Dialog_Separator"/>
 												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].OpenLogAnalysisDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
@@ -1684,7 +1679,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,*">
-									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" Grid.RowSpan="2" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" Grid.RowSpan="2" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Image Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="True">
@@ -1760,7 +1755,7 @@
 												<TextBlock 
 													FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 													Grid.Column="2"
-													Text="{Binding ByteSize, Converter={x:Static asConverters:FileSizeConverter.Default} StringFormat={}({0})}" 
+													Text="{Binding ByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}, StringFormat={}({0})}" 
 													TextTrimming="CharacterEllipsis" 
 													VerticalAlignment="Center"/>
 													
@@ -1799,9 +1794,9 @@
 							<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
 								<Binding Path="!IsRemovingLogFiles"/>
 								<Binding Path="LogAnalysis.AnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox"/>
-								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox"/>
-								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="logAnalysisScriptSetListBox"/>
+								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox" FallbackValue="False"/>
+								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox" FallbackValue="False"/>
+								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="logAnalysisScriptSetListBox" FallbackValue="False"/>
 							</MultiBinding>
 						</Border.IsVisible>
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
@@ -1919,7 +1914,7 @@
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<DockPanel>
-									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicatorByFileName}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Grid ColumnDefinitions="Auto,*,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
 											<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text.Outline}"/>

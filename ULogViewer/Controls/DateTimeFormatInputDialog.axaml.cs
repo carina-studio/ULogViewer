@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Controls
     partial class DateTimeFormatInputDialog : InputDialog
     {
         // Static fields.
-        static readonly DirectProperty<DateTimeFormatInputDialog, string?> SampleResultProperty = AvaloniaProperty.RegisterDirect<DateTimeFormatInputDialog, string?>("SampleResult", d => d.sampleResult);
+        static readonly DirectProperty<DateTimeFormatInputDialog, string?> SampleResultProperty = AvaloniaProperty.RegisterDirect<DateTimeFormatInputDialog, string?>(nameof(SampleResult), d => d.sampleResult);
 
 
         // Fields.
@@ -92,5 +92,9 @@ namespace CarinaStudio.ULogViewer.Controls
             base.OnValidateInput() 
             && this.formatTextBox.IsTextValid
             && !string.IsNullOrEmpty(this.formatTextBox.Object);
+        
+
+        // Sample result to be shown.
+        public string? SampleResult => this.GetValue(SampleResultProperty);
     }
 }

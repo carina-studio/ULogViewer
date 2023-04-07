@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace CarinaStudio.ULogViewer.Controls;
 
 /// <summary>
-/// Dialog to edit <see cref="ContextualBasedAnalysisCondition"/>s.
+/// Dialog to edit log analysis script set.
 /// </summary>
 partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
 {
@@ -25,7 +25,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 
 
 	// Static fields.
-	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>("AreValidParameters", d => d.areValidParameters);
+	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>(nameof(AreValidParameters), d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("LogAnalysisScriptSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 	static readonly StyledProperty<bool> IsEmbeddedScriptSetProperty = AvaloniaProperty.Register<LogAnalysisScriptSetEditorDialog, bool>(nameof(IsEmbeddedScriptSet));
@@ -93,6 +93,10 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		});
 		this.GetObservable(IsEmbeddedScriptSetProperty).Subscribe(_ => this.validateParametersAction.Schedule());
 	}
+	
+
+	// Whether all parameters are valid or not.
+	public bool AreValidParameters => this.GetValue(AreValidParametersProperty);
 
 
 	/// <summary>
@@ -320,7 +324,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			this.scriptSetToEdit = value;
 		}
 	}
-
+	
 
 	/// <summary>
 	/// Show dialog to edit script set.
