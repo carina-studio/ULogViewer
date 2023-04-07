@@ -2208,7 +2208,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							if (System.IO.File.Exists(path))
 								filePaths.Add(path);
-							else if (Directory.Exists(path))
+							else if (System.IO.Directory.Exists(path))
 								dirPaths.Add(path);
 						});
 					}

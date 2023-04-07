@@ -9,8 +9,8 @@ using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.IO;
 using CarinaStudio.Threading;
-using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.Windows.Input;
 using System;
@@ -750,7 +750,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		{
 			await (Path.GetDirectoryName(this.fileNameTextBox.Text?.Trim())?.LetAsync(async path =>
 			{
-				if (path.IsValidFilePath() && await Task.Run(() => Directory.Exists(path)))
+				if (path.IsValidFilePath() && await CarinaStudio.IO.Directory.ExistsAsync(path))
 					options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
 			}) ?? Task.CompletedTask);
 		});
@@ -793,7 +793,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		{
 			await (this.workingDirectoryTextBox.Text?.Trim().LetAsync(async path =>
 			{
-				if (path.IsValidFilePath() && await Task.Run(() => Directory.Exists(path)))
+				if (path.IsValidFilePath() && await CarinaStudio.IO.Directory.ExistsAsync(path))
 					options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
 			}) ?? Task.CompletedTask);
 		});
