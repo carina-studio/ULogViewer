@@ -692,7 +692,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		{
 			InitialFileName = initFileName
 		}.ShowAsync(this);
-		if (fileNames.IsNotEmpty())
+		if (fileNames != null && fileNames.IsNotEmpty())
 			this.fileNameTextBox.Text = fileNames[0];
 		this.SetValue(IsSelectingFileNameProperty, false);
 	}
