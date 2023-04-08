@@ -1921,7 +1921,7 @@
 							<DataTemplate>
 								<DockPanel>
 									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding $parent[UserControl].DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
-									<Grid ColumnDefinitions="Auto,*,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
+									<Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
 											<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text.Outline}"/>
 											<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting.Outline}"/>
@@ -1929,14 +1929,18 @@
 											<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error.Outline}"/>
 										</Panel>
 										<StackPanel Grid.Column="1">
-											<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
-											<Grid ColumnDefinitions="Auto,Auto" HorizontalAlignment="Left" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}">
-												<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{DynamicResource String/SessionView.LogCountInLogFile}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-												<TextBlock Grid.Column="1" FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" Text="{Binding LogCount}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											</Grid>
-											<TextBlock FontSize="{StaticResource Double/SessionView.LogFileInfo.Summary.FontSize}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" Text="{DynamicResource String/SessionView.HasLogReadingPrecondition.WithBrackets}" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
+											<abControls:FormattedTextBlock Arg1="{Binding LogCount}" Format="{DynamicResource String/SessionView.LogCountInLogFile}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" TextTrimming="CharacterEllipsis"/>
 										</StackPanel>
-										<ToggleButton Name="logFileActionButton" Classes="InPlaceAction_ToggleButton_Medium" Command="{Binding $parent[UserControl].ShowLogFileActionMenuCommand}" CommandParameter="{Binding $self}" Grid.Column="2" VerticalAlignment="Top">
+										<StackPanel Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+											<Border Background="{x:Static Brushes.Transparent}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" ToolTip.Tip="{DynamicResource String/SessionView.HasLogReadingPrecondition}">
+												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Filter}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
+											</Border>
+											<Border Background="{x:Static Brushes.Transparent}" IsVisible="{Binding MaxLogReadingCount, Converter={x:Static ObjectConverters.IsNotNull}}" ToolTip.Tip="{DynamicResource String/SessionView.HasMaxLogReadingCount}">
+												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Layers}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
+											</Border>
+										</StackPanel>
+										<ToggleButton Name="logFileActionButton" Classes="InPlaceAction_ToggleButton_Medium" Command="{Binding $parent[UserControl].ShowLogFileActionMenuCommand}" CommandParameter="{Binding $self}" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
 											<ToggleButton.IsVisible>
 												<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
 													<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">

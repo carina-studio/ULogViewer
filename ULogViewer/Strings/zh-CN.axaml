@@ -1034,7 +1034,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">使用选择的 TID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">只使用选择的 TID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">数据来源发生错误</sys:String>
-	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition.WithBrackets">(已设置前置条件)</sys:String>
+	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">已设置日志读取前置条件</sys:String>
+	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">已设置日志读取数量上限</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分数据来源发生错误</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日志可以展示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">点一下工具列的</sys:String>
@@ -1064,7 +1065,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">运行「{0}」之脚本以分析日志时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">运行「{0}」之脚本以初始化分析时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
-	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
+	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">运行「{0}」之脚本以关闭原始日志行读取器时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">运行「{0}」之脚本以开启原始日志行读取器时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">运行「{0}」之脚本以读取原始日志行时发生错误：</sys:String>
