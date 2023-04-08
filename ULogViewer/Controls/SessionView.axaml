@@ -208,7 +208,7 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFile}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile}">
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFile}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile}" IsEnabled="{Binding $parent[UserControl].DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 				</MenuItem.Icon>
