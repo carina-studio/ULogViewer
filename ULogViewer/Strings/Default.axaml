@@ -296,7 +296,7 @@
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each file.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to {0} inclusively.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by log profile</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Log reading options</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Log reading count options</sys:String>
 
 	<!-- FilterCombinationMode -->
 	<sys:String x:Key="String/FilterCombinationMode.Auto">Auto</sys:String>
@@ -1141,7 +1141,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">Need to upgrade to Pro version to enable the feature</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">Reload logs</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">Change precondition of log reading…</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">Change options of log reading…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">Change options of log reading count…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>

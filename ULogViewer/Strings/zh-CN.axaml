@@ -279,7 +279,7 @@
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">从每个文件中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 {0} (包含)。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">日志类型所定义之最大日志读取数量</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">日志读取设置</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">日志读取数量设置</sys:String>
 
 	<!-- FilterCombinationMode -->
 	<sys:String x:Key="String/FilterCombinationMode.Auto">自动选择</sys:String>
@@ -1105,7 +1105,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升级至专业版以启用此功能</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">重新读入日志</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">变更日志读取前置条件…</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">变更日志读取设置…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">变更日志读取数量设置…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日志读取前置条件</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志档案</sys:String>

@@ -211,22 +211,23 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewMaxLogReadingCountCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
-				</MenuItem.Icon>
-			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}" IsEnabled="{Binding $parent[UserControl].DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/CheckFilter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithoutLogReadingPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition}" IsEnabled="{Binding !LogReadingPrecondition.IsEmpty}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].DataContext.RemoveLogFileCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}">
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewMaxLogReadingCountCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Layers.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
+			<Separator/>
+			<MenuItem Command="{Binding $parent[UserControl].DataContext.RemoveLogFileCommand, FallbackValue={x:Null}}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 				</MenuItem.Icon>
