@@ -216,7 +216,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}">
+			<MenuItem Command="{Binding $parent[UserControl].ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}" IsEnabled="{Binding $parent[UserControl].DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 				</MenuItem.Icon>
