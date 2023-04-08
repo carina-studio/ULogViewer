@@ -4184,7 +4184,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.IsRemovingLogFiles):
 					if (session.IsRemovingLogFiles)
+					{
+						this.logAnalysisResultListBox.SelectedItems?.Clear(); // [Workaround] Prevent NRE caused by Avalonia
 						this.logAnalysisResultListBox.Items = null;
+					}
 					else
 					{
 						this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsProperty, new Binding()
