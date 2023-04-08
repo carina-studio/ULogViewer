@@ -19,7 +19,7 @@
   "Icon": "Phone",
   "LogPatterns": [
     {
-      "Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+(?<Extra2>[\\d\\w\\.])(?<Extra3>[\\d\\w\\.])(?<Extra4>[\\d\\w\\.])(?<Extra5>[\\d\\w\\.])[\\s]+(?<TimeSpan>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+      "Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+(?<Extra2>[\\d\\w\\.])(?<Extra3>[\\d\\w\\.])(?<Extra4>[\\d\\w\\.])(?<Extra5>[\\d\\w\\.])[\\D]+(?<TimeSpan>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
     }
   ],
   "LogStringEncodingForReading": "Plane",
