@@ -1151,7 +1151,8 @@ namespace CarinaStudio.ULogViewer
 
 			// hint for refreshing application icon on macOS
 			var appVersion = this.Application.Assembly.GetName().Version;
-			if (appVersion?.Major == 3
+			if (Platform.IsMacOS 
+			    && appVersion?.Major == 3
 				&& (this.Application.PreviousVersion?.Major).GetValueOrDefault() < 3
 				&& !this.Application.IsFirstLaunch
 				&& !IsRefreshingAppIconOnMacOSHintDialogShown)
