@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
 class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplication>, INotifyPropertyChanged
 {
     // Static fields.
-    static readonly long DefaultMemorySize = (7 * IntPtr.Size) // Appliation, BeginningLog, EndingLog, Log, message, Analyzer, PropertyChanged
+    static readonly long DefaultMemorySize = (7 * IntPtr.Size) // Application, BeginningLog, EndingLog, Log, message, Analyzer, PropertyChanged
         + (4 + 8) // ByteSize
         + (4 + 8) // Duration
         + 4 // Id
@@ -30,7 +30,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// <summary>
     /// Initialize new <see cref="DisplayableLogAnalysisResult"/> instance.
     /// </summary>
-    /// <param name="analyzer"><see cref="IDisplayableLogAnalyzer"/> which generates this result.</param>
+    /// <param name="analyzer"><see cref="IDisplayableLogAnalyzer{DisplayableLogAnalysisResult}"/> which generates this result.</param>
     /// <param name="type">Type of result.</param>
     /// <param name="log"><see cref="DisplayableLog"/> which relates to this result.</param>
     public DisplayableLogAnalysisResult(IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> analyzer, DisplayableLogAnalysisResultType type, DisplayableLog? log) : base(analyzer.Application)
@@ -43,7 +43,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 
 
     /// <summary>
-    /// Get <see cref="IDisplayableLogAnalyzer"/> which generates this result.
+    /// Get <see cref="IDisplayableLogAnalyzer{DisplayableLogAnalysisResult}"/> which generates this result.
     /// </summary>
     public IDisplayableLogAnalyzer<DisplayableLogAnalysisResult> Analyzer { get; }
 
@@ -63,10 +63,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// <summary>
     /// Get <see cref="IBrush"/> of color indicator.
     /// </summary>
-    public IBrush? ColorIndicatorBrush 
-    { 
-        get => (this.Log ?? this.BeginningLog ?? this.EndingLog)?.ColorIndicatorBrush;
-    }
+    public IBrush? ColorIndicatorBrush => (this.Log ?? this.BeginningLog ?? this.EndingLog)?.ColorIndicatorBrush;
 
 
     /// <summary>
@@ -84,19 +81,19 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// <summary>
     /// Check whether <see cref="ByteSize"/> is valid value or not.
     /// </summary>
-    public bool HasByteSize { get => this.ByteSize.HasValue; }
+    public bool HasByteSize => this.ByteSize.HasValue;
 
 
     /// <summary>
     /// Check whether <see cref="Duration"/> is valid value or not.
     /// </summary>
-    public bool HasDuration { get => this.Duration.HasValue; }
+    public bool HasDuration => this.Duration.HasValue;
 
 
     /// <summary>
     /// Check whether <see cref="Quantity"/> is valid value or not.
     /// </summary>
-    public bool HasQuantity { get => this.Quantity.HasValue; }
+    public bool HasQuantity => this.Quantity.HasValue;
 
 
     /// <summary>
@@ -126,20 +123,20 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// <summary>
     /// Check whether type of result is <see cref="DisplayableLogAnalysisResultType.Error"/> or not.
     /// </summary>
-    public bool IsError { get => this.Type == DisplayableLogAnalysisResultType.Error; }
+    public bool IsError => this.Type == DisplayableLogAnalysisResultType.Error;
 
 
     /// <summary>
     /// Check whether type of result is <see cref="DisplayableLogAnalysisResultType.Information"/> or not.
     /// </summary>
-    public bool IsInformation { get => this.Type == DisplayableLogAnalysisResultType.Information; }
+    public bool IsInformation => this.Type == DisplayableLogAnalysisResultType.Information;
 
 
     /// <summary>
     /// Check whether type of result is <see cref="DisplayableLogAnalysisResultType.Warning"/> or not.
     /// </summary>
-    public bool IsWarning { get => this.Type == DisplayableLogAnalysisResultType.Warning; }
-    
+    public bool IsWarning => this.Type == DisplayableLogAnalysisResultType.Warning;
+
 
     /// <summary>
     /// Get <see cref="DisplayableLog"/> which relates to this result.
@@ -150,7 +147,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
     /// <summary>
     /// Get memory size of the result instance in bytes.
     /// </summary>
-    public virtual long MemorySize { get => DefaultMemorySize; }
+    public virtual long MemorySize => DefaultMemorySize;
 
 
     /// <summary>
@@ -212,7 +209,7 @@ class DisplayableLogAnalysisResult : BaseApplicationObject<IULogViewerApplicatio
 /// <summary>
 /// Type of <see cref="DisplayableLogAnalysisResult"/>.
 /// </summary>
-enum DisplayableLogAnalysisResultType : uint
+enum DisplayableLogAnalysisResultType : byte
 {
     /// <summary>
     /// Error.

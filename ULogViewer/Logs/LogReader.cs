@@ -137,15 +137,13 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Whether read logs can be added or not.
-		bool CanAddLogs
-		{
-			get => this.state switch
+		bool CanAddLogs =>
+			this.state switch
 			{
 				LogReaderState.Starting => true,
 				LogReaderState.ReadingLogs => true,
 				_ => false,
 			};
-		}
 
 
 		// Change state.
@@ -970,12 +968,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			});
 			var logBuilder = new LogBuilder()
 			{
-				StringCompressionLevel = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) switch
-				{
-					MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
-					MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
-					_ => CompressedString.Level.None,
-				}
+				MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy),
 			};
 			var syncContext = this.SynchronizationContext;
 			void FlushContinuousReadingLog(int updateInterval)
@@ -1021,8 +1014,8 @@ namespace CarinaStudio.ULogViewer.Logs
 				var lastLogPatternIndex = (logPatterns.Length - 1);
 				var lineNumber = 0;
 				var startReadingTime = stopWatch.ElapsedMilliseconds;
-				var updateInterval = 0;
-				var logLine = (string?)null;
+				int updateInterval;
+				string? logLine;
 				void ReadNextLine()
 				{
 					++lineNumber;
@@ -1040,8 +1033,10 @@ namespace CarinaStudio.ULogViewer.Logs
 								{
 									logLine = reader.ReadLine();
 								}
-								catch 
+								// ReSharper disable EmptyGeneralCatchClause
+								catch
 								{ }
+								// ReSharper restore EmptyGeneralCatchClause
 								lock (readLineSyncLock)
 								{
 									Monitor.PulseAll(readLineSyncLock);
@@ -1360,7 +1355,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 			catch (Exception ex)
 			{
-				this.Logger.LogError(ex, "Error occurred while reading logs.");
+				this.Logger.LogError(ex, "Error occurred while reading logs");
 				exception = ex;
 			}
 			finally
@@ -1513,7 +1508,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				case LogReaderState.StartingWhenPaused:
 					break;
 				default:
-					this.Logger.LogError("Cannot start readong logs when state is {state}", this.state);
+					this.Logger.LogError("Cannot start reading logs when state is {state}", this.state);
 					return;
 			}
 
@@ -1556,7 +1551,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					}
 					if (!this.ChangeState(LogReaderState.ReadingLogs))
 					{
-						Global.RunWithoutErrorAsync(() => reader?.Close());
+						Global.RunWithoutErrorAsync(() => reader.Close());
 						return;
 					}
 					break;
@@ -1568,7 +1563,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					}
 					if (!this.ChangeState(LogReaderState.Paused))
 					{
-						Global.RunWithoutErrorAsync(() => reader?.Close());
+						Global.RunWithoutErrorAsync(() => reader.Close());
 						return;
 					}
 					break;
@@ -1583,14 +1578,14 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.logsReadingCancellationTokenSource = new CancellationTokenSource();
 			var readingToken = this.logsReadingToken;
 			var cancellationToken = this.logsReadingCancellationTokenSource.Token;
-			_ = this.readingTaskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken));
+			_ = this.readingTaskFactory.StartNew(() => this.ReadLogs(readingToken, reader, cancellationToken), cancellationToken);
 		}
 
 
 		/// <summary>
 		/// Get current state of <see cref="LogReader"/>.
 		/// </summary>
-		public LogReaderState State { get => this.state; }
+		public LogReaderState State => this.state;
 
 
 		/// <summary>
@@ -1723,9 +1718,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Implementations.
 		public bool CheckAccess() => this.Application.CheckAccess();
-		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
+		IApplication IApplicationObject.Application => this.Application;
 		public event PropertyChangedEventHandler? PropertyChanged;
-		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
+		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
 		public override string ToString() => $"{this.GetType().Name}-{this.Id}";
 	}
 

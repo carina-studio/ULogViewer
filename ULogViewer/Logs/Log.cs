@@ -64,7 +64,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 		static readonly HashSet<string> dateTimePropertyNameSet = new();
 		static volatile bool isPropertyMapReady;
-		static long nextId = 0;
+		static long nextId;
 		static readonly Dictionary<string, int> propertyIndices = new();
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 		static readonly int propertyNameCount;
@@ -135,7 +135,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			if (propertyIndices.TryGetValue(nameof(ReadTime), out propertyIndex))
 			{
 				propertyValueIndices[propertyIndex] = (byte)(index + 1);
-				propertyValues[index++] = DateTime.Now;
+				propertyValues[index] = DateTime.Now;
 				propertyMemorySize += Memory.EstimateInstanceSize<DateTime>();
 			}
 
@@ -147,19 +147,19 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get beginning time span.
 		/// </summary>
-		public TimeSpan? BeginningTimeSpan { get => (TimeSpan?)this.GetProperty(PropertyName.BeginningTimeSpan); }
+		public TimeSpan? BeginningTimeSpan => (TimeSpan?)this.GetProperty(PropertyName.BeginningTimeSpan);
 
 
 		/// <summary>
 		/// Get beginning timestamp.
 		/// </summary>
-		public DateTime? BeginningTimestamp { get => (DateTime?)this.GetProperty(PropertyName.BeginningTimestamp); }
+		public DateTime? BeginningTimestamp => (DateTime?)this.GetProperty(PropertyName.BeginningTimestamp);
 
 
 		/// <summary>
 		/// Get category of log.
 		/// </summary>
-		public string? Category { get => this.GetProperty(PropertyName.Category)?.ToString(); }
+		public string? Category => this.GetProperty(PropertyName.Category)?.ToString();
 
 
 #pragma warning disable CS8603
@@ -175,7 +175,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			SetupPropertyMap();
 			if (propertyMap.TryGetValue(propertyName, out var propertyInfo))
 				return (it => (T)propertyInfo.GetValue(it));
-			return (it => default);
+			return (_ => default);
 		}
 #pragma warning restore CS8603
 #pragma warning restore CS8600
@@ -204,104 +204,104 @@ namespace CarinaStudio.ULogViewer.Logs
 				stringPropertyGetters[propertyName] = getter;
 				return getter;
 			}
-			return (log, buffer, offset) => 0;
+			return (_, _, _) => 0;
 		}
 
 
 		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
-		public string? DeviceId { get => this.GetProperty(PropertyName.DeviceId)?.ToString(); }
+		public string? DeviceId => this.GetProperty(PropertyName.DeviceId)?.ToString();
 
 
 		/// <summary>
 		/// Get name of device which generates log.
 		/// </summary>
-		public string? DeviceName { get => this.GetProperty(PropertyName.DeviceName)?.ToString(); }
+		public string? DeviceName => this.GetProperty(PropertyName.DeviceName)?.ToString();
 
 
 		/// <summary>
 		/// Get ending time span.
 		/// </summary>
-		public TimeSpan? EndingTimeSpan { get => (TimeSpan?)this.GetProperty(PropertyName.EndingTimeSpan); }
+		public TimeSpan? EndingTimeSpan => (TimeSpan?)this.GetProperty(PropertyName.EndingTimeSpan);
 
 
 		/// <summary>
 		/// Get ending timestamp.
 		/// </summary>
-		public DateTime? EndingTimestamp { get => (DateTime?)this.GetProperty(PropertyName.EndingTimestamp); }
+		public DateTime? EndingTimestamp => (DateTime?)this.GetProperty(PropertyName.EndingTimestamp);
 
 
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
-		public string? Event { get => this.GetProperty(PropertyName.Event)?.ToString(); }
+		public string? Event => this.GetProperty(PropertyName.Event)?.ToString();
 
 
 		/// <summary>
 		/// Get 1st extra data of log.
 		/// </summary>
-		public string? Extra1 { get => this.GetProperty(PropertyName.Extra1)?.ToString(); }
+		public string? Extra1 => this.GetProperty(PropertyName.Extra1)?.ToString();
 
 
 		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
-		public string? Extra10 { get => this.GetProperty(PropertyName.Extra10)?.ToString(); }
+		public string? Extra10 => this.GetProperty(PropertyName.Extra10)?.ToString();
 
 
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
-		public string? Extra2 { get => this.GetProperty(PropertyName.Extra2)?.ToString(); }
+		public string? Extra2 => this.GetProperty(PropertyName.Extra2)?.ToString();
 
 
 		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
-		public string? Extra3 { get => this.GetProperty(PropertyName.Extra3)?.ToString(); }
+		public string? Extra3 => this.GetProperty(PropertyName.Extra3)?.ToString();
 
 
 		/// <summary>
 		/// Get 4th extra data of log.
 		/// </summary>
-		public string? Extra4 { get => this.GetProperty(PropertyName.Extra4)?.ToString(); }
+		public string? Extra4 => this.GetProperty(PropertyName.Extra4)?.ToString();
 
 
 		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
-		public string? Extra5 { get => this.GetProperty(PropertyName.Extra5)?.ToString(); }
+		public string? Extra5 => this.GetProperty(PropertyName.Extra5)?.ToString();
 
 
 		/// <summary>
 		/// Get 6th extra data of log.
 		/// </summary>
-		public string? Extra6 { get => this.GetProperty(PropertyName.Extra6)?.ToString(); }
+		public string? Extra6 => this.GetProperty(PropertyName.Extra6)?.ToString();
 
 
 		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
-		public string? Extra7 { get => this.GetProperty(PropertyName.Extra7)?.ToString(); }
+		public string? Extra7 => this.GetProperty(PropertyName.Extra7)?.ToString();
 
 
 		/// <summary>
 		/// Get 8th extra data of log.
 		/// </summary>
-		public string? Extra8 { get => this.GetProperty(PropertyName.Extra8)?.ToString(); }
+		public string? Extra8 => this.GetProperty(PropertyName.Extra8)?.ToString();
 
 
 		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
-		public string? Extra9 { get => this.GetProperty(PropertyName.Extra9)?.ToString(); }
+		public string? Extra9 => this.GetProperty(PropertyName.Extra9)?.ToString();
 
 
 		/// <summary>
 		/// Get name of file which log read from.
 		/// </summary>
-		public string? FileName { get => this.GetProperty(PropertyName.FileName)?.ToString(); }
+		public string? FileName => this.GetProperty(PropertyName.FileName)?.ToString();
 
 
 		// Get property.
@@ -408,13 +408,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get level.
 		/// </summary>
-		public LogLevel Level { get => (LogLevel)(this.GetProperty(PropertyName.Level) ?? LogLevel.Undefined); }
+		public LogLevel Level => (LogLevel)(this.GetProperty(PropertyName.Level) ?? LogLevel.Undefined);
 
 
 		/// <summary>
 		/// Get line number.
 		/// </summary>
-		public int? LineNumber { get => (int?)this.GetProperty(PropertyName.LineNumber); }
+		public int? LineNumber => (int?)this.GetProperty(PropertyName.LineNumber);
 
 
 		/// <summary>
@@ -426,25 +426,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get message.
 		/// </summary>
-		public string? Message { get => this.GetProperty(PropertyName.Message)?.ToString(); }
+		public string? Message => this.GetProperty(PropertyName.Message)?.ToString();
 
 
 		/// <summary>
 		/// Get ID of process which generates log.
 		/// </summary>
-		public int? ProcessId { get => (int?)this.GetProperty(PropertyName.ProcessId); }
+		public int? ProcessId => (int?)this.GetProperty(PropertyName.ProcessId);
 
 
 		/// <summary>
 		/// Get name of process which generates log.
 		/// </summary>
-		public string? ProcessName { get => this.GetProperty(PropertyName.ProcessName)?.ToString(); }
+		public string? ProcessName => this.GetProperty(PropertyName.ProcessName)?.ToString();
 
 
 		/// <summary>
 		/// Get list of log properties exported by <see cref="Log"/>.
 		/// </summary>
-		public static IList<string> PropertyNames { get => propertyNames; }
+		public static IList<string> PropertyNames => propertyNames;
 
 
 		/// <summary>
@@ -486,51 +486,52 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of source which generates log.
 		/// </summary>
-		public string? SourceName { get => this.GetProperty(PropertyName.SourceName)?.ToString(); }
+		public string? SourceName => this.GetProperty(PropertyName.SourceName)?.ToString();
 
 
 		/// <summary>
 		/// Get summary of log.
 		/// </summary>
-		public string? Summary { get => this.GetProperty(PropertyName.Summary)?.ToString(); }
+		public string? Summary => this.GetProperty(PropertyName.Summary)?.ToString();
 
 
 		/// <summary>
 		/// Get tags of log.
 		/// </summary>
-		public string? Tags { get => this.GetProperty(PropertyName.Tags)?.ToString(); }
+		public string? Tags => this.GetProperty(PropertyName.Tags)?.ToString();
 
 
 		/// <summary>
 		/// Get ID of thread which generates log.
 		/// </summary>
-		public int? ThreadId { get => (int?)this.GetProperty(PropertyName.ThreadId); }
+		public int? ThreadId => (int?)this.GetProperty(PropertyName.ThreadId);
 
 
 		/// <summary>
 		/// Get name of thread which generates log.
 		/// </summary>
-		public string? ThreadName { get => this.GetProperty(PropertyName.ThreadName)?.ToString(); }
+		public string? ThreadName => this.GetProperty(PropertyName.ThreadName)?.ToString();
 
 
 		/// <summary>
 		/// Get time span.
 		/// </summary>
-		public TimeSpan? TimeSpan { get => (TimeSpan?)this.GetProperty(PropertyName.TimeSpan); }
+		public TimeSpan? TimeSpan => (TimeSpan?)this.GetProperty(PropertyName.TimeSpan);
 
 
 		/// <summary>
 		/// Get timestamp.
 		/// </summary>
-		public DateTime? Timestamp { get => (DateTime?)this.GetProperty(PropertyName.Timestamp); }
+		public DateTime? Timestamp => (DateTime?)this.GetProperty(PropertyName.Timestamp);
 
 
 		/// <summary>
 		/// Get title of log.
 		/// </summary>
-		public string? Title { get => this.GetProperty(PropertyName.Title)?.ToString(); }
+		public string? Title => this.GetProperty(PropertyName.Title)?.ToString();
 
 
+		/// <summary>
 		/// Try getting the earliest/latest timestamp from <see cref="BeginningTimestamp"/>, <see cref="EndingTimestamp"/> and <see cref="Timestamp"/>.
 		/// </summary>
 		/// <param name="earliestTimestamp">The earliest timestamp.</param>
@@ -583,7 +584,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				return false;
 			}
 			var rawValue = this.propertyValues[valueIndex - 1];
-			if (rawValue == null || !typeof(T).IsAssignableFrom(rawValue.GetType()))
+			if (rawValue is not T)
 			{
 				value = default;
 				return false;
@@ -594,6 +595,7 @@ namespace CarinaStudio.ULogViewer.Logs
 #pragma warning restore CS8601
 
 
+		/// <summary>
 		/// Try getting the smallest/largest time span from <see cref="BeginningTimeSpan"/>, <see cref="EndingTimeSpan"/> and <see cref="TimeSpan"/>.
 		/// </summary>
 		/// <param name="smallestTimeSpan">The smallest time span.</param>
@@ -626,13 +628,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get ID of user which generates log.
 		/// </summary>
-		public string? UserId { get => this.GetProperty(PropertyName.UserId)?.ToString(); }
+		public string? UserId => this.GetProperty(PropertyName.UserId)?.ToString();
 
 
 		/// <summary>
 		/// Get name of user which generates log.
 		/// </summary>
-		public string? UserName { get => this.GetProperty(PropertyName.UserName)?.ToString(); }
+		public string? UserName => this.GetProperty(PropertyName.UserName)?.ToString();
 	}
 
 

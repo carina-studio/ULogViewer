@@ -38,15 +38,16 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Constants.
-		const uint FLAGS_COMPRESSED_MASK = 0x80000000;
-		const int FLAGS_COMPRESSED_SHIFT_COUNT = 31;
-		const uint FLAGS_UTF8_ENCODING_SIZE_MASK = 0x7fffffff;
+		const uint FLAGS_DEFLATE_COMPRESSED_MASK = 0x80000000;
+		const uint FLAGS_GZIP_COMPRESSED_MASK = 0x40000000;
+		const uint FLAGS_COMPRESSED_MASK = FLAGS_DEFLATE_COMPRESSED_MASK | FLAGS_GZIP_COMPRESSED_MASK;
+		const uint FLAGS_UTF8_ENCODING_SIZE_MASK = 0x3fffffff;
 
 
 		// Static fields.
 		static readonly long BaseSize = Memory.EstimateInstanceSize<CompressedString>();
 		[ThreadStatic]
-		static MemoryStream? CompressionMemoryStream;
+		static MemoryStream? DeflateCompressionMemoryStream;
 		[ThreadStatic]
 		static MemoryStream? DecompressionMemoryStream;
 
@@ -60,7 +61,7 @@ namespace CarinaStudio.ULogViewer
 		// Constructor.
 		CompressedString(string value, Level level)
 		{
-			if (level == Level.None || value.Length < 32)
+			if (level == Level.None || value.Length < 32 || value.Length > FLAGS_UTF8_ENCODING_SIZE_MASK)
 				this.data = value;
 			else
 			{
@@ -69,16 +70,16 @@ namespace CarinaStudio.ULogViewer
 				this.flags = ((uint)utf8Bytes.Length & FLAGS_UTF8_ENCODING_SIZE_MASK);
 				if (level == Level.Optimal && value.Length >= 64)
 				{
-					CompressionMemoryStream ??= new();
-					using (var stream = new DeflateStream(CompressionMemoryStream, CompressionMode.Compress, true))
+					DeflateCompressionMemoryStream ??= new();
+					using (var stream = new DeflateStream(DeflateCompressionMemoryStream, CompressionLevel.SmallestSize, true))
 						stream.Write(utf8Bytes, 0, utf8Bytes.Length);
-					if (CompressionMemoryStream.Position < utf8Bytes.Length)
+					if (DeflateCompressionMemoryStream.Position < utf8Bytes.Length)
 					{
-						var compressedData = CompressionMemoryStream.ToArray();
+						var compressedData = DeflateCompressionMemoryStream.ToArray();
 						this.data = compressedData;
-						this.flags |= (1u << FLAGS_COMPRESSED_SHIFT_COUNT);
+						this.flags |= FLAGS_DEFLATE_COMPRESSED_MASK;
 					}
-					CompressionMemoryStream.SetLength(0);
+					DeflateCompressionMemoryStream.SetLength(0);
 				}
 			}
 			this.length = value.Length;
@@ -108,8 +109,16 @@ namespace CarinaStudio.ULogViewer
 			DecompressionMemoryStream.Write(bytes, 0, bytes.Length);
 			DecompressionMemoryStream.Position = 0;
 			var utf8Bytes = new byte[(int)(this.flags & FLAGS_UTF8_ENCODING_SIZE_MASK)];
-			using (var stream = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true))
-				stream.Read(utf8Bytes, 0, utf8Bytes.Length);
+			if ((this.flags & FLAGS_DEFLATE_COMPRESSED_MASK) != 0)
+			{
+				using var stream = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true);
+				_ = stream.Read(utf8Bytes, 0, utf8Bytes.Length);
+			}
+			else
+			{
+				using var stream = new GZipStream(DecompressionMemoryStream, CompressionMode.Decompress, true);
+				_ = stream.Read(utf8Bytes, 0, utf8Bytes.Length);
+			}
 			DecompressionMemoryStream.SetLength(0);
 			return utf8Bytes;
 		}
@@ -148,21 +157,18 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Get number of characters of original string.
 		/// </summary>
-		public int Length { get => this.length; }
+		public int Length => this.length;
 
 
 		/// <summary>
 		/// Get size of compressed string in bytes.
 		/// </summary>
-		public long Size 
-		{ 
-			get => this.data switch
-			{
-				string str => Memory.EstimateInstanceSize(typeof(string), str.Length),
-				byte[] bytes => Memory.EstimateArrayInstanceSize(sizeof(byte), bytes.Length),
-				_ => 0,
-			} + BaseSize;
-		}
+		public long Size => this.data switch
+		{
+			string str => Memory.EstimateInstanceSize(typeof(string), str.Length),
+			byte[] bytes => Memory.EstimateArrayInstanceSize(sizeof(byte), bytes.Length),
+			_ => 0,
+		} + BaseSize;
 
 
 		// Decompress to string.

@@ -70,7 +70,23 @@ namespace CarinaStudio.ULogViewer.Logs
 		public CompressedString? GetCompressedStringOrNull(string propertyName)
 		{
 			if (this.properties.TryGetValue(propertyName, out var str))
-				return CompressedString.Create(str, this.StringCompressionLevel);
+			{
+				var length = str.Length;
+				if (length == 0)
+					return CompressedString.Empty;
+				var compressedString = this.MemoryUsagePolicy switch
+				{
+					MemoryUsagePolicy.BetterPerformance => length <= 64
+						? CompressedString.Create(str, CompressedString.Level.Optimal)
+						: CompressedString.Create(str, CompressedString.Level.Fast),
+					MemoryUsagePolicy.LessMemoryUsage => 
+						CompressedString.Create(str, CompressedString.Level.Optimal),
+					_ => length <= 64
+						? CompressedString.Create(str, CompressedString.Level.Fast)
+						: CompressedString.Create(str, CompressedString.Level.Optimal),
+				};
+				return compressedString;
+			}
 			return null;
 		}
 
@@ -195,21 +211,21 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
+		/// Get or set memory usage policy.
+		/// </summary>
+		public MemoryUsagePolicy MemoryUsagePolicy { get; set; } = MemoryUsagePolicy.Balance;
+
+
+		/// <summary>
 		/// Get number of properties has been set to builder.
 		/// </summary>
-		public int PropertyCount { get => this.properties.Count; }
+		public int PropertyCount => this.properties.Count;
 
 
 		/// <summary>
 		/// Get all property names in the builder.
 		/// </summary>
-		public ICollection<string> PropertyNames { get => this.properties.Keys; }
-
-
-		/// <summary>
-		/// Get <see cref="LogReader"/> which owns this builder.
-		/// </summary>
-		public LogReader? Reader { get; }
+		public ICollection<string> PropertyNames => this.properties.Keys;
 
 
 		/// <summary>
@@ -230,11 +246,5 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			properties[propertyName] = value;
 		}
-
-
-		/// <summary>
-		/// Get or set string compression level.
-		/// </summary>
-		public CompressedString.Level StringCompressionLevel { get; set; } = CompressedString.Level.None;
 	}
 }

@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Log which is suitable for displaying.
 	/// </summary>
-	class DisplayableLog : BaseDisposable, IApplicationObject, INotifyPropertyChanged
+	class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyChanged
 	{
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = Array.Empty<DisplayableLogAnalysisResult>();
@@ -44,6 +44,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		CompressedString? endingTimeSpanString;
 		CompressedString? endingTimestampString;
 		readonly byte[] extraLineCount;
+		byte isDisposed;
 		MarkColor markedColor;
 		short memorySize;
 		byte messageLineCount;
@@ -75,10 +76,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check extras
 			var extraCount = group.MaxLogExtraNumber;
-			if (extraCount > 0)
-				this.extraLineCount = new byte[extraCount];
-			else
-				this.extraLineCount = emptyByteArray;
+			this.extraLineCount = extraCount > 0 ? new byte[extraCount] : emptyByteArray;
 
 			// estimate memory usage
 			long memorySize = log.MemorySize + instanceFieldMemorySize;
@@ -101,7 +99,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.IsDisposed)
+			if (this.isDisposed != 0)
 				return;
 			
 			// add to list
@@ -140,25 +138,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get icon for analysis result indicator.
 		/// </summary>
-		public IImage? AnalysisResultIndicatorIcon  { get => this.Group.GetAnalysisResultIndicatorIcon(this.activeAnalysisResultType); }
+		public IImage? AnalysisResultIndicatorIcon => this.Group.GetAnalysisResultIndicatorIcon(this.activeAnalysisResultType);
 
 
 		/// <summary>
 		/// Get all <see cref="DisplayableLogAnalysisResult"/>s which were added to this log.
 		/// </summary>
-		public IList<DisplayableLogAnalysisResult> AnalysisResults { get => this.analysisResults; }
+		public IList<DisplayableLogAnalysisResult> AnalysisResults => this.analysisResults;
 
 
 		/// <summary>
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IULogViewerApplication Application { get => this.Group.Application; }
+		public IULogViewerApplication Application => this.Group.Application;
 
 
 		/// <summary>
 		/// Get beginning time span of log.
 		/// </summary>
-		public TimeSpan? BeginningTimeSpan { get => this.Log.BeginningTimeSpan; }
+		public TimeSpan? BeginningTimeSpan => this.Log.BeginningTimeSpan;
 
 
 		/// <summary>
@@ -188,7 +186,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get beginning timestamp of log.
 		/// </summary>
-		public DateTime? BeginningTimestamp { get => this.Log.BeginningTimestamp; }
+		public DateTime? BeginningTimestamp => this.Log.BeginningTimestamp;
 
 
 		/// <summary>
@@ -287,7 +285,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get category of log.
 		/// </summary>
-		public string? Category { get => this.Log.Category; }
+		public string? Category => this.Log.Category;
 
 
 		// Check whether extra line of ExtraX exist or not.
@@ -297,13 +295,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get <see cref="IBrush"/> of color indicator.
 		/// </summary>
-		public IBrush? ColorIndicatorBrush { get => this.Group.GetColorIndicatorBrush(this); }
+		public IBrush? ColorIndicatorBrush => this.Group.GetColorIndicatorBrush(this);
 
 
 		/// <summary>
 		/// Get tip text for color indicator.
 		/// </summary>
-		public string? ColorIndicatorTip { get => this.Group.GetColorIndicatorTip(this); }
+		public string? ColorIndicatorTip => this.Group.GetColorIndicatorTip(this);
 
 
 		/// <summary>
@@ -424,24 +422,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
-		public string? DeviceId { get => this.Log.DeviceId; }
+		public string? DeviceId => this.Log.DeviceId;
 
 
 		/// <summary>
 		/// Get name of device which generates log.
 		/// </summary>
-		public string? DeviceName { get => this.Log.DeviceName; }
+		public string? DeviceName => this.Log.DeviceName;
 
 
-		// Dispose.
-		protected override void Dispose(bool disposing)
+		public void Dispose()
 		{
-			// check thread
 #if DEBUG
 			this.VerifyAccess();
 #endif
-
-			// notify
+			if (this.isDisposed != 0)
+				return;
+			this.isDisposed = 1;
 			this.Group.OnDisplayableLogDisposed(this);
 		}
 
@@ -449,7 +446,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ending time span of log.
 		/// </summary>
-		public TimeSpan? EndingTimeSpan { get => this.Log.EndingTimeSpan; }
+		public TimeSpan? EndingTimeSpan => this.Log.EndingTimeSpan;
 
 
 		/// <summary>
@@ -479,7 +476,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ending timestamp.
 		/// </summary>
-		public DateTime? EndingTimestamp { get => this.Log.EndingTimestamp; }
+		public DateTime? EndingTimestamp => this.Log.EndingTimestamp;
 
 
 		/// <summary>
@@ -509,133 +506,133 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
-		public string? Event { get => this.Log.Event; }
+		public string? Event => this.Log.Event;
 
 
 		/// <summary>
 		/// Get 1st extra data of log.
 		/// </summary>
-		public string? Extra1 { get => this.Log.Extra1; }
+		public string? Extra1 => this.Log.Extra1;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra1"/>.
 		/// </summary>
-		public int Extra1LineCount { get => this.GetExtraLineCount(0); }
+		public int Extra1LineCount => this.GetExtraLineCount(0);
 
 
 		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
-		public string? Extra10 { get => this.Log.Extra10; }
+		public string? Extra10 => this.Log.Extra10;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra10"/>.
 		/// </summary>
-		public int Extra10LineCount { get => this.GetExtraLineCount(9); }
+		public int Extra10LineCount => this.GetExtraLineCount(9);
 
 
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
-		public string? Extra2 { get => this.Log.Extra2; }
+		public string? Extra2 => this.Log.Extra2;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra2"/>.
 		/// </summary>
-		public int Extra2LineCount { get => this.GetExtraLineCount(1); }
+		public int Extra2LineCount => this.GetExtraLineCount(1);
 
 
 		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
-		public string? Extra3 { get => this.Log.Extra3; }
+		public string? Extra3 => this.Log.Extra3;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra3"/>.
 		/// </summary>
-		public int Extra3LineCount { get => this.GetExtraLineCount(2); }
+		public int Extra3LineCount => this.GetExtraLineCount(2);
 
 
 		/// <summary>
 		/// Get 4th extra data of log.
 		/// </summary>
-		public string? Extra4 { get => this.Log.Extra4; }
+		public string? Extra4 => this.Log.Extra4;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra4"/>.
 		/// </summary>
-		public int Extra4LineCount { get => this.GetExtraLineCount(3); }
+		public int Extra4LineCount => this.GetExtraLineCount(3);
 
 
 		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
-		public string? Extra5 { get => this.Log.Extra5; }
+		public string? Extra5 => this.Log.Extra5;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra5"/>.
 		/// </summary>
-		public int Extra5LineCount { get => this.GetExtraLineCount(4); }
+		public int Extra5LineCount => this.GetExtraLineCount(4);
 
 
 		/// <summary>
 		/// Get 6th extra data of log.
 		/// </summary>
-		public string? Extra6 { get => this.Log.Extra6; }
+		public string? Extra6 => this.Log.Extra6;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra6"/>.
 		/// </summary>
-		public int Extra6LineCount { get => this.GetExtraLineCount(5); }
+		public int Extra6LineCount => this.GetExtraLineCount(5);
 
 
 		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
-		public string? Extra7 { get => this.Log.Extra7; }
+		public string? Extra7 => this.Log.Extra7;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra7"/>.
 		/// </summary>
-		public int Extra7LineCount { get => this.GetExtraLineCount(6); }
+		public int Extra7LineCount => this.GetExtraLineCount(6);
 
 
 		/// <summary>
 		/// Get 8th extra data of log.
 		/// </summary>
-		public string? Extra8 { get => this.Log.Extra8; }
+		public string? Extra8 => this.Log.Extra8;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra8"/>.
 		/// </summary>
-		public int Extra8LineCount { get => this.GetExtraLineCount(7); }
+		public int Extra8LineCount => this.GetExtraLineCount(7);
 
 
 		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
-		public string? Extra9 { get => this.Log.Extra9; }
+		public string? Extra9 => this.Log.Extra9;
 
 
 		/// <summary>
 		/// Get line count of <see cref="Extra9"/>.
 		/// </summary>
-		public int Extra9LineCount { get => this.GetExtraLineCount(8); }
+		public int Extra9LineCount => this.GetExtraLineCount(8);
 
 
 		/// <summary>
 		/// Get name of file which read log from.
 		/// </summary>
-		public string? FileName { get => this.Log.FileName; }
+		public string? FileName => this.Log.FileName;
 
 
 		// Format timestamp to string.
@@ -728,7 +725,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether at least one <see cref="DisplayableLogAnalysisResult"/> has been added to this log or not.
 		/// </summary>
-		public bool HasAnalysisResult { get => this.analysisResults.IsNotEmpty(); }
+		public bool HasAnalysisResult => this.analysisResults.IsNotEmpty();
 
 
 		/// <summary>
@@ -743,73 +740,73 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra1"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra1 { get => this.CheckExtraLinesOfExtra(0); }
+		public bool HasExtraLinesOfExtra1 => this.CheckExtraLinesOfExtra(0);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra10"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra10 { get => this.CheckExtraLinesOfExtra(9); }
+		public bool HasExtraLinesOfExtra10 => this.CheckExtraLinesOfExtra(9);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra2"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra2 { get => this.CheckExtraLinesOfExtra(1); }
+		public bool HasExtraLinesOfExtra2 => this.CheckExtraLinesOfExtra(1);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra3"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra3 { get => this.CheckExtraLinesOfExtra(2); }
+		public bool HasExtraLinesOfExtra3 => this.CheckExtraLinesOfExtra(2);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra4"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra4 { get => this.CheckExtraLinesOfExtra(3); }
+		public bool HasExtraLinesOfExtra4 => this.CheckExtraLinesOfExtra(3);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra5"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra5 { get => this.CheckExtraLinesOfExtra(4); }
+		public bool HasExtraLinesOfExtra5 => this.CheckExtraLinesOfExtra(4);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra6"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra6 { get => this.CheckExtraLinesOfExtra(5); }
+		public bool HasExtraLinesOfExtra6 => this.CheckExtraLinesOfExtra(5);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra7"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra7 { get => this.CheckExtraLinesOfExtra(6); }
+		public bool HasExtraLinesOfExtra7 => this.CheckExtraLinesOfExtra(6);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra8"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra8 { get => this.CheckExtraLinesOfExtra(7); }
+		public bool HasExtraLinesOfExtra8 => this.CheckExtraLinesOfExtra(7);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra9"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfExtra9 { get => this.CheckExtraLinesOfExtra(8); }
+		public bool HasExtraLinesOfExtra9 => this.CheckExtraLinesOfExtra(8);
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfMessage { get=> this.MessageLineCount > this.Group.MaxDisplayLineCount; }
+		public bool HasExtraLinesOfMessage => this.MessageLineCount > this.Group.MaxDisplayLineCount;
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Summary"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfSummary { get => this.SummaryLineCount > this.Group.MaxDisplayLineCount; }
+		public bool HasExtraLinesOfSummary => this.SummaryLineCount > this.Group.MaxDisplayLineCount;
 
 
 		/// <summary>
@@ -872,51 +869,47 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether the value of <see cref="MarkedColor"/> is not <see cref="MarkColor.None"/> or not.
 		/// </summary>
-		public bool IsMarked { get => this.markedColor != MarkColor.None; }
+		public bool IsMarked => this.markedColor != MarkColor.None;
 
 
 		/// <summary>
 		/// Check whether process ID of log has been selected by user or not.
 		/// </summary>
-		public bool IsProcessIdSelected 
-		{ 
-			get => this.Log.ProcessId.Let(it =>
-				it.HasValue && it.Value == this.Group.SelectedProcessId); 
-		}
+		public bool IsProcessIdSelected =>
+			this.Log.ProcessId.Let(it =>
+				it.HasValue && it.Value == this.Group.SelectedProcessId);
 
 
 		/// <summary>
 		/// Check whether thread ID of log has been selected by user or not.
 		/// </summary>
-		public bool IsThreadIdSelected 
-		{ 
-			get => this.Log.ThreadId.Let(it =>
-				it.HasValue && it.Value == this.Group.SelectedThreadId); 
-		}
+		public bool IsThreadIdSelected =>
+			this.Log.ThreadId.Let(it =>
+				it.HasValue && it.Value == this.Group.SelectedThreadId);
 
 
 		/// <summary>
 		/// Get level of log.
 		/// </summary>
-		public LogLevel Level { get => this.Log.Level; }
+		public LogLevel Level => this.Log.Level;
 
 
 		/// <summary>
 		/// Get foreground <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelBackgroundBrush { get => this.Group.GetLevelBackgroundBrush(this); }
+		public IBrush LevelBackgroundBrush => this.Group.GetLevelBackgroundBrush(this);
 
 
 		/// <summary>
 		/// Get foreground <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelForegroundBrush { get => this.Group.GetLevelForegroundBrush(this); }
+		public IBrush LevelForegroundBrush => this.Group.GetLevelForegroundBrush(this);
 
 
 		/// <summary>
 		/// Get foreground <see cref="IBrush"/> for pointer-over according to level of log.
 		/// </summary>
-		public IBrush LevelForegroundBrushForPointerOver { get => this.Group.GetLevelForegroundBrush(this, "PointerOver"); }
+		public IBrush LevelForegroundBrushForPointerOver => this.Group.GetLevelForegroundBrush(this, "PointerOver");
 
 
 		/// <summary>
@@ -943,7 +936,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get line number.
 		/// </summary>
-		public int? LineNumber { get => this.Log.LineNumber; }
+		public int? LineNumber => this.Log.LineNumber;
 
 
 		/// <summary>
@@ -955,7 +948,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get unique ID of log.
 		/// </summary>
-		public long LogId { get => this.Log.Id; }
+		public long LogId => this.Log.Id;
 
 
 		/// <summary>
@@ -989,13 +982,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of memory usage by the instance in bytes.
 		/// </summary>
-		public long MemorySize { get => this.memorySize; }
+		public long MemorySize => this.memorySize;
 
 
 		/// <summary>
 		/// Get message of log.
 		/// </summary>
-		public string? Message { get => this.Log.Message; }
+		public string? Message => this.Log.Message;
 
 
 		/// <summary>
@@ -1054,11 +1047,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// check message line count
-			if (this.messageLineCount >= 0)
+			if (this.messageLineCount > 0)
 				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfMessage)));
 
 			// check summary line count
-			if (this.summaryLineCount >= 0)
+			if (this.summaryLineCount > 0)
 				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfSummary)));
 		}
 
@@ -1095,6 +1088,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (this.endingTimestampString != CompressedString.Empty)
 						memorySizeDiff -= this.endingTimestampString.Size;
 					this.endingTimestampString = null;
+				}
+				if (this.readTimeString != null)
+				{
+					if (this.readTimeString != CompressedString.Empty)
+						memorySizeDiff -= this.readTimeString.Size;
+					this.readTimeString = null;
 				}
 				if (this.timeSpanString != null)
 				{
@@ -1143,7 +1142,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var propertyChangedHandlers = this.PropertyChanged;
 			if (propertyChangedHandlers == null)
 				return;
-			if (this.analysisResults != null)
+			if (this.analysisResults.IsNotEmpty())
 				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(AnalysisResultIndicatorIcon)));
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(ColorIndicatorBrush)));
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(LevelBackgroundBrush)));
@@ -1158,29 +1157,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnTimeSpanFormatChanged()
 		{
 			var propertyChangedHandlers = this.PropertyChanged;
-			if (propertyChangedHandlers == null)
+			var memorySizeDiff = 0L;
+			if (this.Log.BeginningTimeSpan.HasValue && this.beginningTimeSpanString != null)
 			{
+				memorySizeDiff -= this.beginningTimeSpanString.Size;
 				this.beginningTimeSpanString = null;
-				this.endingTimeSpanString = null;
-				this.timeSpanString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
 			}
-			else
+			if (this.Log.EndingTimeSpan.HasValue && this.endingTimeSpanString != null)
 			{
-				if (this.Log.BeginningTimeSpan.HasValue)
-				{
-					this.beginningTimeSpanString = null;
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
-				}
-				if (this.Log.EndingTimeSpan.HasValue)
-				{
-					this.endingTimeSpanString = null;
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
-				}
-				if (this.Log.TimeSpan.HasValue)
-				{
-					this.timeSpanString = null;
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
-				}
+				memorySizeDiff -= this.endingTimeSpanString.Size;
+				this.endingTimeSpanString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
+			}
+			if (this.Log.TimeSpan.HasValue && this.timeSpanString != null)
+			{
+				memorySizeDiff -= this.timeSpanString.Size;
+				this.timeSpanString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
+			}
+			if (memorySizeDiff != 0)
+			{
+				this.memorySize += (short)memorySizeDiff;
+				this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 			}
 		}
 
@@ -1191,29 +1190,35 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnTimestampFormatChanged()
 		{
 			var propertyChangedHandlers = this.PropertyChanged;
-			if (propertyChangedHandlers == null)
+			var memorySizeDiff = 0L;
+			if (this.Log.BeginningTimestamp.HasValue && this.beginningTimestampString != null)
 			{
+				memorySizeDiff -= this.beginningTimestampString.Size;
 				this.beginningTimestampString = null;
-				this.endingTimestampString = null;
-				this.timestampString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
 			}
-			else
+			if (this.Log.EndingTimestamp.HasValue && this.endingTimestampString != null)
 			{
-				if (this.Log.BeginningTimestamp.HasValue)
-				{
-					this.beginningTimestampString = null;
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
-				}
-				if (this.Log.EndingTimestamp.HasValue)
-				{
-					this.endingTimestampString = null;
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
-				}
-				if (this.Log.Timestamp.HasValue)
-				{
-					this.timestampString = null;
-					propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimestampString)));
-				}
+				memorySizeDiff -= this.endingTimestampString.Size;
+				this.endingTimestampString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
+			}
+			if (this.Log.Timestamp.HasValue && this.readTimeString != null)
+			{
+				memorySizeDiff -= this.readTimeString.Size;
+				this.readTimeString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ReadTimeString)));
+			}
+			if (this.Log.Timestamp.HasValue && this.timestampString != null)
+			{
+				memorySizeDiff -= this.timestampString.Size;
+				this.timestampString = null;
+				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampString)));
+			}
+			if (memorySizeDiff != 0)
+			{
+				this.memorySize += (short)memorySizeDiff;
+				this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 			}
 		}
 
@@ -1227,13 +1232,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ID of process which generates log.
 		/// </summary>
-		public int? ProcessId { get => this.Log.ProcessId; }
+		public int? ProcessId => this.Log.ProcessId;
 
 
 		/// <summary>
 		/// Get name of process which generates log.
 		/// </summary>
-		public string? ProcessName { get => this.Log.ProcessName; }
+		public string? ProcessName => this.Log.ProcessName;
 
 
 		/// <summary>
@@ -1276,7 +1281,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.IsDisposed)
+			if (this.isDisposed != 0)
 				return;
 			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
@@ -1356,7 +1361,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.IsDisposed)
+			if (this.isDisposed != 0)
 				return;
 			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
@@ -1448,10 +1453,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 									propertyMap[convertedName] = it;
 								});
 							}
+							// ReSharper disable EmptyGeneralCatchClause
 							catch
 							{ }
+							// ReSharper restore EmptyGeneralCatchClause
 						}
-						var specificPropertyNames = new string[]
+						var specificPropertyNames = new[]
 						{
 							nameof(BeginningTimeSpanString),
 							nameof(BeginningTimestampString),
@@ -1483,13 +1490,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get name of source which generates log.
 		/// </summary>
-		public string? SourceName { get => this.Log.SourceName; }
+		public string? SourceName => this.Log.SourceName;
 
 
 		/// <summary>
 		/// Get summary of log.
 		/// </summary>
-		public string? Summary { get => this.Log.Summary; }
+		public string? Summary => this.Log.Summary;
 
 
 		/// <summary>
@@ -1509,31 +1516,31 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get tags of log.
 		/// </summary>
-		public string? Tags { get => this.Log.Tags; }
+		public string? Tags => this.Log.Tags;
 
 
 		/// <summary>
 		/// Get definition set of text highlighting.
 		/// </summary>
-		public SyntaxHighlightingDefinitionSet TextHighlightingDefinitionSet { get => this.Group.TextHighlightingDefinitionSet; }
+		public SyntaxHighlightingDefinitionSet TextHighlightingDefinitionSet => this.Group.TextHighlightingDefinitionSet;
 
 
 		/// <summary>
 		/// Get ID of thread which generates log.
 		/// </summary>
-		public int? ThreadId { get => this.Log.ThreadId; }
+		public int? ThreadId => this.Log.ThreadId;
 
 
 		/// <summary>
 		/// Get name of thread which generates log.
 		/// </summary>
-		public string? ThreadName { get => this.Log.ThreadName; }
+		public string? ThreadName => this.Log.ThreadName;
 
 
 		/// <summary>
 		/// Get time span of log.
 		/// </summary>
-		public TimeSpan? TimeSpan { get => this.Log.TimeSpan; }
+		public TimeSpan? TimeSpan => this.Log.TimeSpan;
 
 
 		/// <summary>
@@ -1563,7 +1570,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get timestamp of log.
 		/// </summary>
-		public DateTime? Timestamp { get => this.Log.Timestamp; }
+		public DateTime? Timestamp => this.Log.Timestamp;
 
 
 		/// <summary>
@@ -1593,15 +1600,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get title of log.
 		/// </summary>
-		public string? Title { get => this.Log.Title; }
+		public string? Title => this.Log.Title;
 
 
+		/// <summary>
 		/// Try getting the earliest/latest timestamp from <see cref="BeginningTimestamp"/>, <see cref="EndingTimestamp"/> and <see cref="Timestamp"/>.
 		/// </summary>
 		/// <param name="earliestTimestamp">The earliest timestamp.</param>
 		/// <param name="latestTimestamp">The latest timestamp.</param>
 		/// <returns>True if the earliest/latest timestamp are valid.</returns>
-		public unsafe bool TryGetEarliestAndLatestTimestamp([NotNullWhen(true)] out DateTime? earliestTimestamp, [NotNullWhen(true)] out DateTime? latestTimestamp) =>
+		public bool TryGetEarliestAndLatestTimestamp([NotNullWhen(true)] out DateTime? earliestTimestamp, [NotNullWhen(true)] out DateTime? latestTimestamp) =>
 			this.Log.TryGetEarliestAndLatestTimestamp(out earliestTimestamp, out latestTimestamp);
 
 
@@ -1618,7 +1626,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			SetupPropertyMap();
 			if (propertyMap.TryGetValue(propertyName, out var propertyInfo)
-				&& propertyInfo != null
 				&& typeof(T).IsAssignableFrom(propertyInfo.PropertyType))
 			{
 				value = (T)propertyInfo.GetValue(this);
@@ -1631,32 +1638,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #pragma warning restore CS8601
 
 
+		/// <summary>
 		/// Try getting the smallest/largest time span from <see cref="BeginningTimeSpan"/>, <see cref="EndingTimeSpan"/> and <see cref="TimeSpan"/>.
 		/// </summary>
 		/// <param name="smallestTimeSpan">The smallest time span.</param>
 		/// <param name="largestTimeSpan">The largest time span.</param>
 		/// <returns>True if the smallest/largest time span are valid.</returns>
-		public unsafe bool TryGetSmallestAndLargestTimeSpan([NotNullWhen(true)] out TimeSpan? smallestTimeSpan, [NotNullWhen(true)] out TimeSpan? largestTimeSpan) =>
+		public bool TryGetSmallestAndLargestTimeSpan([NotNullWhen(true)] out TimeSpan? smallestTimeSpan, [NotNullWhen(true)] out TimeSpan? largestTimeSpan) =>
 			this.Log.TryGetSmallestAndLargestTimeSpan(out smallestTimeSpan, out largestTimeSpan);
 
 
 		/// <summary>
 		/// Get ID of user which generates log.
 		/// </summary>
-		public string? UserId { get => this.Log.UserId; }
+		public string? UserId => this.Log.UserId;
 
 
 		/// <summary>
 		/// Get name of user which generates log.
 		/// </summary>
-		public string? UserName { get => this.Log.UserName; }
+		public string? UserName => this.Log.UserName;
 
 
 		// Interface implementations.
 		public bool CheckAccess() => this.Application.CheckAccess();
-		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
+		IApplication IApplicationObject.Application => this.Application;
 		public event PropertyChangedEventHandler? PropertyChanged;
-		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
+		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
 	}
 
 
@@ -1679,7 +1687,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Color of marking of <see cref="DisplayableLog"/>.
 	/// </summary>
-	enum MarkColor
+	enum MarkColor : byte
     {
 		/// <summary>
 		/// Not marked.
