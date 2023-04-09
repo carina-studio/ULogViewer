@@ -2,7 +2,6 @@
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -97,7 +96,7 @@ namespace CarinaStudio.ULogViewer
 			// setup native menu items
 			if (Platform.IsMacOS)
 			{
-				NativeMenu.GetMenu(this)?.Let(nativeMenu =>
+				NativeMenu.GetMenu(this).Let(nativeMenu =>
 				{
 					for (var i = nativeMenu.Items.Count - 1; i >= 0; --i)
 					{
@@ -108,7 +107,7 @@ namespace CarinaStudio.ULogViewer
 							case "Tools":
 								for (var j = (menuItem.Menu?.Items?.Count).GetValueOrDefault() - 1; j >= 0; --j)
 								{
-									if (menuItem.Menu!.Items[j] is not NativeMenuItem subMenuItem)
+									if (menuItem.Menu!.Items![j] is not NativeMenuItem subMenuItem)
 										continue;
 									switch (subMenuItem.CommandParameter as string)
 									{
@@ -181,7 +180,7 @@ namespace CarinaStudio.ULogViewer
 			// attach to property change
 			this.GetObservable(IsActiveProperty).Subscribe(isActive =>
 			{
-				if (isActive && Avalonia.Input.FocusManager.Instance?.Current is not TextBox)
+				if (isActive && FocusManager.Instance?.Current is not TextBox)
 					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
 			});
 
@@ -381,7 +380,7 @@ namespace CarinaStudio.ULogViewer
 		/// Edit PATH environment variable.
 		/// </summary>
 		public void EditPathEnvironmentVariable() =>
-			_ = new AppSuite.Controls.PathEnvVarEditorDialog().ShowDialog(this);
+			_ = new PathEnvVarEditorDialog().ShowDialog(this);
 
 
 		/// <summary>
@@ -443,7 +442,6 @@ namespace CarinaStudio.ULogViewer
 			}))
 			{
 				this.Logger.LogError("Unable to create new main window for session to be moved");
-				return;
 			}
         }
 
@@ -563,7 +561,7 @@ namespace CarinaStudio.ULogViewer
 			// remove session tab items
 			for (var i = this.tabItems.Count - 2; i >= 0; --i)
 			{
-				this.DisposeSessionTabItem((TabItem)this.tabItems[i].AsNonNull());
+				this.DisposeSessionTabItem(this.tabItems[i].AsNonNull());
 				this.tabItems.RemoveAt(i);
 			}
 			this.SetValue(HasMultipleSessionsProperty, false);
@@ -647,7 +645,6 @@ namespace CarinaStudio.ULogViewer
 				// complete
 				this.tabControl.ScrollHeaderIntoView(e.ItemIndex);
 				e.DragEffects = DragDropEffects.Move;
-				return;
 			}
 		}
 
@@ -732,7 +729,6 @@ namespace CarinaStudio.ULogViewer
 
 				// complete
 				e.Handled = true;
-				return;
 			}
 		}
 
@@ -746,28 +742,28 @@ namespace CarinaStudio.ULogViewer
 
 
         // Called when key down.
-        protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
 		{
 			// handle key event for combo keys
 			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
 			{
 				switch (e.Key)
 				{
-					case Avalonia.Input.Key.N:
+					case Key.N:
 						if (!Platform.IsMacOS)
 						{
 							this.CreateMainWindow();
 							e.Handled = true;
 						}
 						break;
-					case Avalonia.Input.Key.T:
+					case Key.T:
 						if (!Platform.IsMacOS)
 						{
 							this.CreateSessionTabItem();
 							e.Handled = true;
 						}
 						break;
-					case Avalonia.Input.Key.Tab:
+					case Key.Tab:
 						if (this.tabItems.Count > 2)
 						{
 							var index = this.tabControl.SelectedIndex;
@@ -787,7 +783,7 @@ namespace CarinaStudio.ULogViewer
 						}
 						e.Handled = true;
 						break;
-					case Avalonia.Input.Key.W:
+					case Key.W:
 						if (!Platform.IsMacOS)
 						{
 							this.CloseCurrentSessionTabItem();
@@ -858,7 +854,7 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when product ativation state changed.
+		// Called when product activation state changed.
 		void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
 		{
 			if (productId != Products.Professional)
@@ -891,7 +887,7 @@ namespace CarinaStudio.ULogViewer
 						var count = e.OldItems.AsNonNull().Count;
 						for (var i = count - 1; i >= 0; --i)
 						{
-							this.DisposeSessionTabItem((TabItem)this.tabItems[startIndex + i].AsNonNull());
+							this.DisposeSessionTabItem(this.tabItems[startIndex + i].AsNonNull());
 							var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
 							var tabItem = this.tabItems[startIndex + i];
 							if (tabItem.Content is SessionView sessionView)
@@ -936,7 +932,7 @@ namespace CarinaStudio.ULogViewer
 			if (index == this.tabItems.Count - 1)
 				this.CreateSessionTabItem();
 			else
-				workspace.ActiveSession = (Session)((TabItem)this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
+				workspace.ActiveSession = (Session)(this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
 			this.focusOnTabItemContentAction.Schedule();
 		}
 
@@ -1020,10 +1016,9 @@ namespace CarinaStudio.ULogViewer
 				return;
 			if (workspace.ActiveSession != null && workspace.Sessions.IndexOf(workspace.ActiveSession) >= 0)
 				return;
-			if (workspace.Sessions.IsNotEmpty())
-				workspace.ActiveSession = workspace.Sessions[0];
-			else
-				workspace.ActiveSession = workspace.CreateAndAttachSession();
+			workspace.ActiveSession = workspace.Sessions.IsNotEmpty() 
+				? workspace.Sessions[0] 
+				: workspace.CreateAndAttachSession();
 		}
 
 
@@ -1060,7 +1055,7 @@ namespace CarinaStudio.ULogViewer
 		/// Set title of current session.
 		/// </summary>
 		public void SetCurrentCustomSessionTitle() =>
-			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.SetCustomSessionTitle(it));
+			(this.tabControl.SelectedItem as TabItem)?.Let(this.SetCustomSessionTitle);
 
 
 		// Set title of session.
@@ -1071,7 +1066,7 @@ namespace CarinaStudio.ULogViewer
 				return;
 
 			// select name
-			var title = await new AppSuite.Controls.TextInputDialog()
+			var title = await new TextInputDialog()
 			{
 				InitialText = session.CustomTitle,
 				MaxTextLength = 128,
@@ -1125,13 +1120,13 @@ namespace CarinaStudio.ULogViewer
 			{
 				it.Anchor = button;
 				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile"));
-				it.Dismissed += (_, e) => 
+				it.Dismissed += (_, _) => 
 				{
 					this.PersistentState.SetValue<bool>(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
 					dismissed?.Invoke();
 				};
 				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-				it.SkippingAllTutorialRequested += (_, e) => 
+				it.SkippingAllTutorialRequested += (_, _) => 
 				{
 					this.SkipAllTutorials();
 					requestSkippingAllTutorials?.Invoke();

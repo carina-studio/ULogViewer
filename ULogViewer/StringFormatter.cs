@@ -11,7 +11,7 @@ namespace CarinaStudio.ULogViewer;
 class StringFormatter
 {
     // Static fields.
-	static readonly Regex ParamRegex = new Regex("\\{(?<Name>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
+	static readonly Regex ParamRegex = new("\\{(?<Name>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
 
     
     // Fields.
@@ -20,7 +20,7 @@ class StringFormatter
 
 
     /// <summary>
-    /// Initialize new <see cref=""/> instance.
+    /// Initialize new <see cref="StringFormatter"/> instance.
     /// </summary>
     /// <param name="format">String format.</param>
     /// <param name="paramProvider">Function to get named parameters.</param>

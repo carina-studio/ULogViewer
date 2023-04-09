@@ -10,7 +10,6 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
-using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -23,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,14 +31,14 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// ULogViewer application.
 	/// </summary>
-	class App : AppSuite.AppSuiteApplication, IULogViewerApplication
+	class App : AppSuiteApplication, IULogViewerApplication
 	{
 		// Source of change list.
 		class ChangeListSource : DocumentSource
 		{
 			public ChangeListSource(App app) : base(app)
 			{ }
-			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
+			public override IList<ApplicationCulture> SupportedCultures => new[]
 			{
 				ApplicationCulture.EN_US,
 				ApplicationCulture.ZH_CN,
@@ -67,7 +65,7 @@ namespace CarinaStudio.ULogViewer
 			{ 
 				this.SetToCurrentCulture();
 			}
-			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
+			public override IList<ApplicationCulture> SupportedCultures => new[]
 			{
 				ApplicationCulture.EN_US,
 				ApplicationCulture.ZH_TW,
@@ -87,7 +85,7 @@ namespace CarinaStudio.ULogViewer
 			{ 
 				this.SetToCurrentCulture();
 			}
-			public override IList<ApplicationCulture> SupportedCultures => new ApplicationCulture[]
+			public override IList<ApplicationCulture> SupportedCultures => new[]
 			{
 				ApplicationCulture.EN_US,
 				ApplicationCulture.ZH_TW,
@@ -170,30 +168,27 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override DocumentSource? ChangeList => new ChangeListSource(this);
+		public override DocumentSource ChangeList => new ChangeListSource(this);
 
 
 		/// <inheritdoc/>
         public override AppSuite.ViewModels.ApplicationInfo CreateApplicationInfoViewModel() => 
-			new ViewModels.AppInfo();
+			new AppInfo();
 
 
         /// <inheritdoc/>
         public override AppSuite.ViewModels.ApplicationOptions CreateApplicationOptionsViewModel() =>
-			new ViewModels.AppOptions();
+			new AppOptions();
 
 
 		/// <summary>
 		/// Get <see cref="App"/> instance for current process.
 		/// </summary>
-		public static new App Current
-		{
-			get => (App)Application.Current;
-		}
+		public static new App Current => (App)Application.Current;
 
 
 		/// <inheritdoc/>
-		public override IEnumerable<ExternalDependency> ExternalDependencies { get => this.externalDependencies; }
+		public override IEnumerable<ExternalDependency> ExternalDependencies => this.externalDependencies;
 
 
 		/// <inheritdoc/>
@@ -236,12 +231,11 @@ namespace CarinaStudio.ULogViewer
 		// Create view-model for main window.
 		protected override ViewModel OnCreateMainWindowViewModel(JsonElement? savedState) => new Workspace(savedState).Also(it =>
 		{
-			var value = (object?)null;
 			if (!savedState.HasValue)
 			{
 				var initialProfile = Global.Run(() =>
 				{
-					if (this.LaunchOptions.TryGetValue(InitialLogProfileKey, out value) && value is string strValue)
+					if (this.LaunchOptions.TryGetValue(InitialLogProfileKey, out var value) && value is string strValue)
 						return strValue;
 					return null;
 				})?.Let(it =>
@@ -249,7 +243,7 @@ namespace CarinaStudio.ULogViewer
 					var profile = LogProfileManager.Default.GetProfileOrDefault(it);
 					if (profile != null)
 					{
-						this.Logger.LogWarning("Initial log profile is '{profileName}'", profile?.Name);
+						this.Logger.LogWarning("Initial log profile is '{profileName}'", profile.Name);
 						return profile;
 					}
 					this.Logger.LogError("Cannot find initial log profile by ID '{id}'", it);
@@ -261,7 +255,7 @@ namespace CarinaStudio.ULogViewer
 					var profile = LogProfileManager.Default.GetProfileOrDefault(it);
 					if (profile != null)
 					{
-						this.Logger.LogWarning("Initial log profile is '{profileName}'", profile?.Name);
+						this.Logger.LogWarning("Initial log profile is '{profileName}'", profile.Name);
 						return profile;
 					}
 					this.Logger.LogError("Cannot find initial log profile by ID '{id}'", it);
@@ -274,7 +268,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Load default string resource.
-        protected override IResourceProvider? OnLoadDefaultStringResource()
+        protected override IResourceProvider OnLoadDefaultStringResource()
         {
 			var resources = this.LoadStringResource(new Uri("avares://ULogViewer/Strings/Default.axaml")).AsNonNull();
 			if (Platform.IsLinux)
@@ -339,7 +333,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Load theme.
-		protected override IStyle? OnLoadTheme(AppSuite.ThemeMode themeMode, bool useCompactUI)
+		protected override IStyle OnLoadTheme(ThemeMode themeMode, bool useCompactUI)
 		{
 			// load resources
 			if (!useCompactUI)
@@ -356,7 +350,7 @@ namespace CarinaStudio.ULogViewer
 			// load styles
 			var uri = themeMode switch
 			{
-				AppSuite.ThemeMode.Light => new Uri($"avares://ULogViewer/Styles/Light.axaml"),
+				ThemeMode.Light => new Uri("avares://ULogViewer/Styles/Light.axaml"),
 				_ => new Uri($"avares://ULogViewer/Styles/Dark.axaml"),
 			};
 			return new StyleInclude(new Uri("avares://ULogViewer/")).Also(it =>
@@ -443,7 +437,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		protected override AppSuite.Controls.SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref AppSuite.Controls.SplashWindowParams param) =>
+		protected override SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref SplashWindowParams param) =>
 		{
 			param.AccentColor = Avalonia.Media.Color.FromRgb(0x8a, 0x5c, 0xe6);
 		});
@@ -480,6 +474,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				it.Add(new ExecutableExternalDependency(this, "AndroidSDK", ExternalDependencyPriority.RequiredByFeatures, "adb", new Uri("https://developer.android.com/"), new Uri("https://developer.android.com/studio")));
 				it.Add(new ExecutableExternalDependency(this, "Git", ExternalDependencyPriority.RequiredByFeatures, "git", new Uri("https://git-scm.com/"), new Uri("https://git-scm.com/downloads")));
+				// ReSharper disable StringLiteralTypo
 				if (Platform.IsNotWindows)
 					it.Add(new ExecutableExternalDependency(this, "TraceConv", ExternalDependencyPriority.RequiredByFeatures, "traceconv", new Uri("https://perfetto.dev/docs/quickstart/traceconv"), new Uri("https://perfetto.dev/docs/quickstart/traceconv#setup")));
 				if (Platform.IsMacOS)
@@ -488,6 +483,7 @@ namespace CarinaStudio.ULogViewer
 					it.Add(new ExecutableExternalDependency(this, "XcodeCommandLineTools", ExternalDependencyPriority.RequiredByFeatures, "xcrun", new Uri("https://developer.apple.com/xcode/"), new Uri("https://developer.apple.com/download/all/?q=xcode")));
 					it.Add(new XcodeCmdLineToolsSettingExtDependency(this));
 				}
+				// ReSharper restore StringLiteralTypo
 			}).ToArray();
 
 			// call base
@@ -513,7 +509,7 @@ namespace CarinaStudio.ULogViewer
 			// find menu items
 			if (Platform.IsMacOS)
 			{
-				NativeMenu.GetMenu(this)?.Let(menu =>
+				NativeMenu.GetMenu(this).Let(menu =>
 				{
 					for (var i = menu.Items.Count - 1; i >= 0 ; --i)
 					{
@@ -636,25 +632,25 @@ namespace CarinaStudio.ULogViewer
 				settings.GetValueOrDefault(LegacyCultureSettingKey).Let(oldValue =>
 				{
 					settings.ResetValue(LegacyCultureSettingKey);
-					if (Enum.TryParse<AppSuite.ApplicationCulture>(oldValue, out var culture))
-						settings.SetValue<AppSuite.ApplicationCulture>(AppSuite.SettingKeys.Culture, culture);
+					if (Enum.TryParse<ApplicationCulture>(oldValue, out var culture))
+						settings.SetValue<ApplicationCulture>(AppSuite.SettingKeys.Culture, culture);
 				});
 			}
 
 			// upgrade theme mode
-			if (oldVersion < 3)
-			{
-				if (Platform.IsMacOS && settings.GetValueOrDefault(AppSuite.SettingKeys.ThemeMode) == AppSuite.ThemeMode.Light)
-					settings.SetValue<AppSuite.ThemeMode>(AppSuite.SettingKeys.ThemeMode, AppSuite.ThemeMode.System);
-			}
-			else if (oldVersion < 2)
+			if (oldVersion < 2)
 			{
 				settings.GetValueOrDefault(LegacyThemeModeSettingKey).Let(oldValue =>
 				{
 					settings.ResetValue(LegacyThemeModeSettingKey);
-					if (Enum.TryParse<AppSuite.ThemeMode>(oldValue, out var themeMode))
-						settings.SetValue<AppSuite.ThemeMode>(AppSuite.SettingKeys.ThemeMode, themeMode);
+					if (Enum.TryParse<ThemeMode>(oldValue, out var themeMode))
+						settings.SetValue<ThemeMode>(AppSuite.SettingKeys.ThemeMode, themeMode);
 				});
+			}
+			if (oldVersion < 3)
+			{
+				if (Platform.IsMacOS && settings.GetValueOrDefault(AppSuite.SettingKeys.ThemeMode) == ThemeMode.Light)
+					settings.SetValue<ThemeMode>(AppSuite.SettingKeys.ThemeMode, ThemeMode.System);
 			}
 
 			// upgrade memory usage policy
@@ -683,22 +679,16 @@ namespace CarinaStudio.ULogViewer
 				};
 
 
-        /// <summary>
-        /// Get private memory usage by application in bytes.
-        /// </summary>
-        public long PrivateMemoryUsage { get; private set; }
+		/// <inheritdoc/>
+		public override DocumentSource PrivacyPolicy => new PrivacyPolicySource(this);
 
 
 		/// <inheritdoc/>
-		public override DocumentSource? PrivacyPolicy { get => new PrivacyPolicySource(this); }
-
-
-		/// <inheritdoc/>
-		public override Version? PrivacyPolicyVersion => new(1, 3);
+		public override Version PrivacyPolicyVersion => new(1, 3);
 
 
         // Releasing type.
-        public override AppSuite.ApplicationReleasingType ReleasingType => AppSuite.ApplicationReleasingType.Development;
+        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.Development;
 
 
 		// Version of settings.
@@ -748,11 +738,11 @@ namespace CarinaStudio.ULogViewer
 			}
 			switch (result)
 			{
-				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartApplicationNeeded:
+				case ApplicationOptionsDialogResult.RestartApplicationNeeded:
 					this.Logger.LogWarning("Restart application");
 					this.Restart(this.IsRunningAsAdministrator);
 					break;
-				case AppSuite.Controls.ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
+				case ApplicationOptionsDialogResult.RestartMainWindowsNeeded:
 					this.Logger.LogWarning("Restart main windows");
 					_ = this.RestartRootWindowsAsync();
 					break;
@@ -776,10 +766,10 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override DocumentSource? UserAgreement { get => new UserAgreementSource(this); }
+		public override DocumentSource UserAgreement => new UserAgreementSource(this);
 
 
 		/// <inheritdoc/>
-		public override Version? UserAgreementVersion => new(2, 0);
+		public override Version UserAgreementVersion => new(2, 0);
     }
 }
