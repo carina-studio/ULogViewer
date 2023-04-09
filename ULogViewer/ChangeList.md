@@ -4,6 +4,8 @@
 ## New Features
 + Support setting **'Cooperative log analysis script'** which is embedded in log profile, and will be run automatically when using the log profile.
 + Support embedding **Log data source script** into log profile and set it as data source of log profile.
++ Add **'Log reading position'** and **'Maximum log reading count'** properties to log profile.
++ Allow setting **'Log reading position'** and **'Maximum log reading count'** to log files.
 + Syntax highlighting for **Regular Expression**, **Date and Time Format**, **Time Span Format**, **Query String (SQL)** and **Command-Line Shell Command**.
 + Highlight text sequences in logs which are matched by text filter.
 + Highlight PID and TID which are same as PID and TID of selected log.
@@ -32,6 +34,7 @@
 + Add new built-in log profile templates: 
     + Specific Apple Device Log
     + Specific Apple Device Simulator Log
+    + Windows Event Log
 
 + Add built-in fonts:
     + IBM Plex Mono
