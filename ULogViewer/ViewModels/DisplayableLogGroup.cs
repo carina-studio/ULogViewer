@@ -650,17 +650,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					log = log.Next;
 				}
 			}
-			else if (e.Key == SettingKeys.MemoryUsagePolicy)
-			{
-				var newPolicy = (MemoryUsagePolicy)e.Value;
-				this.MemoryUsagePolicy = newPolicy;
-				var log = this.displayableLogsHead;
-				while (log != null)
-				{
-					log.OnMemoryUsagePolicyChanged(newPolicy);
-					log = log.Next;
-				}
-			}
 		}
 
 

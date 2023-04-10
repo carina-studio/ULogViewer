@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace CarinaStudio.ULogViewer.ViewModels.Categorizing;
 
 /// <summary>
-/// <see cref="IDisplayableLogAnalyzer"/> to categorize logs by timestamp.
+/// <see cref="IDisplayableLogCategorizer{TCategory}"/> to categorize logs by timestamp.
 /// </summary>
 class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<TimestampDisplayableLogCategorizer.ProcessingToken, TimestampDisplayableLogCategory>
 {
@@ -22,7 +22,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         public readonly Func<DisplayableLog, DateTime?> TimestampGetter;
 
         // Constructor.
-        public ProcessingToken() : this(new(log => null), default)
+        public ProcessingToken() : this(_ => null, default)
         { }
         public ProcessingToken(Func<DisplayableLog, DateTime?> timestampGetter, TimestampDisplayableLogCategoryGranularity granularity)
         {
@@ -139,7 +139,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         for (var i = logs.Count - 1; i >= 0; --i)
         {
             var timestamp = results[i].Timestamp;
-            if (this.categoriesByTimestamp.TryGetValue(timestamp, out var existingResult) && existingResult != null)
+            if (this.categoriesByTimestamp.TryGetValue(timestamp, out var existingResult))
             {
                 if (this.CompareSourceLogs(existingResult.Log, logs[i]) > 0)
                     this.RemoveCategory(existingResult);
@@ -187,8 +187,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         // categorize
         lock (token.PartialCategories)
         {
-            if (token.PartialCategories.TryGetValue(timestamp.Value, out var existingResult) 
-                && existingResult != null
+            if (token.PartialCategories.TryGetValue(timestamp.Value, out var existingResult)
                 && this.CompareSourceLogs(existingResult.Log, log) <= 0)
             {
                 return false;

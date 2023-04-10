@@ -39,19 +39,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Fields.
 		DisplayableLogAnalysisResultType activeAnalysisResultType;
 		IList<DisplayableLogAnalysisResult> analysisResults = emptyAnalysisResults;
-		CompressedString? beginningTimeSpanString;
-		CompressedString? beginningTimestampString;
-		CompressedString? endingTimeSpanString;
-		CompressedString? endingTimestampString;
 		readonly byte[] extraLineCount;
 		byte isDisposed;
 		MarkColor markedColor;
 		short memorySize;
 		byte messageLineCount;
-		CompressedString? readTimeString;
 		byte summaryLineCount;
-		CompressedString? timeSpanString;
-		CompressedString? timestampString;
 
 
 		/// <summary>
@@ -63,13 +56,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
 			// setup properties
-			this.BinaryBeginningTimeSpan = (long)(log.BeginningTimeSpan?.TotalMilliseconds ?? 0);
-			this.BinaryBeginningTimestamp = log.BeginningTimestamp?.ToBinary() ?? 0L;
-			this.BinaryEndingTimeSpan = (long)(log.EndingTimeSpan?.TotalMilliseconds ?? 0);
-			this.BinaryEndingTimestamp = log.EndingTimestamp?.ToBinary() ?? 0L;
-			this.BinaryReadTime = log.ReadTime.ToBinary();
-			this.BinaryTimeSpan = (long)(log.TimeSpan?.TotalMilliseconds ?? 0);
-			this.BinaryTimestamp = log.Timestamp?.ToBinary() ?? 0L;
 			this.Group = group;
 			this.Log = log;
 			this.LogReader = reader;
@@ -162,25 +148,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get beginning time span of log in string format.
 		/// </summary>
-		public string BeginningTimeSpanString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimeSpan(this.Log.BeginningTimeSpan);
-				if (this.beginningTimeSpanString == null)
-				{
-					this.beginningTimeSpanString = this.FormatTimeSpanCompressed(this.Log.BeginningTimeSpan);
-					if (this.beginningTimeSpanString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.beginningTimeSpanString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.beginningTimeSpanString.ToString();
-			}
-		}
+		public string BeginningTimeSpanString => this.FormatTimeSpan(this.Log.BeginningTimeSpan);
 
 
 		/// <summary>
@@ -192,67 +160,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get beginning timestamp of log in string format.
 		/// </summary>
-		public string BeginningTimestampString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimestamp(this.Log.BeginningTimestamp);
-				if (this.beginningTimestampString == null)
-				{
-					this.beginningTimestampString = this.FormatTimestampCompressed(this.Log.BeginningTimestamp);
-					if (this.beginningTimestampString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.beginningTimestampString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.beginningTimestampString.ToString();
-			}
-		}
-
-
-		/// <summary>
-		/// Get beginning time span of log in binary format.
-		/// </summary>
-		public long BinaryBeginningTimeSpan { get; }
-
-
-		/// <summary>
-		/// Get beginning timestamp of log in binary format.
-		/// </summary>
-		public long BinaryBeginningTimestamp { get; }
-
-
-		/// <summary>
-		/// Get ending time span of log in binary format.
-		/// </summary>
-		public long BinaryEndingTimeSpan { get; }
-
-
-		/// <summary>
-		/// Get ending timestamp of log in binary format.
-		/// </summary>
-		public long BinaryEndingTimestamp { get; }
-
-
-		/// <summary>
-		/// Get the timestamp of this log was read in binary format..
-		/// </summary>
-		public long BinaryReadTime { get; }
-
-
-		/// <summary>
-		/// Get time span of log in binary format.
-		/// </summary>
-		public long BinaryTimeSpan { get; }
-
-
-		/// <summary>
-		/// Get timestamp of log in binary format.
-		/// </summary>
-		public long BinaryTimestamp { get; }
+		public string BeginningTimestampString => this.FormatTimestamp(this.Log.BeginningTimestamp);
 
 
 		// Calculate line count.
@@ -316,13 +224,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				nameof(BeginningTimeSpanString) => (it => (T)(object)it.BeginningTimeSpanString),
 				nameof(BeginningTimestampString) => (it => (T)(object)it.BeginningTimestampString),
-				nameof(BinaryBeginningTimeSpan) => (it => (T)(object)it.BinaryBeginningTimeSpan),
-				nameof(BinaryBeginningTimestamp) => (it => (T)(object)it.BinaryBeginningTimestamp),
-				nameof(BinaryEndingTimeSpan) => (it => (T)(object)it.BinaryEndingTimeSpan),
-				nameof(BinaryEndingTimestamp) => (it => (T)(object)it.BinaryEndingTimestamp),
-				nameof(BinaryReadTime) => (it => (T)(object)it.BinaryReadTime),
-				nameof(BinaryTimeSpan) => (it => (T)(object)it.BinaryTimeSpan),
-				nameof(BinaryTimestamp) => (it => (T)(object)it.BinaryTimestamp),
 				nameof(EndingTimeSpanString) => (it => (T)(object)it.EndingTimeSpanString),
 				nameof(EndingTimestampString) => (it => (T)(object)it.EndingTimestampString),
 				nameof(LevelString) => (it => (T)(object)it.LevelString),
@@ -353,20 +254,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return getter;
 			
 			// create getter
-			Func<DisplayableLog, CompressedString?> backedValueGetter;
+			Func<DisplayableLog, string?> valueGenerator;
 			switch (propertyName)
 			{
 				case nameof(BeginningTimeSpanString):
-					backedValueGetter = log => log.beginningTimeSpanString;
+					valueGenerator = log => log.BeginningTimeSpanString;
 					break;
 				case nameof(BeginningTimestampString):
-					backedValueGetter = log => log.beginningTimestampString;
+					valueGenerator = log => log.BeginningTimestampString;
 					break;
 				case nameof(EndingTimeSpanString):
-					backedValueGetter = log => log.endingTimestampString;
+					valueGenerator = log => log.EndingTimeSpanString;
 					break;
 				case nameof(EndingTimestampString):
-					backedValueGetter = log => log.endingTimestampString;
+					valueGenerator = log => log.EndingTimestampString;
 					break;
 				case nameof(LevelString):
 					getter = (log, buffer, offset) =>
@@ -382,13 +283,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					logStringPropertyGetters[propertyName] = getter;
 					return getter;
 				case nameof(ReadTimeString):
-					backedValueGetter = log => log.readTimeString;
+					valueGenerator = log => log.ReadTimeString;
 					break;
 				case nameof(TimeSpanString):
-					backedValueGetter = log => log.timeSpanString;
+					valueGenerator = log => log.TimeSpanString;
 					break;
 				case nameof(TimestampString):
-					backedValueGetter = log => log.timestampString;
+					valueGenerator = log => log.TimestampString;
 					break;
 				default:
 					getter = Log.CreateStringPropertyGetter(propertyName).Let(getter =>
@@ -400,16 +301,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			getter = (log, buffer, offset) =>
 			{
-				var backedValue = backedValueGetter(log);
-				if (backedValue != null)
-					return backedValue.GetString(buffer, offset);
-				if (log.TryGetProperty<string>(propertyName, out var s))
+				var s = valueGenerator(log);
+				if (s is not null || log.TryGetProperty<string>(propertyName, out s))
 				{
 					if (offset < 0)
 						throw new ArgumentOutOfRangeException(nameof(offset));
 					if (offset + s.Length > buffer.Length)
 						return ~s.Length;
-					s.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..^0]);
+					s.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..]);
 					return s.Length;
 				}
 				return 0;
@@ -452,25 +351,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ending time span of log in string format.
 		/// </summary>
-		public string EndingTimeSpanString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimeSpan(this.Log.EndingTimeSpan);
-				if (this.endingTimeSpanString == null)
-				{
-					this.endingTimeSpanString = this.FormatTimeSpanCompressed(this.Log.EndingTimeSpan);
-					if (this.endingTimeSpanString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.endingTimeSpanString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.endingTimeSpanString.ToString();
-			}
-		}
+		public string EndingTimeSpanString => this.FormatTimeSpan(this.Log.EndingTimeSpan);
 
 
 		/// <summary>
@@ -482,25 +363,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ending timestamp of log in string format.
 		/// </summary>
-		public string EndingTimestampString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimestamp(this.Log.EndingTimestamp);
-				if (this.endingTimestampString == null)
-				{
-					this.endingTimestampString = this.FormatTimestampCompressed(this.Log.EndingTimestamp);
-					if (this.endingTimestampString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.endingTimestampString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.endingTimestampString.ToString();
-			}
-		}
+		public string EndingTimestampString => this.FormatTimestamp(this.Log.EndingTimestamp);
 
 
 		/// <summary>
@@ -814,17 +677,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if property of log is existing.</returns>
-		public static bool HasInt64Property(string propertyName) => propertyName switch
-		{
-			nameof(BinaryBeginningTimeSpan) 
-			or nameof(BinaryBeginningTimestamp)
-			or nameof(BinaryEndingTimeSpan)
-			or nameof(BinaryEndingTimestamp)
-			or nameof(BinaryReadTime)
-			or nameof(BinaryTimeSpan)
-			or nameof(BinaryTimestamp) => true,
-			_ => false,
-		};
+		public static bool HasInt64Property(string propertyName) => false;
+
 
 
 		/// <summary>
@@ -1056,66 +910,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
-		/// <summary>
-		/// Called when policy of memory usage changed.
-		/// </summary>
-		/// <param name="policy">New policy.</param>
-		internal void OnMemoryUsagePolicyChanged(MemoryUsagePolicy policy)
-		{
-			if (policy == MemoryUsagePolicy.LessMemoryUsage)
-			{
-				var memorySizeDiff = 0L;
-				if (this.beginningTimeSpanString != null)
-				{
-					if (this.beginningTimeSpanString != CompressedString.Empty)
-						memorySizeDiff -= this.beginningTimeSpanString.Size;
-					this.beginningTimeSpanString = null;
-				}
-				if (this.beginningTimestampString != null)
-				{
-					if (this.beginningTimestampString != CompressedString.Empty)
-						memorySizeDiff -= this.beginningTimestampString.Size;
-					this.beginningTimestampString = null;
-				}
-				if (this.endingTimeSpanString != null)
-				{
-					if (this.endingTimeSpanString != CompressedString.Empty)
-						memorySizeDiff -= this.endingTimeSpanString.Size;
-					this.endingTimeSpanString = null;
-				}
-				if (this.endingTimestampString != null)
-				{
-					if (this.endingTimestampString != CompressedString.Empty)
-						memorySizeDiff -= this.endingTimestampString.Size;
-					this.endingTimestampString = null;
-				}
-				if (this.readTimeString != null)
-				{
-					if (this.readTimeString != CompressedString.Empty)
-						memorySizeDiff -= this.readTimeString.Size;
-					this.readTimeString = null;
-				}
-				if (this.timeSpanString != null)
-				{
-					if (this.timeSpanString != CompressedString.Empty)
-						memorySizeDiff -= this.timeSpanString.Size;
-					this.timeSpanString = null;
-				}
-				if (this.timestampString != null)
-				{
-					if (this.timestampString != CompressedString.Empty)
-						memorySizeDiff -= this.timestampString.Size;
-					this.timestampString = null;
-				}
-				if (memorySizeDiff != 0)
-				{
-					this.memorySize += (short)memorySizeDiff;
-					this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-				}
-			}
-		}
-
-
 		// Called when user selected process ID changed.
 		internal void OnSelectedProcessIdChanged()
 		{
@@ -1157,30 +951,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnTimeSpanFormatChanged()
 		{
 			var propertyChangedHandlers = this.PropertyChanged;
-			var memorySizeDiff = 0L;
-			if (this.Log.BeginningTimeSpan.HasValue && this.beginningTimeSpanString != null)
-			{
-				memorySizeDiff -= this.beginningTimeSpanString.Size;
-				this.beginningTimeSpanString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
-			}
-			if (this.Log.EndingTimeSpan.HasValue && this.endingTimeSpanString != null)
-			{
-				memorySizeDiff -= this.endingTimeSpanString.Size;
-				this.endingTimeSpanString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
-			}
-			if (this.Log.TimeSpan.HasValue && this.timeSpanString != null)
-			{
-				memorySizeDiff -= this.timeSpanString.Size;
-				this.timeSpanString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
-			}
-			if (memorySizeDiff != 0)
-			{
-				this.memorySize += (short)memorySizeDiff;
-				this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-			}
+			if (propertyChangedHandlers is null)
+				return;
+			if (this.Log.BeginningTimeSpan.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimeSpanString)));
+			if (this.Log.EndingTimeSpan.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimeSpanString)));
+			if (this.Log.TimeSpan.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimeSpanString)));
 		}
 
 
@@ -1190,36 +968,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal void OnTimestampFormatChanged()
 		{
 			var propertyChangedHandlers = this.PropertyChanged;
-			var memorySizeDiff = 0L;
-			if (this.Log.BeginningTimestamp.HasValue && this.beginningTimestampString != null)
-			{
-				memorySizeDiff -= this.beginningTimestampString.Size;
-				this.beginningTimestampString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
-			}
-			if (this.Log.EndingTimestamp.HasValue && this.endingTimestampString != null)
-			{
-				memorySizeDiff -= this.endingTimestampString.Size;
-				this.endingTimestampString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
-			}
-			if (this.Log.Timestamp.HasValue && this.readTimeString != null)
-			{
-				memorySizeDiff -= this.readTimeString.Size;
-				this.readTimeString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(ReadTimeString)));
-			}
-			if (this.Log.Timestamp.HasValue && this.timestampString != null)
-			{
-				memorySizeDiff -= this.timestampString.Size;
-				this.timestampString = null;
-				propertyChangedHandlers?.Invoke(this, new PropertyChangedEventArgs(nameof(TimestampString)));
-			}
-			if (memorySizeDiff != 0)
-			{
-				this.memorySize += (short)memorySizeDiff;
-				this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-			}
+			if (propertyChangedHandlers is null)
+				return;
+			if (this.Log.BeginningTimestamp.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
+			if (this.Log.EndingTimestamp.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
+			if (this.Log.Timestamp.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(ReadTimeString)));
+			if (this.Log.Timestamp.HasValue)
+				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimestampString)));
 		}
 
 
@@ -1250,25 +1008,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get timestamp of this log was read in string format.
 		/// </summary>
-		public string ReadTimeString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimestamp(this.Log.ReadTime);
-				if (this.readTimeString == null)
-				{
-					this.readTimeString = this.FormatTimestampCompressed(this.Log.ReadTime);
-					if (this.readTimeString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.readTimeString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.readTimeString.ToString();
-			}
-		}
+		public string ReadTimeString => this.FormatTimestamp(this.Log.ReadTime);
 
 
 		/// <summary>
@@ -1462,12 +1202,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						{
 							nameof(BeginningTimeSpanString),
 							nameof(BeginningTimestampString),
-							nameof(BinaryBeginningTimeSpan),
-							nameof(BinaryBeginningTimestamp),
-							nameof(BinaryEndingTimeSpan),
-							nameof(BinaryEndingTimestamp),
-							nameof(BinaryTimeSpan),
-							nameof(BinaryEndingTimestamp),
 							nameof(EndingTimeSpanString),
 							nameof(EndingTimestampString),
 							nameof(LevelString),
@@ -1546,25 +1280,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get time span of log in string format.
 		/// </summary>
-		public string TimeSpanString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimeSpan(this.Log.TimeSpan);
-				if (this.timeSpanString == null)
-				{
-					this.timeSpanString = this.FormatTimeSpanCompressed(this.Log.TimeSpan);
-					if (this.timeSpanString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.timeSpanString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.timeSpanString.ToString();
-			}
-		}
+		public string TimeSpanString => this.FormatTimeSpan(this.Log.TimeSpan);
 
 
 		/// <summary>
@@ -1576,25 +1292,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get timestamp of log in string format.
 		/// </summary>
-		public string TimestampString
-		{
-			get
-			{
-				if (this.Group.MemoryUsagePolicy == MemoryUsagePolicy.LessMemoryUsage)
-					return this.FormatTimestamp(this.Log.Timestamp);
-				if (this.timestampString == null)
-				{
-					this.timestampString = this.FormatTimestampCompressed(this.Log.Timestamp);
-					if (this.timestampString != CompressedString.Empty)
-					{
-						var memorySizeDiff = this.timestampString.Size;
-						this.memorySize += (short)memorySizeDiff;
-						this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
-					}
-				}
-				return this.timestampString.ToString();
-			}
-		}
+		public string TimestampString => this.FormatTimestamp(this.Log.Timestamp);
 
 
 		/// <summary>

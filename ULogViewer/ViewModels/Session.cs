@@ -1503,11 +1503,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by time span
-			var diff = x.BinaryBeginningTimeSpan - y.BinaryBeginningTimeSpan;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.BeginningTimeSpan.GetValueOrDefault().CompareTo(y.BeginningTimeSpan.GetValueOrDefault());
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -1525,11 +1523,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by timestamp
-			var diff = x.BinaryBeginningTimestamp - y.BinaryBeginningTimestamp;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.BeginningTimestamp.GetValueOrDefault().CompareTo(y.BeginningTimestamp.GetValueOrDefault());
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -1547,11 +1543,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by time span
-			var diff = x.BinaryEndingTimeSpan - y.BinaryEndingTimeSpan;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.EndingTimeSpan.GetValueOrDefault().CompareTo(y.EndingTimeSpan.GetValueOrDefault());
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -1569,11 +1563,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by timestamp
-			var diff = x.BinaryEndingTimestamp - y.BinaryEndingTimestamp;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.EndingTimestamp.GetValueOrDefault().CompareTo(y.EndingTimestamp.GetValueOrDefault());
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -1615,11 +1607,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by timestamp
-			var diff = x.BinaryReadTime - y.BinaryReadTime;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.ReadTime.CompareTo(y.ReadTime);
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -1637,11 +1627,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by time span
-			var diff = x.BinaryTimeSpan - y.BinaryTimeSpan;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.TimeSpan.GetValueOrDefault().CompareTo(y.TimeSpan.GetValueOrDefault());
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -1659,11 +1647,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return 1;
 
 			// compare by timestamp
-			var diff = x.BinaryTimestamp - y.BinaryTimestamp;
-			if (diff < 0)
-				return -1;
-			if (diff > 0)
-				return 1;
+			var result = x.Timestamp.GetValueOrDefault().CompareTo(y.Timestamp.GetValueOrDefault());
+			if (result != 0)
+				return result;
 
 			// compare by ID
 			return CompareDisplayableLogsByIdNonNull(x, y);
@@ -2311,19 +2297,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// prepare comparison
 			var timestampGetter = profile.SortKey switch
 			{
-				LogSortKey.BeginningTimestamp => log => log.BinaryBeginningTimestamp,
-				LogSortKey.EndingTimestamp => log => log.BinaryEndingTimestamp,
-				LogSortKey.Timestamp => log => log.BinaryTimestamp,
-				_ => default(Func<DisplayableLog, long>?),
+				LogSortKey.BeginningTimestamp => log => log.BeginningTimestamp.GetValueOrDefault(),
+				LogSortKey.EndingTimestamp => log => log.EndingTimestamp.GetValueOrDefault(),
+				LogSortKey.ReadTime => log => log.ReadTime,
+				LogSortKey.Timestamp => log => log.Timestamp.GetValueOrDefault(),
+				_ => default(Func<DisplayableLog, DateTime>?),
 			};
 			if (timestampGetter == null)
 				return null;
-			var comparison = new Comparison<long>((x, y) => x.CompareTo(y));
+			var comparison = new Comparison<DateTime>((x, y) => x.CompareTo(y));
 			if (profile.SortDirection == SortDirection.Descending)
 				comparison = comparison.Invert();
 
 			// find log
-			var index = logs.BinarySearch(timestamp.ToBinary(), timestampGetter, comparison);
+			var index = logs.BinarySearch(timestamp, timestampGetter, comparison);
 			if (index < 0)
 				index = Math.Min(logs.Count - 1, ~index);
 			return logs[index];
