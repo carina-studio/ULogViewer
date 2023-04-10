@@ -1638,7 +1638,6 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								if (logProperty.Name == nameof(DisplayableLog.Level))
 									binding.Converter = Converters.EnumConverters.LogLevel;
-								binding.Mode = logProperty.Name.EndsWith("String") ? BindingMode.OneWay : BindingMode.OneTime;
 								binding.Path = logProperty.Name;
 							}));
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
@@ -2052,7 +2051,6 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
 					{
-						Mode = propertyInMarkedItem.Name.EndsWith("String") ? BindingMode.OneWay : BindingMode.OneTime,
 						Path = propertyInMarkedItem.Name,
 					});
 					it.Margin = itemPadding;

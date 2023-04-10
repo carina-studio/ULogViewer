@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Text.Unicode;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -59,15 +60,19 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Constructor.
-		CompressedString(string value, Level level)
+		CompressedString(string value, Level level) : this(value.AsMemory(), level)
+		{ }
+		CompressedString(ReadOnlyMemory<char> value, Level level)
 		{
 			if (level == Level.None || value.Length < 32 || value.Length > FLAGS_UTF8_ENCODING_SIZE_MASK)
 				this.data = value;
 			else
 			{
-				var utf8Bytes = Encoding.UTF8.GetBytes(value);
+				var utf8ByteCount = Encoding.UTF8.GetByteCount(value.Span);
+				var utf8Bytes = new byte[utf8ByteCount];
+				Utf8.FromUtf16(value.Span, utf8Bytes, out _, out _);
 				this.data = utf8Bytes;
-				this.flags = ((uint)utf8Bytes.Length & FLAGS_UTF8_ENCODING_SIZE_MASK);
+				this.flags = (uint)utf8Bytes.Length & FLAGS_UTF8_ENCODING_SIZE_MASK;
 				if (level == Level.Optimal && value.Length >= 64)
 				{
 					DeflateCompressionMemoryStream ??= new();
@@ -97,7 +102,21 @@ namespace CarinaStudio.ULogViewer
 			if (value == null)
 				return null;
 			if (value.Length == 0)
-				return CompressedString.Empty;
+				return Empty;
+			return new CompressedString(value, level);
+		}
+		
+		
+		/// <summary>
+		/// Create new <see cref="CompressedString"/> instance.
+		/// </summary>
+		/// <param name="value">String value.</param>
+		/// <param name="level">Compression level.</param>
+		/// <returns><see cref="CompressedString"/> or Null if <paramref name="value"/> is Null.</returns>
+		public static CompressedString Create(ReadOnlyMemory<char> value, Level level)
+		{
+			if (value.Length == 0)
+				return Empty;
 			return new CompressedString(value, level);
 		}
 
@@ -141,12 +160,14 @@ namespace CarinaStudio.ULogViewer
 				return ~length;
 			var data = this.data;
 			if (data is string str)
-				str.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..^0]);
+				str.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..]);
+			else if (data is ReadOnlyMemory<char> memory)
+				memory.Span.CopyTo(offset == 0 ? buffer : buffer[offset..]);
 			else if (data is byte[] bytes)
 			{
 				if ((this.flags & FLAGS_COMPRESSED_MASK) != 0)
 					bytes = this.Decompress(bytes);
-				Encoding.UTF8.GetDecoder().GetChars(bytes.AsSpan(), offset == 0 ? buffer : buffer[offset..^0], true);
+				Encoding.UTF8.GetDecoder().GetChars(bytes.AsSpan(), offset == 0 ? buffer : buffer[offset..], true);
 			}
 			else
 				return 0;
@@ -177,6 +198,8 @@ namespace CarinaStudio.ULogViewer
 			var data = this.data;
 			if (data is string str)
 				return str;
+			if (data is ReadOnlyMemory<char> memory)
+				return new string(memory.Span);
 			if (data is not byte[] bytes)
 				return "";
 			if ((this.flags & FLAGS_COMPRESSED_MASK) != 0)

@@ -10,7 +10,9 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogBuilder
 	{
 		// Fields.
-		readonly Dictionary<string, string> properties = new();
+		Func<ReadOnlyMemory<char>, CompressedString?> getCompressedStringImpl = GetCompressedStringWithBalanceMup;
+		MemoryUsagePolicy memoryUsagePolicy = MemoryUsagePolicy.Balance;
+		readonly Dictionary<string, object> properties = new();
 
 
 		/// <summary>
@@ -18,8 +20,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		public LogBuilder()
 		{ }
-
-
+		
+		
 		/// <summary>
 		/// Append value into property.
 		/// </summary>
@@ -27,10 +29,81 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="value">Value to append.</param>
 		public void Append(string propertyName, string value)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str))
-				properties[propertyName] = str + value;
-			else
-				properties[propertyName] = value;
+			if (this.properties.TryGetValue(propertyName, out var current))
+			{
+				if (current is ReadOnlyMemory<char> memory)
+				{
+					var oldLength = memory.Length;
+					var newValue = new char[oldLength + value.Length];
+					memory.CopyTo(newValue);
+					value.AsMemory().CopyTo(new Memory<char>(newValue).Slice(oldLength));
+					properties[propertyName] = newValue;
+					return;
+				}
+				if (current is string str)
+				{
+					properties[propertyName] = str + value;
+					return;
+				}
+			}
+			properties[propertyName] = value;
+		}
+
+
+		/// <summary>
+		/// Append value into property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <param name="value">Value to append.</param>
+		public void Append(string propertyName, ReadOnlyMemory<char> value)
+		{
+			if (this.properties.TryGetValue(propertyName, out var current))
+			{
+				if (current is ReadOnlyMemory<char> memory)
+				{
+					var oldLength = memory.Length;
+					var newValue = new char[oldLength + value.Length];
+					memory.CopyTo(newValue);
+					value.CopyTo(new Memory<char>(newValue).Slice(oldLength));
+					properties[propertyName] = newValue;
+					return;
+				}
+				if (current is string str)
+				{
+					properties[propertyName] = str + new string(value.Span);
+					return;
+				}
+			}
+			properties[propertyName] = value;
+		}
+		
+		
+		/// <summary>
+		/// Append value to next line of property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <param name="value">Value to append.</param>
+		public void AppendToNextLine(string propertyName, string value)
+		{
+			if (this.properties.TryGetValue(propertyName, out var current))
+			{
+				if (current is ReadOnlyMemory<char> memory)
+				{
+					var oldLength = memory.Length;
+					var newValue = new char[oldLength + value.Length + 1];
+					memory.CopyTo(newValue);
+					newValue[oldLength] = '\n';
+					value.AsMemory().CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
+					properties[propertyName] = newValue;
+					return;
+				}
+				if (current is string str)
+				{
+					properties[propertyName] = str + '\n' + value;
+					return;
+				}
+			}
+			properties[propertyName] = value;
 		}
 
 
@@ -39,12 +112,27 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to append.</param>
-		public void AppendToNextLine(string propertyName, string value)
+		public void AppendToNextLine(string propertyName, ReadOnlyMemory<char> value)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str))
-				properties[propertyName] = str + "\n" + value;
-			else
-				properties[propertyName] = value;
+			if (this.properties.TryGetValue(propertyName, out var current))
+			{
+				if (current is ReadOnlyMemory<char> memory)
+				{
+					var oldLength = memory.Length;
+					var newValue = new char[oldLength + value.Length + 1];
+					memory.CopyTo(newValue);
+					newValue[oldLength] = '\n';
+					value.CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
+					properties[propertyName] = newValue;
+					return;
+				}
+				if (current is string str)
+				{
+					properties[propertyName] = str + '\n' + new string(value.Span);
+					return;
+				}
+			}
+			properties[propertyName] = value;
 		}
 
 
@@ -62,6 +150,40 @@ namespace CarinaStudio.ULogViewer.Logs
 		public Log BuildAndReset() => new Log(this).Also(_ => this.Reset());
 
 
+		// Get compressed string for Balance memory usage policy.
+		static CompressedString? GetCompressedStringWithBalanceMup(ReadOnlyMemory<char> s)
+		{
+			var length = s.Length;
+			if (length == 0)
+				return CompressedString.Empty;
+			return length <= 64
+				? CompressedString.Create(s, CompressedString.Level.Optimal)
+				: CompressedString.Create(s, CompressedString.Level.Fast);
+		}
+		
+		
+		// Get compressed string for BetterPerformance memory usage policy.
+		static CompressedString? GetCompressedStringWithBetterPerformanceMup(ReadOnlyMemory<char> s)
+		{
+			var length = s.Length;
+			if (length == 0)
+				return CompressedString.Empty;
+			return length <= 64
+				? CompressedString.Create(s, CompressedString.Level.Fast)
+				: CompressedString.Create(s, CompressedString.Level.None);
+		}
+		
+		
+		// Get compressed string for LessMemoryUsage memory usage policy.
+		static CompressedString? GetCompressedStringWithLessMemoryUsageMup(ReadOnlyMemory<char> s)
+		{
+			var length = s.Length;
+			if (length == 0)
+				return CompressedString.Empty;
+			return CompressedString.Create(s, CompressedString.Level.Optimal);
+		}
+
+
 		/// <summary>
 		/// Get log property as <see cref="CompressedString"/> or return null if unable to get the property.
 		/// </summary>
@@ -69,23 +191,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public CompressedString? GetCompressedStringOrNull(string propertyName)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str))
+			if (this.properties.TryGetValue(propertyName, out var value))
 			{
-				var length = str.Length;
-				if (length == 0)
-					return CompressedString.Empty;
-				var compressedString = this.MemoryUsagePolicy switch
-				{
-					MemoryUsagePolicy.BetterPerformance => length <= 64
-						? CompressedString.Create(str, CompressedString.Level.Optimal)
-						: CompressedString.Create(str, CompressedString.Level.Fast),
-					MemoryUsagePolicy.LessMemoryUsage => 
-						CompressedString.Create(str, CompressedString.Level.Optimal),
-					_ => length <= 64
-						? CompressedString.Create(str, CompressedString.Level.Fast)
-						: CompressedString.Create(str, CompressedString.Level.Optimal),
-				};
-				return compressedString;
+				if (value is ReadOnlyMemory<char> memory)
+					return this.getCompressedStringImpl(memory);
+				if (value is string s)
+					return this.getCompressedStringImpl(s.AsMemory());
 			}
 			return null;
 		}
@@ -98,11 +209,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public DateTime? GetDateTimeOrNull(string propertyName)
 		{
-			if (!this.properties.TryGetValue(propertyName, out var str))
+			if (!this.properties.TryGetValue(propertyName, out var value))
 				return null;
-			if (DateTime.TryParse(str, out var value))
-				return value;
-			if (long.TryParse(str, out var longValue))
+			var span = value switch
+			{
+				ReadOnlyMemory<char> memory => memory.Span,
+				string s => s.AsSpan(),
+				_ => default,
+			};
+			if (DateTime.TryParse(span, out var dateTimeValue))
+				return dateTimeValue;
+			if (long.TryParse(span, out var longValue))
 				return DateTime.FromBinary(longValue);
 			return null;
 		}
@@ -115,8 +232,16 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public T? GetEnumOrNull<T>(string propertyName) where T : struct, Enum
 		{
-			if (this.properties.TryGetValue(propertyName, out var str) && Enum.TryParse<T>(str, out var value))
-				return value;
+			if (!this.properties.TryGetValue(propertyName, out var value))
+				return null;
+			var span = value switch
+			{
+				ReadOnlyMemory<char> memory => memory.Span,
+				string s => s.AsSpan(),
+				_ => default,
+			};
+			if (Enum.TryParse<T>(span, out var enumValue))
+				return enumValue;
 			return null;
 		}
 
@@ -128,16 +253,22 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public int? GetInt32OrNull(string propertyName)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str))
+			if (this.properties.TryGetValue(propertyName, out var value))
 			{
-				int value;
-				if (str.StartsWith("0x"))
+				int intValue;
+				var span = value switch
 				{
-					if (int.TryParse(str[2..^0], NumberStyles.AllowHexSpecifier, null, out value))
-						return value;
+					ReadOnlyMemory<char> memory => memory.Span,
+					string s => s.AsSpan(),
+					_ => default,
+				};
+				if (span.Length > 2 && span[0] == '0' && span[1] == 'x')
+				{
+					if (int.TryParse(span[2..], NumberStyles.AllowHexSpecifier, null, out intValue))
+						return intValue;
 				}
-				else if (int.TryParse(str, out value))
-					return value;
+				else if (int.TryParse(span, out intValue))
+					return intValue;
 			}
 			return null;
 		}
@@ -150,17 +281,23 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public long? GetInt64OrNull(string propertyName)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str))
+			if (this.properties.TryGetValue(propertyName, out var value))
 			{
-				long value;
-				if (str.StartsWith("0x"))
+				long longValue;
+				var span = value switch
 				{
-					str = str.EndsWith("L") ? str[2..^1] : str[2..^0];
-					if (long.TryParse(str, NumberStyles.AllowHexSpecifier, null, out value))
-						return value;
+					ReadOnlyMemory<char> memory => memory.Span,
+					string s => s.AsSpan(),
+					_ => default,
+				};
+				if (span.Length > 2 && span[0] == '0' && span[1] == 'x')
+				{
+					span = span[^1] == 'L' ? span[2..^1] : span[2..];
+					if (long.TryParse(span, NumberStyles.AllowHexSpecifier, null, out longValue))
+						return longValue;
 				}
-				else if (long.TryParse(str, out value))
-					return value;
+				else if (long.TryParse(span, out longValue))
+					return longValue;
 			}
 			return null;
 		}
@@ -173,8 +310,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public string? GetStringOrNull(string propertyName)
 		{
-			if (this.properties.TryGetValue(propertyName, out var str))
-				return str;
+			if (this.properties.TryGetValue(propertyName, out var value))
+			{
+				if (value is ReadOnlyMemory<char> memory)
+					return new string(memory.Span);
+				if (value is string s)
+					return s;
+			}
 			return null;
 		}
 
@@ -186,12 +328,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>Value or null.</returns>
 		public TimeSpan? GetTimeSpanOrNull(string propertyName)
 		{
-			if (!this.properties.TryGetValue(propertyName, out var str))
+			if (!this.properties.TryGetValue(propertyName, out var value))
 				return null;
-			if (double.TryParse(str, out var ms))
+			var span = value switch
+			{
+				ReadOnlyMemory<char> memory => memory.Span,
+				string s => s.AsSpan(),
+				_ => default,
+			};
+			if (double.TryParse(span, out var ms))
 				return TimeSpan.FromMilliseconds(ms);
-			if (TimeSpan.TryParse(str, out var value))
-				return value;
+			if (TimeSpan.TryParse(span, out var timeSpan))
+				return timeSpan;
 			return null;
 		}
 
@@ -213,7 +361,22 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get or set memory usage policy.
 		/// </summary>
-		public MemoryUsagePolicy MemoryUsagePolicy { get; set; } = MemoryUsagePolicy.Balance;
+		public MemoryUsagePolicy MemoryUsagePolicy
+		{
+			get => this.memoryUsagePolicy;
+			set
+			{
+				if (this.memoryUsagePolicy == value)
+					return;
+				this.memoryUsagePolicy = value;
+				this.getCompressedStringImpl = value switch
+				{
+					MemoryUsagePolicy.BetterPerformance => GetCompressedStringWithBetterPerformanceMup,
+					MemoryUsagePolicy.LessMemoryUsage => GetCompressedStringWithLessMemoryUsageMup,
+					_ => GetCompressedStringWithBalanceMup,
+				};
+			}
+		}
 
 
 		/// <summary>
@@ -235,6 +398,15 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			this.properties.Clear();
 		}
+		
+		
+		/// <summary>
+		/// Set or override value to property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <param name="value">Value to set.</param>
+		public void Set(string propertyName, string value) =>
+			properties[propertyName] = value;
 
 
 		/// <summary>
@@ -242,9 +414,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to set.</param>
-		public void Set(string propertyName, string value)
-		{
+		public void Set(string propertyName, ReadOnlyMemory<char> value) =>
 			properties[propertyName] = value;
-		}
 	}
 }
