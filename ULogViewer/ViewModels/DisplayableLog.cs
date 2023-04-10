@@ -42,7 +42,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly byte[] extraLineCount;
 		byte isDisposed;
 		MarkColor markedColor;
-		short memorySize;
+		ushort memorySize;
 		byte messageLineCount;
 		byte summaryLineCount;
 
@@ -68,7 +68,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			long memorySize = log.MemorySize + instanceFieldMemorySize;
 			if (extraCount > 0)
 				memorySize += Memory.EstimateArrayInstanceSize(sizeof(byte), extraCount);
-			this.memorySize = (short)memorySize;
+			this.memorySize = (ushort)memorySize;
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
@@ -115,7 +115,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
-			this.memorySize += (short)memorySizeDiff;
+			this.memorySize = (ushort)Math.Min(ushort.MaxValue, this.memorySize + memorySizeDiff);
 			this.Group.OnAnalysisResultAdded(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 		}
@@ -1085,7 +1085,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			
 			// update memory usage
-			this.memorySize += (short)memorySizeDiff;
+			this.memorySize = (ushort)Math.Max(0, this.memorySize + memorySizeDiff);
 			this.Group.OnAnalysisResultRemoved(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 		}
@@ -1165,7 +1165,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
-			this.memorySize += (short)memorySizeDiff;
+			this.memorySize = (ushort)Math.Max(0, this.memorySize + memorySizeDiff);
 			this.Group.OnAnalysisResultRemoved(this);
 			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
 		}

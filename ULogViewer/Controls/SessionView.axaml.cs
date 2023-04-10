@@ -1556,7 +1556,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					it.Children.Add(new Border().Also(border =>
 					{
-						border.Bind(Border.BackgroundProperty, new Binding()
+						border.Bind(Border.BackgroundProperty, new Binding
 						{
 							Converter = Converters.MarkColorToBackgroundConverter.Default,
 							Path = nameof(DisplayableLog.MarkedColor)
@@ -1573,8 +1573,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					it.Opacity = 0;
 					it.Padding = propertyPadding;
 					it.Text = " ";
@@ -1607,14 +1607,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						nameof(DisplayableLog.LevelString) => (Control)new CarinaStudio.Controls.TextBlock().Also(it =>
 						{
-							it.Bind(BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBackgroundBrush) });
-							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
-							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+							it.Bind(BackgroundProperty, new Binding { Path = nameof(DisplayableLog.LevelBackgroundBrush) });
+							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 							it.Foreground = levelForegroundBrush;
 							it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
-							it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = logProperty.Name });
+							it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = logProperty.Name });
 							it.TextAlignment = TextAlignment.Center;
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
@@ -1623,13 +1623,13 @@ namespace CarinaStudio.ULogViewer.Controls
 						}),
 						_ => new SyntaxHighlightingTextBlock().Also(it =>
 						{
-							it.Bind(SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding() { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
-							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
-							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+							it.Bind(SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
+							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 							if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
-								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelForegroundBrush) });
+								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 							if (isMultiLineProperty)
-								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding() { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
@@ -1638,6 +1638,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								if (logProperty.Name == nameof(DisplayableLog.Level))
 									binding.Converter = Converters.EnumConverters.LogLevel;
+								binding.Mode = logProperty.Name.EndsWith("String") ? BindingMode.OneWay : BindingMode.OneTime;
 								binding.Path = logProperty.Name;
 							}));
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
@@ -1732,13 +1733,13 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.Bind(Border.BackgroundProperty, new MultiBinding().Also(binding =>
 								{
 									binding.Converter = this.selectableValueLogItemBackgroundConverter;
-									binding.Bindings.Add(new Binding() { Path = isSelectedValuePropertyName });
-									binding.Bindings.Add(new Binding()
+									binding.Bindings.Add(new Binding { Path = isSelectedValuePropertyName });
+									binding.Bindings.Add(new Binding
 									{ 
 										Path = nameof(ListBoxItem.IsSelected), 
 										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
 									});
-									binding.Bindings.Add(new Binding()
+									binding.Bindings.Add(new Binding
 									{ 
 										Path = nameof(ListBoxItem.IsPointerOver), 
 										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
@@ -1757,11 +1758,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					new Border().Also(it =>
 					{
-						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.Bind(Border.BackgroundProperty, new Binding { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
 						it.BorderBrush = colorIndicatorBorderBrush;
 						it.BorderThickness = colorIndicatorBorderThickness;
 						it.HorizontalAlignment = HorizontalAlignment.Left;
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorTip) });
+						it.Bind(ToolTip.TipProperty, new Binding { Path = nameof(DisplayableLog.ColorIndicatorTip) });
 						it.Width = colorIndicatorWidth;
 						itemPanel.Children.Add(it);
 					});
@@ -1804,12 +1805,12 @@ namespace CarinaStudio.ULogViewer.Controls
 						panel.Children.Add(emptyMarker);
 						panel.Children.Add(new Border().Also(border =>
 						{
-							border.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.MarkedColor), Converter = Converters.MarkColorToIndicatorConverter.Default });
+							border.Bind(Border.BackgroundProperty, new Binding { Path = nameof(DisplayableLog.MarkedColor), Converter = Converters.MarkColorToIndicatorConverter.Default });
 							border.BorderBrush = iconBrush;
 							border.BorderThickness = markIndicatorBorderThickness;
 							border.CornerRadius = markIndicatorCornerRadius;
 							border.Height = markIndicatorSize;
-							border.Bind(IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.IsMarked) });
+							border.Bind(IsVisibleProperty, new Binding { Path = nameof(DisplayableLog.IsMarked) });
 							border.Margin = markIndicatorMargin;
 							border.VerticalAlignment = VerticalAlignment.Center;
 							border.Width = markIndicatorSize;
@@ -1880,8 +1881,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							var isLeftPointerDown = false;
 							background.Background = Brushes.Transparent;
-							background.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
-							background.Bind(IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
+							background.Cursor = new Cursor(StandardCursorType.Hand);
+							background.Bind(IsVisibleProperty, new Binding { Path = nameof(DisplayableLog.HasAnalysisResult) });
 							background.PointerPressed += (_, e) =>
 								isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
 							background.AddHandler(PointerReleasedEvent, (_, _) =>
@@ -1897,8 +1898,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						panel.Children.Add(new Avalonia.Controls.Image().Also(image =>
 						{
 							image.Classes.Add("Icon");
-							image.Bind(IsVisibleProperty, new Binding() { Path = nameof(DisplayableLog.HasAnalysisResult) });
-							image.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
+							image.Bind(IsVisibleProperty, new Binding { Path = nameof(DisplayableLog.HasAnalysisResult) });
+							image.Bind(Avalonia.Controls.Image.SourceProperty, new Binding { Path = nameof(DisplayableLog.AnalysisResultIndicatorIcon) });
 						}));
 					}));
 				}));
@@ -1948,7 +1949,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// complete
 				return new ControlTemplateResult(itemPanel, this.FindNameScope().AsNonNull());
 			});
-			return new DataTemplate()
+			return new DataTemplate
 			{
 				Content = itemTemplateContent,
 				DataType = typeof(DisplayableLog),
@@ -2000,18 +2001,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// build item template for marked log list box
-			var propertyInMarkedItem = Global.Run(() =>
-			{
-				return messageProperty
-					?? summaryProperty
-					?? titleProperty
-					?? sourceNameProperty
-					?? userNameProperty
-					?? userIdProperty
-					?? timestampStringProperty
-					?? timeSpanStringProperty
-					?? new DisplayableLogProperty(this.Application, nameof(DisplayableLog.LogId), null, null);
-			});
+			var propertyInMarkedItem = Global.Run(() => 
+				messageProperty
+	            ?? summaryProperty
+	            ?? titleProperty
+	            ?? sourceNameProperty
+	            ?? userNameProperty
+	            ?? userIdProperty
+	            ?? timestampStringProperty
+	            ?? timeSpanStringProperty
+	            ?? new DisplayableLogProperty(this.Application, nameof(DisplayableLog.LogId), null, null)
+			);
 			var app = (App)this.Application;
 			var colorIndicatorBorderBrush = app.FindResourceOrDefault<IBrush?>("Brush/WorkingArea.Panel.Background");
 			var colorIndicatorBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.ColorIndicator.Border");
@@ -2027,7 +2027,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				var itemPanel = new Panel();
 				new Border().Let(it =>
 				{
-					it.Bind(Border.BackgroundProperty, new Binding()
+					it.Bind(Border.BackgroundProperty, new Binding
 					{
 						Converter = Converters.MarkColorToBackgroundConverter.DefaultWithoutDefaultColor,
 						Path = nameof(DisplayableLog.MarkedColor),
@@ -2037,8 +2037,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				new Avalonia.Controls.TextBlock().Let(it =>
 				{
 					// empty view to reserve height of item
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					it.Margin = itemPadding;
 					it.Opacity = 0;
 					it.Text = " ";
@@ -2046,18 +2046,22 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				var propertyView = new Avalonia.Controls.TextBlock().Also(it =>
 				{
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding() { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding() { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					if (propertyInMarkedItem.ForegroundColor == LogPropertyForegroundColor.Level)
-						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelForegroundBrush) });
-					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding() { Path = propertyInMarkedItem.Name });
+						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
+					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
+					{
+						Mode = propertyInMarkedItem.Name.EndsWith("String") ? BindingMode.OneWay : BindingMode.OneTime,
+						Path = propertyInMarkedItem.Name,
+					});
 					it.Margin = itemPadding;
 					it.MaxLines = 1;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
 					it.TextWrapping = TextWrapping.NoWrap;
 					it.VerticalAlignment = VerticalAlignment.Top;
 					if (timestampStringProperty != null)
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = timestampStringProperty.Name });
+						it.Bind(ToolTip.TipProperty, new Binding { Path = timestampStringProperty.Name });
 				});
 				itemPanel.Children.Add(propertyView);
 				itemPanel.Children.Add(new Border().Also(border =>
@@ -2065,7 +2069,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.BorderBrush = itemBorderBrush;
 					border.BorderThickness = itemBorderThickness;
 					border.CornerRadius = itemCornerRadius;
-					border.Bind(Border.IsVisibleProperty, new Binding()
+					border.Bind(Border.IsVisibleProperty, new Binding
 					{
 						RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
 						Path = nameof(ListBoxItem.IsSelected)
@@ -2077,18 +2081,18 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					new Border().Also(it =>
 					{
-						it.Bind(Border.BackgroundProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
+						it.Bind(Border.BackgroundProperty, new Binding { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
 						it.BorderBrush = colorIndicatorBorderBrush;
 						it.BorderThickness = colorIndicatorBorderThickness;
 						it.HorizontalAlignment = HorizontalAlignment.Left;
-						it.Bind(ToolTip.TipProperty, new Binding() { Path = nameof(DisplayableLog.ColorIndicatorTip) });
+						it.Bind(ToolTip.TipProperty, new Binding { Path = nameof(DisplayableLog.ColorIndicatorTip) });
 						it.Width = colorIndicatorWidth;
 						itemPanel.Children.Add(it);
 					});
 				}
 				return new ControlTemplateResult(itemPanel, this.FindNameScope().AsNonNull());
 			});
-			return new DataTemplate()
+			return new DataTemplate
 			{
 				Content = itemTemplateContent,
 				DataType = typeof(DisplayableLog),

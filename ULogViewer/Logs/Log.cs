@@ -84,6 +84,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
+		readonly ushort memorySize;
 		readonly byte[] propertyValueIndices;
 		readonly object?[] propertyValues;
 
@@ -140,7 +141,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			// calculate memory size
-			this.MemorySize = baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length);
+			this.memorySize = (ushort)(baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length));
 		}
 
 
@@ -420,7 +421,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get size of memory usage by the instance in bytes.
 		/// </summary>
-		public long MemorySize { get; }
+		public long MemorySize => this.memorySize;
 
 
 		/// <summary>
