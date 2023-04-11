@@ -27,7 +27,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	{
 		// Static fields.
 		static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
-		static int nextId = 1;
+		static long nextId = 1;
 
 
 		// Fields.
@@ -349,7 +349,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get unique ID of this <see cref="LogReader"/> instance.
 		/// </summary>
-		public int Id { get; }
+		public long Id { get; }
 
 
 		/// <summary>

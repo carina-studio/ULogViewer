@@ -34,7 +34,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Static fields.
 		static readonly long BaseMemorySize = Memory.EstimateInstanceSize<DisplayableLogGroup>();
 		static Regex? ExtraCaptureRegex;
-		static int NextId = 1;
+		static readonly SortedList<uint, DisplayableLogGroup> InstancesById = new();
+		static uint NextId = 1;
 		static Regex? TextFilterBracketAndSeparatorRegex;
 
 
@@ -67,7 +68,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public DisplayableLogGroup(LogProfile profile)
 		{
 			// get ID
-			this.Id = NextId++;
+			uint id;
+			do
+			{
+				id = unchecked(NextId++);
+				if (id == 0)
+					id = NextId++;
+			} while (InstancesById.TryGetValue(id, out _));
+			this.Id = id;
+			InstancesById.Add(id, this);
 
 			// start watch
 			var app = profile.Application;
@@ -293,6 +302,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
+			// remove from ID table
+			if (disposing)
+			{
+				this.VerifyAccess();
+				InstancesById.Remove(this.Id);
+			}
+			else
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					if (InstancesById.TryGetValue(this.Id, out var instance) && ReferenceEquals(this, instance))
+						InstancesById.Remove(this.Id);
+				});
+			}
+			
 			// ignore managed resources
 			if (!disposing)
 				return;
@@ -458,7 +482,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get unique ID of group.
 		/// </summary>
-		public int Id { get; }
+		public uint Id { get; }
 
 
 		/// <summary>
@@ -476,7 +500,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get maximum line count to display for each log.
 		/// </summary>
-		public int MaxDisplayLineCount { get => this.maxDisplayLineCount; }
+		public int MaxDisplayLineCount => this.maxDisplayLineCount;
 
 
 		/// <summary>
@@ -488,7 +512,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of memory usage by the group in bytes.
 		/// </summary>
-		public long MemorySize { get => this.memorySize; }
+		public long MemorySize => this.memorySize;
 
 
 		/// <summary>
@@ -733,6 +757,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			$"{nameof(DisplayableLogGroup)}-{this.Id}";
 
 
+		/// <summary>
+		/// Try getting instance of <see cref="DisplayableLogGroup"/> by its ID.
+		/// </summary>
+		/// <param name="id">ID.</param>
+		/// <param name="group"><see cref="DisplayableLogGroup"/> with given ID or Null if instance cannot be found.</param>
+		/// <returns>True if instance found.</returns>
+		internal static bool TryGetInstanceById(uint id, [NotNullWhen(true)] out DisplayableLogGroup? group) =>
+			InstancesById.TryGetValue(id, out group);
+
+
 		// Update color indicator brushes.
 		void UpdateColorIndicatorBrushes()
 		{
@@ -797,7 +831,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Interface implementations.
 		public bool CheckAccess() => this.Application.CheckAccess();
-		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
-		public SynchronizationContext SynchronizationContext { get => this.Application.SynchronizationContext; }
+		CarinaStudio.IApplication IApplicationObject.Application => this.Application;
+		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
 	}
 }

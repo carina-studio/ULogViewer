@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Data.Converters;
@@ -40,6 +41,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		DisplayableLogAnalysisResultType activeAnalysisResultType;
 		IList<DisplayableLogAnalysisResult> analysisResults = emptyAnalysisResults;
 		readonly byte[] extraLineCount;
+		readonly uint groupId;
 		byte isDisposed;
 		MarkColor markedColor;
 		ushort memorySize;
@@ -56,7 +58,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
 			// setup properties
-			this.Group = group;
+			this.groupId = group.Id;
 			this.Log = log;
 			this.LogReader = reader;
 
@@ -116,15 +118,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update memory usage
 			this.memorySize = (ushort)Math.Min(ushort.MaxValue, this.memorySize + memorySizeDiff);
-			this.Group.OnAnalysisResultAdded(this);
-			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			{
+				group.OnAnalysisResultAdded(this);
+				group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+			}
 		}
 
 
 		/// <summary>
 		/// Get icon for analysis result indicator.
 		/// </summary>
-		public IImage? AnalysisResultIndicatorIcon => this.Group.GetAnalysisResultIndicatorIcon(this.activeAnalysisResultType);
+		public IImage? AnalysisResultIndicatorIcon => 
+			this.GroupOrNull?.GetAnalysisResultIndicatorIcon(this.activeAnalysisResultType);
 
 
 		/// <summary>
@@ -136,7 +142,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IULogViewerApplication Application => this.Group.Application;
+		public IULogViewerApplication Application =>
+			this.GroupOrNull?.Application
+			?? AppSuiteApplication.CurrentOrNull as IULogViewerApplication
+			?? throw new InvalidOperationException();
 
 
 		/// <summary>
@@ -197,19 +206,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Check whether extra line of ExtraX exist or not.
-		bool CheckExtraLinesOfExtra(int index) => this.GetExtraLineCount(index) > this.Group.MaxDisplayLineCount;
+		bool CheckExtraLinesOfExtra(int index) => this.GetExtraLineCount(index) > this.GroupOrNull?.MaxDisplayLineCount;
 
 
 		/// <summary>
 		/// Get <see cref="IBrush"/> of color indicator.
 		/// </summary>
-		public IBrush? ColorIndicatorBrush => this.Group.GetColorIndicatorBrush(this);
+		public IBrush? ColorIndicatorBrush => this.GroupOrNull?.GetColorIndicatorBrush(this);
 
 
 		/// <summary>
 		/// Get tip text for color indicator.
 		/// </summary>
-		public string? ColorIndicatorTip => this.Group.GetColorIndicatorTip(this);
+		public string? ColorIndicatorTip => this.GroupOrNull?.GetColorIndicatorTip(this);
 
 
 		/// <summary>
@@ -338,7 +347,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (this.isDisposed != 0)
 				return;
 			this.isDisposed = 1;
-			this.Group.OnDisplayableLogDisposed(this);
+			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+				group.OnDisplayableLogDisposed(this);
 		}
 
 
@@ -505,7 +515,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return string.Empty;
 			try
 			{
-				var format = this.Group.LogProfile.TimeSpanFormatForDisplaying;
+				var format = this.GroupOrNull?.LogProfile.TimeSpanFormatForDisplaying;
 				if (format != null)
 					return timeSpan.Value.ToString(format);
 				return timeSpan.Value.ToString();
@@ -523,7 +533,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var s = this.FormatTimeSpan(timeSpan);
 			if (s.Length == 0)
 				return CompressedString.Empty;
-			var level = this.Group.MemoryUsagePolicy switch
+			var level = this.GroupOrNull?.MemoryUsagePolicy switch
 			{
 				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
 				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
@@ -540,7 +550,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return string.Empty;
 			try
 			{
-				var format = this.Group.LogProfile.TimestampFormatForDisplaying;
+				var format = this.GroupOrNull?.LogProfile.TimestampFormatForDisplaying;
 				if (format != null)
 					return timestamp.Value.ToString(format);
 				return timestamp.Value.ToString();
@@ -558,7 +568,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var s = this.FormatTimestamp(timestamp);
 			if (s.Length == 0)
 				return CompressedString.Empty;
-			var level = this.Group.MemoryUsagePolicy switch
+			var level = this.GroupOrNull?.MemoryUsagePolicy switch
 			{
 				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
 				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
@@ -582,7 +592,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get <see cref="DisplayableLogGroup"/> which the instance belongs to.
 		/// </summary>
-		public DisplayableLogGroup Group { get; }
+		public DisplayableLogGroup? GroupOrNull =>
+			DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group)
+				? group
+				: null;
 
 
 		/// <summary>
@@ -663,13 +676,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether number of lines in <see cref="Message"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfMessage => this.MessageLineCount > this.Group.MaxDisplayLineCount;
+		public bool HasExtraLinesOfMessage => this.MessageLineCount > this.GroupOrNull?.MaxDisplayLineCount;
 
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Summary"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
-		public bool HasExtraLinesOfSummary => this.SummaryLineCount > this.Group.MaxDisplayLineCount;
+		public bool HasExtraLinesOfSummary => this.SummaryLineCount > this.GroupOrNull?.MaxDisplayLineCount;
 
 
 		/// <summary>
@@ -730,16 +743,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether process ID of log has been selected by user or not.
 		/// </summary>
 		public bool IsProcessIdSelected =>
-			this.Log.ProcessId.Let(it =>
-				it.HasValue && it.Value == this.Group.SelectedProcessId);
+			this.GroupOrNull?.Let(group =>
+			{
+				return this.Log.ProcessId.Let(it =>
+					it.HasValue && it.Value == group.SelectedProcessId);
+			}) ?? false;
+			
 
 
 		/// <summary>
 		/// Check whether thread ID of log has been selected by user or not.
 		/// </summary>
 		public bool IsThreadIdSelected =>
-			this.Log.ThreadId.Let(it =>
-				it.HasValue && it.Value == this.Group.SelectedThreadId);
+			this.GroupOrNull?.Let(group =>
+			{
+				return this.Log.ThreadId.Let(it =>
+					it.HasValue && it.Value == group.SelectedThreadId);
+			}) ?? false;
 
 
 		/// <summary>
@@ -751,19 +771,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get foreground <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelBackgroundBrush => this.Group.GetLevelBackgroundBrush(this);
+		public IBrush? LevelBackgroundBrush => this.GroupOrNull?.GetLevelBackgroundBrush(this);
 
 
 		/// <summary>
 		/// Get foreground <see cref="IBrush"/> according to level of log.
 		/// </summary>
-		public IBrush LevelForegroundBrush => this.Group.GetLevelForegroundBrush(this);
+		public IBrush? LevelForegroundBrush => this.GroupOrNull?.GetLevelForegroundBrush(this);
 
 
 		/// <summary>
 		/// Get foreground <see cref="IBrush"/> for pointer-over according to level of log.
 		/// </summary>
-		public IBrush LevelForegroundBrushForPointerOver => this.Group.GetLevelForegroundBrush(this, "PointerOver");
+		public IBrush? LevelForegroundBrushForPointerOver => this.GroupOrNull?.GetLevelForegroundBrush(this, "PointerOver");
 
 
 		/// <summary>
@@ -774,11 +794,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get
 			{
 				var level = this.Log.Level;
-				if (level == LogLevel.Undefined)
+				if (level == LogLevel.Undefined || !DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
 					return "";
-				if (this.Group.LevelMapForDisplaying.TryGetValue(level, out var s))
+				if (group.LevelMapForDisplaying.TryGetValue(level, out var s))
 					return s;
-				var propertyName = this.Group.LogProfile.RawLogLevelPropertyName;
+				var propertyName = group.LogProfile.RawLogLevelPropertyName;
 				if (propertyName != nameof(Level) && this.TryGetProperty(propertyName, out s) && s != null)
 					return s;
 				levelConverter ??= new(this.Application, typeof(LogLevel));
@@ -1086,8 +1106,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update memory usage
 			this.memorySize = (ushort)Math.Max(0, this.memorySize + memorySizeDiff);
-			this.Group.OnAnalysisResultRemoved(this);
-			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			{
+				group.OnAnalysisResultRemoved(this);
+				group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+			}
 		}
 
 
@@ -1166,8 +1189,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update memory usage
 			this.memorySize = (ushort)Math.Max(0, this.memorySize + memorySizeDiff);
-			this.Group.OnAnalysisResultRemoved(this);
-			this.Group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			{
+				group.OnAnalysisResultRemoved(this);
+				group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
+			}
 		}
 
 
@@ -1256,7 +1282,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get definition set of text highlighting.
 		/// </summary>
-		public SyntaxHighlightingDefinitionSet TextHighlightingDefinitionSet => this.Group.TextHighlightingDefinitionSet;
+		public SyntaxHighlightingDefinitionSet? TextHighlightingDefinitionSet => this.GroupOrNull?.TextHighlightingDefinitionSet;
 
 
 		/// <summary>

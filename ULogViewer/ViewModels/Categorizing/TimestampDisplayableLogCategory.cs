@@ -104,7 +104,7 @@ class TimestampDisplayableLogCategory : DisplayableLogCategory
     /// <inheritdoc/>
     protected override string OnUpdateName()
     {
-        var format = this.Log?.Group.LogProfile.TimestampFormatForDisplaying?.Let((Func<string, string>)this.GetTimestampFormat);
+        var format = this.Log?.GroupOrNull?.LogProfile.TimestampFormatForDisplaying?.Let((Func<string, string>)this.GetTimestampFormat);
         if (format != null)
             return this.Timestamp.ToString(format);
         return this.Granularity switch

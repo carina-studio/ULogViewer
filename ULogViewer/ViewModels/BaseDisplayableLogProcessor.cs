@@ -785,21 +785,23 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.OnPropertyChanged(nameof(Progress));
 
         // attach to log profile
-        var group = this.unprocessedLogs[0].Group;
-        var profile = group.LogProfile;
+        var group = this.unprocessedLogs[0].GroupOrNull;
+        var profile = group?.LogProfile;
         if (group != this.attachedLogGroup)
         {
             if (this.attachedLogGroup != null)
                 this.OnDetachFromLogGroup(this.attachedLogGroup);
             this.attachedLogGroup = group;
-            this.OnAttachToLogGroup(group);
+            if (group is not null)
+                this.OnAttachToLogGroup(group);
         }
-        if (profile != this.attachedLogProfile)
+        if (!ReferenceEquals(profile, this.attachedLogProfile))
         {
             if (this.attachedLogProfile != null)
                 this.OnDetachFromLogProfile(this.attachedLogProfile);
             this.attachedLogProfile = profile;
-            this.OnAttachToLogProfile(profile);
+            if (profile is not null)
+                this.OnAttachToLogProfile(profile);
         }
 
         // start processing
