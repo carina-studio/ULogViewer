@@ -695,6 +695,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Check whether the value of given property of log is frozen or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if value of property of log is frozen.</returns>
+		public static bool HasFrozenProperty(string propertyName) =>
+			HasProperty(propertyName) && !propertyName.EndsWith("String");
+
+
+		/// <summary>
 		/// Check whether given property of log with <see cref="Int64"/> value is existing or not.
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>

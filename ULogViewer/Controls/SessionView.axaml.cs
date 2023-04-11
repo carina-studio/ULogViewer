@@ -1634,12 +1634,34 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
-							it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding().Also(binding =>
+							if (logProperty.Name == nameof(DisplayableLog.Level))
 							{
-								if (logProperty.Name == nameof(DisplayableLog.Level))
-									binding.Converter = Converters.EnumConverters.LogLevel;
-								binding.Path = logProperty.Name;
-							}));
+								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
+								{
+									Converter = Converters.EnumConverters.LogLevel,
+									Path = logProperty.Name,
+								});
+							}
+							else if (DisplayableLog.HasFrozenProperty(logProperty.Name))
+							{
+								it.DataContextChanged += (_, _) =>
+								{
+									if (it.DataContext is DisplayableLog log
+									    && log.TryGetProperty<object?>(logProperty.Name, out var value))
+									{
+										it.Text = value?.ToString();
+									}
+									else
+										it.Text = null;
+								};
+							}
+							else
+							{
+								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
+								{
+									Path = logProperty.Name,
+								});
+							}
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
@@ -2049,10 +2071,26 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					if (propertyInMarkedItem.ForegroundColor == LogPropertyForegroundColor.Level)
 						it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
-					it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
+					if (DisplayableLog.HasFrozenProperty(propertyInMarkedItem.Name))
 					{
-						Path = propertyInMarkedItem.Name,
-					});
+						it.DataContextChanged += (_, _) =>
+						{
+							if (it.DataContext is DisplayableLog log
+							    && log.TryGetProperty<object?>(propertyInMarkedItem.Name, out var value))
+							{
+								it.Text = value?.ToString();
+							}
+							else
+								it.Text = null;
+						};
+					}
+					else
+					{
+						it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
+                        {
+                        	Path = propertyInMarkedItem.Name,
+                        });
+					}
 					it.Margin = itemPadding;
 					it.MaxLines = 1;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
