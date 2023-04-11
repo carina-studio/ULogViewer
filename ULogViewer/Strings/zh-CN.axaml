@@ -494,7 +494,7 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">当使用此日志类型时将自动运行此日志分析脚本。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有的日志分析脚本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">从文件导入…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">资料来源</sys:String>
@@ -506,7 +506,7 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以将内嵌日志资料来源脚本设为此日志类型的「资料来源」。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">导入现有的日志资料来源脚本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">导入现有脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">从文件导入…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式说明</sys:String>

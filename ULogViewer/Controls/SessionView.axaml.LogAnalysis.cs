@@ -394,6 +394,114 @@ partial class SessionView
     /// Command to export given operation duration analysis rule set.
     /// </summary>
     public ICommand ExportOperationDurationAnalysisRuleSetCommand { get; }
+    
+    
+    /// <summary>
+    /// Import cooperative log analysis script from file.
+    /// </summary>
+    public async void ImportCooperativeLogAnalysisScriptFromFile()
+    {
+        // select file
+        if (this.attachedWindow is null 
+            || this.DataContext is not Session session
+            || !session.IsProVersionActivated)
+        {
+            return;
+        }
+        var profile = session.LogProfile;
+        if (profile is null)
+            return;
+        var fileName = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
+        {
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+                {
+                    Patterns = new[] { "*.json" }
+                }
+            }
+        })).Let(it =>
+        {
+            if (it.Count == 1 && it[0].TryGetUri(out var uri))
+                return uri.LocalPath;
+            return null;
+        });
+        if (string.IsNullOrEmpty(fileName) 
+            || this.attachedWindow is null 
+            || this.DataContext != session 
+            || !ReferenceEquals(session.LogProfile, profile))
+        {
+            return;
+        }
+
+        // try loading script set
+        var scriptSet = await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName));
+        if (scriptSet == null)
+        {
+            _ = new MessageDialog()
+            {
+                Icon = MessageDialogIcon.Error,
+                Message = new FormattedString().Also(it =>
+                {
+                    it.Arg1 = fileName;
+                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToImportLogAnalysisRuleSet"));
+                }),
+            }.ShowDialog(this.attachedWindow);
+            return;
+        }
+
+        // edit script set and replace
+        scriptSet = await new LogAnalysisScriptSetEditorDialog()
+        {
+            IsEmbeddedScriptSet = true,
+            ScriptSetToEdit = scriptSet,
+        }.ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
+        if (scriptSet is not null 
+            && this.DataContext == session 
+            && ReferenceEquals(session.LogProfile, profile))
+        {
+            profile.CooperativeLogAnalysisScriptSet = scriptSet;
+        }
+    }
+    
+    
+    /// <summary>
+    /// Import existing cooperative log analysis script.
+    /// </summary>
+    public async void ImportExistingCooperativeLogAnalysisScript()
+    {
+        // select script set
+        if (this.attachedWindow is null 
+            || this.DataContext is not Session session
+            || !session.IsProVersionActivated)
+        {
+            return;
+        }
+        var profile = session.LogProfile;
+        if (profile is null)
+            return;
+        var scriptSet = await new LogAnalysisScriptSetSelectionDialog().ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
+        if (scriptSet is null
+            || this.attachedWindow == null
+            || this.DataContext != session
+            || !ReferenceEquals(session.LogProfile, profile))
+        {
+            return;
+        }
+
+        // edit script set and replace
+        scriptSet = await new LogAnalysisScriptSetEditorDialog()
+        {
+            IsEmbeddedScriptSet = true,
+            ScriptSetToEdit = new(scriptSet, ""),
+        }.ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
+        if (scriptSet is not null
+            && this.DataContext == session
+            && ReferenceEquals(session.LogProfile, profile))
+        {
+            profile.CooperativeLogAnalysisScriptSet = scriptSet;
+        }
+    }
 
 
     /// <summary>
@@ -469,8 +577,8 @@ partial class SessionView
     // Get or set whether scrolling to latest log analysis result is needed or not.
     public bool IsScrollingToLatestLogAnalysisResultNeeded
     {
-        get => this.GetValue<bool>(IsScrollingToLatestLogAnalysisResultNeededProperty);
-        set => this.SetValue<bool>(IsScrollingToLatestLogAnalysisResultNeededProperty, value);
+        get => this.GetValue(IsScrollingToLatestLogAnalysisResultNeededProperty);
+        set => this.SetValue(IsScrollingToLatestLogAnalysisResultNeededProperty, value);
     }
 
 
@@ -541,7 +649,7 @@ partial class SessionView
     // Called when pointer released on log analysis result list box.
     void OnLogAnalysisResultListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left)
+        if (e.InitialPressMouseButton == MouseButton.Left)
             this.isPointerPressedOnLogAnalysisResultListBox = false;
     }
 
@@ -557,10 +665,10 @@ partial class SessionView
     void OnLogAnalysisResultListBoxScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
         if (this.isPointerPressedOnLogAnalysisResultListBox 
-            || this.pressedKeys.Contains(Avalonia.Input.Key.Down)
-            || this.pressedKeys.Contains(Avalonia.Input.Key.Up)
-            || this.pressedKeys.Contains(Avalonia.Input.Key.Home)
-            || this.pressedKeys.Contains(Avalonia.Input.Key.End))
+            || this.pressedKeys.Contains(Key.Down)
+            || this.pressedKeys.Contains(Key.Up)
+            || this.pressedKeys.Contains(Key.Home)
+            || this.pressedKeys.Contains(Key.End))
         {
             this.UpdateIsScrollingToLatestLogAnalysisResultNeeded(e.OffsetDelta.Y);
         }
@@ -607,7 +715,7 @@ partial class SessionView
                 // focus on log
                 if (log != null && (forceReSelection || !isLogSelected))
                 {
-                    log.Let(new Func<DisplayableLog, Task>(async (log) =>
+                    log.Let(new Func<DisplayableLog, Task>(async log =>
                     {
                         // show all logs if needed
                         if (!session.Logs.Contains(log))
@@ -904,6 +1012,35 @@ partial class SessionView
     public void OpenLogAnalysisDocumentation() =>
         Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis");
 #pragma warning restore CA1822
+    
+    
+    /// <summary>
+    /// Remove cooperative log analysis script.
+    /// </summary>
+    public async void RemoveCooperativeLogAnalysisScript()
+    {
+        if (this.attachedWindow == null
+            || this.DataContext is not Session session)
+        {
+            return;
+        }
+        var profile = session.LogProfile;
+        if (profile is null)
+            return;
+        var result = await new MessageDialog()
+        {
+            Buttons = MessageDialogButtons.YesNo,
+            DefaultResult = MessageDialogResult.No,
+            Icon = MessageDialogIcon.Question,
+            Message = this.Application.GetObservableString("LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion"),
+        }.ShowDialog(this.attachedWindow);
+        if (result == MessageDialogResult.Yes
+            && this.DataContext == session
+            && ReferenceEquals(session.LogProfile, profile))
+        {
+            profile.CooperativeLogAnalysisScriptSet = null;
+        }
+    }
 
 
     // Remove given key log analysis rule set.
