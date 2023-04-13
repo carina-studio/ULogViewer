@@ -75,6 +75,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
         this.analysisScript = template.analysisScript;
         this.icon = template.icon;
         this.iconColor = template.iconColor;
+        this.isContextualBased = template.isContextualBased;
         this.Name = name;
         this.setupScript = template.setupScript;
     }
@@ -106,11 +107,12 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
 
     /// <inheritdoc/>
     public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
-        object.ReferenceEquals(this, profile)
+        ReferenceEquals(this, profile)
         || (profile is LogAnalysisScriptSet scriptSet
             && scriptSet.analysisScript == this.analysisScript
             && scriptSet.icon == this.icon
             && scriptSet.iconColor == this.iconColor
+            && scriptSet.isContextualBased == this.isContextualBased
             && scriptSet.Name == this.Name
             && scriptSet.setupScript == this.setupScript);
 
