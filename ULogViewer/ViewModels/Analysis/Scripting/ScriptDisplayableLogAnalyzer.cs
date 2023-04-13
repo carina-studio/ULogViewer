@@ -24,6 +24,7 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
 
     // Fields.
     readonly List<LogAnalysisScriptSet> attachedScriptSets = new();
+    bool isContextualBased;
     bool isCooperativeLogAnalysis;
     readonly ObservableList<DisplayableLogProperty> logProperties = new();
     readonly ObservableList<LogAnalysisScriptSet> scriptSets = new();
@@ -67,7 +68,7 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
 
 
     /// <inheritdoc/>
-    protected override bool IsContextualBased => true;
+    protected override bool IsContextualBased => this.isContextualBased;
 
 
     /// <inheritdoc/>
@@ -116,6 +117,7 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     // Called when list of script sets changed.
     void OnScriptSetsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        // attach/detach to/from script sets
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
@@ -159,6 +161,24 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
             default:
                 throw new NotSupportedException("Unsupported change of script sets.");
         }
+        
+        // check analysis type
+        var isContextualBased = false;
+        foreach (var scriptSet in this.scriptSets)
+        {
+            if (scriptSet.IsContextualBased)
+            {
+                isContextualBased = true;
+                break;
+            }
+        }
+        if (this.isContextualBased != isContextualBased)
+        {
+            this.isContextualBased = isContextualBased;
+            this.OnPropertyChanged(nameof(IsContextualBased));
+        }
+        
+        // restart analysis if needed
         this.InvalidateProcessing();
     }
 

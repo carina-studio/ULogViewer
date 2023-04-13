@@ -44,6 +44,7 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
     IScript? analysisScript;
     LogProfileIcon icon = LogProfileIcon.Analysis;
     LogProfileIconColor iconColor = LogProfileIconColor.Default;
+    bool isContextualBased = true;
     IScript? setupScript;
 
 
@@ -146,6 +147,24 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
                 return;
             this.iconColor = value;
             this.OnPropertyChanged(nameof(IconColor));
+        }
+    }
+
+
+    /// <summary>
+    /// Get or set whether the analysis is contextual-based or not.
+    /// </summary>
+    public bool IsContextualBased
+    {
+        get => this.isContextualBased;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyBuiltIn();
+            if (this.isContextualBased == value)
+                return;
+            this.isContextualBased = value;
+            this.OnPropertyChanged(nameof(IsContextualBased));
         }
     }
 

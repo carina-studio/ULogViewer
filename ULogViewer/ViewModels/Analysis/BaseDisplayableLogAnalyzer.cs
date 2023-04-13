@@ -170,6 +170,15 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
 
 
     /// <inheritdoc/>
+    protected override void OnPropertyChanged(string propertyName)
+    {
+        base.OnPropertyChanged(propertyName);
+        if (propertyName == nameof(IsContextualBased) && this.IsContextualBased)
+            this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
+    }
+
+
+    /// <inheritdoc/>
     protected override void OnSourceLogsChanged(NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
