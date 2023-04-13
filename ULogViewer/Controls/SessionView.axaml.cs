@@ -1030,8 +1030,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnMarkedLogsChanged);
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
-			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
-				it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
+			session.LogFiltering.Let(it =>
+			{
+				it.PropertyChanged += this.OnLogFilteringPropertyChanged;
+				(it.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
+					it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
+			});
 			this.AttachToLogAnalysis(session.LogAnalysis);
 			
 			// attach to properties
@@ -2155,8 +2159,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnMarkedLogsChanged);
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
-			(session.LogFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
-				it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
+			session.LogFiltering.Let(it =>
+			{
+				it.PropertyChanged -= this.OnLogFilteringPropertyChanged;
+				(it.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
+					it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
+			});
 			this.DetachFromLogAnalysis(session.LogAnalysis);
 
 			// remove log analysis results
@@ -3815,18 +3823,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					break;
 				case nameof(Session.Logs):
-					// prepare scrolling to log around current position
-					if (!this.IsScrollingToLatestLogNeeded)
-					{
-						this.targetLogRangeToScrollTo = this.latestDisplayedLogRange?.Clone() as DisplayableLog[];
-						this.targetMarkedLogsToScrollTo.Clear();
-						this.targetMarkedLogsToScrollTo.AddRange(this.latestDisplayedMarkedLogs);
-						if (this.targetLogRangeToScrollTo != null)
-						{
-							this.Logger.LogTrace("Setup target range of log to scroll to, marked log(s): {count}", this.targetMarkedLogsToScrollTo.Count);
-							this.SetValue(IsScrollingToTargetLogRangeProperty, true);
-						}
-					}
+					// start scrolling to log around current position
+					this.StartKeepingCurrentDisplayedLogRange();
 
 					// update time and selection info
 					this.SynchronizationContext.Post(() =>
@@ -4889,6 +4887,23 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
 			});
 			this.SetAndRaise(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
+		}
+		
+		
+		// Keep current displayed log range.
+		void StartKeepingCurrentDisplayedLogRange()
+		{
+			if (!this.IsScrollingToLatestLogNeeded)
+			{
+				this.targetLogRangeToScrollTo = this.latestDisplayedLogRange?.Clone() as DisplayableLog[];
+				this.targetMarkedLogsToScrollTo.Clear();
+				this.targetMarkedLogsToScrollTo.AddRange(this.latestDisplayedMarkedLogs);
+				if (this.targetLogRangeToScrollTo != null)
+				{
+					this.Logger.LogTrace("Setup target range of log to scroll to, marked log(s): {count}", this.targetMarkedLogsToScrollTo.Count);
+					this.SetValue(IsScrollingToTargetLogRangeProperty, true);
+				}
+			}
 		}
 
 

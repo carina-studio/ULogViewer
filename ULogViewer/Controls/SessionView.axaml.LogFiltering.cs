@@ -210,6 +210,22 @@ partial class SessionView
     public ICommand EditPredefinedLogTextFilterCommand { get; }
 
 
+    // Called when property of log filtering view-model changed.
+    void OnLogFilteringPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(LogFilteringViewModel.IsFiltering):
+                if ((sender as LogFilteringViewModel)?.IsFiltering == true)
+                {
+                    // start scrolling to log around current position
+                    this.StartKeepingCurrentDisplayedLogRange();
+                }
+                break;
+        }
+    }
+
+
     // Called when selection of list box of predefined log text filter has been changed.
     void OnPredefinedLogTextFilterListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
