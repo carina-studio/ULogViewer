@@ -34,6 +34,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	// Fields.
 	bool areValidParameters;
 	readonly ScheduledAction completeSettingInitSizeAction;
+	readonly ToggleSwitch contextBasedToggleSwitch;
 	Size? expectedInitSize;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
@@ -74,6 +75,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			this.initWidthObserverToken!.Dispose();
 			this.OnInitialSizeSet();
 		});
+		this.contextBasedToggleSwitch = this.Get<ToggleSwitch>(nameof(contextBasedToggleSwitch));
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
 		this.initBoundsObserverToken = this.GetObservable(BoundsProperty).Subscribe(bounds =>
@@ -119,6 +121,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
 		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 		scriptSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
+		scriptSet.IsContextualBased = this.contextBasedToggleSwitch.IsChecked.GetValueOrDefault();
 		if (!this.IsEmbeddedScriptSet && !LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
 		{
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
@@ -269,10 +272,12 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 				this.iconComboBox.SelectedItem = scriptSet.Icon;
 				this.nameTextBox.Text = scriptSet.Name;
 			}
+			this.contextBasedToggleSwitch.IsChecked = scriptSet.IsContextualBased;
 		}
 		else
 		{
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+			this.contextBasedToggleSwitch.IsChecked = true;
 		}
 
 		// setup initial focus

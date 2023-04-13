@@ -35,33 +35,48 @@
 		<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
-				<!-- Name and Icon -->
-				<Border Classes="Dialog_ItemsGroup_Container" IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
+				<!-- Common -->
+				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>
+				
+						<!-- Name and Icon -->
+						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
+							
+							<!-- Name -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
+								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Name -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
-							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-						</Grid>
-						<Separator Classes="Dialog_Item_Separator"/>
+							<!-- Icon -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
+								<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}" Grid.Column="1"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Icon -->
+							<!-- Icon color -->
+							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
+								<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
+							</Grid>
+							<Separator Classes="Dialog_Item_Separator"/>
+							
+						</StackPanel>
+
+						<!-- Contextual-based -->
 						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
-							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}" Grid.Column="1"/>
-						</Grid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Icon color -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
-							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description}"/>
+							</StackPanel>
+							<ToggleSwitch Name="contextBasedToggleSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 						</Grid>
 
 					</StackPanel>
 				</Border>
-				<Separator Classes="Dialog_Separator" IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}"/>
+				<Separator Classes="Dialog_Separator"/>
 
 				<!-- Scripts -->
 				<Border Classes="Dialog_ItemsGroup_Container">
