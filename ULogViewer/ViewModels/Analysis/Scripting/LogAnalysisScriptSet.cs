@@ -22,18 +22,18 @@ class LogAnalysisScriptSet : BaseProfile<IULogViewerApplication>, ILogProfileIco
     public static readonly ScriptOptions ScriptOptions = new()
     {
         ContextType = typeof(ILogAnalysisScriptContext),
-        ExtensionTypes = new HashSet<Type>()
+        ExtensionTypes = new HashSet<Type>
         {
             typeof(LogAnalysisScriptContextExtensions),
             typeof(LogExtensions),
         },
-        ImportedNamespaces = new HashSet<string>()
+        ImportedNamespaces = new HashSet<string>
         {
             "CarinaStudio.ULogViewer.Logs",
             "CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting",
             "System.Text.RegularExpressions",
         },
-        ReferencedAssemblies = new HashSet<Assembly>()
+        ReferencedAssemblies = new HashSet<Assembly>
         {
             Assembly.GetExecutingAssembly()
         },
@@ -276,7 +276,7 @@ public static class LogAnalysisScriptContextExtensions
 
 
 /// <summary>
-/// Interface for <see cref="LogAnalysisScript"/> to access log.
+/// Interface for <see cref="LogAnalysisScriptSet"/> to access log.
 /// </summary>
 public interface ILog
 {
@@ -368,6 +368,7 @@ public static class LogExtensions
 }
 
 
+// ReSharper disable UnusedMember.Global
 /// <summary>
 /// Result of analysis by script.
 /// </summary>
@@ -469,33 +470,70 @@ public enum ResultType
     /// <summary>
     /// Error.
     /// </summary>
-    Error = (int)DisplayableLogAnalysisResultType.Error,
+    Error = DisplayableLogAnalysisResultType.Error,
     /// <summary>
     /// Warning.
     /// </summary>
-    Warning = (int)DisplayableLogAnalysisResultType.Warning,
+    Warning = DisplayableLogAnalysisResultType.Warning,
     /// <summary>
     /// Start of operation.
     /// </summary>
-    OperationStart = (int)DisplayableLogAnalysisResultType.OperationStart,
+    OperationStart = DisplayableLogAnalysisResultType.OperationStart,
     /// <summary>
     /// End of operation.
     /// </summary>
-    OperationEnd = (int)DisplayableLogAnalysisResultType.OperationEnd,
+    OperationEnd = DisplayableLogAnalysisResultType.OperationEnd,
+    /// <summary>
+    /// Increase.
+    /// </summary>
+    Increase = DisplayableLogAnalysisResultType.Increase,
+    /// <summary>
+    /// Decrease.
+    /// </summary>
+    Decrease = DisplayableLogAnalysisResultType.Decrease,
+    /// <summary>
+    /// Steady.
+    /// </summary>
+    Steady = DisplayableLogAnalysisResultType.Steady,
+    /// <summary>
+    /// Fast.
+    /// </summary>
+    Fast = DisplayableLogAnalysisResultType.Fast,
+    /// <summary>
+    /// Slow.
+    /// </summary>
+    Slow = DisplayableLogAnalysisResultType.Slow,
     /// <summary>
     /// Checkpoint.
     /// </summary>
-    Checkpoint = (int)DisplayableLogAnalysisResultType.Checkpoint,
+    Checkpoint = DisplayableLogAnalysisResultType.Checkpoint,
     /// <summary>
     /// Time span.
     /// </summary>
-    TimeSpan = (int)DisplayableLogAnalysisResultType.TimeSpan,
+    TimeSpan = DisplayableLogAnalysisResultType.TimeSpan,
     /// <summary>
     /// Performance.
     /// </summary>
-    Performance = (int)DisplayableLogAnalysisResultType.Performance,
+    Performance = DisplayableLogAnalysisResultType.Performance,
+    /// <summary>
+    /// Frequency.
+    /// </summary>
+    Frequency = DisplayableLogAnalysisResultType.Frequency,
+    /// <summary>
+    /// Trend.
+    /// </summary>
+    Trend = DisplayableLogAnalysisResultType.Trend,
     /// <summary>
     /// Information.
     /// </summary>
-    Information = (int)DisplayableLogAnalysisResultType.Information,
+    Information = DisplayableLogAnalysisResultType.Information,
+    /// <summary>
+    /// Skipped operation.
+    /// </summary>
+    SkippedOperation = DisplayableLogAnalysisResultType.SkippedOperation,
+    /// <summary>
+    /// Debug.
+    /// </summary>
+    Debug = DisplayableLogAnalysisResultType.Debug,
 }
+// ReSharper restore UnusedMember.Global

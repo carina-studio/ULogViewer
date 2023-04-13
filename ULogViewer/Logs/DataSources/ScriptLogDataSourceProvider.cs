@@ -20,12 +20,12 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
     public static readonly ScriptOptions ScriptOptions = new()
     {
         ContextType = typeof(ILogDataSourceScriptContext),
-        ImportedNamespaces = new HashSet<string>()
+        ImportedNamespaces = new HashSet<string>
         {
             "CarinaStudio.ULogViewer.Logs.DataSources",
             "System.IO",
         },
-        ReferencedAssemblies = new HashSet<Assembly>()
+        ReferencedAssemblies = new HashSet<Assembly>
         {
             Assembly.GetExecutingAssembly(),
         },
@@ -135,7 +135,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
 
 
     /// <inheritdoc/>
-    string ILogDataSourceProvider.DisplayName { get => this.displayName ?? ""; }
+    string ILogDataSourceProvider.DisplayName => this.displayName ?? "";
 
 
 #pragma warning disable CA1816
@@ -146,7 +146,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
 
 
     /// <summary>
-    /// Load provifer from JSON data.
+    /// Load provider from JSON data.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="element">JSON element which contains information of provider.</param>
