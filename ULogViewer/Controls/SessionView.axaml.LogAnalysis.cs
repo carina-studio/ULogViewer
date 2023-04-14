@@ -144,7 +144,7 @@ partial class SessionView
     public void CreateLogAnalysisScriptSet()
     {
         if (this.attachedWindow != null)
-            LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, null);
+            LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, default(LogAnalysisScriptSet));
     }
 
 
@@ -240,6 +240,13 @@ partial class SessionView
     /// Command to edit given log analysis script set.
     /// </summary>
     public ICommand EditLogAnalysisScriptSetCommand { get; }
+    
+    
+#if DEBUG
+    // Edit given log analysis script set file.
+    internal void EditLogAnalysisScriptSetFile()
+    { }
+#endif
 
 
     // Edit given operation counting analysis rule set.
@@ -402,8 +409,7 @@ partial class SessionView
     public async void ImportCooperativeLogAnalysisScriptFromFile()
     {
         // select file
-        if (this.attachedWindow is null 
-            || this.DataContext is not Session session
+        if (this.DataContext is not Session session
             || !session.IsProVersionActivated)
         {
             return;
@@ -411,21 +417,7 @@ partial class SessionView
         var profile = session.LogProfile;
         if (profile is null)
             return;
-        var fileName = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
-        {
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
-                {
-                    Patterns = new[] { "*.json" }
-                }
-            }
-        })).Let(it =>
-        {
-            if (it.Count == 1 && it[0].TryGetUri(out var uri))
-                return uri.LocalPath;
-            return null;
-        });
+        var fileName = await this.SelectLogAnalysisScriptSetFileAsync();
         if (string.IsNullOrEmpty(fileName) 
             || this.attachedWindow is null 
             || this.DataContext != session 
@@ -438,7 +430,7 @@ partial class SessionView
         var scriptSet = await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName));
         if (scriptSet == null)
         {
-            _ = new MessageDialog()
+            _ = new MessageDialog
             {
                 Icon = MessageDialogIcon.Error,
                 Message = new FormattedString().Also(it =>
@@ -451,7 +443,7 @@ partial class SessionView
         }
 
         // edit script set and replace
-        scriptSet = await new LogAnalysisScriptSetEditorDialog()
+        scriptSet = await new LogAnalysisScriptSetEditorDialog
         {
             IsEmbeddedScriptSet = true,
             ScriptSetToEdit = scriptSet,
@@ -1139,6 +1131,30 @@ partial class SessionView
             if (!PathEqualityComparer.Default.Equals(Path.GetExtension(path), ".json"))
                 path += ".json";
             return path;
+        });
+    }
+
+
+    // Select file of log analysis script set.
+    async Task<string?> SelectLogAnalysisScriptSetFileAsync()
+    {
+        // select file
+        if (this.attachedWindow is null)
+            return null;
+        return (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
+        {
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
+                {
+                    Patterns = new[] { "*.json" }
+                }
+            }
+        })).Let(it =>
+        {
+            if (it.Count == 1 && it[0].TryGetUri(out var uri))
+                return uri.LocalPath;
+            return null;
         });
     }
 

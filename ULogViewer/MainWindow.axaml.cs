@@ -374,6 +374,15 @@ namespace CarinaStudio.ULogViewer
 				Settings = this.Application.Configuration,
 			}.ShowDialog(this);
 		}
+		
+		
+#if DEBUG
+		/// <summary>
+		/// Edit given log analysis script set file.
+		/// </summary>
+		public void EditLogAnalysisScriptSetFile()
+		{ }
+#endif
 
 
 		/// <summary>

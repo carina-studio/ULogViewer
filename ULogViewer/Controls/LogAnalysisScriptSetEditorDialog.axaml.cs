@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CarinaStudio.AppSuite.Data;
+using Microsoft.Extensions.Logging;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -39,6 +41,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	readonly ScheduledAction completeSettingInitSizeAction;
 	readonly ToggleSwitch contextBasedToggleSwitch;
 	Size? expectedInitSize;
+	string? fileNameToSave;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
 	readonly IDisposable initBoundsObserverToken;
@@ -119,7 +122,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 
 
 	// Complete editing.
-	async void CompleteEditing()
+	async Task CompleteEditing()
 	{
 		// check compilation error
 		//
@@ -130,21 +133,43 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
 		scriptSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
 		scriptSet.IsContextualBased = this.contextBasedToggleSwitch.IsChecked.GetValueOrDefault();
-		if (!this.IsEmbeddedScriptSet && !LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
+		
+		// add script set or save to file
+		if (string.IsNullOrEmpty(this.fileNameToSave))
 		{
-			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
-				&& !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
+			if (!this.IsEmbeddedScriptSet && !LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
 			{
-				await new MessageDialog
+				if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+				    && !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
 				{
-					Icon = MessageDialogIcon.Warning,
-					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+					await new MessageDialog
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+					}.ShowDialog(this);
+					return;
+				}
+				LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
+			}
+		}
+		else
+		{
+			try
+			{
+				await scriptSet.SaveAsync(this.fileNameToSave, true);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to save script set to '{fileName}'", this.fileNameToSave);
+				_ = new MessageDialog
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = $"Unable to save script set to '{this.fileNameToSave}'",
 				}.ShowDialog(this);
 				return;
 			}
-			LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
 		}
-		
+
 		// complete
 		this.Close(scriptSet);
 	}
@@ -171,7 +196,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	{
 		if (this.scriptSetToEdit != null 
 			&& Dialogs.TryGetValue(this.scriptSetToEdit, out var dialog)
-			&& this == dialog)
+			&& ReferenceEquals(this, dialog))
 		{
 			Dialogs.Remove(this.scriptSetToEdit);
 		}

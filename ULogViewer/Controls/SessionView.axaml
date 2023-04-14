@@ -396,7 +396,7 @@
 				</MenuItem.Icon>
 				<MenuItem Command="{Binding $parent[UserControl].EditPathEnvVar}" Header="{DynamicResource String/SessionView.EditPathEnvVar}" IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}">
 					<MenuItem.Icon>
-						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Edit}"/>
+						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Edit.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
 				<Separator IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}"/>

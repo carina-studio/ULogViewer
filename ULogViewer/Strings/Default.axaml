@@ -1058,6 +1058,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
+	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">Edit log analysis script file…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit PATH environment variable…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
 	<sys:String x:Key="String/SessionView.EnableRunningScript">Enable running scripts…</sys:String>
