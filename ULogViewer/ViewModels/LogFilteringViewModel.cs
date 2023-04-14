@@ -374,11 +374,8 @@ class LogFilteringViewModel : SessionComponent
             this.Logger.LogDebug("  Text filters: {textRegexListCount}", textRegexList.Count);
         }
 
-        // cancel showing all/marked logs
-        if (this.Session.IsShowingAllLogsTemporarily)
-            this.Session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
-        if (this.Session.IsShowingMarkedLogsTemporarily)
-            this.Session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
+        // cancel temporarily shown logs
+        this.Session.ResetTemporarilyShownLogsCommand.TryExecute();
     }
 
 

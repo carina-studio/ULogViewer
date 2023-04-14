@@ -1090,6 +1090,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距 (点击以选取该日志)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日志筛选进度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此页面日志内存使用量</sys:String>
+	<sys:String x:Key="String/SessionView.LogsShowingMode">日志显示模式</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字筛选 (正则表达式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
@@ -1116,6 +1117,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志档案</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有筛选设定</sys:String>
+	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">正常显示日志</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以系统管理员身份重新启动</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs">储存所有日志到档案</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">储存所有日志到档案 (Ctrl+Shift+S)</sys:String>
@@ -1142,11 +1144,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">选择/变更日志类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">选择/变成 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
-	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志(Alt+A)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在档案管理中显示档案</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">查看日志属性「{0}」…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">查看日志属性…</sys:String>
-	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志 (Alt+M)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在档案管理中开启工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.SidePanel">侧边面板</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>

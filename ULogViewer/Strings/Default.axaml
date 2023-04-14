@@ -1126,6 +1126,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log (Click to select the log)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Progress of log filtering</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
+	<sys:String x:Key="String/SessionView.LogsShowingMode">Mode of showing logs</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
@@ -1152,6 +1153,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear all filters</sys:String>
+	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">Show logs normally</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Administrator</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs">Save all logs to file</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">Save all logs to file (Ctrl+Shift+S)</sys:String>
@@ -1178,11 +1180,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
-	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily (Alt+A)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show file in Windows File Explorer</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">View log property '{0}'…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
-	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily (Alt+M)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Categories of timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">Tools</sys:String>

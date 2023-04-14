@@ -180,6 +180,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
+		readonly ToggleButton logsShowingModeButton;
+		readonly ContextMenu logsShowingModeMenu;
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
@@ -418,7 +420,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.GetObservable(Control.IsVisibleProperty).Subscribe(isVisible =>
 				{
 					if (isVisible)
-						this.SynchronizationContext.Post(() => this.ShowLogAnalysisRuleSetsTutorial());
+						this.SynchronizationContext.Post(this.ShowLogAnalysisRuleSetsTutorial);
 				});
 			});
 			this.logAnalysisRuleSetsPopup = this.Get<Popup>(nameof(logAnalysisRuleSetsPopup)).Also(it =>
@@ -487,6 +489,16 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
+			this.logsShowingModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logsShowingModeButton)).AsNonNull();
+			this.logsShowingModeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logsShowingModeButton.IsChecked = false);
+				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logsShowingModeButton, false);
+					this.logsShowingModeButton.IsChecked = true;
+				});
+			});
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
 				it.ValidationDelay = this.CommitLogFilterParamsDelay;
@@ -3263,7 +3275,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when key down.
-		protected override void OnKeyDown(Avalonia.Input.KeyEventArgs e)
+		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			this.pressedKeys.Add(e.Key);
 			if (!e.Handled && !logAnalysisRuleSetsPopup.IsOpen)
@@ -3276,10 +3288,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
 					switch (e.Key)
 					{
-						case Avalonia.Input.Key.A:
+						case Key.A:
 							e.Handled = true;
 							break;
-						case Avalonia.Input.Key.C:
+						case Key.C:
 							if (e.Source is not TextBox)
 							{
 								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
@@ -3288,70 +3300,70 @@ namespace CarinaStudio.ULogViewer.Controls
 									(this.DataContext as Session)?.LogSelection.CopySelectedLogs();
 							}
 							break;
-						case Avalonia.Input.Key.D0:
+						case Key.D0:
 							if (isAltPressed)
 							{
 								this.UnmarkSelectedLogs();
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D1:
+						case Key.D1:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Red);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D2:
+						case Key.D2:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Orange);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D3:
+						case Key.D3:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Yellow);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D4:
+						case Key.D4:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Green);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D5:
+						case Key.D5:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Blue);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D6:
+						case Key.D6:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Indigo);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D7:
+						case Key.D7:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Purple);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.D8:
+						case Key.D8:
 							if (isAltPressed)
 							{
 								this.MarkSelectedLogs(MarkColor.Magenta);
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.F:
+						case Key.F:
 							if (this.logTextFilterTextBox.IsEnabled)
 							{
 								this.logTextFilterTextBox.Focus();
@@ -3359,24 +3371,24 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.M:
+						case Key.M:
 							this.MarkSelectedLogs(MarkColor.Default);
 							e.Handled = true;
 							break;
-						case Avalonia.Input.Key.N:
+						case Key.N:
 							if (!Platform.IsMacOS)
 							{
 								this.FindAncestorOfType<MainWindow>()?.CreateMainWindow();
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.O:
+						case Key.O:
 							this.AddLogFiles();
 							break;
-						case Avalonia.Input.Key.P:
+						case Key.P:
 							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
 							break;
-						case Avalonia.Input.Key.S:
+						case Key.S:
 							if (e.Source == this.logTextFilterTextBox)
 							{
 								this.logTextFilterTextBox.Validate();
@@ -3392,12 +3404,16 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					switch (e.Key)
                     {
-						case Avalonia.Input.Key.A:
+						case Key.A:
 							(this.DataContext as Session)?.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
 							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
 							break;
-						case Avalonia.Input.Key.M:
+						case Key.M:
 							(this.DataContext as Session)?.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
+							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
+							break;
+						case Key.R:
+							(this.DataContext as Session)?.ResetTemporarilyShownLogsCommand.TryExecute();
 							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
 							break;
 					}
@@ -3406,7 +3422,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					switch (e.Key)
 					{
-						case Avalonia.Input.Key.Down:
+						case Key.Down:
 							if (e.Source == this.logTextFilterTextBox)
 								(this.DataContext as Session)?.LogFiltering?.UseNextTextFilterOhHistoryCommand?.TryExecute();
 							else if (e.Source is not TextBox)
@@ -3431,7 +3447,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
-						case Avalonia.Input.Key.Up:
+						case Key.Up:
 							if (e.Source == this.logTextFilterTextBox)
 								(this.DataContext as Session)?.LogFiltering?.UsePreviousTextFilterOhHistoryCommand?.TryExecute();
 							else if (e.Source is not TextBox)
@@ -3466,7 +3482,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when key up.
-		protected override void OnKeyUp(Avalonia.Input.KeyEventArgs e)
+		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			// [Workaround] skip handling key event if it was handled by context menu
 			// check whether key down was received or not
@@ -3487,7 +3503,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						switch (e.Key)
 						{
-							case Avalonia.Input.Key.End:
+							case Key.End:
 								if (e.Source is not TextBox)
 								{
 									if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -3496,7 +3512,7 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.logListBox.SelectLastItem();
 								}
 								break;
-							case Avalonia.Input.Key.Escape:
+							case Key.Escape:
 								if (e.Source is TextBox)
 								{
 									if (this.Application.IsDebugMode)
@@ -3506,10 +3522,10 @@ namespace CarinaStudio.ULogViewer.Controls
 								else if (this.predefinedLogTextFiltersPopup.IsOpen)
 									this.predefinedLogTextFiltersPopup.IsOpen = false;
 								break;
-							case Avalonia.Input.Key.F5:
+							case Key.F5:
 								this.ReloadLogs();
 								break;
-							case Avalonia.Input.Key.Home:
+							case Key.Home:
 								if (e.Source is not TextBox)
 								{
 									if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -3518,22 +3534,22 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.logListBox.SelectFirstItem();
 								}
 								break;
-							case Avalonia.Input.Key.M:
+							case Key.M:
 								if (e.Source is not TextBox)
 									this.MarkUnmarkSelectedLogs();
 								break;
-							case Avalonia.Input.Key.P:
+							case Key.P:
 								if (e.Source is not TextBox)
 									(this.DataContext as Session)?.PauseResumeLogsReadingCommand.TryExecute();
 								break;
-							case Avalonia.Input.Key.S:
+							case Key.S:
 								if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
 									(this.DataContext as Session)?.LogSelection.SelectMarkedLogs();
 								break;
 						}
 					}
 				}
-				else if (e.Key == Avalonia.Input.Key.Escape)
+				else if (e.Key == Key.Escape)
 					this.logAnalysisRuleSetsPopup.Close();
 			}
 			else if (this.Application.IsDebugMode && e.Source is not TextBox)
@@ -4629,6 +4645,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void ShowLogsSavingMenu() =>
 			this.logsSavingMenu.Open(this.logsSavingButton);
+
+
+		/// <summary>
+		/// SHow menu of logs showing mode.
+		/// </summary>
+		public void ShowLogsShowingModeMenu()
+		{
+			this.logsShowingModeMenu.PlacementTarget = this.logsShowingModeButton;
+			this.logsShowingModeMenu.Open(this.logsShowingModeButton);
+		}
 
 
 		// Show full log string property.

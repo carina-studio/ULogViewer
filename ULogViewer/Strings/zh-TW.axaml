@@ -1079,6 +1079,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日誌時間/最小日誌時距 (點一下以選取該日誌)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日誌篩選進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此分頁日誌記憶體使用量</sys:String>
+	<sys:String x:Key="String/SessionView.LogsShowingMode">日誌顯示模式</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
@@ -1105,6 +1106,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
+	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">正常顯示日誌</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以系統管理員身分重新啟動</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs">儲存所有日誌至檔案</sys:String>
 	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">儲存所有日誌至檔案 (Ctrl+Shift+S)</sys:String>
@@ -1131,11 +1133,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">選取/變更 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
-	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌 (Alt+A)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在檔案總管中顯示檔案</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">檢視日誌屬性「{0}」…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">檢視日誌屬性…</sys:String>
-	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暫時只顯示已標記的日誌 (Alt+M)</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暫時只顯示已標記的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在檔案總管中開啟工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.SidePanel">側邊面板</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">時間戳記分組</sys:String>

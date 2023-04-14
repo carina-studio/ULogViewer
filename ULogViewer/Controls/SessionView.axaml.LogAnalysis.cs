@@ -744,7 +744,7 @@ partial class SessionView
                             if (!isLogFound)
                             {
                                 // show all logs
-                                if (session.IsShowingAllLogsTemporarily || !session.ToggleShowingAllLogsTemporarilyCommand.TryExecute())
+                                if (session.IsShowingAllLogsTemporarily || !session.ShowAllLogsTemporarilyCommand.TryExecute())
                                     return;
                                 await Task.Yield();
                                 
@@ -754,7 +754,7 @@ partial class SessionView
                                 {
                                     window.ShowTutorial(new Tutorial().Also(it =>
                                     {
-                                        it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
+                                        it.Anchor = this.FindControl<Control>("logsShowingModeButton");
                                         it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
                                         it.Dismissed += (_, _) =>
                                             this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);

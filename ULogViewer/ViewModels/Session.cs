@@ -860,12 +860,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}, this.canReloadLogs);
 			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
+			this.ResetTemporarilyShownLogsCommand = new Command(this.ResetTemporarilyShownLogs, this.GetValueAsObservable(HasLogProfileProperty));
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SearchLogPropertyOnInternetCommand = new Command<Net.SearchProvider>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
+			this.ShowAllLogsTemporarilyCommand = new Command(this.ShowAllLogsTemporarily, this.canShowAllLogsTemporarily);
+			this.ShowMarkedLogsTemporarilyCommand = new Command(this.ShowMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
@@ -3738,6 +3741,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to reset log profile.
 		/// </summary>
 		public ICommand ResetLogProfileCommand { get; }
+		
+		
+		// Reset temporarily shown logs.
+		void ResetTemporarilyShownLogs()
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
+			this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+		}
+		
+		
+		/// <summary>
+		/// Command to reset temporarily shown logs.
+		/// </summary>
+		public ICommand ResetTemporarilyShownLogsCommand { get; }
 
 
 		// Restore log readers from saved state.
@@ -4669,6 +4688,52 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 		public ICommand SetWorkingDirectoryCommand { get; }
+		
+		
+		// Enable showing all logs temporarily.
+		void ShowAllLogsTemporarily()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+
+			// enable
+			if (!this.GetValue(IsShowingAllLogsTemporarilyProperty))
+			{
+				this.SetValue(IsShowingAllLogsTemporarilyProperty, true);
+				this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+			}
+		}
+
+
+		/// <summary>
+		/// Command to set <see cref="IsShowingAllLogsTemporarily"/> to true.
+		/// </summary>
+		public ICommand ShowAllLogsTemporarilyCommand { get; }
+		
+		
+		// Enable showing all logs temporarily.
+		void ShowMarkedLogsTemporarily()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.HasMarkedLogs)
+				return;
+
+			// enable
+			if (!this.GetValue(IsShowingMarkedLogsTemporarilyProperty))
+			{
+				this.SetValue(IsShowingMarkedLogsTemporarilyProperty, true);
+				this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
+			}
+		}
+
+
+		/// <summary>
+		/// Command to set <see cref="IsShowingMarkedLogsTemporarily"/> to true.
+		/// </summary>
+		public ICommand ShowMarkedLogsTemporarilyCommand { get; }
 
 
 		// Start reading logs if available.
@@ -4769,8 +4834,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canShowAllLogsTemporarily.Value)
-				return;
 
 			// toggle
 			this.SetValue(IsShowingAllLogsTemporarilyProperty, !this.GetValue(IsShowingAllLogsTemporarilyProperty));
