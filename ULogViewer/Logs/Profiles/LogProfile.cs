@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CarinaStudio.IO;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
 {
@@ -318,7 +319,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		/// <param name="window">Window.</param>
 		/// <returns>Task of exporting. The result will be True if profile has been exported successfully.</returns>
-		public async Task<bool> ExportAsync(Avalonia.Controls.Window window)
+		public async Task<bool> ExportAsync(Window window)
 		{
 			// select file
 			var fileName = (await window.StorageProvider.SaveFilePickerAsync(new()
@@ -327,12 +328,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
 					{
-						Patterns = new string[] { "*.json" }
+						Patterns = new[] { "*.json" }
 					}
 				}
 			}))?.Let(it =>
 			{
-				return it.TryGetUri(out var uri) ? uri.LocalPath : null;
+				if (!it.TryGetUri(out var uri))
+					return null;
+				var path = uri.LocalPath;
+				if (!PathEqualityComparer.Default.Equals(Path.GetExtension(path), ".json"))
+					path += ".json";
+				return path;
 			});
 			if (string.IsNullOrEmpty(fileName))
 				return false;
@@ -591,7 +597,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			if (!isEmbedded && !LogDataSourceProviders.TryFindProviderByName(providerName, out provider))
 				throw new ArgumentException($"Cannot find data source '{providerName}'.");
 
-			// get opetions
+			// get options
 			var options = new LogDataSourceOptions();
 			if (dataSourceElement.TryGetProperty("Options", out var jsonValue))
 				options = LogDataSourceOptions.Load(jsonValue);
@@ -918,7 +924,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <inheritdoc/>
 		protected override void OnLoad(JsonElement element)
 		{
-			var useEmbeddedDataSourceProvifer = false;
+			var useEmbeddedDataSourceProvider = false;
 			foreach (var jsonProperty in element.EnumerateObject())
 			{
 				switch (jsonProperty.Name)
@@ -927,7 +933,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.allowMultipleFiles = jsonProperty.Value.ValueKind != JsonValueKind.False;
 						break;
 					case "DataSource":
-						this.LoadDataSourceFromJson(jsonProperty.Value, out useEmbeddedDataSourceProvifer);
+						this.LoadDataSourceFromJson(jsonProperty.Value, out useEmbeddedDataSourceProvider);
 						break;
 					case nameof(ColorIndicator):
 						this.colorIndicator = Enum.Parse<LogColorIndicator>(jsonProperty.Value.GetString().AsNonNull());
@@ -1002,11 +1008,11 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 							this.logStringEncodingForReading = encoding;
 						break;
 					case nameof(LogStringEncodingForWriting):
-						if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out encoding))
+						if (Enum.TryParse(jsonProperty.Value.GetString(), out encoding))
 							this.logStringEncodingForWriting = encoding;
 						break;
 					case "LogWritingFormat":
-						this.logWritingFormats = new string[] { jsonProperty.Value.GetString().AsNonNull() };
+						this.logWritingFormats = new[] { jsonProperty.Value.GetString().AsNonNull() };
 						this.IsDataUpgraded = true;
 						break;
 					case nameof(LogWritingFormats):
@@ -1027,7 +1033,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 							this.Name = jsonProperty.Value.GetString();
 						break;
 					case nameof(RawLogLevelPropertyName):
-						this.rawLogLevelPropertyName = jsonProperty.Value.ToString() ?? "";
+						this.rawLogLevelPropertyName = jsonProperty.Value.ToString();
 						if (!Log.HasProperty(this.rawLogLevelPropertyName))
 							this.rawLogLevelPropertyName = nameof(Log.Level);
 						break;
@@ -1081,7 +1087,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						this.timestampFormatForDisplaying = jsonProperty.Value.GetString();
 						break;
 					case "TimestampFormatForReading":
-						this.timestampFormatsForReading = new string[] { jsonProperty.Value.GetString().AsNonNull() };
+						this.timestampFormatsForReading = new[] { jsonProperty.Value.GetString().AsNonNull() };
 						this.IsDataUpgraded = true;
 						break;
 					case nameof(TimestampFormatForWriting):
@@ -1102,12 +1108,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						break;
 				}
 			}
-			if (useEmbeddedDataSourceProvifer)
-			{
-				if (this.embeddedScriptLogDataSourceProvider == null)
-					throw new ArgumentException("Embedded script log data source not found.");
-				this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider;
-			}
+			if (useEmbeddedDataSourceProvider)
+				this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider ?? throw new ArgumentException("Embedded script log data source not found.");
 		}
 
 
@@ -1643,7 +1645,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 
 
-		// <summary>
+		/// <summary>
 		/// Get of set list of log properties to be shown to user.
 		/// </summary>
 		public IList<LogProperty> VisibleLogProperties
