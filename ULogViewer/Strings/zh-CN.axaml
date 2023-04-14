@@ -336,6 +336,7 @@ from CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting import ResultType
 # 返回 True 以保留透过 context.AddResult() 所建立的分析结果，或返回 False 以略过目前的日志及分析结果。
 return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在启用专业版之前，您无法建立更多的日志分析脚本。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">您的脚本中有一个或多个错误，是否仍要关闭编辑器？</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">图标色彩</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">分析基于上下文</sys:String>

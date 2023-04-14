@@ -329,6 +329,7 @@ return false;</sys:String>
 # 回傳 True 以保留透過 context.AddResult() 所建立的分析結果，或回傳 False 以略過目前的日誌及分析結果。
 return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在啟用專業版之前，您無法建立更多的日誌分析腳本。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">您的腳本中有一個或多個錯誤，是否仍要關閉編輯器？</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">圖示</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">圖示色彩</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">分析基於上下文</sys:String>

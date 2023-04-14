@@ -6,11 +6,13 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -52,6 +54,8 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	/// </summary>
 	public LogAnalysisScriptSetEditorDialog()
 	{
+		var isInit = true;
+		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -94,6 +98,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			this.SetAndRaise(AreValidParametersProperty, ref this.areValidParameters, this.IsEmbeddedScriptSet || !string.IsNullOrWhiteSpace(this.nameTextBox.Text));
 		});
 		this.GetObservable(IsEmbeddedScriptSetProperty).Subscribe(_ => this.validateParametersAction.Schedule());
+		isInit = false;
 	}
 	
 
@@ -112,11 +117,13 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 	}
 
 
-	/// <summary>
-	/// Complete editing.
-	/// </summary>
-	public async void CompleteEditing()
+	// Complete editing.
+	async void CompleteEditing()
 	{
+		// check compilation error
+		//
+		
+		// create or update script set
 		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
 		scriptSet.Name = this.nameTextBox.Text?.Trim();
 		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
@@ -127,7 +134,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
 				&& !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
 			{
-				await new MessageDialog()
+				await new MessageDialog
 				{
 					Icon = MessageDialogIcon.Warning,
 					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
@@ -136,8 +143,16 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 			}
 			LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
 		}
+		
+		// complete
 		this.Close(scriptSet);
 	}
+	
+	
+	/// <summary>
+	/// Command to complete editing.
+	/// </summary>
+	public ICommand CompleteEditingCommand { get; }
 
 
 	/// <summary>

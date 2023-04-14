@@ -349,6 +349,7 @@ return false;</sys:String>
 # Return True to take results added by context.AddResult(), or False to ignore current log and results.
 return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">Cannot create more log analysis script before activating Pro version.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">There is one or more errors in your script. Do you still want to close the editor?</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Color of icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">Contextual-based analysis</sys:String>
