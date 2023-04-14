@@ -896,6 +896,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
 # 请参阅 https://carinastudio.azurewebsites.net/ULogViewer/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。</sys:String>
+	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmClosingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors"/>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器开启脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时运行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>

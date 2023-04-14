@@ -177,15 +177,21 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 
 	/// <inheritdoc/>
-	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+	protected override async Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		// check compilation error
+		//
+		
+		// create or update provider
 		var provider = this.Provider ?? new ScriptLogDataSourceProvider(this.Application);
 		provider.DisplayName = this.displayNameTextBox.Text;
 		provider.SetSupportedSourceOptions(
 			this.supportedSourceOptions.Select(it => it.Name),
 			this.supportedSourceOptions.Where(it => it.IsRequired == true).Select(it => it.Name)
 		);
-		return Task.FromResult<object?>(provider);
+		
+		// complete
+		return provider;
 	}
 
 
