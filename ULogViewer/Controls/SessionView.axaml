@@ -351,7 +351,7 @@
 		<ContextMenu x:Key="logsShowingModeMenu" PlacementMode="Bottom">
 			<MenuItem Command="{Binding ResetTemporarilyShownLogsCommand}" Header="{DynamicResource String/SessionView.ResetTemporarilyShownLogs}" InputGesture="Alt+R">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Checked}">
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Checked}">
 						<Image.IsVisible>
 							<MultiBinding Converter="{x:Static BoolConverters.And}">
 								<Binding Path="!DataContext.IsShowingAllLogsTemporarily" ElementName="root" FallbackValue="False"/>
@@ -364,12 +364,12 @@
 			<Separator/>
 			<MenuItem Command="{Binding ShowAllLogsTemporarilyCommand}" Header="{DynamicResource String/SessionView.ShowAllLogsTemporarily}" InputGesture="Alt+A">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" IsVisible="{Binding #root.DataContext.IsShowingAllLogsTemporarily, FallbackValue=False}" Source="{StaticResource Image/Checked}"/>
+					<Image Classes="MenuItem_Icon" IsVisible="{Binding #root.DataContext.IsShowingAllLogsTemporarily, FallbackValue=False}" Source="{StaticResource Image/Icon.Checked}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding ShowMarkedLogsTemporarilyCommand}" Header="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}" InputGesture="Alt+M">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" IsVisible="{Binding #root.DataContext.IsShowingMarkedLogsTemporarily, FallbackValue=False}" Source="{StaticResource Image/Checked}"/>
+					<Image Classes="MenuItem_Icon" IsVisible="{Binding #root.DataContext.IsShowingMarkedLogsTemporarily, FallbackValue=False}" Source="{StaticResource Image/Icon.Checked}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
