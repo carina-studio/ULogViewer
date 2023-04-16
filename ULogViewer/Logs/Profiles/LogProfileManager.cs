@@ -34,6 +34,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "AndroidTraceFile",
         "ApacheAccessLogFile",
         "ApacheErrorLogFile",
+        "AppleDevicesLog",
         "AzureWebappLogFile",
 #if DEBUG
         "DummyLog",
@@ -46,6 +47,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "RawFile",
         "RawHttp",
         "RawTcpServer",
+        "SpecificAppleDeviceLog",
         "TcpNLog",
         "ULogViewerLog",
         "ULogViewerMemoryLog",
@@ -88,11 +90,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         else if (Platform.IsMacOS)
         {
             builtInProfileIDs.Add("AndroidDeviceTrace");
-            builtInProfileIDs.Add("AppleDevicesLog");
             builtInProfileIDs.Add("BootedAppleDeviceSimulatorsRealtimeLog");
             builtInProfileIDs.Add("MacOSInstallationLog");
             builtInProfileIDs.Add("MacOSRealtimeLog");
-            builtInProfileIDs.Add("SpecificAppleDeviceLog");
             builtInProfileIDs.Add("SpecificAppleDeviceSimulatorLog");
         }
     }
@@ -127,7 +127,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// <summary>
     /// Get default instance.
     /// </summary>
-    public static LogProfileManager Default { get => defaultInstance ?? throw new InvalidOperationException(); }
+    public static LogProfileManager Default => defaultInstance ?? throw new InvalidOperationException();
 
 
     /// <summary>
@@ -269,7 +269,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// <summary>
     /// Get all log profiles.
     /// </summary>
-    public new IReadOnlyList<LogProfile> Profiles { get => base.Profiles; }
+    public new IReadOnlyList<LogProfile> Profiles => base.Profiles;
 
 
     /// <inheritdoc/>
@@ -286,7 +286,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// Remove log profile.
     /// </summary>
     /// <param name="profile">Profile to remove.</param>
-    /// <returns>True if profile has neem removed successfully.</returns>
+    /// <returns>True if profile has been removed successfully.</returns>
     public bool RemoveProfile(LogProfile profile)
     {
         if (base.RemoveProfile(profile, true))

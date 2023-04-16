@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 裝置日誌」及「特定 Apple 裝置日誌」內建日誌類型會使用 libimobiledevice 中的 idevicesyslog 工具與裝置通訊並取得日誌。若您不是透過套件管理員安裝 libimobiledevice，安裝完成後請將包含 'idevicesyslog' 指令之資料夾路徑加至 PATH 環境變數。</sys:String>
+	
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK TC,Noto Sans Mono CJK TS</sys:String>
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK">Noto Sans Mono CJK TC,Noto Sans Mono CJK TS</sys:String>

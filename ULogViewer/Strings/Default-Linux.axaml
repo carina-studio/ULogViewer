@@ -4,6 +4,9 @@
 
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
+	
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' and 'Specific Apple Device Log' built-in log profiles use idevicesyslog tool, which is part of libimobiledevice, to contact device and get logs. Please add path of folder contains 'idevicesyslog' command to PATH environment variable after installation if you didn't install libimobiledevice by package manager.</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Superuser</sys:String>

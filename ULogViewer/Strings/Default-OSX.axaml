@@ -7,6 +7,12 @@
 
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
+	
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">'Android Device Log', 'Android Device Event Log' and 'Android Device System Trace' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK Platform Tools. Please add path of 'platform-tools' folder of Android SDK Platform Tools to '/etc/paths' after installation.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data source uses Azure Command-Line Interface (CLI) to read log data or access functions of Azure. Please add path of folder contains 'az' command to '/etc/paths' after installation if you didn't install Azure CLI by Homebrew.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' and 'Specific Apple Device Log' built-in log profiles use idevicesyslog tool, which is part of libimobiledevice, to contact device and get logs. Please add path of folder contains 'idevicesyslog' command to '/etc/paths' after installation if you didn't install libimobiledevice by Homebrew.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">'Android Device System Trace' built-in log profile uses Trace Conversion Tool provided by Perfetto to convert captured data into Android Systrace format. Please add path of folder contains 'traceconv' command to '/etc/paths' after installation.</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>

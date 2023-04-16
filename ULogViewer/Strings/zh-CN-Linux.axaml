@@ -1,6 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+	
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 设备日志」及「特定 Apple 设备日志」内建日志类型会使用 libimobiledevice 中的 idevicesyslog 工具与装置联系并取得日志。若您不是透过套件管理员安装 libimobiledevice，安装完成后请将包含 'idevicesyslog' 指令之资料夹路径加至 PATH 环境变量。</sys:String>
 
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK TS,Noto Sans Mono CJK TC</sys:String>
