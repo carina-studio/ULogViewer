@@ -108,7 +108,7 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new(nameof(SelectWorkingDirectoryWhenNeeded), true);
 	/// <summary>
-	/// Show help button on inupt field of log text filter.
+	/// Show help button on input field of log text filter.
 	/// </summary>
 	public static readonly SettingKey<bool> ShowHelpButtonOnLogTextFilter = new(nameof(ShowHelpButtonOnLogTextFilter), true);
 	/// <summary>
