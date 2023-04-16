@@ -50,6 +50,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		IDisposable? activeFilteringProgressObserverToken;
+		bool areULogViewerInitialDialogsShown;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
 		readonly ScheduledAction selectAndSetLogProfileAction;
@@ -209,7 +210,7 @@ namespace CarinaStudio.ULogViewer
 		/// Reset title of current session.
 		/// </summary>
 		public void ClearCurrentCustomSessionTitle() =>
-			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.ClearCustomSessionTitle(it));
+			(this.tabControl.SelectedItem as TabItem)?.Let(this.ClearCustomSessionTitle);
 
 
 		// Reset title of session.
@@ -230,7 +231,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Close current session tab item.
 		public void CloseCurrentSessionTabItem() =>
-			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.CloseSessionTabItem(it));
+			(this.tabControl.SelectedItem as TabItem)?.Let(this.CloseSessionTabItem);
 
 
 		// Close session tab.
@@ -294,13 +295,8 @@ namespace CarinaStudio.ULogViewer
 			if (Platform.IsMacOS)
 			{
 				((Control)header).ContextMenu = null;
-				(this.Application as App)?.Let(app => 
-				{
-					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(content =>
-					{
-						app.EnsureClosingToolTipIfWindowIsInactive(content);
-					});
-				});
+				(this.Application as App)?.Let(app =>
+					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(app.EnsureClosingToolTipIfWindowIsInactive));
 			}
 
 			// create session view
@@ -434,7 +430,7 @@ namespace CarinaStudio.ULogViewer
 		/// Move current session to new workspace.
 		/// </summary>
 		public void MoveCurrentSessionToNewWorkspace() =>
-			(this.tabControl.SelectedItem as TabItem)?.Let(it => this.MoveSessionToNewWorkspace(it));
+			(this.tabControl.SelectedItem as TabItem)?.Let(this.MoveSessionToNewWorkspace);
 
 
 		// Move given session to new workspace.
@@ -522,7 +518,7 @@ namespace CarinaStudio.ULogViewer
 			this.SetValue(HasMultipleSessionsProperty, workspace.Sessions.Count > 1);
 
 			// attach to active session
-			workspace.ActiveSession?.Let(it => this.AttachToActiveSession(it));
+			workspace.ActiveSession?.Let(this.AttachToActiveSession);
 
 			// update system taskbar
 			this.updateSysTaskBarAction.Schedule();
@@ -1036,7 +1032,7 @@ namespace CarinaStudio.ULogViewer
 		void SelectAndSetLogProfile()
 		{
 			// check state
-			if (this.IsClosed || this.HasDialogs || !this.AreInitialDialogsClosed)
+			if (this.IsClosed || this.HasDialogs || !this.AreInitialDialogsClosed || !this.areULogViewerInitialDialogsShown)
 				return;
 			if (this.DataContext is not Workspace workspace)
 				return;
@@ -1208,6 +1204,7 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// all dialogs were shown
+			this.areULogViewerInitialDialogsShown = true;
 			this.selectAndSetLogProfileAction.Schedule();
 		}
 
