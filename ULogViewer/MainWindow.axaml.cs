@@ -113,6 +113,7 @@ namespace CarinaStudio.ULogViewer
 									{
 										case "EditConfiguration":
 										case "EditPersistentState":
+										case "TakeMemorySnapshot":
 											if (!this.Application.IsDebugMode)
 												menuItem.Menu.Items.RemoveAt(j);
 											break;
@@ -1218,6 +1219,13 @@ namespace CarinaStudio.ULogViewer
 		{
 			this.PersistentState.SetValue<bool>(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
 		}
+
+
+		/// <summary>
+		/// Take single memory snapshot.
+		/// </summary>
+		public void TakeMemorySnapshot() =>
+			_ = ((App) this.Application).TakeMemorySnapshotAsync(this);
 
 
 		// Update menu items of tools.

@@ -4939,6 +4939,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		public SessionViewStatusBarState StatusBarState => this.GetValue(StatusBarStateProperty);
 
 
+		/// <summary>
+		/// Take single memory snapshot.
+		/// </summary>
+		public void TakeMemorySnapshot()
+		{
+			if (this.attachedWindow != null)
+				((App) this.Application).TakeMemorySnapshotAsync(this.attachedWindow);
+		}
+
+
 		// Test functions.
 		void Test(string command)
 		{

@@ -151,6 +151,7 @@
 						<NativeMenuItem Command="{Binding $self.EditConfiguration}" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
 						<NativeMenuItem Command="{Binding $self.EditPersistentState}" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
 						<NativeMenuItem Command="{Binding $self.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{DynamicResource String/Common.SelfTesting}"/>
+						<NativeMenuItem Command="{Binding $self.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{DynamicResource String/Common.TakeMemorySnapshot.WithDialog}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
