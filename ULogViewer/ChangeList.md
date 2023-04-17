@@ -3,6 +3,10 @@
 
 ## New Features
 + Support setting **'Cooperative log analysis script'** which is embedded in log profile, and will be run automatically when using the log profile.
++ Cooperative log analysis scripts are added to the following built-in log profiles for common cases:
+    + Android Device Log
+    + Android Log Files
+    + ULogViewer Log File
 + Support embedding **Log data source script** into log profile and set it as data source of log profile.
 + Add **'Log reading position'** and **'Maximum log reading count'** properties to log profile.
 + Allow setting **'Log reading position'** and **'Maximum log reading count'** to log files.
@@ -42,6 +46,7 @@
     + Roboto Mono
     + Source Code Pro
 
++ Support specifying whether log analysis script is contextual-based analysis or not.
 + Support customizing text color of each visible log property.
 + Support specifying font for **Regular Expression**, **Date and Time Format**, **Time Span Format**, **Query String (SQL)** and **Command-Line Shell Command**.
 + Support specifying font for script editor.
@@ -64,8 +69,9 @@
 + Select proper scale factor of screen on **Linux** automatically.
 + Show **Level** log property in special way.
 + Improve control of history of log text filter.
-+ Show indicator on toolbar when new log analysis result has been generated in backgroud.
++ Show indicator on toolbar when new log analysis result has been generated in background.
 + Show sample result when typing Date and Time Format.
++ Show prompt when exiting dialog of script editor if there is one or more errors in script(s).
 + Improve layout of items on toolbar.
 + More icons for log profile.
 + Improve UX of text pattern editing.
