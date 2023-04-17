@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -525,7 +526,7 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when closed.
+		/// <inheritdoc/>
 		protected override void OnClosed(EventArgs e)
 		{
 			// cancel scheduled actions
@@ -548,13 +549,46 @@ namespace CarinaStudio.ULogViewer
 					token.Dispose();
 			}
 			this.sessionViewPropertyObserverTokens.Clear();
+			
+			// [Workaround] Remove bindings to window to prevent window leakage
+			if (Platform.IsMacOS) 
+			{
+				var directBindingsField = typeof(AvaloniaObject).GetField("_directBindings", BindingFlags.Instance | BindingFlags.NonPublic);
+				var clickHandler = new EventHandler(this.OnNativeMenuItemClick);
+				void DisposeMenuItem(NativeMenuItem menuItem)
+				{
+					menuItem.Click -= clickHandler;
+					menuItem.Command = null;
+					(directBindingsField?.GetValue(menuItem) as IEnumerable<IDisposable>)?.Let(it =>
+					{
+						foreach (var bindingToken in it.ToArray())
+							bindingToken.Dispose();
+					});
+					menuItem.Menu?.Let(menu =>
+					{
+						foreach (var item in menu.Items)
+						{
+							if (item is NativeMenuItem menuItem)
+								DisposeMenuItem(menuItem);
+						}
+					});
+				}
+				NativeMenu.GetMenu(this).Let(menu =>
+				{
+					foreach (var item in menu.Items)
+					{
+						if (item is NativeMenuItem menuItem)
+							DisposeMenuItem(menuItem);
+					}
+				});
+			}
 
 			// call base
 			base.OnClosed(e);
 		}
 
 
-        // Detach from view-model.
+		// Detach from view-model.
         protected override void OnDetachFromViewModel(Workspace workspace)
 		{
 			// detach from active session
@@ -816,6 +850,14 @@ namespace CarinaStudio.ULogViewer
 			sessionView?.SetLogProfileAsync(logProfile);
 		}
 #pragma warning restore IDE0051
+
+
+		// Called when clicking native menu item.
+		void OnNativeMenuItemClick(object? sender, EventArgs e)
+		{
+			if ((sender as NativeMenuItem)?.CommandParameter is not string parameter)
+				return;
+		}
 
 
 		/// <inheritdoc/>
