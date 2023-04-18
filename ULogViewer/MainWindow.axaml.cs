@@ -41,6 +41,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
+		static FieldInfo? AvaloniaObjectDirectBindingsField;
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
@@ -117,11 +118,17 @@ namespace CarinaStudio.ULogViewer
 										case "EditPersistentState":
 										case "TakeMemorySnapshot":
 											if (!this.Application.IsDebugMode)
+											{
+												this.DisposeNativeMenuItem(subMenuItem);
 												menuItem.Menu.Items.RemoveAt(j);
+											}
 											break;
 										case "SelfTesting":
 											if (!this.Application.IsTestingMode)
+											{
+												this.DisposeNativeMenuItem(subMenuItem);
 												menuItem.Menu.Items.RemoveAt(j);
+											}
 											break;
 									}
 								}
@@ -337,6 +344,36 @@ namespace CarinaStudio.ULogViewer
 			this.attachedActiveSession = null;
 			this.updateSysTaskBarAction.Reschedule();
         }
+		
+		
+		// Dispose native menu item properly.
+		void DisposeNativeMenuItem(NativeMenuItem menuItem)
+		{
+			AvaloniaObjectDirectBindingsField ??= AvaloniaObjectDirectBindingsField = typeof(AvaloniaObject).GetField("_directBindings", BindingFlags.Instance | BindingFlags.NonPublic);
+			menuItem.Click -= this.OnNativeMenuItemClick;
+			menuItem.Command = null;
+			(AvaloniaObjectDirectBindingsField?.GetValue(menuItem) as IEnumerable<IDisposable>)?.Let(it =>
+			{
+				if (it is IList<IDisposable> list)
+				{
+					for (var i = list.Count - 1; i >= 0; --i)
+						list[i].Dispose();
+				}
+				else
+				{
+					foreach (var bindingToken in it.ToArray())
+						bindingToken.Dispose();
+				}
+			});
+			menuItem.Menu?.Let(menu =>
+			{
+				foreach (var item in menu.Items)
+				{
+					if (item is NativeMenuItem menuItem)
+						this.DisposeNativeMenuItem(menuItem);
+				}
+			});
+		}
 
 
 		// Dispose tab item for session.
@@ -553,32 +590,12 @@ namespace CarinaStudio.ULogViewer
 			// [Workaround] Remove bindings to window to prevent window leakage
 			if (Platform.IsMacOS) 
 			{
-				var directBindingsField = typeof(AvaloniaObject).GetField("_directBindings", BindingFlags.Instance | BindingFlags.NonPublic);
-				var clickHandler = new EventHandler(this.OnNativeMenuItemClick);
-				void DisposeMenuItem(NativeMenuItem menuItem)
-				{
-					menuItem.Click -= clickHandler;
-					menuItem.Command = null;
-					(directBindingsField?.GetValue(menuItem) as IEnumerable<IDisposable>)?.Let(it =>
-					{
-						foreach (var bindingToken in it.ToArray())
-							bindingToken.Dispose();
-					});
-					menuItem.Menu?.Let(menu =>
-					{
-						foreach (var item in menu.Items)
-						{
-							if (item is NativeMenuItem menuItem)
-								DisposeMenuItem(menuItem);
-						}
-					});
-				}
 				NativeMenu.GetMenu(this).Let(menu =>
 				{
 					foreach (var item in menu.Items)
 					{
 						if (item is NativeMenuItem menuItem)
-							DisposeMenuItem(menuItem);
+							this.DisposeNativeMenuItem(menuItem);
 					}
 				});
 			}
