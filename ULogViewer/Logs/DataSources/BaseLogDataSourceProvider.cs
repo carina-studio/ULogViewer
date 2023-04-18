@@ -15,7 +15,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	{
 		// Fields.
 		readonly ICollection<ILogDataSource> activeSources = new List<ILogDataSource>();
-		readonly EventHandler appStringsUpdatedHandler;
+		// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
+		readonly EventHandler appStringsUpdatedHandler; // Need to keep as strong reference
+		// ReSharper restore PrivateFieldCanBeConvertedToLocalVariable
 		readonly IDisposable appStringsUpdatedHandlerToken;
 		string displayName = "";
 		int isDisposed;
@@ -69,7 +71,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		/// <inheritdoc/>
-		public virtual bool IsProVersionOnly { get => false; }
+		public virtual bool IsProVersionOnly => false;
 
 
 		/// <summary>
@@ -123,7 +125,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.VerifyAccess();
 			this.VerifyDisposed();
 			if (!this.AllowMultipleSources && this.activeSources.Count == 1)
-				throw new InvalidOperationException("Mutiple active sources is not allowed.");
+				throw new InvalidOperationException("Multiple active sources is not allowed.");
 			return this.CreateSourceCore(options).Also((it) =>
 			{
 				this.activeSources.Add(it);
@@ -205,10 +207,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Interface implementations.
-		public int ActiveSourceCount { get => this.activeSources.Count; }
+		public int ActiveSourceCount => this.activeSources.Count;
 		public virtual bool AllowMultipleSources => true;
 		public bool CheckAccess() => this.Application.CheckAccess();
-		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
+		IApplication IApplicationObject.Application => this.Application;
 		public abstract string Name { get; }
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;

@@ -37,7 +37,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -188,7 +187,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly double minLogTextFilterItemsPanelWidth;
 		readonly ToggleButton otherActionsButton;
 		readonly ContextMenu otherActionsMenu;
-		readonly HashSet<Avalonia.Input.Key> pressedKeys = new();
+		readonly HashSet<Key> pressedKeys = new();
 		readonly ScheduledAction scrollToLatestLogAction;
 		readonly ScheduledAction scrollToTargetLogRangeAction;
 		readonly MenuItem searchLogPropertyOnInternetMenuItem;
@@ -340,7 +339,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.selectableValueLogItemBackgroundConverter = new FuncMultiValueConverter<bool, IBrush?>(values =>
 			{
 				if (values is not IList<bool> list)
-					list = values.ToArray() ?? Array.Empty<bool>();
+					list = values.ToArray();
 				if (list.Count >= 2 
 					&& list[0] /* IsValueSelected */ 
 					&& !list[1] /* IsListBoxItemSelected */)
@@ -371,7 +370,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.toolBarContainer = this.Get<Border>(nameof(toolBarContainer)).Also(it =>
 			{
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.UpdateToolBarItemsLayout());
-				it.AddHandler(Control.PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerReleasedEvent, this.OnToolBarPointerReleased, RoutingStrategies.Tunnel);
 			});
 
 			// setup controls
@@ -417,7 +416,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logAnalysisRuleSetsButton = this.Get<ToggleButton>(nameof(logAnalysisRuleSetsButton)).Also(it =>
 			{
-				it.GetObservable(Control.IsVisibleProperty).Subscribe(isVisible =>
+				it.GetObservable(IsVisibleProperty).Subscribe(isVisible =>
 				{
 					if (isVisible)
 						this.SynchronizationContext.Post(this.ShowLogAnalysisRuleSetsTutorial);
@@ -471,9 +470,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logListBox = this.logListBoxContainer.FindControl<Avalonia.Controls.ListBox>(nameof(logListBox))!.Also(it =>
 			{
-				it.AddHandler(Avalonia.Controls.ListBox.PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
-				it.AddHandler(Avalonia.Controls.ListBox.PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
-				it.AddHandler(Avalonia.Controls.ListBox.PointerWheelChangedEvent, this.OnLogListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerPressedEvent, this.OnLogListBoxPointerPressed, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerReleasedEvent, this.OnLogListBoxPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerWheelChangedEvent, this.OnLogListBoxPointerWheelChanged, RoutingStrategies.Tunnel);
 				it.GetObservable(Avalonia.Controls.ListBox.ScrollProperty).Subscribe(_ =>
 				{
 					this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
@@ -1025,7 +1024,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Check whether all tutorials are shown or not.
 		/// </summary>
-		public bool AreAllTutorialsShown { get => this.areAllTutorialsShown; }
+		public bool AreAllTutorialsShown => this.areAllTutorialsShown;
 
 
 		// Attach to session.
@@ -1079,7 +1078,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile != null)
 			{
 				this.canEditLogProfile.Update(true);
-				this.SetValue<bool>(HasLogProfileProperty, true);
+				this.SetValue(HasLogProfileProperty, true);
 				if (session.IsIPEndPointNeeded)
 					this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
 				else if (session.IsLogFileNeeded)
@@ -1159,7 +1158,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				|| session.IsLogFilesPanelVisible
 				|| session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 			{
-				sidePanelColumn.Width = new GridLength(new double[] {
+				sidePanelColumn.Width = new GridLength(new[] {
 					session.LogAnalysis.PanelSize,
 					session.LogFilesPanelSize,
 					session.MarkedLogsPanelSize,
@@ -1195,8 +1194,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					size += new FileInfo(fileName).Length;
 				}
+				// ReSharper disable EmptyGeneralCatchClause
 				catch
 				{ }
+				// ReSharper restore EmptyGeneralCatchClause
 			}
 			return size;
 		}, cancellationToken);
@@ -1712,7 +1713,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.CornerRadius = itemCornerRadius;
 						it.Tag = logProperty;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
-						it.GetObservable(Control.IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
+						it.GetObservable(IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 						{
 							if (isPointerOver)
 							{
@@ -1732,10 +1733,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (this.logListBox.SelectedItems?.Count == 1)
 							{
 								this.canCopyLogProperty.Update(true);
-								if (isStringProperty)
-									this.canShowLogProperty.Update(true);
-								else
-									this.canShowLogProperty.Update(false);
+								this.canShowLogProperty.Update(isStringProperty);
 							}
 							else
 							{
@@ -1778,7 +1776,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									});
 									binding.Bindings.Add(new Binding
 									{ 
-										Path = nameof(ListBoxItem.IsPointerOver), 
+										Path = nameof(IsPointerOver), 
 										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
 									});
 								}));
@@ -1852,7 +1850,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							border.VerticalAlignment = VerticalAlignment.Center;
 							border.Width = markIndicatorSize;
 						}));
-						panel.Cursor = new Avalonia.Input.Cursor(StandardCursorType.Hand);
+						panel.Cursor = new Cursor(StandardCursorType.Hand);
 						panel.HorizontalAlignment = HorizontalAlignment.Left;
 						panel.PointerEntered += (_, _) => emptyMarker.IsVisible = true;
 						panel.PointerExited += (_, _) => emptyMarker.IsVisible = isMenuOpen;
@@ -2121,7 +2119,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.BorderBrush = itemBorderBrush;
 					border.BorderThickness = itemBorderThickness;
 					border.CornerRadius = itemCornerRadius;
-					border.Bind(Border.IsVisibleProperty, new Binding
+					border.Bind(IsVisibleProperty, new Binding
 					{
 						RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) },
 						Path = nameof(ListBoxItem.IsSelected)
@@ -2359,12 +2357,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (filePaths.IsEmpty())
 					{
-						it.Filter = logProfile =>
-						{
-							return (logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
-								|| logProfile.IsWorkingDirectoryNeeded)
-								&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
-						};
+						it.Filter = logProfile => (logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)) 
+						                           || logProfile.IsWorkingDirectoryNeeded) 
+						                          && !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
 					}
 					else if (filePaths.Count > 1)
 					{
@@ -2464,7 +2459,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Check whether log profile has been set or not.
 		/// </summary>
-		public bool HasLogProfile { get => this.GetValue<bool>(HasLogProfileProperty); }
+		public bool HasLogProfile => this.GetValue(HasLogProfileProperty);
 
 
 		/// <summary>
@@ -2477,16 +2472,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool IsMultiSelectionKeyPressed(KeyModifiers keyModifiers)
 		{
 			if ((keyModifiers & KeyModifiers.Shift) != 0
-				|| this.pressedKeys.Contains(Avalonia.Input.Key.LeftShift) 
-				|| this.pressedKeys.Contains(Avalonia.Input.Key.RightShift))
+				|| this.pressedKeys.Contains(Key.LeftShift) 
+				|| this.pressedKeys.Contains(Key.RightShift))
 			{
 				return true;
 			}
 			if (Platform.IsMacOS)
 			{
 				if ((keyModifiers & KeyModifiers.Meta) != 0
-					|| this.pressedKeys.Contains(Avalonia.Input.Key.LWin) 
-					|| this.pressedKeys.Contains(Avalonia.Input.Key.RWin))
+					|| this.pressedKeys.Contains(Key.LWin) 
+					|| this.pressedKeys.Contains(Key.RWin))
 				{
 					return true;
 				}
@@ -2494,8 +2489,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			else
 			{
 				if ((keyModifiers & KeyModifiers.Control) != 0
-					|| this.pressedKeys.Contains(Avalonia.Input.Key.LeftCtrl) 
-					|| this.pressedKeys.Contains(Avalonia.Input.Key.RightCtrl))
+					|| this.pressedKeys.Contains(Key.LeftCtrl) 
+					|| this.pressedKeys.Contains(Key.RightCtrl))
 				{
 					return true;
 				}
@@ -2505,7 +2500,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Check whether process info should be shown or not.
-		bool IsProcessInfoVisible { get => this.GetValue(IsProcessInfoVisibleProperty); }
+		bool IsProcessInfoVisible => this.GetValue(IsProcessInfoVisibleProperty);
 
 
 		// Get or set whether scrolling to latest log is needed or not.
@@ -2594,7 +2589,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Max line count to display for each log.
-		int MaxDisplayLineCountForEachLog { get => this.GetValue<int>(MaxDisplayLineCountForEachLogProperty); }
+		int MaxDisplayLineCountForEachLog => this.GetValue(MaxDisplayLineCountForEachLogProperty);
 
 
 		// Called when application string resources updated.
@@ -2831,7 +2826,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.HorizontalAlignment = HorizontalAlignment.Stretch;
 				it.PropertyChanged += (_, e) =>
 				{
-					if (e.Property == Border.BoundsProperty)
+					if (e.Property == BoundsProperty)
 						this.ReportLogHeaderColumnWidths();
 				};
 			}));
@@ -2969,7 +2964,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				var waitingTask = new TaskCompletionSource();
 				var observableToken = (IDisposable?)null;
-				observableToken = mainWindow.GetObservable(MainWindow.HasDialogsProperty).Subscribe(hasDialogs =>
+				observableToken = mainWindow.GetObservable(MainWindow.HasDialogsProperty).Subscribe(_ =>
 				{
 					this.SynchronizationContext.Post(() =>
 					{
@@ -3107,7 +3102,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on log list box.
 		void OnLogListBoxPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (e.InitialPressMouseButton == Avalonia.Input.MouseButton.Left)
+			if (e.InitialPressMouseButton == MouseButton.Left)
 				this.isPointerPressedOnLogListBox = false;
 		}
 
@@ -3125,10 +3120,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// update auto scrolling state
 			if (this.isPointerPressedOnLogListBox 
-				|| this.pressedKeys.Contains(Avalonia.Input.Key.Down)
-				|| this.pressedKeys.Contains(Avalonia.Input.Key.Up)
-				|| this.pressedKeys.Contains(Avalonia.Input.Key.Home)
-				|| this.pressedKeys.Contains(Avalonia.Input.Key.End))
+				|| this.pressedKeys.Contains(Key.Down)
+				|| this.pressedKeys.Contains(Key.Up)
+				|| this.pressedKeys.Contains(Key.Home)
+				|| this.pressedKeys.Contains(Key.End))
 			{
 				this.UpdateIsScrollingToLatestLogNeeded(e.OffsetDelta.Y);
 				this.ClearTargetLogRangeToScrollTo();
@@ -3199,11 +3194,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (this.attachedWindow == null)
 				return;
-			if (this.DataContext is not Session session)
+			if (this.DataContext is not Session)
 				return;
 			
 			// switch to new log profile
-			var result = await new MessageDialog()
+			var result = await new MessageDialog
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				Icon = MessageDialogIcon.Question,
@@ -3423,8 +3418,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					switch (e.Key)
 					{
 						case Key.Down:
-							if (e.Source == this.logTextFilterTextBox)
-								(this.DataContext as Session)?.LogFiltering?.UseNextTextFilterOhHistoryCommand?.TryExecute();
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
+								(this.DataContext as Session)?.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute();
 							else if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -3434,7 +3429,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									var selectedItems = this.logListBox.SelectedItems;
 									if (selectedItems!.Count > 1)
 									{
-										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
+										var latestSelectedItem = selectedItems[^1];
 										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
 										if (latestSelectedItem is DisplayableLog log)
 										{
@@ -3448,8 +3443,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Key.Up:
-							if (e.Source == this.logTextFilterTextBox)
-								(this.DataContext as Session)?.LogFiltering?.UsePreviousTextFilterOhHistoryCommand?.TryExecute();
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
+								(this.DataContext as Session)?.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute();
 							else if (e.Source is not TextBox)
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
@@ -3459,7 +3454,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									var selectedItems = this.logListBox.SelectedItems;
 									if (selectedItems!.Count > 1)
 									{
-										var latestSelectedItem = selectedItems[selectedItems.Count - 1];
+										var latestSelectedItem = selectedItems[^1];
 										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
 										if (latestSelectedItem is DisplayableLog log)
 										{
@@ -3623,7 +3618,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called to handle key-down before all children.
-		async void OnPreviewKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+		async void OnPreviewKeyDown(object? sender, KeyEventArgs e)
 		{
 			// check modifier keys
 			if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
@@ -3640,7 +3635,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				switch (e.Key)
 				{
-					case Avalonia.Input.Key.A:
+					case Key.A:
 						// [Workaround] It will take long time to select all items by list box itself
 						if (e.Source is not TextBox)
 						{
@@ -3671,8 +3666,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							session.LogSelection.SelectAllLogs();
 						}
 						break;
-					case Avalonia.Input.Key.Y:
-						if (e.Source == this.logTextFilterTextBox && Platform.IsNotMacOS)
+					case Key.Y:
+						if (ReferenceEquals(e.Source, this.logTextFilterTextBox) && Platform.IsNotMacOS)
 						{
 							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
 							{
@@ -3682,8 +3677,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							e.Handled = true;
 						}
 						break;
-					case Avalonia.Input.Key.Z:
-						if (e.Source == this.logTextFilterTextBox)
+					case Key.Z:
+						if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 						{
 							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
 							{
@@ -3704,7 +3699,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called to handle key-up before all children.
-		void OnPreviewKeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
+		void OnPreviewKeyUp(object? sender, KeyEventArgs e)
 		{
 			// log event
 #if DEBUG
@@ -3724,8 +3719,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			var property = change.Property;
 			if (property == DataContextProperty)
 			{
-				(change.OldValue as Session)?.Let(session => this.DetachFromSession(session));
-				(change.NewValue as Session)?.Let(session => this.AttachToSession(session));
+				(change.OldValue as Session)?.Let(this.DetachFromSession);
+				(change.NewValue as Session)?.Let(this.AttachToSession);
 			}
 			else if (property == IsScrollingToLatestLogNeededProperty)
 			{
@@ -3891,7 +3886,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when pointer released on tool bar.
 		void OnToolBarPointerReleased(object? sender, PointerReleasedEventArgs e)
 		{
-			if (Avalonia.Input.FocusManager.Instance?.Current is not TextBox)
+			if (FocusManager.Instance?.Current is not TextBox)
 				this.SynchronizationContext.Post(() => this.logListBox.Focus());
 		}
 
@@ -4221,7 +4216,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// scroll to target range
-			var indexToScrollTo = 0;
+			int indexToScrollTo;
 			if (targetCenterIndex >= displayedCenterIndex)
 			{
 				indexToScrollTo = Math.Min(logs.Count - 1, targetCenterIndex + (this.latestDisplayedLogCount >> 1));
@@ -5072,7 +5067,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.latestDisplayedMarkedLogs.Clear();
 			foreach (var itemContainer in this.logListBox.ItemContainerGenerator.Containers)
 			{
-				if (itemContainer?.Item is not DisplayableLog log)
+				if (itemContainer.Item is not DisplayableLog log)
 					continue;
 				++logCount;
 				if (firstLog == null || session.CompareDisplayableLogs(log, firstLog) < 0)
@@ -5103,8 +5098,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		void UpdateToolBarItemsLayout()
 		{
 			// check state
-			if (this.toolBarLogTextFilterItemsPanel == null)
+			// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+			if (this.toolBarLogTextFilterItemsPanel == null) // Need to check because method may be called from constructor
 				return;
+			// ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			
 			// get toolbar size
 			var toolBarPadding = this.toolBarContainer.Padding;
@@ -5118,9 +5115,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			var currentItemsPanelWidth = this.toolBarLogTextFilterItemsPanel.Width;
 			if (toolBarWidth > minItemsPanelWidth)
 			{
+				// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 				var prevItemsPanelWidth1 = (this.toolBarLogActionItemsPanel?.Bounds).GetValueOrDefault().Width;
 				var prevItemsPanelWidth2 = (this.toolBarOtherLogFilterItemsPanel?.Bounds).GetValueOrDefault().Width;
 				var nextItemsPanelWidth1 = (this.toolBarOtherItemsPanel?.Bounds).GetValueOrDefault().Width;
+				// ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 				var remainingWidth = toolBarWidth
 					- prevItemsPanelWidth1
 					- prevItemsPanelWidth2

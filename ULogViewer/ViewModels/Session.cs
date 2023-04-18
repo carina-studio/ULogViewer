@@ -261,7 +261,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return MinSidePanelSize;
 				return it;
 			}, 
-			validate: it => double.IsFinite(it));
+			validate: double.IsFinite);
 		/// <summary>
 		/// Property of <see cref="LogProfile"/>.
 		/// </summary>
@@ -298,7 +298,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return MinSidePanelSize;
 				return it;
 			}, 
-			validate: it => double.IsFinite(it));
+			validate: double.IsFinite);
 		/// <summary>
 		/// Property of <see cref="MaxLogTimeSpan"/>.
 		/// </summary>
@@ -827,16 +827,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Initialize new <see cref="Session"/> instance.
 		/// </summary>
 		/// <param name="app">Application.</param>
-		public Session(IULogViewerApplication app) : this(app, null)
-		{ }
-
-
-		/// <summary>
-		/// Initialize new <see cref="Session"/> instance.
-		/// </summary>
-		/// <param name="app">Application.</param>
 		/// <param name="initLogProfile">Initial log profile.</param>
-		public Session(IULogViewerApplication app, LogProfile? initLogProfile) : base(app)
+		public Session(IULogViewerApplication app, LogProfile? initLogProfile = null) : base(app)
 		{
 			// create static logger
 			staticLogger ??= app.LoggerFactory.CreateLogger(nameof(Session));
@@ -897,10 +889,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create components
 			var internalAccessor = new InternalAccessorImpl(this);
-			this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(it =>
-			{
-				this.AttachToComponent(it);
-			});
+			this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(this.AttachToComponent);
 			this.LogFiltering = new LogFilteringViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
@@ -914,8 +903,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.selectLogsToReportActions?.Schedule();
 				});
 			});
-			this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(it =>
-				this.AttachToComponent(it));
+			this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(this.AttachToComponent);
 			this.LogSelection = new LogSelectionViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
@@ -1238,7 +1226,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnLogProfilesChanged);
 			
-			// attach to ptoduct manager
+			// attach to product manager
 			this.SetValue(IsProVersionActivatedProperty, app.ProductManager.IsProductActivated(Products.Professional));
 			app.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 
@@ -1700,6 +1688,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (e.PropertyName == nameof(RawLogWriter.State))
 				{
+					// ReSharper disable AccessToDisposedClosure
 					switch (logWriter.State)
 					{
 						case LogWriterState.DataOutputError:
@@ -1712,6 +1701,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							}
 							break;
 					}
+					// ReSharper restore AccessToDisposedClosure
 				}
 			};
 
@@ -1818,10 +1808,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
-				if (profile.LogPatterns.IsNotEmpty())
-					it.LogPatterns = profile.LogPatterns;
-				else
-					it.LogPatterns = new[] { new LogPattern("^(?<Message>.*)", false, false) };
+				it.LogPatterns = profile.LogPatterns.IsNotEmpty() 
+					? profile.LogPatterns 
+					: new[] { new LogPattern("^(?<Message>.*)", false, false) };
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 				{
@@ -2080,7 +2069,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnLogProfilesChanged);
 			
-			// detach from ptoduct manager
+			// detach from product manager
 			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 
 			// stop watches
@@ -2137,7 +2126,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove logs
 			if (removeLogs)
 			{
+				// ReSharper disable AccessToDisposedClosure
 				this.allLogs.RemoveAll(it => it.LogReader == logReader);
+				// ReSharper restore AccessToDisposedClosure
 				logReader.DataSource.CreationOptions.FileName?.Let(fileName => this.allLogsByLogFilePath.Remove(fileName));
 			}
 
@@ -3951,7 +3942,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						// get data source options
 						if (!jsonLogReader.TryGetProperty("Options", out jsonValue) || jsonValue.ValueKind != JsonValueKind.Object)
 							continue;
-						var dataSourceOptions = new LogDataSourceOptions();
+						LogDataSourceOptions dataSourceOptions;
 						try
 						{
 							dataSourceOptions = LogDataSourceOptions.Load(jsonValue);
@@ -4118,6 +4109,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (e.PropertyName == nameof(RawLogWriter.State))
 				{
+					// ReSharper disable AccessToDisposedClosure
 					switch (logWriter.State)
 					{
 						case LogWriterState.DataOutputError:
@@ -4130,6 +4122,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							}
 							break;
 					}
+					// ReSharper restore AccessToDisposedClosure
 				}
 			};
 
@@ -4367,7 +4360,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check current IP endpoint
 			if (this.logReaders.IsNotEmpty())
 			{
-				if (object.Equals(this.logReaders.First().DataSource.CreationOptions.IPEndPoint, endPoint))
+				if (Equals(this.logReaders.First().DataSource.CreationOptions.IPEndPoint, endPoint))
 				{
 					this.Logger.LogDebug("Set to same IP endpoint");
 					return;

@@ -1,6 +1,5 @@
 ﻿using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
-using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Cryptography;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// <summary>
 	/// Provider of <see cref="ILogDataSource"/>.
 	/// </summary>
-	interface ILogDataSourceProvider : IApplicationObject, INotifyPropertyChanged, IThreadDependent
+	interface ILogDataSourceProvider : IApplicationObject, INotifyPropertyChanged
 	{
 		/// <summary>
 		/// Get number of active <see cref="ILogDataSource"/> instances created by this provider.
@@ -145,7 +144,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.FormatJsonData == options.FormatJsonData
 					&& this.FormatXmlData == options.FormatXmlData
 					&& this.IncludeStandardError == options.IncludeStandardError
-					&& object.Equals(this.IPEndPoint, options.IPEndPoint)
+					&& Equals(this.IPEndPoint, options.IPEndPoint)
 					&& this.IsResourceOnAzure == options.IsResourceOnAzure
 					&& this.Password == options.Password
 					&& this.QueryString == options.QueryString
@@ -206,13 +205,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		{
 			SetupOptionPropertyInfoMap();
 			if (optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo))
-				return propertyInfo?.GetValue(this);
+				return propertyInfo.GetValue(this);
 			return null;
 		}
 
 
 		/// <summary>
-		/// Get or set whether standard errpr (stderr) should be included or not.
+		/// Get or set whether standard error (stderr) should be included or not.
 		/// </summary>
 		public bool IncludeStandardError { get; set; }
 
@@ -231,7 +230,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public bool IsOptionSet(string optionName)
 		{
 			SetupOptionPropertyInfoMap();
-			if (!optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo) || propertyInfo == null)
+			if (!optionPropertyInfoMap.TryGetValue(optionName, out var propertyInfo))
 				return false;
 			var type = propertyInfo.PropertyType;
 			if (type == typeof(string))
@@ -329,8 +328,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							options.IsResourceOnAzure = jsonProperty.Value.GetBoolean();
 							break;
 						case nameof(Password):
-							if (crypto == null)
-								crypto = new Crypto(App.Current);
+							crypto ??= new Crypto(App.Current);
 							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 							break;
 						case nameof(QueryString):
@@ -362,8 +360,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
 							break;
 						case nameof(UserName):
-							if (crypto == null)
-								crypto = new Crypto(App.Current);
+							crypto ??= new Crypto(App.Current);
 							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 							break;
 						case nameof(UseTextShell):
@@ -412,7 +409,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Save options as JSON data.
 		/// </summary>
 		/// <param name="jsonWriter"><see cref="Utf8JsonWriter"/> to write JSON data.</param>
-		public void Save(Utf8JsonWriter jsonWriter)
+		public readonly void Save(Utf8JsonWriter jsonWriter)
 		{
 			var crypto = (Crypto?)null;
 			try
@@ -470,8 +467,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				this.Uri?.Let(it => jsonWriter.WriteString(nameof(Uri), it.ToString()));
 				this.UserName?.Let(it =>
 				{
-					if (crypto == null)
-						crypto = new Crypto(App.Current);
+					crypto ??= new Crypto(App.Current);
 					jsonWriter.WriteString(nameof(UserName), crypto.Encrypt(it));
 				});
 				if (this.UseTextShell)
@@ -554,11 +550,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	static class LogDataSourceProviderExtensions
 	{
 		/// <summary>
-		/// Check whether given option is reqired for creating <see cref="ILogDataSource"/> or not.
+		/// Check whether given option is required for creating <see cref="ILogDataSource"/> or not.
 		/// </summary>
 		/// <param name="provider"><see cref="ILogDataSourceProvider"/>.</param>
 		/// <param name="optionName">Name of option to check.</param>
-		/// <returns>True if given option is reqired for creating <see cref="ILogDataSource"/>.</returns>
+		/// <returns>True if given option is required for creating <see cref="ILogDataSource"/>.</returns>
 		public static bool IsSourceOptionRequired(this ILogDataSourceProvider provider, string optionName) => provider.RequiredSourceOptions.Contains(optionName);
 
 

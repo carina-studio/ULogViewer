@@ -63,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="BaseLogDataSource"/> instance.
 		/// </summary>
-		/// <param name="provider"><see cref="ILogDataSourceProvider"/> which creates this instane.</param>
+		/// <param name="provider"><see cref="ILogDataSourceProvider"/> which creates this instance.</param>
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create instance.</param>
 		protected BaseLogDataSource(ILogDataSourceProvider provider, LogDataSourceOptions options)
 		{
@@ -79,7 +79,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
-		public IULogViewerApplication Application { get => (IULogViewerApplication)this.Provider.Application; }
+		public IULogViewerApplication Application => (IULogViewerApplication)this.Provider.Application;
 
 
 		// change state.
@@ -224,7 +224,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// open reader
 			var reader = (TextReader?)null;
-			var openingResult = LogDataSourceState.UnclassifiedError;
+			LogDataSourceState openingResult;
 			try
 			{
 				(openingResult, reader) = await this.OpenReaderCoreAsync(cancellationToken);
@@ -285,7 +285,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			}
 			if (this.ChangeState(LogDataSourceState.ReaderOpened) != LogDataSourceState.ReaderOpened)
 			{
-				Global.RunWithoutErrorAsync(() => reader?.Close());
+				Global.RunWithoutErrorAsync(() => reader.Close());
 				throw new InternalStateCorruptedException("Internal state has been changed when opening reader.");
 			}
 			this.openedReader = new TextReaderWrapper(this, reader);
@@ -378,7 +378,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Get <see cref="TaskFactory"/> for execution of internal actions.
 		/// </summary>
-		protected virtual TaskFactory TaskFactory { get => defaultTaskFactory; }
+		protected virtual TaskFactory TaskFactory => defaultTaskFactory;
 
 
 		// Get readable string.
@@ -388,10 +388,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Interface implementations.
 		public bool CheckAccess() => this.Provider.CheckAccess();
 		public LogDataSourceOptions CreationOptions { get; }
-		CarinaStudio.IApplication IApplicationObject.Application { get => this.Application; }
+		IApplication IApplicationObject.Application => this.Application;
 		public event PropertyChangedEventHandler? PropertyChanged;
 		public ILogDataSourceProvider Provider { get; }
 		public SynchronizationContext SynchronizationContext => this.Provider.SynchronizationContext;
-		public LogDataSourceState State { get => this.state; }
+		public LogDataSourceState State => this.state;
 	}
 }
