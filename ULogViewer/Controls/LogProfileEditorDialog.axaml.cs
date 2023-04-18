@@ -17,6 +17,9 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.Windows.Input;
+#if !DEBUG
+using Microsoft.Extensions.Logging;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -68,8 +71,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
-		readonly SortedObservableList<KeyValuePair<string, LogLevel>> logLevelMapEntriesForReading = new((x, y) => x.Key.CompareTo(y.Key));
-		readonly SortedObservableList<KeyValuePair<LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<string, Logs.LogLevel>> logLevelMapEntriesForReading = new((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<Logs.LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
 		readonly AppSuite.Controls.ListBox logLevelMapForWritingListBox;
 		readonly AppSuite.Controls.ListBox logPatternListBox;
@@ -121,8 +124,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}));
 
 			// create commands
-			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, LogLevel>>(this.EditLogLevelMapEntryForReading);
-			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
+			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, Logs.LogLevel>>(this.EditLogLevelMapEntryForReading);
+			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<Logs.LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
 			this.EditLogPatternCommand = new Command<ListBoxItem>(this.EditLogPattern);
 			this.EditLogWritingFormatCommand = new Command<ListBoxItem>(this.EditLogWritingFormat);
 			this.EditTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimeSpanFormatForReading);
@@ -207,13 +210,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void AddLogLevelMapEntryForReading()
 		{
-			var entry = (KeyValuePair<string, LogLevel>?)null;
+			var entry = (KeyValuePair<string, Logs.LogLevel>?)null;
 			while (true)
 			{
 				entry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = entry
-				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
+				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
 				if (entry == null)
 					return;
 				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
@@ -243,13 +246,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <returns></returns>
 		public async void AddLogLevelMapEntryForWriting()
 		{
-			var entry = (KeyValuePair<LogLevel, string>?)null;
+			var entry = (KeyValuePair<Logs.LogLevel, string>?)null;
 			while (true)
 			{
 				entry = await new LogLevelMapEntryForWritingEditorDialog()
 				{
 					Entry = entry
-				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
+				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
 				if (entry == null)
 					return;
 				if (this.logLevelMapEntriesForWriting.Contains(entry.Value))
@@ -474,15 +477,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Edit log level map entry.
-		async void EditLogLevelMapEntryForReading(KeyValuePair<string, LogLevel> entry)
+		async void EditLogLevelMapEntryForReading(KeyValuePair<string, Logs.LogLevel> entry)
 		{
-			var newEntry = (KeyValuePair<string, LogLevel>?)entry;
+			var newEntry = (KeyValuePair<string, Logs.LogLevel>?)entry;
 			while (true)
 			{
 				newEntry = await new LogLevelMapEntryForReadingEditorDialog()
 				{
 					Entry = newEntry
-				}.ShowDialog<KeyValuePair<string, LogLevel>?>(this);
+				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
 				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
@@ -515,15 +518,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Edit log level map entry.
-		async void EditLogLevelMapEntryForWriting(KeyValuePair<LogLevel, string> entry)
+		async void EditLogLevelMapEntryForWriting(KeyValuePair<Logs.LogLevel, string> entry)
 		{
-			var newEntry = (KeyValuePair<LogLevel, string>?)entry;
+			var newEntry = (KeyValuePair<Logs.LogLevel, string>?)entry;
 			while (true)
 			{
 				newEntry = await new LogLevelMapEntryForWritingEditorDialog()
 				{
 					Entry = newEntry
-				}.ShowDialog<KeyValuePair<LogLevel, string>?>(this);
+				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
 				if (newEntry == null || newEntry.Value.Equals(entry))
 					return;
 				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
@@ -739,8 +742,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsTemplate = isTemplate;
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
-			logProfile.LogLevelMapForReading = new Dictionary<string, LogLevel>(this.logLevelMapEntriesForReading);
-			logProfile.LogLevelMapForWriting = new Dictionary<LogLevel, string>(this.logLevelMapEntriesForWriting);
+			logProfile.LogLevelMapForReading = new Dictionary<string, Logs.LogLevel>(this.logLevelMapEntriesForReading);
+			logProfile.LogLevelMapForWriting = new Dictionary<Logs.LogLevel, string>(this.logLevelMapEntriesForWriting);
 			logProfile.LogPatterns = this.logPatterns;
 			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
@@ -975,13 +978,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Entries of log level map.
 		/// </summary>
-		public IList<KeyValuePair<string, LogLevel>> LogLevelMapEntriesForReading { get; }
+		public IList<KeyValuePair<string, Logs.LogLevel>> LogLevelMapEntriesForReading { get; }
 
 
 		/// <summary>
 		/// Entries of log level map.
 		/// </summary>
-		public IList<KeyValuePair<LogLevel, string>> LogLevelMapEntriesForWriting { get; }
+		public IList<KeyValuePair<Logs.LogLevel, string>> LogLevelMapEntriesForWriting { get; }
 
 
 		/// <summary>
@@ -1199,9 +1202,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 				return;
 			if (listBox == this.logLevelMapForReadingListBox)
-				this.EditLogLevelMapEntryForReading((KeyValuePair<string, LogLevel>)e.Item);
+				this.EditLogLevelMapEntryForReading((KeyValuePair<string, Logs.LogLevel>)e.Item);
 			else if (listBox == this.logLevelMapForWritingListBox)
-				this.EditLogLevelMapEntryForWriting((KeyValuePair<LogLevel, string>)e.Item);
+				this.EditLogLevelMapEntryForWriting((KeyValuePair<Logs.LogLevel, string>)e.Item);
 			else if (listBox == this.logPatternListBox)
 				this.EditLogPattern(listBoxItem);
 			else if (listBox == this.logWritingFormatListBox)
@@ -1475,12 +1478,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Remove log level map entry.
 		void RemoveLogLevelMapEntry(object entry)
 		{
-			if (entry is KeyValuePair<string, LogLevel> readingEntry)
+			if (entry is KeyValuePair<string, Logs.LogLevel> readingEntry)
 			{
 				this.logLevelMapEntriesForReading.Remove(readingEntry);
 				this.SelectListBoxItem(this.logLevelMapForReadingListBox, -1);
 			}
-			else if (entry is KeyValuePair<LogLevel, string> writingEntry)
+			else if (entry is KeyValuePair<Logs.LogLevel, string> writingEntry)
 			{
 				this.logLevelMapEntriesForWriting.Remove(writingEntry);
 				this.SelectListBoxItem(this.logLevelMapForWritingListBox, -1);
