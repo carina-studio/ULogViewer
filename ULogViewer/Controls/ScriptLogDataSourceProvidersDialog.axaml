@@ -2,14 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:abControls="using:CarinaStudio.Controls"
-		xmlns:abConverters="using:CarinaStudio.Data.Converters"
-		xmlns:aConverters="using:Avalonia.Data.Converters"
-		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
-		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:appDataSources="using:CarinaStudio.ULogViewer.Logs.DataSources"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:sys="using:System"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProvidersDialog"
         Classes="Dialog"
@@ -33,7 +27,7 @@
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 
-			<asControls:ListBox Name="providerListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" IsVisible="{Binding Count, Source={x:Static appDataSources:LogDataSourceProviders.ScriptProviders}}" Items="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
+			<asControls:ListBox Name="providerListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" Items="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
 				<asControls:ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*,Auto">
