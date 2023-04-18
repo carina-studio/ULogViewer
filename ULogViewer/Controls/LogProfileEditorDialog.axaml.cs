@@ -441,15 +441,41 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void EditEmbeddedScriptLogDataSourceProvider()
 		{
-			var provider = await new ScriptLogDataSourceProviderEditorDialog()
+			// edit provider
+			if (this.embeddedScriptLogDataSourceProvider is null)
+				return;
+			var provider = await new ScriptLogDataSourceProviderEditorDialog
 			{
 				IsEmbeddedProvider = true,
-				Provider = this.embeddedScriptLogDataSourceProvider,
+				Provider = new(this.embeddedScriptLogDataSourceProvider, ""),
 			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
 			if (provider == null || this.IsClosed)
 				return;
-			if (this.dataSourceProviderComboBox.SelectedItem is EmbeddedScriptLogDataSourceProvider)
-				this.OnSelectedDataSourceChanged();
+			
+			// replace provider
+			provider = new EmbeddedScriptLogDataSourceProvider(provider);
+			var prevProvider = this.embeddedScriptLogDataSourceProvider;
+			this.embeddedScriptLogDataSourceProvider = (EmbeddedScriptLogDataSourceProvider)provider;
+			if (ReferenceEquals(this.dataSourceProviderComboBox.SelectedItem, prevProvider))
+			{
+				var index = this.dataSourceProviderComboBox.SelectedIndex;
+				this.dataSourceProviders[index] = provider;
+				this.dataSourceProviderComboBox.SelectedIndex = index;
+				prevProvider?.Dispose();
+				this.InvalidateInput();
+			}
+			else
+			{
+				var index = this.dataSourceProviders.Count - 1;
+				if (index >= 0 && ReferenceEquals(this.dataSourceProviders[index], prevProvider))
+				{
+					this.dataSourceProviders[index] = provider;
+					prevProvider.Dispose();
+				}
+				else
+					this.dataSourceProviders.Add(provider);
+				this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
+			}
 		}
 
 
@@ -826,7 +852,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var provider = await Global.RunOrDefaultAsync(async () => await ScriptLogDataSourceProvider.LoadAsync(this.Application, fileName));
 			if (provider == null)
 			{
-				_ = new MessageDialog()
+				_ = new MessageDialog
 				{
 					Icon = MessageDialogIcon.Error,
 					Message = new FormattedString().Also(it =>
@@ -839,7 +865,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// edit provider and replace
-			provider = await new ScriptLogDataSourceProviderEditorDialog()
+			provider = await new ScriptLogDataSourceProviderEditorDialog
 			{
 				IsEmbeddedProvider = true,
 				Provider = provider,
@@ -847,21 +873,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (provider != null)
 			{
 				provider = new EmbeddedScriptLogDataSourceProvider(provider);
-				if (this.dataSourceProviderComboBox.SelectedItem is EmbeddedScriptLogDataSourceProvider)
+				var prevProvider = this.embeddedScriptLogDataSourceProvider;
+				this.embeddedScriptLogDataSourceProvider = (EmbeddedScriptLogDataSourceProvider)provider;
+				if (ReferenceEquals(this.dataSourceProviderComboBox.SelectedItem, prevProvider))
 				{
 					var index = this.dataSourceProviderComboBox.SelectedIndex;
 					this.dataSourceProviders[index] = provider;
 					this.dataSourceProviderComboBox.SelectedIndex = index;
+					prevProvider?.Dispose();
 					this.InvalidateInput();
 				}
 				else
 				{
 					var index = this.dataSourceProviders.Count - 1;
-					if (index >= 0 && this.dataSourceProviders[index] is EmbeddedScriptLogDataSourceProvider)
+					if (index >= 0 && ReferenceEquals(this.dataSourceProviders[index], prevProvider))
+					{
 						this.dataSourceProviders[index] = provider;
+						prevProvider.Dispose();
+					}
 					else
 						this.dataSourceProviders.Add(provider);
-					this.embeddedScriptLogDataSourceProvider = new(provider);
 					this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
 				}
 			}
@@ -898,43 +929,53 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void ImportExistingEmbeddedScriptLogDataSourceProvider()
 		{
 			// select provider
-			var provider = await new ScriptLogDataSourceProviderSelectionDialog().ShowDialog<ScriptLogDataSourceProvider>(this);
+			var provider = await new ScriptLogDataSourceProviderSelectionDialog().ShowDialog<ScriptLogDataSourceProvider?>(this);
 			if (provider == null)
 				return;
 			
 			// edit provider and replace
-			provider = await new ScriptLogDataSourceProviderEditorDialog()
+			var providerToEdit = new EmbeddedScriptLogDataSourceProvider(provider);
+			provider = await new ScriptLogDataSourceProviderEditorDialog
 			{
 				IsEmbeddedProvider = true,
-				Provider = new EmbeddedScriptLogDataSourceProvider(provider),
+				Provider = providerToEdit,
 			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
 			if (provider != null)
 			{
 				if (provider is not EmbeddedScriptLogDataSourceProvider)
 					provider = new EmbeddedScriptLogDataSourceProvider(provider);
-				if (this.dataSourceProviderComboBox.SelectedItem is EmbeddedScriptLogDataSourceProvider)
+				if (!ReferenceEquals(provider, providerToEdit))
+					providerToEdit.Dispose();
+				var prevProvider = this.embeddedScriptLogDataSourceProvider;
+				this.embeddedScriptLogDataSourceProvider = (EmbeddedScriptLogDataSourceProvider)provider;
+				if (ReferenceEquals(this.dataSourceProviderComboBox.SelectedItem, prevProvider))
 				{
 					var index = this.dataSourceProviderComboBox.SelectedIndex;
 					this.dataSourceProviders[index] = provider;
 					this.dataSourceProviderComboBox.SelectedIndex = index;
+					prevProvider?.Dispose();
 					this.InvalidateInput();
 				}
 				else
 				{
 					var index = this.dataSourceProviders.Count - 1;
-					if (index >= 0 && this.dataSourceProviders[index] is EmbeddedScriptLogDataSourceProvider)
+					if (index >= 0 && ReferenceEquals(this.dataSourceProviders[index], prevProvider))
+					{
 						this.dataSourceProviders[index] = provider;
+						prevProvider.Dispose();
+					}
 					else
 						this.dataSourceProviders.Add(provider);
-					this.embeddedScriptLogDataSourceProvider = new(provider);
 					this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
 				}
 			}
+			else
+				providerToEdit.Dispose();
 		}
 
 
 		// Check whether log data source options is valid or not.
-		bool IsValidDataSourceOptions { get => this.GetValue<bool>(IsValidDataSourceOptionsProperty); }
+		bool IsValidDataSourceOptions => this.GetValue<bool>(IsValidDataSourceOptionsProperty);
 
 
 		/// <summary>
@@ -1416,9 +1457,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void RemoveEmbeddedScriptLogDataSourceProvider()
 		{
-			if (this.embeddedScriptLogDataSourceProvider == null)
+			if (this.embeddedScriptLogDataSourceProvider is null)
 				return;
-			var result = await new MessageDialog()
+			var result = await new MessageDialog
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				DefaultResult = MessageDialogResult.No,
@@ -1427,9 +1468,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			}.ShowDialog(this);
 			if (result == MessageDialogResult.Yes)
 			{
-				if (this.dataSourceProviderComboBox.SelectedItem == this.embeddedScriptLogDataSourceProvider)
+				if (ReferenceEquals(this.dataSourceProviderComboBox.SelectedItem, this.embeddedScriptLogDataSourceProvider))
 					this.SelectDefaultDataSource();
 				this.dataSourceProviders.Remove(this.embeddedScriptLogDataSourceProvider);
+				this.embeddedScriptLogDataSourceProvider.Dispose();
 				this.embeddedScriptLogDataSourceProvider = null;
 				this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, false);
 			}

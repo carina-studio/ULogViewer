@@ -8,6 +8,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDataSourceProvider
 {
     // Fields.
+    // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
+    readonly EventHandler appStringsUpdatedHandler; // Need to keep as strong reference
+    // ReSharper restore PrivateFieldCanBeConvertedToLocalVariable
     readonly IDisposable appStringsUpdatedHandlerToken;
 
 
@@ -17,8 +20,9 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
     /// <param name="template">Template provider.</param>
     public EmbeddedScriptLogDataSourceProvider(ScriptLogDataSourceProvider template) : base(template, "")
     { 
-        this.appStringsUpdatedHandlerToken = this.Application.AddWeakEventHandler(nameof(IApplication.StringsUpdated), (_, _) => 
-            this.OnPropertyChanged(nameof(DisplayName)));
+        this.appStringsUpdatedHandler = (_, _) => 
+            this.OnPropertyChanged(nameof(DisplayName));
+        this.appStringsUpdatedHandlerToken = this.Application.AddWeakEventHandler(nameof(IApplication.StringsUpdated), this.appStringsUpdatedHandler);
     }
 
 
@@ -41,5 +45,5 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
 
 
     /// <inheritdoc/>
-    string ILogDataSourceProvider.DisplayName { get => this.DisplayName ?? ""; }
+    string ILogDataSourceProvider.DisplayName => this.DisplayName;
 }
