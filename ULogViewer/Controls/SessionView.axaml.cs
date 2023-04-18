@@ -338,8 +338,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			// create value converters
 			this.selectableValueLogItemBackgroundConverter = new FuncMultiValueConverter<bool, IBrush?>(values =>
 			{
+#pragma warning disable CS8619
 				if (values is not IList<bool> list)
 					list = values.ToArray();
+#pragma warning restore CS8619
 				if (list.Count >= 2 
 					&& list[0] /* IsValueSelected */ 
 					&& !list[1] /* IsListBoxItemSelected */)
