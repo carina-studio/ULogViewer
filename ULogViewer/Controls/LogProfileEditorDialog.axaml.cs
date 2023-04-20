@@ -382,7 +382,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				IsEmbeddedScriptSet = true,
 			}.ShowDialog<LogAnalysisScriptSet?>(this);
-			if (scriptSet == null || this.IsClosed)
+			if (scriptSet is null || this.IsClosed)
 				return;
 			this.cooperativeLogAnalysisScriptSet = scriptSet;
 			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
@@ -394,14 +394,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void CreateEmbeddedScriptLogDataSourceProvider()
 		{
+			if (this.embeddedScriptLogDataSourceProvider is not null)
+				return;
 			var provider = await new ScriptLogDataSourceProviderEditorDialog()
 			{
 				IsEmbeddedProvider = true,
 			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
-			if (provider == null || this.IsClosed)
+			if (provider is null || this.IsClosed)
 				return;
 			this.embeddedScriptLogDataSourceProvider = new(provider);
-			this.dataSourceProviders.Add(provider);
+			this.dataSourceProviders.Add(this.embeddedScriptLogDataSourceProvider);
 			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
 		}
 
