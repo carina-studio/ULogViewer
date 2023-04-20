@@ -27,6 +27,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using TextBlock = Avalonia.Controls.TextBlock;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -706,8 +707,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this);
 					if (result == MessageDialogResult.Yes)
 					{
-						this.baseScrollViewer.ScrollIntoView(this.logPatternListBox);
-						this.logPatternListBox.Focus();
+						this.SynchronizationContext.PostDelayed(() =>
+						{
+							this.Get<Control>("logPatternsContainer").BringIntoView();
+							this.Get<Button>("addLogPatternButton").Focus();
+							this.AnimateTextBlock(this.Get<TextBlock>("logPatternsTextBlock"));
+						}, 100);
 						return null;
 					}
 					await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
@@ -724,8 +729,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog(this);
 				if (result == MessageDialogResult.Yes)
 				{
-					this.baseScrollViewer.ScrollIntoView(this.visibleLogPropertyListBox);
-					this.visibleLogPropertyListBox.Focus();
+					this.SynchronizationContext.PostDelayed(() =>
+					{
+						this.Get<Control>("visibleLogPropertiesContainer").BringIntoView();
+						this.Get<Button>("addVisibleLogPropertyButton").Focus();
+						this.AnimateTextBlock(this.Get<TextBlock>("visiblePropertiesTextBlock"));
+					}, 100);
 					return null;
 				}
 				await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
