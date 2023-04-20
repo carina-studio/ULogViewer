@@ -748,6 +748,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
 
 	<!-- Session -->
+	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在啟用 ULogViewer 專業版之前無法使用資料來源「{0}」。</sys:String>
 	<sys:String x:Key="String/Session.Empty">空白分頁</sys:String>
 
 	<!-- SessionView -->

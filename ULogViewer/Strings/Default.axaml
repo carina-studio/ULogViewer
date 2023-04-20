@@ -782,6 +782,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
 
 	<!-- Session -->
+	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">Cannot use data source '{0}' before activating ULogViewer Pro.</sys:String>
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
 
 	<!-- SessionView -->
