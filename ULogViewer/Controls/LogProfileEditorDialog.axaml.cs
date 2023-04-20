@@ -1350,6 +1350,24 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup initial focus
 			this.SynchronizationContext.Post(this.nameTextBox.Focus);
+			
+			// check Pro-version only parameters
+			if ((this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider)?.IsProVersionOnly == true
+			    && !this.Application.ProductManager.IsProductActivated(Products.Professional))
+			{
+				await new MessageDialog
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = profile?.Name;
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams"));
+					}),
+				}.ShowDialog(this);
+				await Task.Delay(300); // [Workaround] Prevent crashing when closing two windows immediately on macOS
+				if (!this.IsClosed)
+					this.Close();
+			}
 		}
 
 

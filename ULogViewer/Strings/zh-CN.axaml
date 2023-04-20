@@ -489,6 +489,7 @@ return False</sys:String>
 
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允许加入多个档案</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams">无法编辑日志类型「{0}」，因为其中至少有一个参数仅供专业版使用。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">显示于日志左侧的色块分组方式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般设定</sys:String>
