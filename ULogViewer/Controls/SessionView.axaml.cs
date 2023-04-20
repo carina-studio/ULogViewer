@@ -164,6 +164,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		int latestDisplayedLogCount;
 		DisplayableLog[]? latestDisplayedLogRange;
 		readonly List<DisplayableLog> latestDisplayedMarkedLogs = new();
+		DisplayableLog? latestSelectedDisplayableLog;
 		readonly ContextMenu logActionMenu;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
@@ -3145,8 +3146,16 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when log list box selection changed.
-		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e) =>
+		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count > 0)
+				this.latestSelectedDisplayableLog = e.AddedItems[^1] as DisplayableLog;
+			else if (this.logListBox.SelectedItems?.Count == 0)
+				this.latestSelectedDisplayableLog = null;
+			else if (this.latestSelectedDisplayableLog is null && e.RemovedItems.Contains(this.latestSelectedDisplayableLog))
+				this.latestSelectedDisplayableLog = null;
 			this.OnLogListBoxSelectionChanged();
+		}
 		void OnLogListBoxSelectionChanged()
 		{
 			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
@@ -4167,10 +4176,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.DataContext is not Session)
 				return;
-			var selectedItems = this.logListBox.SelectedItems;
-			if (selectedItems!.Count == 0)
+			if (this.latestSelectedDisplayableLog is null)
 				return;
-			this.ScrollToLog((DisplayableLog)selectedItems[0]!);
+			this.ScrollToLog(this.latestSelectedDisplayableLog);
 			this.logScrollViewer?.Let(scrollViewer =>
 			{
 				if (scrollViewer.Extent.Height > scrollViewer.Viewport.Height)
