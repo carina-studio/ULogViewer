@@ -994,6 +994,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SearchProvider.Zhihu">知乎</sys:String>
 
 	<!-- Session -->
+	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在启用 ULogViewer 专业版之前无法使用资料来源「{0}」。</sys:String>
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
 	
 	<!-- SessionView -->

@@ -1339,7 +1339,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(LastLogReadingPreconditionProperty, param.Precondition);
 
 			// create log reader
-			this.CreateLogReader(dataSource, param.Precondition, null, null);
+			if (!this.CreateLogReader(dataSource, param.Precondition, null, null))
+				this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
 		}
 
 
@@ -1778,8 +1779,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 #pragma warning disable IDE0060
 		// Create log reader.
-		void CreateLogReader(ILogDataSource dataSource, LogReadingPrecondition precondition, LogReadingWindow? readingWindow, int? maxLogCount)
+		bool CreateLogReader(ILogDataSource dataSource, LogReadingPrecondition precondition, LogReadingWindow? readingWindow, int? maxLogCount)
 		{
+			// check Pro-version only data source
+			var dataSourceProvider = dataSource.Provider;
+			if (!this.IsProVersionActivated && dataSourceProvider.IsProVersionOnly)
+			{
+				this.Logger.LogError("Cannot create log reader because the data source provider '{name}' ({id}) is Pro-version only", dataSourceProvider.DisplayName, dataSourceProvider.Name);
+				this.ErrorMessageGenerated?.Invoke(this, new(this.Application.GetFormattedString("Session.CannotUseProVersionOnlyDataSource", dataSourceProvider.DisplayName)));
+				return false;
+			}
+			
 			// prepare displayable log group
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			if (this.displayableLogGroup == null)
@@ -1872,7 +1882,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.updateTitleAndIconAction.Schedule();
 
 			// bind to log file info
-			var dataSourceProvider = dataSource.Provider;
 			var creationOptions = dataSource.CreationOptions;
 			var hasFileName = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)) 
 				&& creationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
@@ -1914,6 +1923,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(HasWorkingDirectoryProperty, true);
 			}
 			this.SetValue(HasLogReadersProperty, true);
+			
+			// complete
+			return true;
 		}
 #pragma warning restore IDE0060
 
@@ -3759,7 +3771,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.Logger.LogError("No log profile to restore {savedLogReaderOptionCount} log reader(s)", this.savedLogReaderOptions.Count);
 				this.savedLogReaderOptions.Clear();
+				this.DisposeLogReaders(true);
 				return;
+			}
+			
+			// check Pro-version only data source
+			var dataSourceProvider = profile.DataSourceProvider;
+			if (!this.IsProVersionActivated && dataSourceProvider.IsProVersionOnly)
+			{
+				this.Logger.LogError("Cannot restore log readers because the data source provider '{name}' ({id}) is Pro-version only", dataSourceProvider.DisplayName, dataSourceProvider.Name);
+				this.savedLogReaderOptions.Clear();
+				this.DisposeLogReaders(true);
+				this.ErrorMessageGenerated?.Invoke(this, new(this.Application.GetFormattedString("Session.CannotUseProVersionOnlyDataSource", dataSourceProvider.DisplayName)));
 			}
 
 			this.Logger.LogWarning("Start restoring {savedLogReaderOptionCount} log reader(s)", this.savedLogReaderOptions.Count);
@@ -3768,7 +3791,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders();
 
 			// restore to default source options
-			var dataSourceProvider = profile.DataSourceProvider;
 			var defaultDataSourceOptions = profile.DataSourceOptions;
 			var useDefaultDataSourceOptions = false;
 			var isFileNameRequired = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
@@ -3874,7 +3896,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				// create data source and reader
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, newDataSourceOptions);
 				if (dataSource != null)
-					this.CreateLogReader(dataSource, logReaderOption.Precondition, null, null);
+				{
+					if (!this.CreateLogReader(dataSource, logReaderOption.Precondition, null, null))
+					{
+						var fileName = logReaderOption.DataSourceOptions.FileName;
+						if (!string.IsNullOrEmpty(fileName))
+							this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+					}
+				}
 				else
 				{
 					this.hasLogDataSourceCreationFailure = true;
@@ -4804,7 +4833,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogDebug("Start reading logs for source '{dataSourceProviderName}'", dataSourceProvider.Name);
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
 				if (dataSource != null)
-					this.CreateLogReader(dataSource, new(), null, null);
+				{
+					if (!this.CreateLogReader(dataSource, new(), null, null))
+					{
+						var fileName = dataSourceOptions.FileName;
+						if (!string.IsNullOrEmpty(fileName))
+							this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+					}
+				}
 				else
 				{
 					this.hasLogDataSourceCreationFailure = true;

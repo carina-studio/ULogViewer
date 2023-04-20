@@ -1030,6 +1030,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SearchProvider.StackOverflow">Stack Overflow</sys:String>
 
 	<!-- Session -->
+	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">Cannot use data source '{0}' before activating ULogViewer Pro.</sys:String>
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
 
 	<!-- SessionView -->
