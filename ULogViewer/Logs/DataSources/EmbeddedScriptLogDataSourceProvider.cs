@@ -46,4 +46,8 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
 
     /// <inheritdoc/>
     string ILogDataSourceProvider.DisplayName => this.DisplayName;
+
+
+    /// <inheritdoc/>
+    public override bool IsProVersionOnly => true;
 }
