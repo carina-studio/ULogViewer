@@ -3,7 +3,6 @@ using CarinaStudio.AppSuite;
 using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
-using System;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Converters;
@@ -23,7 +22,7 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
     readonly IAppSuiteApplication app;
 
 
-    // Construtor.
+    // Constructor.
     DisplayableLogAnalysisResultIconConverter(IAppSuiteApplication app) =>
         this.app = app;
 
@@ -39,11 +38,11 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
         };
         if (type.HasValue)
         {
-            var image = (IImage?)null;
+            IImage? image;
             if ((parameter as string) != "Light")
-                app.TryGetResource<IImage>($"Image/DisplayableLogAnalysisResult.{type.Value}.Colored", out image);
+                app.TryGetResource($"Image/DisplayableLogAnalysisResult.{type.Value}.Colored", out image);
             else
-                app.TryGetResource<IImage>($"Image/DisplayableLogAnalysisResult.{type.Value}.Light", out image);
+                app.TryGetResource($"Image/DisplayableLogAnalysisResult.{type.Value}.Light", out image);
             return image;
         }
         return null;
