@@ -1974,10 +1974,40 @@
 									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding #root.DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
-											<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text.Outline}"/>
-											<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting.Outline}"/>
-											<Image Classes="Icon" IsVisible="{Binding IsRemoving}" Source="{StaticResource Image/Icon.Delete.Outline}"/>
-											<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error.Outline}"/>
+											<Panel IsVisible="{Binding !#lightLogFileIconsContainer.IsVisible}">
+												<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text.Outline}"/>
+												<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}" Source="{StaticResource Image/Icon.Waiting.Outline}"/>
+												<Image Classes="Icon" IsVisible="{Binding IsRemoving}" Source="{StaticResource Image/Icon.Delete.Outline}"/>
+												<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error.Outline}"/>
+											</Panel>
+											<Panel Name="lightLogFileIconsContainer">
+												<Panel.IsVisible>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
+														<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
+													</MultiBinding>
+												</Panel.IsVisible>
+												<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}">
+													<DrawingImage>
+														<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text.Outline}"/>
+													</DrawingImage>
+												</Image>
+												<Image Classes="Icon" IsVisible="{Binding IsReadingLogs}">
+													<DrawingImage>
+														<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Waiting.Outline}"/>
+													</DrawingImage>
+												</Image>
+												<Image Classes="Icon" IsVisible="{Binding IsRemoving}">
+													<DrawingImage>
+														<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
+													</DrawingImage>
+												</Image>
+												<Image Classes="Icon" IsVisible="{Binding HasError}">
+													<DrawingImage>
+														<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Error.Outline}"/>
+													</DrawingImage>
+												</Image>
+											</Panel>
 										</Panel>
 										<StackPanel Grid.Column="1">
 											<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
