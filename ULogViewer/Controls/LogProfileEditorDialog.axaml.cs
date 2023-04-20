@@ -60,7 +60,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleSwitch adminNeededSwitch;
 		readonly Panel allowMultipleFilesPanel;
 		readonly ToggleSwitch allowMultipleFilesSwitch;
-		readonly ScrollViewer baseScrollViewer;
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
@@ -72,7 +71,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
-		readonly SortedObservableList<KeyValuePair<string, Logs.LogLevel>> logLevelMapEntriesForReading = new((x, y) => x.Key.CompareTo(y.Key));
+		readonly SortedObservableList<KeyValuePair<string, Logs.LogLevel>> logLevelMapEntriesForReading = new((x, y) => string.Compare(x.Key, y.Key, StringComparison.InvariantCulture));
 		readonly SortedObservableList<KeyValuePair<Logs.LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
 		readonly AppSuite.Controls.ListBox logLevelMapForWritingListBox;
@@ -158,7 +157,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.adminNeededSwitch = this.Get<ToggleSwitch>("adminNeededSwitch");
 			this.allowMultipleFilesPanel = this.Get<Panel>(nameof(allowMultipleFilesPanel));
 			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch)).AsNonNull();
-			this.baseScrollViewer = this.Get<ScrollViewer>("baseScrollViewer");
 			this.colorIndicatorComboBox = this.Get<ComboBox>("colorIndicatorComboBox");
 			this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
 			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
@@ -214,7 +212,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var entry = (KeyValuePair<string, Logs.LogLevel>?)null;
 			while (true)
 			{
-				entry = await new LogLevelMapEntryForReadingEditorDialog()
+				entry = await new LogLevelMapEntryForReadingEditorDialog
 				{
 					Entry = entry
 				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
@@ -250,7 +248,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var entry = (KeyValuePair<Logs.LogLevel, string>?)null;
 			while (true)
 			{
-				entry = await new LogLevelMapEntryForWritingEditorDialog()
+				entry = await new LogLevelMapEntryForWritingEditorDialog
 				{
 					Entry = entry
 				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
@@ -378,7 +376,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void CreateCooperativeLogAnalysisScript()
 		{
-			var scriptSet = await new LogAnalysisScriptSetEditorDialog()
+			var scriptSet = await new LogAnalysisScriptSetEditorDialog
 			{
 				IsEmbeddedScriptSet = true,
 			}.ShowDialog<LogAnalysisScriptSet?>(this);
@@ -396,7 +394,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.embeddedScriptLogDataSourceProvider is not null)
 				return;
-			var provider = await new ScriptLogDataSourceProviderEditorDialog()
+			var provider = await new ScriptLogDataSourceProviderEditorDialog
 			{
 				IsEmbeddedProvider = true,
 			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
@@ -485,7 +483,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var newEntry = (KeyValuePair<string, Logs.LogLevel>?)entry;
 			while (true)
 			{
-				newEntry = await new LogLevelMapEntryForReadingEditorDialog()
+				newEntry = await new LogLevelMapEntryForReadingEditorDialog
 				{
 					Entry = newEntry
 				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
@@ -526,7 +524,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var newEntry = (KeyValuePair<Logs.LogLevel, string>?)entry;
 			while (true)
 			{
-				newEntry = await new LogLevelMapEntryForWritingEditorDialog()
+				newEntry = await new LogLevelMapEntryForWritingEditorDialog
 				{
 					Entry = newEntry
 				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
@@ -569,13 +567,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			var index = this.logPatterns.IndexOf(logPattern);
 			if (index < 0)
 				return;
-			var newLlogPattern = await new LogPatternEditorDialog()
+			var newLogPattern = await new LogPatternEditorDialog
 			{
 				LogPattern = logPattern
 			}.ShowDialog<LogPattern?>(this);
-			if (newLlogPattern != null && newLlogPattern != logPattern)
+			if (newLogPattern != null && newLogPattern != logPattern)
 			{
-				this.logPatterns[index] = newLlogPattern;
+				this.logPatterns[index] = newLogPattern;
 				this.SelectListBoxItem(this.logPatternListBox, index);
 			}
 		}
@@ -595,7 +593,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var index = this.logWritingFormats.IndexOf(format);
 			if (index < 0)
 				return;
-			var newFormat = await new LogWritingFormatEditorDialog()
+			var newFormat = await new LogWritingFormatEditorDialog
 			{
 				Format = format
 			}.ShowDialog<string?>(this);
@@ -673,7 +671,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (item.DataContext is not LogProperty logProperty)
 				return;
-			var newLogProperty = await new VisibleLogPropertyEditorDialog()
+			var newLogProperty = await new VisibleLogPropertyEditorDialog
 			{
 				LogProperty = logProperty
 			}.ShowDialog<LogProperty?>(this);
@@ -823,7 +821,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// edit script set and replace
-			scriptSet = await new LogAnalysisScriptSetEditorDialog()
+			scriptSet = await new LogAnalysisScriptSetEditorDialog
 			{
 				IsEmbeddedScriptSet = true,
 				ScriptSetToEdit = scriptSet,
@@ -1369,8 +1367,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when selected log data source provider changed.
 		void OnSelectedDataSourceChanged()
 		{
+			// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 			if (this.dataSourceProviderComboBox?.SelectedItem is not ILogDataSourceProvider provider)
 				return;
+			// ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 			this.SetValue(HasDataSourceOptionsProperty, provider.SupportedSourceOptions.IsNotEmpty());
 			this.SetValue(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
 				&& !provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)));
@@ -1625,7 +1625,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
 			if (dataSourceProvider == null)
 				return;
-			var options = await new LogDataSourceOptionsDialog()
+			var options = await new LogDataSourceOptionsDialog
 			{
 				DataSourceProvider = dataSourceProvider,
 				IsTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault(),
@@ -1651,7 +1651,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				dialog.ActivateAndBringToFront();
 				return;
 			}
-			dialog = new LogProfileEditorDialog()
+			dialog = new LogProfileEditorDialog
 			{
 				LogProfile = logProfile,
 			};

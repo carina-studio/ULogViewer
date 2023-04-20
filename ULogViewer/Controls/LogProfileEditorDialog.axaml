@@ -5,7 +5,6 @@
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
-		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
 		xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
@@ -109,7 +108,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
 								<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
 									<Grid.IsVisible>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+										<MultiBinding Converter="{x:Static BoolConverters.And}">
 											<Binding Path="!IsProVersionActivated" ElementName="window"/>
 											<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
 										</MultiBinding>
@@ -119,7 +118,7 @@
 								</Grid>
 								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
 									<Grid.IsVisible>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+										<MultiBinding Converter="{x:Static BoolConverters.And}">
 											<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
 											<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
 										</MultiBinding>
@@ -140,7 +139,7 @@
 											<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
 											<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
 												<TextBlock.IsVisible>
-													<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
 														<Binding Path="!IsProVersionActivated" ElementName="window"/>
 														<Binding Path="IsProVersionOnly"/>
 													</MultiBinding>
@@ -157,9 +156,9 @@
 							<Separator Classes="Dialog_Separator_Small"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
 								<Button.IsEnabled>
-									<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="HasDataSourceOptions" ElementName="window"/>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
 											<Binding Path="!SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
 										</MultiBinding>

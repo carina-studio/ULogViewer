@@ -93,7 +93,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void AddLogProfile()
 		{
 			// create new profile
-			var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile>(this);
+			var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile?>(this);
 			if (profile == null)
 				return;
 
@@ -144,7 +144,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
 			if (result != 0)
 				return result;
-			result = x.Id.CompareTo(y.Id);
+			result = string.CompareOrdinal(x.Id, y.Id);
 			if (result != 0)
 				return result;
 			return x.GetHashCode() - y.GetHashCode();
@@ -159,14 +159,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 
 			// copy and edit log profile
-			var newProfile = await new LogProfileEditorDialog()
+			var newProfile = await new LogProfileEditorDialog
 			{
 				LogProfile = new LogProfile(logProfile)
 				{
 					Name = Utility.GenerateName(logProfile.Name, name =>
 						LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
 				},
-			}.ShowDialog<LogProfile>(this);
+			}.ShowDialog<LogProfile?>(this);
 			if (newProfile == null)
 				return;
 
@@ -187,10 +187,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (logProfile == null)
 				return;
-			logProfile = await new LogProfileEditorDialog()
+			logProfile = await new LogProfileEditorDialog
 			{
 				LogProfile = logProfile
-			}.ShowDialog<LogProfile>(this);
+			}.ShowDialog<LogProfile?>(this);
 			if (logProfile == null)
 				return;
 			this.SelectLogProfile(logProfile);
@@ -219,8 +219,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public Predicate<LogProfile>? Filter
 		{
-			get => this.GetValue<Predicate<LogProfile>?>(FilterProperty);
-			set => this.SetValue<Predicate<LogProfile>?>(FilterProperty, value);
+			get => this.GetValue(FilterProperty);
+			set => this.SetValue(FilterProperty, value);
 		}
 
 
@@ -242,23 +242,21 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select file
 			var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
 			{
-				FileTypeFilter = new FilePickerFileType[]
+				FileTypeFilter = new[]
 				{
 					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
 					{
-						Patterns = new string[] { "*.json" }
+						Patterns = new[] { "*.json" }
 					}
 				}
-			}))?.Let(it =>
-			{
-				return it.Count == 1 && it[0].TryGetUri(out var uri)
-					? uri.LocalPath : null;
-			});
+			})).Let(it => it.Count == 1 && it[0].TryGetUri(out var uri)
+					? uri.LocalPath 
+					: null);
 			if (string.IsNullOrEmpty(fileName))
 				return;
 
 			// load log profile
-			var logProfile = (LogProfile?)null;
+			LogProfile? logProfile;
 			try
 			{
 				logProfile = await LogProfile.LoadAsync(this.Application, fileName);
@@ -266,9 +264,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Unable to load log profile from '{fileName}'", fileName);
-				_ = new AppSuite.Controls.MessageDialog()
+				_ = new MessageDialog
 				{
-					Icon = AppSuite.Controls.MessageDialogIcon.Error,
+					Icon = MessageDialogIcon.Error,
 					Message = new FormattedString().Also(it =>
 					{
 						it.Arg1 = fileName;
@@ -281,11 +279,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// check pro-version only parameters
-			if (!this.GetValue<bool>(IsProVersionActivatedProperty) && logProfile.DataSourceProvider.IsProVersionOnly)
+			if (!this.GetValue(IsProVersionActivatedProperty) && logProfile.DataSourceProvider.IsProVersionOnly)
 			{
-				_ = new AppSuite.Controls.MessageDialog()
+				_ = new MessageDialog
 				{
-					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Icon = MessageDialogIcon.Warning,
 					Message = new FormattedString().Also(it =>
 					{
 						it.Arg1 = fileName;
@@ -297,10 +295,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// edit log profile
 			logProfile.IsPinned = false;
-			logProfile = await new LogProfileEditorDialog()
+			logProfile = await new LogProfileEditorDialog
 			{
 				LogProfile = logProfile
-			}.ShowDialog<LogProfile>(this);
+			}.ShowDialog<LogProfile?>(this);
 			if (logProfile == null)
 				return;
 
@@ -313,7 +311,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when list of all log profiles changed.
 		void OnAllLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
-			var logProfileManager = this.logProfileManager;
 			switch(e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
@@ -351,7 +348,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 			this.attachedLogProfiles.Clear();
 
-			// detach fron product manager
+			// detach from product manager
 			this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
 
 			// call base
@@ -407,7 +404,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// attach to product manager
 			this.Application.ProductManager.Let(it =>
 			{
-				this.SetValue<bool>(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
+				this.SetValue(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
 				it.ProductStateChanged += this.OnProductStateChanged;
 			});
 
@@ -459,12 +456,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when stte of product changed.
+		// Called when state of product changed.
 		void OnProductStateChanged(IProductManager? productManager, string productId)
 		{
 			if (productManager != null && productId == Products.Professional)
 			{
-				this.SetValue<bool>(IsProVersionActivatedProperty, productManager.IsProductActivated(productId));
+				this.SetValue(IsProVersionActivatedProperty, productManager.IsProductActivated(productId));
 				this.InvalidateInput();
 			}
 		}
@@ -593,7 +590,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				?? this.otherLogProfileListBox.SelectedItem;
 			if (selectedItem is not LogProfile logProfile)
 				return false;
-			return !logProfile.DataSourceProvider.IsProVersionOnly || this.GetValue<bool>(IsProVersionActivatedProperty);
+			return !logProfile.DataSourceProvider.IsProVersionOnly || this.GetValue(IsProVersionActivatedProperty);
 		}
 
 
@@ -675,7 +672,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (logProfile == null)
 				return;
-			var result = await new MessageDialog()
+			var result = await new MessageDialog
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				DefaultResult = MessageDialogResult.No,

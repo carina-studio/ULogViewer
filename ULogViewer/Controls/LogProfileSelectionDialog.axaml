@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
-		xmlns:aConverters="using:Avalonia.Data.Converters"
         xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
         xmlns:appProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
@@ -40,7 +39,7 @@
 								<!-- Icon -->
 								<Panel Grid.RowSpan="3" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
 									<Panel.IsEnabled>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
@@ -53,7 +52,7 @@
 								<Grid ColumnDefinitions="*,Auto" Grid.Column="1" HorizontalAlignment="Left">
 									<TextBlock Classes="LogProfileInfo" FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
 										<TextBlock.IsEnabled>
-											<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+											<MultiBinding Converter="{x:Static BoolConverters.Or}">
 												<Binding Path="IsProVersionActivated" ElementName="window"/>
 												<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 											</MultiBinding>
@@ -61,7 +60,7 @@
 									</TextBlock>
 									<Panel Background="{x:Static Brushes.Transparent}" Height="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}" Grid.Column="1" Margin="{StaticResource Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ProVersionOnly}" VerticalAlignment="Center" Width="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}">
 										<Panel.IsVisible>
-											<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+											<MultiBinding Converter="{x:Static BoolConverters.And}">
 												<Binding Path="!IsProVersionActivated" ElementName="window"/>
 												<Binding Path="DataSourceProvider.IsProVersionOnly"/>
 											</MultiBinding>
@@ -74,7 +73,7 @@
 								<!-- Description -->
 								<Panel Classes="LogProfileInfo" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}">
 									<Panel.IsEnabled>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
@@ -86,7 +85,7 @@
 								<!-- Labels -->
 								<WrapPanel Classes="LogProfileInfo" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal">
 									<WrapPanel.IsEnabled>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
@@ -111,9 +110,9 @@
 								<!-- Actions -->
 								<StackPanel Grid.Column="2" Grid.RowSpan="3" Orientation="Horizontal" VerticalAlignment="Top">
 									<StackPanel.IsVisible>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+										<MultiBinding Converter="{x:Static BoolConverters.And}">
 											<Binding Path="IsPointerOver" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"/>
-											<MultiBinding Converter="{x:Static aConverters:BoolConverters.Or}">
+											<MultiBinding Converter="{x:Static BoolConverters.Or}">
 												<Binding Path="IsProVersionActivated" ElementName="window"/>
 												<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 											</MultiBinding>
@@ -133,7 +132,7 @@
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
-									<StackPanel IsVisible="{Binding $parent[Window].Filter, Converter={x:Static aConverters:ObjectConverters.IsNull}}" Orientation="Horizontal">
+									<StackPanel IsVisible="{Binding $parent[Window].Filter, Converter={x:Static ObjectConverters.IsNull}}" Orientation="Horizontal">
 										<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
@@ -175,8 +174,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding $parent[Window].Filter, Converter={x:Static aConverters:ObjectConverters.IsNull}}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ImportLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding $parent[Window].Filter, Converter={x:Static aConverters:ObjectConverters.IsNull}}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding $parent[Window].Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ImportLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding $parent[Window].Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
