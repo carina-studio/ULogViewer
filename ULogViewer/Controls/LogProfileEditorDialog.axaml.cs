@@ -532,7 +532,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
 				if (checkingEntry.Value != null && !entry.Equals(checkingEntry))
 				{
-					await new MessageDialog()
+					await new MessageDialog
 					{
 						Icon = MessageDialogIcon.Warning,
 						Message = new FormattedString().Also(it =>
@@ -697,9 +697,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (this.visibleLogProperties.IsNotEmpty())
 				{
-					var result = await new MessageDialog()
+					var result = await new MessageDialog
 					{
 						Buttons = MessageDialogButtons.YesNo,
+						DefaultResult = MessageDialogResult.Yes,
 						Icon = MessageDialogIcon.Warning,
 						Message = this.GetResourceObservable("String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns"),
 					}.ShowDialog(this);
@@ -709,13 +710,15 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.logPatternListBox.Focus();
 						return null;
 					}
+					await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
 				}
 			}
 			else if (this.visibleLogProperties.IsEmpty() && !isTemplate)
 			{
-				var result = await new MessageDialog()
+				var result = await new MessageDialog
 				{
 					Buttons = MessageDialogButtons.YesNo,
+					DefaultResult = MessageDialogResult.Yes,
 					Icon = MessageDialogIcon.Warning,
 					Message = this.GetResourceObservable("String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties"),
 				}.ShowDialog(this);
@@ -725,6 +728,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.visibleLogPropertyListBox.Focus();
 					return null;
 				}
+				await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
 			}
 
 			// update log profile
@@ -1318,7 +1322,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show hint of 'learn about logs reading and parsing'
 			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
 			{
-				var result = await new MessageDialog()
+				var result = await new MessageDialog
 				{
 					Buttons = MessageDialogButtons.YesNo,
 					Icon = MessageDialogIcon.Question,
@@ -1434,7 +1438,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.cooperativeLogAnalysisScriptSet == null)
 				return;
-			var result = await new MessageDialog()
+			var result = await new MessageDialog
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				DefaultResult = MessageDialogResult.No,
