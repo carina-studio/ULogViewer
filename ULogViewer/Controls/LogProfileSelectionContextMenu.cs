@@ -79,7 +79,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         base.Items = this.items;
         this.Items = ListExtensions.AsReadOnly(this.items);
         Grid.SetIsSharedSizeScope(this, true);
-        this.MenuClosed += (_, e) =>
+        this.MenuClosed += (_, _) =>
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
@@ -87,23 +87,28 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.ScrollIntoView(0);
             }, Avalonia.Threading.DispatcherPriority.Normal);
         };
-        this.GetObservable(EnableActionsOnCurrentLogProfileProperty).Subscribe(_ =>
-        {
-            this.UpdateActionOnCurrentLogProfileMenuItemsVisibility();
-        });
         this.GetObservable(CurrentLogProfileProperty).Subscribe(currentLogProfile =>
         {
             this.UpdateActionOnCurrentLogProfileMenuItemsVisibility();
+            this.UpdateActionOnCurrentLogProfileMenuItemStates();
             foreach (var item in this.items)
             {
                 if (item is not MenuItem menuItem || menuItem.Header is not Panel panel)
                     continue;
-                var isCurrentLogProfile = currentLogProfile != null && menuItem.DataContext == currentLogProfile;
+                var isCurrentLogProfile = currentLogProfile != null && ReferenceEquals(menuItem.DataContext, currentLogProfile);
                 (panel.Children[0] as Avalonia.Controls.TextBlock)?.Let(it =>
-                    it.FontWeight = isCurrentLogProfile ? Avalonia.Media.FontWeight.Bold : Avalonia.Media.FontWeight.Normal);
+                    it.FontWeight = isCurrentLogProfile ? FontWeight.Bold : FontWeight.Normal);
                 (panel.Children[2] as Control)?.Let(it =>
                     it.IsVisible = isCurrentLogProfile);
             }
+        });
+        this.GetObservable(EnableActionsOnCurrentLogProfileProperty).Subscribe(_ =>
+        {
+            this.UpdateActionOnCurrentLogProfileMenuItemsVisibility();
+        });
+        this.GetObservable(IsProVersionActivatedProperty).Subscribe(_ =>
+        {
+            this.UpdateActionOnCurrentLogProfileMenuItemStates();
         });
     }
 
@@ -206,8 +211,8 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 Name = Utility.GenerateName(logProfile.Name, name =>
                     LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
             },
-        }.ShowDialog<LogProfile>(window);
-        if (newProfile == null || window.IsClosed)
+        }.ShowDialog<LogProfile?>(window);
+        if (newProfile is null || window.IsClosed)
             return;
         LogProfileManager.Default.AddProfile(newProfile);
         this.LogProfileCreated?.Invoke(this, newProfile);
@@ -230,7 +235,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem.Command = new CarinaStudio.Windows.Input.Command(this.CopyCurrentLogProfile);
         menuItem.Header = new FormattedTextBlock().Also(it =>
         {
-            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding
             {
                 Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
                 Source = this,
@@ -252,7 +257,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem.Command = new CarinaStudio.Windows.Input.Command(this.EditCurrentLogProfile);
         menuItem.Header = new FormattedTextBlock().Also(it =>
         {
-            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding
             {
                 Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
                 Source = this,
@@ -264,11 +269,6 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             icon.Classes.Add("MenuItem_Icon");
             icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Edit.Outline");
         });
-        menuItem.Bind(IsEnabledProperty, new Binding() 
-        { 
-            Path = $"!{nameof(CurrentLogProfile)}.{nameof(LogProfile.IsBuiltIn)}",
-            Source = this,
-        });
         menuItem.Tag = EditCurrentLogProfileTag;
     });
 
@@ -279,7 +279,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem.Command = new CarinaStudio.Windows.Input.Command(this.ExportCurrentLogProfile);
         menuItem.Header = new FormattedTextBlock().Also(it =>
         {
-            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding
             {
                 Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
                 Source = this,
@@ -298,7 +298,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     // Create menu item for log profile.
     MenuItem CreateMenuItem(LogProfile logProfile) => new MenuItem().Also(menuItem =>
     {
-        menuItem.Click += (_, e) =>
+        menuItem.Click += (_, _) =>
         {
             this.Close();
             this.LogProfileSelected?.Invoke(this, logProfile);
@@ -307,7 +307,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Bind(Avalonia.Controls.Image.SourceProperty, new Binding()
+            icon.Bind(Avalonia.Controls.Image.SourceProperty, new Binding
             {
                 Converter = LogProfileIconConverter.Default,
             });
@@ -326,14 +326,14 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 { 
                     Path = nameof(LogProfile.Name) 
                 });
-                it.TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis;
+                it.TextTrimming = TextTrimming.CharacterEllipsis;
                 it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
             });
             var currentLogProfileTextBlock = new Avalonia.Controls.TextBlock().Also(it =>
             {
                 it.Opacity = this.FindResourceOrDefault<double>("Double/LogProfileSelectionContextMenu.CurrentLogProfile.Opacity");
                 it.Bind(Avalonia.Controls.TextBlock.TextProperty, this.GetResourceObservable("String/LogProfileSelectionContextMenu.CurrentLogProfile"));
-                it.TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis;
+                it.TextTrimming = TextTrimming.CharacterEllipsis;
                 it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
                 Grid.SetColumn(it, 2);
             });
@@ -341,7 +341,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             grid.Children.Add(new Separator().Also(it =>
             {
                 it.Classes.Add("Dialog_Separator_Small");
-                it.Bind(IsVisibleProperty, new Binding()
+                it.Bind(IsVisibleProperty, new Binding
                 {
                     Path = nameof(IsVisible),
                     Source = currentLogProfileTextBlock,
@@ -352,26 +352,26 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             menuItem.GetObservable(DataContextProperty).Subscribe(dataContext =>
             {
                 var currentLogProfile = this.CurrentLogProfile;
-                if (currentLogProfile == null || dataContext != currentLogProfile)
+                if (currentLogProfile is null || !ReferenceEquals(dataContext, currentLogProfile))
                 {
-                    nameTextBlock.FontWeight = Avalonia.Media.FontWeight.Normal;
+                    nameTextBlock.FontWeight = FontWeight.Normal;
                     currentLogProfileTextBlock.IsVisible = false;
                 }
                 else
                 {
-                    nameTextBlock.FontWeight = Avalonia.Media.FontWeight.Bold;
+                    nameTextBlock.FontWeight = FontWeight.Bold;
                     currentLogProfileTextBlock.IsVisible = true;
                 }
             });
         });
         menuItem.Bind(MenuItem.IsEnabledProperty, new MultiBinding().Also(it =>
         {
-            it.Bindings.Add(new Binding()
+            it.Bindings.Add(new Binding
             {
                 Path = "IsProVersionActivated",
                 Source = this,
             });
-            it.Bindings.Add(new Binding()
+            it.Bindings.Add(new Binding
             {
                 Path = $"!{nameof(LogProfile.DataSourceProvider)}.{nameof(Logs.DataSources.ILogDataSourceProvider.IsProVersionOnly)}",
             });
@@ -386,7 +386,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem.Command = new CarinaStudio.Windows.Input.Command(this.RemoveCurrentLogProfile);
         menuItem.Header = new FormattedTextBlock().Also(it =>
         {
-            it.Bind(FormattedTextBlock.Arg1Property, new Binding()
+            it.Bind(FormattedTextBlock.Arg1Property, new Binding
             {
                 Path = $"{nameof(CurrentLogProfile)}.{nameof(LogProfile.Name)}",
                 Source = this,
@@ -397,11 +397,6 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         {
             icon.Classes.Add("MenuItem_Icon");
             icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Delete.Outline");
-        });
-        menuItem.Bind(IsEnabledProperty, new Binding() 
-        { 
-            Path = $"!{nameof(CurrentLogProfile)}.{nameof(LogProfile.IsBuiltIn)}",
-            Source = this,
         });
         menuItem.Tag = RemoveCurrentLogProfileTag;
     });
@@ -497,6 +492,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 it.Add(this.exportCurrentLogProfileMenuItem);
                 it.Add(this.removeCurrentLogProfileMenuItem);
                 it.Add(this.actionsOnCurrentLogProfileSeparator);
+                this.UpdateActionOnCurrentLogProfileMenuItemStates();
             }
             var recentlyUsedLogProfiles = LogProfileManager.Default.RecentlyUsedProfiles;
             foreach (var logProfile in LogProfileManager.Default.Profiles)
@@ -553,6 +549,9 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             return;
         switch (e.PropertyName)
         {
+            case nameof(LogProfile.DataSourceProvider):
+                this.UpdateActionOnCurrentLogProfileMenuItemStates();
+                break;
             case nameof(LogProfile.IsPinned):
                 if (logProfile.IsPinned)
                 {
@@ -789,6 +788,19 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         menuItem = this.items.FirstOrDefault(it => it is MenuItem menuItem && menuItem.DataContext == logProfile) as MenuItem;
         return menuItem != null;
     }
+    
+    
+    // Update state of log action items.
+    void UpdateActionOnCurrentLogProfileMenuItemStates()
+    {
+        var profile = this.CurrentLogProfile;
+        var isValidProfile = profile is not null && (!profile.DataSourceProvider.IsProVersionOnly || this.GetValue(IsProVersionActivatedProperty));
+        var isBuiltInProfile = profile?.IsBuiltIn == true;
+        this.copyCurrentLogProfileMenuItem?.Let(it => it.IsEnabled = isValidProfile);
+        this.editCurrentLogProfileMenuItem?.Let(it => it.IsEnabled = isValidProfile && !isBuiltInProfile);
+        this.exportCurrentLogProfileMenuItem?.Let(it => it.IsEnabled = isValidProfile);
+        this.removeCurrentLogProfileMenuItem?.Let(it => it.IsEnabled = isValidProfile && !isBuiltInProfile);
+    }
 
 
     // Update visibility of actions on current log profile.
@@ -813,6 +825,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                     this.items.Add(this.exportCurrentLogProfileMenuItem);
                     this.items.Add(this.removeCurrentLogProfileMenuItem);
                     this.items.Add(this.actionsOnCurrentLogProfileSeparator);
+                    this.UpdateActionOnCurrentLogProfileMenuItemStates();
                 }
             }
             else
