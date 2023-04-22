@@ -269,6 +269,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		var result = await new MessageDialog()
 		{
 			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
+			DefaultResult = MessageDialogResult.No,
 			Icon = AppSuite.Controls.MessageDialogIcon.Question,
 			Message = logProfileCount > 0 
 				? new FormattedString().Also(it =>

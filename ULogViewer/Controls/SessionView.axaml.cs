@@ -1001,6 +1001,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var result = await new MessageDialog()
 			{
 				Buttons = MessageDialogButtons.YesNo,
+				DefaultResult = MessageDialogResult.No,
 				Icon = MessageDialogIcon.Question,
 				Message = isScriptSet
 					? new FormattedString().Also(it =>
