@@ -15,6 +15,7 @@
 			 xmlns:app="using:CarinaStudio.ULogViewer"
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 			 xmlns:appAnalysisScripting="using:CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting"
+             xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
              xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
              xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
@@ -23,6 +24,8 @@
 			 xmlns:cs="using:CarinaStudio"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView"
+             x:CompileBindings="False"
+             x:DataType="appViewModels:Session"
 			 Name="root">
 
 	<!-- Resources -->
@@ -260,7 +263,7 @@
 		</ContextMenu>
 
 		<!-- Log header template-->
-		<DataTemplate x:Key="logHeaderTemplate">
+		<DataTemplate x:Key="logHeaderTemplate" x:CompileBindings="True" x:DataType="appViewModels:DisplayableLogProperty">
 			<Border Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
 				<ToolTip.Tip>
 					<StackPanel Orientation="Horizontal">
@@ -1306,9 +1309,9 @@
 					</Border>
 					<asControls:ListBox Classes="Log" Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogCategorizing.TimestampCategories}">
 						<asControls:ListBox.ItemTemplate>
-							<DataTemplate>
+							<DataTemplate x:CompileBindings="True" x:DataType="appCategorizing:DisplayableLogCategory">
 								<Grid ColumnDefinitions="Auto,*">
-									<Border Background="{Binding Log.ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding Log.ColorIndicatorBrush, FallbackValue={x:Null}}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{ReflectionBinding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
@@ -1434,7 +1437,7 @@
 															</Border>
 															<ListBox Name="keyLogAnalysisRuleSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" Items="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
-																	<DataTemplate>
+																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
@@ -1491,7 +1494,7 @@
 															</Border>
 															<ListBox Name="operationDurationAnalysisRuleSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsVisible="{Binding RuleSets.Count, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" Items="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
-																	<DataTemplate>
+																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
@@ -1551,7 +1554,7 @@
 															</Border>
 															<ListBox Name="operationCountingAnalysisRuleSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" Items="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
-																	<DataTemplate>
+																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
@@ -1616,7 +1619,7 @@
 															</Border>
 															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="False" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
-																	<DataTemplate>
+																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
@@ -1625,28 +1628,28 @@
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																			<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																				<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].ExportLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Export}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
-																				<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
-																				<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].CopyLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
-																				<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
@@ -1716,10 +1719,10 @@
 							</ContextMenu>
 						</asControls:ListBox.ContextMenu>
 						<asControls:ListBox.ItemTemplate>
-							<DataTemplate>
+							<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:DisplayableLogAnalysisResult">
 								<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,*">
-									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" Grid.RowSpan="2" IsVisible="{Binding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
-									<Image Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
+									<Border x:CompileBindings="False" Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" Grid.RowSpan="2" IsVisible="{Binding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Image x:CompileBindings="False" Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="True">
 												<iaCore:ChangePropertyAction PropertyName="VerticalAlignment" Value="Top"/>
