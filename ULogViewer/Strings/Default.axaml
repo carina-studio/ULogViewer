@@ -232,7 +232,7 @@
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The type of return value is boolean to indicate whether analysis results of the log should be taken or not.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
  * Namespaces are imported automatically for types and functions for log analysis. For ex, ILog and ResultType.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
 
@@ -242,7 +242,7 @@
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
  * Namespaces are imported automatically for types and functions for log analysis. For ex, csUlvScripting.ILog and csUlvScripting.ResultType.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
 
@@ -257,11 +257,11 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to setup analysis</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run one time before starting analysis process. There is no return value needed.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript">/*
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
@@ -708,12 +708,12 @@ At line {2} column {3}.
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run one time when closing raw log reader. There is no return value needed.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
  * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
  * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name (required)</sys:String>
@@ -721,7 +721,7 @@ At line {2} column {3}.
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
  * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream and LogDataSourceState.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
@@ -735,7 +735,7 @@ At line {2} column {3}.
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
  * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream and csUlvDataSources.LogDataSourceState.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
@@ -751,7 +751,7 @@ return csUlvDataSources.LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
  * Namespaces are imported automatically for types and functions for log reading. For ex, FileStream.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
@@ -761,7 +761,7 @@ return csUlvDataSources.LogDataSourceState.unclassifiedError;</sys:String>
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
  * Namespaces are imported automatically for types and functions for log reading. For ex, sysIO.FileStream.
- * Please refer to https://carinastudio.azurewebsites.net/ULogViewer/Scripting
+ * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
