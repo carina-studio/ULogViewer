@@ -25,9 +25,9 @@
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively">节省内存</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SaveMemoryAggressively.Description">尽量只加载较少内容，这将会使日志载入及筛选速度下降，也会影响界面操作流畅度。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时显示输入界面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志档案时立即开启档案选择界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志文件时立即开启文件选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新页面后开启日志类型选择界面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从档案读取日志前指定前置读取条件（当条件支持时）</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从文件读取日志前指定前置读取条件（当条件支持时）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即开启目录选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在状态栏中显示CPU以及内存使用量</sys:String>
@@ -52,12 +52,12 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">通过 ADB 取得 Android 设备实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android 设备系统追踪</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">自 Android 设备撷取 5 秒系统追踪以追分析 Android 系统及应用程序效能。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日志档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一个或多个档案中的 Android 日志。此类型亦支援事件日志。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日志档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一个或多个档案中的 Android 核心日志。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系统追踪档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用于追踪及分析 Android 系统及应用程序效能的档案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一个或多个文件中的 Android 日志。此类型亦支援事件日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一个或多个文件中的 Android 核心日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系统追踪文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用于追踪及分析 Android 系统及应用程序效能的文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">從 Azure 下载之 Webapp 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp 实时日志</sys:String>
@@ -69,29 +69,29 @@
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">以较少内容显示指定仓库中的 Git 提交列表。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux 核心日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">在 Linux 上产生的核心日志的最新部分。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux 核心日志档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile.Description">在 Linux 上产生的核心日志档案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux 核心日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile.Description">在 Linux 上产生的核心日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxRealtimeLog">Linux 实时全局系统日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxRealtimeLog.Description">在 Linux 上产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLog">Linux 系统日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLog.Description">在 Linux 上产生的系统日志的最新部分。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile">Linux 系统日志档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">在 Linux 上产生的系统日志档案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile">Linux 系统日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">在 Linux 上产生的系统日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS 安装日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">由 macOS 产生的安装日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS 实时全局系统日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">在 macOS 上产生的实时全局系统日志。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS 系统日志档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">在 macOS 上产生的系统日志档案。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.RawFile">档案原始内容</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">从一个或多个档案中读取未分析的原始文字内容。通常用于测试及调试时使用。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS 系统日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">在 macOS 上产生的系统日志文件。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawFile">文件原始内容</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">从一个或多个文件中读取未分析的原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp">HTTP/HTTPS 原始通信内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">送出 HTTP/HTTPS 请求并读取未分析的响应内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客户端原始内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式输出，并通过 TCP 传输实时日志。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日志档案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 应用程序输出的日志档案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 应用程序输出的日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 实时日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">来自 ULogViewer 位于内存中的实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件记录 (应用程序)</sys:String>
@@ -139,7 +139,7 @@
 	<sys:String x:Key="String/CopyVariableAction">复制 {{{0}}} 至 {{{1}}}</sys:String>
 
 	<!-- DatabaseSourceType -->
-	<sys:String x:Key="String/DatabaseSourceType.File">档案</sys:String>
+	<sys:String x:Key="String/DatabaseSourceType.File">文件</sys:String>
 	<sys:String x:Key="String/DatabaseSourceType.Network">网络</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
@@ -182,11 +182,11 @@
 	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 设备系统追踪」内建日志类型使用由 Perfetto 提供的 Trace 转换工具将自设备撷取的资料转换成为 Android 系统追踪格式。對於 Linux 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。對於 macOS 使用者，請將包含 'traceconv' 指令之資料夾路徑加至 '/etc/paths'。</sys:String>
 
 	<!-- FileFormat -->
-	<sys:String x:Key="String/FileFormat.Json">JSON 档案</sys:String>
-	<sys:String x:Key="String/FileFormat.Log">日志档案</sys:String>
+	<sys:String x:Key="String/FileFormat.Json">JSON 文件</sys:String>
+	<sys:String x:Key="String/FileFormat.Log">日志文件</sys:String>
 
 	<!-- FileLogDataSourceProvider -->
-	<sys:String x:Key="String/FileLogDataSourceProvider.DisplayName">档案</sys:String>
+	<sys:String x:Key="String/FileLogDataSourceProvider.DisplayName">文件</sys:String>
 
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IP 地址</sys:String>
@@ -226,7 +226,7 @@
  */
 
 /*
- * 返回 True 以保留透过 Context.AddResult() 所建立的分析结果，或返回 False 以略过目前的日志及分析结果。
+ * 返回 True 以保留透过 Context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
@@ -236,7 +236,7 @@ return false;</sys:String>
  */
 
 /*
- * 返回 True 以保留透过 context.addResult() 所建立的分析结果，或返回 False 以略过目前的日志及分析结果。
+ * 返回 True 以保留透过 context.addResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在启用专业版之前，您无法建立更多的日志分析脚本。</sys:String>
@@ -256,7 +256,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">编辑日志分析脚本</sys:String>
 
 	<!-- LogColorIndicator -->
-	<sys:String x:Key="String/LogColorIndicator.FileName">档案</sys:String>
+	<sys:String x:Key="String/LogColorIndicator.FileName">文件</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.None">无</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.ProcessName">进程名称</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.ThreadName">线程名称</sys:String>
@@ -324,7 +324,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">调试</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Diagnostic">诊断</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Experiment">实验</sys:String>
-	<sys:String x:Key="String/LogProfileIcon.File">档案</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.File">文件</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">目录</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">网络</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Performance">性能</sys:String>
@@ -336,7 +336,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Website">网站</sys:String>
 
 	<!-- LogProfileEditorDialog -->
-	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允许加入多个档案</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允许加入多个文件</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams">无法编辑日志类型「{0}」，因为其中至少有一个参数仅供专业版使用。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">显示于日志左侧的色块分组方式</sys:String>
@@ -389,10 +389,10 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatsForReading">自定义日志时间读取格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">建立新的日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">编辑日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">显示的日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日志属性可以编辑器中看到</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">显示的日志属性</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日志属性可以编辑器中看到。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定义了 '显示的日志属性' 但没有定义 '日志行格式'，这可能导致日志显示错误。您是否要定义 '日志行格式'？</sys:String>
-
+	
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">建立…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">所有日志类型</sys:String>
@@ -447,7 +447,7 @@ return false;</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra7">附加资料 7</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra8">附加资料 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra9">附加资料 9</sys:String>
-	<sys:String x:Key="String/LogProperty.FileName">档案</sys:String>
+	<sys:String x:Key="String/LogProperty.FileName">文件</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">键值</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">等级</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">行号</sys:String>
@@ -752,26 +752,26 @@ return null;</sys:String>
 	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
 	
 	<!-- SessionView -->
-	<sys:String x:Key="String/SessionView.AddLogFiles">加入日志档案</sys:String>
-	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志档案 (Ctrl+O)</sys:String>
+	<sys:String x:Key="String/SessionView.AddLogFiles">加入日志文件</sys:String>
+	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志文件 (Ctrl+O)</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogCount">总共 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogLevels">所有等级</sys:String>
 	<sys:String x:Key="String/SessionView.AppInfo">关于 ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">应用程序选项…</sys:String>
 	<sys:String x:Key="String/SessionView.CheckForAppUpdate">检查更新…</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除选择</sys:String>
-	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日志档案</sys:String>
+	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日志文件</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除选择</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">您是否确定要移除规则集「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">您是否确定要移除脚本「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">选择大量日志会使用一些时间，是否继续选择？</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogFileName">复制档案名称</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogFilePath">复制完整档案路径</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogFileName">复制文件名称</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogFilePath">复制完整文件路径</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty">复制日志属性「{0}」</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">复制日志属性</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogs">复制日志</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogText">复制筛选用日志文字</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含档案名称)</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含文件名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">编辑 PATH 环境变量…</sys:String>
@@ -792,7 +792,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">筛选耗时 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">读取耗时 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日志分析</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">移除日志档案时暂时无法使用日志分析</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">移除日志文件时暂时无法使用日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">点击面板右上角的按钮以选择要套用的的分析规则集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日志中…</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析结果</sys:String>
@@ -803,8 +803,8 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：</sys:String>
-	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用档案</sys:String>
-	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日志档案</sys:String>
+	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用文件</sys:String>
+	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日志文件</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">筛选条件运算方式 (交集/并集)</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">登录 Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">登录 Azure (专业版)</sys:String>
@@ -827,9 +827,9 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">标记/解除标记</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
-	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日志类型不允许加入多个档案。</sys:String>
+	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">当前的日志类型不允许加入多个文件。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">「{0}」需要系统管理员身份，是否要以系统管理员身份重新启动应用程序并使用此日志类型？</sys:String>
-	<sys:String x:Key="String/SessionView.NoFilePathDropped">请拖放有效的档案。</sys:String>
+	<sys:String x:Key="String/SessionView.NoFilePathDropped">请拖放有效的文件。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他动作</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暂停/继续读取日志 (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定义的文字筛选 (Ctrl+P)</sys:String>
@@ -838,13 +838,13 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">变更日志读取前置条件…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日志读取前置条件</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>
-	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志档案</sys:String>
+	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志文件</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有筛选设定</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以系统管理员身份重新启动</sys:String>
-	<sys:String x:Key="String/SessionView.SaveAllLogs">储存所有日志到档案</sys:String>
-	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">储存所有日志到档案 (Ctrl+Shift+S)</sys:String>
-	<sys:String x:Key="String/SessionView.SaveLogs">储存日志到档案</sys:String>
-	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到档案 (Ctrl+S)</sys:String>
+	<sys:String x:Key="String/SessionView.SaveAllLogs">储存所有日志到文件</sys:String>
+	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">储存所有日志到文件 (Ctrl+Shift+S)</sys:String>
+	<sys:String x:Key="String/SessionView.SaveLogs">储存日志到文件</sys:String>
+	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到文件 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">已选取 {0} 笔</sys:String>
@@ -858,24 +858,24 @@ return null;</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">选择/变成 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志(Alt+A)</sys:String>
-	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在档案管理中显示档案</sys:String>
+	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在文件管理中显示文件</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">显示日志属性「{0}」…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">显示日志属性…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志 (Alt+M)</sys:String>
-	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在档案管理中开启工作目录</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在文件管理中开启工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.SidePanel">侧边面板</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">工具</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">请拖放单个目录。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">总日志内存使用量</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">在于目前的列表不包含分析结果的日志，因此必须取消只显示已标记的日志。您可以自行将其开启。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">在于当前的列表不包含分析结果的日志，因此必须取消只显示已标记的日志。您可以自行将其开启。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">您复制的文字是用于日志文字筛选的完整日志文字，可以用来验证日志文字筛选以及日志分析的格式。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">检查日志的的分析结果。</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">检查及管理已加入的日志档案。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">检查及管理已加入的日志文件。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">已标记的日志列表。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">点一下这里以选择套用的日志分析规则集。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">点一下这里以选择日志类型并开启使用。</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">在于目前的列表不包含分析结果的日志，因此必须暂停显示所有日志。您可以自行将其开启。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">在于当前的列表不包含分析结果的日志，因此必须暂停显示所有日志。您可以自行将其开启。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">从这里切换侧边面板内容或关闭面板。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.TimestampCategoriesPanel">根据时间戳的日志分组列表。</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者界面响应时间</sys:String>
