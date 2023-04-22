@@ -8,6 +8,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.VisualTree;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
@@ -25,7 +26,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -41,7 +41,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
-		static FieldInfo? AvaloniaObjectDirectBindingsField;
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
@@ -349,22 +348,9 @@ namespace CarinaStudio.ULogViewer
 		// Dispose native menu item properly.
 		void DisposeNativeMenuItem(NativeMenuItem menuItem)
 		{
-			AvaloniaObjectDirectBindingsField ??= AvaloniaObjectDirectBindingsField = typeof(AvaloniaObject).GetField("_directBindings", BindingFlags.Instance | BindingFlags.NonPublic);
 			menuItem.Click -= this.OnNativeMenuItemClick;
 			menuItem.Command = null;
-			(AvaloniaObjectDirectBindingsField?.GetValue(menuItem) as IEnumerable<IDisposable>)?.Let(it =>
-			{
-				if (it is IList<IDisposable> list)
-				{
-					for (var i = list.Count - 1; i >= 0; --i)
-						list[i].Dispose();
-				}
-				else
-				{
-					foreach (var bindingToken in it.ToArray())
-						bindingToken.Dispose();
-				}
-			});
+			menuItem.ClearBindings();
 			menuItem.Menu?.Let(menu =>
 			{
 				foreach (var item in menu.Items)
