@@ -658,7 +658,17 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">Event</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra1">Extra 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra10">Extra 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra11">Extra 11</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra12">Extra 12</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra13">Extra 13</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra14">Extra 14</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra15">Extra 15</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra16">Extra 16</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra17">Extra 17</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra18">Extra 18</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra19">Extra 19</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra2">Extra 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra20">Extra 20</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra3">Extra 3</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra4">Extra 4</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra5">Extra 5</sys:String>

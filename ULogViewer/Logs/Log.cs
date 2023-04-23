@@ -1,5 +1,4 @@
-﻿using CarinaStudio.Collections;
-using CarinaStudio.Diagnostics;
+﻿using CarinaStudio.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -16,7 +15,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get capacity of extra data.
 		/// </summary>
-		public const int ExtraCapacity = 10;
+		public const int ExtraCapacity = 20;
 
 
 		// Property definitions.
@@ -33,7 +32,17 @@ namespace CarinaStudio.ULogViewer.Logs
 			Event,
 			Extra1,
 			Extra10,
+			Extra11,
+			Extra12,
+			Extra13,
+			Extra14,
+			Extra15,
+			Extra16,
+			Extra17,
+			Extra18,
+			Extra19,
 			Extra2,
+			Extra20,
 			Extra3,
 			Extra4,
 			Extra5,
@@ -74,6 +83,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 		static readonly HashSet<string> dateTimePropertyNameSet = new();
 		static volatile bool isPropertyMapReady;
+		static readonly HashSet<string> multiLineStringPropertyNames = new()
+		{
+			nameof(Message),
+			nameof(Summary),
+		};
 		static long nextId;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 		[ThreadStatic]
@@ -88,6 +102,14 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly byte[] propertyNames;
 		readonly object?[] propertyValues;
 		readonly DateTime readTime;
+		
+		
+		// Static initializer.
+		static Log()
+		{
+			for (var i = ExtraCapacity; i > 0; --i)
+				multiLineStringPropertyNames.Add($"Extra{i}");
+		}
 
 
 		/// <summary>
@@ -257,12 +279,72 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get 10th extra data of log.
 		/// </summary>
 		public string? Extra10 => this.GetProperty(PropertyName.Extra10)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 11st extra data of log.
+		/// </summary>
+		public string? Extra11 => this.GetProperty(PropertyName.Extra11)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 12nd extra data of log.
+		/// </summary>
+		public string? Extra12 => this.GetProperty(PropertyName.Extra12)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 13rd extra data of log.
+		/// </summary>
+		public string? Extra13 => this.GetProperty(PropertyName.Extra13)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 14th extra data of log.
+		/// </summary>
+		public string? Extra14 => this.GetProperty(PropertyName.Extra14)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 15th extra data of log.
+		/// </summary>
+		public string? Extra15 => this.GetProperty(PropertyName.Extra15)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 16th extra data of log.
+		/// </summary>
+		public string? Extra16 => this.GetProperty(PropertyName.Extra16)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 17th extra data of log.
+		/// </summary>
+		public string? Extra17 => this.GetProperty(PropertyName.Extra17)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 18th extra data of log.
+		/// </summary>
+		public string? Extra18 => this.GetProperty(PropertyName.Extra18)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 19th extra data of log.
+		/// </summary>
+		public string? Extra19 => this.GetProperty(PropertyName.Extra19)?.ToString();
 
 
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
 		public string? Extra2 => this.GetProperty(PropertyName.Extra2)?.ToString();
+		
+		
+		/// <summary>
+		/// Get 20th extra data of log.
+		/// </summary>
+		public string? Extra20 => this.GetProperty(PropertyName.Extra20)?.ToString();
 
 
 		/// <summary>
@@ -358,22 +440,8 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if given log property is exported.</returns>
-		public static bool HasMultiLineStringProperty(string propertyName) => propertyName switch
-		{
-			nameof(Message)
-			or nameof(Summary)
-			or nameof(Extra1)
-			or nameof(Extra2)
-			or nameof(Extra3)
-			or nameof(Extra4)
-			or nameof(Extra5)
-			or nameof(Extra6)
-			or nameof(Extra7)
-			or nameof(Extra8)
-			or nameof(Extra9)
-			or nameof(Extra10) => true,
-			_ => false,
-		};
+		public static bool HasMultiLineStringProperty(string propertyName) =>
+			multiLineStringPropertyNames.Contains(propertyName);
 
 
 		/// <summary>

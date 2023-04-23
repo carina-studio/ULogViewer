@@ -621,7 +621,17 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">事件</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra1">附加資料 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra10">附加資料 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra11">附加資料 11</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra12">附加資料 12</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra13">附加資料 13</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra14">附加資料 14</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra15">附加資料 15</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra16">附加資料 16</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra17">附加資料 17</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra18">附加資料 18</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra19">附加資料 19</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra2">附加資料 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra20">附加資料 20</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra3">附加資料 3</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra4">附加資料 4</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra5">附加資料 5</sys:String>

@@ -92,7 +92,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.maxDisplayLineCount = Math.Max(1, app.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
 			this.MemoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 			this.TextHighlightingDefinitionSet = new($"Text Highlighting of {this}");
-			this.CheckMaxLogExtraNumber();
+			this.CheckLogExtras();
 			this.UpdateLevelMapForDisplaying();
 
 			// setup actions
@@ -159,8 +159,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 													Pattern = new(subPatternBuffer.ToString(), options),
 												});
 											}
+											// ReSharper disable EmptyGeneralCatchClause
 											catch
 											{ }
+											// ReSharper restore EmptyGeneralCatchClause
 											subPatternBuffer.Clear();
 										}
 									}
@@ -181,8 +183,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 											Pattern = new(subPatternBuffer.ToString(), options),
 										});
 									}
+									// ReSharper disable EmptyGeneralCatchClause
 									catch
 									{ }
+									// ReSharper restore EmptyGeneralCatchClause
 								}
 							}
 							else
@@ -237,7 +241,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Raised when a set of analysis result has been remoed from a log.
+		/// Raised when a set of analysis result has been removed from a log.
 		/// </summary>
 		public event DirectDisplayableLogEventHandler? AnalysisResultRemoved;
 
@@ -248,22 +252,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public IULogViewerApplication Application { get; }
 
 
-		// Check maximum log extra number.
-		void CheckMaxLogExtraNumber()
+		// Check state of Extra* log properties.
+		[MemberNotNull(nameof(LogExtraNumbers))]
+		void CheckLogExtras()
 		{
-			var maxNumber = 0;
 			ExtraCaptureRegex ??= CreateExtraCaptureRegex();
+			var extraNumbers = new SortedObservableList<int>();
 			foreach (var pattern in this.LogProfile.LogPatterns)
 			{
 				var match = ExtraCaptureRegex.Match(pattern.Regex.ToString());
 				while (match.Success)
 				{
-					if (int.TryParse(match.Groups["Number"].Value, out var number) && number > maxNumber)
-						maxNumber = number;
+					if (int.TryParse(match.Groups["Number"].Value, out var index) && index > 0 && index <= Log.ExtraCapacity)
+						Global.RunWithoutError(() => extraNumbers.Add(index));
 					match = match.NextMatch();
 				}
 			}
-			this.MaxLogExtraNumber = Math.Min(Log.ExtraCapacity, maxNumber);
+			this.LogExtraNumbers = ListExtensions.AsReadOnly(extraNumbers);
+			this.LogExtraNumberCount = extraNumbers.Count;
 		}
 
 
@@ -445,6 +451,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get background <see cref="IBrush"/> for given log.
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
+		/// <param name="state">State.</param>
 		/// <returns><see cref="IBrush"/> for given log.</returns>
 		internal IBrush GetLevelBackgroundBrush(DisplayableLog log, string? state = null)
 		{
@@ -464,6 +471,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get foreground <see cref="IBrush"/> for given log.
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
+		/// <param name="state">State.</param>
 		/// <returns><see cref="IBrush"/> for given log.</returns>
 		internal IBrush GetLevelForegroundBrush(DisplayableLog log, string? state = null)
 		{
@@ -489,6 +497,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get map of converting from <see cref="Logs.LogLevel"/> to string.
 		/// </summary>
 		public IDictionary<Logs.LogLevel, string> LevelMapForDisplaying { get; private set; }
+		
+		
+		/// <summary>
+		/// Get number of Extra* log properties were defined.
+		/// </summary>
+		public int LogExtraNumberCount { get; private set; }
+		
+		
+		/// <summary>
+		/// Get list of numbers of Extra* log properties.
+		/// </summary>
+		public IList<int> LogExtraNumbers { get; private set; }
 
 
 		/// <summary>
@@ -501,12 +521,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get maximum line count to display for each log.
 		/// </summary>
 		public int MaxDisplayLineCount => this.maxDisplayLineCount;
-
-
-		/// <summary>
-		/// Get maximum number of extras provided by each <see cref="Log"/> by <see cref="LogProfile"/>.
-		/// </summary>
-		public int MaxLogExtraNumber { get; private set; }
 
 
 		/// <summary>
@@ -635,7 +649,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.updateLevelMapAction.Schedule();
 					break;
 				case nameof(LogProfile.LogPatterns):
-					this.CheckMaxLogExtraNumber();
+					this.CheckLogExtras();
 					break;
 				case nameof(LogProfile.TimeSpanFormatForDisplaying):
 					{
@@ -815,9 +829,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			this.LevelMapForDisplaying = new Dictionary<Logs.LogLevel, string>().Also(it =>
 			{
-				foreach ((var s, var level) in this.LogProfile.LogLevelMapForReading)
+				foreach (var (s, level) in this.LogProfile.LogLevelMapForReading)
 					it.TryAdd(level, s);
-				foreach ((var level, var s) in this.LogProfile.LogLevelMapForWriting)
+				foreach (var (level, s) in this.LogProfile.LogLevelMapForWriting)
 					it[level] = s;
 			});
 			var log = this.displayableLogsHead;
@@ -831,7 +845,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Interface implementations.
 		public bool CheckAccess() => this.Application.CheckAccess();
-		CarinaStudio.IApplication IApplicationObject.Application => this.Application;
+		IApplication IApplicationObject.Application => this.Application;
 		public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
 	}
 }
