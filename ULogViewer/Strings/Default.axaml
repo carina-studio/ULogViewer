@@ -633,6 +633,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">Select log profile</sys:String>
 
 	<!-- LogProperty -->
+	<sys:String x:Key="String/LogProperty.Action">Action</sys:String>
 	<sys:String x:Key="String/LogProperty.Author">Author</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimeSpan">Beginning Time Span</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimestamp">Beginning Timestamp</sys:String>
@@ -672,9 +673,22 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.LevelString">Level</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">Line Number</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">Message</sys:String>
+	<sys:String x:Key="String/LogProperty.Method">Method</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">Name</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">Node</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">Number</sys:String>
+	<sys:String x:Key="String/LogProperty.Operation">Operation</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter">Parameter</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter1">Parameter 1</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter10">Parameter 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter2">Parameter 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter3">Parameter 3</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter4">Parameter 4</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter5">Parameter 5</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter6">Parameter 6</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter7">Parameter 7</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter8">Parameter 8</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter9">Parameter 9</sys:String>
 	<sys:String x:Key="String/LogProperty.Parent">Parent</sys:String>
 	<sys:String x:Key="String/LogProperty.Path">Path</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessId">PID</sys:String>
@@ -692,6 +706,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">Short Name</sys:String>
 	<sys:String x:Key="String/LogProperty.Size">Size</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">Source</sys:String>
+	<sys:String x:Key="String/LogProperty.Speed">Speed</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">Start</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">Status</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">Summary</sys:String>
@@ -710,6 +725,16 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">User</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">Value</sys:String>
+	<sys:String x:Key="String/LogProperty.Value1">Value 1</sys:String>
+	<sys:String x:Key="String/LogProperty.Value10">Value 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Value2">Value 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Value3">Value 3</sys:String>
+	<sys:String x:Key="String/LogProperty.Value4">Value 4</sys:String>
+	<sys:String x:Key="String/LogProperty.Value5">Value 5</sys:String>
+	<sys:String x:Key="String/LogProperty.Value6">Value 6</sys:String>
+	<sys:String x:Key="String/LogProperty.Value7">Value 7</sys:String>
+	<sys:String x:Key="String/LogProperty.Value8">Value 8</sys:String>
+	<sys:String x:Key="String/LogProperty.Value9">Value 9</sys:String>
 
 	<!-- LogPropertyForegroundColor -->
 	<sys:String x:Key="String/LogPropertyForegroundColor.Level">Level of log</sys:String>

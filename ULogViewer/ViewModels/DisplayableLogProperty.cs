@@ -96,6 +96,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				displayNames ??= new List<string>(Log.PropertyNames).Also(it =>
 				{
+					it.Add("Action");
 					it.Add("Author");
 					it.Add("BeginningValue");
 					it.Add("Child");
@@ -112,9 +113,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("EndPoint");
 					it.Add("ID");
 					it.Add("Key");
+					it.Add("Method");
 					it.Add("Name");
 					it.Add("Node");
 					it.Add("Number");
+					it.Add("Operation");
+					it.Add("Parameter");
+					it.Add("Parameter1");
+					it.Add("Parameter10");
+					it.Add("Parameter2");
+					it.Add("Parameter3");
+					it.Add("Parameter4");
+					it.Add("Parameter5");
+					it.Add("Parameter6");
+					it.Add("Parameter7");
+					it.Add("Parameter8");
+					it.Add("Parameter9");
 					it.Add("Parent");
 					it.Add("Path");
 					it.Add("RawData");
@@ -127,6 +141,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Result");
 					it.Add("ShortName");
 					it.Add("Size");
+					it.Add("Speed");
 					it.Add("Start");
 					it.Add("Status");
 					it.Add("Tag");
@@ -134,6 +149,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Uri");
 					it.Add("UserAgent");
 					it.Add("Value");
+					it.Add("Value1");
+					it.Add("Value10");
+					it.Add("Value2");
+					it.Add("Value3");
+					it.Add("Value4");
+					it.Add("Value5");
+					it.Add("Value6");
+					it.Add("Value7");
+					it.Add("Value8");
+					it.Add("Value9");
 					it.Sort();
 				}).AsReadOnly();
 				return displayNames;

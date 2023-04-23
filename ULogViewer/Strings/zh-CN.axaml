@@ -603,6 +603,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.Title">选择日志类型</sys:String>
 
 	<!-- LogProperty -->
+	<sys:String x:Key="String/LogProperty.Action">动作</sys:String>
 	<sys:String x:Key="String/LogProperty.Author">作者</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimeSpan">起始时距</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimestamp">起始时间</sys:String>
@@ -641,9 +642,22 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.LevelString">等级</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">行号</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">消息</sys:String>
+	<sys:String x:Key="String/LogProperty.Method">方法</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">节点</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">编号</sys:String>
+	<sys:String x:Key="String/LogProperty.Operation">操作</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter">参数</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter1">参数 1</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter10">参数 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter2">参数 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter3">参数 3</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter4">参数 4</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter5">参数 5</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter6">参数 6</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter7">参数 7</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter8">参数 8</sys:String>
+	<sys:String x:Key="String/LogProperty.Parameter9">参数 9</sys:String>
 	<sys:String x:Key="String/LogProperty.Parent">父代</sys:String>
 	<sys:String x:Key="String/LogProperty.Path">路径</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">进程名称</sys:String>
@@ -660,6 +674,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">简短名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Size">大小</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">来源</sys:String>
+	<sys:String x:Key="String/LogProperty.Speed">速度</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">开始</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">状态</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">摘要</sys:String>
@@ -676,6 +691,16 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.UserAgent">用户媒介</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">值</sys:String>
+	<sys:String x:Key="String/LogProperty.Value1">值 1</sys:String>
+	<sys:String x:Key="String/LogProperty.Value10">值 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Value2">值 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Value3">值 3</sys:String>
+	<sys:String x:Key="String/LogProperty.Value4">值 4</sys:String>
+	<sys:String x:Key="String/LogProperty.Value5">值 5</sys:String>
+	<sys:String x:Key="String/LogProperty.Value6">值 6</sys:String>
+	<sys:String x:Key="String/LogProperty.Value7">值 7</sys:String>
+	<sys:String x:Key="String/LogProperty.Value8">值 8</sys:String>
+	<sys:String x:Key="String/LogProperty.Value9">值 9</sys:String>
 
 	<!-- LogPropertyForegroundColor -->
 	<sys:String x:Key="String/LogPropertyForegroundColor.Level">日志等级</sys:String>
