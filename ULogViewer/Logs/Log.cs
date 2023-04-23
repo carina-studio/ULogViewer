@@ -20,8 +20,9 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Property definitions.
-		enum PropertyName
+		enum PropertyName : byte
 		{
+			None,
 			BeginningTimeSpan,
 			BeginningTimestamp,
 			Category,
@@ -41,12 +42,10 @@ namespace CarinaStudio.ULogViewer.Logs
 			Extra8,
 			Extra9,
 			FileName,
-			Level,
 			LineNumber,
 			Message,
 			ProcessId,
 			ProcessName,
-			ReadTime,
 			SourceName,
 			Summary,
 			Tags,
@@ -61,22 +60,22 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Static fields.
-		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
-		static readonly HashSet<string> dateTimePropertyNameSet = new();
-		static volatile bool isPropertyMapReady;
-		static long nextId;
-		static readonly Dictionary<string, int> propertyIndices = new();
-		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
-		static readonly int propertyNameCount;
-		static readonly IList<string> propertyNames = Enum.GetValues<PropertyName>().Let(propertyNames =>
+		static readonly IList<string> allPropertyNames = Enum.GetValues<PropertyName>().Let(propertyNames =>
 		{
 			var propertyCount = propertyNames.Length;
 			return new List<string>(propertyCount).Also(it =>
 			{
 				for (var i = 0; i < propertyCount; ++i)
 					it.Add(propertyNames[i].ToString());
+				it.Add(nameof(Level));
+				it.Add(nameof(ReadTime));
 			}).AsReadOnly();
 		});
+		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
+		static readonly HashSet<string> dateTimePropertyNameSet = new();
+		static volatile bool isPropertyMapReady;
+		static long nextId;
+		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 		[ThreadStatic]
 		static Dictionary<string, LogStringPropertyGetter>? stringPropertyGetters;
 		static readonly HashSet<string> stringPropertyNameSet = new();
@@ -84,18 +83,11 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Fields.
+		readonly LogLevel level;
 		readonly ushort memorySize;
-		readonly byte[] propertyValueIndices;
+		readonly byte[] propertyNames;
 		readonly object?[] propertyValues;
-
-
-		// Static initializer.
-		static Log()
-		{
-			for (var i = propertyNames.Count - 1; i >= 0; --i)
-				propertyIndices[propertyNames[i]] = i;
-			propertyNameCount = propertyNames.Count;
-		}
+		readonly DateTime readTime;
 
 
 		/// <summary>
@@ -105,20 +97,28 @@ namespace CarinaStudio.ULogViewer.Logs
 		internal Log(LogBuilder builder)
 		{
 			// prepare
-			var propertyValueIndices = new byte[propertyNameCount];
-			var propertyValues = new object?[builder.PropertyCount + 1]; // Including ReadTime
+			var propertyCount = builder.PropertyCount;
+			var level = builder.GetEnumOrNull<LogLevel>(nameof(Level));
+			if (level.HasValue)
+				--propertyCount;
+			var propertyNames = new byte[propertyCount];
+			var propertyValues = new object?[propertyCount];
 			var index = 0;
-			int propertyIndex;
 			long propertyMemorySize = 0;
 			foreach (var propertyName in builder.PropertyNames)
 			{
-				var value = GetPropertyFromBuilder(builder, propertyName);
-				if (value == null)
+				if (propertyName == nameof(Level) || !Enum.TryParse<PropertyName>(propertyName, out var name))
 					continue;
-				if (!propertyIndices.TryGetValue(propertyName, out propertyIndex))
+				propertyNames[index++] = (byte)name;
+			}
+			Array.Sort(propertyNames);
+			for (var i = propertyNames.Length - 1; i >= 0; --i)
+			{
+				var propertyName = (PropertyName)propertyNames[i];
+				var value = GetPropertyFromBuilder(builder, propertyName.ToString());
+				if (value is null)
 					continue;
-				propertyValueIndices[propertyIndex] = (byte)(index + 1);
-				propertyValues[index++] = value;
+				propertyValues[i] = value;
 				if (value is CompressedString compressedString)
 					propertyMemorySize += compressedString.Size;
 				else if (value is string str)
@@ -126,22 +126,21 @@ namespace CarinaStudio.ULogViewer.Logs
 				else
 					propertyMemorySize += Memory.EstimateInstanceSize(value);
 			}
-			this.propertyValueIndices = propertyValueIndices;
+			this.propertyNames = propertyNames;
 			this.propertyValues = propertyValues;
 
 			// get ID
 			this.Id = Interlocked.Increment(ref nextId);
 
+			// setup level
+			this.level = level ?? LogLevel.Undefined;
+
 			// setup reading time
-			if (propertyIndices.TryGetValue(nameof(ReadTime), out propertyIndex))
-			{
-				propertyValueIndices[propertyIndex] = (byte)(index + 1);
-				propertyValues[index] = DateTime.Now;
-				propertyMemorySize += Memory.EstimateInstanceSize<DateTime>();
-			}
+			this.readTime = DateTime.Now;
+			propertyMemorySize += Memory.EstimateInstanceSize<DateTime>();
 
 			// calculate memory size
-			this.memorySize = (ushort)(baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyValueIndices.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length));
+			this.memorySize = (ushort)(baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyNames.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length));
 		}
 
 
@@ -194,18 +193,27 @@ namespace CarinaStudio.ULogViewer.Logs
 				stringPropertyGetters = new();
 			else if (stringPropertyGetters.TryGetValue(propertyName, out getter))
 				return getter;
-			if (propertyIndices.TryGetValue(propertyName, out var propertyIndex))
+			getter = (log, buffer, offset) =>
 			{
-				getter = (log, buffer, offset) =>
-				{
-					if (log.GetProperty((PropertyName)propertyIndex) is CompressedString compressedString)
-						return compressedString.GetString(buffer, offset);
+				if (!Enum.TryParse<PropertyName>(propertyName, out var name))
 					return 0;
-				};
-				stringPropertyGetters[propertyName] = getter;
-				return getter;
-			}
-			return (_, _, _) => 0;
+				var value = log.GetProperty(name);
+				if (value is CompressedString compressedString)
+					return compressedString.GetString(buffer, offset);
+				if (value is string s)
+				{
+					if (buffer.Length - offset < s.Length)
+						return ~s.Length;
+					if (offset == 0)
+						s.AsSpan().CopyTo(buffer);
+					else
+						s.AsSpan().CopyTo(buffer.Slice(offset));
+					return s.Length;
+				}
+				return 0;
+			};
+			stringPropertyGetters[propertyName] = getter;
+			return getter;
 		}
 
 
@@ -308,9 +316,9 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Get property.
 		object? GetProperty(PropertyName propertyName)
 		{
-			int index = this.propertyValueIndices[(int)propertyName];
-			if (index > 0)
-				return this.propertyValues[index - 1];
+			int index = Array.BinarySearch(this.propertyNames, (byte)propertyName);
+			if (index >= 0)
+				return this.propertyValues[index];
 			return null;
 		}
 
@@ -373,7 +381,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if given log property is exported.</returns>
-		public static bool HasProperty(string propertyName) => propertyIndices.ContainsKey(propertyName);
+		public static bool HasProperty(string propertyName) => 
+			propertyName == nameof(Level)
+			|| propertyName == nameof(ReadTime)
+			|| (Enum.TryParse<PropertyName>(propertyName, out var name) && name != PropertyName.None);
 
 
 		/// <summary>
@@ -409,7 +420,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get level.
 		/// </summary>
-		public LogLevel Level => (LogLevel)(this.GetProperty(PropertyName.Level) ?? LogLevel.Undefined);
+		public LogLevel Level => this.level;
 
 
 		/// <summary>
@@ -445,13 +456,13 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get list of log properties exported by <see cref="Log"/>.
 		/// </summary>
-		public static IList<string> PropertyNames => propertyNames;
+		public static IList<string> PropertyNames => allPropertyNames;
 
 
 		/// <summary>
 		/// Get the timestamp of this log was read.
 		/// </summary>
-		public DateTime ReadTime => (DateTime)this.GetProperty(PropertyName.ReadTime).AsNonNull();
+		public DateTime ReadTime => this.readTime;
 
 
 		// Setup property map.
@@ -464,7 +475,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					if (!isPropertyMapReady)
 					{
-						foreach (var propertyName in propertyNames)
+						foreach (var propertyName in allPropertyNames)
 						{
 							var propertyInfo = logType.GetProperty(propertyName);
 							if (propertyInfo == null)
@@ -572,19 +583,18 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <returns>True if value of property get successfully.</returns>
 		public bool TryGetProperty<T>(string propertyName, out T value)
 		{
-			var propertyIndex = propertyNames.BinarySearch(propertyName);
-			if (propertyIndex < 0)
+			if (!Enum.TryParse<PropertyName>(propertyName, out var name) || name == PropertyName.None)
 			{
 				value = default;
 				return false;
 			}
-			var valueIndex = this.propertyValueIndices[propertyIndex];
-			if (valueIndex <= 0)
+			var index = Array.BinarySearch(this.propertyNames, (byte)name);
+			if (index < 0)
 			{
 				value = default;
 				return false;
 			}
-			var rawValue = this.propertyValues[valueIndex - 1];
+			var rawValue = this.propertyValues[index];
 			if (rawValue is not T)
 			{
 				value = default;

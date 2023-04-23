@@ -156,7 +156,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var length = s.Length;
 			if (length == 0)
 				return CompressedString.Empty;
-			return length <= 64
+			return length <= 64 || length > 256
 				? CompressedString.Create(s, CompressedString.Level.Optimal)
 				: CompressedString.Create(s, CompressedString.Level.Fast);
 		}
@@ -168,7 +168,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var length = s.Length;
 			if (length == 0)
 				return CompressedString.Empty;
-			return length <= 64
+			return length <= 64 || length > 256
 				? CompressedString.Create(s, CompressedString.Level.Fast)
 				: CompressedString.Create(s, CompressedString.Level.None);
 		}
