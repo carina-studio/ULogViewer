@@ -31,8 +31,6 @@
     + Apache Error Log Files
     + Apple Devices Log
     + Apple Device Simulators Log
-    + Specific Apple Device Log
-    + Specific Apple Device Simulator Log
     + Windows Event Log Files
 
 + Add new built-in log profile templates: 
