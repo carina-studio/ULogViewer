@@ -8,6 +8,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -19,11 +20,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Log which is suitable for displaying.
 	/// </summary>
-	class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyChanged
+	unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyChanged
 	{
+		// Constants (Data offset).
+		const int ActiveAnalysisResultTypeDataOffset = 0; // byte
+		const int GroupIdDataOffset = 1; // uint
+		const int IsDisposedDataOffset = 5; // byte
+		const int MarkedColorDataOffset = 6; // byte
+		const int MemorySizeDataOffset = 7; // ushort
+		const int MessageLineCountDataOffset = 9; // byte
+		const int SummaryLineCountDataOffset = 10; // byte
+		const int ExtraLineCountsDataOffset = 11; // byte[], should be last one
+
+
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = Array.Empty<DisplayableLogAnalysisResult>();
-		static readonly byte[] emptyByteArray = Array.Empty<byte>();
 		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
@@ -35,18 +46,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		[ThreadStatic]
 		static Dictionary<string, DisplayableLogStringPropertyGetter>? logStringPropertyGetters;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
+		static readonly delegate*<ReadOnlySpan<byte>, ushort> readUInt16Function;
+		static readonly delegate*<ReadOnlySpan<byte>, uint> readUInt32Function;
+		static readonly delegate*<Span<byte>, ushort, void> writeUInt16Function;
+		static readonly delegate*<Span<byte>, uint, void> writeUInt32Function;
 
 
 		// Fields.
-		DisplayableLogAnalysisResultType activeAnalysisResultType;
 		IList<DisplayableLogAnalysisResult> analysisResults = emptyAnalysisResults;
-		readonly byte[] extraLineCount;
-		readonly uint groupId;
-		byte isDisposed;
-		MarkColor markedColor;
-		ushort memorySize;
-		byte messageLineCount;
-		byte summaryLineCount;
+		readonly byte[] data;
+		
+		
+		// Static initializer.
+		static DisplayableLog()
+		{
+			var n = 1;
+			if (*(byte*)&n == 1) // BE
+			{
+				readUInt16Function = &BinaryPrimitives.ReadUInt16BigEndian;
+				readUInt32Function = &BinaryPrimitives.ReadUInt32BigEndian;
+				writeUInt16Function = &BinaryPrimitives.WriteUInt16BigEndian;
+				writeUInt32Function = &BinaryPrimitives.WriteUInt32BigEndian;
+			}
+			else // LE
+			{
+				readUInt16Function = &BinaryPrimitives.ReadUInt16LittleEndian;
+				readUInt32Function = &BinaryPrimitives.ReadUInt32LittleEndian;
+				writeUInt16Function = &BinaryPrimitives.WriteUInt16LittleEndian;
+				writeUInt32Function = &BinaryPrimitives.WriteUInt32LittleEndian;
+			}
+		}
 
 
 		/// <summary>
@@ -57,20 +86,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="log">Log.</param>
 		internal DisplayableLog(DisplayableLogGroup group, LogReader reader, Log log)
 		{
+			// allocate data buffer
+			var extraCount = group.MaxLogExtraNumber;
+			var data = new byte[ExtraLineCountsDataOffset + extraCount];
+			this.data = data;
+			
 			// setup properties
-			this.groupId = group.Id;
+			writeUInt32Function(data.AsSpan(GroupIdDataOffset), group.Id);
 			this.Log = log;
 			this.LogReader = reader;
-
-			// check extras
-			var extraCount = group.MaxLogExtraNumber;
-			this.extraLineCount = extraCount > 0 ? new byte[extraCount] : emptyByteArray;
 
 			// estimate memory usage
 			long memorySize = log.MemorySize + instanceFieldMemorySize;
 			if (extraCount > 0)
 				memorySize += Memory.EstimateArrayInstanceSize(sizeof(byte), extraCount);
-			this.memorySize = (ushort)memorySize;
+			writeUInt16Function(data.AsSpan(MemorySizeDataOffset), (ushort) memorySize);
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
@@ -87,7 +117,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.isDisposed != 0)
+			if (this.data[IsDisposedDataOffset] != 0)
 				return;
 			
 			// add to list
@@ -108,17 +138,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// select active type
-			if (this.activeAnalysisResultType == 0 || this.activeAnalysisResultType > result.Type)
+			var data = this.data;
+			if (data[ActiveAnalysisResultTypeDataOffset] == 0 || data[ActiveAnalysisResultTypeDataOffset] > (byte)result.Type)
 			{
-				this.activeAnalysisResultType = result.Type;
+				data[ActiveAnalysisResultTypeDataOffset] = (byte)result.Type;
 				this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
 			}
 			if (currentResultCount == 0)
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
-			this.memorySize = (ushort)Math.Min(ushort.MaxValue, this.memorySize + memorySizeDiff);
-			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			var memorySizeSpan = data.AsSpan(MemorySizeDataOffset);
+			var memorySize = readUInt16Function(memorySizeSpan);
+			writeUInt16Function(memorySizeSpan, (ushort)Math.Min(ushort.MaxValue, memorySize + memorySizeDiff));
+			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 			{
 				group.OnAnalysisResultAdded(this);
 				group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
@@ -130,7 +163,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get icon for analysis result indicator.
 		/// </summary>
 		public IImage? AnalysisResultIndicatorIcon => 
-			this.GroupOrNull?.GetAnalysisResultIndicatorIcon(this.activeAnalysisResultType);
+			this.GroupOrNull?.GetAnalysisResultIndicatorIcon((DisplayableLogAnalysisResultType)this.data[ActiveAnalysisResultTypeDataOffset]);
 
 
 		/// <summary>
@@ -173,7 +206,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Calculate line count.
-		static unsafe byte CalculateLineCount(string? text)
+		static byte CalculateLineCount(string? text)
 		{
 			if (text == null)
 				return 0;
@@ -344,10 +377,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.isDisposed != 0)
+			if (this.data[IsDisposedDataOffset] != 0)
 				return;
-			this.isDisposed = 1;
-			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			this.data[IsDisposedDataOffset] = 1;
+			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 				group.OnDisplayableLogDisposed(this);
 			else
 			{
@@ -590,19 +623,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Get number of lines of ExtraX.
 		int GetExtraLineCount(int index)
 		{
-			if (index >= this.extraLineCount.Length)
+			index += ExtraLineCountsDataOffset;
+			if (index >= this.data.Length)
 				return 0;
-			if (this.extraLineCount[index] == 0)
-				this.extraLineCount[index] = CalculateLineCount(extraGetters[index](this.Log));
-			return this.extraLineCount[index];
+			if (this.data[index] == 0)
+				this.data[index] = CalculateLineCount(extraGetters[index](this.Log));
+			return this.data[index];
 		}
+
+
+		// ID of group which the instance belongs to.
+		uint GroupId => readUInt32Function(this.data.AsSpan(GroupIdDataOffset));
 
 
 		/// <summary>
 		/// Get <see cref="DisplayableLogGroup"/> which the instance belongs to.
 		/// </summary>
 		public DisplayableLogGroup? GroupOrNull =>
-			DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group)
+			DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group)
 				? group
 				: null;
 
@@ -754,7 +792,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether the value of <see cref="MarkedColor"/> is not <see cref="MarkColor.None"/> or not.
 		/// </summary>
-		public bool IsMarked => this.markedColor != MarkColor.None;
+		public bool IsMarked => this.data[MarkedColorDataOffset] != (byte)MarkColor.None;
 
 
 		/// <summary>
@@ -812,7 +850,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			get
 			{
 				var level = this.Log.Level;
-				if (level == LogLevel.Undefined || !DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+				if (level == LogLevel.Undefined || !DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 					return "";
 				if (group.LevelMapForDisplaying.TryGetValue(level, out var s))
 					return s;
@@ -854,16 +892,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public MarkColor MarkedColor
 		{
-			get => this.markedColor;
+			get => (MarkColor)this.data[MarkedColorDataOffset];
 			set
 			{
 #if DEBUG
 				this.VerifyAccess();
 #endif
-				if (this.markedColor == value)
+				if (this.data[MarkedColorDataOffset] == (byte)value)
 					return;
 				var isPrevMarked = this.IsMarked;
-				this.markedColor = value;
+				this.data[MarkedColorDataOffset] = (byte)value;
 				this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MarkedColor)));
 				if (this.IsMarked != isPrevMarked)
 					this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMarked)));
@@ -874,7 +912,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of memory usage by the instance in bytes.
 		/// </summary>
-		public long MemorySize => this.memorySize;
+		public long MemorySize => readUInt16Function(this.data.AsSpan(MemorySizeDataOffset));
 
 
 		/// <summary>
@@ -890,9 +928,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
-				if (this.messageLineCount == 0)
-					this.messageLineCount = CalculateLineCount(this.Log.Message);
-				return this.messageLineCount;
+				if (this.data[MessageLineCountDataOffset] == 0)
+					this.data[MessageLineCountDataOffset] = CalculateLineCount(this.Log.Message);
+				return this.data[MessageLineCountDataOffset];
 			}
 		}
 
@@ -932,18 +970,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 
 			// check extra line count
-			for (var i = this.extraLineCount.Length - 1; i >= 0; --i)
+			var data = this.data;
+			for (var i = this.data.Length - 1; i >= ExtraLineCountsDataOffset; --i)
 			{
-				if (this.extraLineCount[i] > 0)
+				if (data[i] > 0)
 					propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
 			}
 
 			// check message line count
-			if (this.messageLineCount > 0)
+			if (data[MessageLineCountDataOffset] > 0)
 				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfMessage)));
 
 			// check summary line count
-			if (this.summaryLineCount > 0)
+			if (data[SummaryLineCountDataOffset] > 0)
 				propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfSummary)));
 		}
 
@@ -1059,7 +1098,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.isDisposed != 0)
+			if (this.data[IsDisposedDataOffset] != 0)
 				return;
 			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
@@ -1107,24 +1146,27 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			
 			// update active type
-			if (this.activeAnalysisResultType >= result.Type)
+			var data = this.data;
+			if (data[ActiveAnalysisResultTypeDataOffset] >= (byte)result.Type)
 			{
-				this.activeAnalysisResultType = currentResultCount > 1 ? this.analysisResults[0].Type : 0;
+				data[ActiveAnalysisResultTypeDataOffset] = (byte)(currentResultCount > 1 ? this.analysisResults[0].Type : 0);
 				for (var i = currentResultCount - 2; i >= 1; --i)
 				{
 					var type = this.analysisResults[i].Type;
-					if (this.activeAnalysisResultType > type)
-						this.activeAnalysisResultType = type;
+					if (data[ActiveAnalysisResultTypeDataOffset] > (byte)type)
+						data[ActiveAnalysisResultTypeDataOffset] = (byte)type;
 				}
-				if (this.activeAnalysisResultType > result.Type)
+				if (data[ActiveAnalysisResultTypeDataOffset] > (byte)result.Type)
 					this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
 				if (currentResultCount == 1)
 					this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			}
 			
 			// update memory usage
-			this.memorySize = (ushort)Math.Max(0, this.memorySize + memorySizeDiff);
-			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			var memorySizeSpan = this.data.AsSpan(MemorySizeDataOffset);
+			var memorySize = readUInt16Function(memorySizeSpan);
+			writeUInt16Function(memorySizeSpan, (ushort)Math.Max(0, memorySize + memorySizeDiff));
+			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 			{
 				group.OnAnalysisResultRemoved(this);
 				group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
@@ -1142,7 +1184,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 #if DEBUG
 			this.VerifyAccess();
 #endif
-			if (this.isDisposed != 0)
+			if (this.data[IsDisposedDataOffset] != 0)
 				return;
 			var currentResultCount = this.analysisResults.Count;
 			if (currentResultCount == 0)
@@ -1192,22 +1234,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			
 			// update active type
-			var currentActiveResultType = this.activeAnalysisResultType;
-			this.activeAnalysisResultType = currentResultCount > 0 ? this.analysisResults[0].Type : 0;
+			var data = this.data;
+			var currentActiveResultType = data[ActiveAnalysisResultTypeDataOffset];
+			data[ActiveAnalysisResultTypeDataOffset] = (byte)(currentResultCount > 0 ? this.analysisResults[0].Type : 0);
 			for (var i = currentResultCount - 1; i >= 1; --i)
 			{
 				var type = this.analysisResults[i].Type;
-				if (this.activeAnalysisResultType > type)
-					this.activeAnalysisResultType = type;
+				if (data[ActiveAnalysisResultTypeDataOffset] > (byte)type)
+					data[ActiveAnalysisResultTypeDataOffset] = (byte)type;
 			}
-			if (this.activeAnalysisResultType > currentActiveResultType)
+			if (data[ActiveAnalysisResultTypeDataOffset] > currentActiveResultType)
 				this.PropertyChanged?.Invoke(this, new(nameof(AnalysisResultIndicatorIcon)));
 			if (currentResultCount == 0)
 				this.PropertyChanged?.Invoke(this, new(nameof(HasAnalysisResult)));
 			
 			// update memory usage
-			this.memorySize = (ushort)Math.Max(0, this.memorySize + memorySizeDiff);
-			if (DisplayableLogGroup.TryGetInstanceById(this.groupId, out var group))
+			var memorySizeSpan = this.data.AsSpan(MemorySizeDataOffset);
+			var memorySize = readUInt16Function(memorySizeSpan);
+			writeUInt16Function(memorySizeSpan, (ushort)Math.Max(0, memorySize + memorySizeDiff));
+			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 			{
 				group.OnAnalysisResultRemoved(this);
 				group.OnDisplayableLogMemorySizeChanged(memorySizeDiff);
@@ -1284,9 +1329,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			get
 			{
-				if (this.summaryLineCount == 0)
-					this.summaryLineCount = CalculateLineCount(this.Log.Summary);
-				return this.summaryLineCount;
+				if (this.data[SummaryLineCountDataOffset] == 0)
+					this.data[SummaryLineCountDataOffset] = CalculateLineCount(this.Log.Summary);
+				return this.data[SummaryLineCountDataOffset];
 			}
 		}
 
