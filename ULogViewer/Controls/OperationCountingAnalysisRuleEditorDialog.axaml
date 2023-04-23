@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:abConverters="using:CarinaStudio.Data.Converters"
-		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
@@ -24,6 +23,8 @@
 			<!-- Control buttons -->
 			<Border Classes="Dialog_ControlButtonsPanel">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
+					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+					<Separator Classes="Dialog_Separator_Small"/>
 					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
 					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 				</StackPanel>

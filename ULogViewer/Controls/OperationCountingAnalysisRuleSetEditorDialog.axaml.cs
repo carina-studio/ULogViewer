@@ -258,7 +258,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 #pragma warning disable CA1822
 		public void OpenDocumentation() =>
-			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationDurationAnalysis");
+			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationCountingAnalysis");
 #pragma warning restore CA1822
 		
 

@@ -108,6 +108,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text)
 			&& this.patternEditor.Pattern != null;
 		
+		
+		/// <summary>
+		/// Open online documentation.
+		/// </summary>
+#pragma warning disable CA1822
+		public void OpenDocumentation() =>
+			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationCountingAnalysis");
+#pragma warning restore CA1822
+		
 
 		/// <summary>
 		/// Get or set rule to be edited.

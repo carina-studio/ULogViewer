@@ -132,6 +132,15 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
     protected override bool OnValidateInput() =>
 		base.OnValidateInput() && this.patternEditor.Pattern != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
 	
+	
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
+#pragma warning disable CA1822
+	public void OpenDocumentation() =>
+		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#KeyLogAnalysis");
+#pragma warning restore CA1822
+	
 
 	/// <summary>
 	/// Get of set rule to be edited.
