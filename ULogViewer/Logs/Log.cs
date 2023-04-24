@@ -125,7 +125,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var propertyNames = new byte[propertyCount];
 			var propertyValues = new object?[propertyCount];
 			var index = 0;
-			long propertyMemorySize = 0;
+			var propertyMemorySize = 0L;
 			foreach (var propertyName in builder.PropertyNames)
 			{
 				if (propertyName == nameof(Level) || !Enum.TryParse<PropertyName>(propertyName, out var name))
@@ -136,16 +136,19 @@ namespace CarinaStudio.ULogViewer.Logs
 			for (var i = propertyNames.Length - 1; i >= 0; --i)
 			{
 				var propertyName = (PropertyName)propertyNames[i];
-				var value = GetPropertyFromBuilder(builder, propertyName.ToString());
+				var value = GetPropertyFromBuilder(builder, propertyName.ToString(), out var fromCache);
 				if (value is null)
 					continue;
 				propertyValues[i] = value;
-				if (value is IStringSource stringSource)
-					propertyMemorySize += stringSource.ByteCount;
-				else if (value is string str)
-					propertyMemorySize += Memory.EstimateInstanceSize(typeof(string), str.Length);
-				else
-					propertyMemorySize += Memory.EstimateInstanceSize(value);
+				if (!fromCache)
+				{
+					if (value is IStringSource stringSource)
+						propertyMemorySize += stringSource.ByteCount;
+					else if (value is string str)
+						propertyMemorySize += Memory.EstimateInstanceSize(typeof(string), str.Length);
+					else
+						propertyMemorySize += Memory.EstimateInstanceSize(value);
+				}
 			}
 			this.propertyNames = propertyNames;
 			this.propertyValues = propertyValues;
@@ -158,10 +161,12 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// setup reading time
 			this.readTime = DateTime.Now;
-			propertyMemorySize += Memory.EstimateInstanceSize<DateTime>();
 
 			// calculate memory size
-			this.memorySize = (ushort)(baseMemorySize + propertyMemorySize + Memory.EstimateArrayInstanceSize(sizeof(byte), propertyNames.Length) + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length));
+			this.memorySize = (ushort)(baseMemorySize 
+			                           + propertyMemorySize 
+			                           + Memory.EstimateArrayInstanceSize<byte>(propertyNames.Length) 
+			                           + Memory.EstimateArrayInstanceSize(IntPtr.Size, this.propertyValues.Length));
 		}
 
 
@@ -369,20 +374,24 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Get property from log builder.
-		static object? GetPropertyFromBuilder(LogBuilder builder, string propertyName) => propertyName switch
+		static object? GetPropertyFromBuilder(LogBuilder builder, string propertyName, out bool fromCache)
 		{
-			nameof(BeginningTimeSpan)
-			or nameof(EndingTimeSpan)
-			or nameof(TimeSpan) => builder.GetTimeSpanOrNull(propertyName),
-			nameof(BeginningTimestamp)
-			or nameof(EndingTimestamp)
-			or nameof(Timestamp) => builder.GetDateTimeOrNull(propertyName),
-			nameof(Level) => builder.GetEnumOrNull<LogLevel>(propertyName) ?? LogLevel.Undefined,
-			nameof(LineNumber)
-			or nameof(ProcessId)
-			or nameof(ThreadId) => builder.GetInt32OrNull(propertyName),
-			_ => builder.GetStringOrNull(propertyName),
-		};
+			fromCache = false;
+			return propertyName switch
+			{
+				nameof(BeginningTimeSpan)
+					or nameof(EndingTimeSpan)
+					or nameof(TimeSpan) => builder.GetTimeSpanOrNull(propertyName),
+				nameof(BeginningTimestamp)
+					or nameof(EndingTimestamp)
+					or nameof(Timestamp) => builder.GetDateTimeOrNull(propertyName),
+				nameof(Level) => builder.GetEnumOrNull<LogLevel>(propertyName) ?? LogLevel.Undefined,
+				nameof(LineNumber)
+					or nameof(ProcessId)
+					or nameof(ThreadId) => builder.GetInt32OrNull(propertyName),
+				_ => builder.GetStringOrNull(propertyName, out fromCache),
+			};
+		}
 
 
 		/// <summary>

@@ -72,6 +72,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<double> LogAnalysisScriptSetEditorDialogInitWidthRatio = new(nameof(LogAnalysisScriptSetEditorDialogInitWidthRatio), 0.6);
     /// <summary>
+    /// Size of string cache for log reading in MB.
+    /// </summary>
+    public static readonly SettingKey<int> LogReadingStringCacheSizeInMB = new(nameof(LogReadingStringCacheSizeInMB), 8);
+    /// <summary>
     /// Maximum number of log text filter to be kept in history queue.
     /// </summary>
     public static readonly SettingKey<int> LogTextFilterHistoryCount = new(nameof(LogTextFilterHistoryCount), 16);

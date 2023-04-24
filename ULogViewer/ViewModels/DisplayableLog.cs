@@ -96,10 +96,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogReader = reader;
 
 			// estimate memory usage
-			long memorySize = log.MemorySize + instanceFieldMemorySize;
-			if (extraCount > 0)
-				memorySize += Memory.EstimateArrayInstanceSize(sizeof(byte), extraCount);
-			writeUInt16Function(data.AsSpan(MemorySizeDataOffset), (ushort) memorySize);
+			var memorySize = log.MemorySize 
+			                  + instanceFieldMemorySize 
+			                  + Memory.EstimateArrayInstanceSize<byte>(data.Length);
+			writeUInt16Function(data.AsSpan(MemorySizeDataOffset), (ushort)memorySize);
 
 			// notify group
 			group.OnDisplayableLogCreated(this);

@@ -976,9 +976,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					+ Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.allLogs.Count + this.markedLogs.Count);
 				foreach (var component in this.attachedComponents)
 					logsMemoryUsage += component.MemorySize;
+				foreach (var reader in this.logReaders)
+					logsMemoryUsage += reader.MemorySize;
 				this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
 				totalLogsMemoryUsage += (logsMemoryUsage - prevLogsMemoryUsage);
-				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage);
+				this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage + LogBuilder.SharedCachesMemorySize);
 
 				// hibernate sessions if needed
 				hibernateSessionsAction.Schedule();
@@ -2062,7 +2064,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.DisposeLogReaders(true);
 
 			// release log group
-			totalLogsMemoryUsage -= this.displayableLogGroup?.MemorySize ?? 0L;
 			this.Logger.LogDebug("Dispose displayable log group '{group}'", this.displayableLogGroup);
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 			this.checkLogsMemoryUsageAction.Cancel();
@@ -2093,6 +2094,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// remove from activation history
 			if (this.activationHistoryListNode.List != null)
 				activationHistoryList.Remove(this.activationHistoryListNode);
+			
+			// update total memory usage
+			totalLogsMemoryUsage -= this.LogsMemoryUsage;
 
 			// call base
 			base.Dispose(disposing);
@@ -2210,14 +2214,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.logFileInfoList.Clear();
 
 			// release log group
-			if (this.IsDisposed)
-			{
-				var logsMemoryUsage = this.LogsMemoryUsage;
-				totalLogsMemoryUsage -= logsMemoryUsage;
-			}
-			else
-				this.checkLogsMemoryUsageAction.Execute();
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
+			
+			// check memory usage
+			if (!this.IsDisposed)
+				this.checkLogsMemoryUsageAction.Schedule();
 		}
 
 

@@ -18,6 +18,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using CarinaStudio.Diagnostics;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -27,6 +28,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	{
 		// Static fields.
+		static readonly long baseMemorySize = Memory.EstimateInstanceSize<LogReader>();
 		static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
 		static long nextId = 1;
 
@@ -41,6 +43,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly Dictionary<string, LogLevel> logLevelMap = new();
 		IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
 		readonly ObservableList<Log> logs = new();
+		long logsReadingCacheMemorySize;
 		CancellationTokenSource? logsReadingCancellationTokenSource;
 		object logsReadingToken = new();
 		LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
@@ -117,7 +120,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				}
 				var logs = this.pendingLogs.ToArray();
 				this.pendingLogs.Clear();
-				this.SynchronizationContext.Post(() => this.OnLogsRead(token, logs));
+				this.SynchronizationContext.Post(() => this.OnLogsRead(token, logs, this.logsReadingCacheMemorySize));
 			});
 			this.startReadingLogsAction = new ScheduledAction(this.StartReadingLogs);
 
@@ -507,6 +510,15 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+		/// <summary>
+		/// Get memory size used by the instance.
+		/// </summary>
+		public long MemorySize => baseMemorySize
+		                          + Memory.EstimateCollectionInstanceSize<Log>(this.logs.Capacity)
+		                          + Memory.EstimateCollectionInstanceSize<Log>(this.pendingLogs.Capacity)
+		                          + this.logsReadingCacheMemorySize;
+
+
 		// Called when property of data source has been changed.
 		void OnDataSourcePropertyChanged(object? sender, PropertyChangedEventArgs e) => this.OnDataSourcePropertyChanged(e);
 
@@ -554,7 +566,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (this.DataSource.IsErrorState())
 							{
 								this.Logger.LogWarning("Data source state changed to {state}, cancel reading logs", state);
-								this.OnLogsReadingCompleted(null);
+								this.OnLogsReadingCompleted(null, this.logsReadingCacheMemorySize);
 							}
 							break;
 					}
@@ -577,6 +589,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			if (this.state != LogReaderState.ClearingLogs)
 				return;
+			this.logsReadingCacheMemorySize = 0;
 			if (this.isRestarting)
 			{
 				this.Logger.LogWarning("Logs cleared, start reading logs");
@@ -593,18 +606,19 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Called when logs read.
-		void OnLogsRead(object readingToken, ICollection<Log> readLogs)
+		void OnLogsRead(object readingToken, ICollection<Log> readLogs, long cacheByteCount)
 		{
 			if (!this.CanAddLogs || this.logsReadingToken != readingToken)
 				return;
 			this.DropLogs(readLogs.Count);
 			this.logs.AddRange(readLogs);
 			this.DropLogs(0);
+			this.logsReadingCacheMemorySize = cacheByteCount;
 		}
 
 
 		// Called when all logs read.
-		void OnLogsReadingCompleted(Exception? ex)
+		void OnLogsReadingCompleted(Exception? ex, long cacheByteCount)
 		{
 			// check state
 			switch(this.state)
@@ -619,6 +633,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 
 			this.Logger.LogWarning("Complete reading logs");
+			
+			// update cache state
+			this.logsReadingCacheMemorySize = cacheByteCount;
 
 			// update data source waiting state
 			this.IsWaitingForDataSource = false;
@@ -646,7 +663,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					this.pendingLogs.Clear();
 				});
 				if (readingToken != null && logs.IsNotEmpty())
-					this.OnLogsRead(readingToken, logs);
+					this.OnLogsRead(readingToken, logs, this.logsReadingCacheMemorySize);
 			}
 
 			// change state
@@ -947,17 +964,18 @@ namespace CarinaStudio.ULogViewer.Logs
 					}
 				}
 			});
-			var logBuilder = new LogBuilder()
-			{
-				MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy),
-			};
 			var syncContext = this.SynchronizationContext;
+			var stringSourceCache = new StringSourceCache
+			{
+				MaxByteCount = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogReadingStringCacheSizeInMB)) << 20,
+			};
 			void FlushContinuousReadingLog(int updateInterval)
 			{
 				var log = readLog;
 				if (log != null)
 				{
 					readLog = null;
+					var stringSourceCacheByteCount = stringSourceCache.ByteCount;
 					this.pendingLogsSyncContext.Post(() =>
 					{
 						if (this.pendingLogsReadingToken != readingToken)
@@ -965,6 +983,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							this.pendingLogsReadingToken = readingToken;
 							this.pendingLogs.Clear();
 						}
+						this.logsReadingCacheMemorySize = stringSourceCacheByteCount;
 						this.pendingLogs.Add(log);
 						this.flushPendingLogsAction.Schedule(updateInterval);
 					});
@@ -978,6 +997,11 @@ namespace CarinaStudio.ULogViewer.Logs
 					return IStringSource.Empty;
 				return new CompressedStringSource(it);
 			});
+			var logBuilder = new LogBuilder()
+			{
+				MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy),
+				StringCache = stringSourceCache,
+			};
 			var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
 			var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 			var exception = (Exception?)null;
@@ -1148,7 +1172,7 @@ namespace CarinaStudio.ULogViewer.Logs
 										Thread.Sleep(nonContinuousPaddingInterval);
 									var logArray = readLogs.ToArray();
 									readLogs.Clear();
-									syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
+									syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
 								}
 								else if (readLogs.Count > maxLogCount)
 									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
@@ -1324,7 +1348,7 @@ namespace CarinaStudio.ULogViewer.Logs
 										Thread.Sleep(nonContinuousPaddingInterval);
 									var logArray = readLogs.ToArray();
 									readLogs.Clear();
-									syncContext.Post(() => this.OnLogsRead(readingToken, logArray));
+									syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
 								}
 								else if (readLogs.Count > maxLogCount)
 									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
@@ -1352,17 +1376,21 @@ namespace CarinaStudio.ULogViewer.Logs
 				{
 					if (hasMaxLogCount && readingWindow == LogReadingWindow.EndOfDataSource && readLogs.Count > maxLogCount)
 						readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
-					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs));
+					syncContext.Post(() => this.OnLogsRead(readingToken, readLogs, stringSourceCache.ByteCount));
 				}
+				
+				// clear cache
+				var finalStringSourceCacheByteCount = stringSourceCache.CachedStringSourcesByteCount;
+				stringSourceCache.Clear();
 
 				// close reader
 				Global.RunWithoutError(reader.Close);
 
 				// complete reading
 				if (readLogs.IsNotEmpty())
-					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
+					syncContext.Post(() => this.OnLogsReadingCompleted(exception, finalStringSourceCacheByteCount));
 				else
-					syncContext.Post(() => this.OnLogsReadingCompleted(exception));
+					syncContext.Post(() => this.OnLogsReadingCompleted(exception, finalStringSourceCacheByteCount));
 			}
 		}
 

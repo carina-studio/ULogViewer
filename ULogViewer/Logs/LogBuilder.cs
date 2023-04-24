@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CarinaStudio.ULogViewer.Text;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using CarinaStudio.ULogViewer.Text;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -11,8 +12,13 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class LogBuilder
 	{
+		// Constants.
+		const int StringLengthToUseCache = 32;
+		
+		
 		// Static fields.
-		static readonly IDictionary<ushort, IStringSource> SharedStringSources = new ConcurrentDictionary<ushort, IStringSource>();
+		static readonly IDictionary<ushort, IStringSource> SharedSmallStringSources = new ConcurrentDictionary<ushort, IStringSource>();
+		static long SharedSmallStringSourcesByteCount;
 
 
 		// Fields.
@@ -261,45 +267,94 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get log property as <see cref="string"/> or return null if unable to get the property.
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
+		/// <param name="fromCache">True is the string is got from one of cache.</param>
 		/// <returns>Value or null.</returns>
-		public IStringSource? GetStringOrNull(string propertyName)
+		public IStringSource? GetStringOrNull(string propertyName, out bool fromCache)
 		{
+			fromCache = false;
 			if (this.properties.TryGetValue(propertyName, out var value))
 			{
-				if (value is IStringSource stringSource)
+				// use string source directly
+				// ReSharper disable UsePatternMatching
+				var stringSource = value as IStringSource;
+				// ReSharper restore UsePatternMatching
+				if (stringSource is not null)
 					return stringSource;
+				
+				// create string source
+				var stringCache = this.StringCache;
+				var cacheKey = default(string);
 				if (value is ReadOnlyMemory<char> memory)
 				{
+					// use cached small string source
 					if (memory.Length == 0)
 						return IStringSource.Empty;
 					var stringSpan = memory.Span;
 					if (memory.Length <= 2 && stringSpan[0] <= 127 && (memory.Length == 1 || stringSpan[1] <= 127))
 					{
 						var key = (ushort)((stringSpan[0] << 8) | (memory.Length == 1 ? 0 : stringSpan[1]));
-						if (SharedStringSources.TryGetValue(key, out var sharedStringSource))
+						if (SharedSmallStringSources.TryGetValue(key, out var sharedStringSource))
 							return sharedStringSource;
 						sharedStringSource = new SmallStringSource(stringSpan);
-						SharedStringSources.TryAdd(key, sharedStringSource);
+						if (SharedSmallStringSources.TryAdd(key, sharedStringSource))
+							Interlocked.Add(ref SharedSmallStringSourcesByteCount, sharedStringSource.ByteCount);
+						fromCache = true;
 						return sharedStringSource;
 					}
-					return this.getStringImpl(memory);
+					
+					// use cached string source
+					if (memory.Length <= StringLengthToUseCache && stringCache is not null)
+					{
+						cacheKey = new string(memory.Span);
+						if (stringCache.TryGet(cacheKey, out stringSource))
+						{
+							fromCache = true;
+							return stringSource;
+						}
+					}
+					
+					// create new string source
+					stringSource = this.getStringImpl(memory);
 				}
-				if (value is string s)
+				else if (value is string s)
 				{
+					// use cached small string source
 					if (s.Length == 0)
 						return IStringSource.Empty;
 					var stringSpan = s.AsSpan();
 					if (s.Length <= 2 && stringSpan[0] <= 127 && (s.Length == 1 || stringSpan[1] <= 127))
 					{
 						var key = (ushort)((stringSpan[0] << 8) | (s.Length == 1 ? 0 : stringSpan[1]));
-						if (SharedStringSources.TryGetValue(key, out var sharedStringSource))
+						if (SharedSmallStringSources.TryGetValue(key, out var sharedStringSource))
 							return sharedStringSource;
 						sharedStringSource = new SmallStringSource(stringSpan);
-						SharedStringSources.TryAdd(key, sharedStringSource);
+						if (SharedSmallStringSources.TryAdd(key, sharedStringSource))
+							Interlocked.Add(ref SharedSmallStringSourcesByteCount, sharedStringSource.ByteCount);
+						fromCache = true;
 						return sharedStringSource;
 					}
-					return this.getStringImpl(s.AsMemory());
+					
+					// use cached string source
+					if (s.Length <= StringLengthToUseCache && stringCache is not null)
+					{
+						cacheKey = s;
+						if (stringCache.TryGet(cacheKey, out stringSource))
+						{
+							fromCache = true;
+							return stringSource;
+						}
+					}
+					
+					// create new string source
+					stringSource = this.getStringImpl(s.AsMemory());
 				}
+				
+				// add string source to cache
+				if (cacheKey is not null && stringCache is not null)
+					stringCache.Add(cacheKey, stringSource!);
+
+				// complete
+				return stringSource;
 			}
 			return null;
 		}
@@ -449,5 +504,17 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <param name="value">Value to set.</param>
 		public void Set(string propertyName, ReadOnlyMemory<char> value) =>
 			properties[propertyName] = value;
+
+
+		/// <summary>
+		/// Memory usage of all internal shared caches.
+		/// </summary>
+		public static long SharedCachesMemorySize => SharedSmallStringSourcesByteCount;
+		
+		
+		/// <summary>
+		/// Cache for strings.
+		/// </summary>
+		public StringSourceCache? StringCache { get; set; }
 	}
 }
