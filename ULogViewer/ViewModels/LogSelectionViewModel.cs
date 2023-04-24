@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
+using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -53,7 +54,7 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="SelectedLogStringPropertyValue"/>.
     /// </summary>
-    public static readonly ObservableProperty<string?> SelectedLogStringPropertyValueProperty = ObservableProperty.Register<LogSelectionViewModel, string?>(nameof(SelectedLogStringPropertyValue));
+    public static readonly ObservableProperty<IStringSource?> SelectedLogStringPropertyValueProperty = ObservableProperty.Register<LogSelectionViewModel, IStringSource?>(nameof(SelectedLogStringPropertyValue));
     /// <summary>
     /// Property of <see cref="SelectedProcessId"/>.
     /// </summary>
@@ -405,7 +406,7 @@ class LogSelectionViewModel : SessionComponent
         }
         if (DisplayableLog.HasStringProperty(property.Name) && !property.Name.EndsWith("String"))
         {
-            this.selectedLogs[0].TryGetProperty<string?>(property.Name, out var value);
+            this.selectedLogs[0].TryGetProperty<IStringSource?>(property.Name, out var value);
             this.SetValue(SelectedLogPropertyValueProperty, value);
             this.SetValue(SelectedLogStringPropertyValueProperty, value);
         }
@@ -480,7 +481,7 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Get value of selected log property with string value.
     /// </summary>
-    public string? SelectedLogStringPropertyValue => this.GetValue(SelectedLogStringPropertyValueProperty);
+    public IStringSource? SelectedLogStringPropertyValue => this.GetValue(SelectedLogStringPropertyValueProperty);
 
 
     // Select the log which represents the ending point of total duration of logs.

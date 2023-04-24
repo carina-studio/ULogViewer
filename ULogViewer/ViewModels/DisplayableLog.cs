@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
+using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -35,16 +36,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Static fields.
 		static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = Array.Empty<DisplayableLogAnalysisResult>();
-		static readonly Func<Log, string?>[] extraGetters = new Func<Log, string?>[Log.ExtraCapacity].Also(it =>
+		static readonly Func<Log, IStringSource?>[] extraGetters = new Func<Log, IStringSource?>[Log.ExtraCapacity].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
-				it[i] = Log.CreatePropertyGetter<string?>($"Extra{i + 1}");
+				it[i] = Log.CreatePropertyGetter<IStringSource?>($"Extra{i + 1}");
 		});
 		static readonly long instanceFieldMemorySize = Memory.EstimateInstanceSize<DisplayableLog>();
 		static volatile bool isPropertyMapReady;
 		static AppSuite.Converters.EnumConverter? levelConverter;
-		[ThreadStatic]
-		static Dictionary<string, DisplayableLogStringPropertyGetter>? logStringPropertyGetters;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 		static readonly delegate*<ReadOnlySpan<byte>, ushort> readUInt16Function;
 		static readonly delegate*<ReadOnlySpan<byte>, uint> readUInt32Function;
@@ -190,7 +189,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get beginning time span of log in string format.
 		/// </summary>
-		public string BeginningTimeSpanString => this.FormatTimeSpan(this.Log.BeginningTimeSpan);
+		public IStringSource? BeginningTimeSpanString => this.FormatTimeSpan(this.Log.BeginningTimeSpan);
 
 
 		/// <summary>
@@ -202,11 +201,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get beginning timestamp of log in string format.
 		/// </summary>
-		public string BeginningTimestampString => this.FormatTimestamp(this.Log.BeginningTimestamp);
+		public IStringSource? BeginningTimestampString => this.FormatTimestamp(this.Log.BeginningTimestamp);
 
 
 		// Calculate line count.
-		static byte CalculateLineCount(string? text)
+		static byte CalculateLineCount(IStringSource? text)
 		{
 			if (text == null)
 				return 0;
@@ -214,7 +213,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (textLength == 0)
 				return 1;
 			var lineCount = (byte)1;
-			fixed (char* p = text.AsSpan())
+			var textBuffer = new char[textLength];
+			if (!text.TryCopyTo(textBuffer.AsSpan()))
+				return 1;
+			fixed (char* p = textBuffer)
 			{
 				char* charPtr = (p + textLength - 1);
 				while (charPtr >= p)
@@ -235,7 +237,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get category of log.
 		/// </summary>
-		public string? Category => this.Log.Category;
+		public IStringSource? Category => this.Log.Category;
 
 
 		// Check whether extra line of ExtraX exist or not.
@@ -254,6 +256,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public string? ColorIndicatorTip => this.GroupOrNull?.GetColorIndicatorTip(this);
 
 
+#pragma warning disable CS8600
+#pragma warning disable CS8603
 		/// <summary>
 		/// Create <see cref="Func{T, TResult}"/> to get specific log property from <see cref="DisplayableLog"/>.
 		/// </summary>
@@ -262,114 +266,46 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns><see cref="Func{T, TResult}"/>.</returns>
 		public static Func<DisplayableLog, T> CreateLogPropertyGetter<T>(string propertyName)
 		{
-			return propertyName switch
+			Func<DisplayableLog, object?> rawPropertyGetter = propertyName switch
 			{
-				nameof(BeginningTimeSpanString) => (it => (T)(object)it.BeginningTimeSpanString),
-				nameof(BeginningTimestampString) => (it => (T)(object)it.BeginningTimestampString),
-				nameof(EndingTimeSpanString) => (it => (T)(object)it.EndingTimeSpanString),
-				nameof(EndingTimestampString) => (it => (T)(object)it.EndingTimestampString),
-				nameof(LevelString) => (it => (T)(object)it.LevelString),
-				nameof(LogId) => (it => (T)(object)it.LogId),
-				nameof(ReadTimeString) => (it => (T)(object)it.ReadTimeString),
-				nameof(TimeSpanString) => (it => (T)(object)it.TimeSpanString),
-				nameof(TimestampString) => (it => (T)(object)it.TimestampString),
-				_ => Log.CreatePropertyGetter<T>(propertyName).Let(getter =>
+				nameof(BeginningTimeSpanString) => it => it.BeginningTimeSpanString,
+				nameof(BeginningTimestampString) => it => it.BeginningTimestampString,
+				nameof(EndingTimeSpanString) => it => it.EndingTimeSpanString,
+				nameof(EndingTimestampString) => it => it.EndingTimestampString,
+				nameof(LevelString) => it => it.LevelString,
+				nameof(LogId) => it => it.LogId,
+				nameof(ReadTimeString) => it => it.ReadTimeString,
+				nameof(TimeSpanString) => it => it.TimeSpanString,
+				nameof(TimestampString) => it => it.TimestampString,
+				_ => Log.CreatePropertyGetter<object?>(propertyName).Let(getter =>
 				{
-					return new Func<DisplayableLog, T>(it => getter(it.Log));
+					return new Func<DisplayableLog, object?>(it => getter(it.Log));
 				}),
 			};
-		}
-
-
-		/// <summary>
-		/// Create delegate for getting specific string log property.
-		/// </summary>
-		/// <param name="propertyName">Name of property.</param>
-		/// <returns>Delegate for getting specific string log property.</returns>
-		public static DisplayableLogStringPropertyGetter CreateLogStringPropertyGetter(string propertyName)
-		{
-			// use cached getter
-			DisplayableLogStringPropertyGetter? getter;
-			if (logStringPropertyGetters == null)
-				logStringPropertyGetters = new();
-			else if (logStringPropertyGetters.TryGetValue(propertyName, out getter))
-				return getter;
-			
-			// create getter
-			Func<DisplayableLog, string?> valueGenerator;
-			switch (propertyName)
+			return log =>
 			{
-				case nameof(BeginningTimeSpanString):
-					valueGenerator = log => log.BeginningTimeSpanString;
-					break;
-				case nameof(BeginningTimestampString):
-					valueGenerator = log => log.BeginningTimestampString;
-					break;
-				case nameof(EndingTimeSpanString):
-					valueGenerator = log => log.EndingTimeSpanString;
-					break;
-				case nameof(EndingTimestampString):
-					valueGenerator = log => log.EndingTimestampString;
-					break;
-				case nameof(LevelString):
-					getter = (log, buffer, offset) =>
-					{
-						if (offset < 0)
-							throw new ArgumentOutOfRangeException(nameof(offset));
-						var s = log.LevelString;
-						if (offset + s.Length > buffer.Length)
-							return ~s.Length;
-						s.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..^0]);
-						return s.Length;
-					};
-					logStringPropertyGetters[propertyName] = getter;
-					return getter;
-				case nameof(ReadTimeString):
-					valueGenerator = log => log.ReadTimeString;
-					break;
-				case nameof(TimeSpanString):
-					valueGenerator = log => log.TimeSpanString;
-					break;
-				case nameof(TimestampString):
-					valueGenerator = log => log.TimestampString;
-					break;
-				default:
-					getter = Log.CreateStringPropertyGetter(propertyName).Let(getter =>
-					{
-						return new DisplayableLogStringPropertyGetter((log, buffer, offset) => getter(log.Log, buffer, offset));
-					});
-					logStringPropertyGetters[propertyName] = getter;
-					return getter;
-			}
-			getter = (log, buffer, offset) =>
-			{
-				var s = valueGenerator(log);
-				if (s is not null || log.TryGetProperty<string>(propertyName, out s))
-				{
-					if (offset < 0)
-						throw new ArgumentOutOfRangeException(nameof(offset));
-					if (offset + s.Length > buffer.Length)
-						return ~s.Length;
-					s.AsSpan().CopyTo(offset == 0 ? buffer : buffer[offset..]);
-					return s.Length;
-				}
-				return 0;
+				var rawValue = rawPropertyGetter(log);
+				if (rawValue is T valueT)
+					return valueT;
+				if (typeof(T) == typeof(string))
+					return (T)(object?)rawValue?.ToString();
+				throw new InvalidCastException($"Cannot get value of property '{propertyName}' as {typeof(T).Name}.");
 			};
-			logStringPropertyGetters[propertyName] = getter;
-			return getter;
 		}
+#pragma warning restore CS8600
+#pragma warning restore CS8603
 
 
 		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
-		public string? DeviceId => this.Log.DeviceId;
+		public IStringSource? DeviceId => this.Log.DeviceId;
 
 
 		/// <summary>
 		/// Get name of device which generates log.
 		/// </summary>
-		public string? DeviceName => this.Log.DeviceName;
+		public IStringSource? DeviceName => this.Log.DeviceName;
 
 
 		public void Dispose()
@@ -403,7 +339,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ending time span of log in string format.
 		/// </summary>
-		public string EndingTimeSpanString => this.FormatTimeSpan(this.Log.EndingTimeSpan);
+		public IStringSource? EndingTimeSpanString => this.FormatTimeSpan(this.Log.EndingTimeSpan);
 
 
 		/// <summary>
@@ -415,19 +351,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ending timestamp of log in string format.
 		/// </summary>
-		public string EndingTimestampString => this.FormatTimestamp(this.Log.EndingTimestamp);
+		public IStringSource? EndingTimestampString => this.FormatTimestamp(this.Log.EndingTimestamp);
 
 
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
-		public string? Event => this.Log.Event;
+		public IStringSource? Event => this.Log.Event;
 
 
 		/// <summary>
 		/// Get 1st extra data of log.
 		/// </summary>
-		public string? Extra1 => this.Log.Extra1;
+		public IStringSource? Extra1 => this.Log.Extra1;
 
 
 		/// <summary>
@@ -439,7 +375,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
-		public string? Extra10 => this.Log.Extra10;
+		public IStringSource? Extra10 => this.Log.Extra10;
 
 
 		/// <summary>
@@ -451,7 +387,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 11st extra data of log.
 		/// </summary>
-		public string? Extra11 => this.Log.Extra11;
+		public IStringSource? Extra11 => this.Log.Extra11;
 
 
 		/// <summary>
@@ -463,7 +399,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 12nd extra data of log.
 		/// </summary>
-		public string? Extra12 => this.Log.Extra12;
+		public IStringSource? Extra12 => this.Log.Extra12;
 
 
 		/// <summary>
@@ -475,7 +411,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 13rd extra data of log.
 		/// </summary>
-		public string? Extra13 => this.Log.Extra13;
+		public IStringSource? Extra13 => this.Log.Extra13;
 
 
 		/// <summary>
@@ -487,7 +423,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 14th extra data of log.
 		/// </summary>
-		public string? Extra14 => this.Log.Extra14;
+		public IStringSource? Extra14 => this.Log.Extra14;
 
 
 		/// <summary>
@@ -499,7 +435,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 15th extra data of log.
 		/// </summary>
-		public string? Extra15 => this.Log.Extra15;
+		public IStringSource? Extra15 => this.Log.Extra15;
 
 
 		/// <summary>
@@ -511,7 +447,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 16th extra data of log.
 		/// </summary>
-		public string? Extra16 => this.Log.Extra16;
+		public IStringSource? Extra16 => this.Log.Extra16;
 
 
 		/// <summary>
@@ -523,7 +459,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 17th extra data of log.
 		/// </summary>
-		public string? Extra17 => this.Log.Extra17;
+		public IStringSource? Extra17 => this.Log.Extra17;
 
 
 		/// <summary>
@@ -535,7 +471,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 18th extra data of log.
 		/// </summary>
-		public string? Extra18 => this.Log.Extra18;
+		public IStringSource? Extra18 => this.Log.Extra18;
 
 
 		/// <summary>
@@ -547,7 +483,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 19th extra data of log.
 		/// </summary>
-		public string? Extra19 => this.Log.Extra19;
+		public IStringSource? Extra19 => this.Log.Extra19;
 
 
 		/// <summary>
@@ -559,7 +495,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
-		public string? Extra2 => this.Log.Extra2;
+		public IStringSource? Extra2 => this.Log.Extra2;
 
 
 		/// <summary>
@@ -571,7 +507,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 20th extra data of log.
 		/// </summary>
-		public string? Extra20 => this.Log.Extra20;
+		public IStringSource? Extra20 => this.Log.Extra20;
 
 
 		/// <summary>
@@ -583,7 +519,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
-		public string? Extra3 => this.Log.Extra3;
+		public IStringSource? Extra3 => this.Log.Extra3;
 
 
 		/// <summary>
@@ -595,7 +531,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 4th extra data of log.
 		/// </summary>
-		public string? Extra4 => this.Log.Extra4;
+		public IStringSource? Extra4 => this.Log.Extra4;
 
 
 		/// <summary>
@@ -607,7 +543,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
-		public string? Extra5 => this.Log.Extra5;
+		public IStringSource? Extra5 => this.Log.Extra5;
 
 
 		/// <summary>
@@ -619,7 +555,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 6th extra data of log.
 		/// </summary>
-		public string? Extra6 => this.Log.Extra6;
+		public IStringSource? Extra6 => this.Log.Extra6;
 
 
 		/// <summary>
@@ -631,7 +567,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
-		public string? Extra7 => this.Log.Extra7;
+		public IStringSource? Extra7 => this.Log.Extra7;
 
 
 		/// <summary>
@@ -643,7 +579,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 8th extra data of log.
 		/// </summary>
-		public string? Extra8 => this.Log.Extra8;
+		public IStringSource? Extra8 => this.Log.Extra8;
 
 
 		/// <summary>
@@ -655,7 +591,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
-		public string? Extra9 => this.Log.Extra9;
+		public IStringSource? Extra9 => this.Log.Extra9;
 
 
 		/// <summary>
@@ -667,76 +603,44 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get name of file which read log from.
 		/// </summary>
-		public string? FileName => this.Log.FileName;
+		public IStringSource? FileName => this.Log.FileName;
 
 
 		// Format timestamp to string.
-		string FormatTimeSpan(TimeSpan? timeSpan)
+		IStringSource? FormatTimeSpan(TimeSpan? timeSpan)
 		{
 			if (timeSpan == null)
-				return string.Empty;
+				return null;
 			try
 			{
 				var format = this.GroupOrNull?.LogProfile.TimeSpanFormatForDisplaying;
 				if (format != null)
-					return timeSpan.Value.ToString(format);
-				return timeSpan.Value.ToString();
+					return new SimpleStringSource(timeSpan.Value.ToString(format));
+				return new SimpleStringSource(timeSpan.Value.ToString());
 			}
 			catch
 			{
-				return string.Empty;
+				return null;
 			}
-		}
-
-
-		// Format timestamp to compressed string.
-		CompressedString FormatTimeSpanCompressed(TimeSpan? timeSpan)
-		{
-			var s = this.FormatTimeSpan(timeSpan);
-			if (s.Length == 0)
-				return CompressedString.Empty;
-			var level = this.GroupOrNull?.MemoryUsagePolicy switch
-			{
-				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
-				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
-				_ => CompressedString.Level.None,
-			};
-			return CompressedString.Create(s, level)!;
 		}
 
 
 		// Format timestamp to string.
-		string FormatTimestamp(DateTime? timestamp)
+		IStringSource? FormatTimestamp(DateTime? timestamp)
 		{
 			if (timestamp == null)
-				return string.Empty;
+				return null;
 			try
 			{
 				var format = this.GroupOrNull?.LogProfile.TimestampFormatForDisplaying;
 				if (format != null)
-					return timestamp.Value.ToString(format);
-				return timestamp.Value.ToString();
+					return new SimpleStringSource(timestamp.Value.ToString(format));
+				return new SimpleStringSource(timestamp.Value.ToString());
 			}
 			catch
 			{
-				return string.Empty;
+				return null;
 			}
-		}
-
-
-		// Format timestamp to compressed string.
-		CompressedString FormatTimestampCompressed(DateTime? timestamp)
-		{
-			var s = this.FormatTimestamp(timestamp);
-			if (s.Length == 0)
-				return CompressedString.Empty;
-			var level = this.GroupOrNull?.MemoryUsagePolicy switch
-			{
-				MemoryUsagePolicy.Balance => CompressedString.Level.Fast,
-				MemoryUsagePolicy.LessMemoryUsage => CompressedString.Level.Optimal,
-				_ => CompressedString.Level.None,
-			};
-			return CompressedString.Create(s, level)!;
 		}
 
 
@@ -1104,7 +1008,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get message of log.
 		/// </summary>
-		public string? Message => this.Log.Message;
+		public IStringSource? Message => this.Log.Message;
 
 
 		/// <summary>
@@ -1259,7 +1163,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get name of process which generates log.
 		/// </summary>
-		public string? ProcessName => this.Log.ProcessName;
+		public IStringSource? ProcessName => this.Log.ProcessName;
 
 
 		/// <summary>
@@ -1271,7 +1175,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get timestamp of this log was read in string format.
 		/// </summary>
-		public string ReadTimeString => this.FormatTimestamp(this.Log.ReadTime);
+		public IStringSource? ReadTimeString => this.FormatTimestamp(this.Log.ReadTime);
 
 
 		/// <summary>
@@ -1499,13 +1403,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get name of source which generates log.
 		/// </summary>
-		public string? SourceName => this.Log.SourceName;
+		public IStringSource? SourceName => this.Log.SourceName;
 
 
 		/// <summary>
 		/// Get summary of log.
 		/// </summary>
-		public string? Summary => this.Log.Summary;
+		public IStringSource? Summary => this.Log.Summary;
 
 
 		/// <summary>
@@ -1525,7 +1429,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get tags of log.
 		/// </summary>
-		public string? Tags => this.Log.Tags;
+		public IStringSource? Tags => this.Log.Tags;
 
 
 		/// <summary>
@@ -1543,7 +1447,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get name of thread which generates log.
 		/// </summary>
-		public string? ThreadName => this.Log.ThreadName;
+		public IStringSource? ThreadName => this.Log.ThreadName;
 
 
 		/// <summary>
@@ -1555,7 +1459,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get time span of log in string format.
 		/// </summary>
-		public string TimeSpanString => this.FormatTimeSpan(this.Log.TimeSpan);
+		public IStringSource? TimeSpanString => this.FormatTimeSpan(this.Log.TimeSpan);
 
 
 		/// <summary>
@@ -1567,13 +1471,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get timestamp of log in string format.
 		/// </summary>
-		public string TimestampString => this.FormatTimestamp(this.Log.Timestamp);
+		public IStringSource? TimestampString => this.FormatTimestamp(this.Log.Timestamp);
 
 
 		/// <summary>
 		/// Get title of log.
 		/// </summary>
-		public string? Title => this.Log.Title;
+		public IStringSource? Title => this.Log.Title;
 
 
 		/// <summary>
@@ -1598,11 +1502,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public bool TryGetProperty<T>(string propertyName, out T value)
 		{
 			SetupPropertyMap();
-			if (propertyMap.TryGetValue(propertyName, out var propertyInfo)
-				&& typeof(T).IsAssignableFrom(propertyInfo.PropertyType))
+			if (propertyMap.TryGetValue(propertyName, out var propertyInfo))
 			{
-				value = (T)propertyInfo.GetValue(this);
-				return true;
+				var rawValue = propertyInfo.GetValue(this);
+				if (rawValue is T valueT)
+				{
+					value = valueT;
+					return true;
+				}
+				if (typeof(T) == typeof(string))
+				{
+					value = (T)(object?)rawValue?.ToString();
+					return true;
+				}
 			}
 			value = default;
 			return false;
@@ -1624,13 +1536,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get ID of user which generates log.
 		/// </summary>
-		public string? UserId => this.Log.UserId;
+		public IStringSource? UserId => this.Log.UserId;
 
 
 		/// <summary>
 		/// Get name of user which generates log.
 		/// </summary>
-		public string? UserName => this.Log.UserName;
+		public IStringSource? UserName => this.Log.UserName;
 
 
 		// Interface implementations.
@@ -1645,16 +1557,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// Delegate of direct event handler for <see cref="DisplayableLog"/>.
 	/// </summary>
 	delegate void DirectDisplayableLogEventHandler(DisplayableLogGroup group, DisplayableLog log);
-
-
-	/// <summary>
-	/// Delegate to get value of string property of log.
-	/// </summary>
-	/// <param name="log">Log.</param>
-	/// <param name="buffer">Buffer.</param>
-	/// <param name="offset">Offset in buffer to put first character.</param>
-	/// <returns>Number of characters in original string, or 1's complement of number of characters if size of buffer is insufficient.</returns>
-	delegate int DisplayableLogStringPropertyGetter(DisplayableLog log, Span<char> buffer, int offset = 0);
 
 
 	/// <summary>

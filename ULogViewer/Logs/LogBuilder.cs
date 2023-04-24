@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -10,7 +11,7 @@ namespace CarinaStudio.ULogViewer.Logs
 	class LogBuilder
 	{
 		// Fields.
-		Func<ReadOnlyMemory<char>, CompressedString?> getCompressedStringImpl = GetCompressedStringWithBalanceMup;
+		Func<ReadOnlyMemory<char>, IStringSource> getStringImpl = GetStringWithBalanceMup;
 		MemoryUsagePolicy memoryUsagePolicy = MemoryUsagePolicy.Balance;
 		readonly Dictionary<string, object> properties = new();
 
@@ -150,58 +151,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		public Log BuildAndReset() => new Log(this).Also(_ => this.Reset());
 
 
-		// Get compressed string for Balance memory usage policy.
-		static CompressedString? GetCompressedStringWithBalanceMup(ReadOnlyMemory<char> s)
-		{
-			var length = s.Length;
-			if (length == 0)
-				return CompressedString.Empty;
-			return length <= 64 || length > 256
-				? CompressedString.Create(s, CompressedString.Level.Optimal)
-				: CompressedString.Create(s, CompressedString.Level.Fast);
-		}
-		
-		
-		// Get compressed string for BetterPerformance memory usage policy.
-		static CompressedString? GetCompressedStringWithBetterPerformanceMup(ReadOnlyMemory<char> s)
-		{
-			var length = s.Length;
-			if (length == 0)
-				return CompressedString.Empty;
-			return length <= 64 || length > 256
-				? CompressedString.Create(s, CompressedString.Level.Fast)
-				: CompressedString.Create(s, CompressedString.Level.None);
-		}
-		
-		
-		// Get compressed string for LessMemoryUsage memory usage policy.
-		static CompressedString? GetCompressedStringWithLessMemoryUsageMup(ReadOnlyMemory<char> s)
-		{
-			var length = s.Length;
-			if (length == 0)
-				return CompressedString.Empty;
-			return CompressedString.Create(s, CompressedString.Level.Optimal);
-		}
-
-
-		/// <summary>
-		/// Get log property as <see cref="CompressedString"/> or return null if unable to get the property.
-		/// </summary>
-		/// <param name="propertyName">Name of property of log.</param>
-		/// <returns>Value or null.</returns>
-		public CompressedString? GetCompressedStringOrNull(string propertyName)
-		{
-			if (this.properties.TryGetValue(propertyName, out var value))
-			{
-				if (value is ReadOnlyMemory<char> memory)
-					return this.getCompressedStringImpl(memory);
-				if (value is string s)
-					return this.getCompressedStringImpl(s.AsMemory());
-			}
-			return null;
-		}
-
-
 		/// <summary>
 		/// Get log property as <see cref="DateTime"/> or return null if unable to get the property.
 		/// </summary>
@@ -308,16 +257,56 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <returns>Value or null.</returns>
-		public string? GetStringOrNull(string propertyName)
+		public IStringSource? GetStringOrNull(string propertyName)
 		{
 			if (this.properties.TryGetValue(propertyName, out var value))
 			{
 				if (value is ReadOnlyMemory<char> memory)
-					return new string(memory.Span);
+					return this.getStringImpl(memory);
 				if (value is string s)
-					return s;
+					return this.getStringImpl(s.AsMemory());
 			}
 			return null;
+		}
+		
+		
+		// Get string for Balance memory usage policy.
+		static IStringSource GetStringWithBalanceMup(ReadOnlyMemory<char> s)
+		{
+			var length = s.Length;
+			if (length == 0)
+				return IStringSource.Empty;
+			if (length <= SmallStringSource.MaxLength)
+				return new SmallStringSource(s);
+			return length <= 64 || length > 256
+				? new CompressedStringSource(s)
+				: new Utf8StringSource(s);
+		}
+		
+		
+		// Get string for BetterPerformance memory usage policy.
+		static IStringSource GetStringWithBetterPerformanceMup(ReadOnlyMemory<char> s)
+		{
+			var length = s.Length;
+			if (length == 0)
+				return IStringSource.Empty;
+			if (length <= SmallStringSource.MaxLength)
+				return new SmallStringSource(s);
+			return length <= 64 || length > 256
+				? new Utf8StringSource(s)
+				: new SimpleStringSource(s);
+		}
+		
+		
+		// Get string for LessMemoryUsage memory usage policy.
+		static IStringSource GetStringWithLessMemoryUsageMup(ReadOnlyMemory<char> s)
+		{
+			var length = s.Length;
+			if (length == 0)
+				return IStringSource.Empty;
+			if (length <= SmallStringSource.MaxLength)
+				return new SmallStringSource(s);
+			return new CompressedStringSource(s);
 		}
 
 
@@ -369,11 +358,11 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (this.memoryUsagePolicy == value)
 					return;
 				this.memoryUsagePolicy = value;
-				this.getCompressedStringImpl = value switch
+				this.getStringImpl = value switch
 				{
-					MemoryUsagePolicy.BetterPerformance => GetCompressedStringWithBetterPerformanceMup,
-					MemoryUsagePolicy.LessMemoryUsage => GetCompressedStringWithLessMemoryUsageMup,
-					_ => GetCompressedStringWithBalanceMup,
+					MemoryUsagePolicy.BetterPerformance => GetStringWithBetterPerformanceMup,
+					MemoryUsagePolicy.LessMemoryUsage => GetStringWithLessMemoryUsageMup,
+					_ => GetStringWithBalanceMup,
 				};
 			}
 		}

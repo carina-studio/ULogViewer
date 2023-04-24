@@ -7,13 +7,15 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
 /// <summary>
 /// Filter of <see cref="DisplayableLog"/>.
 /// </summary>
-partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.FilteringToken, byte>, IDisplayableLogFilter
+class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.FilteringToken, byte>, IDisplayableLogFilter
 {
     // Token of filtering.
     public class FilteringToken
@@ -26,7 +28,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
         public bool IncludeMarkedLogs;
         public volatile bool IsTextRegexListReady;
         public Logs.LogLevel Level;
-        public IList<DisplayableLogStringPropertyGetter> LogTextPropertyGetters = Array.Empty<DisplayableLogStringPropertyGetter>();
+        public IList<Func<DisplayableLog, IStringSource?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, IStringSource?>>();
         public int? ProcessId;
         public int? ThreadId;
         public Regex[] TextRegexList = Array.Empty<Regex>();
@@ -97,12 +99,13 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
         // check log properties
         isProcessingNeeded = false;
         var filteringToken = new FilteringToken();
-        var textPropertyGetters = new List<DisplayableLogStringPropertyGetter>();
+        var textPropertyGetters = new List<Func<DisplayableLog, IStringSource?>>();
         foreach (var logProperty in this.filteringLogProperties)
         {
             if (DisplayableLog.HasStringProperty(logProperty.Name))
             {
-                textPropertyGetters.Add(DisplayableLog.CreateLogStringPropertyGetter(logProperty.Name));
+                var rawPropertyGetter = DisplayableLog.CreateLogPropertyGetter<IStringSource?>(logProperty.Name);
+                textPropertyGetters.Add(log => rawPropertyGetter(log));
                 isProcessingNeeded = true;
             }
             else if (logProperty.Name == nameof(DisplayableLog.ProcessId))
@@ -327,12 +330,14 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
                     textBufferToMatch[textBufferLength++] = '$'; // special separator between text properties
                     textBufferToMatch[textBufferLength++] = '$';
                 }
+                var textPropertyValue = token.LogTextPropertyGetters[j](log);
+                if (textPropertyValue.IsNullOrEmpty())
+                    continue;
                 while (true)
                 {
-                    var valueLength = token.LogTextPropertyGetters[j](log, textSpanToMatch, textBufferLength);
-                    if (valueLength >= 0)
+                    if (textPropertyValue.TryCopyTo(textSpanToMatch.Slice(textBufferLength)))
                     {
-                        textBufferLength += valueLength;
+                        textBufferLength += textPropertyValue.Length;
                         break;
                     }
                     IncreaseTextBuffer(ref textBufferToMatch);
@@ -354,9 +359,7 @@ partial class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogF
             return true;
 
         // check level
-        var areOtherConditionsMatched = true;
-        if (level != Logs.LogLevel.Undefined && log.Level != level)
-            areOtherConditionsMatched = false;
+        bool areOtherConditionsMatched = (level == LogLevel.Undefined || log.Level == level);
         if (areOtherConditionsMatched && token.ProcessId.HasValue && token.HasLogProcessId)
             areOtherConditionsMatched = (token.ProcessId == log.ProcessId);
         if (areOtherConditionsMatched && token.ThreadId.HasValue && token.HasLogThreadId)

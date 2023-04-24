@@ -440,7 +440,7 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyDisposed();
 
         // get template value
-        var propertyValue = this.Session.LogSelection.SelectedLogStringPropertyValue;
+        var propertyValue = this.Session.LogSelection.SelectedLogStringPropertyValue?.ToString();
         if (string.IsNullOrWhiteSpace(propertyValue))
         {
             this.Logger.LogDebug("No property value to filter");
@@ -682,7 +682,7 @@ class LogFilteringViewModel : SessionComponent
         {
             this.selectedLogStringPropertyValueObserverToken = it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProperty).Subscribe(value =>
             {
-                this.canFilterBySelectedProperty.Update(!string.IsNullOrWhiteSpace(value));
+                this.canFilterBySelectedProperty.Update(!string.IsNullOrWhiteSpace(value?.ToString()));
             });
             this.selectedPidObserverToken = it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProperty).Subscribe(pid =>
             {

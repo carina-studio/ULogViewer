@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Reflection;
+using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.Logs
 {
@@ -90,8 +91,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		};
 		static long nextId;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
-		[ThreadStatic]
-		static Dictionary<string, LogStringPropertyGetter>? stringPropertyGetters;
 		static readonly HashSet<string> stringPropertyNameSet = new();
 		static readonly HashSet<string> timeSpanPropertyNameSet = new();
 
@@ -141,8 +140,8 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (value is null)
 					continue;
 				propertyValues[i] = value;
-				if (value is CompressedString compressedString)
-					propertyMemorySize += compressedString.Size;
+				if (value is IStringSource stringSource)
+					propertyMemorySize += stringSource.ByteCount;
 				else if (value is string str)
 					propertyMemorySize += Memory.EstimateInstanceSize(typeof(string), str.Length);
 				else
@@ -181,7 +180,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get category of log.
 		/// </summary>
-		public string? Category => this.GetProperty(PropertyName.Category)?.ToString();
+		public IStringSource? Category => this.GetProperty(PropertyName.Category) as IStringSource;
 
 
 #pragma warning disable CS8603
@@ -204,51 +203,15 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		/// <summary>
-		/// Create delegate of getting specific string property of log.
-		/// </summary>
-		/// <param name="propertyName">Name of property.</param>
-		/// <returns>Getter of specific string property.</returns>
-		public static LogStringPropertyGetter CreateStringPropertyGetter(string propertyName)
-		{
-			LogStringPropertyGetter? getter;
-			if (stringPropertyGetters == null)
-				stringPropertyGetters = new();
-			else if (stringPropertyGetters.TryGetValue(propertyName, out getter))
-				return getter;
-			getter = (log, buffer, offset) =>
-			{
-				if (!Enum.TryParse<PropertyName>(propertyName, out var name))
-					return 0;
-				var value = log.GetProperty(name);
-				if (value is CompressedString compressedString)
-					return compressedString.GetString(buffer, offset);
-				if (value is string s)
-				{
-					if (buffer.Length - offset < s.Length)
-						return ~s.Length;
-					if (offset == 0)
-						s.AsSpan().CopyTo(buffer);
-					else
-						s.AsSpan().CopyTo(buffer.Slice(offset));
-					return s.Length;
-				}
-				return 0;
-			};
-			stringPropertyGetters[propertyName] = getter;
-			return getter;
-		}
-
-
-		/// <summary>
 		/// Get ID of device which generates log.
 		/// </summary>
-		public string? DeviceId => this.GetProperty(PropertyName.DeviceId)?.ToString();
+		public IStringSource? DeviceId => this.GetProperty(PropertyName.DeviceId) as IStringSource;
 
 
 		/// <summary>
 		/// Get name of device which generates log.
 		/// </summary>
-		public string? DeviceName => this.GetProperty(PropertyName.DeviceName)?.ToString();
+		public IStringSource? DeviceName => this.GetProperty(PropertyName.DeviceName) as IStringSource;
 
 
 		/// <summary>
@@ -266,133 +229,133 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
-		public string? Event => this.GetProperty(PropertyName.Event)?.ToString();
+		public IStringSource? Event => this.GetProperty(PropertyName.Event) as IStringSource;
 
 
 		/// <summary>
 		/// Get 1st extra data of log.
 		/// </summary>
-		public string? Extra1 => this.GetProperty(PropertyName.Extra1)?.ToString();
+		public IStringSource? Extra1 => this.GetProperty(PropertyName.Extra1) as IStringSource;
 
 
 		/// <summary>
 		/// Get 10th extra data of log.
 		/// </summary>
-		public string? Extra10 => this.GetProperty(PropertyName.Extra10)?.ToString();
+		public IStringSource? Extra10 => this.GetProperty(PropertyName.Extra10) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 11st extra data of log.
 		/// </summary>
-		public string? Extra11 => this.GetProperty(PropertyName.Extra11)?.ToString();
+		public IStringSource? Extra11 => this.GetProperty(PropertyName.Extra11) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 12nd extra data of log.
 		/// </summary>
-		public string? Extra12 => this.GetProperty(PropertyName.Extra12)?.ToString();
+		public IStringSource? Extra12 => this.GetProperty(PropertyName.Extra12) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 13rd extra data of log.
 		/// </summary>
-		public string? Extra13 => this.GetProperty(PropertyName.Extra13)?.ToString();
+		public IStringSource? Extra13 => this.GetProperty(PropertyName.Extra13) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 14th extra data of log.
 		/// </summary>
-		public string? Extra14 => this.GetProperty(PropertyName.Extra14)?.ToString();
+		public IStringSource? Extra14 => this.GetProperty(PropertyName.Extra14) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 15th extra data of log.
 		/// </summary>
-		public string? Extra15 => this.GetProperty(PropertyName.Extra15)?.ToString();
+		public IStringSource? Extra15 => this.GetProperty(PropertyName.Extra15) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 16th extra data of log.
 		/// </summary>
-		public string? Extra16 => this.GetProperty(PropertyName.Extra16)?.ToString();
+		public IStringSource? Extra16 => this.GetProperty(PropertyName.Extra16) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 17th extra data of log.
 		/// </summary>
-		public string? Extra17 => this.GetProperty(PropertyName.Extra17)?.ToString();
+		public IStringSource? Extra17 => this.GetProperty(PropertyName.Extra17) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 18th extra data of log.
 		/// </summary>
-		public string? Extra18 => this.GetProperty(PropertyName.Extra18)?.ToString();
+		public IStringSource? Extra18 => this.GetProperty(PropertyName.Extra18) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 19th extra data of log.
 		/// </summary>
-		public string? Extra19 => this.GetProperty(PropertyName.Extra19)?.ToString();
+		public IStringSource? Extra19 => this.GetProperty(PropertyName.Extra19) as IStringSource;
 
 
 		/// <summary>
 		/// Get 2nd extra data of log.
 		/// </summary>
-		public string? Extra2 => this.GetProperty(PropertyName.Extra2)?.ToString();
+		public IStringSource? Extra2 => this.GetProperty(PropertyName.Extra2) as IStringSource;
 		
 		
 		/// <summary>
 		/// Get 20th extra data of log.
 		/// </summary>
-		public string? Extra20 => this.GetProperty(PropertyName.Extra20)?.ToString();
+		public IStringSource? Extra20 => this.GetProperty(PropertyName.Extra20) as IStringSource;
 
 
 		/// <summary>
 		/// Get 3rd extra data of log.
 		/// </summary>
-		public string? Extra3 => this.GetProperty(PropertyName.Extra3)?.ToString();
+		public IStringSource? Extra3 => this.GetProperty(PropertyName.Extra3) as IStringSource;
 
 
 		/// <summary>
 		/// Get 4th extra data of log.
 		/// </summary>
-		public string? Extra4 => this.GetProperty(PropertyName.Extra4)?.ToString();
+		public IStringSource? Extra4 => this.GetProperty(PropertyName.Extra4) as IStringSource;
 
 
 		/// <summary>
 		/// Get 5th extra data of log.
 		/// </summary>
-		public string? Extra5 => this.GetProperty(PropertyName.Extra5)?.ToString();
+		public IStringSource? Extra5 => this.GetProperty(PropertyName.Extra5) as IStringSource;
 
 
 		/// <summary>
 		/// Get 6th extra data of log.
 		/// </summary>
-		public string? Extra6 => this.GetProperty(PropertyName.Extra6)?.ToString();
+		public IStringSource? Extra6 => this.GetProperty(PropertyName.Extra6) as IStringSource;
 
 
 		/// <summary>
 		/// Get 7th extra data of log.
 		/// </summary>
-		public string? Extra7 => this.GetProperty(PropertyName.Extra7)?.ToString();
+		public IStringSource? Extra7 => this.GetProperty(PropertyName.Extra7) as IStringSource;
 
 
 		/// <summary>
 		/// Get 8th extra data of log.
 		/// </summary>
-		public string? Extra8 => this.GetProperty(PropertyName.Extra8)?.ToString();
+		public IStringSource? Extra8 => this.GetProperty(PropertyName.Extra8) as IStringSource;
 
 
 		/// <summary>
 		/// Get 9th extra data of log.
 		/// </summary>
-		public string? Extra9 => this.GetProperty(PropertyName.Extra9)?.ToString();
+		public IStringSource? Extra9 => this.GetProperty(PropertyName.Extra9) as IStringSource;
 
 
 		/// <summary>
 		/// Get name of file which log read from.
 		/// </summary>
-		public string? FileName => this.GetProperty(PropertyName.FileName)?.ToString();
+		public IStringSource? FileName => this.GetProperty(PropertyName.FileName) as IStringSource;
 
 
 		// Get property.
@@ -414,12 +377,11 @@ namespace CarinaStudio.ULogViewer.Logs
 			nameof(BeginningTimestamp)
 			or nameof(EndingTimestamp)
 			or nameof(Timestamp) => builder.GetDateTimeOrNull(propertyName),
-			nameof(FileName) => builder.GetStringOrNull(propertyName),
 			nameof(Level) => builder.GetEnumOrNull<LogLevel>(propertyName) ?? LogLevel.Undefined,
 			nameof(LineNumber)
 			or nameof(ProcessId)
 			or nameof(ThreadId) => builder.GetInt32OrNull(propertyName),
-			_ => builder.GetCompressedStringOrNull(propertyName),
+			_ => builder.GetStringOrNull(propertyName),
 		};
 
 
@@ -506,7 +468,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get message.
 		/// </summary>
-		public string? Message => this.GetProperty(PropertyName.Message)?.ToString();
+		public IStringSource? Message => this.GetProperty(PropertyName.Message) as IStringSource;
 
 
 		/// <summary>
@@ -518,7 +480,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of process which generates log.
 		/// </summary>
-		public string? ProcessName => this.GetProperty(PropertyName.ProcessName)?.ToString();
+		public IStringSource? ProcessName => this.GetProperty(PropertyName.ProcessName) as IStringSource;
 
 
 		/// <summary>
@@ -549,7 +511,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (propertyInfo == null)
 								continue;
 							propertyMap[propertyInfo.Name] = propertyInfo;
-							if (propertyInfo.PropertyType == typeof(string))
+							if (propertyInfo.PropertyType == typeof(IStringSource))
 								stringPropertyNameSet.Add(propertyName);
 							else if (propertyInfo.PropertyType == typeof(DateTime?) || propertyInfo.PropertyType == typeof(DateTime))
 								dateTimePropertyNameSet.Add(propertyName);
@@ -566,19 +528,19 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of source which generates log.
 		/// </summary>
-		public string? SourceName => this.GetProperty(PropertyName.SourceName)?.ToString();
+		public IStringSource? SourceName => this.GetProperty(PropertyName.SourceName) as IStringSource;
 
 
 		/// <summary>
 		/// Get summary of log.
 		/// </summary>
-		public string? Summary => this.GetProperty(PropertyName.Summary)?.ToString();
+		public IStringSource? Summary => this.GetProperty(PropertyName.Summary) as IStringSource;
 
 
 		/// <summary>
 		/// Get tags of log.
 		/// </summary>
-		public string? Tags => this.GetProperty(PropertyName.Tags)?.ToString();
+		public IStringSource? Tags => this.GetProperty(PropertyName.Tags) as IStringSource;
 
 
 		/// <summary>
@@ -590,7 +552,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get name of thread which generates log.
 		/// </summary>
-		public string? ThreadName => this.GetProperty(PropertyName.ThreadName)?.ToString();
+		public IStringSource? ThreadName => this.GetProperty(PropertyName.ThreadName) as IStringSource;
 
 
 		/// <summary>
@@ -608,7 +570,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get title of log.
 		/// </summary>
-		public string? Title => this.GetProperty(PropertyName.Title)?.ToString();
+		public IStringSource? Title => this.GetProperty(PropertyName.Title) as IStringSource;
 
 
 		/// <summary>
@@ -641,6 +603,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		}
 
 
+#pragma warning disable CS8600
 #pragma warning disable CS8601
 		/// <summary>
 		/// Get get property of log by name.
@@ -663,14 +626,28 @@ namespace CarinaStudio.ULogViewer.Logs
 				return false;
 			}
 			var rawValue = this.propertyValues[index];
-			if (rawValue is not T)
+			if (rawValue is IStringSource stringSource)
 			{
-				value = default;
-				return false;
+				if (stringSource is T stringSourceT)
+				{
+					value = stringSourceT;
+					return true;
+				}
+				if (typeof(T) == typeof(string))
+				{
+					value = (T)(object)stringSource.ToString();
+					return true;
+				}
 			}
-			value = (T)rawValue;
-			return true;
+			if (rawValue is T valueT)
+			{
+				value = valueT;
+				return true;
+			}
+			value = default;
+			return false;
 		}
+#pragma warning restore CS8600
 #pragma warning restore CS8601
 
 
@@ -707,22 +684,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Get ID of user which generates log.
 		/// </summary>
-		public string? UserId => this.GetProperty(PropertyName.UserId)?.ToString();
+		public IStringSource? UserId => this.GetProperty(PropertyName.UserId) as IStringSource;
 
 
 		/// <summary>
 		/// Get name of user which generates log.
 		/// </summary>
-		public string? UserName => this.GetProperty(PropertyName.UserName)?.ToString();
+		public IStringSource? UserName => this.GetProperty(PropertyName.UserName) as IStringSource;
 	}
-
-
-	/// <summary>
-	/// Delegate to get value of string property of log.
-	/// </summary>
-	/// <param name="log">Log.</param>
-	/// <param name="buffer">Buffer.</param>
-	/// <param name="offset">Offset in buffer to put first character.</param>
-	/// <returns>Number of characters in original string, or 1's complement of number of characters if size of buffer is insufficient.</returns>
-	delegate int LogStringPropertyGetter(Log log, Span<char> buffer, int offset = 0);
 }

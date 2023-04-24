@@ -622,14 +622,14 @@ namespace CarinaStudio.ULogViewer.Controls
 						: null;
 					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
-						var displayName = property.DisplayName;
+						var displayName = property.DisplayName?.ToString();
 						if (string.IsNullOrWhiteSpace(displayName))
 							displayName = Converters.LogPropertyNameConverter.Default.Convert(property.Name);
-						var propertyValue = (this.DataContext as Session)?.LogSelection.SelectedLogStringPropertyValue;
+						var propertyValue = (this.DataContext as Session)?.LogSelection.SelectedLogStringPropertyValue?.ToString();
 						if (string.IsNullOrWhiteSpace(propertyValue))
 							propertyValue = displayName;
 						else if (propertyValue.Length > 16)
-							propertyValue = $"{propertyValue[0..16]}…";
+							propertyValue = $"{propertyValue[..16]}…";
 						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", displayName);
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
 						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet", propertyValue);
@@ -4573,7 +4573,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var dirPathSet = new HashSet<string>(comparer);
 			foreach (DisplayableLog log in this.logListBox.SelectedItems!)
 			{
-				var fileName = log.FileName;
+				var fileName = log.FileName?.ToString();
 				if (string.IsNullOrEmpty(fileName))
 					continue;
 				if (filePath == null && dirPathSet.IsEmpty())

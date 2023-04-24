@@ -266,7 +266,7 @@ namespace CarinaStudio.ULogViewer.Logs
 					// write to memory
 					if (writeFileNames)
 					{
-						log.FileName?.Let(fileName =>
+						log.FileName?.ToString().Let(fileName =>
 						{
 							if (!PathEqualityComparer.Default.Equals(currentFileName, fileName))
 							{

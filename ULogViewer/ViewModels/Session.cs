@@ -908,7 +908,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.AttachToComponent(it);
 				it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProperty).Subscribe(value =>
-					this.canSearchLogPropertyOnInternet.Update(!string.IsNullOrWhiteSpace(value)));
+					this.canSearchLogPropertyOnInternet.Update(!string.IsNullOrWhiteSpace(value?.ToString())));
 			});
 			this.AllComponentsCreated?.Invoke();
 
@@ -2870,7 +2870,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					else
 						log.MarkedColor = color;
-					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+					log.FileName?.ToString()?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 				}
 			}
 
@@ -2915,7 +2915,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						this.markedLogs.Remove(log);
 						if (isShowingAllLogsTemporarily)
 							this.LogFiltering.InvalidateLog(log);
-						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+						log.FileName?.ToString()?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
 				}
 			}
@@ -2929,7 +2929,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						log.MarkedColor = MarkColor.Default;
 						this.markedLogs.Add(log);
 						this.LogFiltering.InvalidateLog(log);
-						log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+						log.FileName?.ToString()?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 					}
 				}
 			}
@@ -4220,7 +4220,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Save marked logs.
 		void SaveMarkedLogs(string logFileName)
 		{
-			var markedLogs = this.markedLogs.Where(it => it.FileName == logFileName);
+			var markedLogs = this.markedLogs.Where(it => it.FileName?.ToString() == logFileName);
 			var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
 			{
 				foreach (var markedLog in markedLogs)
@@ -4312,7 +4312,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyDisposed();
 
 			// get property value
-			var propertyValue = this.LogSelection.SelectedLogStringPropertyValue;
+			var propertyValue = this.LogSelection.SelectedLogStringPropertyValue?.ToString();
 			if (string.IsNullOrWhiteSpace(propertyValue))
 				return;
 			
@@ -4943,7 +4943,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.markedLogs.Remove(log);
 					if (isShowingAllLogsTemporarily)
 						this.LogFiltering.InvalidateLog(log);
-					log.FileName?.Let(it => this.markedLogsChangedFilePaths.Add(it));
+					log.FileName?.ToString()?.Let(it => this.markedLogsChangedFilePaths.Add(it));
 				}
 			}
 

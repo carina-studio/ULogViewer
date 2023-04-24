@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 
@@ -349,6 +350,7 @@ public static class LogExtensions
 #pragma warning restore CS8604
     
 
+#pragma warning disable CS8600
     /// <summary>
     /// Get property of log with specific type.
     /// </summary>
@@ -361,10 +363,18 @@ public static class LogExtensions
         var rawValue = log.GetProperty(name);
         if (rawValue == null)
             return defaultValue;
+        if (rawValue is IStringSource stringSource)
+        {
+            if (stringSource is T stringSourceT)
+                return stringSourceT;
+            if (typeof(T) == typeof(string))
+                return (T)(object)stringSource.ToString();
+        }
         if (rawValue is T targetValue)
             return targetValue;
         return defaultValue;
     }
+#pragma warning restore CS8600
 }
 
 

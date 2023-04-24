@@ -790,13 +790,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup key getter
 			this.colorIndicatorKeyGetter = this.LogProfile.ColorIndicator switch
 			{
-				LogColorIndicator.FileName => it => it.FileName ?? "",
+				LogColorIndicator.FileName => it => it.FileName?.ToString() ?? "",
 				LogColorIndicator.ProcessId => it => it.ProcessId?.ToString() ?? "",
-				LogColorIndicator.ProcessName => it => it.ProcessName ?? "",
+				LogColorIndicator.ProcessName => it => it.ProcessName?.ToString() ?? "",
 				LogColorIndicator.ThreadId => it => it.ThreadId?.ToString() ?? "",
-				LogColorIndicator.ThreadName => it => it.ThreadName ?? "",
-				LogColorIndicator.UserId => it => it.UserId ?? "",
-				LogColorIndicator.UserName => it => it.UserName ?? "",
+				LogColorIndicator.ThreadName => it => it.ThreadName?.ToString() ?? "",
+				LogColorIndicator.UserId => it => it.UserId?.ToString() ?? "",
+				LogColorIndicator.UserName => it => it.UserName?.ToString() ?? "",
 				_ => null,
 			};
 
