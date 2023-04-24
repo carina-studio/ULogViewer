@@ -42,7 +42,7 @@
 					<!-- Name -->
 					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" Items="{x:Static appLogs:Log.PropertyNames}" SelectionChanged="OnNameComboBoxSelectionChanged" VirtualizationMode="None">
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" Items="{x:Static appLogs:Log.PropertyNames}" VirtualizationMode="None">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">

@@ -76,7 +76,11 @@ namespace CarinaStudio.ULogViewer.Logs
 			return new List<string>(propertyCount).Also(it =>
 			{
 				for (var i = 0; i < propertyCount; ++i)
+				{
+					if (propertyNames[i] == PropertyName.None)
+						continue;
 					it.Add(propertyNames[i].ToString());
+				}
 				it.Add(nameof(Level));
 				it.Add(nameof(ReadTime));
 			}).AsReadOnly();

@@ -22,6 +22,7 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 	readonly TextBox customDisplayNameTextBox;
 	readonly ComboBox displayNameComboBox;
 	readonly ComboBox foregroundColorComboBox;
+	bool isDisplayNameSameAsName;
 	readonly ComboBox nameComboBox;
 	readonly ToggleSwitch specifyWidthSwitch;
 	readonly IntegerTextBox widthTextBox;
@@ -35,9 +36,22 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 		AvaloniaXamlLoader.Load(this);
 		this.customDisplayNameSwitch = this.Get<ToggleSwitch>(nameof(customDisplayNameSwitch));
 		this.customDisplayNameTextBox = this.Get<TextBox>(nameof(customDisplayNameTextBox));
-		this.displayNameComboBox = this.Get<ComboBox>(nameof(displayNameComboBox));
+		this.displayNameComboBox = this.Get<ComboBox>(nameof(displayNameComboBox)).Also(it =>
+		{
+			it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
+			{
+				this.isDisplayNameSameAsName = (item as string == this.nameComboBox?.SelectedItem as string);
+			});
+		});
 		this.foregroundColorComboBox = this.Get<ComboBox>(nameof(foregroundColorComboBox));
-		this.nameComboBox = this.Get<ComboBox>(nameof(nameComboBox));
+		this.nameComboBox = this.Get<ComboBox>(nameof(nameComboBox)).Also(it =>
+		{
+			it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
+			{
+				if (item is string name && this.isDisplayNameSameAsName)
+					this.displayNameComboBox.SelectedItem = name;
+			});
+		});
 		this.specifyWidthSwitch = this.Get<ToggleSwitch>(nameof(specifyWidthSwitch));
 		this.widthTextBox = this.Get<IntegerTextBox>(nameof(widthTextBox)).Also(it =>
 		{
@@ -75,13 +89,6 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 	}
 
 
-	// Called when selection of name combo box changed.
-	void OnNameComboBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
-	{
-		this.displayNameComboBox.SelectedItem = this.nameComboBox.SelectedItem;
-	}
-
-
 	// Called when opened.
 	protected override void OnOpened(EventArgs e)
 	{
@@ -89,6 +96,8 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 		var property = this.LogProperty;
 		if (property == null)
 		{
+			this.displayNameComboBox.SelectedItem = nameof(Log.Message);
+			this.isDisplayNameSameAsName = true;
 			this.nameComboBox.SelectedItem = nameof(Log.Message);
 			this.specifyWidthSwitch.IsChecked = true;
 			this.foregroundColorComboBox.SelectedItem = LogPropertyForegroundColor.Level;
@@ -101,6 +110,7 @@ partial class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IUL
 				this.displayNameComboBox.SelectedItem = property.DisplayName;
 			else
 			{
+				this.isDisplayNameSameAsName = true;
 				this.customDisplayNameSwitch.IsChecked = true;
 				this.customDisplayNameTextBox.Text = property.DisplayName.Trim();
 			}
