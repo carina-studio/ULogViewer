@@ -11,18 +11,42 @@ public class SmallStringSource : IStringSource
     /// <summary>
     /// Maximum number of characters supported to be stored in <see cref="SmallStringSource"/>.
     /// </summary>
-    public const int MaxLength = 4;
+    public const int MaxLength = 8;
     
     
     // Static fields.
     static readonly long BaseByteCount = Memory.EstimateInstanceSize<SmallStringSource>();
+    static unsafe readonly delegate*<SmallStringSource, Span<char>, void>[] CopyCharsFuncs = 
+    {
+        null,
+        &Copy1Char,
+        &Copy2Chars,
+        &Copy3Chars,
+        &Copy4Chars,
+        &Copy5Chars,
+        &Copy6Chars,
+        &Copy7Chars,
+        &Copy8Chars,
+    };
+    static unsafe readonly delegate*<SmallStringSource, ReadOnlySpan<char>, void>[] InitFuncs = 
+    {
+        null,
+        &InitWith1Char,
+        &InitWith2Chars,
+        &InitWith3Chars,
+        &InitWith4Chars,
+        &InitWith5Chars,
+        &InitWith6Chars,
+        &InitWith7Chars,
+        &InitWith8Chars,
+    };
     
     
     // Fields.
-    readonly char c0;
-    readonly char c1;
-    readonly char c2;
-    readonly char c3;
+    uint c01;
+    uint c23;
+    uint c45;
+    uint c67;
     
     
     /// <summary>
@@ -45,39 +69,211 @@ public class SmallStringSource : IStringSource
     /// Initialize new instance of <see cref="SmallStringSource"/>.
     /// </summary>
     /// <param name="s">String.</param>
-    public SmallStringSource(ReadOnlySpan<char> s)
+    public unsafe SmallStringSource(ReadOnlySpan<char> s)
     {
-        switch (s.Length)
+        var length = s.Length;
+        if (length > MaxLength)
+            throw new InvalidOperationException($"Number of characters cannot be greater than {MaxLength}.");
+        if (length > 0)
         {
-            case 0:
-                break;
-            case 1:
-                this.c0 = s[0];
-                break;
-            case 2:
-                this.c0 = s[0];
-                this.c1 = s[1];
-                break;
-            case 3:
-                this.c0 = s[0];
-                this.c1 = s[1];
-                this.c2 = s[2];
-                break;
-            case 4:
-                this.c0 = s[0];
-                this.c1 = s[1];
-                this.c2 = s[2];
-                this.c3 = s[3];
-                break;
-            default:
-                throw new InvalidOperationException($"Number of characters cannot be greater than {MaxLength}.");
+            InitFuncs[length](this, s);
+            this.Length = s.Length;
         }
-        this.Length = s.Length;
     }
 
 
     /// <inheritdoc/>
     public long ByteCount => BaseByteCount;
+
+
+    // Copy string with 1 character.
+    static unsafe void Copy1Char(SmallStringSource source, Span<char> buffer)
+    {
+        buffer[0] = (char)source.c01;
+    }
+
+
+    // Copy string with 2 characters.
+    static unsafe void Copy2Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            *(uint*)p = source.c01;
+        }
+    }
+
+
+    // Copy string with 3 characters.
+    static unsafe void Copy3Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            var cPtr = (uint*)p;
+            *cPtr = source.c01;
+            buffer[2] = (char)source.c23;
+        }
+    }
+
+
+    // Copy string with 4 characters.
+    static unsafe void Copy4Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            var cPtr = (uint*)p;
+            *(cPtr++) = source.c01;
+            *cPtr = source.c23;
+        }
+    }
+
+
+    // Copy string with 5 characters.
+    static unsafe void Copy5Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            var cPtr = (uint*)p;
+            *(cPtr++) = source.c01;
+            *(cPtr++) = source.c23;
+            buffer[4] = (char)source.c45;
+        }
+    }
+
+
+    // Copy string with 6 characters.
+    static unsafe void Copy6Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            var cPtr = (uint*)p;
+            *(cPtr++) = source.c01;
+            *(cPtr++) = source.c23;
+            *cPtr = source.c45;
+        }
+    }
+
+
+    // Copy string with 7 characters.
+    static unsafe void Copy7Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            var cPtr = (uint*)p;
+            *(cPtr++) = source.c01;
+            *(cPtr++) = source.c23;
+            *cPtr = source.c45;
+            buffer[6] = (char)source.c67;
+        }
+    }
+
+
+    // Copy string with 8 characters.
+    static unsafe void Copy8Chars(SmallStringSource source, Span<char> buffer)
+    {
+        fixed (char* p = buffer)
+        {
+            var cPtr = (uint*)p;
+            *(cPtr++) = source.c01;
+            *(cPtr++) = source.c23;
+            *(cPtr++) = source.c45;
+            *cPtr = source.c67;
+        }
+    }
+
+
+    // Initialize with 1 character.
+    static unsafe void InitWith1Char(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        source.c01 = s[0];
+    }
+
+
+    // Initialize with 2 characters.
+    static unsafe void InitWith2Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            source.c01 = *(uint*)p;
+        }
+    }
+
+
+    // Initialize with 3 characters.
+    static unsafe void InitWith3Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            var cPtr = (uint*)p;
+            source.c01 = *cPtr++;
+            source.c23 = s[2];
+        }
+    }
+
+
+    // Initialize with 4 characters.
+    static unsafe void InitWith4Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            var cPtr = (uint*)p;
+            source.c01 = *cPtr++;
+            source.c23 = *cPtr;
+        }
+    }
+
+
+    // Initialize with 5 characters.
+    static unsafe void InitWith5Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            var cPtr = (uint*)p;
+            source.c01 = *cPtr++;
+            source.c23 = *cPtr;
+            source.c45 = s[4];
+        }
+    }
+
+
+    // Initialize with 6 characters.
+    static unsafe void InitWith6Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            var cPtr = (uint*)p;
+            source.c01 = *cPtr++;
+            source.c23 = *cPtr++;
+            source.c45 = *cPtr;
+        }
+    }
+
+
+    // Initialize with 7 characters.
+    static unsafe void InitWith7Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            var cPtr = (uint*)p;
+            source.c01 = *cPtr++;
+            source.c23 = *cPtr++;
+            source.c45 = *cPtr;
+            source.c67 = s[6];
+        }
+    }
+
+
+    // Initialize with 8 characters.
+    static unsafe void InitWith8Chars(SmallStringSource source, ReadOnlySpan<char> s)
+    {
+        fixed (char* p = s)
+        {
+            var cPtr = (uint*)p;
+            source.c01 = *cPtr++;
+            source.c23 = *cPtr++;
+            source.c45 = *cPtr++;
+            source.c67 = *cPtr;
+        }
+    }
 
 
     /// <inheritdoc/>
@@ -96,33 +292,14 @@ public class SmallStringSource : IStringSource
 
 
     /// <inheritdoc/>
-    public bool TryCopyTo(Span<char> buffer)
+    public unsafe bool TryCopyTo(Span<char> buffer)
     {
-        if (this.Length == 0)
+        var length = this.Length;
+        if (length == 0)
             return true;
-        if (buffer.Length < this.Length)
+        if (buffer.Length <length)
             return false;
-        switch (this.Length)
-        {
-            case 1:
-                buffer[0] = this.c0;
-                break;
-            case 2:
-                buffer[0] = this.c0;
-                buffer[1] = this.c1;
-                break;
-            case 3:
-                buffer[0] = this.c0;
-                buffer[1] = this.c1;
-                buffer[2] = this.c2;
-                break;
-            case 4:
-                buffer[0] = this.c0;
-                buffer[1] = this.c1;
-                buffer[2] = this.c2;
-                buffer[3] = this.c3;
-                break;
-        }
+        CopyCharsFuncs[length](this, buffer);
         return true;
     }
 }
