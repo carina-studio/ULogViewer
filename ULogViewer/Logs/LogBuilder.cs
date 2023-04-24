@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using CarinaStudio.ULogViewer.Text;
@@ -10,6 +11,10 @@ namespace CarinaStudio.ULogViewer.Logs
 	/// </summary>
 	class LogBuilder
 	{
+		// Static fields.
+		static readonly IDictionary<ushort, IStringSource> SharedStringSources = new ConcurrentDictionary<ushort, IStringSource>();
+
+
 		// Fields.
 		Func<ReadOnlyMemory<char>, IStringSource> getStringImpl = GetStringWithBalanceMup;
 		MemoryUsagePolicy memoryUsagePolicy = MemoryUsagePolicy.Balance;
@@ -261,10 +266,40 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			if (this.properties.TryGetValue(propertyName, out var value))
 			{
+				if (value is IStringSource stringSource)
+					return stringSource;
 				if (value is ReadOnlyMemory<char> memory)
+				{
+					if (memory.Length == 0)
+						return IStringSource.Empty;
+					var stringSpan = memory.Span;
+					if (memory.Length <= 2 && stringSpan[0] <= 127 && (memory.Length == 1 || stringSpan[1] <= 127))
+					{
+						var key = (ushort)((stringSpan[0] << 8) | (memory.Length == 1 ? 0 : stringSpan[1]));
+						if (SharedStringSources.TryGetValue(key, out var sharedStringSource))
+							return sharedStringSource;
+						sharedStringSource = new SmallStringSource(stringSpan);
+						SharedStringSources.TryAdd(key, sharedStringSource);
+						return sharedStringSource;
+					}
 					return this.getStringImpl(memory);
+				}
 				if (value is string s)
+				{
+					if (s.Length == 0)
+						return IStringSource.Empty;
+					var stringSpan = s.AsSpan();
+					if (s.Length <= 2 && stringSpan[0] <= 127 && (s.Length == 1 || stringSpan[1] <= 127))
+					{
+						var key = (ushort)((stringSpan[0] << 8) | (s.Length == 1 ? 0 : stringSpan[1]));
+						if (SharedStringSources.TryGetValue(key, out var sharedStringSource))
+							return sharedStringSource;
+						sharedStringSource = new SmallStringSource(stringSpan);
+						SharedStringSources.TryAdd(key, sharedStringSource);
+						return sharedStringSource;
+					}
 					return this.getStringImpl(s.AsMemory());
+				}
 			}
 			return null;
 		}
@@ -387,6 +422,15 @@ namespace CarinaStudio.ULogViewer.Logs
 		{
 			this.properties.Clear();
 		}
+
+
+		/// <summary>
+		/// Set or override value to property.
+		/// </summary>
+		/// <param name="propertyName">Name of property of log.</param>
+		/// <param name="value">Value to set.</param>
+		public void Set(string propertyName, IStringSource value) =>
+			properties[propertyName] = value;
 		
 		
 		/// <summary>

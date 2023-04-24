@@ -3,6 +3,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.ULogViewer.Text;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -776,7 +777,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read single line of log.
-		void ReadLog(LogBuilder logBuilder, Match match, StringPool stringPool, string[]? timeSpanFormats, string[]? timestampFormats)
+		void ReadLog(LogBuilder logBuilder, Match match, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
 #pragma warning disable IDE0220
 			foreach (Group group in match.Groups)
@@ -801,27 +802,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (Log.HasMultiLineStringProperty(name))
 					logBuilder.AppendToNextLine(name, value);
 				else if (Log.HasStringProperty(name))
-				{
-					switch (name)
-					{
-						case nameof(Log.Category):
-						case nameof(Log.DeviceId):
-						case nameof(Log.DeviceName):
-						case nameof(Log.Event):
-						case nameof(Log.ProcessId):
-						case nameof(Log.ProcessName):
-						case nameof(Log.SourceName):
-						case nameof(Log.ThreadId):
-						case nameof(Log.ThreadName):
-						case nameof(Log.UserId):
-						case nameof(Log.UserName):
-							logBuilder.Set(name, stringPool[value]);
-							break;
-						default:
-							logBuilder.Set(name, value);
-							break;
-					}
-				}
+					logBuilder.Set(name, value);
 				else if (Log.HasDateTimeProperty(name))
 				{
 					switch (this.timestampEncoding)
@@ -991,8 +972,12 @@ namespace CarinaStudio.ULogViewer.Logs
 			}
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
-			var fileName = dataSourceOptions.FileName ?? "";
-			var stringPool = new StringPool();
+			var fileName = dataSourceOptions.FileName.Let(it =>
+			{
+				if (it is null)
+					return IStringSource.Empty;
+				return new CompressedStringSource(it);
+			});
 			var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
 			var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 			var exception = (Exception?)null;
@@ -1117,7 +1102,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (match.Success)
 							{
 								// read log
-								this.ReadLog(logBuilder, match, stringPool, timeSpanFormats, timestampFormats);
+								this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
 
 								// set file name and line number
 								if (isReadingFromFile)
@@ -1187,7 +1172,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (match.Success)
 							{
 								// read log
-								this.ReadLog(logBuilder, match, stringPool, timeSpanFormats, timestampFormats);
+								this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
 
 								// set file name and line number
 								if (logPatternIndex == 0 && isReadingFromFile)
