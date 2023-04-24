@@ -3,6 +3,7 @@ RID_LIST=("osx.11.0-arm64" "osx-x64")
 PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
+ICON_VERSION="2"
 CERT_NAME="" # Name of certification to sign the application
 
 echo "********** Start building $APP_NAME **********"
@@ -64,7 +65,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
 
     # copy application icon and remove unnecessary files
-    cp ./$APP_NAME/$APP_NAME.icns ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/Resources/$APP_NAME.icns
+    cp ./$APP_NAME/$APP_NAME.$ICON_VERSION.icns ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/Resources/$APP_NAME.$ICON_VERSION.icns
     if [ "$?" != "0" ]; then
         exit
     fi

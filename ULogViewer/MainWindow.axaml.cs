@@ -45,7 +45,7 @@ namespace CarinaStudio.ULogViewer
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static bool IsReactivatingProVersionHintDialogShown;
-		static bool IsRefreshingAppIconOnMacOSHintDialogShown;
+		//static bool IsRefreshingAppIconOnMacOSHintDialogShown;
 		static MainWindow? MainWindowToActivateProVersion;
 
 
@@ -1201,6 +1201,7 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// hint for refreshing application icon on macOS
+			/*
 			var appVersion = this.Application.Assembly.GetName().Version;
 			if (Platform.IsMacOS 
 			    && appVersion?.Major == 3
@@ -1220,6 +1221,7 @@ namespace CarinaStudio.ULogViewer
 				this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
 					return;
 			}
+			*/
 
 			// suggestion of using built-in font
 			if (!this.PersistentState.GetValueOrDefault(IsBuiltInFontSuggestionShownKey))

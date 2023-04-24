@@ -33,11 +33,11 @@
 		<CFBundleExecutable>ULogViewer</CFBundleExecutable>
 		<CFBundleIdentifier>com.carina-studio.ulogviewer</CFBundleIdentifier>
 		<CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
-		<CFBundleIconFile>ULogViewer.icns</CFBundleIconFile>
+		<CFBundleIconFile>ULogViewer.2.icns</CFBundleIconFile>
 		<CFBundlePackageType>APPL</CFBundlePackageType>
 		<NSPrincipalClass>NSApplication</NSPrincipalClass>
 		<NSHighResolutionCapable>True</NSHighResolutionCapable>
-		<NSHumanReadableCopyright>©2022 Carina Studio</NSHumanReadableCopyright>
+		<NSHumanReadableCopyright>©2022-2023 Carina Studio</NSHumanReadableCopyright>
 	</PropertyGroup>
 
 	<ItemGroup>
