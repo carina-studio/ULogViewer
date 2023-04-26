@@ -16,7 +16,6 @@ using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -67,7 +66,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (item is MenuItem menuItem && menuItem.Name == "searchOnInternetMenuItem")
 						{
-							var providers = Net.SearchProviderManager.Default.Providers;
+							var providers = SearchProviderManager.Default.Providers;
 							var subItems = new MenuItem[providers.Count];
 							for (var i = 0; i < providers.Count; ++i)
 							{
@@ -85,9 +84,9 @@ namespace CarinaStudio.ULogViewer.Controls
 									subItem.Icon = iconImage;
 									subItem.AttachedToLogicalTree += (_, _) =>
 									{
-										commandBindingToken = subItem.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(SearchOnInternet), Source = this });
-										headerBindingToken = subItem.Bind(MenuItem.HeaderProperty, new Binding() { Path = nameof(Net.SearchProvider.Name), Source = provider });
-										iconBindingToken = iconImage.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Source = provider, Converter = Converters.SearchProviderIconConverters.Default });
+										commandBindingToken = subItem.Bind(MenuItem.CommandProperty, new Binding { Path = nameof(SearchOnInternet), Source = this });
+										headerBindingToken = subItem.Bind(MenuItem.HeaderProperty, new Binding { Path = nameof(SearchProvider.Name), Source = provider });
+										iconBindingToken = iconImage.Bind(Avalonia.Controls.Image.SourceProperty, new Binding { Source = provider, Converter = SearchProviderIconConverters.Default });
 									};
 									subItem.DetachedFromLogicalTree += (_, _) =>
 									{
@@ -106,7 +105,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(LogPropertyDisplayNameProperty, LogPropertyNameConverter.Default.Convert(nameof(Log.Message)));
 			this.AddHandler(KeyDownEvent, (_, e) =>
 			{
-				if (e.Key == Avalonia.Input.Key.F)
+				if (e.Key == Key.F)
 				{
 					var modifier = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
 					if ((e.KeyModifiers & modifier) != 0)
@@ -139,7 +138,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Check whether propertyValueTextEditor is focused or not.
-		bool IsPropertyValueTextEditorFocused { get => this.GetValue<bool>(IsPropertyValueTextEditorFocusedProperty); }
+		bool IsPropertyValueTextEditorFocused => this.GetValue(IsPropertyValueTextEditorFocusedProperty);
 
 
 		/// <summary>
@@ -153,8 +152,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public string LogPropertyDisplayName
 		{
-			get => this.GetValue<string>(LogPropertyDisplayNameProperty);
-			set => this.SetValue<string>(LogPropertyDisplayNameProperty, value);
+			get => this.GetValue(LogPropertyDisplayNameProperty);
+			set => this.SetValue(LogPropertyDisplayNameProperty, value);
 		}
 
 
@@ -187,7 +186,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			this.propertyValueTextBox.Text = this.LogPropertyName.Let(propertyName =>
+			this.propertyValueTextBox.Text = this.LogPropertyName.Let(_ =>
 			{
 				var value = "";
 				this.Log?.TryGetProperty(this.LogPropertyName, out value);
@@ -213,7 +212,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (parameter is not SearchProvider provider)
 				return;
-			var text = this.propertyValueTextBox.SelectedText?.Trim();
+			var text = this.propertyValueTextBox.SelectedText.Trim();
 			if (string.IsNullOrEmpty(text))
 				return;
 			var keywords = CreateTextSplitterRegex().Split(text);
@@ -225,7 +224,7 @@ namespace CarinaStudio.ULogViewer.Controls
         // set text wrapping.
         void SetTextWrapping(bool wrap)
 		{
-			if (this.propertyValueTextBox == null)
+			if (this.propertyValueTextBox is null)
 				return;
 			ScrollViewer.SetHorizontalScrollBarVisibility(this.propertyValueTextBox, wrap ? Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled : Avalonia.Controls.Primitives.ScrollBarVisibility.Auto);
 			this.propertyValueTextBox.Margin = new(1);

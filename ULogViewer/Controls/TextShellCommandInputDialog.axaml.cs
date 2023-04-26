@@ -14,7 +14,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to let user input command of text-shell.
 /// </summary>
-partial class TextShellCommandInputDialog : InputDialog
+class TextShellCommandInputDialog : InputDialog
 {
     // Fields.
     readonly TextBox commandTextBox;
@@ -42,7 +42,7 @@ partial class TextShellCommandInputDialog : InputDialog
 
 
     /// <inheritdoc/>
-    protected override void OnEnterKeyClickedOnInputControl(IControl control)
+    protected override void OnEnterKeyClickedOnInputControl(Control control)
     {
         base.OnEnterKeyClickedOnInputControl(control);
         if (control == this.commandTextBox)

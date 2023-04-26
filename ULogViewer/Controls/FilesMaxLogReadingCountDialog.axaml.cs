@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
-partial class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly StyledProperty<bool> ConfirmMaxLogReadingCountForLargeFilesProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>("ConfirmMaxLogReadingCountForLargeFiles");
@@ -95,7 +95,7 @@ partial class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULo
 
 
 	/// <inheritdoc/>
-	protected override void OnEnterKeyClickedOnInputControl(IControl control)
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
 	{
 		base.OnEnterKeyClickedOnInputControl(control);
 		if (control == this.maxLogReadingCountTextBox)

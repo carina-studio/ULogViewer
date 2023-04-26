@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
-partial class LogWritingFormatEditorDialog : InputDialog
+class LogWritingFormatEditorDialog : InputDialog
 {
     // Fields.
     readonly TextBox formatTextBox;
@@ -57,7 +57,7 @@ partial class LogWritingFormatEditorDialog : InputDialog
 
 
     /// <inheritdoc/>
-    protected override void OnEnterKeyClickedOnInputControl(IControl control)
+    protected override void OnEnterKeyClickedOnInputControl(Control control)
     {
         base.OnEnterKeyClickedOnInputControl(control);
     }

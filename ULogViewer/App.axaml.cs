@@ -218,7 +218,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Create main window.
-        protected override CarinaStudio.Controls.Window OnCreateMainWindow() => new MainWindow().Also(it =>
+        protected override AppSuite.Controls.MainWindow OnCreateMainWindow() => new MainWindow().Also(it =>
 		{
 			var info = new MainWindowInfo()
 			{

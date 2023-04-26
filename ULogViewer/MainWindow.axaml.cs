@@ -34,7 +34,7 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// Main window.
 	/// </summary>
-	partial class MainWindow : MainWindow<IULogViewerApplication, Workspace>
+	class MainWindow : MainWindow<IULogViewerApplication, Workspace>
 	{
 		// Constants.
 		const string DraggingSessionKey = "DraggingSettion";
@@ -298,10 +298,10 @@ namespace CarinaStudio.ULogViewer
 		TabItem CreateSessionTabItem(Session session)
 		{
 			// create header
-			var header = this.sessionTabItemHeaderTemplate.Build(session);
+			var header = (Control)this.sessionTabItemHeaderTemplate.Build(session);
 			if (Platform.IsMacOS)
 			{
-				((Control)header).ContextMenu = null;
+				header.ContextMenu = null;
 				(this.Application as App)?.Let(app =>
 					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(app.EnsureClosingToolTipIfWindowIsInactive));
 			}
