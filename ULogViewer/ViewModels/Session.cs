@@ -900,6 +900,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
 				{
 					this.canShowAllLogsTemporarily.Update(this.LogProfile != null && it.IsFilteringNeeded);
+					if (!this.canShowAllLogsTemporarily.Value && this.GetValue(IsShowingAllLogsTemporarilyProperty))
+						this.ToggleShowingAllLogsTemporarily();
 					this.selectLogsToReportActions?.Schedule();
 				});
 			});
