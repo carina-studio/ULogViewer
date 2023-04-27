@@ -376,6 +376,9 @@ class LogFilteringViewModel : SessionComponent
 
         // cancel temporarily shown logs
         this.Session.ResetTemporarilyShownLogsCommand.TryExecute();
+        
+        // raise event
+        this.FiltersApplied?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -597,6 +600,12 @@ class LogFilteringViewModel : SessionComponent
     /// Get progress of log filtering.
     /// </summary>
     public double FilteringProgress => this.GetValue(FilteringProgressProperty);
+
+
+    /// <summary>
+    /// Raised when all filters are applied for filtering logs.
+    /// </summary>
+    public event EventHandler? FiltersApplied;
 
 
     /// <summary>

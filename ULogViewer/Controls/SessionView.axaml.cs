@@ -1046,7 +1046,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
 			session.LogFiltering.Let(it =>
 			{
-				it.PropertyChanged += this.OnLogFilteringPropertyChanged;
+				it.FiltersApplied += this.OnLogFiltersApplied;
 				(it.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 					it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
 			});
@@ -2174,7 +2174,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
 			session.LogFiltering.Let(it =>
 			{
-				it.PropertyChanged -= this.OnLogFilteringPropertyChanged;
+				it.FiltersApplied -= this.OnLogFiltersApplied;
 				(it.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
 					it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
 			});
