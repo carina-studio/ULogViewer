@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
 + 版本：2.0
-+ 更新時間：2023/3/24
++ 更新時間：2023/4/27
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -21,14 +21,21 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 
 ## 外部相依性
 
-### Android SDK
-若要使用 **「Android 裝置日誌」** 及 **「Android 裝置事件日誌」** 日誌類型，您必須先安裝 [Android SDK or Android Studio](https://developer.android.com/studio)。
+### Android SDK 平台工具
+若要使用 **「Android 裝置日誌」** 、 **「Android 裝置事件日誌」** 及 **「Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
 
 ### Azure 命令列介面 (CLI)
 若要使用 **「Azure 命令列介面 (CLI)」**、**「MySQL 資料庫」** 及 **「SQL Server 資料庫」** 資料來源之完整功能，您必須先安裝 [Azure 命令列介面 (CLI)](https://docs.microsoft.com/cli/azure/)。
 
 ### Git
 若要使用 **「Git 提交紀錄」** 及 **「Git 提交紀錄 (精簡)」** 日誌類型，您必須先安裝 [Git](https://git-scm.com/)。
+
+### libimobiledevice
+若要使用 **「Apple 裝置日誌」** 及 **「特定 Apple 裝置日誌」** 日誌類型，您必須先安裝 [libimobiledevice](https://libimobiledevice.org/)。
+
++ [Windows 使用者](https://github.com/iFred09/libimobiledevice-windows)
++ [macOS 使用者](https://formulae.brew.sh/formula/libimobiledevice)
++ [Linux 使用者](https://command-not-found.com/idevicesyslog)
 
 ### Trace 轉換工具
 若要在 **macOS/Linux** 上使用 **「Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Trace 轉換工具](https://perfetto.dev/docs/quickstart/traceconv)。
@@ -89,6 +96,9 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 ### 自我升級
 + 下載的升級檔案及應用程式備份將存放於系統之暫存目錄內。
 
+### 匯出應用程式日誌
++ 包含應用程式日誌的 \*.zip 檔案將以 **讀寫** 模式開啟。
+
 其他由 ULogViewer 執行檔以外的檔案存取不受本協議之約束。
 
 
@@ -136,6 +146,9 @@ ULogViewer 會定期從 ULogViewer 網站下載資訊清單以檢查是否有新
 + 自動更新程式封裝。
 + ULogViewer 升級封裝。
 
+### 擷取記憶體快照
+[dotMemory](https://www.jetbrains.com/dotmemory/) 是 Carina Studio 用以分析記憶體使用狀況的主要工具。當您第一次在偵錯模式中擷取記憶體快照時，所有 [dotMemory](https://www.jetbrains.com/dotmemory/) 所需的檔案將下載至 ULogViewer 的目錄中。
+
 其他由 ULogViewer 執行檔以外的網路存取不受本協議之約束。
 
 
@@ -149,6 +162,7 @@ ULogViewer 會定期從 ULogViewer 網站下載資訊清單以檢查是否有新
 + 執行 **nautilus** 或 **xdg-open** 以在 Linux 上開啟檔案管理器。
 + 執行 **cmd** 以在必要時更新 Windows 上的 PATH 環境變數。
 + 執行 **osascript** 以在必要時更新 macOS 上的 /etc/paths。
++ 執行 **gsettings** 以確認在 Linux 上的系統佈景設定。
 
 除了上述必要情況外，當日誌來源為 **「Azure 命令列介面 (CLI)」** 或 **「標準輸出 (stdout)」** 時將執行外部命令。您可以在編輯日誌類型之 **「資料來源」** 時在 **「資料來源參數」** 對話方塊中檢視完整的指令及參數列表。
 

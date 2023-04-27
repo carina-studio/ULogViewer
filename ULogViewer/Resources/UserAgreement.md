@@ -1,7 +1,7 @@
 # User Agreement of ULogViewer
  ---
 + Version: 2.0
-+ Update: 2023/3/24
++ Update: 2023/4/27
 
 This is the User Agreement of ULogViewer which you need to read before you using ULogViewer. The User Agreement may be updated in the future and you can check it on the website of ULogViewer. It means that you have agreed this User Agreement once you start using ULogViewer.
 
@@ -21,14 +21,21 @@ ULogViewer has built-in Debug Mode which is disabled by default. You can enable 
 
 ## External Dependencies
 
-### Android SDK
-In order to use **'Android Device Log'**, **'Android Device Event Log'** and **'Android Device System Trace'** log profiles, you need to install [Android SDK or Android Studio](https://developer.android.com/studio) on your device first.
+### Android SDK Platform Tools
+In order to use **'Android Device Log'**, **'Android Device Event Log'** and **'Android Device System Trace'** log profiles, you need to install [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools) or [Android Studio](https://developer.android.com/studio) on your device first.
 
 ### Azure Command-Line Interface (CLI)
 In order to use full features of **'Azure CLI'**, **'MySQL Database'** and **'SQL Server Database'** data sources, you need to install [Azure CLI](https://docs.microsoft.com/cli/azure/) on your device first.
 
 ### Git
 In order to use **'Git Log'** and **'Git Log (Simple)'** log profiles, you need to install [Git](https://git-scm.com/) on your device first.
+
+### libimobiledevice
+In order to use **'Apple Devices Log'** and **'Specific Apple Device Log'** log profiles, you need to install [libimobiledevice](https://libimobiledevice.org/) on your device first.
+
++ [For Windows User](https://github.com/iFred09/libimobiledevice-windows)
++ [For macOS User](https://formulae.brew.sh/formula/libimobiledevice)
++ [For Linux User](https://command-not-found.com/idevicesyslog)
 
 ### Trace Conversion Tool
 In order to use **'Android Device System Trace'** built-in log profile on **macOS/Linux**, you need to install [Trace Conversion Tool](https://perfetto.dev/docs/quickstart/traceconv) on your device first.
@@ -89,6 +96,9 @@ Except for system files, all necessary files of ULogViewer are placed inside the
 ### Self Updating
 + Downloaded packages and backed-up application files will be placed inside Temporary directory of system.
 
+### Exporting Application Logs
++ The \*.zip file contains application logs will be opened in **Read/Write** mode.
+
 Other file access outside from executable of ULogViewer are not dominated by this User Agreement.
 
 
@@ -136,6 +146,9 @@ There are 4 type of data will be downloaded when updating ULogViewer:
 + Package of auto updater.
 + Update package of ULogViewer.
 
+### Taking Memory Snapshot
+[dotMemory](https://www.jetbrains.com/dotmemory/) is the main tool for memory usage analysis by Carina Studio. When you start taking memory snapshot first time in debug mode, all necessary files of [dotMemory](https://www.jetbrains.com/dotmemory/) will be downloaded into the directory of ULogViewer.
+
 Other network access outside from executable of ULogViewer are not dominated by this User Agreement.
 
 
@@ -149,6 +162,7 @@ There are some necessary external command execution when running ULogViewer:
 + Run **nautilus** or **xdg-open** to open File Manager on Linux.
 + Run **cmd** to update PATH environment variable on Windows if needed.
 + Run **osascript** to update /etc/paths on macOS if needed.interface scale factor on Linux.
++ Run **gsettings** to check system theme mode on Linux.
 
 Except for necessary cases above, external command execution will happen when the source of logs is **'Azure CLI'** or **'Standard Output (stdout)'**. You can check the list of commands and arguments in the **'Data source'** options dialog when editing **'Data Source'** of log profile.
 
