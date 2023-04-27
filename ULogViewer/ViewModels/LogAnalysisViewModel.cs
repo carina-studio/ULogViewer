@@ -68,7 +68,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 return Session.MinSidePanelSize;
             return it;
         }, 
-        validate: it => double.IsFinite(it));
+        validate: double.IsFinite);
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsAverageByteSize"/>.
     /// </summary>
@@ -157,7 +157,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             it.IsCooperativeLogAnalysis = true;
             this.AttachToAnalyzer(it);
         });
-        this.keyLogAnalysisRuleSets.CollectionChanged += (_, e) => 
+        this.keyLogAnalysisRuleSets.CollectionChanged += (_, _) => 
         {
             if (this.keyLogAnalysisRuleSets.IsEmpty())
                 this.Logger.LogTrace("Clear key log analysis rule sets");
@@ -165,9 +165,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change key log analysis rule sets: {ruleSetsCount}", this.keyLogAnalysisRuleSets.Count);
             this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToAnalyzer(it));
-        this.logAnalysisScriptSets.CollectionChanged += (_, e) =>
+        this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
+        this.logAnalysisScriptSets.CollectionChanged += (_, _) =>
         {
             if (this.logAnalysisScriptSets.IsEmpty())
                 this.Logger.LogTrace("Clear log analysis script sets");
@@ -175,7 +174,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change log analysis script sets: {scriptSetsCount}", this.logAnalysisScriptSets.Count);
             this.updateScriptLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.operationCountingAnalysisRuleSets.CollectionChanged += (_, e) => 
+        this.operationCountingAnalysisRuleSets.CollectionChanged += (_, _) => 
         {
             if (this.operationCountingAnalysisRuleSets.IsEmpty())
                 this.Logger.LogTrace("Clear operation counting analysis rule sets");
@@ -183,9 +182,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change operation counting analysis rule sets: {ruleSetsCount}", this.operationCountingAnalysisRuleSets.Count);
             this.updateOperationCountingAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.operationCountingAnalyzer = new OperationCountingAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToAnalyzer(it));
-        this.operationDurationAnalysisRuleSets.CollectionChanged += (_, e) => 
+        this.operationCountingAnalyzer = new OperationCountingAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
+        this.operationDurationAnalysisRuleSets.CollectionChanged += (_, _) => 
         {
             if (this.operationCountingAnalysisRuleSets.IsEmpty())
                 this.Logger.LogTrace("Clear operation duration analysis rule sets");
@@ -193,10 +191,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change operation duration analysis rule sets: {ruleSetsCount}", this.operationCountingAnalysisRuleSets.Count);
             this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToAnalyzer(it));
-        this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-            this.AttachToAnalyzer(it));
+        this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
+        this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
         
         // setup properties
         this.AnalysisResults = new Collections.SafeReadOnlyList<DisplayableLogAnalysisResult>(this.analysisResults);
@@ -415,7 +411,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get progress of logs analysis.
     /// </summary>
-    public double AnalysisProgress { get => this.GetValue(AnalysisProgressProperty); }
+    public double AnalysisProgress => this.GetValue(AnalysisProgressProperty);
 
 
     /// <summary>
@@ -451,7 +447,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         this.analysisResults.AddAll(analyzer.AnalysisResults);
 
         // report state
+        // ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         this.updateAnalysisStateAction?.Schedule();
+        // ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
     }
 
 
@@ -462,7 +460,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
 
     // Compare log analysis results.
-    unsafe int CompareAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
+    int CompareAnalysisResults(DisplayableLogAnalysisResult? lhs, DisplayableLogAnalysisResult? rhs)
     {
         // get logs
         var lhsLogs = this.analysisResultComparisonTempLogs1;
@@ -572,7 +570,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
         // report state
         if (!isDisposing)
-            this.updateAnalysisStateAction?.Schedule();
+            this.updateAnalysisStateAction.Schedule();
     }
 
 
@@ -610,25 +608,25 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Check whether cooperative log analysis script set has been set to current log profile or not.
     /// </summary>
-    public bool HasCooperativeLogAnalysisScriptSet { get => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty); }
+    public bool HasCooperativeLogAnalysisScriptSet => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty);
 
 
     /// <summary>
     /// Check whether at least one new analysis result has been generated in background or not.
     /// </summary>
-    public bool HasNewAnalysisResultsInBackground { get => this.GetValue(HasNewAnalysisResultsInBackgroundProperty); }
+    public bool HasNewAnalysisResultsInBackground => this.GetValue(HasNewAnalysisResultsInBackgroundProperty);
 
 
     /// <summary>
     /// Check whether at least one analysis result is selected or not.
     /// </summary>
-    public bool HasSelectedAnalysisResults { get => this.GetValue(HasSelectedAnalysisResultsProperty); }
+    public bool HasSelectedAnalysisResults => this.GetValue(HasSelectedAnalysisResultsProperty);
 
 
     /// <summary>
     /// Check whether logs are being analyzed or not.
     /// </summary>
-    public bool IsAnalyzing { get => this.GetValue(IsAnalyzingProperty); }
+    public bool IsAnalyzing => this.GetValue(IsAnalyzingProperty);
 
 
     /// <summary>
@@ -659,7 +657,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get list of <see cref="KeyLogAnalysisRuleSet"/> for log analysis.
     /// </summary>
-    public IList<KeyLogAnalysisRuleSet> KeyLogAnalysisRuleSets { get => this.keyLogAnalysisRuleSets; }
+    public IList<KeyLogAnalysisRuleSet> KeyLogAnalysisRuleSets => this.keyLogAnalysisRuleSets;
 
 
     /// <summary>
@@ -671,7 +669,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get list of script sets to analyze log.
     /// </summary>
-    public IList<LogAnalysisScriptSet> LogAnalysisScriptSets { get => this.logAnalysisScriptSets; }
+    public IList<LogAnalysisScriptSet> LogAnalysisScriptSets => this.logAnalysisScriptSets;
 
 
     /// <inheritdoc/>
@@ -942,7 +940,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         if ((element.TryGetProperty("LogAnalysisPanelSize", out jsonValue) // for upgrade case
             || element.TryGetProperty($"LogAnalysis.{nameof(PanelSize)}", out jsonValue))
                 && jsonValue.TryGetDouble(out var doubleValue)
-                && PanelSizeProperty.ValidationFunction(doubleValue) == true)
+                && PanelSizeProperty.ValidationFunction(doubleValue))
         {
             this.SetValue(PanelSizeProperty, doubleValue);
         }
@@ -1047,13 +1045,13 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get list of <see cref="OperationCountingAnalysisRuleSet"/> for log analysis.
     /// </summary>
-    public IList<OperationCountingAnalysisRuleSet> OperationCountingAnalysisRuleSets { get => this.operationCountingAnalysisRuleSets; }
+    public IList<OperationCountingAnalysisRuleSet> OperationCountingAnalysisRuleSets => this.operationCountingAnalysisRuleSets;
 
 
     /// <summary>
     /// Get list of <see cref="OperationDurationAnalysisRuleSet"/> for log analysis.
     /// </summary>
-    public IList<OperationDurationAnalysisRuleSet> OperationDurationAnalysisRuleSets { get => this.operationDurationAnalysisRuleSets; }
+    public IList<OperationDurationAnalysisRuleSet> OperationDurationAnalysisRuleSets => this.operationDurationAnalysisRuleSets;
 
 
     /// <summary>
@@ -1077,41 +1075,41 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get collection of selected analysis results.
     /// </summary>
-    public IList<DisplayableLogAnalysisResult> SelectedAnalysisResults { get => this.selectedAnalysisResults; }
+    public IList<DisplayableLogAnalysisResult> SelectedAnalysisResults => this.selectedAnalysisResults;
 
 
     /// <summary>
-    /// Get average byte size of selcted analysis results.
+    /// Get average byte size of selected analysis results.
     /// </summary>
-    public long? SelectedAnalysisResultsAverageByteSize { get => this.GetValue(SelectedAnalysisResultsAverageByteSizeProperty); }
+    public long? SelectedAnalysisResultsAverageByteSize => this.GetValue(SelectedAnalysisResultsAverageByteSizeProperty);
 
 
     /// <summary>
-    /// Get average duration of selcted analysis results.
+    /// Get average duration of selected analysis results.
     /// </summary>
-    public TimeSpan? SelectedAnalysisResultsAverageDuration { get => this.GetValue(SelectedAnalysisResultsAverageDurationProperty); }
+    public TimeSpan? SelectedAnalysisResultsAverageDuration => this.GetValue(SelectedAnalysisResultsAverageDurationProperty);
 
 
     /// <summary>
-    /// Get average quantity of selcted analysis results.
+    /// Get average quantity of selected analysis results.
     /// </summary>
-    public double? SelectedAnalysisResultsAverageQuantity { get => this.GetValue(SelectedAnalysisResultsAverageQuantityProperty); }
+    public double? SelectedAnalysisResultsAverageQuantity => this.GetValue(SelectedAnalysisResultsAverageQuantityProperty);
 
 
     /// <summary>
-    /// Get total byte size of selcted analysis results.
+    /// Get total byte size of selected analysis results.
     /// </summary>
-    public long? SelectedAnalysisResultsTotalByteSize { get => this.GetValue(SelectedAnalysisResultsTotalByteSizeProperty); }
+    public long? SelectedAnalysisResultsTotalByteSize => this.GetValue(SelectedAnalysisResultsTotalByteSizeProperty);
 
 
     /// <summary>
-    /// Get total duration of selcted analysis results.
+    /// Get total duration of selected analysis results.
     /// </summary>
-    public TimeSpan? SelectedAnalysisResultsTotalDuration { get => this.GetValue(SelectedAnalysisResultsTotalDurationProperty); }
+    public TimeSpan? SelectedAnalysisResultsTotalDuration => this.GetValue(SelectedAnalysisResultsTotalDurationProperty);
 
 
     /// <summary>
-    /// Get total quantity of selcted analysis results.
+    /// Get total quantity of selected analysis results.
     /// </summary>
-    public long? SelectedAnalysisResultsTotalQuantity { get => this.GetValue(SelectedAnalysisResultsTotalQuantityProperty); }
+    public long? SelectedAnalysisResultsTotalQuantity => this.GetValue(SelectedAnalysisResultsTotalQuantityProperty);
 }

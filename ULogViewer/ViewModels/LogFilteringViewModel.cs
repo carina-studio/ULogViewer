@@ -27,7 +27,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="FilteringProgress"/>.
     /// </summary>
-    public static ObservableProperty<double> FilteringProgressProperty = ObservableProperty.Register<LogFilteringViewModel, double>(nameof(FilteringProgress), double.NaN);
+    public static readonly ObservableProperty<double> FilteringProgressProperty = ObservableProperty.Register<LogFilteringViewModel, double>(nameof(FilteringProgress), double.NaN);
     /// <summary>
     /// Property of <see cref="FiltersCombinationMode"/>.
     /// </summary>
@@ -35,31 +35,31 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="IgnoreTextFilterCase"/>.
     /// </summary>
-    public static ObservableProperty<bool> IgnoreTextFilterCaseProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IgnoreTextFilterCase), true);
+    public static readonly ObservableProperty<bool> IgnoreTextFilterCaseProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IgnoreTextFilterCase), true);
     /// <summary>
     /// Property of <see cref="IsFiltering"/>.
     /// </summary>
-    public static ObservableProperty<bool> IsFilteringProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFiltering));
+    public static readonly ObservableProperty<bool> IsFilteringProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFiltering));
     /// <summary>
     /// Property of <see cref="IsFilteringNeeded"/>.
     /// </summary>
-    public static ObservableProperty<bool> IsFilteringNeededProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFilteringNeeded));
+    public static readonly ObservableProperty<bool> IsFilteringNeededProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFilteringNeeded));
     /// <summary>
     /// Property of <see cref="IsProcessIdFilterEnabled"/>.
     /// </summary>
-    public static ObservableProperty<bool> IsProcessIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsProcessIdFilterEnabled), false);
+    public static readonly ObservableProperty<bool> IsProcessIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsProcessIdFilterEnabled), false);
     /// <summary>
     /// Property of <see cref="IsThreadIdFilterEnabled"/>.
     /// </summary>
-    public static ObservableProperty<bool> IsThreadIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsThreadIdFilterEnabled), false);
+    public static readonly ObservableProperty<bool> IsThreadIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsThreadIdFilterEnabled), false);
     /// <summary>
     /// Property of <see cref="LastFilteringDuration"/>.
     /// </summary>
-    public static ObservableProperty<TimeSpan?> LastFilteringDurationProperty = ObservableProperty.Register<LogFilteringViewModel, TimeSpan?>(nameof(LastFilteringDuration));
+    public static readonly ObservableProperty<TimeSpan?> LastFilteringDurationProperty = ObservableProperty.Register<LogFilteringViewModel, TimeSpan?>(nameof(LastFilteringDuration));
     /// <summary>
     /// Property of <see cref="LevelFilter"/>.
     /// </summary>
-    public static readonly ObservableProperty<Logs.LogLevel> LevelFilterProperty = ObservableProperty.Register<LogFilteringViewModel, Logs.LogLevel>(nameof(LevelFilter), ULogViewer.Logs.LogLevel.Undefined);
+    public static readonly ObservableProperty<Logs.LogLevel> LevelFilterProperty = ObservableProperty.Register<LogFilteringViewModel, Logs.LogLevel>(nameof(LevelFilter), Logs.LogLevel.Undefined);
     /// <summary>
     /// Property of <see cref="ProcessIdFilter"/>.
     /// </summary>
@@ -142,7 +142,7 @@ class LogFilteringViewModel : SessionComponent
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
         {
-            it.CollectionChanged += (_, e) =>
+            it.CollectionChanged += (_, _) =>
             {
                 if (this.IsDisposed)
                     return;
@@ -278,7 +278,7 @@ class LogFilteringViewModel : SessionComponent
     {
         var hasPid = false;
         var hasTid = false;
-        this.LogProfile?.VisibleLogProperties?.Let(it =>
+        this.LogProfile?.VisibleLogProperties.Let(it =>
         {
             foreach (var property in it)
             {
@@ -344,7 +344,7 @@ class LogFilteringViewModel : SessionComponent
                 {
                     textFilter = new(textFilter.ToString(), options | RegexOptions.IgnoreCase);
                     this.SetValue(TextFilterProperty, textFilter);
-                    this.commitFiltersAction!.Cancel();
+                    this.commitFiltersAction.Cancel();
                 }
             }
             else
@@ -353,7 +353,7 @@ class LogFilteringViewModel : SessionComponent
                 {
                     textFilter = new(textFilter.ToString(), options & ~RegexOptions.IgnoreCase);
                     this.SetValue(TextFilterProperty, textFilter);
-                    this.commitFiltersAction!.Cancel();
+                    this.commitFiltersAction.Cancel();
                 }
             }
             textRegexList.Add(textFilter);
@@ -481,7 +481,7 @@ class LogFilteringViewModel : SessionComponent
         }
         if (tokenCount == 1)
         {
-            (var tokenType, var value) = tokens[0];
+            var (tokenType, value) = tokens[0];
             if (tokenType != TokenType.Symbol || !RegexReservedChars.Contains(value[0]))
                 patternBuffer.Append(value);
             else
@@ -493,7 +493,7 @@ class LogFilteringViewModel : SessionComponent
             var prevToken = "";
             for (var i = 0; i < tokenCount; ++i)
             {
-                (var tokenType, var value) = tokens[i];
+                var (tokenType, value) = tokens[i];
                 if (tokenType == TokenType.HexNumber)
                     patternBuffer.Append(@$"\s*({Tokenizer.HexNumberPattern})");
                 else if (tokenType == TokenType.DecimalNumber)
@@ -590,13 +590,13 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Get list of filtered logs.
     /// </summary>
-    public IList<DisplayableLog> FilteredLogs { get => this.logFilter.FilteredLogs; }
+    public IList<DisplayableLog> FilteredLogs => this.logFilter.FilteredLogs;
 
 
     /// <summary>
-    /// Get progress of log filterinf.
+    /// Get progress of log filtering.
     /// </summary>
-    public double FilteringProgress { get => this.GetValue(FilteringProgressProperty); }
+    public double FilteringProgress => this.GetValue(FilteringProgressProperty);
 
 
     /// <summary>
@@ -630,31 +630,31 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Check whether there is on-going log filtering or not.
     /// </summary>
-    public bool IsFiltering { get => this.GetValue(IsFilteringProperty); }
+    public bool IsFiltering => this.GetValue(IsFilteringProperty);
 
 
     /// <summary>
     /// Check whether log filtering is needed or not.
     /// </summary>
-    public bool IsFilteringNeeded { get => this.GetValue(IsFilteringNeededProperty); }
+    public bool IsFilteringNeeded => this.GetValue(IsFilteringNeededProperty);
 
 
     /// <summary>
     /// Check whether <see cref="ProcessIdFilter"/> is valid to filter logs in current log profile or not.
     /// </summary>
-    public bool IsProcessIdFilterEnabled { get => this.GetValue(IsProcessIdFilterEnabledProperty); }
+    public bool IsProcessIdFilterEnabled => this.GetValue(IsProcessIdFilterEnabledProperty);
 
 
     /// <summary>
     /// Check whether <see cref="ThreadIdFilter"/> is valid to filter logs in current log profile or not.
     /// </summary>
-    public bool IsThreadIdFilterEnabled { get => this.GetValue(IsThreadIdFilterEnabledProperty); }
+    public bool IsThreadIdFilterEnabled => this.GetValue(IsThreadIdFilterEnabledProperty);
 
 
     /// <summary>
     /// Get duration of last log filtering.
     /// </summary>
-    public TimeSpan? LastFilteringDuration { get => this.GetValue(LastFilteringDurationProperty); }
+    public TimeSpan? LastFilteringDuration => this.GetValue(LastFilteringDurationProperty);
 
 
     /// <summary>
@@ -921,7 +921,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Get list of <see cref="PredefinedLogTextFilter"/>s to filter logs.
     /// </summary>
-    public IList<PredefinedLogTextFilter> PredefinedTextFilters { get => this.predefinedTextFilters; }
+    public IList<PredefinedLogTextFilter> PredefinedTextFilters => this.predefinedTextFilters;
 
 
     /// <summary>
@@ -956,7 +956,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
-    /// Command to set <see cref="LogFilteringViewModel.FilterCombinationMode"/>.
+    /// Command to set <see cref="LogFilteringViewModel.FiltersCombinationMode"/>.
     /// </summary>
     /// <value>The type of parameter is <see cref="FilterCombinationMode"/>.</value>
     public ICommand SetFilterCombinationModeCommand { get; }
@@ -1000,7 +1000,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
-    /// Histroy of applied <see cref="TextFilter"/>.
+    /// History of applied <see cref="TextFilter"/>.
     /// </summary>
     public IList<string> TextFilterHistory { get; }
 
