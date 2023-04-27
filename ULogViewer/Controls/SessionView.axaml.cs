@@ -2232,7 +2232,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async Task<bool> DropAsync(KeyModifiers keyModifiers, IDataObject data)
 		{
 			// check data
-			if (!data.HasFileNames() || this.IsHandlingDragAndDrop)
+			var hasFileNames = Global.RunOrDefault(() => data.HasFileNames()); // [Workaround] Prevent NRE when dragging without files on macOS
+			if (!hasFileNames || this.IsHandlingDragAndDrop)
 				return false;
 
 			// bring window to front
@@ -2920,7 +2921,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// check data
-			e.DragEffects = e.Data.HasFileNames()
+			e.DragEffects = Global.RunOrDefault(() => e.Data.HasFileNames()) // [Workaround] Prevent NRE when dragging without files on macOS
 				? DragDropEffects.Copy
 				: DragDropEffects.None;
 		}

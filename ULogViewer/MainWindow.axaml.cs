@@ -644,7 +644,7 @@ namespace CarinaStudio.ULogViewer
 			e.Handled = true;
 
 			// handle file dragging
-			if(e.Data.HasFileNames())
+			if(Global.RunOrDefault(() => e.Data.HasFileNames())) // [Workaround] Prevent NRE when dragging without files on macOS
 			{
 				// select tab item
 				if (e.ItemIndex < this.tabItems.Count - 1)
@@ -704,7 +704,7 @@ namespace CarinaStudio.ULogViewer
 			ItemInsertionIndicator.SetInsertingItemBefore(tabItem, false);
 			
 			// drop files
-			if (e.Data.HasFileNames())
+			if (Global.RunOrDefault(() => e.Data.HasFileNames())) // [Workaround] Prevent NRE when dragging without files on macOS
 			{
 				// find tab and session view
 				var sessionView = Global.Run(() =>
