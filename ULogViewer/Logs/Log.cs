@@ -101,7 +101,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 		// Fields.
 		readonly LogLevel level;
-		readonly ushort memorySize;
+		readonly uint memorySize;
 		readonly byte[] propertyNames;
 		readonly object?[] propertyValues;
 		readonly DateTime readTime;

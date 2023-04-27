@@ -28,10 +28,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int GroupIdDataOffset = 1; // uint
 		const int IsDisposedDataOffset = 5; // byte
 		const int MarkedColorDataOffset = 6; // byte
-		const int MemorySizeDataOffset = 7; // ushort
-		const int MessageLineCountDataOffset = 9; // byte
-		const int SummaryLineCountDataOffset = 10; // byte
-		const int ExtraLineCountsDataOffset = 11; // byte[], should be last one
+		const int MemorySizeDataOffset = 7; // uint
+		const int MessageLineCountDataOffset = 11; // byte
+		const int SummaryLineCountDataOffset = 12; // byte
+		const int ExtraLineCountsDataOffset = 13; // byte[], should be last one
 
 
 		// Static fields.
@@ -99,7 +99,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var memorySize = log.MemorySize 
 			                  + instanceFieldMemorySize 
 			                  + Memory.EstimateArrayInstanceSize<byte>(data.Length);
-			writeUInt16Function(data.AsSpan(MemorySizeDataOffset), (ushort)memorySize);
+			writeUInt32Function(data.AsSpan(MemorySizeDataOffset), (uint)memorySize);
 
 			// notify group
 			group.OnDisplayableLogCreated(this);
@@ -148,8 +148,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update memory usage
 			var memorySizeSpan = data.AsSpan(MemorySizeDataOffset);
-			var memorySize = readUInt16Function(memorySizeSpan);
-			writeUInt16Function(memorySizeSpan, (ushort)Math.Min(ushort.MaxValue, memorySize + memorySizeDiff));
+			var memorySize = readUInt32Function(memorySizeSpan);
+			writeUInt32Function(memorySizeSpan, (uint)Math.Min(uint.MaxValue, memorySize + memorySizeDiff));
 			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 			{
 				group.OnAnalysisResultAdded(this);
@@ -1002,7 +1002,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get size of memory usage by the instance in bytes.
 		/// </summary>
-		public long MemorySize => readUInt16Function(this.data.AsSpan(MemorySizeDataOffset));
+		public long MemorySize => readUInt32Function(this.data.AsSpan(MemorySizeDataOffset));
 
 
 		/// <summary>
