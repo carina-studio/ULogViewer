@@ -97,25 +97,36 @@ public class CompressedStringSource : IStringSource
         if (buffer.Length < this.Length)
             return false;
         byte[]? utf8;
+        int utf8ByteCount;
         if ((this.flags & 0x80000000u) == 0)
+        {
             utf8 = this.data;
+            utf8ByteCount = utf8.Length;
+        }
         else
         {
             DecompressionMemoryStream ??= new();
             DecompressionMemoryStream.Write(this.data);
             DecompressionMemoryStream.Position = 0;
+            utf8ByteCount = (int)(this.flags & 0x7fffffffu);
             utf8 = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true).Use(stream =>
             {
-                var utf8 = new byte[(int)(this.flags & 0x7fffffffu)];
-                if (stream.Read(utf8) == utf8.Length)
-                    return utf8;
-                return null;
+                var bufferLength = utf8ByteCount;
+                var buffer = new byte[bufferLength];
+                var totalReadCount = stream.Read(buffer);
+                while (totalReadCount < utf8ByteCount && bufferLength < (utf8ByteCount << 1) && bufferLength + 64 < int.MaxValue)
+                {
+                    bufferLength += 64;
+                    var newBuffer = new byte[bufferLength];
+                    Array.Copy(buffer, newBuffer, totalReadCount);
+                    totalReadCount += stream.Read(newBuffer, totalReadCount, bufferLength - totalReadCount);
+                    buffer = newBuffer;
+                }
+                return buffer;
             });
             DecompressionMemoryStream.SetLength(0);
-            if (utf8 is null)
-                return false;
         }
-        Utf8.ToUtf16(utf8.AsSpan(), buffer, out _, out _);
+        Utf8.ToUtf16(utf8.AsSpan(0, utf8ByteCount), buffer, out _, out _);
         return true;
     }
 }
