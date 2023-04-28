@@ -290,7 +290,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return valueT;
 				if (typeof(T) == typeof(string))
 					return (T)(object?)rawValue?.ToString();
-				throw new InvalidCastException($"Cannot get value of property '{propertyName}' as {typeof(T).Name}.");
+				return (T)rawValue;
 			};
 		}
 #pragma warning restore CS8600
