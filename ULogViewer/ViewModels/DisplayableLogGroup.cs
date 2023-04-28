@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -28,6 +27,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
+		/// <summary>
+		/// Maximum number of log reader can be added to each group.
+		/// </summary>
+		public const int MaxLogReaderCount = 255;
+		
+		
 		// Control block of log reader.
 		class LogReaderInfo
 		{
@@ -636,9 +641,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				var isReaderLocalIdFound = false;
 				var candidateReaderLocalId = (byte)(this.logReaderInfosByLogReader.Count + 1);
-				if (this.logReaderInfosByLocalId.Count < 255)
+				if (this.logReaderInfosByLocalId.Count < MaxLogReaderCount)
 				{
-					for (var i = 255; i > 0; --i)
+					for (var i = MaxLogReaderCount; i > 0; --i)
 					{
 						if (!this.logReaderInfosByLocalId.ContainsKey(candidateReaderLocalId))
 						{
@@ -660,7 +665,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				readerLocalId = candidateReaderLocalId;
 				this.logReaderInfosByLocalId.Add(candidateReaderLocalId, readerInfo);
 				this.logReaderInfosByLogReader.Add(reader, readerInfo);
-				Interlocked.Add(ref this.memorySize, LogReaderInfoKeyValuePairMemorySize << 1);
+				Interlocked.Add(ref this.memorySize, (LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize);
 			}
 			++readerInfo.DisplayableLogCount;
 			
@@ -694,7 +699,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logger.LogTrace("Remove log reader '{readerId}' with local ID '{localId}'", readerInfo.LogReader.Id, readerInfo.LocalId);
 					this.logReaderInfosByLocalId.Remove(readerInfo.LocalId);
 					this.logReaderInfosByLogReader.Remove(readerInfo.LogReader);
-					Interlocked.Add(ref this.memorySize, -(LogReaderInfoKeyValuePairMemorySize << 1));
+					Interlocked.Add(ref this.memorySize, -((LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize));
 				}
 			}
 			

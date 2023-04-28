@@ -1206,6 +1206,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">解除日志标记</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">查看更多…</sys:String>
 	<sys:String x:Key="String/SessionView.WaitingForDataSources">正在等待资料来源…</sys:String>
+	<sys:String x:Key="String/SessionView.WillExceedMaxLogFileCount">无法加入日志文件，因为将超过日志文件数量上限。</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String/SortDirection.Ascending">递增</sys:String>

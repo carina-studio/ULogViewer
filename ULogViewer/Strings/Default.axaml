@@ -1241,6 +1241,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">Unmark logs</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">View more…</sys:String>
 	<sys:String x:Key="String/SessionView.WaitingForDataSources">Waiting for data source…</sys:String>
+	<sys:String x:Key="String/SessionView.WillExceedMaxLogFileCount">Cannot add file(s) because it will exceeds the maximum number of log files.</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String/SortDirection.Ascending">Ascending</sys:String>

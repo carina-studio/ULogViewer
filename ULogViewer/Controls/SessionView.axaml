@@ -537,17 +537,17 @@
 						</ToggleButton>
 
 						<!-- Set working directory -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectorySupported}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
 						</Button>
 
 						<!-- Add files -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.AddLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.AddLogFilesCommand}" IsVisible="{Binding IsLogFileSupported}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
 						</Button>
 
 						<!-- Set URI -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding IsUriNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding IsUriSupported}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
 							<Image Classes="Icon">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
@@ -556,7 +556,7 @@
 						</Button>
 
 						<!-- Set IP endpoint -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetIPEndPointCommand}" IsVisible="{Binding IsIPEndPointNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetIPEndPointCommand}" IsVisible="{Binding IsIPEndPointSupported}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
 							<Image Classes="Icon">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>

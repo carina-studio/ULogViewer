@@ -990,6 +990,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (fileNameList.IsEmpty())
 					return false;
 				
+				// check file count
+				if (session.LogFiles.Count + fileNameList.Count > session.MaxLogFileCount)
+				{
+					await new MessageDialog
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.Application.GetObservableString("SessionView.WillExceedMaxLogFileCount"),
+					}.ShowDialog(this.attachedWindow);
+					return false;
+				}
+				
 				// sort file names
 				fileNameList.Sort();
 				

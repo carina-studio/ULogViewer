@@ -62,6 +62,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
 		/// <summary>
+		/// Property of <see cref="CanAddLogFile"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanAddLogFileProperty = ObservableProperty.Register<Session, bool>(nameof(CanAddLogFile));
+		/// <summary>
+		/// Property of <see cref="CanSetIPEndPoint"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanSetIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetIPEndPoint));
+		/// <summary>
+		/// Property of <see cref="CanSetUri"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanSetUriProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetUri));
+		/// <summary>
+		/// Property of <see cref="CanSetWorkingDirectory"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanSetWorkingDirectoryProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetWorkingDirectory));
+		/// <summary>
 		/// Property of <see cref="CustomTitle"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
@@ -174,6 +190,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsIPEndPointNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointNeeded));
 		/// <summary>
+		/// Property of <see cref="IsIPEndPointSupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsIPEndPointSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointSupported));
+		/// <summary>
 		/// Property of <see cref="IsLogFileNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsLogFileNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFileNeeded));
@@ -230,6 +250,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
 		/// <summary>
+		/// Property of <see cref="IsUriSupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsUriSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriSupported));
+		/// <summary>
 		/// Property of <see cref="IsWaitingForDataSources"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsWaitingForDataSourcesProperty = ObservableProperty.Register<Session, bool>(nameof(IsWaitingForDataSources));
@@ -237,6 +261,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsWorkingDirectoryNeeded"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsWorkingDirectoryNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectoryNeeded));
+		/// <summary>
+		/// Property of <see cref="IsWorkingDirectorySupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsWorkingDirectorySupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectorySupported));
 		/// <summary>
 		/// Property of <see cref="LastLogReadingPrecondition"/>.
 		/// </summary>
@@ -299,6 +327,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return it;
 			}, 
 			validate: double.IsFinite);
+		/// <summary>
+		/// Property of <see cref="MaxLogFileCount"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int> MaxLogFileCountProperty = ObservableProperty.Register<Session, int>(nameof(MaxLogFileCount));
 		/// <summary>
 		/// Property of <see cref="MaxLogTimeSpan"/>.
 		/// </summary>
@@ -837,7 +869,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.activationHistoryListNode = new LinkedListNode<Session>(this);
 
 			// create commands
-			this.AddLogFileCommand = new Command<LogDataSourceParams<string>?>(this.AddLogFile, this.GetValueAsObservable(IsLogFileNeededProperty));
+			this.AddLogFileCommand = new Command<LogDataSourceParams<string>?>(this.AddLogFile, this.GetValueAsObservable(CanAddLogFileProperty));
 			this.ClearLogFilesCommand = new Command(this.ClearLogFiles, this.canClearLogFiles);
 			this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
 			this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
@@ -855,10 +887,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ResetTemporarilyShownLogsCommand = new Command(this.ResetTemporarilyShownLogs, this.GetValueAsObservable(HasLogProfileProperty));
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SearchLogPropertyOnInternetCommand = new Command<Net.SearchProvider>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
-			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(IsIPEndPointNeededProperty));
+			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(CanSetIPEndPointProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
-			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(IsUriNeededProperty));
-			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(IsWorkingDirectoryNeededProperty));
+			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(CanSetUriProperty));
+			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(CanSetWorkingDirectoryProperty));
 			this.ShowAllLogsTemporarilyCommand = new Command(this.ShowAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.ShowMarkedLogsTemporarilyCommand = new Command(this.ShowMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
@@ -881,6 +913,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// setup properties
 			this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
+			this.LogFiles = ListExtensions.AsReadOnly(this.logFileInfoList);
 			this.SetValue(LogsProperty, this.AllLogs);
 			this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
@@ -1004,15 +1037,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					var firstLog = logs[0];
 					var lastLog = logs.Last();
-					TimeSpan? duration;
-					DateTime? earliestTimestamp;
-					DateTime? latestTimestamp;
-					TimeSpan? minTimeSpan;
-					TimeSpan? maxTimeSpan;
-					if (profile.SortDirection == SortDirection.Ascending)
-						duration = CalculateDurationBetweenLogs(firstLog, lastLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
-					else
-						duration = CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
+					var duration = profile.SortDirection == SortDirection.Ascending
+						? CalculateDurationBetweenLogs(firstLog, lastLog, out var minTimeSpan, out var maxTimeSpan, out var earliestTimestamp, out var latestTimestamp)
+						: CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
 					this.SetValue(LogsDurationProperty, duration);
 					this.SetValue(MinLogTimeSpanProperty, minTimeSpan);
 					this.SetValue(MaxLogTimeSpanProperty, maxTimeSpan);
@@ -1308,8 +1335,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.IsLogFileNeeded)
-				return;
 			if (param == null)
 				throw new ArgumentNullException(nameof(param));
 			var fileName = param.Source;
@@ -1329,6 +1354,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning("File '{fileName}' is already added", fileName);
 				return;
 			}
+			if (this.logFileInfoList.Count >= this.GetValue(MaxLogFileCountProperty))
+			{
+				this.Logger.LogError("Maximum log file count reached: {count}", this.MaxLogFileCount);
+				return;
+			}
+			if (this.logReaders.Count >= DisplayableLogGroup.MaxLogReaderCount)
+			{
+				this.Logger.LogError("Maximum log reader count reached: {count}", DisplayableLogGroup.MaxLogReaderCount);
+				return;
+			}
 			this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition, null, null));
 
 			this.Logger.LogDebug("Add log file '{fileName}'", fileName);
@@ -1336,15 +1371,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create data source
 			dataSourceOptions.FileName = fileName;
 			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
-			if (dataSource == null)
+			if (dataSource is null)
+			{
+				this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
 				return;
-			
+			}
+
 			// update state
 			this.SetValue(LastLogReadingPreconditionProperty, param.Precondition);
 
 			// create log reader
 			if (!this.CreateLogReader(dataSource, param.Precondition, null, null))
+			{
 				this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+				return;
+			}
+
+			// update state
+			this.UpdateCanAddLogFile();
 		}
 
 
@@ -1456,6 +1500,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			maxTimeSpan = null;
 			return null;
 		}
+
+
+		/// <summary>
+		/// Check whether one or more log files can be added to session or not.
+		/// </summary>
+		public bool CanAddLogFile => this.GetValue(CanAddLogFileProperty);
+		
+		
+		/// <summary>
+		/// Check whether IP end point can be set to session or not.
+		/// </summary>
+		public bool CanSetIPEndPoint => this.GetValue(CanSetIPEndPointProperty);
+		
+		
+		/// <summary>
+		/// Check whether URI can be set to session or not.
+		/// </summary>
+		public bool CanSetUri => this.GetValue(CanSetUriProperty);
+		
+		
+		/// <summary>
+		/// Check whether working directory can be set to session or not.
+		/// </summary>
+		public bool CanSetWorkingDirectory => this.GetValue(CanSetWorkingDirectoryProperty);
 
 
 		// Clear all log files.
@@ -1791,6 +1859,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.Logger.LogError("Cannot create log reader because the data source provider '{name}' ({id}) is Pro-version only", dataSourceProvider.DisplayName, dataSourceProvider.Name);
 				this.ErrorMessageGenerated?.Invoke(this, new(this.Application.GetFormattedString("Session.CannotUseProVersionOnlyDataSource", dataSourceProvider.DisplayName)));
+				return false;
+			}
+			
+			// check max log reader count
+			if (this.logReaders.Count >= DisplayableLogGroup.MaxLogReaderCount)
+			{
+				this.Logger.LogError("Max log reader count reached: {count}", DisplayableLogGroup.MaxLogReaderCount);
 				return false;
 			}
 			
@@ -2213,7 +2288,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// remove log file infos
 			if (clearLogFileInfos)
+			{
 				this.logFileInfoList.Clear();
+				this.UpdateCanAddLogFile();
+			}
 
 			// release log group
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
@@ -2329,113 +2407,97 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether errors are found in all data sources or not.
 		/// </summary>
-		public bool HasAllDataSourceErrors => 
-			this.GetValue(HasAllDataSourceErrorsProperty);
+		public bool HasAllDataSourceErrors => this.GetValue(HasAllDataSourceErrorsProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="CustomTitle"/> has been set or not.
 		/// </summary>
-		public bool HasCustomTitle => 
-			this.GetValue(HasCustomTitleProperty);
+		public bool HasCustomTitle => this.GetValue(HasCustomTitleProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="IPEndPoint"/> is non-null or not.
 		/// </summary>
-		public bool HasIPEndPoint => 
-			this.GetValue(HasIPEndPointProperty);
+		public bool HasIPEndPoint => this.GetValue(HasIPEndPointProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="LastLogsReadingDuration"/> is valid or not.
 		/// </summary>
-		public bool HasLastLogsReadingDuration => 
-			this.GetValue(HasLastLogsReadingDurationProperty);
+		public bool HasLastLogsReadingDuration => this.GetValue(HasLastLogsReadingDurationProperty);
 
 
 		/// <summary>
 		/// Check whether color indicator of log is needed or not.
 		/// </summary>
-		public bool HasLogColorIndicator => 
-			this.GetValue(HasLogColorIndicatorProperty);
+		public bool HasLogColorIndicator => this.GetValue(HasLogColorIndicatorProperty);
 
 
 		/// <summary>
 		/// Check whether color indicator of log by file name is needed or not.
 		/// </summary>
-		public bool HasLogColorIndicatorByFileName => 
-			this.GetValue(HasLogColorIndicatorByFileNameProperty);
+		public bool HasLogColorIndicatorByFileName => this.GetValue(HasLogColorIndicatorByFileNameProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log file was added to session or not.
 		/// </summary>
-		public bool HasLogFiles => 
-			this.GetValue(HasLogFilesProperty);
+		public bool HasLogFiles => this.GetValue(HasLogFilesProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="LogProfile"/> is valid or not.
 		/// </summary>
-		public bool HasLogProfile => 
-			this.GetValue(HasLogProfileProperty);
+		public bool HasLogProfile => this.GetValue(HasLogProfileProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log reader created or not.
 		/// </summary>
-		public bool HasLogReaders => 
-			this.GetValue(HasLogReadersProperty);
+		public bool HasLogReaders => this.GetValue(HasLogReadersProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log is read or not.
 		/// </summary>
-		public bool HasLogs => 
-			this.GetValue(HasLogsProperty);
+		public bool HasLogs => this.GetValue(HasLogsProperty);
 
 
 		/// <summary>
 		/// Check whether <see cref="LogsDuration"/> is valid or not.
 		/// </summary>
-		public bool HasLogsDuration => 
-			this.GetValue(HasLogsDurationProperty);
+		public bool HasLogsDuration => this.GetValue(HasLogsDurationProperty);
 
 
 		/// <summary>
 		/// Check whether at least one log has been marked or not.
 		/// </summary>
-		public bool HasMarkedLogs => 
-			this.GetValue(HasMarkedLogsProperty);
+		public bool HasMarkedLogs => this.GetValue(HasMarkedLogsProperty);
 
 
 		/// <summary>
 		/// Check whether errors are found in some of data sources or not.
 		/// </summary>
-		public bool HasPartialDataSourceErrors =>
-			this.GetValue(HasPartialDataSourceErrorsProperty);
+		public bool HasPartialDataSourceErrors => this.GetValue(HasPartialDataSourceErrorsProperty);
 
 
 		/// <summary>
 		/// Check whether URI has been set or not.
 		/// </summary>
-		public bool HasUri =>
-			this.GetValue(HasUriProperty);
+		public bool HasUri => this.GetValue(HasUriProperty);
 
 
 		/// <summary>
 		/// Check whether at least one property of <see cref="DisplayableLog"/> which represents timestamp will be shown in UI or not.
 		/// </summary>
-		public bool HasTimestampDisplayableLogProperty => 
-			this.GetValue(HasTimestampDisplayableLogPropertyProperty);
+		public bool HasTimestampDisplayableLogProperty => this.GetValue(HasTimestampDisplayableLogPropertyProperty);
 
 
 		/// <summary>
 		/// Check whether working directory has been set or not.
 		/// </summary>
-		public bool HasWorkingDirectory => 
-			this.GetValue(HasWorkingDirectoryProperty);
+		public bool HasWorkingDirectory => this.GetValue(HasWorkingDirectoryProperty);
 
 
 		// Hibernate the session.
@@ -2471,57 +2533,55 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get icon of session.
 		/// </summary>
-		public IImage? Icon => 
-			this.GetValue(IconProperty);
+		public IImage? Icon => this.GetValue(IconProperty);
 
 
 		/// <summary>
 		/// Get current <see cref="IPEndPoint"/> to read logs from.
 		/// </summary>
-		public IPEndPoint? IPEndPoint => 
-			this.GetValue(IPEndPointProperty);
+		public IPEndPoint? IPEndPoint => this.GetValue(IPEndPointProperty);
 
 
 		/// <summary>
 		/// Check whether session has been activated or not.
 		/// </summary>
-		public bool IsActivated => 
-			this.GetValue(IsActivatedProperty);
+		public bool IsActivated => this.GetValue(IsActivatedProperty);
 
 
 		/// <summary>
 		/// Check whether logs are being analyzed or not.
 		/// </summary>
-		public bool IsAnalyzingLogs => 
-			this.GetValue(IsAnalyzingLogsProperty);
+		public bool IsAnalyzingLogs => this.GetValue(IsAnalyzingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether current log profile is a built-in log profile or not.
 		/// </summary>
-		public bool IsBuiltInLogProfile => 
-			this.GetValue(IsBuiltInLogProfileProperty);
+		public bool IsBuiltInLogProfile => this.GetValue(IsBuiltInLogProfileProperty);
 
 
 		/// <summary>
 		/// Check whether logs copying is on-going or not.
 		/// </summary>
-		public bool IsCopyingLogs => 
-			this.GetValue(IsCopyingLogsProperty);
+		public bool IsCopyingLogs => this.GetValue(IsCopyingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether session is hibernated or not.
 		/// </summary>
-		public bool IsHibernated => 
-			this.GetValue(IsHibernatedProperty);
+		public bool IsHibernated => this.GetValue(IsHibernatedProperty);
 
 
 		/// <summary>
 		/// Check whether IP endpoint is needed or not.
 		/// </summary>
-		public bool IsIPEndPointNeeded => 
-			this.GetValue(IsIPEndPointNeededProperty);
+		public bool IsIPEndPointNeeded => this.GetValue(IsIPEndPointNeededProperty);
+		
+		
+		/// <summary>
+		/// Check whether IP endpoint is supported or not.
+		/// </summary>
+		public bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
 
 
 		/// <summary>
@@ -2536,8 +2596,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs file is needed or not.
 		/// </summary>
-		public bool IsLogFileNeeded => 
-			this.GetValue(IsLogFileNeededProperty);
+		public bool IsLogFileNeeded => this.GetValue(IsLogFileNeededProperty);
 
 
 		/// <summary>
@@ -2553,15 +2612,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs file is supported or not.
 		/// </summary>
-		public bool IsLogFileSupported => 
-			this.GetValue(IsLogFileSupportedProperty);
+		public bool IsLogFileSupported => this.GetValue(IsLogFileSupportedProperty);
 
 
 		/// <summary>
 		/// Check whether logs reading has been paused or not.
 		/// </summary>
-		public bool IsLogsReadingPaused => 
-			this.GetValue(IsLogsReadingPausedProperty);
+		public bool IsLogsReadingPaused => this.GetValue(IsLogsReadingPausedProperty);
 
 
 		/// <summary>
@@ -2577,99 +2634,97 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether logs are being processed or not.
 		/// </summary>
-		public bool IsProcessingLogs => 
-			this.GetValue(IsProcessingLogsProperty);
+		public bool IsProcessingLogs => this.GetValue(IsProcessingLogsProperty);
 		
 
 		/// <summary>
 		/// Check whether Pro-version is activated or not.
 		/// </summary>
-		public bool IsProVersionActivated => 
-			this.GetValue(IsProVersionActivatedProperty);
+		public bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
 
 
 		/// <summary>
 		/// Check whether logs are being read or not.
 		/// </summary>
-		public bool IsReadingLogs => 
-			this.GetValue(IsReadingLogsProperty);
+		public bool IsReadingLogs => this.GetValue(IsReadingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether logs are being read continuously or not.
 		/// </summary>
-		public bool IsReadingLogsContinuously =>
-			this.GetValue(IsReadingLogsContinuouslyProperty);
+		public bool IsReadingLogsContinuously => this.GetValue(IsReadingLogsContinuouslyProperty);
 
 
 		/// <summary>
 		/// Check whether one or more log files are being removed or not.
 		/// </summary>
-		public bool IsRemovingLogFiles =>
-			this.GetValue(IsRemovingLogFilesProperty);
+		public bool IsRemovingLogFiles => this.GetValue(IsRemovingLogFilesProperty);
 
 
 		/// <summary>
 		/// Check whether logs saving is on-going or not.
 		/// </summary>
-		public bool IsSavingLogs => 
-			this.GetValue(IsSavingLogsProperty);
+		public bool IsSavingLogs => this.GetValue(IsSavingLogsProperty);
 
 
 		/// <summary>
 		/// Check whether all logs are shown temporarily.
 		/// </summary>
-		public bool IsShowingAllLogsTemporarily => 
-			this.GetValue(IsShowingAllLogsTemporarilyProperty);
+		public bool IsShowingAllLogsTemporarily => this.GetValue(IsShowingAllLogsTemporarilyProperty);
 
 
 		/// <summary>
 		/// Check whether showing marked logs temporarily or not.
 		/// </summary>
-		public bool IsShowingMarkedLogsTemporarily =>
-			this.GetValue(IsShowingMarkedLogsTemporarilyProperty);
+		public bool IsShowingMarkedLogsTemporarily => this.GetValue(IsShowingMarkedLogsTemporarilyProperty);
 
 
 		/// <summary>
 		/// Check whether URI is needed or not.
 		/// </summary>
-		public bool IsUriNeeded => 
-			this.GetValue(IsUriNeededProperty);
+		public bool IsUriNeeded => this.GetValue(IsUriNeededProperty);
+		
+		
+		/// <summary>
+		/// Check whether URI is supported or not.
+		/// </summary>
+		public bool IsUriSupported => this.GetValue(IsUriSupportedProperty);
 
 
 		/// <summary>
 		/// Check data sources are not ready for reading logs.
 		/// </summary>
-		public bool IsWaitingForDataSources =>
-			this.GetValue(IsWaitingForDataSourcesProperty);
+		public bool IsWaitingForDataSources => this.GetValue(IsWaitingForDataSourcesProperty);
 
 
 		/// <summary>
 		/// Check whether working directory is needed or not.
 		/// </summary>
-		public bool IsWorkingDirectoryNeeded => 
-			this.GetValue(IsWorkingDirectoryNeededProperty);
+		public bool IsWorkingDirectoryNeeded => this.GetValue(IsWorkingDirectoryNeededProperty);
+		
+		
+		/// <summary>
+		/// Check whether working directory is supported or not.
+		/// </summary>
+		public bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
 
 
 		/// <summary>
 		/// Get the last precondition of log reading.
 		/// </summary>
-		public LogReadingPrecondition LastLogReadingPrecondition => 
-			this.GetValue(LastLogReadingPreconditionProperty);
+		public LogReadingPrecondition LastLogReadingPrecondition => this.GetValue(LastLogReadingPreconditionProperty);
 
 
 		/// <summary>
 		/// Get the duration of last logs reading.
 		/// </summary>
-		public TimeSpan? LastLogsReadingDuration =>
-			this.GetValue(LastLogsReadingDurationProperty);
+		public TimeSpan? LastLogsReadingDuration => this.GetValue(LastLogsReadingDurationProperty);
 
 
 		/// <summary>
 		/// Get latest timestamp of log in <see cref="Logs"/>.
 		/// </summary>
-		public DateTime? LatestLogTimestamp => 
-			this.GetValue(LatestLogTimestampProperty);
+		public DateTime? LatestLogTimestamp => this.GetValue(LatestLogTimestampProperty);
 
 
 		// Load marked logs from file.
@@ -2769,6 +2824,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Raised when runtime error occurred by script of log data source.
 		/// </summary>
 		public event EventHandler<ScriptRuntimeErrorEventArgs>? LogDataSourceScriptRuntimeErrorOccurred;
+
+
+		/// <summary>
+		/// Get information of added log files.
+		/// </summary>
+		public IList<LogFileInfo> LogFiles { get; }
 
 
 		/// <summary>
@@ -2991,6 +3052,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Get maximum number of log files added to the session.
+		/// </summary>
+		public int MaxLogFileCount => this.GetValue(MaxLogFileCountProperty);
+
+
+		/// <summary>
 		/// Get maximum time span of log in <see cref="Logs"/>.
 		/// </summary>
 		public TimeSpan? MaxLogTimeSpan => 
@@ -3112,7 +3179,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					case nameof(ILogDataSourceProvider.RequiredSourceOptions):
 					case nameof(ILogDataSourceProvider.SupportedSourceOptions):
 						this.DisposeLogReaders(true);
-						this.UpdateDataSourceRelatedStates();
 						this.StartReadingLogs();
 						break;
 				}
@@ -3158,6 +3224,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						if (this.AreFileBasedLogs)
 						{
+							this.UpdateMaxLogFileCount(profile);
+							this.UpdateCanAddLogFile(profile);
 							if (profile.AllowMultipleFiles)
 								this.ScheduleReloadingLogs(true, false);
 							else
@@ -3176,7 +3244,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.ScheduleReloadingLogs(false, true);
 					break;
 				case nameof(LogProfile.DataSourceOptions):
-					this.ScheduleReloadingLogs(true, false);
+					(sender as LogProfile)?.Let(profile =>
+					{
+						this.UpdateMaxLogFileCount(profile);
+						this.UpdateCanAddLogFile(profile);
+						this.ScheduleReloadingLogs(true, false);
+					});
 					break;
 				case nameof(LogProfile.DataSourceProvider):
 					if (this.attachedLogDataSourceProvider != null)
@@ -3185,7 +3258,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (this.attachedLogDataSourceProvider != null)
 						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
 					this.DisposeLogReaders(true);
-					this.UpdateDataSourceRelatedStates();
 					this.StartReadingLogs();
 					break;
 				case nameof(LogProfile.Icon):
@@ -3356,6 +3428,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								this.Logger.LogDebug("All logs cleared, remove log file '{logFileInfoFileName}'", logFileInfo.FileName);
 								this.logFileInfoList.Remove(logFileInfo);
 								this.DisposeLogReader(reader, false);
+								this.UpdateCanAddLogFile();
 							}
 						}
 						logFileInfo?.UpdateLogReaderState(reader.State);
@@ -3406,6 +3479,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			base.OnPropertyChanged(property, oldValue, newValue);
 			if (property == AllLogCountProperty)
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
+			else if (property == CanAddLogFileProperty)
+				this.Logger.LogTrace("Can add log file: {canAdd}", newValue);
 			else if (property == CustomTitleProperty)
 			{
 				this.SetValue(HasCustomTitleProperty, newValue != null);
@@ -3448,12 +3523,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(IsBuiltInLogProfileProperty, (newValue as LogProfile)?.IsBuiltIn == true);
 			}
 			else if (property == LogsProperty)
+			{
+				// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 				this.reportLogsTimeInfoAction?.Reschedule();
+				// ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+			}
 			else if (property == MarkedLogsPanelSizeProperty)
 			{
 				if (!this.isRestoringState)
 					this.PersistentState.SetValue<double>(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
 			}
+			else if (property == MaxLogFileCountProperty)
+				this.UpdateCanAddLogFile();
 			else if (property == UriProperty)
 				this.SetValue(HasUriProperty, newValue != null);
 		}
@@ -3713,15 +3794,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(AreLogsSortedByTimestampProperty, false);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
+			this.ResetValue(CanSetIPEndPointProperty);
+			this.ResetValue(CanSetUriProperty);
+			this.ResetValue(CanSetWorkingDirectoryProperty);
 			this.ResetValue(HasLogColorIndicatorProperty);
 			this.ResetValue(HasLogColorIndicatorByFileNameProperty);
-			this.SetValue(IsIPEndPointNeededProperty, false);
-			this.SetValue(IsLogFileNeededProperty, false);
+			this.ResetValue(IsIPEndPointNeededProperty);
+			this.ResetValue(IsIPEndPointSupportedProperty);
+			this.ResetValue(IsLogFileNeededProperty);
 			this.ResetValue(IsLogFileSupportedProperty);
 			this.SetValue(IsReadingLogsContinuouslyProperty, false);
-			this.SetValue(IsUriNeededProperty, false);
-			this.SetValue(IsWorkingDirectoryNeededProperty, false);
+			this.ResetValue(IsUriNeededProperty);
+			this.ResetValue(IsUriSupportedProperty);
+			this.ResetValue(IsWorkingDirectoryNeededProperty);
+			this.ResetValue(IsWorkingDirectorySupportedProperty);
 			this.ResetValue(LastLogReadingPreconditionProperty);
+			this.ResetValue(MaxLogFileCountProperty);
 			this.UpdateIsLogsWritingAvailable(null);
 			this.UpdateValidLogLevels();
 
@@ -3796,8 +3884,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// restore to default source options
 			var defaultDataSourceOptions = profile.DataSourceOptions;
 			var useDefaultDataSourceOptions = false;
+			var isFileNameSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName));
 			var isFileNameRequired = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
-			var isFileNameSet = isFileNameRequired && defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+			var isFileNameSet = isFileNameSupported && defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			if (isFileNameRequired)
 			{
 				this.SetValue(AreFileBasedLogsProperty, true);
@@ -3808,55 +3897,92 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logFileInfoList.Clear();
 					this.logFileInfoList.Add(new LogFileInfoImpl(this, defaultDataSourceOptions.FileName.AsNonNull(), new(), null, null, true));
 					this.canClearLogFiles.Update(false);
-					this.SetValue(IsLogFileNeededProperty, false);
+					this.ResetValue(IsLogFileNeededProperty);
+					this.ResetValue(IsLogFileSupportedProperty);
 				}
 				else
+				{
 					this.SetValue(IsLogFileNeededProperty, true);
+					this.SetValue(IsLogFileSupportedProperty, true);
+				}
 			}
 			else
 			{
 				this.canClearLogFiles.Update(false);
-				this.SetValue(AreFileBasedLogsProperty, false);
+				this.SetValue(AreFileBasedLogsProperty, isFileNameSupported);
 				this.SetValue(IsLogFileNeededProperty, false);
-				this.SetValue(IsLogFileSupportedProperty, dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+				this.SetValue(IsLogFileSupportedProperty, isFileNameSupported);
 			}
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
 				{
 					useDefaultDataSourceOptions = true;
-					this.SetValue(IsIPEndPointNeededProperty, false);
+					this.ResetValue(IsIPEndPointNeededProperty);
+					this.ResetValue(IsIPEndPointSupportedProperty);
 				}
 				else
+				{
 					this.SetValue(IsIPEndPointNeededProperty, true);
+					this.SetValue(IsIPEndPointSupportedProperty, true);
+				}
+				this.SetValue(CanSetIPEndPointProperty, true);
 			}
 			else
+			{
+				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint));
+				this.SetValue(CanSetIPEndPointProperty, isSupported);
 				this.SetValue(IsIPEndPointNeededProperty, false);
+				this.SetValue(IsIPEndPointSupportedProperty, isSupported);
+			}
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
 			{
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
 				{
 					useDefaultDataSourceOptions = true;
-					this.SetValue(IsUriNeededProperty, false);
+					this.ResetValue(IsUriNeededProperty);
+					this.ResetValue(IsUriSupportedProperty);
 				}
 				else
+				{
 					this.SetValue(IsUriNeededProperty, true);
+					this.SetValue(IsUriSupportedProperty, true);
+				}
+				this.SetValue(CanSetUriProperty, true);
 			}
 			else
+			{
+				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri));
+				this.SetValue(CanSetUriProperty, isSupported);
 				this.SetValue(IsUriNeededProperty, false);
+				this.SetValue(IsUriSupportedProperty, isSupported);
+			}
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
-				|| profile.IsWorkingDirectoryNeeded)
+			    || profile.IsWorkingDirectoryNeeded)
 			{
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 				{
 					useDefaultDataSourceOptions = true;
-					this.SetValue(IsWorkingDirectoryNeededProperty, false);
+					this.ResetValue(IsWorkingDirectoryNeededProperty);
+					this.ResetValue(IsWorkingDirectorySupportedProperty);
 				}
 				else
+				{
 					this.SetValue(IsWorkingDirectoryNeededProperty, true);
+					this.SetValue(IsWorkingDirectorySupportedProperty, true);
+				}
+				this.SetValue(CanSetWorkingDirectoryProperty, true);
 			}
 			else
+			{
+				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory));
+				this.SetValue(CanSetWorkingDirectoryProperty, isSupported);
 				this.SetValue(IsWorkingDirectoryNeededProperty, false);
+				this.SetValue(IsWorkingDirectorySupportedProperty, isSupported);
+			}
+
+			// update state
+			this.UpdateCanAddLogFile(profile);
 
 			// restore
 			if (useDefaultDataSourceOptions)
@@ -3914,6 +4040,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 			this.savedLogReaderOptions.Clear();
+			
+			// update state
+			this.UpdateCanAddLogFile();
 
 			this.Logger.LogWarning("Complete restoring {logReaderCount} log reader(s)", this.logReaders.Count);
 		}
@@ -4025,6 +4154,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					this.SetValue(MarkedLogsPanelSizeProperty, doubleValue);
 				}
+				
+				// update state
+				this.UpdateCanAddLogFile();
 
 				// raise event
 				this.RestoringState?.Invoke(jsonState);
@@ -4480,12 +4612,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(HasLogColorIndicatorByFileNameProperty, profile.ColorIndicator == LogColorIndicator.FileName);
 			this.ResetValue(LastLogReadingPreconditionProperty);
 
-			// update state
-			this.UpdateDataSourceRelatedStates();
-
 			// start reading logs
-			if (startReadingLogs)
-				this.StartReadingLogs();
+			this.StartReadingLogs(!startReadingLogs);
 
 			// update title
 			this.updateTitleAndIconAction.Schedule();
@@ -4762,7 +4890,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Start reading logs if available.
-		void StartReadingLogs()
+		void StartReadingLogs(bool updateStateOnly = false)
 		{
 			// check state
 			var profile = this.LogProfile;
@@ -4770,68 +4898,122 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			if (this.logReaders.IsNotEmpty())
 				return;
+			
+			// update state
+			this.UpdateMaxLogFileCount(profile);
 
-			// start reading or wait for more actions
+			// check log file
 			var canStartReading = true;
 			var dataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
+			var isFileNameSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName));
+			var isFileNameRequired = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
+			var isFileNameSet = isFileNameSupported && dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+			if (isFileNameRequired)
 			{
-				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				this.SetValue(AreFileBasedLogsProperty, true);
+				if (isFileNameSet)
 				{
 					this.ResetValue(IsLogFileNeededProperty);
+					this.ResetValue(IsLogFileSupportedProperty);
 					this.logFileInfoList.Add(new LogFileInfoImpl(this, dataSourceOptions.FileName.AsNonNull(), new(), null, null, true));
 				}
 				else
 				{
 					this.Logger.LogDebug("No file name specified, waiting for adding file");
 					this.SetValue(IsLogFileNeededProperty, true);
+					this.SetValue(IsLogFileSupportedProperty, true);
 					canStartReading = false;
 				}
 			}
 			else
+			{
+				this.SetValue(AreFileBasedLogsProperty, isFileNameSupported);
+				this.SetValue(IsLogFileSupportedProperty, isFileNameSupported);
 				this.ResetValue(IsLogFileNeededProperty);
+			}
+			
+			// check IP end point
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+				{
 					this.ResetValue(IsIPEndPointNeededProperty);
+					this.ResetValue(IsIPEndPointSupportedProperty);
+				}
 				else
 				{
 					this.Logger.LogDebug("No IP endpoint specified, waiting for setting IP endpoint");
 					this.SetValue(IsIPEndPointNeededProperty, true);
+					this.SetValue(IsIPEndPointSupportedProperty, true);
 					canStartReading = false;
 				}
+				this.SetValue(CanSetIPEndPointProperty, true);
 			}
 			else
+			{
+				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint));
+				this.SetValue(CanSetIPEndPointProperty, isSupported);
 				this.ResetValue(IsIPEndPointNeededProperty);
+				this.SetValue(IsIPEndPointSupportedProperty, isSupported);
+			}
+			
+			// check URI
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
 			{
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+				{
 					this.ResetValue(IsUriNeededProperty);
+					this.ResetValue(IsUriSupportedProperty);
+				}
 				else
 				{
 					this.Logger.LogDebug("Need URI, waiting for setting URI");
 					this.SetValue(IsUriNeededProperty, true);
+					this.SetValue(IsUriSupportedProperty, true);
 					canStartReading = false;
 				}
+				this.SetValue(CanSetUriProperty, true);
 			}
 			else
+			{
+				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri));
+				this.SetValue(CanSetUriProperty, isSupported);
 				this.ResetValue(IsUriNeededProperty);
+				this.SetValue(IsUriSupportedProperty, isSupported);
+			}
+			
+			// check working directory
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
-				|| profile.IsWorkingDirectoryNeeded)
+			    || profile.IsWorkingDirectoryNeeded)
 			{
 				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+				{
 					this.ResetValue(IsWorkingDirectoryNeededProperty);
+					this.ResetValue(IsWorkingDirectorySupportedProperty);
+				}
 				else
 				{
 					this.Logger.LogDebug("Need working directory, waiting for setting working directory");
 					this.SetValue(IsWorkingDirectoryNeededProperty, true);
+					this.SetValue(IsWorkingDirectorySupportedProperty, true);
 					canStartReading = false;
 				}
+				this.SetValue(CanSetWorkingDirectoryProperty, true);
 			}
 			else
+			{
+				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory));
+				this.SetValue(CanSetWorkingDirectoryProperty, isSupported);
 				this.ResetValue(IsWorkingDirectoryNeededProperty);
-			if (canStartReading)
+				this.SetValue(IsWorkingDirectorySupportedProperty, isSupported);
+			}
+			
+			// update state
+			this.UpdateCanAddLogFile(profile);
+			
+			// start reading
+			if (canStartReading && !updateStateOnly)
 			{
 				this.Logger.LogDebug("Start reading logs for source '{dataSourceProviderName}'", dataSourceProvider.Name);
 				var dataSource = this.CreateLogDataSourceOrNull(dataSourceProvider, dataSourceOptions);
@@ -4841,7 +5023,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						var fileName = dataSourceOptions.FileName;
 						if (!string.IsNullOrEmpty(fileName))
+						{
 							this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+							this.UpdateCanAddLogFile(profile);
+						}
 					}
 				}
 				else
@@ -4960,24 +5145,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>Type of parameter is <see cref="IEnumerable{DisplayableLog}"/>.</remarks>
 		public ICommand UnmarkLogsCommand { get; }
-
-
-		// Update log data source related states.
-		void UpdateDataSourceRelatedStates()
+		
+		
+		// Check whether log file can be added or not.
+		void UpdateCanAddLogFile()
 		{
-			var dataSourceProvider = this.LogProfile?.DataSourceProvider;
-			if (dataSourceProvider == null)
+			if (this.IsDisposed)
 				return;
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
-			{
-				this.SetValue(AreFileBasedLogsProperty, true);
-				this.SetValue(IsLogFileSupportedProperty, true);
-			}
+			var profile = this.LogProfile;
+			if (profile is not null)
+				this.UpdateCanAddLogFile(profile);
 			else
+				this.ResetValue(CanAddLogFileProperty);
+		}
+		void UpdateCanAddLogFile(LogProfile profile)
+		{
+			if (this.IsDisposed)
+				return;
+			var dataSourceProvider = profile.DataSourceProvider;
+			if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)))
 			{
-				this.ResetValue(AreFileBasedLogsProperty);
-				this.SetValue(IsLogFileSupportedProperty, dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+				this.ResetValue(CanAddLogFileProperty);
+				return;
 			}
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+			{
+				this.ResetValue(CanAddLogFileProperty);
+				return;
+			}
+			this.SetValue(CanAddLogFileProperty, this.logFileInfoList.Count < this.GetValue(MaxLogFileCountProperty));
 		}
 
 
@@ -5048,6 +5245,64 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)));
 				this.canSaveLogs.Update(this.Application is App && !this.IsSavingLogs && this.AllLogCount > 0);
 			}
+		}
+
+
+		// Update maximum log file count according to current state.
+		void UpdateMaxLogFileCount(LogProfile profile)
+		{
+			// check state
+			if (this.IsDisposed)
+				return;
+			
+			// get state
+			var dataSourceOptions = profile.DataSourceOptions;
+			var dataSourceProvider = profile.DataSourceProvider;
+			var isFileNameSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName));
+			var isFileNameSet = isFileNameSupported && dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+			var allowMultipleFiles = false;
+			var maxLogFileCount = 0;
+			
+			// check file name
+			if (isFileNameSupported)
+			{
+				allowMultipleFiles = !isFileNameSet && profile.AllowMultipleFiles;
+				maxLogFileCount = allowMultipleFiles ? DisplayableLogGroup.MaxLogReaderCount : 1;
+			}
+
+			// check IP end point
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			{
+				if (allowMultipleFiles)
+					--maxLogFileCount;
+			}
+			else if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)) && allowMultipleFiles)
+				--maxLogFileCount;
+			
+			// check URI
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			{
+				if (allowMultipleFiles)
+					--maxLogFileCount;
+			}
+			else if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)) && allowMultipleFiles)
+				--maxLogFileCount;
+
+			// check working directory
+			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
+			    || profile.IsWorkingDirectoryNeeded)
+			{
+				if (allowMultipleFiles)
+					--maxLogFileCount;
+			}
+			else if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)) && allowMultipleFiles)
+				--maxLogFileCount;
+
+			// update state
+			if (maxLogFileCount < 0)
+				maxLogFileCount = 0;
+			this.Logger.LogTrace("Max log file count: {count}", maxLogFileCount);
+			this.SetValue(MaxLogFileCountProperty, maxLogFileCount);
 		}
 
 
