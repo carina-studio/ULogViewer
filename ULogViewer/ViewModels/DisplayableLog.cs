@@ -25,13 +25,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	{
 		// Constants (Data offset).
 		const int ActiveAnalysisResultTypeDataOffset = 0; // byte
-		const int GroupIdDataOffset = 1; // uint
-		const int IsDisposedDataOffset = 5; // byte
-		const int MarkedColorDataOffset = 6; // byte
-		const int MemorySizeDataOffset = 7; // uint
-		const int MessageLineCountDataOffset = 11; // byte
-		const int SummaryLineCountDataOffset = 12; // byte
-		const int ExtraLineCountsDataOffset = 13; // byte[], should be last one
+		const int LogReaderLocalIdDataOffset = 1; // byte
+		const int GroupIdDataOffset = 2; // uint
+		const int IsDisposedDataOffset = 6; // byte
+		const int MarkedColorDataOffset = 7; // byte
+		const int MemorySizeDataOffset = 8; // uint
+		const int MessageLineCountDataOffset = 12; // byte
+		const int SummaryLineCountDataOffset = 13; // byte
+		const int ExtraLineCountsDataOffset = 14; // byte[], should be last one
 
 
 		// Static fields.
@@ -93,7 +94,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			writeUInt32Function(data.AsSpan(GroupIdDataOffset), group.Id);
 			this.Log = log;
-			this.LogReader = reader;
 
 			// estimate memory usage
 			var memorySize = log.MemorySize 
@@ -102,7 +102,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			writeUInt32Function(data.AsSpan(MemorySizeDataOffset), (uint)memorySize);
 
 			// notify group
-			group.OnDisplayableLogCreated(this);
+			group.OnDisplayableLogCreated(this, reader, out var readerLocalId);
+			data[LogReaderLocalIdDataOffset] = readerLocalId;
 		}
 
 
@@ -327,6 +328,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Previous = null;
 				this.Next = null;
 			}
+			this.data[LogReaderLocalIdDataOffset] = 0;
 		}
 
 
@@ -974,7 +976,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Get log reader which reads the log.
 		/// </summary>
-		public LogReader LogReader { get; }
+		public LogReader LogReader
+		{
+			get
+			{
+				var localId = this.data[LogReaderLocalIdDataOffset];
+				if (localId != 0 && this.GroupOrNull?.TryGetLogReaderByLocalId(localId, out var reader) == true)
+					return reader;
+				throw new InvalidOperationException("No log reader which is related to the log.");
+			}
+		}
+
+
+		/// <summary>
+		/// Local ID of log reader which reads the log.
+		/// </summary>
+		internal byte LogReaderLocalId => this.data[LogReaderLocalIdDataOffset];
 
 
 		/// <summary>

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -27,6 +28,23 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject
 	{
+		// Control block of log reader.
+		class LogReaderInfo
+		{
+			// Fields.
+			public int DisplayableLogCount;
+			public readonly byte LocalId;
+			public readonly LogReader LogReader;
+
+			// Constructor.
+			public LogReaderInfo(LogReader reader, byte localId)
+			{
+				this.LocalId = localId;
+				this.LogReader = reader;
+			}
+		}
+		
+		
 		// Constants.
 		const int RecentlyUsedColorIndicatorColorCount = 8;
 
@@ -35,6 +53,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static readonly long BaseMemorySize = Memory.EstimateInstanceSize<DisplayableLogGroup>();
 		static Regex? ExtraCaptureRegex;
 		static readonly SortedList<uint, DisplayableLogGroup> InstancesById = new();
+		static readonly long LogReaderInfoKeyValuePairMemorySize = Memory.EstimateInstanceSize<KeyValuePair<byte, LogReaderInfo>>();
+		static readonly long LogReaderInfoMemorySize = Memory.EstimateInstanceSize<LogReaderInfo>();
 		static uint NextId = 1;
 		static Regex? TextFilterBracketAndSeparatorRegex;
 
@@ -48,8 +68,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Dictionary<string, IBrush> levelBackgroundBrushes = new();
 		readonly Dictionary<string, IBrush> levelForegroundBrushes = new();
 		readonly ILogger logger;
+		readonly SortedList<byte, LogReaderInfo> logReaderInfosByLocalId = new();
+		readonly Dictionary<LogReader, LogReaderInfo> logReaderInfosByLogReader = new();
 		int maxDisplayLineCount;
-		long memorySize = BaseMemorySize;
+		long memorySize = BaseMemorySize 
+		                  + (Memory.EstimateCollectionInstanceSize(LogReaderInfoKeyValuePairMemorySize, 0) << 1);
 		readonly Random random = new();
 		readonly Queue<Color> recentlyUsedColorIndicatorColors = new(RecentlyUsedColorIndicatorColorCount);
 		int? selectedProcessId;
@@ -348,6 +371,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// stop watch
 			this.stopwatch.Stop();
+			
+			// clear log reader info
+			this.logReaderInfosByLogReader.Clear();
+			this.logReaderInfosByLocalId.Clear();
 		}
 
 
@@ -590,14 +617,54 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Called when new <see cref="DisplayableLog"/> has been created.
 		/// </summary>
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
-		internal void OnDisplayableLogCreated(DisplayableLog log)
+		/// <param name="reader">Log reader which reads the log.</param>
+		/// <param name="readerLocalId">Local ID of log reader.</param>
+		internal void OnDisplayableLogCreated(DisplayableLog log, LogReader reader, out byte readerLocalId)
 		{
+			// add to list
 			if (this.displayableLogsHead != null)
 			{
 				log.Next = this.displayableLogsHead;
 				this.displayableLogsHead.Previous = log;
 			}
 			this.displayableLogsHead = log;
+			
+			// create log reader info if needed
+			if (this.logReaderInfosByLogReader.TryGetValue(reader, out var readerInfo))
+				readerLocalId = readerInfo.LocalId;
+			else
+			{
+				var isReaderLocalIdFound = false;
+				var candidateReaderLocalId = (byte)(this.logReaderInfosByLogReader.Count + 1);
+				if (this.logReaderInfosByLocalId.Count < 255)
+				{
+					for (var i = 255; i > 0; --i)
+					{
+						if (!this.logReaderInfosByLocalId.ContainsKey(candidateReaderLocalId))
+						{
+							isReaderLocalIdFound = true;
+							break;
+						}
+						unchecked
+						{
+							++candidateReaderLocalId;
+							if (candidateReaderLocalId == 0)
+								candidateReaderLocalId = 1;
+						}
+					}
+				}
+				if (!isReaderLocalIdFound)
+					throw new NotSupportedException($"Too many log readers in the displayable log group '{this.Id}'.");
+				this.logger.LogTrace("Add log reader '{readerId}' with local ID '{localId}'", reader.Id, candidateReaderLocalId);
+				readerInfo = new LogReaderInfo(reader, candidateReaderLocalId);
+				readerLocalId = candidateReaderLocalId;
+				this.logReaderInfosByLocalId.Add(candidateReaderLocalId, readerInfo);
+				this.logReaderInfosByLogReader.Add(reader, readerInfo);
+				Interlocked.Add(ref this.memorySize, LogReaderInfoKeyValuePairMemorySize << 1);
+			}
+			++readerInfo.DisplayableLogCount;
+			
+			// update memory size
 			Interlocked.Add(ref this.memorySize, log.MemorySize);
 		}
 
@@ -608,6 +675,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="log"><see cref="DisplayableLog"/>.</param>
 		internal void OnDisplayableLogDisposed(DisplayableLog log)
 		{
+			// remove from list
 			if (log.Previous != null)
 				log.Previous.Next = log.Next;
 			if (log.Next != null)
@@ -616,6 +684,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.displayableLogsHead = log.Next;
 			log.Next = null;
 			log.Previous = null;
+			
+			// remove from log reader info
+			if (this.logReaderInfosByLocalId.TryGetValue(log.LogReaderLocalId, out var readerInfo))
+			{
+				--readerInfo.DisplayableLogCount;
+				if (readerInfo.DisplayableLogCount <= 0)
+				{
+					this.logger.LogTrace("Remove log reader '{readerId}' with local ID '{localId}'", readerInfo.LogReader.Id, readerInfo.LocalId);
+					this.logReaderInfosByLocalId.Remove(readerInfo.LocalId);
+					this.logReaderInfosByLogReader.Remove(readerInfo.LogReader);
+					Interlocked.Add(ref this.memorySize, -(LogReaderInfoKeyValuePairMemorySize << 1));
+				}
+			}
+			
+			// update memory size
 			Interlocked.Add(ref this.memorySize, -log.MemorySize);
 		}
 
@@ -779,6 +862,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns>True if instance found.</returns>
 		internal static bool TryGetInstanceById(uint id, [NotNullWhen(true)] out DisplayableLogGroup? group) =>
 			InstancesById.TryGetValue(id, out group);
+
+
+		/// <summary>
+		/// Try getting log reader by given local ID.
+		/// </summary>
+		/// <param name="localId">Local ID of log reader.</param>
+		/// <param name="reader">Log reader.</param>
+		/// <returns>True if log reader got successfully.</returns>
+		internal bool TryGetLogReaderByLocalId(byte localId, [NotNullWhen(true)] out LogReader? reader)
+		{
+			if (this.logReaderInfosByLocalId.TryGetValue(localId, out var readerInfo))
+			{
+				reader = readerInfo.LogReader;
+				return true;
+			}
+			reader = null;
+			return false;
+		}
 
 
 		// Update color indicator brushes.
