@@ -294,7 +294,10 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						var key = (ushort)((stringSpan[0] << 8) | (memory.Length == 1 ? 0 : stringSpan[1]));
 						if (SharedSmallStringSources.TryGetValue(key, out var sharedStringSource))
+						{
+							fromCache = true;
 							return sharedStringSource;
+						}
 						sharedStringSource = new SmallStringSource(stringSpan);
 						if (SharedSmallStringSources.TryAdd(key, sharedStringSource))
 							Interlocked.Add(ref SharedSmallStringSourcesByteCount, sharedStringSource.ByteCount);
@@ -326,7 +329,10 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						var key = (ushort)((stringSpan[0] << 8) | (s.Length == 1 ? 0 : stringSpan[1]));
 						if (SharedSmallStringSources.TryGetValue(key, out var sharedStringSource))
+						{
+							fromCache = true;
 							return sharedStringSource;
+						}
 						sharedStringSource = new SmallStringSource(stringSpan);
 						if (SharedSmallStringSources.TryAdd(key, sharedStringSource))
 							Interlocked.Add(ref SharedSmallStringSourcesByteCount, sharedStringSource.ByteCount);
@@ -351,7 +357,10 @@ namespace CarinaStudio.ULogViewer.Logs
 				
 				// add string source to cache
 				if (cacheKey is not null && stringCache is not null)
+				{
+					fromCache = true;
 					stringCache.Add(cacheKey, stringSource!);
+				}
 
 				// complete
 				return stringSource;
