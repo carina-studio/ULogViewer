@@ -1223,6 +1223,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
+	<sys:String x:Key="String/SessionView.StopReadingLogs">Abort reading logs</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Categories of timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">Tools</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>

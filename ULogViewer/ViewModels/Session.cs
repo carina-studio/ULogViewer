@@ -78,6 +78,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> CanSetWorkingDirectoryProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetWorkingDirectory));
 		/// <summary>
+		/// Property of <see cref="CanStopReadingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanStopReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(CanStopReadingLogs));
+		/// <summary>
 		/// Property of <see cref="CustomTitle"/>.
 		/// </summary>
 		public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
@@ -849,6 +853,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction saveMarkedLogsAction;
 		readonly ScheduledAction selectLogsToReportActions;
 		readonly List<MarkedLogInfo> unmatchedMarkedLogInfos = new();
+		readonly ScheduledAction updateCanStopReadingLogsAction;
 		readonly ScheduledAction updateIsReadingLogsAction;
 		readonly ScheduledAction updateIsRemovingLogFilesAction;
 		readonly ScheduledAction updateIsProcessingLogsAction;
@@ -893,6 +898,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(CanSetWorkingDirectoryProperty));
 			this.ShowAllLogsTemporarilyCommand = new Command(this.ShowAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.ShowMarkedLogsTemporarilyCommand = new Command(this.ShowMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
+			this.StopReadingLogsCommand = new Command(this.StopReadingLogs, this.GetValueAsObservable(CanStopReadingLogsProperty));
 			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
@@ -1027,7 +1033,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.reloadLogsFullyAction= new(() => this.ReloadLogs(true, true));
 			this.reloadLogsWithRecreatingLogReadersAction = new(() => this.ReloadLogs(true, false));
 			this.reloadLogsWithUpdatingVisPropAction = new(() => this.ReloadLogs(false, true));
-			this.reportLogsTimeInfoAction = new ScheduledAction(() =>
+			this.reportLogsTimeInfoAction = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
@@ -1096,13 +1102,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(LogsDurationEndingStringProperty, null);
 				}
 			});
-			this.saveMarkedLogsAction = new ScheduledAction(() =>
+			this.saveMarkedLogsAction = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
 				this.SaveMarkedLogs();
 			});
-			this.selectLogsToReportActions = new ScheduledAction(() =>
+			this.selectLogsToReportActions = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
@@ -1135,7 +1141,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					TriggerGC();
 				}
 			});
-			this.updateIsReadingLogsAction = new ScheduledAction(() =>
+			this.updateCanStopReadingLogsAction = new(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				foreach (var reader in this.logReaders)
+				{
+					if (reader.IsContinuousReading)
+						continue;
+					switch (reader.State)
+					{
+						case LogReaderState.Starting: 
+						case LogReaderState.ReadingLogs:
+						case LogReaderState.Paused:
+							this.SetValue(CanStopReadingLogsProperty, true);
+							return;
+					}
+				}
+				this.ResetValue(CanStopReadingLogsProperty);
+			});
+			this.updateIsReadingLogsAction = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
@@ -1196,7 +1221,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsRemovingLogFilesProperty, isRemovingLogFiles);
 				}
 			});
-			this.updateIsProcessingLogsAction = new ScheduledAction(() =>
+			this.updateIsProcessingLogsAction = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
@@ -1213,7 +1238,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					this.SetValue(IsProcessingLogsProperty, false);
 			});
-			this.updateTitleAndIconAction = new ScheduledAction(() =>
+			this.updateTitleAndIconAction = new(() =>
 			{
 				// check state
 				if (this.IsDisposed)
@@ -1524,6 +1549,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether working directory can be set to session or not.
 		/// </summary>
 		public bool CanSetWorkingDirectory => this.GetValue(CanSetWorkingDirectoryProperty);
+		
+		
+		/// <summary>
+		/// Check whether logs reading can be stopped or not.
+		/// </summary>
+		public bool CanStopReadingLogs => this.GetValue(CanStopReadingLogsProperty);
 
 
 		// Clear all log files.
@@ -2253,6 +2284,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.canMarkUnmarkLogs.Update(false);
 					this.canPauseResumeLogsReading.Update(false);
 					this.canReloadLogs.Update(false);
+					this.updateCanStopReadingLogsAction.Execute();
 					this.SetValue(HasLogFilesProperty, false);
 					this.SetValue(HasLogReadersProperty, false);
 					this.SetValue(HasWorkingDirectoryProperty, false);
@@ -3433,6 +3465,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						}
 						logFileInfo?.UpdateLogReaderState(reader.State);
 					});
+					this.updateCanStopReadingLogsAction.Schedule();
 					this.updateIsReadingLogsAction.Schedule();
 					this.updateIsRemovingLogFilesAction.Schedule();
 					break;
@@ -5038,11 +5071,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Stop all non-continuous logs reading.
+		void StopReadingLogs()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			
+			// stop reading
+			this.Logger.LogWarning("Stop reading logs");
+			foreach (var reader in this.logReaders)
+			{
+				if (!reader.IsContinuousReading)
+					reader.Stop();
+			}
+		}
+		
+		
+		/// <summary>
+		/// Command to stop logs reading.
+		/// </summary>
+		public ICommand StopReadingLogsCommand { get; }
+
+
 		/// <summary>
 		/// Get title of session.
 		/// </summary>
-		public string? Title => 
-			this.GetValue(TitleProperty);
+		public string? Title => this.GetValue(TitleProperty);
 
 
 		// Enable or disable showing all logs temporarily.

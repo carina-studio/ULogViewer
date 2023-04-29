@@ -581,9 +581,14 @@
 						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete}"/>
 						</Button>
+						
+						<!-- Stop reading logs -->
+						<Button Classes="ToolBar_Button" Command="{Binding StopReadingLogsCommand}" IsVisible="{Binding CanStopReadingLogs}" ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
+						</Button>
 
 						<!-- Reload logs -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ReloadLogsCommand}" IsVisible="{Binding !CanStopReadingLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 

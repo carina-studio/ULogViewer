@@ -1187,7 +1187,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">查看日志属性…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在文件管理中开启工作目录</sys:String>
-	<sys:String x:Key="String/SessionView.SidePanel">侧边面板</sys:String>
+	<sys:String x:Key="String/SessionView.StopReadingLogs">中止日志读取</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">工具</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">请拖放单个目录。</sys:String>
