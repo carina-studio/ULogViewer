@@ -35,7 +35,7 @@ class LogCategorizingViewModel : SessionComponent
                 return Session.MinSidePanelSize;
             return it;
         }, 
-        validate: it => double.IsFinite(it));
+        validate: double.IsFinite);
     
 
     // Static fields.
@@ -227,7 +227,7 @@ class LogCategorizingViewModel : SessionComponent
             if ((element.TryGetProperty(nameof(TimestampCategoriesPanelSize), out jsonValue) // For upgrade case
                 || element.TryGetProperty($"LogCategorizing.{nameof(TimestampCategoriesPanelSize)}", out jsonValue))
                     && jsonValue.TryGetDouble(out var doubleValue)
-                    && TimestampCategoriesPanelSizeProperty.ValidationFunction(doubleValue) == true)
+                    && TimestampCategoriesPanelSizeProperty.ValidationFunction(doubleValue))
             {
                 this.SetValue(TimestampCategoriesPanelSizeProperty, doubleValue);
             }
@@ -254,7 +254,7 @@ class LogCategorizingViewModel : SessionComponent
     /// <summary>
     /// Get list of log categories by timestamp.
     /// </summary>
-    public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories { get => this.GetValue(TimestampCategoriesProperty); }
+    public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories => this.GetValue(TimestampCategoriesProperty);
 
 
     /// <summary>

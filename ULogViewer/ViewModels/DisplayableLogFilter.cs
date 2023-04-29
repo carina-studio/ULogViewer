@@ -27,7 +27,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         public bool HasTextRegex;
         public bool IncludeMarkedLogs;
         public volatile bool IsTextRegexListReady;
-        public Logs.LogLevel Level;
+        public LogLevel Level;
         public IList<Func<DisplayableLog, IStringSource?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, IStringSource?>>();
         public int? ProcessId;
         public int? ThreadId;
@@ -45,7 +45,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     readonly SortedObservableList<DisplayableLog> filteredLogs;
     IList<DisplayableLogProperty> filteringLogProperties = Array.Empty<DisplayableLogProperty>();
     bool includeMarkedLogs = true;
-    Logs.LogLevel level = Logs.LogLevel.Undefined;
+    LogLevel level = LogLevel.Undefined;
     int? processId;
     IList<Regex> textRegexList = Array.Empty<Regex>();
     int? threadId;
@@ -130,7 +130,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                 isProcessingNeeded = false;
         }
         if (!isProcessingNeeded)
-            isProcessingNeeded = (this.level != Logs.LogLevel.Undefined);
+            isProcessingNeeded = (this.level != LogLevel.Undefined);
         if (!isProcessingNeeded)
             isProcessingNeeded = (this.processId != null);
         if (!isProcessingNeeded)
@@ -225,7 +225,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     /// <summary>
     /// Get or set level of log to be filtered.
     /// </summary>
-    public Logs.LogLevel Level
+    public LogLevel Level
     {
         get => this.level;
         set
