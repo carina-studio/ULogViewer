@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarinaStudio.ULogViewer.Text;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -14,12 +15,12 @@ namespace CarinaStudio.ULogViewer
 		class LogHolder
 		{
 			public readonly long Index;
-			public readonly CompressedString? Log;
+			public readonly CompressedStringSource? Log;
 			public volatile LogHolder? Next;
 			public LogHolder(long index, string log)
 			{
 				this.Index = index;
-				this.Log = CompressedString.Create(log, CompressedString.Level.Optimal);
+				this.Log = new(log);
 			}
 		}
 
@@ -32,7 +33,7 @@ namespace CarinaStudio.ULogViewer
 			public volatile LogHolder? CurrentLogHolder;
 
 			// Implementations.
-			public string Current { get => this.current ?? throw new InvalidOperationException(); }
+			public string Current => this.current ?? throw new InvalidOperationException();
 			public void Dispose()
 			{
 				this.CurrentLogHolder = null;
@@ -131,7 +132,9 @@ namespace CarinaStudio.ULogViewer
 						logHolderListTail = null;
 					logHolder.Next = null;
 					logHolder = nextLogHolder;
+					// ReSharper disable NonAtomicCompoundOperator
 					--logHolderCount;
+					// ReSharper restore NonAtomicCompoundOperator
 					++dropCount;
 				}
 			}
@@ -159,7 +162,7 @@ namespace CarinaStudio.ULogViewer
 			var messages = Global.Run(() =>
 			{
 				if (string.IsNullOrEmpty(exception))
-					return new string[] { message };
+					return new[] { message };
 				message = $"{message} {exception}";
 				return message.Split('\n');
 			});
@@ -169,12 +172,15 @@ namespace CarinaStudio.ULogViewer
 				{
 					var log = $"{timestamp} {pid} {tid} {level} {logger}: {messages[i]}";
 					var logHolder = new LogHolder(nextLogHolderIndex++, log);
-					if (logHolderListHead == null)
-						logHolderListHead = logHolder;
+					// ReSharper disable NonAtomicCompoundOperator
+					logHolderListHead ??= logHolder;
+					// ReSharper restore NonAtomicCompoundOperator
 					if (logHolderListTail != null)
 						logHolderListTail.Next = logHolder;
 					logHolderListTail = logHolder;
+					// ReSharper disable NonAtomicCompoundOperator
 					++logHolderCount;
+					// ReSharper restore NonAtomicCompoundOperator
 				}
 				Monitor.PulseAll(logHolderLock);
 				DropLogHolders();
