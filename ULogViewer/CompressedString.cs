@@ -120,18 +120,30 @@ namespace CarinaStudio.ULogViewer
 				return str;
 			if (this.data is not byte[] bytes)
 				return "";
+			var utf8ByteCount = (int)(this.flags & FLAGS_UTF8_ENCODING_SIZE_MASK);
 			if ((this.flags & FLAGS_COMPRESSED_MASK) != 0)
 			{
 				DecompressionMemoryStream ??= new();
 				DecompressionMemoryStream.Write(bytes, 0, bytes.Length);
 				DecompressionMemoryStream.Position = 0;
-				var utf8Bytes = new byte[(int)(this.flags & FLAGS_UTF8_ENCODING_SIZE_MASK)];
 				using (var stream = new DeflateStream(DecompressionMemoryStream, CompressionMode.Decompress, true))
-					stream.Read(utf8Bytes, 0, utf8Bytes.Length);
+				{
+					var bufferSize = utf8ByteCount;
+					var buffer = new byte[bufferSize];
+					var totalReadCount = stream.Read(buffer);
+					while (totalReadCount < utf8ByteCount && bufferSize < (utf8ByteCount << 1) && bufferSize + 64 < int.MaxValue)
+					{
+						bufferSize += 64;
+						var newBuffer = new byte[bufferSize];
+						Array.Copy(buffer, newBuffer, totalReadCount);
+						totalReadCount += stream.Read(newBuffer, totalReadCount, bufferSize - totalReadCount);
+						buffer = newBuffer;
+					}
+					bytes = buffer;
+				}
 				DecompressionMemoryStream.SetLength(0);
-				return Encoding.UTF8.GetString(utf8Bytes);
 			}
-			return Encoding.UTF8.GetString(bytes);
+			return Encoding.UTF8.GetString(bytes, 0, utf8ByteCount);
 		}
 	}
 }
