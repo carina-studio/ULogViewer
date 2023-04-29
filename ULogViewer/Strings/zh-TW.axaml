@@ -1071,6 +1071,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
+	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">高度記憶體使用</sys:String>
+	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">因為高度記憶體使用而暫時停用日誌讀取</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">忽略文字篩選的大小寫</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時 {0}</sys:String>
@@ -1116,6 +1118,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日誌時間/最小日誌時距 (點一下以選取該日誌)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日誌篩選進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此分頁日誌記憶體使用量</sys:String>
+	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">因為高度記憶體使用 ({0})，日誌讀取已暫時停用。</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">日誌顯示模式</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>

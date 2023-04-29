@@ -592,18 +592,9 @@
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
-						<!-- Pause/resume -->
+						<!-- Pause/Resume -->
 						<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
-							<Image Classes="Icon">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Icon.PlayMedia}"/>
-									</iaCore:DataTriggerBehavior>
-									<iaCore:DataTriggerBehavior Binding="{Binding IsLogsReadingPaused}" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Source" Value="{StaticResource Image/Icon.PauseMedia}"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-							</Image>
+							<Image Classes="Icon" Source="{Binding IsLogsReadingPaused, Converter={x:Static appControls:SessionView.PauseResumeReadingLogsIconConverter}, FallbackValue=False}"/>
 						</Button>
 
 					</StackPanel>
@@ -971,29 +962,12 @@
 		</Grid>
 
 		<!-- Status bar -->
-		<Border Background="{StaticResource Brush/SessionView.StatusBar.Background.Inactive}" Classes="StatusBar" Grid.ColumnSpan="4" Grid.Row="2">
-			<ia:Interaction.Behaviors>
-				<iaCore:DataTriggerBehavior Binding="{Binding #root.StatusBarState}" Value="None">
-					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush/SessionView.StatusBar.Background.Inactive}"/>
-				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding #root.StatusBarState}" Value="Active">
-					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush/StatusBar.Background}"/>
-				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding #root.StatusBarState}" Value="Error">
-					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush/SessionView.StatusBar.Background.Error}"/>
-				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding #root.StatusBarState}" Value="Paused">
-					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush/SessionView.StatusBar.Background.Paused}"/>
-				</iaCore:DataTriggerBehavior>
-				<iaCore:DataTriggerBehavior Binding="{Binding #root.StatusBarState}" Value="Warning">
-					<iaCore:ChangePropertyAction PropertyName="Background" Value="{StaticResource Brush/SessionView.StatusBar.Background.Warning}"/>
-				</iaCore:DataTriggerBehavior>
-			</ia:Interaction.Behaviors>
+		<Border x:CompileBindings="False" Classes="StatusBar" Background="{Binding #root.StatusBarState, Converter={x:Static appControls:SessionView.StatusBarBackgroundConverter}}" Grid.ColumnSpan="4" Grid.Row="2">
 			
 			<DockPanel>
 
 				<!-- Right part -->
-				<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" DockPanel.Dock="Right">
+				<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" DockPanel.Dock="Right">
 
 					<!-- Filtering progress -->
 					<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding LogFiltering.IsFiltering}" Orientation="Horizontal">
@@ -1100,9 +1074,20 @@
 							</StackPanel>
 						</ToggleButton>
 					</StackPanel>
+					
+					<!-- High memory usage -->
+					<StackPanel Grid.Column="6" IsVisible="{Binding IsHighMemoryUsageToStopReadingLogs}" Orientation="Horizontal">
+						<Separator Classes="StatusBar_Separator"/>
+						<Image Classes="StatusBar_IconWithText">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
+							</DrawingImage>
+						</Image>
+						<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{DynamicResource String/SessionView.HighMemoryUsageToStopReadingLogs}" ToolTip.Tip="{DynamicResource String/SessionView.HighMemoryUsageToStopReadingLogs.Description}"/>
+					</StackPanel>
 
 					<!-- Error message -->
-					<StackPanel Grid.Column="5" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+					<StackPanel Grid.Column="6" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
@@ -1111,7 +1096,7 @@
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 					</StackPanel>
-					<StackPanel Grid.Column="5" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+					<StackPanel Grid.Column="6" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
@@ -1121,7 +1106,7 @@
 					</StackPanel>
 
 					<!-- Process info -->
-					<StackPanel Grid.Column="6" IsVisible="{Binding #root.IsProcessInfoVisible}" Orientation="Horizontal">
+					<StackPanel Grid.Column="7" IsVisible="{Binding #root.IsProcessInfoVisible}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<StackPanel IsVisible="{Binding #root.Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
 							<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">

@@ -72,6 +72,10 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<string> PatternFontFamily = new(nameof(PatternFontFamily), "");
 	/// <summary>
+	/// Percentage of physical memory usage by application to stop reading logs.
+	/// </summary>
+	public static readonly SettingKey<long> PhysicalMemoryUsagePercentageToStopReadingLogs = new(nameof(PhysicalMemoryUsagePercentageToStopReadingLogs), 80);
+	/// <summary>
 	/// Reset all log analysis rule sets after setting log profile.
 	/// </summary>
 	public static readonly SettingKey<bool> ResetLogAnalysisRuleSetsAfterSettingLogProfile = new(nameof(ResetLogAnalysisRuleSetsAfterSettingLogProfile), true);
@@ -130,6 +134,10 @@ static class SettingKeys
 	/// </summary>
 	public const int MaxLogFontSize = 30;
 	/// <summary>
+	/// Maximum value of <see cref="PhysicalMemoryUsagePercentageToStopReadingLogs"/>.
+	/// </summary>
+	public const int MaxPhysicalMemoryUsagePercentageToStopReadingLogs = 95;
+	/// <summary>
 	/// Maximum value of <see cref="ScriptEditorFontSize"/>.
 	/// </summary>
 	public const int MaxScriptEditorFontSize = 30;
@@ -145,6 +153,10 @@ static class SettingKeys
 	/// Maximum value of <see cref="LogFontSize"/>.
 	/// </summary>
 	public const int MinLogFontSize = 10;
+	/// <summary>
+	/// Minimum value of <see cref="PhysicalMemoryUsagePercentageToStopReadingLogs"/>.
+	/// </summary>
+	public const int MinPhysicalMemoryUsagePercentageToStopReadingLogs = 25;
 	/// <summary>
 	/// Minimum value of <see cref="ScriptEditorFontSize"/>.
 	/// </summary>

@@ -60,6 +60,44 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert from <see cref="Session.IsLogsReadingPaused"/> to icon of pause/resume reading logs.
+		/// </summary>
+		public static readonly IValueConverter PauseResumeReadingLogsIconConverter = new FuncValueConverter<bool, IImage?>(isPaused =>
+		{
+			var icon = default(IImage);
+			App.CurrentOrNull?.TryGetResource(isPaused ? "Image/Icon.PlayMedia" : "Image/Icon.PauseMedia", out icon);
+			return icon;
+		});
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert from state of status bar to background brush of status bar.
+		/// </summary>
+		public static readonly IValueConverter StatusBarBackgroundConverter = new FuncValueConverter<SessionViewStatusBarState, IBrush?>(state =>
+		{
+			var app = App.CurrentOrNull;
+			if (app is null)
+				return null;
+			IBrush? brush;
+			switch (state)
+			{
+				case SessionViewStatusBarState.Active:
+					app.TryGetResource("Brush/StatusBar.Background", out brush);
+					break;
+				case SessionViewStatusBarState.Error:
+					app.TryGetResource("Brush/SessionView.StatusBar.Background.Error", out brush);
+					break;
+				case SessionViewStatusBarState.Paused:
+					app.TryGetResource("Brush/SessionView.StatusBar.Background.Paused", out brush);
+					break;
+				case SessionViewStatusBarState.Warning:
+					app.TryGetResource("Brush/SessionView.StatusBar.Background.Warning", out brush);
+					break;
+				default:
+					app.TryGetResource("Brush/SessionView.StatusBar.Background.Inactive", out brush);
+					break;
+			}
+			return brush;
+		});
 
 
         // Implementation of LogLevelNameConverter.
@@ -622,7 +660,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						: null;
 					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
 					{
-						var displayName = property.DisplayName?.ToString();
+						var displayName = property.DisplayName;
 						if (string.IsNullOrWhiteSpace(displayName))
 							displayName = Converters.LogPropertyNameConverter.Default.Convert(property.Name);
 						var propertyValue = (this.DataContext as Session)?.LogSelection.SelectedLogStringPropertyValue?.ToString();
@@ -903,6 +941,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (this.DataContext is not Session session)
 						return SessionViewStatusBarState.None;
+					if (session.IsHighMemoryUsageToStopReadingLogs)
+						return SessionViewStatusBarState.Warning;
 					if (session.IsLogsReadingPaused)
 						return SessionViewStatusBarState.Paused;
 					if (session.HasPartialDataSourceErrors)
@@ -3813,6 +3853,21 @@ namespace CarinaStudio.ULogViewer.Controls
 								this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
 						}
 					}
+					break;
+				case nameof(Session.IsHighMemoryUsageToStopReadingLogs):
+					if (session.IsHighMemoryUsageToStopReadingLogs && session.IsActivated && this.attachedWindow is not null)
+					{
+						_ = new MessageDialog
+						{
+							Icon = MessageDialogIcon.Warning,
+							Message = new FormattedString().Also(it =>
+							{
+								it.Arg1 = this.Application.ProcessInfo.PrivateMemoryUsage.GetValueOrDefault().ToFileSizeString();
+								it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogsReadingStoppedDueToHighMemoryUsage"));
+							}),
+						}.ShowDialog(this.attachedWindow);
+					}
+					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.IsLogsReadingPaused):
 					this.updateStatusBarStateAction.Schedule();

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
@@ -189,6 +190,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsHibernated"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsHibernatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsHibernated));
+		/// <summary>
+		/// Property of <see cref="IsHighMemoryUsageToStopReadingLogs"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsHighMemoryUsageToStopReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsHighMemoryUsageToStopReadingLogs));
 		/// <summary>
 		/// Property of <see cref="IsIPEndPointNeeded"/>.
 		/// </summary>
@@ -584,6 +589,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			staticLogger?.LogWarning("Hibernate {hibernatedSessionCount} session(s) to release {releasedMemory} memory", hibernatedSessionCount, AppSuite.Converters.FileSizeConverter.Default.Convert<string>(releasedMemory));
 		});
+		static readonly HashSet<Session> instances = new();
 		static readonly TaskFactory ioTaskFactory = new(new FixedThreadsTaskScheduler(1));
 		static readonly SettingKey<double> latestLogFilesPanelSizeKey = new("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
 		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
@@ -884,8 +890,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ReloadLogFileCommand = new Command<LogDataSourceParams<string>?>(this.ReloadLogFile, this.canClearLogFiles);
 			this.ReloadLogsCommand = new Command(() => 
 			{
-				if (this.canReloadLogs.Value)
-					this.ScheduleReloadingLogs(false, false);
+				this.ScheduleReloadingLogs(false, false);
 			}, this.canReloadLogs);
 			this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 			this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
@@ -1285,6 +1290,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// attach to product manager
 			this.SetValue(IsProVersionActivatedProperty, app.ProductManager.IsProductActivated(Products.Professional));
 			app.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
+			
+			// attach to process info
+			app.ProcessInfo.PropertyChanged += this.OnProcessInfoPropertyChanged;
+			this.CheckAppMemoryUsageToStopReadingLogs();
 
 			// restore state
 #pragma warning disable CS0612
@@ -1307,6 +1316,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogWarning("Initial lop profile: '{name}' [{id}]", initLogProfile.Name, initLogProfile.Id);
 				this.SetLogProfile(initLogProfile, true, true);
 			}
+			
+			// add to instance set
+			instances.Add(this);
 		}
 
 
@@ -1413,7 +1425,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 
 			// update state
-			this.UpdateCanAddLogFile();
+			this.UpdateCanAddLogFile(profile);
 		}
 
 
@@ -1555,6 +1567,45 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs reading can be stopped or not.
 		/// </summary>
 		public bool CanStopReadingLogs => this.GetValue(CanStopReadingLogsProperty);
+
+
+		// Check whether memory usage of application is too high to stop reading logs or not.
+		void CheckAppMemoryUsageToStopReadingLogs()
+		{
+			var physicalMemorySize = this.Application.HardwareInfo.TotalPhysicalMemory;
+			var privateMemoryUsage = this.Application.ProcessInfo.PrivateMemoryUsage;
+			if (physicalMemorySize is null || privateMemoryUsage is null)
+				return;
+			var percentage = this.Settings.GetValueOrDefault(SettingKeys.PhysicalMemoryUsagePercentageToStopReadingLogs);
+			if (percentage < SettingKeys.MinPhysicalMemoryUsagePercentageToStopReadingLogs)
+				percentage = SettingKeys.MinPhysicalMemoryUsagePercentageToStopReadingLogs;
+			else if (percentage > SettingKeys.MaxPhysicalMemoryUsagePercentageToStopReadingLogs)
+				percentage = SettingKeys.MaxPhysicalMemoryUsagePercentageToStopReadingLogs;
+			var threshold = Math.Max(500L << 20, (long)(physicalMemorySize.Value * (percentage / 100.0) + 0.5));
+			if (!this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				if (privateMemoryUsage.Value >= threshold + (50L << 20))
+				{
+					// update state
+					this.Logger.LogWarning("Private memory usage ({privateMemoryUsage} MB) is too high, stop reading logs. Physical memory: {physicalMemorySize} MB", (privateMemoryUsage.Value >> 20), (physicalMemorySize.Value >> 20));
+					this.SetValue(IsHighMemoryUsageToStopReadingLogsProperty, true);
+				
+					// stop or pause reading logs
+					if (!this.GetValue(IsReadingLogsContinuouslyProperty))
+						this.StopReadingLogs();
+					else if (!this.GetValue(IsLogsReadingPausedProperty))
+						this.PauseResumeLogsReading();
+				}
+			}
+			else
+			{
+				if (privateMemoryUsage.Value <= threshold - (50L << 20))
+				{
+					this.Logger.LogWarning("Private memory usage becomes lower to allow reading logs");
+					this.ResetValue(IsHighMemoryUsageToStopReadingLogsProperty);
+				}
+			}
+		}
 
 
 		// Clear all log files.
@@ -1900,6 +1951,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return false;
 			}
 			
+			// check memory usage
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.Logger.LogError("Cannot create log reader because of high private memory usage");
+				return false;
+			}
+			
 			// prepare displayable log group
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
 			if (this.displayableLogGroup == null)
@@ -2010,8 +2068,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.canClearLogFiles.Update(true);
 			}
 			this.canMarkUnmarkLogs.Update(true);
-			this.canPauseResumeLogsReading.Update(profile.IsContinuousReading);
-			this.canReloadLogs.Update(true);
+			this.UpdateCanPauseResumeLogsReading();
+			this.UpdateCanReloadLogs();
 			this.SetValue(UriProperty, creationOptions.Uri);
 			if (hasFileName)
 			{
@@ -2145,15 +2203,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
-			// ignore managed resources
-			if (!disposing)
-			{
-				base.Dispose(disposing);
-				return;
-			}
-
 			// check thread
 			this.VerifyAccess();
+			
+			// remove from instance set
+			instances.Remove(this);
 
 			// dispose components
 			foreach (var component in this.attachedComponents.ToArray())
@@ -2192,6 +2246,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// detach from product manager
 			this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
+			
+			// detach from process info
+			this.Application.ProcessInfo.PropertyChanged -= this.OnProcessInfoPropertyChanged;
 
 			// stop watches
 			this.logsReadingWatch.Stop();
@@ -2282,8 +2339,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.reportLogsTimeInfoAction.Execute();
 					this.canClearLogFiles.Update(false);
 					this.canMarkUnmarkLogs.Update(false);
-					this.canPauseResumeLogsReading.Update(false);
-					this.canReloadLogs.Update(false);
+					this.UpdateCanPauseResumeLogsReading();
+					this.UpdateCanReloadLogs(profile);
 					this.updateCanStopReadingLogsAction.Execute();
 					this.SetValue(HasLogFilesProperty, false);
 					this.SetValue(HasLogReadersProperty, false);
@@ -2602,6 +2659,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether session is hibernated or not.
 		/// </summary>
 		public bool IsHibernated => this.GetValue(IsHibernatedProperty);
+		
+		
+		/// <summary>
+		/// Check whether memory usage is too high to stop reading logs or not.
+		/// </summary>
+		public bool IsHighMemoryUsageToStopReadingLogs => this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty);
 
 
 		/// <summary>
@@ -3496,6 +3559,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 			}
 		}
+		
+		
+		// Called when property of process info changed.
+		void OnProcessInfoPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(ProcessInfo.PrivateMemoryUsage))
+				this.CheckAppMemoryUsageToStopReadingLogs();
+		}
 
 
 		// Called when product state changed.
@@ -3526,6 +3597,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			else if (property == IPEndPointProperty)
 				this.SetValue(HasIPEndPointProperty, newValue != null);
+			else if (property == IsHighMemoryUsageToStopReadingLogsProperty)
+			{
+				var profile = this.LogProfile;
+				this.UpdateCanAddLogFile(profile);
+				this.UpdateCanPauseResumeLogsReading();
+				this.UpdateCanReloadLogs(profile);
+				this.UpdateCanSetIPEndPoint(profile);
+				this.UpdateCanSetUri(profile);
+				this.UpdateCanSetWorkingDirectory(profile);
+			}
 			else if (property == IsReadingLogsProperty
 				|| property == IsRemovingLogFilesProperty)
 			{
@@ -3609,14 +3690,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (!this.canPauseResumeLogsReading.Value)
-				return;
-			if (this.logReaders.IsEmpty())
-				throw new InternalStateCorruptedException("No log reader to pause/resume logs reading.");
 
 			// pause or resume
 			if (this.IsLogsReadingPaused)
 			{
+				if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+				{
+					this.Logger.LogError("Cannot resume reading logs because of high private memory usage");
+					return;
+				}
 				foreach (var logReader in this.logReaders)
 					logReader.Resume();
 				this.SetValue(IsLogsReadingPausedProperty, false);
@@ -3827,9 +3909,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SetValue(AreLogsSortedByTimestampProperty, false);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
-			this.ResetValue(CanSetIPEndPointProperty);
-			this.ResetValue(CanSetUriProperty);
-			this.ResetValue(CanSetWorkingDirectoryProperty);
+			this.UpdateCanAddLogFile(null);
+			this.UpdateCanSetIPEndPoint(null);
+			this.UpdateCanSetUri(null);
+			this.UpdateCanSetWorkingDirectory(null);
 			this.ResetValue(HasLogColorIndicatorProperty);
 			this.ResetValue(HasLogColorIndicatorByFileNameProperty);
 			this.ResetValue(IsIPEndPointNeededProperty);
@@ -3959,12 +4042,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsIPEndPointNeededProperty, true);
 					this.SetValue(IsIPEndPointSupportedProperty, true);
 				}
-				this.SetValue(CanSetIPEndPointProperty, true);
 			}
 			else
 			{
 				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint));
-				this.SetValue(CanSetIPEndPointProperty, isSupported);
 				this.SetValue(IsIPEndPointNeededProperty, false);
 				this.SetValue(IsIPEndPointSupportedProperty, isSupported);
 			}
@@ -3981,12 +4062,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsUriNeededProperty, true);
 					this.SetValue(IsUriSupportedProperty, true);
 				}
-				this.SetValue(CanSetUriProperty, true);
 			}
 			else
 			{
 				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri));
-				this.SetValue(CanSetUriProperty, isSupported);
 				this.SetValue(IsUriNeededProperty, false);
 				this.SetValue(IsUriSupportedProperty, isSupported);
 			}
@@ -4004,17 +4083,20 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsWorkingDirectoryNeededProperty, true);
 					this.SetValue(IsWorkingDirectorySupportedProperty, true);
 				}
-				this.SetValue(CanSetWorkingDirectoryProperty, true);
 			}
 			else
 			{
 				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory));
-				this.SetValue(CanSetWorkingDirectoryProperty, isSupported);
 				this.SetValue(IsWorkingDirectoryNeededProperty, false);
 				this.SetValue(IsWorkingDirectorySupportedProperty, isSupported);
 			}
-
+			
 			// update state
+			this.UpdateCanSetIPEndPoint(profile);
+			this.UpdateCanSetUri(profile);
+			this.UpdateCanSetWorkingDirectory(profile);
+
+			// update state (must update after checking all options of data source)
 			this.UpdateCanAddLogFile(profile);
 
 			// restore
@@ -4981,15 +5063,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsIPEndPointSupportedProperty, true);
 					canStartReading = false;
 				}
-				this.SetValue(CanSetIPEndPointProperty, true);
 			}
 			else
 			{
 				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint));
-				this.SetValue(CanSetIPEndPointProperty, isSupported);
 				this.ResetValue(IsIPEndPointNeededProperty);
 				this.SetValue(IsIPEndPointSupportedProperty, isSupported);
 			}
+			this.UpdateCanSetIPEndPoint(profile);
 			
 			// check URI
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
@@ -5006,15 +5087,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsUriSupportedProperty, true);
 					canStartReading = false;
 				}
-				this.SetValue(CanSetUriProperty, true);
 			}
 			else
 			{
 				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri));
-				this.SetValue(CanSetUriProperty, isSupported);
 				this.ResetValue(IsUriNeededProperty);
 				this.SetValue(IsUriSupportedProperty, isSupported);
 			}
+			this.UpdateCanSetUri(profile);
 			
 			// check working directory
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
@@ -5032,17 +5112,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsWorkingDirectorySupportedProperty, true);
 					canStartReading = false;
 				}
-				this.SetValue(CanSetWorkingDirectoryProperty, true);
 			}
 			else
 			{
 				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory));
-				this.SetValue(CanSetWorkingDirectoryProperty, isSupported);
 				this.ResetValue(IsWorkingDirectoryNeededProperty);
 				this.SetValue(IsWorkingDirectorySupportedProperty, isSupported);
 			}
+			this.UpdateCanSetWorkingDirectory(profile);
 			
-			// update state
+			// update state (must update after checking all options of data source)
 			this.UpdateCanAddLogFile(profile);
 			
 			// start reading
@@ -5155,6 +5234,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var app = App.CurrentOrNull;
 			if (app == null)
 				return;
+			var isHighMemoryUsage = instances.FirstOrDefault(it => it.GetValue(IsHighMemoryUsageToStopReadingLogsProperty)) is not null;
+			if (isHighMemoryUsage)
+			{
+				staticLogger?.LogWarning("Force GC because of high private memory usage");
+				app.PerformGC(GCCollectionMode.Forced);
+				return;
+			}
 			switch (app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy))
 			{
 				case MemoryUsagePolicy.Balance:
@@ -5203,20 +5289,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		// Check whether log file can be added or not.
-		void UpdateCanAddLogFile()
+		void UpdateCanAddLogFile() => 
+			this.UpdateCanAddLogFile(this.LogProfile);
+		void UpdateCanAddLogFile(LogProfile? profile)
 		{
 			if (this.IsDisposed)
 				return;
-			var profile = this.LogProfile;
-			if (profile is not null)
-				this.UpdateCanAddLogFile(profile);
-			else
+			if (profile is null)
+			{
 				this.ResetValue(CanAddLogFileProperty);
-		}
-		void UpdateCanAddLogFile(LogProfile profile)
-		{
-			if (this.IsDisposed)
 				return;
+			}
 			var dataSourceProvider = profile.DataSourceProvider;
 			if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)))
 			{
@@ -5229,7 +5312,110 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.ResetValue(CanAddLogFileProperty);
 				return;
 			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanAddLogFileProperty);
+				return;
+			}
 			this.SetValue(CanAddLogFileProperty, this.logFileInfoList.Count < this.GetValue(MaxLogFileCountProperty));
+		}
+
+
+		// Update whether pause/resume reading logs can be performed or not.
+		void UpdateCanPauseResumeLogsReading()
+		{
+			if (this.IsDisposed)
+				return;
+			this.canPauseResumeLogsReading.Update(this.LogProfile?.IsContinuousReading == true 
+			                                      && this.logReaders.IsNotEmpty()
+			                                      && !this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty));
+		}
+		
+		
+		// Update whether reloading logs can be performed or not.
+		void UpdateCanReloadLogs() =>
+			this.UpdateCanReloadLogs(this.LogProfile);
+		void UpdateCanReloadLogs(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.canReloadLogs.Update(false);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.canReloadLogs.Update(false);
+				return;
+			}
+			this.canReloadLogs.Update(this.logReaders.IsNotEmpty());
+		}
+		
+		
+		// Update whether IP end point can be set or not.
+		void UpdateCanSetIPEndPoint() =>
+			this.UpdateCanSetIPEndPoint(this.LogProfile);
+		void UpdateCanSetIPEndPoint(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.ResetValue(CanSetIPEndPointProperty);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanSetIPEndPointProperty);
+				return;
+			}
+			this.SetValue(CanSetIPEndPointProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint))
+			                                        && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)));
+		}
+		
+		
+		// Update whether URI can be set or not.
+		void UpdateCanSetUri() =>
+			this.UpdateCanSetUri(this.LogProfile);
+		void UpdateCanSetUri(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.ResetValue(CanSetUriProperty);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanSetUriProperty);
+				return;
+			}
+			this.SetValue(CanSetUriProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri))
+			                                 && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)));
+		}
+		
+		
+		// Update whether working directory can be set or not.
+		void UpdateCanSetWorkingDirectory() =>
+			this.UpdateCanSetWorkingDirectory(this.LogProfile);
+		void UpdateCanSetWorkingDirectory(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.ResetValue(CanSetWorkingDirectoryProperty);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanSetWorkingDirectoryProperty);
+				return;
+			}
+			this.SetValue(CanSetWorkingDirectoryProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+			                                              && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)));
 		}
 
 
