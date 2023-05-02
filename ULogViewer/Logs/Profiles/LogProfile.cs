@@ -41,7 +41,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool allowMultipleFiles = true;
 		string builtInName = "";
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
-		LogAnalysisScriptSet? cooprativeLogAnalysisScriptSet;
+		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		string? description;
@@ -112,7 +112,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.allowMultipleFiles = template.allowMultipleFiles;
 			this.colorIndicator = template.colorIndicator;
-			this.cooprativeLogAnalysisScriptSet = template.cooprativeLogAnalysisScriptSet;
+			this.cooperativeLogAnalysisScriptSet = template.cooperativeLogAnalysisScriptSet;
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.description = template.description;
@@ -210,14 +210,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		public LogAnalysisScriptSet? CooperativeLogAnalysisScriptSet
 		{
-			get => this.cooprativeLogAnalysisScriptSet;
+			get => this.cooperativeLogAnalysisScriptSet;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.cooprativeLogAnalysisScriptSet?.Equals(value) == true)
+				if (this.cooperativeLogAnalysisScriptSet?.Equals(value) == true)
 					return;
-				this.cooprativeLogAnalysisScriptSet = value;
+				this.cooperativeLogAnalysisScriptSet = value;
 				this.OnPropertyChanged(nameof(CooperativeLogAnalysisScriptSet));
 			}
 		}
@@ -941,7 +941,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(CooperativeLogAnalysisScriptSet):
 						try
 						{
-							this.cooprativeLogAnalysisScriptSet = LogAnalysisScriptSet.Load(this.Application, jsonProperty.Value);
+							this.cooperativeLogAnalysisScriptSet = LogAnalysisScriptSet.Load(this.Application, jsonProperty.Value);
 						}
 						catch (Exception ex)
 						{
@@ -1121,7 +1121,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			writer.WritePropertyName("DataSource");
 			this.SaveDataSourceToJson(writer);
 			writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
-			this.cooprativeLogAnalysisScriptSet?.Let(scriptSet =>
+			this.cooperativeLogAnalysisScriptSet?.Let(scriptSet =>
 			{
 				writer.WritePropertyName(nameof(CooperativeLogAnalysisScriptSet));
 				scriptSet.Save(writer);
