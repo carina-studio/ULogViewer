@@ -12,8 +12,11 @@
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
+        x:CompileBindings="True"
+        x:DataType="appViewModels:AppOptions"
 		Name="window">
 	
 	<Window.Styles>
@@ -27,7 +30,7 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{ReflectionBinding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
 			</StackPanel>
 		</Border>
 
@@ -347,10 +350,10 @@
 						<!-- Default text shell -->
 						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
 							<TextBlock Name="defaultTextShellLabel" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.DefaultTextShell}"/>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
+							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>
+									<DataTemplate x:CompileBindings="True" x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
+										<TextBlock Text="{ReflectionBinding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
@@ -370,6 +373,16 @@
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:MemoryUsagePolicy}" Grid.Column="1" SelectedItem="{Binding MemoryUsagePolicy, Mode=TwoWay}"/>
 						</Grid>
 						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Physical memory usage percentage to stop reading logs -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}">
+							<StackPanel Classes="Dialog_Item_TextBox">
+								<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Label" Arg1="{Binding PrivateMemoryUsageToStopReadingLogs, Converter={x:Static asConverters:FileSizeConverter.Default}}" Arg2="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs}" Format="{DynamicResource String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description}"/>
+							</StackPanel>
+							<Slider Classes="Dialog_Item_Slider" Grid.Column="1" IsSnapToTickEnabled="True" Maximum="{Binding MaxPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" Minimum="{Binding MinPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" TickFrequency="5" Value="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs, Mode=TwoWay}"/>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}"/>
 
 						<!-- Notify application update -->
 						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">

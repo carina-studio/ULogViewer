@@ -3855,7 +3855,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					break;
 				case nameof(Session.IsHighMemoryUsageToStopReadingLogs):
-					if (session.IsHighMemoryUsageToStopReadingLogs && session.IsActivated && this.attachedWindow is not null)
+					if (session.IsHighMemoryUsageToStopReadingLogs 
+					    && session.IsActivated 
+					    && this.attachedWindow?.IsActive == true)
 					{
 						_ = new MessageDialog
 						{

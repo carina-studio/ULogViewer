@@ -30,6 +30,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont">Pattern font</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Description">Font for all patterns including regular expression, format of date time, format of time span, etc.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Sample">Sample [0-9] \s \d HH:mm:ss</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs">Limitation of memory usage ({0}, {1}%)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description">Logs reading will be disabled temporarily when memory usage of process exceeds the limitation.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">Upgrade to Pro version needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset applied rule sets after changing log profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">Script editor font and size</sys:String>
