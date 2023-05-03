@@ -7,6 +7,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -163,6 +164,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	/// <summary>
 	/// Get or set initial log profile.
 	/// </summary>
+	[AllowNull]
 	public LogProfile InitialLogProfile
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.InitialLogProfile).Let(it =>
@@ -171,13 +173,13 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 				return LogProfileManager.Default.EmptyProfile;
 			return LogProfileManager.Default.GetProfileOrDefault(it) ?? LogProfileManager.Default.EmptyProfile;
 		});
-		set => value.Let(it =>
+		set
 		{
-			if (it == LogProfileManager.Default.EmptyProfile)
+			if (value is null || value == LogProfileManager.Default.EmptyProfile)
 				this.Settings.ResetValue(SettingKeys.InitialLogProfile);
 			else
-				this.Settings.SetValue<string>(SettingKeys.InitialLogProfile, it.Id);
-		});
+				this.Settings.SetValue<string>(SettingKeys.InitialLogProfile, value.Id);
+		}
 	}
 
 
@@ -287,6 +289,18 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	/// Get minimum value of <see cref="PhysicalMemoryUsagePercentageToStopReadingLogs"/>
 	/// </summary>
 	public int MinPhysicalMemoryUsagePercentageToStopReadingLogs => SettingKeys.MinPhysicalMemoryUsagePercentageToStopReadingLogs;
+
+
+	/// <inheritdoc/>
+	protected override void OnApplicationStringsUpdated()
+	{
+		base.OnApplicationStringsUpdated();
+		var initLogProfile = this.InitialLogProfile;
+		this.logProfiles.Clear();
+		this.logProfiles.Add(LogProfileManager.Default.EmptyProfile);
+		this.logProfiles.AddAll(LogProfileManager.Default.Profiles.Where(it => !it.IsTemplate));
+		this.InitialLogProfile = initLogProfile;
+	}
 
 
 	// Called when list of log profiles changed.
