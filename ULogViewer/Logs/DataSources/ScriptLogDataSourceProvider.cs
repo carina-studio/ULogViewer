@@ -163,7 +163,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
     /// <param name="app">Application.</param>
     /// <param name="fileName">File name.</param>
     /// <returns>Task of loading provider.</returns>
-    public static async Task<ScriptLogDataSourceProvider> LoadAsync(IULogViewerApplication app, string fileName)
+    public static Task<ScriptLogDataSourceProvider> LoadAsync(IULogViewerApplication app, string fileName)
     {
         throw new NotImplementedException();
     }

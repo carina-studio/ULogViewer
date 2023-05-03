@@ -177,7 +177,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 
 
 	/// <inheritdoc/>
-	protected override async Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
 		// check compilation error
 		//
@@ -191,7 +191,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		);
 		
 		// complete
-		return provider;
+		return Task.FromResult<object?>(provider);
 	}
 
 

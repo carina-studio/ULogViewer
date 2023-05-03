@@ -1295,10 +1295,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Confirm log reading window and limitation.
-		async Task<(bool, Logs.LogReadingWindow, int?)> ConfirmMaxLogReadingCountFromLargeFilesAsync(long fileSize)
-		{
-			return default;
-		}
+		Task<(bool, Logs.LogReadingWindow, int?)> ConfirmMaxLogReadingCountFromLargeFilesAsync(long fileSize) =>
+			Task.FromResult<(bool, Logs.LogReadingWindow, int?)>(default);
 
 
 		// Show UI to confirm removing log analysis rule set.
@@ -3997,7 +3995,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Reload log file.
-		async void ReloadLogFileWithNewMaxLogReadingCount(string? fileName)
+		void ReloadLogFileWithNewMaxLogReadingCount(string? fileName)
 		{
 		}
 
@@ -4009,7 +4007,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Reload log file.
-		async void ReloadLogFileWithNewPrecondition(string? fileName)
+		void ReloadLogFileWithNewPrecondition(string? fileName)
 		{
 		}
 

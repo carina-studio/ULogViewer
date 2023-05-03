@@ -1139,10 +1139,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Show dialog to notify user that reactivating Pro-version may be needed.
-		async Task<bool> ShowReactivatingProVersionHintDialogAsync()
-		{
-			return false;
-		}
+		Task<bool> ShowReactivatingProVersionHintDialogAsync() =>
+			Task.FromResult(false);
 
 
 		/// <summary>
