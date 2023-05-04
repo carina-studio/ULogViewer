@@ -362,6 +362,11 @@ return False</sys:String>
 
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">无法将选取的日志分析结果复制至剪贴簿。</sys:String>
+	
+	<!-- LogChartType -->
+	<sys:String x:Key="String/LogChartType.Bars">条形图</sys:String>
+	<sys:String x:Key="String/LogChartType.Lines">折线图</sys:String>
+	<sys:String x:Key="String/LogChartType.None">无</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">文件</sys:String>

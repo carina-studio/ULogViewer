@@ -50,7 +50,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <inheritdoc/>
-		public override int GetHashCode() => this.Name?.GetHashCode() ?? 0;
+		public override int GetHashCode() => this.Name.GetHashCode();
 
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
-		/// Inquality operator.
+		/// Inequality operator.
 		/// </summary>
 		public static bool operator !=(LogProperty? x, LogProperty? y) => !(x?.Equals(y) ?? y is null);
 

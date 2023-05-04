@@ -375,6 +375,11 @@ return False</sys:String>
 
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
+	
+	<!-- LogChartType -->
+	<sys:String x:Key="String/LogChartType.Bars">Bar chart</sys:String>
+	<sys:String x:Key="String/LogChartType.Lines">Line chart</sys:String>
+	<sys:String x:Key="String/LogChartType.None">None</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
