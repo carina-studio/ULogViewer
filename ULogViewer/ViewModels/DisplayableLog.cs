@@ -831,6 +831,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <returns>True if value of property of log is frozen.</returns>
 		public static bool HasFrozenProperty(string propertyName) =>
 			HasProperty(propertyName) && !propertyName.EndsWith("String");
+		
+		
+		/// <summary>
+		/// Check whether given property of log with <see cref="Int32"/> value is existing or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if property of log is existing.</returns>
+		public static bool HasInt32Property(string propertyName) => Log.HasInt32Property(propertyName);
 
 
 		/// <summary>
@@ -838,7 +846,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="propertyName">Name of property.</param>
 		/// <returns>True if property of log is existing.</returns>
-		public static bool HasInt64Property(string propertyName) => false;
+		public static bool HasInt64Property(string propertyName) => Log.HasInt64Property(propertyName);
 
 
 

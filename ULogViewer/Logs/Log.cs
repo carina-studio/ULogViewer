@@ -107,6 +107,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		});
 		static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 		static readonly HashSet<string> dateTimePropertyNameSet = new();
+		static readonly HashSet<string> int32PropertyNameSet = new();
 		static volatile bool isPropertyMapReady;
 		static readonly HashSet<string> multiLineStringPropertyNames = new()
 		{
@@ -117,7 +118,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
 		static readonly PropertyType[] propertyTypeMap =
 		{
-			default(PropertyType), // None
+			default, // None
 			PropertyType.TimeSpan,
 			PropertyType.DateTime,
 			PropertyType.String, // Category
@@ -630,6 +631,26 @@ namespace CarinaStudio.ULogViewer.Logs
 			SetupPropertyMap();
 			return dateTimePropertyNameSet.Contains(propertyName);
 		}
+		
+		
+		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> with <see cref="Int32"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasInt32Property(string propertyName)
+		{
+			SetupPropertyMap();
+			return int32PropertyNameSet.Contains(propertyName);
+		}
+
+
+		/// <summary>
+		/// Check whether given log property is exported by <see cref="Log"/> with <see cref="Int64"/> value or not.
+		/// </summary>
+		/// <param name="propertyName">Name of property.</param>
+		/// <returns>True if given log property is exported.</returns>
+		public static bool HasInt64Property(string propertyName) => false;
 
 
 		/// <summary>
@@ -752,6 +773,8 @@ namespace CarinaStudio.ULogViewer.Logs
 								dateTimePropertyNameSet.Add(propertyName);
 							else if (propertyInfo.PropertyType == typeof(TimeSpan?) || propertyInfo.PropertyType == typeof(TimeSpan))
 								timeSpanPropertyNameSet.Add(propertyName);
+							else if (propertyInfo.PropertyType == typeof(int?) || propertyInfo.PropertyType == typeof(int))
+								int32PropertyNameSet.Add(propertyName);
 						}
 						isPropertyMapReady = true;
 					}
