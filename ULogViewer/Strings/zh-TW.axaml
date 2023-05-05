@@ -531,7 +531,12 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何讀取及解析日誌》 以幫助您建立日誌類型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日誌分析</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日誌圖表設定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties">顯示的日誌屬性</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties.Description">指定有哪些日誌屬性需要繪製於圖表中。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">圖表類型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日誌顯示設定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutLogChartProperties">您定義了「圖表類型」但沒有定義「顯示的日誌屬性」。您是否要定義「顯示的日誌屬性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日誌等級對照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">將「原始日誌等級屬性」所指定之屬性值對應至日誌等級。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">日誌等級對照表</sys:String>

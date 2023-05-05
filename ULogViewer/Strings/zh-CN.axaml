@@ -538,6 +538,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必须选择工作目录</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何读取及解析日志》 以帮助您建立日志类型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日志分析</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日志图表設定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties">显示的日志属性</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties.Description">指定有哪些日志属性需要绘制于图表中。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">图表类型</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutLogChartProperties">您定义了「图表类型」但没有定义「显示的日志属性」。您是否要定义「显示的日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将「原始日志等级属性」所指定之属性值对应至日志等级。</sys:String>

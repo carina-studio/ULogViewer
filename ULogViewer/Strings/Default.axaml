@@ -568,6 +568,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">Log Analysis</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">Log Chart</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties">Log properties to show</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties.Description">Specify which properties of log should be rendered to chart.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">Type of chart</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutLogChartProperties">You have defined 'Type of chart' without defining 'Log properties to show'. Do you want to define 'Log properties to show'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Convert from raw value of property specified by "Name of property of raw log level" into actual log level.</sys:String>
@@ -575,7 +580,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text. The mapping for log reading will be used if specific level cannot be mapped.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You have defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">The position to read logs from each data source.</sys:String>
@@ -611,7 +616,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You have defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
 
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CopyCurrentLogProfile">Copy '{0}'…</sys:String>

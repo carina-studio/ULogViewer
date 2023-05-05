@@ -27,6 +27,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ListBox = Avalonia.Controls.ListBox;
 using TextBlock = Avalonia.Controls.TextBlock;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -124,6 +125,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}));
 
 			// create commands
+			this.EditLogChartPropertyCommand = new Command<ListBoxItem>(this.EditLogChartProperty);
 			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, Logs.LogLevel>>(this.EditLogLevelMapEntryForReading);
 			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<Logs.LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
 			this.EditLogPatternCommand = new Command<ListBoxItem>(this.EditLogPattern);
@@ -131,12 +133,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.EditTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimeSpanFormatForReading);
 			this.EditTimestampFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimestampFormatForReading);
 			this.EditVisibleLogPropertyCommand = new Command<ListBoxItem>(this.EditVisibleLogProperty);
+			this.MoveLogChartPropertyDownCommand = new Command<ListBoxItem>(this.MoveLogChartPropertyDown);
+			this.MoveLogChartPropertyUpCommand = new Command<ListBoxItem>(this.MoveLogChartPropertyUp);
 			this.MoveLogPatternDownCommand = new Command<ListBoxItem>(this.MoveLogPatternDown);
 			this.MoveLogPatternUpCommand = new Command<ListBoxItem>(this.MoveLogPatternUp);
 			this.MoveLogWritingFormatDownCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatDown);
 			this.MoveLogWritingFormatUpCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatUp);
 			this.MoveVisibleLogPropertyDownCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyDown);
 			this.MoveVisibleLogPropertyUpCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyUp);
+			this.RemoveLogChartPropertyCommand = new Command<ListBoxItem>(this.RemoveLogChartProperty);
 			this.RemoveLogLevelMapEntryCommand = new Command<object>(this.RemoveLogLevelMapEntry);
 			this.RemoveLogPatternCommand = new Command<ListBoxItem>(this.RemoveLogPattern);
 			this.RemoveLogWritingFormatCommand = new Command<ListBoxItem>(this.RemoveLogWritingFormat);
@@ -202,6 +207,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				(allProviders as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += this.OnAllLogDataSourceProvidersChanged);
 			});
 		}
+
+
+		/// <summary>
+		/// Add log chart property.
+		/// </summary>
+		public void AddLogChartProperty()
+		{ }
 
 
 		/// <summary>
@@ -475,6 +487,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
 			}
 		}
+		
+		
+		// Edit log chart property.
+		void EditLogChartProperty(ListBoxItem item)
+		{ }
+
+
+		/// <summary>
+		/// Command to edit log chart property.
+		/// </summary>
+		public ICommand EditLogChartPropertyCommand { get; }
 
 
 		// Edit log level map entry.
@@ -666,10 +689,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Edit visible log property.
 		async void EditVisibleLogProperty(ListBoxItem item)
 		{
-			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
 			if (item.DataContext is not LogProperty logProperty)
+				return;
+			var index = this.visibleLogProperties.IndexOf(logProperty);
+			if (index < 0)
 				return;
 			var newLogProperty = await new VisibleLogPropertyEditorDialog
 			{
@@ -1020,6 +1043,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Definition set of log writing format syntax highlighting.
 		/// </summary>
 		public SyntaxHighlightingDefinitionSet LogWritingFormatSyntaxHighlightingDefinitionSet { get; }
+		
+		
+		// Move log chart property down.
+		void MoveLogChartPropertyDown(ListBoxItem item)
+		{ }
+
+
+		/// <summary>
+		/// Command to move log chart property down.
+		/// </summary>
+		public ICommand MoveLogChartPropertyDownCommand { get; }
+
+
+		// Move log chart property up.
+		void MoveLogChartPropertyUp(ListBoxItem item)
+		{ }
+
+
+		/// <summary>
+		/// Command to move log chart property up.
+		/// </summary>
+		public ICommand MoveLogChartPropertyUpCommand { get; }
 
 
 		// Move log pattern down.
@@ -1210,7 +1255,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when double-tapped on list box.
 		void OnListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
-			if (sender is not Avalonia.Controls.ListBox listBox)
+			if (sender is not ListBox listBox)
 				return;
 			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 				return;
@@ -1506,6 +1551,17 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, false);
 			}
 		}
+		
+		
+		// Remove log chart property.
+		void RemoveLogChartProperty(ListBoxItem item)
+		{ }
+
+
+		/// <summary>
+		/// Command to remove log chart property.
+		/// </summary>
+		public ICommand RemoveLogChartPropertyCommand { get; }
 
 
 		// Remove log level map entry.
