@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:abControls="using:CarinaStudio.Controls"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogChartPropertyEditorDialog"
+        Classes="Dialog"
+		SizeToContent="Height"
+        Title="{DynamicResource String/LogChartPropertyEditorDialog.Title}"
+        Width="{DynamicResource Double/LogChartPropertyEditorDialog.Width}">
+	
+	<Window.Styles>
+
+		<Style Selector="ComboBox.Dialog_ComboBox /template/ ContentControl#ContentPresenter">
+			<Setter Property="Grid.IsSharedSizeScope" Value="True"/>
+		</Style>
+
+	</Window.Styles>
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
+			<Border Classes="Dialog_ItemsGroup_Container">
+				<StackPanel>
+
+					<!-- Name -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartPropertyEditorDialog.Name}"/>
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{x:Static appControls:LogChartPropertyEditorDialog.LogChartPropertyNames}" VirtualizationMode="None">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<Grid ColumnDefinitions="Auto,*">
+										<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartPropertyEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									</Grid>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
+
+					<!-- Display name -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartPropertyEditorDialog.DisplayName}"/>
+						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" Items="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}" VirtualizationMode="None">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<Grid ColumnDefinitions="Auto,*">
+										<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartPropertyEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									</Grid>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.None}"/>
+					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
+
+					<!-- Custom display name -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartPropertyEditorDialog.CustomDisplayName}"/>
+						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+					</Grid>
+
+				</StackPanel>
+			</Border>
+		</StackPanel>
+		
+	</DockPanel>
+  
+</Window>

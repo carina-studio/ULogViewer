@@ -1,41 +1,58 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
 /// <summary>
-/// Dialog to edit visible <see cref="LogProperty"/>.
+/// Dialog to edit visible <see cref="LogChartProperty"/>.
 /// </summary>
-class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+class LogChartPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
+	/// <summary>
+	/// List of valid names of log properties for chart.
+	/// </summary>
+	public static readonly IList<string> LogChartPropertyNames = new List<string>(Log.PropertyNames).Also(it =>
+	{
+		for (var i = it.Count - 1; i >= 0; --i)
+		{
+			var name = it[i];
+			if (!Log.HasStringProperty(name) && !Log.HasInt32Property(name) && !Log.HasInt64Property(name))
+				it.RemoveAt(i);
+		}
+	}).AsReadOnly();
+
+
 	// Fields.
 	readonly ToggleSwitch customDisplayNameSwitch;
 	readonly TextBox customDisplayNameTextBox;
 	readonly ComboBox displayNameComboBox;
-	readonly ComboBox foregroundColorComboBox;
 	bool isDisplayNameSameAsName;
 	readonly ComboBox nameComboBox;
-	readonly ToggleSwitch specifyWidthSwitch;
-	readonly IntegerTextBox widthTextBox;
 
 
 	/// <summary>
-	/// Initialize new <see cref="VisibleLogPropertyEditorDialog"/> instance.
+	/// Initialize new <see cref="LogChartPropertyEditorDialog"/> instance.
 	/// </summary>
-	public VisibleLogPropertyEditorDialog()
+	public LogChartPropertyEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
-		this.customDisplayNameSwitch = this.Get<ToggleSwitch>(nameof(customDisplayNameSwitch));
-		this.customDisplayNameTextBox = this.Get<TextBox>(nameof(customDisplayNameTextBox));
+		this.customDisplayNameSwitch = this.Get<ToggleSwitch>(nameof(customDisplayNameSwitch)).Also(it =>
+		{
+			it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(this.InvalidateInput);
+		});
+		this.customDisplayNameTextBox = this.Get<TextBox>(nameof(customDisplayNameTextBox)).Also(it =>
+		{
+			it.GetObservable(TextBox.TextProperty).Subscribe(this.InvalidateInput);
+		});
 		this.displayNameComboBox = this.Get<ComboBox>(nameof(displayNameComboBox)).Also(it =>
 		{
 			it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
@@ -43,7 +60,6 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				this.isDisplayNameSameAsName = (item as string == this.nameComboBox?.SelectedItem as string);
 			});
 		});
-		this.foregroundColorComboBox = this.Get<ComboBox>(nameof(foregroundColorComboBox));
 		this.nameComboBox = this.Get<ComboBox>(nameof(nameComboBox)).Also(it =>
 		{
 			it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
@@ -51,11 +67,6 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				if (item is string name && this.isDisplayNameSameAsName)
 					this.displayNameComboBox.SelectedItem = name;
 			});
-		});
-		this.specifyWidthSwitch = this.Get<ToggleSwitch>(nameof(specifyWidthSwitch));
-		this.widthTextBox = this.Get<IntegerTextBox>(nameof(widthTextBox)).Also(it =>
-		{
-			it.Minimum = (int)(this.FindResourceOrDefault<double>("Double/SessionView.LogHeader.MinWidth", 10) + 0.5);
 		});
 	}
 
@@ -66,42 +77,26 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 		var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
 				? this.customDisplayNameTextBox.Text?.Trim() ?? ""
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
-		var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthTextBox.Value : null;
-		return Task.FromResult((object?)new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, (LogPropertyForegroundColor)this.foregroundColorComboBox.SelectedItem!, width));
+		return Task.FromResult((object?)new LogChartProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName));
 	}
 
 
 	/// <summary>
-	/// Get or set <see cref="LogProperty"/> to be edited.
+	/// Get or set <see cref="LogChartProperty"/> to be edited.
 	/// </summary>
-	public LogProperty? LogProperty { get; set; }
-
-
-	// Called when property of editor control changed.
-	void OnEditorControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-	{
-		var property = e.Property;
-		if (property == ToggleSwitch.IsCheckedProperty
-			|| property == TextBox.TextProperty)
-		{
-			this.InvalidateInput();
-		}
-	}
+	public LogChartProperty? LogChartProperty { get; set; }
 
 
 	// Called when opened.
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		var property = this.LogProperty;
+		var property = this.LogChartProperty;
 		if (property == null)
 		{
 			this.displayNameComboBox.SelectedItem = nameof(Log.Message);
 			this.isDisplayNameSameAsName = true;
 			this.nameComboBox.SelectedItem = nameof(Log.Message);
-			this.specifyWidthSwitch.IsChecked = true;
-			this.foregroundColorComboBox.SelectedItem = LogPropertyForegroundColor.Level;
-			this.widthTextBox.Value = 100;
 		}
 		else
 		{
@@ -114,12 +109,6 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				this.customDisplayNameSwitch.IsChecked = true;
 				this.customDisplayNameTextBox.Text = property.DisplayName.Trim();
 			}
-			this.foregroundColorComboBox.SelectedItem = property.ForegroundColor;
-			property.Width.Let(it =>
-			{
-				this.specifyWidthSwitch.IsChecked = it.HasValue;
-				this.widthTextBox.Value = it ?? 100;
-			});
 		}
 		this.SynchronizationContext.Post(this.nameComboBox.Focus);
 	}

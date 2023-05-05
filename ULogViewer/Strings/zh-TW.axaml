@@ -356,6 +356,12 @@ return False</sys:String>
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">無法將選取的日誌分析結果複製至剪貼簿。</sys:String>
 	
+	<!-- LogChartPropertyEditorDialog -->
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.CustomDisplayName">自訂顯示名稱</sys:String>
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.DisplayName">顯示名稱</sys:String>
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.Name">屬性</sys:String>
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.Title">用於圖表的日誌屬性</sys:String>
+	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.Bars">長條圖</sys:String>
 	<sys:String x:Key="String/LogChartType.Lines">折線圖</sys:String>
@@ -1280,10 +1286,10 @@ return None</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">變數名稱：</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">自訂顯示名稱</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">顯示名稱</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartPropertyEditorDialog.CustomDisplayName"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartPropertyEditorDialog.DisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">文字色彩</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Name">屬性</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartPropertyEditorDialog.Name"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定欄位寬度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">欄位寬度</sys:String>

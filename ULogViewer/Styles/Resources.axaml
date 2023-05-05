@@ -62,6 +62,10 @@
 	<!-- LogAnalysisScriptSetSelectionDialog -->
 	<sys:Double x:Key="Double/LogAnalysisScriptSetSelectionDialog.MaxHeight">600</sys:Double>
 	<sys:Double x:Key="Double/LogAnalysisScriptSetSelectionDialog.Width">400</sys:Double>
+	
+	<!-- LogChartPropertyEditorDialog -->
+	<sys:Double x:Key="Double/LogChartPropertyEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/LogChartPropertyEditorDialog.NameComboBox.Name.Margin">20,0,0,0</Thickness>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Command.Height">80</sys:Double>
@@ -276,7 +280,7 @@
 	<sys:Double x:Key="Double/VarAndConstComparisonEditorDialog.Width">600</sys:Double>
 
 	<!-- VisibleLogPropertyEditorDialog -->
-	<sys:Double x:Key="Double/VisibleLogPropertyEditorDialog.Width">500</sys:Double>
-	<Thickness x:Key="Thickness/VisibleLogPropertyEditorDialog.NameComboBox.Name.Margin">20,0,0,0</Thickness>
+	<StaticResourceExtension x:Key="Double/VisibleLogPropertyEditorDialog.Width" ResourceKey="Double/LogChartPropertyEditorDialog.Width"/>
+	<StaticResourceExtension x:Key="Thickness/VisibleLogPropertyEditorDialog.NameComboBox.Name.Margin" ResourceKey="Thickness/LogChartPropertyEditorDialog.NameComboBox.Name.Margin"/>
 	
 </ResourceDictionary>

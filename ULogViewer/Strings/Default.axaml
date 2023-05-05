@@ -376,6 +376,12 @@ return False</sys:String>
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
 	
+	<!-- LogChartPropertyEditorDialog -->
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.DisplayName">Display name</sys:String>
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.Name">Property</sys:String>
+	<sys:String x:Key="String/LogChartPropertyEditorDialog.Title">Log property for chart</sys:String>
+	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.Bars">Bar chart</sys:String>
 	<sys:String x:Key="String/LogChartType.Lines">Line chart</sys:String>
@@ -1339,11 +1345,11 @@ return None</sys:String>
 	<sys:String x:Key="String/VariablesComparisonCondition">{{{0}}} {1} {{{2}}}</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.DisplayName">Display name</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartPropertyEditorDialog.CustomDisplayName"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartPropertyEditorDialog.DisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Color of text</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Name">Property</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Speficy the column width</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartPropertyEditorDialog.Name"/>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the column width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column width</sys:String>
 
