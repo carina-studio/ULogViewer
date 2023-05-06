@@ -290,6 +290,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return valueT;
 				if (typeof(T) == typeof(string))
 					return (T)(object?)rawValue?.ToString();
+				if (rawValue is string s && typeof(T) == typeof(IStringSource))
+					return (T)(object)new SimpleStringSource(s);
 				return (T)rawValue;
 			};
 		}
