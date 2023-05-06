@@ -10,11 +10,15 @@ public enum LogChartType
     /// </summary>
     None,
     /// <summary>
-    /// Lines,
+    /// Lines of values,
     /// </summary>
-    Lines,
+    ValueLines,
     /// <summary>
-    /// Bars,
+    /// Bars of values,
     /// </summary>
-    Bars,
+    ValueBars,
+    /// <summary>
+    /// Bars of categories,
+    /// </summary>
+    CategoryBars,
 }

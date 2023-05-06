@@ -383,9 +383,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartPropertyEditorDialog.Title">Log property for chart</sys:String>
 	
 	<!-- LogChartType -->
-	<sys:String x:Key="String/LogChartType.Bars">Bar chart</sys:String>
-	<sys:String x:Key="String/LogChartType.Lines">Line chart</sys:String>
+	<sys:String x:Key="String/LogChartType.CategoryBars">Bar chart of categories</sys:String>
 	<sys:String x:Key="String/LogChartType.None">None</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueBars">Bar chart of values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLines">Line chart of values</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>

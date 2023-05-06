@@ -363,9 +363,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartPropertyEditorDialog.Title">用於圖表的日誌屬性</sys:String>
 	
 	<!-- LogChartType -->
-	<sys:String x:Key="String/LogChartType.Bars">長條圖</sys:String>
-	<sys:String x:Key="String/LogChartType.Lines">折線圖</sys:String>
+	<sys:String x:Key="String/LogChartType.CategoryBars">分類長條圖</sys:String>
 	<sys:String x:Key="String/LogChartType.None">無</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueBars">數值長條圖</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLines">數值折線圖</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>
