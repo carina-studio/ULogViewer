@@ -367,6 +367,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartType.None">無</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">數值長條圖</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueLines">數值折線圖</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedAreas">數值堆疊面積圖</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedBars">數值堆疊長條圖</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">檔案</sys:String>

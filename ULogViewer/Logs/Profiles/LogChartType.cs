@@ -14,9 +14,17 @@ public enum LogChartType
     /// </summary>
     ValueLines,
     /// <summary>
+    /// Stacked areas of values,
+    /// </summary>
+    ValueStackedAreas,
+    /// <summary>
     /// Bars of values,
     /// </summary>
     ValueBars,
+    /// <summary>
+    /// Stacked bars of values,
+    /// </summary>
+    ValueStackedBars,
     /// <summary>
     /// Bars of categories,
     /// </summary>
