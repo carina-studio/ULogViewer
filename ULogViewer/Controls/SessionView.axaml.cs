@@ -32,6 +32,8 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
+using LiveChartsCore.Measure;
+using LiveChartsCore.SkiaSharpView.Avalonia;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -50,7 +52,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// View of <see cref="Session"/>.
 	/// </summary>
-	partial class SessionView : UserControl<IULogViewerApplication>
+	sealed partial class SessionView : UserControl<IULogViewerApplication>
 	{
 		/// <summary>
 		/// Property of <see cref="AreAllTutorialsShown"/>.
@@ -188,6 +190,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
+		bool isInitializing = true;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
 		readonly MutableObservableBoolean isNotAddingLogFiles = new(true);
@@ -371,6 +374,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup properties
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
+			this.LogChartXAxes = ListExtensions.AsReadOnly(new[] { this.logChartXAxis });
+			this.LogChartYAxes = ListExtensions.AsReadOnly(new[] { this.logChartYAxis });
 			this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = ListExtensions.AsReadOnly(this.validLogLevels);
 
@@ -483,6 +488,23 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
+			this.logChart = this.Get<CartesianChart>(nameof(logChart)).Also(it =>
+			{
+				var chartMargin = this.Application.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Chart.Margin", default);
+				it.DrawMargin = new Margin(
+					chartMargin.Left == 0 ? float.NaN : (float)chartMargin.Left, 
+					chartMargin.Top == 0 ? float.NaN : (float)chartMargin.Top, 
+					chartMargin.Right == 0 ? float.NaN : (float)chartMargin.Right, 
+					chartMargin.Bottom == 0 ? float.NaN : (float)chartMargin.Bottom);
+				it.DataPointerDown += (_, e) => this.OnLogChartDataPointerDown(e);
+				it.GetObservable(IsPointerOverProperty).Subscribe(isPointerOver =>
+				{
+					if (!this.isInitializing)
+						this.OnLogChartPointerOverChanged(isPointerOver);
+				});
+				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
+			});
+			this.logChartGridRow = this.logChart.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(this.logChart)];
 			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
 			this.logFilteringHelpButton = this.toolBarContainer.FindControl<Button>(nameof(logFilteringHelpButton)).AsNonNull().Also(it =>
 			{
@@ -807,13 +829,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.showLogPropertyMenuItem.AsNonNull();
 			
 			// create scheduled actions
-			this.autoAddLogFilesAction = new ScheduledAction(() =>
+			this.autoAddLogFilesAction = new(() =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.AddLogFiles();
 			});
-			this.autoCloseSidePanelAction = new ScheduledAction(() =>
+			this.autoCloseSidePanelAction = new(() =>
 			{
 				if (this.DataContext is not Session session)
 					return;
@@ -827,25 +849,25 @@ namespace CarinaStudio.ULogViewer.Controls
 					session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 				}
 			});
-			this.autoSetIPEndPointAction = new ScheduledAction(() =>
+			this.autoSetIPEndPointAction = new(() =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.SelectAndSetIPEndPoint();
 			});
-			this.autoSetUriAction = new ScheduledAction(() =>
+			this.autoSetUriAction = new(() =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.SelectAndSetUri();
 			});
-			this.autoSetWorkingDirectoryAction = new ScheduledAction(() =>
+			this.autoSetWorkingDirectoryAction = new(() =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders)
 					return;
 				this.SelectAndSetWorkingDirectory();
 			});
-			this.scrollToLatestLogAction = new ScheduledAction(() =>
+			this.scrollToLatestLogAction = new(() =>
 			{
 				// check state
 				if (!this.IsScrollingToLatestLogNeeded)
@@ -926,7 +948,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogAnalysis.LogAnalysisScriptSets.Clear();
 				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
-			this.commitLogFiltersAction = new ScheduledAction(this.CommitLogFilters);
+			this.commitLogFiltersAction = new(this.CommitLogFilters);
+			this.updateLogChartXAxisLimitAction = new(this.UpdateLogChartXAxisLimit);
+			this.updateLogChartYAxisLimitAction = new(this.UpdateLogChartYAxisLimit);
 			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
 			this.updateLatestDisplayedLogRangeAction = new(this.UpdateLatestDisplayedLogRange);
 			this.updateLogHeaderContainerMarginAction = new(() =>
@@ -954,9 +978,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					return SessionViewStatusBarState.None;
 				}));
 			});
+			
+			// setup axes of log chart
+			this.UpdateLogChartAxes();
 
 			// perform initial actions
 			this.updateLogTextFilterTextBoxClassesAction.Schedule();
+			
+			// complete
+			this.isInitializing = false;
 		}
 
 
@@ -1095,6 +1125,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnMarkedLogsChanged);
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
+			session.LogChart.Let(it =>
+			{
+				it.PropertyChanged += this.OnLogChartViewModelPropertyChanged;
+				this.AttachToRawLogChartSeries(it.Series);
+			});
 			session.LogFiltering.Let(it =>
 			{
 				it.FiltersApplied += this.OnLogFiltersApplied;
@@ -1169,6 +1204,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// sync log filters to UI
 			this.SyncLogTextFiltersBack();
 			this.commitLogFiltersAction.Cancel();
+			
+			// sync log chart to UI
+			this.UpdateLogChartPanelVisibility();
 
 			// sync log analysis rule sets to UI
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
@@ -2221,6 +2259,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnMarkedLogsChanged);
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
+			session.LogChart.Let(it =>
+			{
+				it.PropertyChanged -= this.OnLogChartViewModelPropertyChanged;
+				this.DetachFromRawLogChartSeries();
+			});
 			session.LogFiltering.Let(it =>
 			{
 				it.FiltersApplied -= this.OnLogFiltersApplied;
@@ -2648,6 +2691,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when application string resources updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
+			this.areLogChartAxesReady = false;
+			this.UpdateLogChartSeries();
 			this.UpdateLogLevelFilterComboBoxStrings();
 		}
 
@@ -2743,6 +2788,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// check administrator role
 			this.ConfirmRestartingAsAdmin();
+			
+			// update resources for log chart
+			this.UpdateLogChartPaints();
 
 			// show tutorial
 			this.SynchronizationContext.Post(() => this.ShowNextTutorial());

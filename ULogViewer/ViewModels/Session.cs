@@ -934,6 +934,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// create components
 			var internalAccessor = new InternalAccessorImpl(this);
 			this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(this.AttachToComponent);
+			this.LogChart = new LogChartViewModel(this, internalAccessor).Also(this.AttachToComponent);
 			this.LogFiltering = new LogFilteringViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
@@ -2913,6 +2914,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <value></value>
 		public LogCategorizingViewModel LogCategorizing { get; }
+		
+		
+		/// <summary>
+		/// View-model of log chart.
+		/// </summary>
+		public LogChartViewModel LogChart { get; }
 
 
 		/// <summary>

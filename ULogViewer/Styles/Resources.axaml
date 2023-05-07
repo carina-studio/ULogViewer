@@ -206,6 +206,14 @@
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">500</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Crosshair.Width">1</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Axis.FontSize">10</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Separator.Width">1</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Width">2</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Legend.FontSize">13</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Size">5</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Width">1</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.ToolTip.FontSize">13</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.FileName.FontSize">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Icon.Size">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Indicator.Size">12</sys:Double>
@@ -238,6 +246,8 @@
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding">10</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogChart.Axis.Padding.Y">10,5,10,5</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogChart.Chart.Margin">0,0,10,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.FileName.Margin">0,0,0,4</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Icon.Margin">0,3,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Indicator.Margin">2,1,0,3</Thickness>

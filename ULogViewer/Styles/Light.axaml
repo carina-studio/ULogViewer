@@ -73,6 +73,8 @@
 			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Foreground">#bf2626</SolidColorBrush>
 
 			<!-- SessionView -->
+			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Crosshair" Color="#000000"/>
+			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Separator" Color="#a0a0a0"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#d0d0d0</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#4f000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#2f0094ff</SolidColorBrush>

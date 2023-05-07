@@ -22,6 +22,7 @@
 			 xmlns:appInput="using:CarinaStudio.ULogViewer.Input"
              xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 			 xmlns:cs="using:CarinaStudio"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView"
              x:CompileBindings="False"
@@ -811,7 +812,14 @@
 		</Panel>
 
 		<!-- Logs -->
-		<Grid Name="logListBoxContainer" Background="{x:Static Brushes.Transparent}" DragDrop.AllowDrop="True" Grid.Row="1" RowDefinitions="Auto,*,Auto">
+		<Grid Name="logListBoxContainer" Background="{DynamicResource Brush/WorkingArea.Background}" DragDrop.AllowDrop="True" Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/> <!-- Header -->
+				<RowDefinition Height="*" MinHeight="100"/> <!-- Logs -->
+				<RowDefinition Height="Auto"/> <!-- Separator -->
+				<RowDefinition Height="0"/> <!-- Chart -->
+				<RowDefinition Height="Auto"/> <!-- Time information -->
+			</Grid.RowDefinitions>
 
 			<!-- Header -->
 			<Panel Background="{DynamicResource Brush/SessionView.LogHeader.Background}">
@@ -883,7 +891,7 @@
 			</Panel>
 
 			<!-- ListBox -->
-			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{DynamicResource Brush/WorkingArea.Background}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasLogProfile}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasLogProfile}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
 				<asControls:ListBox.Resources>
 					<sys:Double x:Key="ToolTipContentMaxWidth">400</sys:Double>
 				</asControls:ListBox.Resources>
@@ -914,9 +922,28 @@
 
 				</Panel>
 			</Viewbox>
+			
+			<!-- Chart -->
+			<GridSplitter Classes="GridSplitter_Horizontal" Background="{x:Static Brushes.Transparent}" Grid.Row="2" IsVisible="False"/>
+			<lvc:CartesianChart Name="logChart" 
+			                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
+			                    Background="{x:Static Brushes.Transparent}" 
+			                    Grid.Row="3"
+			                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
+			                    LegendPosition="Right"
+			                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
+			                    LegendTextSize="{StaticResource Double/SessionView.LogChart.Legend.FontSize}"
+			                    IsVisible="False"
+			                    Series="{Binding #root.LogChartSeries}" 
+			                    TooltipBackgroundPaint="{Binding #root.LogChartToolTipBackgroundPaint}" 
+			                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
+			                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
+			                    XAxes="{Binding #root.LogChartXAxes}"
+			                    YAxes="{Binding #root.LogChartYAxes}"
+			                    ZoomMode="Both"/>
 
 			<!-- Logs time information -->
-			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" IsVisible="{Binding HasLogsDuration}">
+			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="4" IsVisible="{Binding HasLogsDuration}">
 				<Grid ColumnDefinitions="*,Auto">
 
 					<Grid.Styles>
