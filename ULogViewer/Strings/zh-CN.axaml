@@ -1132,6 +1132,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">运行「{0}」之脚本以分析日志时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">运行「{0}」之脚本以初始化分析时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(当前使用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">运行「{0}」之脚本以关闭原始日志行读取器时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">运行「{0}」之脚本以开启原始日志行读取器时发生错误：</sys:String>
@@ -1179,6 +1180,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日志读取前置条件</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志文件</sys:String>
+	<sys:String x:Key="String/SessionView.ResetLogChartZoom">重置图表缩放</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有筛选设定</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">正常显示日志</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以系统管理员身份重新启动</sys:String>
@@ -1187,8 +1189,10 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SaveLogs">储存日志到文件</sys:String>
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到文件 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToEndOfLogChart">滚动至图表的末端</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">滚动至最新的分析结果</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToStartOfLogChart">滚动至图表的开端</sys:String>
 	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">在互联网搜索「{0}」</sys:String>
 	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">在互联网搜索日志属性值</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">平均字节大小</sys:String>
@@ -1204,6 +1208,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">指定的时间戳</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">选择最接近时间戳的日志</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">选择/变更 IP 端点</sys:String>
+	<sys:String x:Key="String/SessionView.SetLogChartType">改变图表类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">选择/变更日志类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">选择/变成 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>

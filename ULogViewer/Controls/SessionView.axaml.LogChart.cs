@@ -1,12 +1,17 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Data.Converters;
 using Avalonia.Media;
 using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.Windows.Input;
 using LiveChartsCore;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
@@ -26,6 +31,10 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class SessionView
 {
     /// <summary>
+    /// Define <see cref="IsLogChartHorizontallyZoomed"/> property.
+    /// </summary>
+    public static readonly StyledProperty<bool> IsLogChartHorizontallyZoomedProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsLogChartHorizontallyZoomed), false);
+    /// <summary>
     /// Define <see cref="LogChartLegendBackgroundPaint"/> property.
     /// </summary>
     public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartLegendBackgroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartLegendBackgroundPaint), new SolidColorPaint());
@@ -33,6 +42,10 @@ partial class SessionView
     /// Define <see cref="LogChartLegendForegroundPaint"/> property.
     /// </summary>
     public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartLegendForegroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartLegendForegroundPaint), new SolidColorPaint());
+    /// <summary>
+    /// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
+    /// </summary>
+    public static readonly IValueConverter LogChartTypeNameConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(LogChartType));
     /// <summary>
     /// Define <see cref="LogChartToolTipBackgroundPaint"/> property.
     /// </summary>
@@ -45,7 +58,6 @@ partial class SessionView
     
     // Constants.
     const int RecentlyUsedLogChartSeriesColorCount = 8;
-    const int LogChartXAxisMinMaxUpdatingDelay = 100;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
 
@@ -53,12 +65,13 @@ partial class SessionView
     // Fields.
     bool areLogChartAxesReady;
     INotifyCollectionChanged? attachedRawLogChartSeries;
-    readonly HashSet<INotifyCollectionChanged> attachedRawLogChartSeriesValues = new();
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
     readonly ObservableList<ISeries> logChartSeries = new();
     readonly Dictionary<string, SKColor> logChartSeriesColors = new();
+    readonly ToggleButton logChartTypeButton;
+    readonly ContextMenu logChartTypeMenu;
     readonly Axis logChartXAxis = new()
     {
         IsVisible = false,
@@ -69,7 +82,6 @@ partial class SessionView
     };
     IPaint<SkiaSharpDrawingContext>? logChartYAxisCrosshairPaint;
     readonly Queue<SKColor> recentlyUsedLogChartSeriesColors = new(RecentlyUsedLogChartSeriesColorCount);
-    readonly ScheduledAction updateLogChartXAxisLimitAction;
     readonly ScheduledAction updateLogChartYAxisLimitAction;
     
     
@@ -188,12 +200,8 @@ partial class SessionView
     {
         if (this.attachedRawLogChartSeries is not null)
             this.attachedRawLogChartSeries.CollectionChanged -= this.OnRawLogChartSeriesChanged;
-        foreach (var values in this.attachedRawLogChartSeriesValues)
-            values.CollectionChanged -= this.OnRawLogChartSeriesValuesChanged;
         this.attachedRawLogChartSeries = null;
-        this.attachedRawLogChartSeriesValues.Clear();
         this.logChartSeries.Clear();
-        this.updateLogChartXAxisLimitAction.Execute();
     }
     
     
@@ -203,6 +211,12 @@ partial class SessionView
         ThemeMode.Dark => new((byte) (random.Next(180) + 60), (byte) (random.Next(180) + 60), (byte) (random.Next(180) + 60)),
         _ => new((byte) (random.Next(180) + 20), (byte) (random.Next(180) + 20), (byte) (random.Next(180) + 20)),
     };
+
+
+    /// <summary>
+    /// Check whether log chart has been zoomed horizontally.
+    /// </summary>
+    public bool IsLogChartHorizontallyZoomed => this.GetValue(IsLogChartHorizontallyZoomedProperty);
 
 
     /// <summary>
@@ -245,6 +259,22 @@ partial class SessionView
     /// X axes of log chart.
     /// </summary>
     public IList<Axis> LogChartYAxes { get; }
+    
+    
+    // Called when property of axis of log chart changed.
+    void OnLogChartAxisPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender == this.logChartXAxis)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Axis.MaxLimit):
+                case nameof(Axis.MinLimit):
+                    this.SetValue(IsLogChartHorizontallyZoomedProperty, this.logChartXAxis.MinLimit.HasValue || this.logChartXAxis.MaxLimit.HasValue);
+                    break;
+            }
+        }
+    }
 
 
     // Called when pointer entered or leave the chart.
@@ -314,6 +344,7 @@ partial class SessionView
             return;
         switch (e.PropertyName)
         {
+            case nameof(LogChartViewModel.ChartType):
             case nameof(LogChartViewModel.IsChartDefined):
                 this.UpdateLogChartSeries();
                 break;
@@ -352,29 +383,12 @@ partial class SessionView
                 {
                     var startIndex = e.NewStartingIndex;
                     for (int i = 0, count = series.Count; i < count; ++i)
-                    {
-                        if (series[i].Values is INotifyCollectionChanged notifyCollectionChanged
-                            && this.attachedRawLogChartSeriesValues.Add(notifyCollectionChanged))
-                        {
-                            notifyCollectionChanged.CollectionChanged += this.OnRawLogChartSeriesValuesChanged;
-                        }
                         this.logChartSeries.Insert(startIndex + i, this.CreateLogChartSeries(viewModel, series[i]));
-                    }
                 });
                 break;
             case NotifyCollectionChangedAction.Remove:
                 e.OldItems!.Cast<DisplayableLogChartSeries>().Let(series =>
-                {
-                    for (var i = series.Count - 1; i >= 0; --i)
-                    {
-                        if (series[i].Values is INotifyCollectionChanged notifyCollectionChanged
-                            && this.attachedRawLogChartSeriesValues.Remove(notifyCollectionChanged))
-                        {
-                            notifyCollectionChanged.CollectionChanged -= this.OnRawLogChartSeriesValuesChanged;
-                        }
-                    }
-                    this.logChartSeries.RemoveRange(e.OldStartingIndex, series.Count);
-                });
+                    this.logChartSeries.RemoveRange(e.OldStartingIndex, series.Count));
                 break;
             case NotifyCollectionChangedAction.Reset:
                 this.UpdateLogChartSeries();
@@ -383,11 +397,56 @@ partial class SessionView
                 throw new NotSupportedException();
         }
     }
+
+
+    /// <summary>
+    /// Reset zoom on log chart.
+    /// </summary>
+    public void ResetLogChartZoom()
+    {
+        this.logChartXAxis.Let(it =>
+        {
+            it.MinLimit = null;
+            it.MaxLimit = null;
+        });
+    }
     
     
-    // Called when one of values of series of log chart has been changed.
-    void OnRawLogChartSeriesValuesChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        this.updateLogChartXAxisLimitAction.Schedule(LogChartXAxisMinMaxUpdatingDelay);
+    /// <summary>
+    /// Horizontally scroll to end of log chart.
+    /// </summary>
+    public void ScrollToEndOfLogChart()
+    {
+        var minLimit = this.logChartXAxis.MinLimit ?? double.NaN;
+        var maxLimit = this.logChartXAxis.MaxLimit ?? double.NaN;
+        if (!double.IsFinite(minLimit) && !double.IsFinite(maxLimit))
+            return;
+        if (this.DataContext is not Session session)
+            return;
+        var maxSeriesValueCount = 0;
+        foreach (var series in session.LogChart.Series)
+            maxSeriesValueCount = Math.Max(maxSeriesValueCount, series.Values.Count);
+        var length = (maxLimit - minLimit);
+        var reserved = (length * LogChartXAxisMinMaxReservedRatio);
+        this.logChartXAxis.MinLimit = maxSeriesValueCount - length + reserved;
+        this.logChartXAxis.MaxLimit = maxSeriesValueCount + reserved;
+    }
+
+
+    /// <summary>
+    /// Horizontally scroll to start of log chart.
+    /// </summary>
+    public void ScrollToStartOfLogChart()
+    {
+        var minLimit = this.logChartXAxis.MinLimit ?? double.NaN;
+        var maxLimit = this.logChartXAxis.MaxLimit ?? double.NaN;
+        if (!double.IsFinite(minLimit) && !double.IsFinite(maxLimit))
+            return;
+        var length = (maxLimit - minLimit);
+        var reserved = (length * LogChartXAxisMinMaxReservedRatio);
+        this.logChartXAxis.MinLimit = -reserved;
+        this.logChartXAxis.MaxLimit = length - reserved;
+    }
     
     
     // Select color for series.
@@ -440,6 +499,92 @@ partial class SessionView
                 this.logChartSeriesColors[propertyName] = color;
             return color;
         }
+    }
+
+
+    // Setup items of menu for types of log chart.
+    IList<MenuItem> SetupLogChartTypeMenuItems(ContextMenu menu)
+    {
+        var app = this.Application;
+        var menuItems = new List<MenuItem>();
+        foreach (var type in Enum.GetValues<LogChartType>())
+        {
+            if (type == LogChartType.None)
+                continue;
+            menuItems.Add(new MenuItem().Also(menuItem =>
+            {
+                menuItem.Click += (_, _) =>
+                {
+                    (this.DataContext as Session)?.LogChart.SetChartTypeCommand.TryExecute(type);
+                    menu.Close();
+                };
+                var nameTextBlock = new Avalonia.Controls.TextBlock().Also(it =>
+                {
+                    it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Source = type, Converter = LogChartTypeNameConverter });
+                    it.TextTrimming = TextTrimming.CharacterEllipsis;
+                    it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                });
+                var currentTypeTextBlock = new Avalonia.Controls.TextBlock().Also(it =>
+                {
+                    it.Opacity = app.FindResourceOrDefault<double>("Double/SessionView.LogChartTypeMenu.CurrentLogChartType.Opacity");
+                    it.Bind(Avalonia.Controls.TextBlock.TextProperty, app.GetObservableString("SessionView.LogChartTypeMenu.CurrentLogChartType"));
+                    it.TextTrimming = TextTrimming.CharacterEllipsis;
+                    it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                    Grid.SetColumn(it, 2);
+                });
+                menuItem.Header = new Grid().Also(grid =>
+                {
+                    grid.ColumnDefinitions.Add(new(1, GridUnitType.Star)
+                    {
+                        SharedSizeGroup = "Name",
+                    });
+                    grid.ColumnDefinitions.Add(new(1, GridUnitType.Auto));
+                    grid.ColumnDefinitions.Add(new(1, GridUnitType.Auto));
+                    grid.Children.Add(nameTextBlock);
+                    grid.Children.Add(new Separator().Also(it =>
+                    {
+                        it.Classes.Add("Dialog_Separator_Small");
+                        it.Bind(IsVisibleProperty, new Binding
+                        {
+                            Path = nameof(IsVisible),
+                            Source = currentTypeTextBlock,
+                        });
+                        Grid.SetColumn(it, 1);
+                    }));
+                    grid.Children.Add(currentTypeTextBlock);
+                });
+                menuItem.Icon = new Image().Also(icon =>
+                {
+                    icon.Classes.Add("MenuItem_Icon");
+                    icon.Bind(Image.SourceProperty, new Binding { Source = type, Converter = LogChartTypeIconConverter.Outline });
+                });
+                menuItem.GetObservable(DataContextProperty).Subscribe(dataContext =>
+                {
+                    if (dataContext is not LogChartType currentType || type != currentType)
+                    {
+                        nameTextBlock.FontWeight = FontWeight.Normal;
+                        currentTypeTextBlock.IsVisible = false;
+                    }
+                    else
+                    {
+                        nameTextBlock.FontWeight = FontWeight.Bold;
+                        currentTypeTextBlock.IsVisible = true;
+                    }
+                });
+            }));
+        }
+        Grid.SetIsSharedSizeScope(menu, true);
+        return menuItems;
+    }
+
+
+    /// <summary>
+    /// Open menu of types of log chart.
+    /// </summary>
+    public void ShowLogChartTypeMenu()
+    {
+        this.logChartTypeMenu.DataContext = (this.DataContext as Session)?.LogChart.ChartType;
+        this.logChartTypeMenu.Open(this.logChartTypeButton);
     }
     
     
@@ -531,11 +676,6 @@ partial class SessionView
     // Update series of log chart.
     void UpdateLogChartSeries()
     {
-        // detach from current series
-        foreach (var values in this.attachedRawLogChartSeriesValues)
-            values.CollectionChanged -= this.OnRawLogChartSeriesValuesChanged;
-        this.attachedRawLogChartSeriesValues.Clear();
-        
         // clear current series
         this.logChartSeries.Clear();
 
@@ -548,42 +688,17 @@ partial class SessionView
         
         // setup axes
         this.UpdateLogChartAxes();
-        this.updateLogChartXAxisLimitAction.Execute();
         this.updateLogChartYAxisLimitAction.Execute();
         
         // create series
         foreach (var series in viewModel.Series)
-        {
-            if (series.Values is INotifyCollectionChanged notifyCollectionChanged
-                && this.attachedRawLogChartSeriesValues.Add(notifyCollectionChanged))
-            {
-                notifyCollectionChanged.CollectionChanged += this.OnRawLogChartSeriesValuesChanged;
-            }
             this.logChartSeries.Add(this.CreateLogChartSeries(viewModel, series));
-        }
     }
     
     
     // Update visibility of log chart panel.
     void UpdateLogChartPanelVisibility()
     { }
-    
-    
-    // Update limit of X-axis.
-    void UpdateLogChartXAxisLimit()
-    {
-        if (this.DataContext is not Session session)
-            return;
-        var viewModel = session.LogChart;
-        if (!viewModel.IsChartDefined)
-            return;
-        var maxSeriesValueCount = 0;
-        foreach (var series in viewModel.Series)
-            maxSeriesValueCount = Math.Max(maxSeriesValueCount, series.Values.Count);
-        var reserved = Math.Max(1, maxSeriesValueCount * LogChartXAxisMinMaxReservedRatio);
-        this.logChartXAxis.MinLimit = -reserved;
-        this.logChartXAxis.MaxLimit = maxSeriesValueCount + reserved;
-    }
     
     
     // Update limit of Y-axis.

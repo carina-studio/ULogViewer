@@ -497,14 +497,22 @@ namespace CarinaStudio.ULogViewer.Controls
 					chartMargin.Right == 0 ? float.NaN : (float)chartMargin.Right, 
 					chartMargin.Bottom == 0 ? float.NaN : (float)chartMargin.Bottom);
 				it.DataPointerDown += (_, e) => this.OnLogChartDataPointerDown(e);
+				it.DoubleTapped += (_, e) =>
+				{
+					this.ResetLogChartZoom();
+					e.Handled = true;
+				};
 				it.GetObservable(IsPointerOverProperty).Subscribe(isPointerOver =>
 				{
 					if (!this.isInitializing)
 						this.OnLogChartPointerOverChanged(isPointerOver);
 				});
 				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
+				this.logChartXAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
+				this.logChartYAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 			});
-			this.logChartGridRow = this.logChart.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(this.logChart)];
+			this.logChartGridRow = this.Get<Panel>("logChartPanel").Let(it => it.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(it)]);
+			this.logChartTypeButton = this.toolBarContainer.FindControl<ToggleButton>(nameof(logChartTypeButton)).AsNonNull();
 			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
 			this.logFilteringHelpButton = this.toolBarContainer.FindControl<Button>(nameof(logFilteringHelpButton)).AsNonNull().Also(it =>
 			{
@@ -517,15 +525,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.ReportLogHeaderColumnWidths());
 			});
 			this.logFilterCombinationModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logFilterCombinationModeButton)).AsNonNull();
-			this.logFilterCombinationModeMenu = ((ContextMenu)this.Resources[nameof(logFilterCombinationModeMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logFilterCombinationModeButton.IsChecked = false);
-				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
-				{
-					ToolTip.SetIsOpen(this.logFilterCombinationModeButton, false);
-					this.logFilterCombinationModeButton.IsChecked = true;
-				});
-			});
 			this.logLevelFilterComboBox = this.Get<ComboBox>(nameof(logLevelFilterComboBox)).Also(it =>
 			{
 				if (Platform.IsMacOS)
@@ -554,7 +553,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsShowingModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logsShowingModeButton)).AsNonNull();
 			this.logsShowingModeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
 			{
-				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logsShowingModeButton.IsChecked = false);
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() =>
+				{
+					this.logsShowingModeButton.IsChecked = false;
+					it.DataContext = null;
+				});
 				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
 				{
 					ToolTip.SetIsOpen(this.logsShowingModeButton, false);
@@ -704,6 +707,16 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
+			this.logChartTypeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
+			{
+				it.Items = this.SetupLogChartTypeMenuItems(it);
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logChartTypeButton.IsChecked = false);
+				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logChartTypeButton, false);
+					this.logChartTypeButton.IsChecked = true;
+				});
+			});
 			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
 			{
 				it.MenuClosed += (_, _) =>
@@ -721,6 +734,15 @@ namespace CarinaStudio.ULogViewer.Controls
 						SynchronizationContext.Post(() => button.IsChecked = true);
 					}
 				};
+			});
+			this.logFilterCombinationModeMenu = ((ContextMenu)this.Resources[nameof(logFilterCombinationModeMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logFilterCombinationModeButton.IsChecked = false);
+				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logFilterCombinationModeButton, false);
+					this.logFilterCombinationModeButton.IsChecked = true;
+				});
 			});
 			this.logMarkingMenu = ((ContextMenu)this.Resources[nameof(logMarkingMenu)].AsNonNull()).Also(it =>
 			{
@@ -949,7 +971,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
 			this.commitLogFiltersAction = new(this.CommitLogFilters);
-			this.updateLogChartXAxisLimitAction = new(this.UpdateLogChartXAxisLimit);
 			this.updateLogChartYAxisLimitAction = new(this.UpdateLogChartYAxisLimit);
 			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
 			this.updateLatestDisplayedLogRangeAction = new(this.UpdateLatestDisplayedLogRange);

@@ -27,16 +27,37 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     {
         public static readonly ProcessingToken Empty = new();
     }
+    
+    
+    // Type of values of series.
+    enum SeriesValueType
+    {
+        Undefined,
+        Value,
+        Category,
+    }
 
 
     // Static fields.
     static readonly long SeriesCategoriesEntryMemorySize = Memory.EstimateInstanceSize<KeyValuePair<string, (int, int)>>();
     static readonly long SeriesValueMemorySize = Memory.EstimateInstanceSize<DisplayableLogChartSeriesValue>();
+    static readonly Dictionary<LogChartType, SeriesValueType> SeriesValueTypes = new ()
+    {
+        { LogChartType.CategoryBars, SeriesValueType.Category },
+        { LogChartType.ValueBars, SeriesValueType.Value },
+        { LogChartType.ValueLines, SeriesValueType.Value },
+        { LogChartType.ValueLinesWithDataPoints, SeriesValueType.Value },
+        { LogChartType.ValueStackedAreas, SeriesValueType.Value },
+        { LogChartType.ValueStackedAreasWithDataPoints, SeriesValueType.Value },
+        { LogChartType.ValueStackedBars, SeriesValueType.Value },
+    };
 
 
     // Fields.
     IList<DisplayableLogProperty> logChartProperties = Array.Empty<DisplayableLogProperty>();
     LogChartType logChartType = LogChartType.None;
+    DisplayableLogChartSeriesValue? knownMaxSeriesValue;
+    DisplayableLogChartSeriesValue? knownMinSeriesValue;
     readonly ScheduledAction reportMinMaxValuesAction;
     readonly ObservableList<DisplayableLogChartSeries> series = new();
     Dictionary<string, (int /* counter */, int /* index */)>[] seriesCategories = Array.Empty<Dictionary<string, (int, int)>>();
@@ -66,6 +87,16 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
         isProcessingNeeded = false;
         return ProcessingToken.Empty;
     }
+    
+    
+    // Check whether type of log chart is stacked chart or not.
+    static bool IsStackedLogChartType(LogChartType type) => type switch
+    {
+        LogChartType.ValueStackedAreas
+            or LogChartType.ValueStackedAreasWithDataPoints
+            or LogChartType.ValueStackedBars => true,
+        _ => false,
+    };
 
 
     /// <summary>
@@ -99,8 +130,19 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
             this.VerifyDisposed();
             if (this.logChartType == value)
                 return;
+            SeriesValueTypes.TryGetValue(this.logChartType, out var prevSeriesValueType);
+            SeriesValueTypes.TryGetValue(value, out var seriesValueType);
+            var isPrevStackedLogChartType = IsStackedLogChartType(this.logChartType);
+            var isStackedLogChartType = IsStackedLogChartType(value);
             this.logChartType = value;
-            this.InvalidateProcessing();
+            if (prevSeriesValueType != seriesValueType)
+                this.InvalidateProcessing();
+            else if (isPrevStackedLogChartType != isStackedLogChartType)
+            {
+                this.knownMinSeriesValue = null;
+                this.knownMaxSeriesValue = null;
+                this.reportMinMaxValuesAction.Execute();
+            }
             this.OnPropertyChanged(nameof(LogChartType));
         }
     }

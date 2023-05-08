@@ -3,9 +3,11 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -17,7 +19,7 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Minimum size of chart panel.
     /// </summary>
-    public const double MinPanelSize = 100;
+    public const double MinPanelSize = 130;
     
     
     /// <summary>
@@ -55,6 +57,7 @@ class LogChartViewModel : SessionComponent
     // Fields.
     DisplayableLogChartSeriesGenerator activeSeriesGenerator;
     readonly DisplayableLogChartSeriesGenerator allLogsSeriesGenerator;
+    readonly MutableObservableBoolean canSetChartType = new();
     DisplayableLogChartSeriesGenerator? filteredLogsSeriesGenerator;
     readonly List<IDisposable> observerTokens = new();
     readonly DisplayableLogChartSeriesGenerator markedLogsSeriesGenerator;
@@ -68,6 +71,9 @@ class LogChartViewModel : SessionComponent
     /// <param name="internalAccessor">Accessor to internal state of session.</param>
     public LogChartViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
+        // create commands
+        this.SetChartTypeCommand = new Command<LogChartType>(this.SetChartType, this.canSetChartType);
+        
         // create series generators
         this.allLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
         {
@@ -113,6 +119,7 @@ class LogChartViewModel : SessionComponent
             if (isInit)
                 return;
             this.SetValue(IsPanelVisibleProperty, isDefined);
+            this.UpdateCanSetChartType();
         });
         this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
         {
@@ -124,7 +131,10 @@ class LogChartViewModel : SessionComponent
         this.observerTokens.Add(session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(_ =>
         {
             if (!isInit)
+            {
                 this.ApplyLogChartProperties();
+                this.UpdateCanSetChartType();
+            }
         }));
         isInit = false;
     }
@@ -276,6 +286,7 @@ class LogChartViewModel : SessionComponent
         this.markedLogsSeriesGenerator.LogChartType = logChartType;
         this.SetValue(ChartTypeProperty, logChartType);
         this.ApplyLogChartProperties();
+        this.UpdateCanSetChartType();
     }
 
 
@@ -345,4 +356,27 @@ class LogChartViewModel : SessionComponent
     /// Series of log chart.
     /// </summary>
     public IList<DisplayableLogChartSeries> Series => this.activeSeriesGenerator.Series;
+
+
+    // Set type of log chart.
+    void SetChartType(LogChartType chartType)
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        this.LogProfile?.Let(it => it.LogChartType = chartType);
+    }
+    
+    
+    /// <summary>
+    /// Command set set type of log chart.
+    /// </summary>
+    /// <remarks>Type of parameter is <see cref="LogChartType"/>.</remarks>
+    public ICommand SetChartTypeCommand { get; }
+    
+    
+    // Update whether setting type of log chart is available or not.
+    void UpdateCanSetChartType()
+    {
+        this.canSetChartType.Update(this.IsChartDefined && this.Session.IsProVersionActivated && this.LogProfile?.IsBuiltIn != true);
+    }
 }

@@ -1169,6 +1169,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">Error occurred while running script of '{0}' to setup analysis:</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">Error occurred while running script of '{0}':</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count: {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(Current)</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">Error occurred while running script of '{0}' to close raw log reader:</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">Error occurred while running script of '{0}' to open raw log reader:</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">Error occurred while running script of '{0}' to read raw log line:</sys:String>
@@ -1215,6 +1216,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>
+	<sys:String x:Key="String/SessionView.ResetLogChartZoom">Reset zoom of chart</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">Show logs normally</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Administrator</sys:String>
@@ -1223,8 +1225,10 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SaveLogs">Save logs to file</sys:String>
 	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">Saving logs…</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToEndOfLogChart">Scroll to end of chart</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">Scroll to latest analysis result</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToStartOfLogChart">Scroll to start of chart</sys:String>
 	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">Search '{0}' on the Internet</sys:String>
 	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">Search value of log property on the Internet</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">Average size in bytes</sys:String>
@@ -1240,6 +1244,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">Select log nearest to specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
+	<sys:String x:Key="String/SessionView.SetLogChartType">Change type of chart</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>

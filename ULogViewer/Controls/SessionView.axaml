@@ -200,6 +200,9 @@
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
+		
+		<!-- Log chart type menu -->
+		<ContextMenu x:Key="logChartTypeMenu" PlacementMode="Top"/>
 
 		<!-- Log file action menu -->
 		<ContextMenu x:Key="logFileActionMenu" PlacementMode="Bottom">
@@ -924,23 +927,72 @@
 			</Viewbox>
 			
 			<!-- Chart -->
-			<GridSplitter Classes="GridSplitter_Horizontal" Background="{x:Static Brushes.Transparent}" Grid.Row="2" IsVisible="False"/>
-			<lvc:CartesianChart Name="logChart" 
-			                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
-			                    Background="{x:Static Brushes.Transparent}" 
-			                    Grid.Row="3"
-			                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
-			                    LegendPosition="Right"
-			                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
-			                    LegendTextSize="{StaticResource Double/SessionView.LogChart.Legend.FontSize}"
-			                    IsVisible="False"
-			                    Series="{Binding #root.LogChartSeries}" 
-			                    TooltipBackgroundPaint="{Binding #root.LogChartToolTipBackgroundPaint}" 
-			                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
-			                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
-			                    XAxes="{Binding #root.LogChartXAxes}"
-			                    YAxes="{Binding #root.LogChartYAxes}"
-			                    ZoomMode="Both"/>
+			<GridSplitter Classes="GridSplitter_Horizontal" Background="{x:Static Brushes.Transparent}" Grid.Row="2" Height="{}" IsVisible="False"/>
+			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
+				
+				<!-- Tool bar -->
+				<Border Classes="ToolBar" DockPanel.Dock="Right">
+					<StackPanel>
+						<StackPanel.Styles>
+							<Style Selector="Button.ToolBar_Button">
+								<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+								<Setter Property="Margin" Value="0,1,0,0"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
+								<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+							</Style>
+							<Style Selector="ToggleButton.ToolBar_ToggleButton">
+								<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+								<Setter Property="Margin" Value="0,1,0,0"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
+								<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+							</Style>
+						</StackPanel.Styles>
+						
+						<!-- Reset zoom -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogChartZoom}">
+							<Image Classes="Icon" Source="{StaticResource Image/Fit}"/>
+						</Button>
+						
+						<!-- Scroll to start -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToStartOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToStartOfLogChart}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
+						</Button>
+						
+						<!-- Scroll to end -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToEndOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToEndOfLogChart}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
+						</Button>
+						
+						<Separator Classes="ToolBar_Separator_Horizontal"/>
+						
+						<!-- Type of chart -->
+						<ToggleButton Name="logChartTypeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogChartTypeMenu}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogChartType}">
+							<Panel>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}}"/>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}, ConverterParameter=Light}"/>
+							</Panel>
+						</ToggleButton>
+						
+					</StackPanel>
+				</Border>
+				
+				<!-- Chart -->
+				<lvc:CartesianChart Name="logChart" 
+				                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
+				                    Background="{x:Static Brushes.Transparent}" 
+				                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
+				                    LegendPosition="Right"
+				                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
+				                    LegendTextSize="{StaticResource Double/SessionView.LogChart.Legend.FontSize}"
+				                    Series="{Binding #root.LogChartSeries}" 
+				                    TooltipBackgroundPaint="{Binding #root.LogChartToolTipBackgroundPaint}" 
+				                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
+				                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
+				                    XAxes="{Binding #root.LogChartXAxes}"
+				                    YAxes="{Binding #root.LogChartYAxes}"
+				                    ZoomMode="X"/>
+				
+			</DockPanel>
 
 			<!-- Logs time information -->
 			<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="4" IsVisible="{Binding HasLogsDuration}">
