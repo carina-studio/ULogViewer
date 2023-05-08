@@ -387,7 +387,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartType.None">None</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">Bar chart of values</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueLines">Line chart of values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">Line chart of values with data points</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreas">Stacked area chart of values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">Stacked area chart of values with data points</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedBars">Stacked bar chart of values</sys:String>
 
 	<!-- LogColorIndicator -->

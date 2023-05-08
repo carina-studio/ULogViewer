@@ -114,10 +114,11 @@ partial class SessionView
                 },
                 Values = series.Values,
             },
-            LogChartType.ValueStackedAreas => new StackedAreaSeries<DisplayableLogChartSeriesValue>
+            LogChartType.ValueStackedAreas
+                or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue>
             {
                 Fill = new SolidColorPaint(color.WithAlpha((byte)(color.Alpha >> 3))),
-                GeometryFill = new SolidColorPaint(color),
+                GeometryFill = viewModel.ChartType == LogChartType.ValueStackedAreasWithDataPoints ? new SolidColorPaint(color) : null,
                 GeometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 6.0),
                 GeometryStroke = null,
                 LineSmoothness = 0,
@@ -159,7 +160,7 @@ partial class SessionView
             _ => new LineSeries<DisplayableLogChartSeriesValue>
             {
                 Fill = null,
-                GeometryFill = new SolidColorPaint(color),
+                GeometryFill = viewModel.ChartType == LogChartType.ValueLinesWithDataPoints ? new SolidColorPaint(color) : null,
                 GeometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 6.0),
                 GeometryStroke = null,
                 LineSmoothness = 0,

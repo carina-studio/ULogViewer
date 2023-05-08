@@ -374,7 +374,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartType.None">无</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">数值条形图</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueLines">数值折线图</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">数值折线图 (含资料点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreas">数值堆积面积图</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">数值堆积面积图 (含资料点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedBars">数值堆积条形图</sys:String>
 
 	<!-- LogColorIndicator -->
