@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
+using CarinaStudio.AppSuite.Converters;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -37,6 +38,10 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	partial class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
+		/// </summary>
+		public static readonly IValueConverter LogChartTypeNameConverter = new EnumConverter(App.CurrentOrNull, typeof(LogChartType));
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="Logs.LogLevel"/> to readable name.
 		/// </summary>
@@ -1009,6 +1014,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions => this.GetValue(IsValidDataSourceOptionsProperty);
+
+
+		/// <summary>
+		/// Get all available types of log chart.
+		/// </summary>
+		public IList<LogChartType> LogChartTypes { get; } = Enum.GetValues<LogChartType>();
 
 
 		/// <summary>

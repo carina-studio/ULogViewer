@@ -14,6 +14,11 @@
 	<Geometry x:Key="Geometry/Battery">M3.2,1.6 L3.2,0.8 A0.8,-0.8 0 0 1 4,0 L7.2,0 A0.8,-0.8 0 0 1 8,0.8 L8,1.6 L10.4,1.6 A0.8,-0.8 0 0 1 11.2,2.4 L11.2,15.2 A0.8,-0.8 0 0 1 10.4,16 L0.8,16 A0.8,-0.8 0 0 1 0,15.2 L0,2.4 A0.8,-0.8 0 0 1 0.8,1.6 L3.2,1.6 z M6.4,8 L6.4,4 L2.4,9.6 L4.8,9.6 L4.8,13.6 L8.8,8 L6.4,8 z</Geometry>
 	<Geometry x:Key="Geometry/BeginFrom">M0,1.831E-007 L12,1.831E-007 L12,2 L0,2 z M5,4 L5,10 L0,10 L6,16 L12,10 L7,10 L7,4 z</Geometry>
 	<Geometry x:Key="Geometry/Calendar">M9,10V12H7V10H9M13,10V12H11V10H13M17,10V12H15V10H17M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5A2,2 0 0,1 5,3H6V1H8V3H16V1H18V3H19M19,19V8H5V19H19M9,14V16H7V14H9M13,14V16H11V14H13M17,14V16H15V14H17Z</Geometry>
+	<Geometry x:Key="Geometry/Chart.Bars">M0,11.43 A1.143,-1.143 0 0 1 1.143,10.29 L3.429,10.29 A1.143,-1.143 0 0 1 4.571,11.43 L4.571,14.86 A1.143,-1.143 0 0 1 3.429,16 L1.143,16 A1.143,-1.143 0 0 1 0,14.86 L0,11.43 z M5.714,6.857 A1.143,-1.143 0 0 1 6.857,5.714 L9.143,5.714 A1.143,-1.143 0 0 1 10.29,6.857 L10.29,14.86 A1.143,-1.143 0 0 1 9.143,16 L6.857,16 A1.143,-1.143 0 0 1 5.714,14.86 L5.714,6.857 z M11.43,1.143 A1.143,-1.143 0 0 1 12.57,0 L14.86,0 A1.143,-1.143 0 0 1 16,1.143 L16,14.86 A1.143,-1.143 0 0 1 14.86,16 L12.57,16 A1.143,-1.143 0 0 1 11.43,14.86 L11.43,1.143 z</Geometry>
+	<Geometry x:Key="Geometry/Chart.Bars.Outline">M3.429,11.43 L1.143,11.43 L1.143,14.86 L3.429,14.86 L3.429,11.43 z M9.143,6.857 L6.857,6.857 L6.857,14.86 L9.143,14.86 L9.143,6.857 z M14.86,1.143 L14.86,14.86 L12.57,14.86 L12.57,1.143 L14.86,1.143 z M12.57,0 A1.143,-1.143 0 0 0 11.43,1.143 L11.43,14.86 A1.143,-1.143 0 0 0 12.57,16 L14.86,16 A1.143,-1.143 0 0 0 16,14.86 L16,1.143 A1.143,-1.143 0 0 0 14.86,0 L12.57,0 z M5.714,6.857 A1.143,-1.143 0 0 1 6.857,5.714 L9.143,5.714 A1.143,-1.143 0 0 1 10.29,6.857 L10.29,14.86 A1.143,-1.143 0 0 1 9.143,16 L6.857,16 A1.143,-1.143 0 0 1 5.714,14.86 L5.714,6.857 z M0,11.43 A1.143,-1.143 0 0 1 1.143,10.29 L3.429,10.29 A1.143,-1.143 0 0 1 4.571,11.43 L4.571,14.86 A1.143,-1.143 0 0 1 3.429,16 L1.143,16 A1.143,-1.143 0 0 1 0,14.86 L0,11.43 z</Geometry>
+	<Geometry x:Key="Geometry/Chart.Lines">M1.455,5.818 L1.818,5.869 L5.142,2.545 C5.011,2.073 5.135,1.535 5.52,1.156 C6.087,0.5818 7.004,0.5818 7.571,1.156 C7.956,1.535 8.08,2.073 7.949,2.545 L9.818,4.415 L10.18,4.364 C10.31,4.364 10.44,4.364 10.55,4.415 L13.14,1.818 C13.09,1.709 13.09,1.585 13.09,1.455 A1.455,1.455 0 0 1 14.55,0 A1.455,1.455 0 0 1 16,1.455 A1.455,1.455 0 0 1 14.55,2.909 C14.41,2.909 14.29,2.909 14.18,2.858 L11.59,5.455 C11.64,5.564 11.64,5.687 11.64,5.818 A1.455,1.455 0 0 1 10.18,7.273 A1.455,1.455 0 0 1 8.727,5.818 L8.778,5.455 L6.909,3.585 C6.676,3.636 6.415,3.636 6.182,3.585 L2.858,6.909 L2.909,7.273 A1.455,1.455 0 0 1 1.455,8.727 A1.455,1.455 0 0 1 0,7.273 A1.455,1.455 0 0 1 1.455,5.818 z</Geometry>
+	<Geometry x:Key="Geometry/Chart.Pie">M9.98,6.685 L15.33,6.685 A0.6657,-0.6657 0 0 0 16,6.02 A6.015,-6.015 0 0 0 9.98,0.004376 A0.6657,-0.6657 0 0 0 9.315,0.6701 L9.315,6.02 A0.6657,-0.6657 0 0 0 9.98,6.685 z M15.26,8.025 L8.721,8.025 A0.7298,-0.7298 0 0 1 7.991,7.295 L7.991,0.7422 A0.7379,-0.7379 0 0 0 7.173,0.004376 A8.02,-8.02 0 1 0 16,8.827 A0.7379,-0.7379 0 0 0 15.26,8.025 z</Geometry>
+	<Geometry x:Key="Geometry/Chart.Pie.Outline">M8.8,0 A0.8,-0.8 0 0 0 8,0.8 L8,7.2 A0.8,-0.8 0 0 0 8.8,8 L15.2,8 A0.8,-0.8 0 0 0 16,7.2 A7.2,-7.2 0 0 0 8.8,0 z M9.6,6.4 L9.6,1.656 A5.6,-5.6 0 0 1 14.34,6.4 z M15.06,9.648 A0.8,-0.8 0 0 0 14.03,10.14 A6.4,-6.4 0 1 1 5.864,1.968 A0.8,-0.8 0 0 0 5.336,0.456 A8,-8 0 1 0 15.54,10.66 A0.8,-0.8 0 0 0 15.06,9.648 z</Geometry>
 	<Geometry x:Key="Geometry/Checklist">M11.95,15.36 L9.6,12.8 L10.59,11.81 L11.95,13.17 L15.01,10.1 L16,11.31  M8.363,15.36 L1.707,15.36 C0.7595,15.36 0,14.59 0,13.65 L0,1.707 C0,0.7595 0.7595,0 1.707,0 L13.65,0 A1.707,1.707 0 0 1 15.36,1.707 L15.36,8.363 C14.61,7.927 13.73,7.68 12.8,7.68 L11.95,7.748 L11.95,6.827 L3.413,6.827 L3.413,8.533 L9.975,8.533 C8.593,9.446 7.68,11.02 7.68,12.8 C7.68,13.73 7.927,14.61 8.363,15.36  M7.68,10.24 L3.413,10.24 L3.413,11.95 L7.68,11.95  M11.95,3.413 L3.413,3.413 L3.413,5.12 L11.95,5.12</Geometry>
 	<Geometry x:Key="Geometry/Checklist.Outline">M11.95,15.36 L9.6,12.8 L10.59,11.81 L11.95,13.17 L15.01,10.1 L16,11.31  M8.363,15.36 L1.707,15.36 C0.7595,15.36 0,14.6 0,13.65 L0,1.707 C0,0.7595 0.7595,0 1.707,0 L13.65,0 C14.6,0 15.36,0.7595 15.36,1.707 L15.36,8.363 C14.84,8.064 14.27,7.851 13.65,7.748 L13.65,1.707 L1.707,1.707 L1.707,13.65 L7.748,13.65 C7.851,14.27 8.064,14.84 8.363,15.36  M7.68,11.95 L3.413,11.95 L3.413,10.24 L7.68,10.24  M9.967,8.533 L3.413,8.533 L3.413,6.827 L11.95,6.827 L11.95,7.748 C11.22,7.868 10.56,8.141 9.967,8.533  M11.95,5.12 L3.413,5.12 L3.413,3.413 L11.95,3.413</Geometry>
 	<Geometry x:Key="Geometry/CheckFilter">M7.805,7.024 L7.805,13.17 C7.837,13.41 7.759,13.66 7.579,13.82 C7.275,14.13 6.783,14.13 6.479,13.82 L4.91,12.25 C4.73,12.07 4.652,11.83 4.684,11.61 L4.684,7.024 L4.66,7.024 L0.1649,1.264 C-0.1004,0.9287 -0.03799,0.437 0.2976,0.1717 C0.4459,0.06243 0.6098,0 0.7815,0 L11.71,0 C11.88,0 12.04,0.06243 12.19,0.1717 C12.53,0.437 12.59,0.9287 12.32,1.264 L7.829,7.024 L7.805,7.024  M12.29,14.05 L10.15,11.71 L11.05,10.8 L12.29,12.04 L15.09,9.24 L16,10.34 L12.29,14.05</Geometry>
@@ -166,6 +171,36 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/BeginFrom}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Calendar" Drawing="{StaticResource Drawing/Calendar}"/>
+	<DrawingImage x:Key="Image/Chart.Bars">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Chart.Bars}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Bars.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Chart.Bars}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Bars.Outline">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Chart.Bars.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Bars.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Chart.Bars.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Lines">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Chart.Lines}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Lines.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Chart.Lines}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Pie">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Chart.Pie}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Pie.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Chart.Pie}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Pie.Outline">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Chart.Pie.Outline}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Chart.Pie.Outline.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Chart.Pie.Outline}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/Checklist">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Checklist}"/>
 	</DrawingImage>
