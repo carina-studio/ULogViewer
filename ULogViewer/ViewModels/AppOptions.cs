@@ -393,6 +393,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
 		else if (key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 			this.OnPropertyChanged(nameof(ShowHelpButtonOnLogTextFilter));
+		else if (key == SettingKeys.ShowLogChartPanelIfDefined)
+			this.OnPropertyChanged(nameof(ShowLogChartPanelIfDefined));
 		else if (key == AppSuite.SettingKeys.ShowProcessInfo)
 			this.OnPropertyChanged(nameof(ShowProcessInfo));
 		else if (key == SettingKeys.UpdateLogFilterDelay)
@@ -575,6 +577,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter);
 		set => this.Settings.SetValue<bool>(SettingKeys.ShowHelpButtonOnLogTextFilter, value);
+	}
+	
+	
+	/// <summary>
+	/// Show panel of log chart if log chart is defined.
+	/// </summary>
+	public bool ShowLogChartPanelIfDefined
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined);
+		set => this.Settings.SetValue<bool>(SettingKeys.ShowLogChartPanelIfDefined, value);
 	}
 
 

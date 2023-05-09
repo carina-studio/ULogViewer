@@ -869,7 +869,7 @@
 				<!-- Actions -->
 				<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" HorizontalAlignment="Right" VerticalAlignment="Center">
 					<StackPanel Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Padding}" Orientation="Horizontal">
-
+						
 						<!-- Select log by timestamp -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{DynamicResource String/SessionView.SelectNearestLogByTimestamp}">
 							<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>

@@ -118,7 +118,8 @@ class LogChartViewModel : SessionComponent
         {
             if (isInit)
                 return;
-            this.SetValue(IsPanelVisibleProperty, isDefined);
+            if (!isDefined)
+                this.ResetValue(IsPanelVisibleProperty);
             this.UpdateCanSetChartType();
         });
         this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
@@ -283,6 +284,8 @@ class LogChartViewModel : SessionComponent
         this.markedLogsSeriesGenerator.LogChartType = logChartType;
         this.SetValue(ChartTypeProperty, logChartType);
         this.ApplyLogChartProperties();
+        if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
+            this.SetValue(IsPanelVisibleProperty, true);
         this.UpdateCanSetChartType();
     }
 
@@ -298,11 +301,19 @@ class LogChartViewModel : SessionComponent
         {
             case nameof(LogProfile.LogChartProperties):
             {
+                var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
                 this.ApplyLogChartProperties();
+                if (!isPrevChartDefined 
+                    && this.GetValue(IsChartDefinedProperty) 
+                    && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
+                {
+                    this.SetValue(IsPanelVisibleProperty, true);
+                }
                 break;
             }
             case nameof(LogProfile.LogChartType):
             {
+                var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
                 var logChartType = profile.LogChartType;
                 this.allLogsSeriesGenerator.LogChartType = logChartType;
                 if (this.filteredLogsSeriesGenerator is not null)
@@ -310,6 +321,12 @@ class LogChartViewModel : SessionComponent
                 this.markedLogsSeriesGenerator.LogChartType = logChartType;
                 this.SetValue(ChartTypeProperty, logChartType);
                 this.SetValue(IsChartDefinedProperty, profile.LogChartType != LogChartType.None && this.allLogsSeriesGenerator.LogChartProperties.IsNotEmpty());
+                if (!isPrevChartDefined 
+                    && this.GetValue(IsChartDefinedProperty) 
+                    && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
+                {
+                    this.SetValue(IsPanelVisibleProperty, true);
+                }
                 break;
             }
         }

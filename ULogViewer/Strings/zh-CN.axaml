@@ -45,6 +45,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即开启目录选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字筛选栏位中显示「说明」按钮</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">自动打开图表面板</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">当日志类型中有定义图表时打开面板。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在状态栏中显示CPU以及内存使用量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">条件改变至开始筛选的延迟时间（毫秒）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调色彩</sys:String>
@@ -1132,6 +1134,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">运行「{0}」之脚本以分析日志时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">运行「{0}」之脚本以初始化分析时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel">图表面板</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升级至专业版以启用图表</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(当前使用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：{0}</sys:String>

@@ -116,6 +116,10 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<bool> ShowHelpButtonOnLogTextFilter = new(nameof(ShowHelpButtonOnLogTextFilter), true);
 	/// <summary>
+	/// Show panel of log chart if log chart is defined.
+	/// </summary>
+	public static readonly SettingKey<bool> ShowLogChartPanelIfDefined = new(nameof(ShowLogChartPanelIfDefined), true);
+	/// <summary>
 	/// Delay of updating log filter after changing related parameters in milliseconds.
 	/// </summary>
 	public static readonly SettingKey<int> UpdateLogFilterDelay = new(nameof(UpdateLogFilterDelay), 500);
