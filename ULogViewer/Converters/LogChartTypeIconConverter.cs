@@ -46,12 +46,13 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
         {
             LogChartType.CategoryBars
                 or LogChartType.ValueBars
-                or LogChartType.ValueStackedBars => (this.outline ? "Image/Chart.Bars.Outline" : "Image/Chart.Bars")
+                or LogChartType.ValueStackedBars => "Image/Chart.Bars"
                                                     + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueLines
-                or LogChartType.ValueLinesWithDataPoints
-                or LogChartType.ValueStackedAreas
-                or LogChartType.ValueStackedAreasWithDataPoints => "Image/Chart.Lines"
+                or LogChartType.ValueLinesWithDataPoints => "Image/Chart.Lines"
+                                                            + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
+            LogChartType.ValueStackedAreas
+                or LogChartType.ValueStackedAreasWithDataPoints => (this.outline ? "Image/Chart.Areas.Outline" : "Image/Chart.Areas")
                                                                    + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.None => "Image/LogProfile.Empty",
             _ => null,
