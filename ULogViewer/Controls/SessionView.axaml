@@ -931,7 +931,7 @@
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
 				
 				<!-- Tool bar -->
-				<Border Classes="ToolBar" DockPanel.Dock="Right">
+				<Border Classes="ToolBar" DockPanel.Dock="Right" IsEnabled="{Binding IsProVersionActivated}">
 					<StackPanel>
 						<StackPanel.Styles>
 							<Style Selector="Button.ToolBar_Button">
@@ -976,21 +976,36 @@
 					</StackPanel>
 				</Border>
 				
-				<!-- Chart -->
-				<lvc:CartesianChart Name="logChart" 
-				                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
-				                    Background="{x:Static Brushes.Transparent}" 
-				                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
-				                    LegendPosition="Right"
-				                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
-				                    LegendTextSize="{StaticResource Double/SessionView.LogChart.Legend.FontSize}"
-				                    Series="{Binding #root.LogChartSeries}" 
-				                    TooltipBackgroundPaint="{Binding #root.LogChartToolTipBackgroundPaint}" 
-				                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
-				                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
-				                    XAxes="{Binding #root.LogChartXAxes}"
-				                    YAxes="{Binding #root.LogChartYAxes}"
-				                    ZoomMode="X"/>
+				<!-- Chart and hint -->
+				<Panel>
+				
+					<!-- Chart -->
+					<lvc:CartesianChart Name="logChart" 
+					                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
+					                    Background="{x:Static Brushes.Transparent}" 
+					                    IsVisible="{Binding IsProVersionActivated}"
+					                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
+					                    LegendPosition="Right"
+					                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
+					                    LegendTextSize="{StaticResource Double/SessionView.LogChart.Legend.FontSize}"
+					                    Series="{Binding #root.LogChartSeries}" 
+					                    TooltipBackgroundPaint="{Binding #root.LogChartToolTipBackgroundPaint}" 
+					                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
+					                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
+					                    XAxes="{Binding #root.LogChartXAxes}"
+					                    YAxes="{Binding #root.LogChartYAxes}"
+					                    ZoomMode="X"/>
+					
+					<!-- Hint -->
+					<Border IsVisible="{Binding !IsProVersionActivated}">
+						<TextBlock HorizontalAlignment="Center" 
+						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
+						           Text="{DynamicResource String/SessionView.LogChartPanel.ProVersionNeeded}" 
+						           TextWrapping="WrapWithOverflow" 
+						           VerticalAlignment="Center"/>
+					</Border>
+					
+				</Panel>
 				
 			</DockPanel>
 

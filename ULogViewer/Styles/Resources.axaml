@@ -251,6 +251,7 @@
 	<Thickness x:Key="Thickness/SessionView.LogChart.Axis.Padding.Y">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Chart.Margin">0,0,10,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.FileName.Margin">0,0,0,4</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Icon.Margin">0,3,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Indicator.Margin">2,1,0,3</Thickness>

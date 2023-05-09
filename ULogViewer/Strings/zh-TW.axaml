@@ -1121,6 +1121,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">執行「{0}」之腳本以分析日誌時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">執行「{0}」之腳本以初始化分析時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">執行「{0}」之腳本時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升級至專業版以啟用圖表</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(目前使用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日誌個數：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">執行「{0}」之腳本以關閉原始日誌行讀取器時發生錯誤：</sys:String>
