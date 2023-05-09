@@ -693,6 +693,12 @@ partial class SessionView
         // create series
         foreach (var series in viewModel.Series)
             this.logChartSeries.Add(this.CreateLogChartSeries(viewModel, series));
+        ((int)this.logChart.AnimationsSpeed.TotalMilliseconds).Let(it => // [Workaround] Prevent animation interrupted unexpectedly
+        {
+            if (it > 100)
+                this.SynchronizationContext.PostDelayed(() => this.logChart.CoreChart.Update(), 100);
+            this.SynchronizationContext.PostDelayed(() => this.logChart.CoreChart.Update(), it);
+        });
     }
     
     
