@@ -551,19 +551,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logsShowingModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logsShowingModeButton)).AsNonNull();
-			this.logsShowingModeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() =>
-				{
-					this.logsShowingModeButton.IsChecked = false;
-					it.DataContext = null;
-				});
-				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
-				{
-					ToolTip.SetIsOpen(this.logsShowingModeButton, false);
-					this.logsShowingModeButton.IsChecked = true;
-				});
-			});
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
 				it.ValidationDelay = this.CommitLogFilterParamsDelay;
@@ -707,10 +694,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				};
 			});
-			this.logChartTypeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
+			this.logChartTypeMenu = ((ContextMenu)this.Resources[nameof(logChartTypeMenu)].AsNonNull()).Also(it =>
 			{
 				it.Items = this.SetupLogChartTypeMenuItems(it);
-				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logChartTypeButton.IsChecked = false);
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() =>
+				{
+					this.logChartTypeButton.IsChecked = false;
+					it.DataContext = null;
+				});
 				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
 				{
 					ToolTip.SetIsOpen(this.logChartTypeButton, false);
@@ -773,6 +764,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					ToolTip.SetIsOpen(this.logsSavingButton, false);
 					this.logsSavingButton.IsChecked = true;
+				});
+			});
+			this.logsShowingModeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
+			{
+				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logsShowingModeButton.IsChecked = false);
+				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
+				{
+					ToolTip.SetIsOpen(this.logsShowingModeButton, false);
+					this.logsShowingModeButton.IsChecked = true;
 				});
 			});
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
