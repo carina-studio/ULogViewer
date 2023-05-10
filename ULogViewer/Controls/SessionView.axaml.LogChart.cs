@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
 using Avalonia.Media;
 using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
@@ -26,6 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -58,6 +61,8 @@ partial class SessionView
     
     
     // Constants.
+    const long DurationToDropClickEvent = 500;
+    const double PointerDistanceToDropClickEvent = 5;
     const int RecentlyUsedLogChartSeriesColorCount = 8;
     const int LogChartXAxisMinValueCount = 10;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
@@ -70,6 +75,9 @@ partial class SessionView
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
+    ChartPoint[] logChartPointerDownData = Array.Empty<ChartPoint>();
+    Point? logChartPointerDownPosition;
+    readonly Stopwatch logChartPointerDownWatch = new();
     readonly ObservableList<ISeries> logChartSeries = new();
     readonly Dictionary<string, SKColor> logChartSeriesColors = new();
     readonly ToggleButton logChartTypeButton;
@@ -293,10 +301,18 @@ partial class SessionView
             }
             : null;
     }
-
-
+    
+    
     // Called when pointer down on data points in log chart.
     void OnLogChartDataPointerDown(IEnumerable<ChartPoint> points)
+    {
+        if (this.logChartPointerDownPosition.HasValue)
+            this.logChartPointerDownData = points.ToArray();
+    }
+
+
+    // Called when clicking on data points in log chart.
+    void OnLogChartDataClick(ChartPoint[] points)
     {
         var log = default(DisplayableLog);
         foreach (var point in points)
@@ -322,6 +338,61 @@ partial class SessionView
             this.logListBox.SelectedItems?.Clear();
             this.logListBox.SelectedItem = log;
             this.ScrollToLog(log, true);
+        }
+    }
+    
+    
+    // Called when pointer moved on log chart.
+    void OnLogChartPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (this.logChartPointerDownPosition.HasValue && this.logChartPointerDownData.Length > 0)
+        {
+            var downPosition = this.logChartPointerDownPosition.Value;
+            var position = e.GetPosition(this.logChart);
+            var diffX = (position.X - downPosition.X);
+            var diffY = (position.Y - downPosition.Y);
+            var distance = Math.Sqrt(diffX * diffX + diffY * diffY);
+            if (distance >= PointerDistanceToDropClickEvent)
+            {
+                this.logChartPointerDownData = Array.Empty<ChartPoint>();
+                this.logChartPointerDownPosition = null;
+                this.logChartPointerDownWatch.Reset();
+            }
+        }
+    }
+
+
+    // Called when pointer pressed on log chart.
+    void OnLogChartPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        var point = e.GetCurrentPoint(this.logChart);
+        if (point.Properties.IsLeftButtonPressed)
+        {
+            this.logChartPointerDownPosition = point.Position;
+            this.logChartPointerDownWatch.Restart();
+        }
+    }
+    
+    
+    // Called when pointer released on log chart.
+    void OnLogChartPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (e.InitialPressMouseButton == MouseButton.Left && this.logChartPointerDownData.Length > 0)
+        {
+            var data = this.logChartPointerDownData;
+            this.logChartPointerDownData = Array.Empty<ChartPoint>();
+            if (this.logChartPointerDownPosition.HasValue)
+            {
+                var downPosition = this.logChartPointerDownPosition.Value;
+                var upPosition = e.GetPosition(this.logChart);
+                var diffX = (upPosition.X - downPosition.X);
+                var diffY = (upPosition.Y - downPosition.Y);
+                var distance = Math.Sqrt(diffX * diffX + diffY * diffY);
+                this.logChartPointerDownPosition = null;
+                if (distance < PointerDistanceToDropClickEvent && this.logChartPointerDownWatch.ElapsedMilliseconds < DurationToDropClickEvent)
+                    this.OnLogChartDataClick(data);
+            }
+            this.logChartPointerDownWatch.Reset();
         }
     }
 
