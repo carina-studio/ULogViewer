@@ -39,6 +39,10 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxSeriesValue));
     /// <summary>
+    /// Define <see cref="MaxSeriesValueCount"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<int> MaxSeriesValueCountProperty = ObservableProperty.Register<LogChartViewModel, int>(nameof(MaxSeriesValueCount));
+    /// <summary>
     /// Define <see cref="MinSeriesValue"/> property.
     /// </summary>
     public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinSeriesValue));
@@ -103,6 +107,7 @@ class LogChartViewModel : SessionComponent
                 this.activeSeriesGenerator = seriesGenerator;
                 this.OnPropertyChanged(nameof(HasChart));
                 this.OnPropertyChanged(nameof(IsGeneratingSeries));
+                this.SetValue(MaxSeriesValueCountProperty, seriesGenerator.MaxSeriesValueCount);
                 this.SetValue(MaxSeriesValueProperty, seriesGenerator.MaxSeriesValue);
                 this.SetValue(MinSeriesValueProperty, seriesGenerator.MinSeriesValue);
                 this.OnPropertyChanged(nameof(Series));
@@ -230,6 +235,12 @@ class LogChartViewModel : SessionComponent
     /// Get known maximum value of all series.
     /// </summary>
     public DisplayableLogChartSeriesValue? MaxSeriesValue => this.GetValue(MaxSeriesValueProperty);
+    
+    
+    /// <summary>
+    /// Get maximum number of values in all series.
+    /// </summary>
+    public int MaxSeriesValueCount => this.GetValue(MaxSeriesValueCountProperty);
 
 
     /// <inheritdoc/>
@@ -341,15 +352,19 @@ class LogChartViewModel : SessionComponent
         switch (e.PropertyName)
         {
             case nameof(DisplayableLogChartSeriesGenerator.IsProcessing):
-                if (this.activeSeriesGenerator == generator)
+                if (this.activeSeriesGenerator == generator && !this.IsDisposed)
                     this.OnPropertyChanged(nameof(IsGeneratingSeries));
                 break;
             case nameof(DisplayableLogChartSeriesGenerator.MaxSeriesValue):
-                if (this.activeSeriesGenerator == generator)
+                if (this.activeSeriesGenerator == generator && !this.IsDisposed)
                     this.SetValue(MaxSeriesValueProperty, this.activeSeriesGenerator.MaxSeriesValue);
                 break;
+            case nameof(DisplayableLogChartSeriesGenerator.MaxSeriesValueCount):
+                if (this.activeSeriesGenerator == generator && !this.IsDisposed)
+                    this.SetValue(MaxSeriesValueCountProperty, this.activeSeriesGenerator.MaxSeriesValueCount);
+                break;
             case nameof(DisplayableLogChartSeriesGenerator.MinSeriesValue):
-                if (this.activeSeriesGenerator == generator)
+                if (this.activeSeriesGenerator == generator && !this.IsDisposed)
                     this.SetValue(MinSeriesValueProperty, this.activeSeriesGenerator.MinSeriesValue);
                 break;
         }

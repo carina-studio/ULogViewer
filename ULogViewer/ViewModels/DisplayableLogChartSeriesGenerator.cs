@@ -58,6 +58,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     LogChartType logChartType = LogChartType.None;
     DisplayableLogChartSeriesValue? knownMaxSeriesValue;
     DisplayableLogChartSeriesValue? knownMinSeriesValue;
+    int maxSeriesValueCount;
     readonly ScheduledAction reportMinMaxValuesAction;
     readonly ObservableList<DisplayableLogChartSeries> series = new();
     Dictionary<string, (int /* counter */, int /* index */)>[] seriesCategories = Array.Empty<Dictionary<string, (int, int)>>();
@@ -154,6 +155,12 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     public DisplayableLogChartSeriesValue? MaxSeriesValue => null;
 
 
+    /// <summary>
+    /// Get maximum number of values in all series.
+    /// </summary>
+    public int MaxSeriesValueCount => this.maxSeriesValueCount;
+
+
     /// <inheritdoc/>
     public override long MemorySize => base.MemorySize
                                        + this.seriesCategories.Let(it =>
@@ -200,6 +207,8 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
         this.seriesCategories = Array.Empty<Dictionary<string, (int, int)>>();
         this.seriesCategoriesMemorySize = 0L;
         this.seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
+        this.maxSeriesValueCount = 0;
+        this.OnPropertyChanged(nameof(MaxSeriesValueCount));
         this.reportMinMaxValuesAction.Execute();
     }
 

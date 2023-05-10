@@ -971,6 +971,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
 			this.commitLogFiltersAction = new(this.CommitLogFilters);
+			this.updateLogChartXAxisLimitAction = new(this.UpdateLogChartXAxisLimit);
 			this.updateLogChartYAxisLimitAction = new(this.UpdateLogChartYAxisLimit);
 			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
 			this.updateLatestDisplayedLogRangeAction = new(this.UpdateLatestDisplayedLogRange);

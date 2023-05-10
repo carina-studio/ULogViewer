@@ -15,6 +15,7 @@ using CarinaStudio.Windows.Input;
 using LiveChartsCore;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
+using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Avalonia;
 using LiveChartsCore.SkiaSharpView.Drawing;
@@ -58,6 +59,7 @@ partial class SessionView
     
     // Constants.
     const int RecentlyUsedLogChartSeriesColorCount = 8;
+    const int LogChartXAxisMinValueCount = 10;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
 
@@ -82,6 +84,7 @@ partial class SessionView
     };
     IPaint<SkiaSharpDrawingContext>? logChartYAxisCrosshairPaint;
     readonly Queue<SKColor> recentlyUsedLogChartSeriesColors = new(RecentlyUsedLogChartSeriesColorCount);
+    readonly ScheduledAction updateLogChartXAxisLimitAction;
     readonly ScheduledAction updateLogChartYAxisLimitAction;
     
     
@@ -270,7 +273,7 @@ partial class SessionView
             {
                 case nameof(Axis.MaxLimit):
                 case nameof(Axis.MinLimit):
-                    this.SetValue(IsLogChartHorizontallyZoomedProperty, this.logChartXAxis.MinLimit.HasValue || this.logChartXAxis.MaxLimit.HasValue);
+                    this.updateLogChartXAxisLimitAction.Schedule();
                     break;
             }
         }
@@ -284,6 +287,7 @@ partial class SessionView
             ? session.LogChart.ChartType switch
             {
                 LogChartType.ValueStackedAreas
+                    or LogChartType.ValueStackedAreasWithDataPoints
                     or LogChartType.ValueStackedBars => null,
                 _ => this.logChartYAxisCrosshairPaint,
             }
@@ -354,6 +358,12 @@ partial class SessionView
             case nameof(LogChartViewModel.MaxSeriesValue):
             case nameof(LogChartViewModel.MinSeriesValue):
                 this.updateLogChartYAxisLimitAction.Schedule();
+                break;
+            case nameof(LogChartViewModel.MaxSeriesValueCount):
+                this.logChart.ZoomMode = viewModel.MaxSeriesValueCount > LogChartXAxisMinValueCount 
+                    ? ZoomAndPanMode.X 
+                    : ZoomAndPanMode.None;
+                this.updateLogChartXAxisLimitAction.Schedule();
                 break;
             case nameof(LogChartViewModel.PanelSize):
                 if (!this.isSyncingLogChartPanelSize && viewModel.IsPanelVisible)
@@ -699,12 +709,80 @@ partial class SessionView
                 this.SynchronizationContext.PostDelayed(() => this.logChart.CoreChart.Update(), 100);
             this.SynchronizationContext.PostDelayed(() => this.logChart.CoreChart.Update(), it);
         });
+        
+        // update zoom mode
+        this.logChart.ZoomMode = viewModel.MaxSeriesValueCount > LogChartXAxisMinValueCount 
+            ? ZoomAndPanMode.X 
+            : ZoomAndPanMode.None;
     }
     
     
     // Update visibility of log chart panel.
     void UpdateLogChartPanelVisibility()
     { }
+    
+    
+    // Update limit of X-axis.
+    void UpdateLogChartXAxisLimit()
+    {
+        if (this.DataContext is not Session session)
+            return;
+        var viewModel = session.LogChart;
+        if (!viewModel.IsChartDefined)
+        {
+            this.SetValue(IsLogChartHorizontallyZoomedProperty, false);
+            return;
+        }
+        var axis = this.logChartXAxis;
+        var minLimit = axis.MinLimit ?? double.NaN;
+        var maxLimit = axis.MaxLimit ?? double.NaN;
+        if (!double.IsFinite(minLimit) && !double.IsFinite(maxLimit))
+        {
+            this.SetValue(IsLogChartHorizontallyZoomedProperty, false);
+            return;
+        }
+        var maxValueCount = viewModel.MaxSeriesValueCount;
+        if (maxValueCount <= LogChartXAxisMinValueCount)
+        {
+            axis.MinLimit = null;
+            axis.MaxLimit = null;
+            this.SetValue(IsLogChartHorizontallyZoomedProperty, false);
+            return;
+        }
+        var reserved = maxValueCount * LogChartXAxisMinMaxReservedRatio;
+        var isSnappedToEdge = false;
+        if (minLimit < 0.5)
+        {
+            minLimit = -reserved;
+            axis.MinLimit = null;
+            isSnappedToEdge = true;
+            if (maxLimit < minLimit + LogChartXAxisMinValueCount)
+            {
+                maxLimit = minLimit + LogChartXAxisMinValueCount + 0.0001;
+                axis.MaxLimit = maxLimit;
+            }
+        }
+        if (maxLimit > maxValueCount - 0.5)
+        {
+            maxLimit = maxValueCount + reserved;
+            axis.MaxLimit = null;
+            isSnappedToEdge = true;
+            if (minLimit > maxLimit - LogChartXAxisMinValueCount)
+            {
+                minLimit = maxLimit - LogChartXAxisMinValueCount - 0.0001;
+                axis.MinLimit = minLimit;
+            }
+        }
+        if (!isSnappedToEdge && (maxLimit - minLimit) < LogChartXAxisMinValueCount)
+        {
+            var center = (minLimit + maxLimit) / 2;
+            minLimit = center - (LogChartXAxisMinValueCount / 2.0);
+            maxLimit = center + (LogChartXAxisMinValueCount / 2.0);
+            axis.MinLimit = minLimit;
+            axis.MaxLimit = maxLimit;
+        }
+        this.SetValue(IsLogChartHorizontallyZoomedProperty, axis.MinLimit.HasValue || axis.MaxLimit.HasValue);
+    }
     
     
     // Update limit of Y-axis.
@@ -720,7 +798,7 @@ partial class SessionView
         if (double.IsFinite(minLimit) && double.IsFinite(maxLimit))
         {
             var range = maxLimit - minLimit;
-            var reserved = range * LogChartYAxisMinMaxReservedRatio;
+            var reserved = Math.Max(0.25, range * LogChartYAxisMinMaxReservedRatio);
             if (maxLimit < (double.MaxValue - 1 - reserved) && minLimit > (double.MinValue + 1 + reserved))
             {
                 if (minLimit >= 0)

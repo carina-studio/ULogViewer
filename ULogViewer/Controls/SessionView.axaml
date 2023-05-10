@@ -993,8 +993,7 @@
 					                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
 					                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
 					                    XAxes="{Binding #root.LogChartXAxes}"
-					                    YAxes="{Binding #root.LogChartYAxes}"
-					                    ZoomMode="X"/>
+					                    YAxes="{Binding #root.LogChartYAxes}"/>
 					
 					<!-- Hint -->
 					<Border IsVisible="{Binding !IsProVersionActivated}">
