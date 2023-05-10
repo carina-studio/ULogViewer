@@ -72,6 +72,7 @@ partial class SessionView
     // Fields.
     bool areLogChartAxesReady;
     INotifyCollectionChanged? attachedRawLogChartSeries;
+    bool isLogChartDoubleTapped;
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
@@ -377,22 +378,37 @@ partial class SessionView
     // Called when pointer released on log chart.
     void OnLogChartPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (e.InitialPressMouseButton == MouseButton.Left && this.logChartPointerDownData.Length > 0)
+        if (e.InitialPressMouseButton == MouseButton.Left)
         {
-            var data = this.logChartPointerDownData;
-            this.logChartPointerDownData = Array.Empty<ChartPoint>();
-            if (this.logChartPointerDownPosition.HasValue)
+            // double click
+            if (this.isLogChartDoubleTapped)
             {
-                var downPosition = this.logChartPointerDownPosition.Value;
-                var upPosition = e.GetPosition(this.logChart);
-                var diffX = (upPosition.X - downPosition.X);
-                var diffY = (upPosition.Y - downPosition.Y);
-                var distance = Math.Sqrt(diffX * diffX + diffY * diffY);
+                this.isLogChartDoubleTapped = false;
+                this.logChartPointerDownData = Array.Empty<ChartPoint>();
                 this.logChartPointerDownPosition = null;
-                if (distance < PointerDistanceToDropClickEvent && this.logChartPointerDownWatch.ElapsedMilliseconds < DurationToDropClickEvent)
-                    this.OnLogChartDataClick(data);
+                this.logChartPointerDownWatch.Reset();
+                this.SynchronizationContext.PostDelayed(this.ResetLogChartZoom, 100);
+                return;
             }
-            this.logChartPointerDownWatch.Reset();
+            
+            // single click
+            if (this.logChartPointerDownData.Length > 0)
+            {
+                var data = this.logChartPointerDownData;
+                this.logChartPointerDownData = Array.Empty<ChartPoint>();
+                if (this.logChartPointerDownPosition.HasValue)
+                {
+                    var downPosition = this.logChartPointerDownPosition.Value;
+                    var upPosition = e.GetPosition(this.logChart);
+                    var diffX = (upPosition.X - downPosition.X);
+                    var diffY = (upPosition.Y - downPosition.Y);
+                    var distance = Math.Sqrt(diffX * diffX + diffY * diffY);
+                    this.logChartPointerDownPosition = null;
+                    if (distance < PointerDistanceToDropClickEvent && this.logChartPointerDownWatch.ElapsedMilliseconds < DurationToDropClickEvent)
+                        this.OnLogChartDataClick(data);
+                }
+                this.logChartPointerDownWatch.Reset();
+            }
         }
     }
 
@@ -490,6 +506,7 @@ partial class SessionView
             it.MinLimit = null;
             it.MaxLimit = null;
         });
+        this.updateLogChartXAxisLimitAction.Execute();
     }
     
     

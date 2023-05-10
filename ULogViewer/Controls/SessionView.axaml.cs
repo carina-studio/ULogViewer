@@ -499,7 +499,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.DataPointerDown += (_, e) => this.OnLogChartDataPointerDown(e);
 				it.DoubleTapped += (_, e) =>
 				{
-					this.ResetLogChartZoom();
+					this.isLogChartDoubleTapped = true;
 					e.Handled = true;
 				};
 				it.GetObservable(IsPointerOverProperty).Subscribe(isPointerOver =>
