@@ -209,7 +209,7 @@
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Crosshair.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Separator.Width">1</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Width">2</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Legend.FontSize">13</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Size">5</sys:Double>

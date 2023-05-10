@@ -5,7 +5,6 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Media;
-using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
@@ -85,7 +84,7 @@ partial class SessionView
     readonly ContextMenu logChartTypeMenu;
     readonly Axis logChartXAxis = new()
     {
-        IsVisible = false,
+        CrosshairSnapEnabled = true,
     };
     readonly Axis logChartYAxis = new()
     {
@@ -218,11 +217,13 @@ partial class SessionView
     
     
     // Generate color for log chart series.
-    SKColor GenerateRandomSKColor(Random random) => this.Application.EffectiveThemeMode switch
+    static SKColor GenerateRandomSKColor(Random random)
     {
-        ThemeMode.Dark => new((byte) (random.Next(180) + 60), (byte) (random.Next(180) + 60), (byte) (random.Next(180) + 60)),
-        _ => new((byte) (random.Next(180) + 20), (byte) (random.Next(180) + 20), (byte) (random.Next(180) + 20)),
-    };
+        var r = 48 + random.Next(11) << 4;
+        var g = 48 + random.Next(11) << 4;
+        var b = 48 + random.Next(11) << 4;
+        return new((byte)r, (byte)g, (byte)b);
+    }
 
 
     /// <summary>
@@ -292,7 +293,7 @@ partial class SessionView
     // Called when pointer entered or leave the chart.
     void OnLogChartPointerOverChanged(bool isPointerOver)
     {
-        this.logChartYAxis.CrosshairPaint = isPointerOver && this.DataContext is Session session
+        var paint = isPointerOver && this.DataContext is Session session
             ? session.LogChart.ChartType switch
             {
                 LogChartType.ValueStackedAreas
@@ -301,6 +302,8 @@ partial class SessionView
                 _ => this.logChartYAxisCrosshairPaint,
             }
             : null;
+        this.logChartXAxis.CrosshairPaint = paint;
+        this.logChartYAxis.CrosshairPaint = paint;
     }
     
     
@@ -555,7 +558,7 @@ partial class SessionView
         var random = new Random();
         while (true)
         {
-            color = this.GenerateRandomSKColor(random);
+            color = GenerateRandomSKColor(random);
             var isColorSelected = true;
             foreach (var ruColor in this.recentlyUsedLogChartSeriesColors)
             {
@@ -563,11 +566,11 @@ partial class SessionView
                 var gDiff = Math.Abs(color.Green - ruColor.Green);
                 var bDiff = Math.Abs(color.Blue - ruColor.Blue);
                 var closingCount = 0;
-                if (rDiff <= 0)
+                if (rDiff < 16)
                     ++closingCount;
-                if (gDiff <= 0)
+                if (gDiff < 16)
                     ++closingCount;
-                if (bDiff <= 0)
+                if (bDiff < 16)
                     ++closingCount;
                 if (closingCount >= 2)
                 {
@@ -582,7 +585,7 @@ partial class SessionView
                 var rDiff = Math.Abs(color.Red - existingColor.Red);
                 var gDiff = Math.Abs(color.Green - existingColor.Green);
                 var bDiff = Math.Abs(color.Blue - existingColor.Blue);
-                if (rDiff <= 10 && gDiff <= 10 && bDiff <= 10)
+                if (rDiff <= 16 && gDiff <= 16 && bDiff <= 16)
                 {
                     isColorSelected = false;
                     break;
@@ -709,14 +712,9 @@ partial class SessionView
         });
         this.logChartXAxis.Let(axis =>
         {
-            var textPaint = textBrush.Let(brush =>
-            {
-                var color = brush.Color;
-                return new SolidColorPaint(new(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5)));
-            });
-            axis.LabelsPaint = textPaint;
+            axis.LabelsPaint = null;
             axis.TextSize = (float)axisFontSize;
-            axis.ZeroPaint = new SolidColorPaint(textPaint.Color, (float)axisWidth);
+            axis.ZeroPaint = null;
         });
         this.logChartYAxis.Let(axis =>
         {

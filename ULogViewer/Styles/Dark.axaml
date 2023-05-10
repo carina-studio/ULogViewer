@@ -46,7 +46,6 @@
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#000000</SolidColorBrush>
 
 			<!-- SessionView -->
-			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Crosshair" Color="#ffffff"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Separator" Color="#606060"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#4fffffff</SolidColorBrush>
