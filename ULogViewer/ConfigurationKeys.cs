@@ -80,6 +80,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> LogTextFilterHistoryCount = new(nameof(LogTextFilterHistoryCount), 16);
     /// <summary>
+    /// Maximum number of value in log chart.
+    /// </summary>
+    public static readonly SettingKey<int> MaxValueCountInLogChart = new(nameof(MaxValueCountInLogChart), 10000);
+    /// <summary>
     /// Size of chunk of non-continuous logs reading.
     /// </summary>
     public static readonly SettingKey<int> NonContinuousLogsReadingUpdateChunkSize = new(nameof(NonContinuousLogsReadingUpdateChunkSize), 32768);

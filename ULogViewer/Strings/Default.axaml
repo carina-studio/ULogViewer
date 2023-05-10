@@ -1172,6 +1172,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">Error occurred while running script of '{0}':</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count: {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel">Chart panel</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">The chart has been disabled temporarily because of too many data points in the chart</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">Need to upgrade to Pro version to enable the chart</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(Current)</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">Error occurred while running script of '{0}' to close raw log reader:</sys:String>
@@ -1203,6 +1204,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">Mark logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">Mark/Unmark</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
+	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">In order to ensure the performance of application, the chart has been disabled temporarily because of too many data points in the chart. You can remove some logs or remove some properties of chart to reduce number of data points.</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">Private memory usage</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">Script running is needed by '{0}'. You need to enable script running before using it.</sys:String>

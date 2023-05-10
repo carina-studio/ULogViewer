@@ -1135,6 +1135,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">运行「{0}」之脚本以初始化分析时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel">图表面板</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">图表因资料点过多而被暂时停用</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升级至专业版以启用图表</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(当前使用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：{0}</sys:String>
@@ -1167,6 +1168,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">标记/解除标记</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
+	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">为了维持应用程序的性能，图表因资料点过多而被暂时停用。您可以移除一些日志或移除一些图表的属性以减少资料点数量。</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">当前的日志类型不允许加入多个文件。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」需要脚本运行功能，您需要在使用之前启用脚本运行。</sys:String>

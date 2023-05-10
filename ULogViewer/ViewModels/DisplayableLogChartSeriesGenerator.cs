@@ -54,6 +54,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
 
 
     // Fields.
+    bool isMaxTotalSeriesValueCountReached;
     IList<DisplayableLogProperty> logChartProperties = Array.Empty<DisplayableLogProperty>();
     LogChartType logChartType = LogChartType.None;
     DisplayableLogChartSeriesValue? knownMaxSeriesValue;
@@ -64,6 +65,8 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     Dictionary<string, (int /* counter */, int /* index */)>[] seriesCategories = Array.Empty<Dictionary<string, (int, int)>>();
     long seriesCategoriesMemorySize;
     ObservableList<DisplayableLogChartSeriesValue>[] seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
+    SeriesValueType seriesValueType = SeriesValueType.Undefined;
+    int totalSeriesValueCount;
 
 
     /// <summary>
@@ -89,7 +92,11 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
         return ProcessingToken.Empty;
     }
     
-    
+    /// <summary>
+    /// Check whether <see cref="TotalSeriesValueCount"/> reaches the limitation or not.
+    /// </summary>
+    public bool IsMaxTotalSeriesValueCountReached => this.isMaxTotalSeriesValueCountReached;
+
     // Check whether type of log chart is stacked chart or not.
     static bool IsStackedLogChartType(LogChartType type) => type switch
     {
@@ -209,7 +216,16 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
         this.seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
         this.maxSeriesValueCount = 0;
         this.OnPropertyChanged(nameof(MaxSeriesValueCount));
+        this.totalSeriesValueCount = 0;
+        this.OnPropertyChanged(nameof(TotalSeriesValueCount));
+        this.knownMinSeriesValue = null;
+        this.knownMaxSeriesValue = null;
         this.reportMinMaxValuesAction.Execute();
+        if (this.isMaxTotalSeriesValueCountReached)
+        {
+            this.isMaxTotalSeriesValueCountReached = false;
+            this.OnPropertyChanged(nameof(IsMaxTotalSeriesValueCountReached));
+        }
     }
 
 
@@ -222,6 +238,12 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     /// Series of log chart.
     /// </summary>
     public IList<DisplayableLogChartSeries> Series { get; }
+    
+    
+    /// <summary>
+    /// Get total number of values in all series.
+    /// </summary>
+    public int TotalSeriesValueCount => this.totalSeriesValueCount;
 }
 
 

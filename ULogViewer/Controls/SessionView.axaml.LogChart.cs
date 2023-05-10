@@ -5,7 +5,9 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Media;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
@@ -66,6 +68,10 @@ partial class SessionView
     const int LogChartXAxisMinValueCount = 10;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
+    
+    
+    // Static fields.
+    static readonly SettingKey<bool> PromptWhenMaxTotalLogSeriesValueCountReachedKey = new("SessionView.PromptWhenMaxTotalLogSeriesValueCountReached", true);
 
 
     // Fields.
@@ -442,6 +448,9 @@ partial class SessionView
             case nameof(LogChartViewModel.IsChartDefined):
                 this.UpdateLogChartSeries();
                 break;
+            case nameof(LogChartViewModel.IsMaxTotalSeriesValueCountReached):
+                this.PromptForMaxLogChartSeriesValueCountReached();
+                break;
             case nameof(LogChartViewModel.IsPanelVisible):
                 this.UpdateLogChartPanelVisibility();
                 break;
@@ -496,6 +505,25 @@ partial class SessionView
             default:
                 throw new NotSupportedException();
         }
+    }
+
+
+    // Show message dialog to notify user that the total number of values reaches the limitation.
+    async void PromptForMaxLogChartSeriesValueCountReached()
+    {
+        if (!this.PersistentState.GetValueOrDefault(PromptWhenMaxTotalLogSeriesValueCountReachedKey))
+            return;
+        if (this.attachedWindow is null)
+            return;
+        var dialog = new MessageDialog
+        {
+            DoNotAskOrShowAgain = true,
+            Icon = MessageDialogIcon.Warning,
+            Message = this.Application.GetObservableString("SessionView.MaxTotalLogChartSeriesValueCountReached"),
+        };
+        await dialog.ShowDialog(this.attachedWindow);
+        if (dialog.DoNotAskOrShowAgain == true)
+            this.PersistentState.SetValue<bool>(PromptWhenMaxTotalLogSeriesValueCountReachedKey, false);
     }
 
 
@@ -654,10 +682,10 @@ partial class SessionView
                     }));
                     grid.Children.Add(currentTypeTextBlock);
                 });
-                menuItem.Icon = new Image().Also(icon =>
+                menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
                 {
                     icon.Classes.Add("MenuItem_Icon");
-                    icon.Bind(Image.SourceProperty, new Binding { Source = type, Converter = LogChartTypeIconConverter.Outline });
+                    icon.Bind(Avalonia.Controls.Image.SourceProperty, new Binding { Source = type, Converter = LogChartTypeIconConverter.Outline });
                 });
                 menuItem.GetObservable(DataContextProperty).Subscribe(dataContext =>
                 {

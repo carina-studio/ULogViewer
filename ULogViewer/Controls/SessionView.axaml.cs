@@ -1154,6 +1154,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.PropertyChanged += this.OnLogChartViewModelPropertyChanged;
 				this.AttachToRawLogChartSeries(it.Series);
+				if (it.IsMaxTotalSeriesValueCountReached)
+					this.PromptForMaxLogChartSeriesValueCountReached();
 			});
 			session.LogFiltering.Let(it =>
 			{

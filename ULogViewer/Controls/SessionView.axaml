@@ -931,7 +931,7 @@
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
 				
 				<!-- Tool bar -->
-				<Border Classes="ToolBar" DockPanel.Dock="Right" IsEnabled="{Binding IsProVersionActivated}">
+				<Border Classes="ToolBar" DockPanel.Dock="Right" IsEnabled="{Binding #logChart.IsVisible}">
 					<StackPanel>
 						<StackPanel.Styles>
 							<Style Selector="Button.ToolBar_Button">
@@ -983,7 +983,6 @@
 					<lvc:CartesianChart Name="logChart" 
 					                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
 					                    Background="{x:Static Brushes.Transparent}" 
-					                    IsVisible="{Binding IsProVersionActivated}"
 					                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
 					                    LegendPosition="Right"
 					                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
@@ -993,9 +992,29 @@
 					                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
 					                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
 					                    XAxes="{Binding #root.LogChartXAxes}"
-					                    YAxes="{Binding #root.LogChartYAxes}"/>
+					                    YAxes="{Binding #root.LogChartYAxes}">
+						<lvc:CartesianChart.IsVisible>
+							<MultiBinding Converter="{x:Static BoolConverters.And}">
+								<Binding Path="IsProVersionActivated"/>
+								<Binding Path="!LogChart.IsMaxTotalSeriesValueCountReached"/>
+							</MultiBinding>
+						</lvc:CartesianChart.IsVisible>
+					</lvc:CartesianChart>
 					
 					<!-- Hint -->
+					<Border>
+						<Border.IsVisible>
+							<MultiBinding Converter="{x:Static BoolConverters.And}">
+								<Binding Path="IsProVersionActivated"/>
+								<Binding Path="LogChart.IsMaxTotalSeriesValueCountReached"/>
+							</MultiBinding>
+						</Border.IsVisible>
+						<TextBlock HorizontalAlignment="Center" 
+						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
+						           Text="{DynamicResource String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}" 
+						           TextWrapping="WrapWithOverflow" 
+						           VerticalAlignment="Center"/>
+					</Border>
 					<Border IsVisible="{Binding !IsProVersionActivated}">
 						<TextBlock HorizontalAlignment="Center" 
 						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
