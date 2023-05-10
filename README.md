@@ -126,6 +126,7 @@ Except for log filtering, you can also define rule sets or write scripts to anal
 - [evtx](https://github.com/EricZimmerman/evtx)
 - [IronPython 3](https://github.com/IronLanguages/ironpython3)
 - [Jint](https://github.com/sebastienros/jint)
+- [LiveCharts2](https://github.com/beto-rodriguez/LiveCharts2)
 - [MySqlConnector](https://github.com/mysql-net/MySqlConnector)
 - [NLog](https://github.com/NLog/NLog)
 - [NUnit](https://github.com/nunit/nunit)
