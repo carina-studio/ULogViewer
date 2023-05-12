@@ -119,7 +119,12 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
             this.VerifyDisposed();
             if (this.logChartProperties.SequenceEqual(value))
                 return;
-            this.logChartProperties = new List<DisplayableLogProperty>(value).AsReadOnly();
+            this.logChartProperties = new List<DisplayableLogProperty>(value).Also(it =>
+            {
+                var maxCount = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.MaxSeriesCountInLogChart);
+                if (it.Count > maxCount)
+                    it.RemoveRange(maxCount, it.Count - maxCount);
+            }).AsReadOnly();
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(LogChartProperties));
         }

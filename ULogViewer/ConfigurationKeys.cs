@@ -80,6 +80,10 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> LogTextFilterHistoryCount = new(nameof(LogTextFilterHistoryCount), 16);
     /// <summary>
+    /// Maximum number of series in log chart.
+    /// </summary>
+    public static readonly SettingKey<int> MaxSeriesCountInLogChart = new(nameof(MaxValueCountInLogChart), 10);
+    /// <summary>
     /// Maximum number of value in log chart.
     /// </summary>
     public static readonly SettingKey<int> MaxValueCountInLogChart = new(nameof(MaxValueCountInLogChart), 10000);

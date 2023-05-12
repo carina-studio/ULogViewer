@@ -36,7 +36,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="LogProfile"/>.
 	/// </summary>
-	partial class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
@@ -63,9 +63,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
 		
 
+		// Fields.
 		readonly ToggleSwitch adminNeededSwitch;
 		readonly Panel allowMultipleFilesPanel;
 		readonly ToggleSwitch allowMultipleFilesSwitch;
+		readonly MutableObservableBoolean canAddLogChartProperty = new();
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
@@ -130,6 +132,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}));
 
 			// create commands
+			this.AddLogChartPropertyCommand = new Command(this.AddLogChartProperty, this.canAddLogChartProperty);
 			this.EditLogChartPropertyCommand = new Command<ListBoxItem>(this.EditLogChartProperty);
 			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, Logs.LogLevel>>(this.EditLogLevelMapEntryForReading);
 			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<Logs.LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
@@ -212,13 +215,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				(allProviders as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += this.OnAllLogDataSourceProvidersChanged);
 			});
 		}
-
-
+		
+		
+		// Add log chart property.
+		Task AddLogChartProperty()
+		{
+			return Task.CompletedTask;
+		}
+		
+		
 		/// <summary>
-		/// Add log chart property.
+		/// Command to add log chart property.
 		/// </summary>
-		public void AddLogChartProperty()
-		{ }
+		public ICommand AddLogChartPropertyCommand { get; }
 
 
 		/// <summary>
