@@ -2319,6 +2319,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSetUri.Unbind();
 			this.canSetWorkingDirectory.Unbind();
 			this.canShowWorkingDirectoryInExplorer.Update(false);
+			
+			// invalidate colors of log chart series
+			this.InvalidateLogChartSeriesColors();
 
 			// update properties
 			this.canEditLogProfile.Update(false);
@@ -3973,10 +3976,16 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (profile != null)
 						{
+							// update state
 							this.canEditLogProfile.Update(true);
 							this.SetValue(HasLogProfileProperty, true);
+							
+							// cancel auto scrolling
 							if (!profile.IsContinuousReading)
 								this.IsScrollingToLatestLogNeeded = false;
+							
+							// invalidate colors of log chart series
+							this.InvalidateLogChartSeriesColors();
 						}
 						else
 						{

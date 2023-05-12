@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Media;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -23,6 +24,7 @@ using LiveChartsCore.SkiaSharpView.Avalonia;
 using LiveChartsCore.SkiaSharpView.Drawing;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -64,13 +66,40 @@ partial class SessionView
     // Constants.
     const long DurationToDropClickEvent = 500;
     const double PointerDistanceToDropClickEvent = 5;
-    const int RecentlyUsedLogChartSeriesColorCount = 8;
     const int LogChartXAxisMinValueCount = 10;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
     
     
     // Static fields.
+    static readonly SKColor[] LogChartSeriesColorsDark =
+    {
+        SKColor.FromHsl(0, 100, 60), // Red
+        SKColor.FromHsl(30, 100, 60), // Orange
+        SKColor.FromHsl(53, 100, 60), // Yellow
+        SKColor.FromHsl(53, 100, 30), // Dark Yellow
+        SKColor.FromHsl(95, 100, 60), // Green
+        SKColor.FromHsl(95, 100, 30), // Dark Green
+        SKColor.FromHsl(185, 100, 60), // Blue
+        SKColor.FromHsl(185, 100, 30), // Dark Blue
+        SKColor.FromHsl(220, 100, 60), // Navy
+        SKColor.FromHsl(260, 100, 60), // Purple
+        SKColor.FromHsl(315, 100, 60), // Magenta
+    };
+    static readonly SKColor[] LogChartSeriesColorsLight =
+    {
+        SKColor.FromHsl(0, 100, 35), // Red
+        SKColor.FromHsl(30, 100, 35), // Orange
+        SKColor.FromHsl(53, 100, 35), // Yellow
+        SKColor.FromHsl(53, 100, 20), // Dark Yellow
+        SKColor.FromHsl(95, 100, 35), // Green
+        SKColor.FromHsl(95, 100, 20), // Dark Green
+        SKColor.FromHsl(185, 100, 35), // Blue
+        SKColor.FromHsl(200, 100, 35), // Dark Blue
+        SKColor.FromHsl(220, 100, 40), // Navy
+        SKColor.FromHsl(260, 100, 50), // Purple
+        SKColor.FromHsl(315, 100, 40), // Magenta
+    };
     static readonly SettingKey<bool> PromptWhenMaxTotalLogSeriesValueCountReachedKey = new("SessionView.PromptWhenMaxTotalLogSeriesValueCountReached", true);
 
 
@@ -85,6 +114,7 @@ partial class SessionView
     Point? logChartPointerDownPosition;
     readonly Stopwatch logChartPointerDownWatch = new();
     readonly ObservableList<ISeries> logChartSeries = new();
+    readonly List<SKColor> logChartSeriesColorPool = new();
     readonly Dictionary<string, SKColor> logChartSeriesColors = new();
     readonly ToggleButton logChartTypeButton;
     readonly ContextMenu logChartTypeMenu;
@@ -97,7 +127,6 @@ partial class SessionView
         CrosshairSnapEnabled = true,
     };
     IPaint<SkiaSharpDrawingContext>? logChartYAxisCrosshairPaint;
-    readonly Queue<SKColor> recentlyUsedLogChartSeriesColors = new(RecentlyUsedLogChartSeriesColorCount);
     readonly ScheduledAction updateLogChartXAxisLimitAction;
     readonly ScheduledAction updateLogChartYAxisLimitAction;
     
@@ -220,15 +249,13 @@ partial class SessionView
         this.attachedRawLogChartSeries = null;
         this.logChartSeries.Clear();
     }
-    
-    
-    // Generate color for log chart series.
-    static SKColor GenerateRandomSKColor(Random random)
+
+
+    // Invalidate colors of log chart series.
+    void InvalidateLogChartSeriesColors()
     {
-        var r = 48 + random.Next(11) << 4;
-        var g = 48 + random.Next(11) << 4;
-        var b = 48 + random.Next(11) << 4;
-        return new((byte)r, (byte)g, (byte)b);
+        this.logChartSeriesColorPool.Clear();
+        this.logChartSeriesColors.Clear();
     }
 
 
@@ -581,53 +608,33 @@ partial class SessionView
     // Select color for series.
     SKColor SelectLogChartSeriesColor(string? propertyName)
     {
+        // use existent color
         if (propertyName is not null && this.logChartSeriesColors.TryGetValue(propertyName, out var color))
             return color;
-        var random = new Random();
-        while (true)
+        
+        // generate color pool
+        if (this.logChartSeriesColorPool.IsEmpty())
         {
-            color = GenerateRandomSKColor(random);
-            var isColorSelected = true;
-            foreach (var ruColor in this.recentlyUsedLogChartSeriesColors)
+            this.logChartSeriesColorPool.AddRange(this.Application.EffectiveThemeMode switch
             {
-                var rDiff = Math.Abs(color.Red - ruColor.Red);
-                var gDiff = Math.Abs(color.Green - ruColor.Green);
-                var bDiff = Math.Abs(color.Blue - ruColor.Blue);
-                var closingCount = 0;
-                if (rDiff < 16)
-                    ++closingCount;
-                if (gDiff < 16)
-                    ++closingCount;
-                if (bDiff < 16)
-                    ++closingCount;
-                if (closingCount >= 2)
-                {
-                    isColorSelected = false;
-                    break;
-                }
-            }
-            if (!isColorSelected)
-                continue;
-            foreach (var existingColor in this.logChartSeriesColors.Values)
-            {
-                var rDiff = Math.Abs(color.Red - existingColor.Red);
-                var gDiff = Math.Abs(color.Green - existingColor.Green);
-                var bDiff = Math.Abs(color.Blue - existingColor.Blue);
-                if (rDiff <= 16 && gDiff <= 16 && bDiff <= 16)
-                {
-                    isColorSelected = false;
-                    break;
-                }
-            }
-            if (!isColorSelected)
-                continue;
-            while (this.recentlyUsedLogChartSeriesColors.Count >= RecentlyUsedLogChartSeriesColorCount)
-                this.recentlyUsedLogChartSeriesColors.Dequeue();
-            this.recentlyUsedLogChartSeriesColors.Enqueue(color);
-            if (propertyName is not null)
-                this.logChartSeriesColors[propertyName] = color;
-            return color;
+                ThemeMode.Dark => LogChartSeriesColorsDark,
+                _ => LogChartSeriesColorsLight,
+            });
+            this.logChartSeriesColorPool.Shuffle();
         }
+        
+        // select color
+        var colorIndex = this.logChartSeriesColorPool.Count - 1;
+        color = this.logChartSeriesColorPool[colorIndex];
+        if (this.Application.IsDebugMode)
+        {
+            color.ToHsl(out var h, out var s, out var l);
+            this.Logger.LogTrace("Select color (H: {h:f0}, S: {s:f0}, L: {l:f0}) for log chart series", h, s, l);
+        }
+        this.logChartSeriesColorPool.RemoveAt(colorIndex);
+        if (propertyName is not null)
+            this.logChartSeriesColors[propertyName] = color;
+        return color;
     }
 
 
