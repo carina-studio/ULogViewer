@@ -372,14 +372,16 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartPropertyEditorDialog.Title">用于图表的日志属性</sys:String>
 	
 	<!-- LogChartType -->
-	<sys:String x:Key="String/LogChartType.CategoryBars">分类条形图</sys:String>
 	<sys:String x:Key="String/LogChartType.None">无</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">数值条形图</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueCurves">数值曲线图</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">数值曲线图 (含资料点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueLines">数值折线图</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">数值折线图 (含资料点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreas">数值堆积面积图</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">数值堆积面积图 (含资料点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedBars">数值堆积条形图</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStatisticBars">数值计数条形图</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">文件</sys:String>
@@ -547,7 +549,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日志分析</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日志图表設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties">显示的日志属性</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties.Description">指定有哪些日志属性需要绘制于图表中。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties.Description">指定最多 10 个要绘制于图表中日志属性。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">图表类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutLogChartProperties">您定义了「图表类型」但没有定义「显示的日志属性」。您是否要定义「显示的日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>

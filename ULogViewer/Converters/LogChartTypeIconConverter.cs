@@ -44,10 +44,13 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
         var state = parameter as string;
         var key = value switch
         {
-            LogChartType.CategoryBars
+            LogChartType.ValueStatisticBars
                 or LogChartType.ValueBars
                 or LogChartType.ValueStackedBars => "Image/Chart.Bars"
                                                     + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
+            LogChartType.ValueCurves
+                or LogChartType.ValueCurvesWithDataPoints => "Image/Chart.Curves"
+                                                            + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueLines
                 or LogChartType.ValueLinesWithDataPoints => "Image/Chart.Lines"
                                                             + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),

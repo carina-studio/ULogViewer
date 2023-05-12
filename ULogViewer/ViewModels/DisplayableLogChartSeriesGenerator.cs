@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -34,25 +35,27 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     {
         Undefined,
         Value,
-        Category,
+        ValueStatistic,
     }
 
 
     // Static fields.
-    static readonly long SeriesCategoriesEntryMemorySize = Memory.EstimateInstanceSize<KeyValuePair<string, (int, int)>>();
     static readonly long SeriesValueMemorySize = Memory.EstimateInstanceSize<DisplayableLogChartSeriesValue>();
     static readonly Dictionary<LogChartType, SeriesValueType> SeriesValueTypes = new ()
     {
-        { LogChartType.CategoryBars, SeriesValueType.Category },
+        { LogChartType.ValueStatisticBars, SeriesValueType.ValueStatistic },
         { LogChartType.ValueBars, SeriesValueType.Value },
+        { LogChartType.ValueCurves, SeriesValueType.Value },
+        { LogChartType.ValueCurvesWithDataPoints, SeriesValueType.Value },
         { LogChartType.ValueLines, SeriesValueType.Value },
         { LogChartType.ValueLinesWithDataPoints, SeriesValueType.Value },
         { LogChartType.ValueStackedAreas, SeriesValueType.Value },
         { LogChartType.ValueStackedAreasWithDataPoints, SeriesValueType.Value },
         { LogChartType.ValueStackedBars, SeriesValueType.Value },
     };
-
-
+    static readonly long ValueStatisticEntryMemorySize = Memory.EstimateInstanceSize<KeyValuePair<string, (int, int)>>();
+    
+    
     // Fields.
     bool isMaxTotalSeriesValueCountReached;
     IList<DisplayableLogProperty> logChartProperties = Array.Empty<DisplayableLogProperty>();
@@ -62,11 +65,11 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     int maxSeriesValueCount;
     readonly ScheduledAction reportMinMaxValuesAction;
     readonly ObservableList<DisplayableLogChartSeries> series = new();
-    Dictionary<string, (int /* counter */, int /* index */)>[] seriesCategories = Array.Empty<Dictionary<string, (int, int)>>();
-    long seriesCategoriesMemorySize;
     ObservableList<DisplayableLogChartSeriesValue>[] seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
     SeriesValueType seriesValueType = SeriesValueType.Undefined;
     int totalSeriesValueCount;
+    Dictionary<string, (int /* count */, int /* index */)>[] valueStatistics = Array.Empty<Dictionary<string, (int, int)>>();
+    long valueStatisticStringsMemorySize;
 
 
     /// <summary>
@@ -96,6 +99,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     /// Check whether <see cref="TotalSeriesValueCount"/> reaches the limitation or not.
     /// </summary>
     public bool IsMaxTotalSeriesValueCountReached => this.isMaxTotalSeriesValueCountReached;
+
 
     // Check whether type of log chart is stacked chart or not.
     static bool IsStackedLogChartType(LogChartType type) => type switch
@@ -175,10 +179,10 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
 
     /// <inheritdoc/>
     public override long MemorySize => base.MemorySize
-                                       + this.seriesCategories.Let(it =>
+                                       + this.valueStatistics.Let(it =>
                                        {
-                                           var memorySize = Memory.EstimateCollectionInstanceSize(SeriesCategoriesEntryMemorySize, it.Length);
-                                           return memorySize + this.seriesCategoriesMemorySize;
+                                           var memorySize = Memory.EstimateCollectionInstanceSize(ValueStatisticEntryMemorySize, it.Length);
+                                           return memorySize + this.valueStatisticStringsMemorySize;
                                        })
                                        + this.seriesValues.Let(it =>
                                        {
@@ -216,8 +220,8 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     protected override void OnProcessingCancelled(ProcessingToken token, bool willStartProcessing)
     {
         this.series.Clear();
-        this.seriesCategories = Array.Empty<Dictionary<string, (int, int)>>();
-        this.seriesCategoriesMemorySize = 0L;
+        this.valueStatistics = Array.Empty<Dictionary<string, (int, int)>>();
+        this.valueStatisticStringsMemorySize = 0L;
         this.seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
         this.maxSeriesValueCount = 0;
         this.OnPropertyChanged(nameof(MaxSeriesValueCount));

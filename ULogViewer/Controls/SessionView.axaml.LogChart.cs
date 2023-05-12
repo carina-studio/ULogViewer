@@ -151,7 +151,7 @@ partial class SessionView
         // create series
         return viewModel.ChartType switch
         {
-            LogChartType.CategoryBars 
+            LogChartType.ValueStatisticBars 
                 or LogChartType.ValueBars => new ColumnSeries<DisplayableLogChartSeriesValue>
             {
                 Fill = new SolidColorPaint(color),
@@ -176,7 +176,7 @@ partial class SessionView
                 or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue>
             {
                 Fill = new SolidColorPaint(color.WithAlpha((byte)(color.Alpha >> 3))),
-                GeometryFill = viewModel.ChartType == LogChartType.ValueStackedAreasWithDataPoints ? new SolidColorPaint(color) : null,
+                GeometryFill = viewModel.ChartType == LogChartType.ValueStackedAreasWithDataPoints ? new SolidColorPaint(color) { IsAntialias = true } : null,
                 GeometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 6.0),
                 GeometryStroke = null,
                 LineSmoothness = 0,
@@ -187,7 +187,10 @@ partial class SessionView
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = series.LogProperty?.DisplayName,
-                Stroke = new SolidColorPaint(color, (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 2.0)),
+                Stroke = new SolidColorPaint(color, (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 2.0))
+                {
+                    IsAntialias = true,
+                },
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
@@ -218,10 +221,20 @@ partial class SessionView
             _ => new LineSeries<DisplayableLogChartSeriesValue>
             {
                 Fill = null,
-                GeometryFill = viewModel.ChartType == LogChartType.ValueLinesWithDataPoints ? new SolidColorPaint(color) : null,
+                GeometryFill = viewModel.ChartType switch
+                {
+                    LogChartType.ValueCurvesWithDataPoints
+                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(color) { IsAntialias = true },
+                    _ => null,
+                },
                 GeometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 6.0),
                 GeometryStroke = null,
-                LineSmoothness = 0,
+                LineSmoothness = viewModel.ChartType switch
+                {
+                    LogChartType.ValueCurves
+                        or LogChartType.ValueCurvesWithDataPoints => 1,
+                    _ => 0,
+                },
                 Mapping = (value, point) =>
                 {
                     if (value.Value.HasValue)
@@ -229,7 +242,10 @@ partial class SessionView
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = series.LogProperty?.DisplayName,
-                Stroke = new SolidColorPaint(color, (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 2.0)),
+                Stroke = new SolidColorPaint(color, (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 2.0))
+                {
+                    IsAntialias = true,
+                },
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];

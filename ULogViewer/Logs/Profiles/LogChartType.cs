@@ -18,6 +18,14 @@ public enum LogChartType
     /// </summary>
     ValueLinesWithDataPoints,
     /// <summary>
+    /// Curves of values,
+    /// </summary>
+    ValueCurves,
+    /// <summary>
+    /// Curves of values with data points,
+    /// </summary>
+    ValueCurvesWithDataPoints,
+    /// <summary>
     /// Stacked areas of values,
     /// </summary>
     ValueStackedAreas,
@@ -34,7 +42,7 @@ public enum LogChartType
     /// </summary>
     ValueStackedBars,
     /// <summary>
-    /// Bars of categories,
+    /// Bars of statistic of values,
     /// </summary>
-    CategoryBars,
+    ValueStatisticBars,
 }
