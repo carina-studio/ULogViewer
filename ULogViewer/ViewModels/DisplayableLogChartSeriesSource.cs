@@ -1,0 +1,58 @@
+using CarinaStudio.ULogViewer.Logs.Profiles;
+using System.ComponentModel;
+
+namespace CarinaStudio.ULogViewer.ViewModels;
+
+/// <summary>
+/// Source of log chart series for displaying.
+/// </summary>
+class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
+{
+    // Fields.
+    readonly DisplayableLogProperty logProperty;
+
+
+    /// <summary>
+    /// Initialize new <see cref="DisplayableLogChartSeriesSource"/> instance.
+    /// </summary>
+    /// <param name="app">Application.</param>
+    /// <param name="source">Source of series.</param>
+    public DisplayableLogChartSeriesSource(IULogViewerApplication app, LogChartProperty source)
+    {
+        this.logProperty = new(app, source.Name, source.DisplayName, null);
+        this.logProperty.PropertyChanged += (_, e) =>
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(DisplayableLogProperty.DisplayName):
+                    this.PropertyChanged?.Invoke(this, new(nameof(PropertyDisplayName)));
+                    break;
+            }
+        };
+    }
+    
+    
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        this.logProperty.Dispose();
+    }
+
+
+    /// <summary>
+    /// Raised when property changed.
+    /// </summary>
+    public event PropertyChangedEventHandler? PropertyChanged;
+    
+    
+    /// <summary>
+    /// Get displayed name of log property for series.
+    /// </summary>
+    public string PropertyDisplayName => this.logProperty.DisplayName;
+
+
+    /// <summary>
+    /// Get name of log property for series.
+    /// </summary>
+    public string PropertyName => this.logProperty.Name;
+}

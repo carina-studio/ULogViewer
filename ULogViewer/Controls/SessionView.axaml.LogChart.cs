@@ -146,7 +146,7 @@ partial class SessionView
     ISeries CreateLogChartSeries(LogChartViewModel viewModel, DisplayableLogChartSeries series)
     {
         // select color
-        var color = SelectLogChartSeriesColor(series.LogProperty?.Name);
+        var color = SelectLogChartSeriesColor(series.Source?.PropertyName);
         
         // create series
         return viewModel.ChartType switch
@@ -161,14 +161,14 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
-                Name = series.LogProperty?.DisplayName,
+                Name = series.Source?.PropertyDisplayName,
                 Padding = 1,
                 Rx = 0,
                 Ry = 0,
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.LogProperty?.DisplayName}: {point.PrimaryValue}";
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
                 },
                 Values = series.Values,
             },
@@ -186,7 +186,7 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
-                Name = series.LogProperty?.DisplayName,
+                Name = series.Source?.PropertyDisplayName,
                 Stroke = new SolidColorPaint(color, (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 2.0))
                 {
                     IsAntialias = true,
@@ -194,7 +194,7 @@ partial class SessionView
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.LogProperty?.DisplayName}: {point.PrimaryValue}";
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
                 },
                 Values = series.Values,
             },
@@ -207,14 +207,14 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
-                Name = series.LogProperty?.DisplayName,
+                Name = series.Source?.PropertyDisplayName,
                 Padding = 1,
                 Rx = 0,
                 Ry = 0,
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.LogProperty?.DisplayName}: {point.PrimaryValue}";
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
                 },
                 Values = series.Values,
             },
@@ -241,7 +241,7 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
-                Name = series.LogProperty?.DisplayName,
+                Name = series.Source?.PropertyDisplayName,
                 Stroke = new SolidColorPaint(color, (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 2.0))
                 {
                     IsAntialias = true,
@@ -249,7 +249,7 @@ partial class SessionView
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.LogProperty?.DisplayName}: {point.PrimaryValue}";
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
                 },
                 Values = series.Values,
             },

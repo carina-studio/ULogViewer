@@ -127,7 +127,7 @@ class LogChartViewModel : SessionComponent
         {
             if (!isInit)
             {
-                this.ApplyLogChartProperties();
+                this.ApplyLogChartSeriesSources();
                 this.UpdateCanSetChartType();
             }
         }));
@@ -135,26 +135,34 @@ class LogChartViewModel : SessionComponent
     }
     
     
-    // Set log chart properties to series generators.
-    void ApplyLogChartProperties()
+    // Set sources to series generators.
+    void ApplyLogChartSeriesSources()
     {
-        var logChartProperties = this.ConvertToDisplayableLogChartProperties(this.LogProfile?.LogChartProperties);
+        // get old sources
+        var sourcesToDispose = this.allLogsSeriesGenerator.LogChartSeriesSources;
+        
+        // apply sources
+        var sources = this.ConvertToDisplayableLogChartSources(this.LogProfile?.LogChartProperties);
         if (this.Session.IsProVersionActivated)
         {
-            this.allLogsSeriesGenerator.LogChartProperties = logChartProperties;
+            this.allLogsSeriesGenerator.LogChartSeriesSources = sources;
             if (this.filteredLogsSeriesGenerator is not null)
-                this.filteredLogsSeriesGenerator.LogChartProperties = logChartProperties;
-            this.markedLogsSeriesGenerator.LogChartProperties = logChartProperties;
+                this.filteredLogsSeriesGenerator.LogChartSeriesSources = sources;
+            this.markedLogsSeriesGenerator.LogChartSeriesSources = sources;
         }
         else
         {
-            var emptyProperties = Array.Empty<DisplayableLogProperty>();
-            this.allLogsSeriesGenerator.LogChartProperties = emptyProperties;
+            var emptySources = Array.Empty<DisplayableLogChartSeriesSource>();
+            this.allLogsSeriesGenerator.LogChartSeriesSources = emptySources;
             if (this.filteredLogsSeriesGenerator is not null)
-                this.filteredLogsSeriesGenerator.LogChartProperties = emptyProperties;
-            this.markedLogsSeriesGenerator.LogChartProperties = emptyProperties;
+                this.filteredLogsSeriesGenerator.LogChartSeriesSources = emptySources;
+            this.markedLogsSeriesGenerator.LogChartSeriesSources = emptySources;
         }
-        this.SetValue(IsChartDefinedProperty, logChartProperties.IsNotEmpty() && this.LogProfile?.LogChartType != LogChartType.None);
+        this.SetValue(IsChartDefinedProperty, sources.IsNotEmpty() && this.LogProfile?.LogChartType != LogChartType.None);
+        
+        // dispose old sources
+        foreach (var source in sourcesToDispose)
+            source.Dispose();
     }
 
 
@@ -164,16 +172,16 @@ class LogChartViewModel : SessionComponent
     public LogChartType ChartType => this.GetValue(ChartTypeProperty);
 
 
-    // Convert list of LogChartProperty to list of DisplayableLogProperty.
-    DisplayableLogProperty[] ConvertToDisplayableLogChartProperties(IList<LogChartProperty>? properties)
+    // Convert list of LogChartProperty to list of DisplayableLogChartSeriesSource.
+    DisplayableLogChartSeriesSource[] ConvertToDisplayableLogChartSources(IList<LogChartProperty>? properties)
     {
         if (properties.IsNullOrEmpty())
-            return Array.Empty<DisplayableLogProperty>();
-        var logChartProperties = new DisplayableLogProperty[properties.Count];
+            return Array.Empty<DisplayableLogChartSeriesSource>();
+        var logChartProperties = new DisplayableLogChartSeriesSource[properties.Count];
         for (var i = properties.Count - 1; i >= 0; --i)
         {
             var property = properties[i];
-            logChartProperties[i] = new(this.Application, property.Name, property.DisplayName, null);
+            logChartProperties[i] = new(this.Application, property);
         }
         return logChartProperties;
     }
@@ -182,12 +190,24 @@ class LogChartViewModel : SessionComponent
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
+        // collect sources to dispose
+        var sourcesToDispose = this.allLogsSeriesGenerator.LogChartSeriesSources;
+        
+        // remove observers
         foreach (var token in this.observerTokens)
             token.Dispose();
         this.observerTokens.Clear();
+        
+        // dispose generators
         this.allLogsSeriesGenerator.Dispose();
         this.filteredLogsSeriesGenerator?.Dispose();
         this.markedLogsSeriesGenerator.Dispose();
+        
+        // dispose sources
+        foreach (var source in sourcesToDispose)
+            source.Dispose();
+
+            // call base
         base.Dispose(disposing);
     }
 
@@ -289,7 +309,7 @@ class LogChartViewModel : SessionComponent
             this.filteredLogsSeriesGenerator.LogChartType = logChartType;
         this.markedLogsSeriesGenerator.LogChartType = logChartType;
         this.SetValue(ChartTypeProperty, logChartType);
-        this.ApplyLogChartProperties();
+        this.ApplyLogChartSeriesSources();
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
         this.UpdateCanSetChartType();
@@ -308,7 +328,7 @@ class LogChartViewModel : SessionComponent
             case nameof(LogProfile.LogChartProperties):
             {
                 var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
-                this.ApplyLogChartProperties();
+                this.ApplyLogChartSeriesSources();
                 if (!isPrevChartDefined 
                     && this.GetValue(IsChartDefinedProperty) 
                     && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
@@ -326,7 +346,7 @@ class LogChartViewModel : SessionComponent
                     this.filteredLogsSeriesGenerator.LogChartType = logChartType;
                 this.markedLogsSeriesGenerator.LogChartType = logChartType;
                 this.SetValue(ChartTypeProperty, logChartType);
-                this.SetValue(IsChartDefinedProperty, profile.LogChartType != LogChartType.None && this.allLogsSeriesGenerator.LogChartProperties.IsNotEmpty());
+                this.SetValue(IsChartDefinedProperty, profile.LogChartType != LogChartType.None && this.allLogsSeriesGenerator.LogChartSeriesSources.IsNotEmpty());
                 if (!isPrevChartDefined 
                     && this.GetValue(IsChartDefinedProperty) 
                     && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))

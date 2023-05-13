@@ -58,7 +58,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     
     // Fields.
     bool isMaxTotalSeriesValueCountReached;
-    IList<DisplayableLogProperty> logChartProperties = Array.Empty<DisplayableLogProperty>();
+    IList<DisplayableLogChartSeriesSource> logChartSeriesSources = Array.Empty<DisplayableLogChartSeriesSource>();
     LogChartType logChartType = LogChartType.None;
     DisplayableLogChartSeriesValue? knownMaxSeriesValue;
     DisplayableLogChartSeriesValue? knownMinSeriesValue;
@@ -112,25 +112,25 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
 
 
     /// <summary>
-    /// Get or set list of <see cref="DisplayableLogProperty"/> to generate series.
+    /// Get or set list of <see cref="DisplayableLogChartSeriesSource"/> to generate series.
     /// </summary>
-    public IList<DisplayableLogProperty> LogChartProperties
+    public IList<DisplayableLogChartSeriesSource> LogChartSeriesSources
     {
-        get => this.logChartProperties;
+        get => this.logChartSeriesSources;
         set
         {
             this.VerifyAccess();
             this.VerifyDisposed();
-            if (this.logChartProperties.SequenceEqual(value))
+            if (this.logChartSeriesSources.SequenceEqual(value))
                 return;
-            this.logChartProperties = new List<DisplayableLogProperty>(value).Also(it =>
+            this.logChartSeriesSources = new List<DisplayableLogChartSeriesSource>(value).Also(it =>
             {
                 var maxCount = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.MaxSeriesCountInLogChart);
                 if (it.Count > maxCount)
                     it.RemoveRange(maxCount, it.Count - maxCount);
             }).AsReadOnly();
             this.InvalidateProcessing();
-            this.OnPropertyChanged(nameof(LogChartProperties));
+            this.OnPropertyChanged(nameof(LogChartSeriesSources));
         }
     }
 
@@ -264,19 +264,19 @@ class DisplayableLogChartSeries
     /// <summary>
     /// Initialize new <see cref="DisplayableLogChartSeries"/> instance.
     /// </summary>
-    /// <param name="property">Property of log to generate the series.</param>
+    /// <param name="source">Source to generate the series.</param>
     /// <param name="values">List of values in series.</param>
-    public DisplayableLogChartSeries(DisplayableLogProperty? property, IList<DisplayableLogChartSeriesValue> values)
+    public DisplayableLogChartSeries(DisplayableLogChartSeriesSource? source, IList<DisplayableLogChartSeriesValue> values)
     {
-        this.LogProperty = property;
+        this.Source = source;
         this.Values = ListExtensions.AsReadOnly(values);
     }
-    
-    
+
+
     /// <summary>
-    /// Property of log to generate the series.
+    /// Source of series.
     /// </summary>
-    public DisplayableLogProperty? LogProperty { get; }
+    public DisplayableLogChartSeriesSource? Source { get; }
     
     
     /// <summary>
