@@ -19,6 +19,7 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
     /// <param name="source">Source of series.</param>
     public DisplayableLogChartSeriesSource(IULogViewerApplication app, LogChartSeriesSource source)
     {
+        this.DefaultValue = source.DefaultValue;
         this.logProperty = new(app, source.PropertyName, source.PropertyDisplayName, null);
         this.logProperty.PropertyChanged += (_, e) =>
         {
@@ -32,11 +33,15 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
     }
     
     
+    /// <summary>
+    /// Default value if value cannot be got from log property.
+    /// </summary>
+    public double? DefaultValue { get; }
+    
+    
     /// <inheritdoc/>
-    protected override void Dispose(bool disposing)
-    {
+    protected override void Dispose(bool disposing) =>
         this.logProperty.Dispose();
-    }
 
 
     /// <summary>

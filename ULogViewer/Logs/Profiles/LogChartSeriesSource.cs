@@ -12,16 +12,25 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
     /// </summary>
     /// <param name="propertyName">Name of property of log.</param>
     /// <param name="displayName">Name which is suitable to display on chart.</param>
-    public LogChartSeriesSource(string propertyName, string? displayName)
+    /// <param name="defaultValue">Default value if value cannot be got from log property.</param>
+    public LogChartSeriesSource(string propertyName, string? displayName, double? defaultValue)
     {
+        this.DefaultValue = defaultValue?.Let(it => double.IsFinite(it) ? (double?)it : null);
         this.PropertyDisplayName = displayName ?? propertyName;
         this.PropertyName = propertyName;
     }
+    
+    
+    /// <summary>
+    /// Default value if value cannot be got from log property.
+    /// </summary>
+    public double? DefaultValue { get; }
 
 
     /// <inheritdoc/>
     public bool Equals(LogChartSeriesSource? property) =>
         property is not null
+        && this.DefaultValue.Equals(property.DefaultValue)
         && this.PropertyName == property.PropertyName
         && this.PropertyDisplayName == property.PropertyDisplayName;
 

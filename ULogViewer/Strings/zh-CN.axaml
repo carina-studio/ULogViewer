@@ -367,6 +367,8 @@ return False</sys:String>
 	
 	<!-- LogChartSeriesSourceEditorDialog -->
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">自定义显示名称</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue">默认数值</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">当无法从属性取得实数值时所使用的特定实数值。</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">显示名称</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">属性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">图表的来源日志属性</sys:String>
@@ -549,7 +551,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日志分析</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日志图表設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">来源日志属性</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">指定最多 10 个要绘制于图表中日志属性。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">指定最多 10 个来源日志属性以产生图表。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">图表类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">您定义了「图表类型」但没有定义「来源日志属性」。您是否要定义「来源日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -34,6 +35,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	// Fields.
 	readonly ToggleSwitch customDisplayNameSwitch;
 	readonly TextBox customDisplayNameTextBox;
+	readonly RealNumberTextBox defaultValueTextBox;
 	readonly ComboBox displayNameComboBox;
 	bool isDisplayNameSameAsName;
 	readonly ComboBox nameComboBox;
@@ -53,6 +55,10 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(this.InvalidateInput);
 		});
+		this.defaultValueTextBox = this.Get<RealNumberTextBox>(nameof(defaultValueTextBox)).Also(it =>
+		{
+			it.GetObservable(RealNumberTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
+		});
 		this.displayNameComboBox = this.Get<ComboBox>(nameof(displayNameComboBox)).Also(it =>
 		{
 			it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(item =>
@@ -71,17 +77,17 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	}
 
 
-	// Generate result.
+	/// <inheritdoc/>
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
 		var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
 				? this.customDisplayNameTextBox.Text?.Trim() ?? ""
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
-		return Task.FromResult((object?)new LogChartSeriesSource((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName));
+		return Task.FromResult((object?)new LogChartSeriesSource((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, this.defaultValueTextBox.Value));
 	}
 
 
-	// Called when opened.
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
@@ -94,6 +100,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		}
 		else
 		{
+			this.defaultValueTextBox.Value = source.DefaultValue;
 			this.nameComboBox.SelectedItem = source.PropertyName;
 			if (DisplayableLogProperty.DisplayNames.Contains(source.PropertyDisplayName))
 				this.displayNameComboBox.SelectedItem = source.PropertyDisplayName;
@@ -106,8 +113,14 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		}
 		this.SynchronizationContext.Post(this.nameComboBox.Focus);
 	}
-	
-	
+
+
+	/// <inheritdoc/>
+	protected override bool OnValidateInput() =>
+		base.OnValidateInput()
+		&& this.defaultValueTextBox.IsTextValid;
+
+
 	/// <summary>
 	/// Get or set <see cref="Source"/> to be edited.
 	/// </summary>

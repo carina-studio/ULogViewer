@@ -688,14 +688,21 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var sources = new List<LogChartSeriesSource>();
 			foreach (var propertyElement in logChartPropertiesElement.EnumerateArray())
 			{
-				var name = propertyElement.GetProperty(nameof(LogChartSeriesSource.PropertyName)).GetString().AsNonNull();
-				var displayName = default(string);
-				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.PropertyDisplayName), out var jsonElement)
-				    && jsonElement.ValueKind == JsonValueKind.String)
+				var propertyName = propertyElement.GetProperty(nameof(LogChartSeriesSource.PropertyName)).GetString().AsNonNull();
+				var propertyDisplayName = default(string);
+				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.PropertyDisplayName), out var jsonProperty)
+				    && jsonProperty.ValueKind == JsonValueKind.String)
 				{
-					displayName = jsonElement.GetString();
+					propertyDisplayName = jsonProperty.GetString();
 				}
-				sources.Add(new LogChartSeriesSource(name, displayName));
+				var defaultValue = default(double?);
+				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.DefaultValue), out jsonProperty)
+				    && jsonProperty.ValueKind == JsonValueKind.Number
+				    && jsonProperty.TryGetDouble(out var doubleValue))
+				{
+					defaultValue = doubleValue;
+				}
+				sources.Add(new LogChartSeriesSource(propertyName, propertyDisplayName, defaultValue));
 			}
 			this.logChartSeriesSources = sources.AsReadOnly();
 		}
@@ -1348,6 +1355,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			foreach (var property in properties)
 			{
 				writer.WriteStartObject();
+				property.DefaultValue?.Let(it => writer.WriteNumber(nameof(LogChartSeriesSource.DefaultValue), it));
 				if (property.PropertyDisplayName != property.PropertyName)
 					writer.WriteString(nameof(LogChartSeriesSource.PropertyDisplayName), property.PropertyDisplayName);
 				writer.WriteString(nameof(LogChartSeriesSource.PropertyName), property.PropertyName);
