@@ -7,11 +7,11 @@
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CarinaStudio.ULogViewer.Controls.LogChartPropertyEditorDialog"
+        x:Class="CarinaStudio.ULogViewer.Controls.LogChartSeriesSourceEditorDialog"
         Classes="Dialog"
 		SizeToContent="Height"
-        Title="{DynamicResource String/LogChartPropertyEditorDialog.Title}"
-        Width="{DynamicResource Double/LogChartPropertyEditorDialog.Width}">
+        Title="{DynamicResource String/LogChartSeriesSourceEditorDialog.Title}"
+        Width="{DynamicResource Double/LogChartSeriesSourceEditorDialog.Width}">
 	
 	<Window.Styles>
 
@@ -38,13 +38,13 @@
 
 					<!-- Name -->
 					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartPropertyEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{x:Static appControls:LogChartPropertyEditorDialog.LogChartPropertyNames}" VirtualizationMode="None">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Name}"/>
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{x:Static appControls:LogChartSeriesSourceEditorDialog.LogChartPropertyNames}" VirtualizationMode="None">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
 										<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartPropertyEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartSeriesSourceEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 									</Grid>
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
@@ -54,13 +54,13 @@
 
 					<!-- Display name -->
 					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartPropertyEditorDialog.DisplayName}"/>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DisplayName}"/>
 						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" Items="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}" VirtualizationMode="None">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
 										<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartPropertyEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartSeriesSourceEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 									</Grid>
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
@@ -71,7 +71,7 @@
 
 					<!-- Custom display name -->
 					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartPropertyEditorDialog.CustomDisplayName}"/>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 					</Grid>
 

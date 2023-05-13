@@ -142,7 +142,7 @@ class LogChartViewModel : SessionComponent
         var sourcesToDispose = this.allLogsSeriesGenerator.LogChartSeriesSources;
         
         // apply sources
-        var sources = this.ConvertToDisplayableLogChartSources(this.LogProfile?.LogChartProperties);
+        var sources = this.ConvertToDisplayableLogChartSources(this.LogProfile?.LogChartSeriesSources);
         if (this.Session.IsProVersionActivated)
         {
             this.allLogsSeriesGenerator.LogChartSeriesSources = sources;
@@ -172,16 +172,16 @@ class LogChartViewModel : SessionComponent
     public LogChartType ChartType => this.GetValue(ChartTypeProperty);
 
 
-    // Convert list of LogChartProperty to list of DisplayableLogChartSeriesSource.
-    DisplayableLogChartSeriesSource[] ConvertToDisplayableLogChartSources(IList<LogChartProperty>? properties)
+    // Convert list of LogChartSeriesSource to list of DisplayableLogChartSeriesSource.
+    DisplayableLogChartSeriesSource[] ConvertToDisplayableLogChartSources(IList<LogChartSeriesSource>? properties)
     {
         if (properties.IsNullOrEmpty())
             return Array.Empty<DisplayableLogChartSeriesSource>();
         var logChartProperties = new DisplayableLogChartSeriesSource[properties.Count];
         for (var i = properties.Count - 1; i >= 0; --i)
         {
-            var property = properties[i];
-            logChartProperties[i] = new(this.Application, property);
+            var source = properties[i];
+            logChartProperties[i] = new(this.Application, source);
         }
         return logChartProperties;
     }
@@ -325,7 +325,7 @@ class LogChartViewModel : SessionComponent
             return;
         switch (e.PropertyName)
         {
-            case nameof(LogProfile.LogChartProperties):
+            case nameof(LogProfile.LogChartSeriesSources):
             {
                 var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
                 this.ApplyLogChartSeriesSources();

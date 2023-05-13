@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 namespace CarinaStudio.ULogViewer.Controls;
 
 /// <summary>
-/// Dialog to edit visible <see cref="LogChartProperty"/>.
+/// Dialog to edit visible <see cref="LogChartSeriesSource"/>.
 /// </summary>
-class LogChartPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	/// <summary>
 	/// List of valid names of log properties for chart.
@@ -40,9 +40,9 @@ class LogChartPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerAp
 
 
 	/// <summary>
-	/// Initialize new <see cref="LogChartPropertyEditorDialog"/> instance.
+	/// Initialize new <see cref="LogChartSeriesSourceEditorDialog"/> instance.
 	/// </summary>
-	public LogChartPropertyEditorDialog()
+	public LogChartSeriesSourceEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
 		this.customDisplayNameSwitch = this.Get<ToggleSwitch>(nameof(customDisplayNameSwitch)).Also(it =>
@@ -77,22 +77,16 @@ class LogChartPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerAp
 		var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
 				? this.customDisplayNameTextBox.Text?.Trim() ?? ""
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
-		return Task.FromResult((object?)new LogChartProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName));
+		return Task.FromResult((object?)new LogChartSeriesSource((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName));
 	}
-
-
-	/// <summary>
-	/// Get or set <see cref="LogChartProperty"/> to be edited.
-	/// </summary>
-	public LogChartProperty? LogChartProperty { get; set; }
 
 
 	// Called when opened.
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		var property = this.LogChartProperty;
-		if (property == null)
+		var source = this.Source;
+		if (source == null)
 		{
 			this.displayNameComboBox.SelectedItem = nameof(Log.Message);
 			this.isDisplayNameSameAsName = true;
@@ -100,16 +94,22 @@ class LogChartPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewerAp
 		}
 		else
 		{
-			this.nameComboBox.SelectedItem = property.Name;
-			if (DisplayableLogProperty.DisplayNames.Contains(property.DisplayName))
-				this.displayNameComboBox.SelectedItem = property.DisplayName;
+			this.nameComboBox.SelectedItem = source.PropertyName;
+			if (DisplayableLogProperty.DisplayNames.Contains(source.PropertyDisplayName))
+				this.displayNameComboBox.SelectedItem = source.PropertyDisplayName;
 			else
 			{
 				this.isDisplayNameSameAsName = true;
 				this.customDisplayNameSwitch.IsChecked = true;
-				this.customDisplayNameTextBox.Text = property.DisplayName.Trim();
+				this.customDisplayNameTextBox.Text = source.PropertyDisplayName.Trim();
 			}
 		}
 		this.SynchronizationContext.Post(this.nameComboBox.Focus);
 	}
+	
+	
+	/// <summary>
+	/// Get or set <see cref="Source"/> to be edited.
+	/// </summary>
+	public LogChartSeriesSource? Source { get; set; }
 }

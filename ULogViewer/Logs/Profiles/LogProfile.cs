@@ -55,7 +55,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		readonly SettingKey<bool>? isPinnedSettingKey;
 		bool isTemplate;
 		bool isWorkingDirectoryNeeded;
-		IList<LogChartProperty> logChartProperties = Array.Empty<LogChartProperty>();
+		IList<LogChartSeriesSource> logChartSeriesSources = Array.Empty<LogChartSeriesSource>();
 		LogChartType logChartType = LogChartType.None;
 		readonly Dictionary<string, LogLevel> logLevelMapForReading = new();
 		readonly Dictionary<LogLevel, string> logLevelMapForWriting = new();
@@ -131,8 +131,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.isContinuousReading = template.isContinuousReading;
 			this.isPinned = template.isPinned;
 			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
+			this.logChartSeriesSources = template.logChartSeriesSources;
 			this.logChartType = template.logChartType;
-			this.logChartProperties = template.logChartProperties;
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
 			this.logLevelMapForWriting.AddAll(template.logLevelMapForWriting);
 			this.logReadingWindow = template.logReadingWindow;
@@ -141,7 +141,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
 			this.logWritingFormats = template.logWritingFormats;
 			this.maxLogReadingCount = template.maxLogReadingCount;
+			// ReSharper disable VirtualMemberCallInConstructor
 			this.Name = template.Name;
+			// ReSharper restore VirtualMemberCallInConstructor
 			this.rawLogLevelPropertyName = template.rawLogLevelPropertyName;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
@@ -680,22 +682,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 		
 		
-		// Load log properties for chart from JSON.
-		void LoadLogChartPropertiesFromJson(JsonElement logChartPropertiesElement)
+		// Load sources of log chart series from JSON.
+		void LoadLogChartSeriesSourcesFromJson(JsonElement logChartPropertiesElement)
 		{
-			var logChartProperties = new List<LogChartProperty>();
+			var sources = new List<LogChartSeriesSource>();
 			foreach (var propertyElement in logChartPropertiesElement.EnumerateArray())
 			{
-				var name = propertyElement.GetProperty(nameof(LogChartProperty.Name)).GetString().AsNonNull();
+				var name = propertyElement.GetProperty(nameof(LogChartSeriesSource.PropertyName)).GetString().AsNonNull();
 				var displayName = default(string);
-				if (propertyElement.TryGetProperty(nameof(LogChartProperty.DisplayName), out var jsonElement)
+				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.PropertyDisplayName), out var jsonElement)
 				    && jsonElement.ValueKind == JsonValueKind.String)
 				{
 					displayName = jsonElement.GetString();
 				}
-				logChartProperties.Add(new LogChartProperty(name, displayName));
+				sources.Add(new LogChartSeriesSource(name, displayName));
 			}
-			this.logChartProperties = logChartProperties.AsReadOnly();
+			this.logChartSeriesSources = sources.AsReadOnly();
 		}
 
 
@@ -781,19 +783,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		
 		
 		/// <summary>
-		/// Get of set list of log properties for chart.
+		/// Get of set list of sources of series of log chart.
 		/// </summary>
-		public IList<LogChartProperty> LogChartProperties
+		public IList<LogChartSeriesSource> LogChartSeriesSources
 		{
-			get => this.logChartProperties;
+			get => this.logChartSeriesSources;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.logChartProperties.SequenceEqual(value))
+				if (this.logChartSeriesSources.SequenceEqual(value))
 					return;
-				this.logChartProperties = new List<LogChartProperty>(value).AsReadOnly();
-				this.OnPropertyChanged(nameof(LogChartProperties));
+				this.logChartSeriesSources = new List<LogChartSeriesSource>(value).AsReadOnly();
+				this.OnPropertyChanged(nameof(LogChartSeriesSources));
 				this.Validate();
 			}
 		}
@@ -1050,8 +1052,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(IsWorkingDirectoryNeeded):
 						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
 						break;
-					case nameof(LogChartProperties):
-						this.LoadLogChartPropertiesFromJson(jsonProperty.Value);
+					case nameof(LogChartSeriesSources):
+						this.LoadLogChartSeriesSourcesFromJson(jsonProperty.Value);
 						break;
 					case nameof(LogChartType):
 						if (Enum.TryParse<LogChartType>(jsonProperty.Value.GetString(), out var chartType))
@@ -1214,10 +1216,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteBoolean(nameof(IsTemplate), true);
 			if (this.isWorkingDirectoryNeeded)
 				writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
-			if (this.logChartProperties.IsNotEmpty())
+			if (this.logChartSeriesSources.IsNotEmpty())
 			{
-				writer.WritePropertyName(nameof(LogChartProperties));
-				this.SaveLogChartPropertiesToJson(writer);
+				writer.WritePropertyName(nameof(LogChartSeriesSources));
+				this.SaveLogChartSeriesSourcesToJson(writer);
 			}
 			if (this.logChartType != LogChartType.None)
 				writer.WriteString(nameof(LogChartType), this.logChartType.ToString());
@@ -1338,17 +1340,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		}
 		
 		
-		// Save log properties for chart in JSON format.
-		void SaveLogChartPropertiesToJson(Utf8JsonWriter writer)
+		// Save sources of log chart series in JSON format.
+		void SaveLogChartSeriesSourcesToJson(Utf8JsonWriter writer)
 		{
-			var properties = this.logChartProperties;
+			var properties = this.logChartSeriesSources;
 			writer.WriteStartArray();
 			foreach (var property in properties)
 			{
 				writer.WriteStartObject();
-				if (property.DisplayName != property.Name)
-					writer.WriteString(nameof(LogChartProperty.DisplayName), property.DisplayName);
-				writer.WriteString(nameof(LogChartProperty.Name), property.Name);
+				if (property.PropertyDisplayName != property.PropertyName)
+					writer.WriteString(nameof(LogChartSeriesSource.PropertyDisplayName), property.PropertyDisplayName);
+				writer.WriteString(nameof(LogChartSeriesSource.PropertyName), property.PropertyName);
 				writer.WriteEndObject();
 			}
 			writer.WriteEndArray();
@@ -1720,13 +1722,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				isValid = this.logPatterns.IsNotEmpty()
 					&& (!this.maxLogReadingCount.HasValue || this.maxLogReadingCount > 0)
-					&& this.logChartProperties.Let(it =>
+					&& this.logChartSeriesSources.Let(it =>
 					{
 						if (it.IsEmpty())
 							return true;
 						foreach (var property in it)
 						{
-							if (!Log.HasProperty(property.Name))
+							if (!Log.HasProperty(property.PropertyName))
 								return false;
 						}
 						return true;

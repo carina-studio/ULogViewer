@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleSwitch adminNeededSwitch;
 		readonly Panel allowMultipleFilesPanel;
 		readonly ToggleSwitch allowMultipleFilesSwitch;
-		readonly MutableObservableBoolean canAddLogChartProperty = new();
+		readonly MutableObservableBoolean canAddLogChartSeriesSource = new();
 		readonly ComboBox colorIndicatorComboBox;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
@@ -132,8 +132,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}));
 
 			// create commands
-			this.AddLogChartPropertyCommand = new Command(this.AddLogChartProperty, this.canAddLogChartProperty);
-			this.EditLogChartPropertyCommand = new Command<ListBoxItem>(this.EditLogChartProperty);
+			this.AddLogChartSeriesSourceCommand = new Command(this.AddLogChartSeriesSource, this.canAddLogChartSeriesSource);
+			this.EditLogChartSeriesSourceCommand = new Command<ListBoxItem>(this.EditLogChartSeriesSource);
 			this.EditLogLevelMapEntryForReadingCommand = new Command<KeyValuePair<string, Logs.LogLevel>>(this.EditLogLevelMapEntryForReading);
 			this.EditLogLevelMapEntryForWritingCommand = new Command<KeyValuePair<Logs.LogLevel, string>>(this.EditLogLevelMapEntryForWriting);
 			this.EditLogPatternCommand = new Command<ListBoxItem>(this.EditLogPattern);
@@ -141,15 +141,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.EditTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimeSpanFormatForReading);
 			this.EditTimestampFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimestampFormatForReading);
 			this.EditVisibleLogPropertyCommand = new Command<ListBoxItem>(this.EditVisibleLogProperty);
-			this.MoveLogChartPropertyDownCommand = new Command<ListBoxItem>(this.MoveLogChartPropertyDown);
-			this.MoveLogChartPropertyUpCommand = new Command<ListBoxItem>(this.MoveLogChartPropertyUp);
+			this.MoveLogChartSeriesSourceDownCommand = new Command<ListBoxItem>(this.MoveLogChartSeriesSourceDown);
+			this.MoveLogChartSeriesSourceUpCommand = new Command<ListBoxItem>(this.MoveLogChartSeriesSourceUp);
 			this.MoveLogPatternDownCommand = new Command<ListBoxItem>(this.MoveLogPatternDown);
 			this.MoveLogPatternUpCommand = new Command<ListBoxItem>(this.MoveLogPatternUp);
 			this.MoveLogWritingFormatDownCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatDown);
 			this.MoveLogWritingFormatUpCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatUp);
 			this.MoveVisibleLogPropertyDownCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyDown);
 			this.MoveVisibleLogPropertyUpCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyUp);
-			this.RemoveLogChartPropertyCommand = new Command<ListBoxItem>(this.RemoveLogChartProperty);
+			this.RemoveLogChartSeriesSourceCommand = new Command<ListBoxItem>(this.RemoveLogChartSeriesSource);
 			this.RemoveLogLevelMapEntryCommand = new Command<object>(this.RemoveLogLevelMapEntry);
 			this.RemoveLogPatternCommand = new Command<ListBoxItem>(this.RemoveLogPattern);
 			this.RemoveLogWritingFormatCommand = new Command<ListBoxItem>(this.RemoveLogWritingFormat);
@@ -217,17 +217,17 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		
 		
-		// Add log chart property.
-		Task AddLogChartProperty()
+		// Add source of log chart series.
+		Task AddLogChartSeriesSource()
 		{
 			return Task.CompletedTask;
 		}
 		
 		
 		/// <summary>
-		/// Command to add log chart property.
+		/// Command to add source of log chart series.
 		/// </summary>
-		public ICommand AddLogChartPropertyCommand { get; }
+		public ICommand AddLogChartSeriesSourceCommand { get; }
 
 
 		/// <summary>
@@ -503,15 +503,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		
 		
-		// Edit log chart property.
-		void EditLogChartProperty(ListBoxItem item)
+		// Edit source of log chart series.
+		void EditLogChartSeriesSource(ListBoxItem item)
 		{ }
 
 
 		/// <summary>
-		/// Command to edit log chart property.
+		/// Command to edit source of log chart series.
 		/// </summary>
-		public ICommand EditLogChartPropertyCommand { get; }
+		public ICommand EditLogChartSeriesSourceCommand { get; }
 
 
 		// Edit log level map entry.
@@ -1065,26 +1065,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		public SyntaxHighlightingDefinitionSet LogWritingFormatSyntaxHighlightingDefinitionSet { get; }
 		
 		
-		// Move log chart property down.
-		void MoveLogChartPropertyDown(ListBoxItem item)
+		// Move source of log chart series down.
+		void MoveLogChartSeriesSourceDown(ListBoxItem item)
 		{ }
 
 
 		/// <summary>
-		/// Command to move log chart property down.
+		/// Command to move source of log chart series down.
 		/// </summary>
-		public ICommand MoveLogChartPropertyDownCommand { get; }
+		public ICommand MoveLogChartSeriesSourceDownCommand { get; }
 
 
-		// Move log chart property up.
-		void MoveLogChartPropertyUp(ListBoxItem item)
+		// Move source of log chart series up.
+		void MoveLogChartSeriesSourceUp(ListBoxItem item)
 		{ }
 
 
 		/// <summary>
-		/// Command to move log chart property up.
+		/// Command to move source of log chart series up.
 		/// </summary>
-		public ICommand MoveLogChartPropertyUpCommand { get; }
+		public ICommand MoveLogChartSeriesSourceUpCommand { get; }
 
 
 		// Move log pattern down.
@@ -1573,15 +1573,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		
 		
-		// Remove log chart property.
-		void RemoveLogChartProperty(ListBoxItem item)
+		// Remove source of log chart series.
+		void RemoveLogChartSeriesSource(ListBoxItem item)
 		{ }
 
 
 		/// <summary>
-		/// Command to remove log chart property.
+		/// Command to remove source of log chart series.
 		/// </summary>
-		public ICommand RemoveLogChartPropertyCommand { get; }
+		public ICommand RemoveLogChartSeriesSourceCommand { get; }
 
 
 		// Remove log level map entry.

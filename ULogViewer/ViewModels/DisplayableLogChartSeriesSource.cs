@@ -17,9 +17,9 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="source">Source of series.</param>
-    public DisplayableLogChartSeriesSource(IULogViewerApplication app, LogChartProperty source)
+    public DisplayableLogChartSeriesSource(IULogViewerApplication app, LogChartSeriesSource source)
     {
-        this.logProperty = new(app, source.Name, source.DisplayName, null);
+        this.logProperty = new(app, source.PropertyName, source.PropertyDisplayName, null);
         this.logProperty.PropertyChanged += (_, e) =>
         {
             switch (e.PropertyName)

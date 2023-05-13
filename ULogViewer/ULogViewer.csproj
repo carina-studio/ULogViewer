@@ -185,19 +185,4 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsSystemEventLogs.json" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Compile Update="Controls\LogChartPropertyEditorDialog.axaml.cs">
-	    <DependentUpon>VisibleLogPropertyEditorDialog.axaml</DependentUpon>
-	    <SubType>Code</SubType>
-	  </Compile>
-	  <Compile Update="Controls\VisibleLogPropertyEditorDialog.axaml.cs">
-	    <DependentUpon>LogChartPropertyEditorDialog.axaml</DependentUpon>
-	    <SubType>Code</SubType>
-	  </Compile>
-	  <Compile Update="Controls\LogChartPropertyEditorDialog.axaml.cs">
-	    <DependentUpon>LogChartPropertyEditorDialog.axaml</DependentUpon>
-	    <SubType>Code</SubType>
-	  </Compile>
-	</ItemGroup>
-
 </Project>

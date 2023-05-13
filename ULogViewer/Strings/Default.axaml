@@ -378,11 +378,11 @@ return False</sys:String>
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
 	
-	<!-- LogChartPropertyEditorDialog -->
-	<sys:String x:Key="String/LogChartPropertyEditorDialog.CustomDisplayName">Custom display name</sys:String>
-	<sys:String x:Key="String/LogChartPropertyEditorDialog.DisplayName">Display name</sys:String>
-	<sys:String x:Key="String/LogChartPropertyEditorDialog.Name">Property</sys:String>
-	<sys:String x:Key="String/LogChartPropertyEditorDialog.Title">Log property for chart</sys:String>
+	<!-- LogChartSeriesSourceEditorDialog -->
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">Custom display name</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">Display name</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">Property</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">Source log property of chart</sys:String>
 	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.None">None</sys:String>
@@ -578,10 +578,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">Log Chart</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties">Log properties to show</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartProperties.Description">Specify at most 10 properties of log to be rendered on chart.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">Source log properties</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">Specify at most 10 properties as sources to generate chart.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">Type of chart</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutLogChartProperties">You have defined 'Type of chart' without defining 'Log properties to show'. Do you want to define 'Log properties to show'?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">You have defined 'Type of chart' without defining 'Source log properties'. Do you want to define 'Source log properties'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Convert from raw value of property specified by "Name of property of raw log level" into actual log level.</sys:String>
@@ -1368,10 +1368,10 @@ return None</sys:String>
 	<sys:String x:Key="String/VariablesComparisonCondition">{{{0}}} {1} {{{2}}}</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
-	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartPropertyEditorDialog.CustomDisplayName"/>
-	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartPropertyEditorDialog.DisplayName"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.CustomDisplayName"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.DisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Color of text</sys:String>
-	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartPropertyEditorDialog.Name"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartSeriesSourceEditorDialog.Name"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the column width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column width</sys:String>
