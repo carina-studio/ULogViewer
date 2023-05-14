@@ -597,13 +597,19 @@ partial class SessionView
     {
         var minLimit = this.logChartXAxis.MinLimit ?? double.NaN;
         var maxLimit = this.logChartXAxis.MaxLimit ?? double.NaN;
-        if (!double.IsFinite(minLimit) && !double.IsFinite(maxLimit))
-            return;
         if (this.DataContext is not Session session)
             return;
         var maxSeriesValueCount = 0;
         foreach (var series in session.LogChart.Series)
             maxSeriesValueCount = Math.Max(maxSeriesValueCount, series.Values.Count);
+        if (!double.IsFinite(minLimit))
+        {
+            if (!double.IsFinite(maxLimit))
+                return;
+            minLimit = 0;
+        }
+        if (!double.IsFinite(maxLimit))
+            maxLimit = maxSeriesValueCount;
         var length = (maxLimit - minLimit);
         var reserved = (length * LogChartXAxisMinMaxReservedRatio);
         this.logChartXAxis.MinLimit = maxSeriesValueCount - length + reserved;
@@ -618,8 +624,21 @@ partial class SessionView
     {
         var minLimit = this.logChartXAxis.MinLimit ?? double.NaN;
         var maxLimit = this.logChartXAxis.MaxLimit ?? double.NaN;
-        if (!double.IsFinite(minLimit) && !double.IsFinite(maxLimit))
+        if (this.DataContext is not Session session)
             return;
+        if (!double.IsFinite(minLimit))
+        {
+            if (!double.IsFinite(maxLimit))
+                return;
+            minLimit = 0;
+        }
+        if (!double.IsFinite(maxLimit))
+        {
+            var maxSeriesValueCount = 0;
+            foreach (var series in session.LogChart.Series)
+                maxSeriesValueCount = Math.Max(maxSeriesValueCount, series.Values.Count);
+            maxLimit = maxSeriesValueCount;
+        }
         var length = (maxLimit - minLimit);
         var reserved = (length * LogChartXAxisMinMaxReservedRatio);
         this.logChartXAxis.MinLimit = -reserved;
