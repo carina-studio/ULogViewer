@@ -365,6 +365,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">顯示名稱</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">屬性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">圖表的來源日誌屬性</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">數值縮放</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">從屬性取得數值後再乘以的值。</sys:String>
 	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.None">無</sys:String>

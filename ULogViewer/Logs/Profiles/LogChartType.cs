@@ -46,3 +46,22 @@ public enum LogChartType
     /// </summary>
     ValueStatisticBars,
 }
+
+
+/// <summary>
+/// Extensions of <see cref="LogChartType"/>.
+/// </summary>
+static class LogChartTypeExtensions
+{
+    /// <summary>
+    /// Check whether the type of chart is consist of series of number value from log property directly or not.
+    /// </summary>
+    /// <param name="type">Type of log chart.</param>
+    /// <returns>True if type of chart is consist of series of number value from log property directly.</returns>
+    public static bool IsDirectNumberValueSeriesType(this LogChartType type) => type switch
+    {
+        LogChartType.None
+            or LogChartType.ValueStatisticBars => false,
+        _ => true,
+    };
+}

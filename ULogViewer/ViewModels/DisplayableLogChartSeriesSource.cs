@@ -30,6 +30,7 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
                     break;
             }
         };
+        this.ValueScaling = source.ValueScaling;
     }
     
     
@@ -60,4 +61,10 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
     /// Get name of log property for series.
     /// </summary>
     public string PropertyName => this.logProperty.Name;
+    
+    
+    /// <summary>
+    /// Scaling on value got from log property.
+    /// </summary>
+    public double ValueScaling { get; }
 }

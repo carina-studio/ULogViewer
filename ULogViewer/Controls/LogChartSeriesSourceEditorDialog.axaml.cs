@@ -30,15 +30,21 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 				it.RemoveAt(i);
 		}
 	}).AsReadOnly();
+	
+	
+	// Static fields.
+	static readonly StyledProperty<bool> IsDirectNumberValueSeriesProperty = AvaloniaProperty.Register<LogChartSeriesSourceEditorDialog, bool>("IsDirectNumberValueSeries", false);
 
 
 	// Fields.
+	LogChartType chartType = LogChartType.None;
 	readonly ToggleSwitch customDisplayNameSwitch;
 	readonly TextBox customDisplayNameTextBox;
 	readonly RealNumberTextBox defaultValueTextBox;
 	readonly ComboBox displayNameComboBox;
 	bool isDisplayNameSameAsName;
 	readonly ComboBox nameComboBox;
+	readonly RealNumberTextBox valueScalingTextBox;
 
 
 	/// <summary>
@@ -74,6 +80,24 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 					this.displayNameComboBox.SelectedItem = name;
 			});
 		});
+		this.valueScalingTextBox = this.Get<RealNumberTextBox>(nameof(valueScalingTextBox)).Also(it =>
+		{
+			it.GetObservable(RealNumberTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
+		});
+	}
+
+
+	/// <summary>
+	/// Get or set type of log chart.
+	/// </summary>
+	public LogChartType ChartType
+	{
+		get => this.chartType;
+		set
+		{
+			this.chartType = value;
+			this.SetValue(IsDirectNumberValueSeriesProperty, value.IsDirectNumberValueSeriesType());
+		}
 	}
 
 
@@ -83,7 +107,10 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		var displayName = this.customDisplayNameSwitch.IsChecked.GetValueOrDefault()
 				? this.customDisplayNameTextBox.Text?.Trim() ?? ""
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
-		return Task.FromResult((object?)new LogChartSeriesSource((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, this.defaultValueTextBox.Value));
+		return Task.FromResult((object?)new LogChartSeriesSource((string)this.nameComboBox.SelectedItem.AsNonNull(), 
+			displayName, 
+			this.defaultValueTextBox.Value,
+			this.valueScalingTextBox.Value.GetValueOrDefault()));
 	}
 
 
@@ -110,6 +137,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 				this.customDisplayNameSwitch.IsChecked = true;
 				this.customDisplayNameTextBox.Text = source.PropertyDisplayName.Trim();
 			}
+			this.valueScalingTextBox.Value = source.ValueScaling;
 		}
 		this.SynchronizationContext.Post(this.nameComboBox.Focus);
 	}
@@ -118,7 +146,8 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	/// <inheritdoc/>
 	protected override bool OnValidateInput() =>
 		base.OnValidateInput()
-		&& this.defaultValueTextBox.IsTextValid;
+		&& this.defaultValueTextBox.IsTextValid
+		&& this.valueScalingTextBox.IsTextValid;
 
 
 	/// <summary>

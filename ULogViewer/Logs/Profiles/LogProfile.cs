@@ -702,7 +702,14 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					defaultValue = doubleValue;
 				}
-				sources.Add(new LogChartSeriesSource(propertyName, propertyDisplayName, defaultValue));
+				var valueScaling = 1.0;
+				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.ValueScaling), out jsonProperty)
+				    && jsonProperty.ValueKind == JsonValueKind.Number
+				    && jsonProperty.TryGetDouble(out doubleValue))
+				{
+					valueScaling = doubleValue;
+				}
+				sources.Add(new LogChartSeriesSource(propertyName, propertyDisplayName, defaultValue, valueScaling));
 			}
 			this.logChartSeriesSources = sources.AsReadOnly();
 		}
@@ -1350,15 +1357,17 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Save sources of log chart series in JSON format.
 		void SaveLogChartSeriesSourcesToJson(Utf8JsonWriter writer)
 		{
-			var properties = this.logChartSeriesSources;
+			var sources = this.logChartSeriesSources;
 			writer.WriteStartArray();
-			foreach (var property in properties)
+			foreach (var source in sources)
 			{
 				writer.WriteStartObject();
-				property.DefaultValue?.Let(it => writer.WriteNumber(nameof(LogChartSeriesSource.DefaultValue), it));
-				if (property.PropertyDisplayName != property.PropertyName)
-					writer.WriteString(nameof(LogChartSeriesSource.PropertyDisplayName), property.PropertyDisplayName);
-				writer.WriteString(nameof(LogChartSeriesSource.PropertyName), property.PropertyName);
+				source.DefaultValue?.Let(it => writer.WriteNumber(nameof(LogChartSeriesSource.DefaultValue), it));
+				if (source.PropertyDisplayName != source.PropertyName)
+					writer.WriteString(nameof(LogChartSeriesSource.PropertyDisplayName), source.PropertyDisplayName);
+				writer.WriteString(nameof(LogChartSeriesSource.PropertyName), source.PropertyName);
+				if (Math.Abs(source.ValueScaling - 1) > double.Epsilon * 2)
+					writer.WriteNumber(nameof(LogChartSeriesSource.ValueScaling), source.ValueScaling);
 				writer.WriteEndObject();
 			}
 			writer.WriteEndArray();

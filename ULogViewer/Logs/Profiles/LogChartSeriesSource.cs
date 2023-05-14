@@ -13,11 +13,15 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
     /// <param name="propertyName">Name of property of log.</param>
     /// <param name="displayName">Name which is suitable to display on chart.</param>
     /// <param name="defaultValue">Default value if value cannot be got from log property.</param>
-    public LogChartSeriesSource(string propertyName, string? displayName, double? defaultValue)
+    /// <param name="scaling">Scaling on value got from log property.</param>
+    public LogChartSeriesSource(string propertyName, string? displayName, double? defaultValue, double scaling)
     {
+        if (!double.IsFinite(scaling))
+            throw new ArgumentOutOfRangeException(nameof(scaling));
         this.DefaultValue = defaultValue?.Let(it => double.IsFinite(it) ? (double?)it : null);
         this.PropertyDisplayName = displayName ?? propertyName;
         this.PropertyName = propertyName;
+        this.ValueScaling = scaling;
     }
     
     
@@ -28,16 +32,17 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
 
 
     /// <inheritdoc/>
-    public bool Equals(LogChartSeriesSource? property) =>
-        property is not null
-        && this.DefaultValue.Equals(property.DefaultValue)
-        && this.PropertyName == property.PropertyName
-        && this.PropertyDisplayName == property.PropertyDisplayName;
+    public bool Equals(LogChartSeriesSource? source) =>
+        source is not null
+        && this.DefaultValue.Equals(source.DefaultValue)
+        && this.PropertyName == source.PropertyName
+        && this.PropertyDisplayName == source.PropertyDisplayName
+        && Math.Abs(this.ValueScaling - source.ValueScaling) <= Double.Epsilon * 2;
 
 
     /// <inheritdoc/>
     public override bool Equals(object? obj) =>
-        obj is LogChartSeriesSource property && this.Equals(property);
+        obj is LogChartSeriesSource source && this.Equals(source);
 
 
     /// <inheritdoc/>
@@ -70,4 +75,10 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
 
     // Get readable string.
     public override string ToString() => this.PropertyName;
+    
+    
+    /// <summary>
+    /// Scaling on value got from log property.
+    /// </summary>
+    public double ValueScaling { get; }
 }

@@ -74,21 +74,40 @@
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 					</Grid>
-					<Separator Classes="Dialog_Item_Separator"/>
 					
-					<!-- Default value -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
-						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DefaultValue}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #defaultValueTextBox.IsTextValid}" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DefaultValue.Description}"/>
-							<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#defaultValueTextBox.IsTextValid}">
-								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
-							</Grid>
-						</StackPanel>
-						<abControls:RealNumberTextBox Name="defaultValueTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" MaxLength="20" Watermark="{DynamicResource String/Common.None}"/>
-					</Grid>
-
+					<!-- Properties for direct number value -->
+					<StackPanel IsVisible="{Binding $parent[Window].IsDirectNumberValueSeries}">
+						
+						<!-- Default value -->
+						<Separator Classes="Dialog_Item_Separator"/>
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DefaultValue}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #defaultValueTextBox.IsTextValid}" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DefaultValue.Description}"/>
+								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#defaultValueTextBox.IsTextValid}">
+									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
+								</Grid>
+							</StackPanel>
+							<abControls:RealNumberTextBox Name="defaultValueTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" MaxLength="20" Watermark="{DynamicResource String/Common.None}"/>
+						</Grid>
+						
+						<!-- Value scaling -->
+						<Separator Classes="Dialog_Item_Separator"/>
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<StackPanel Classes="Dialog_Item_Text_Container">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.ValueScaling}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #valueScalingTextBox.IsTextValid}" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.ValueScaling.Description}"/>
+								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#valueScalingTextBox.IsTextValid}">
+									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
+								</Grid>
+							</StackPanel>
+							<abControls:RealNumberTextBox Name="valueScalingTextBox" Classes="Dialog_Item_TextBox" DefaultValue="1" Grid.Column="1" IsNullValueAllowed="False" MaxLength="20"/>
+						</Grid>
+						
+					</StackPanel>
+					
 				</StackPanel>
 			</Border>
 		</StackPanel>
