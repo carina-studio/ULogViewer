@@ -72,6 +72,7 @@ partial class SessionView
     
     
     // Static fields.
+    static readonly SettingKey<bool> IsLogChartTutorialShownKey = new("SessionView.IsLogChartTutorialShown", false);
     static readonly SKColor[] LogChartSeriesColorsDark =
     {
         SKColor.FromHsl(0, 100, 60), // Red
@@ -502,6 +503,7 @@ partial class SessionView
                 break;
             case nameof(LogChartViewModel.IsPanelVisible):
                 this.UpdateLogChartPanelVisibility();
+                this.ShowLogChartTutorial();
                 break;
             case nameof(LogChartViewModel.MaxSeriesValue):
             case nameof(LogChartViewModel.MinSeriesValue):
@@ -676,6 +678,33 @@ partial class SessionView
         if (propertyName is not null)
             this.logChartSeriesColors[propertyName] = color;
         return color;
+    }
+    
+    
+    // Show tutorial of log chart if needed.
+    void ShowLogChartTutorial()
+    {
+        // check state
+        if (this.PersistentState.GetValueOrDefault(IsLogChartTutorialShownKey))
+            return;
+        if (this.attachedWindow is not MainWindow window || window.CurrentTutorial != null || !window.IsActive)
+            return;
+        if (this.DataContext is not Session session || !session.IsActivated || !session.IsProVersionActivated)
+            return;
+        var viewModel = session.LogChart;
+        if (!viewModel.IsPanelVisible || !viewModel.IsChartDefined)
+            return;
+
+        // show tutorial
+        window.ShowTutorial(new Tutorial().Also(it =>
+        {
+            it.Anchor = this.logChart;
+            it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.LogChart"));
+            it.Dismissed += (_, _) => 
+                this.PersistentState.SetValue<bool>(IsLogChartTutorialShownKey, true);
+            it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+            it.IsSkippingAllTutorialsAllowed = false;
+        }));
     }
 
 

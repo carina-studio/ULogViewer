@@ -1229,6 +1229,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">由於目前的列表不包含分析結果之日誌，因此必須取消只顯示已標記的日誌。您可以自行將其開啟。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">您複製的文字是用於日誌文字篩選的完整日誌文字，可以用來驗證日誌文字篩選以及日誌分析的格式。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">檢視日誌的分析結果。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogChart">您可以滾動滑鼠滾輪以縮放，或按住滑鼠左鍵以拖曳圖表。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">檢視及管理已加入的日誌檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">已標記的日誌列表。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">點一下這裡以選取欲套用的日誌分析規則集。</sys:String>

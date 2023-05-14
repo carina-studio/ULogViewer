@@ -2756,6 +2756,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.SynchronizationContext.Post(() => 
 						{
 							this.ShowLogAnalysisRuleSetsTutorial();
+							this.ShowLogChartTutorial();
 							if (this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded)
 							{
 								this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
@@ -3921,6 +3922,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					else
 					{
 						this.ShowLogAnalysisRuleSetsTutorial();
+						this.ShowLogChartTutorial();
 						if (this.HasLogProfile)
 						{
 							if (session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
@@ -3951,6 +3953,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.IsProVersionActivated):
+					this.ShowLogChartTutorial();
 					this.UpdateToolsMenuItems();
 					break;
 				case nameof(Session.IsReadingLogs):
