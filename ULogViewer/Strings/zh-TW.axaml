@@ -361,7 +361,7 @@ return False</sys:String>
 	<!-- LogChartSeriesSourceEditorDialog -->
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">自訂顯示名稱</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue">預設數值</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">當無法從屬性取得實數值時所使用的特定實數值。</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">當無法從屬性取得數值時所使用的特定數值。</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">顯示名稱</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">屬性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">圖表的來源日誌屬性</sys:String>

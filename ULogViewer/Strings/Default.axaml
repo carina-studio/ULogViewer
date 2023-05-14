@@ -381,7 +381,7 @@ return False</sys:String>
 	<!-- LogChartSeriesSourceEditorDialog -->
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">Custom display name</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue">Default value</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">Specific real number if value (real number) cannot be got from property.</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">Specific number if value cannot be got from property.</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">Display name</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">Property</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">Source log property of chart</sys:String>
