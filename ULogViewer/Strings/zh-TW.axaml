@@ -370,6 +370,8 @@ return False</sys:String>
 	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.None">無</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreas">數值面積圖</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreasWithDataPoints">數值面積圖 (含資料點)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">數值長條圖</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueCurves">數值曲線圖</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">數值曲線圖 (含資料點)</sys:String>

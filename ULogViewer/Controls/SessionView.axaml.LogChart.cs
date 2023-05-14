@@ -175,7 +175,7 @@ partial class SessionView
             LogChartType.ValueStackedAreas
                 or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue>
             {
-                Fill = new SolidColorPaint(color.WithAlpha((byte)(color.Alpha >> 3))),
+                Fill = new SolidColorPaint(color.WithAlpha((byte)(color.Alpha * 0.8))),
                 GeometryFill = viewModel.ChartType == LogChartType.ValueStackedAreasWithDataPoints ? new SolidColorPaint(color) { IsAntialias = true } : null,
                 GeometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 6.0),
                 GeometryStroke = null,
@@ -220,10 +220,16 @@ partial class SessionView
             },
             _ => new LineSeries<DisplayableLogChartSeriesValue>
             {
-                Fill = null,
+                Fill = viewModel.ChartType switch
+                {
+                    LogChartType.ValueAreas
+                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaint(color.WithAlpha((byte)(color.Alpha * 0.5))),
+                    _ => null,
+                },
                 GeometryFill = viewModel.ChartType switch
                 {
-                    LogChartType.ValueCurvesWithDataPoints
+                    LogChartType.ValueAreasWithDataPoints
+                        or LogChartType.ValueCurvesWithDataPoints
                         or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(color) { IsAntialias = true },
                     _ => null,
                 },

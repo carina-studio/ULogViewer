@@ -44,6 +44,8 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     static readonly Dictionary<LogChartType, SeriesValueType> SeriesValueTypes = new ()
     {
         { LogChartType.ValueStatisticBars, SeriesValueType.ValueStatistic },
+        { LogChartType.ValueAreas, SeriesValueType.Value },
+        { LogChartType.ValueAreasWithDataPoints, SeriesValueType.Value },
         { LogChartType.ValueBars, SeriesValueType.Value },
         { LogChartType.ValueCurves, SeriesValueType.Value },
         { LogChartType.ValueCurvesWithDataPoints, SeriesValueType.Value },

@@ -390,6 +390,8 @@ return False</sys:String>
 	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.None">None</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreas">Area chart of values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreasWithDataPoints">Area chart of values with data points</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">Bar chart of values</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueCurves">Curve chart of values</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">Curve chart of values with data points</sys:String>

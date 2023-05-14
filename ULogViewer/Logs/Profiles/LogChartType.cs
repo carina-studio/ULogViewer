@@ -26,6 +26,14 @@ public enum LogChartType
     /// </summary>
     ValueCurvesWithDataPoints,
     /// <summary>
+    /// Areas of values,
+    /// </summary>
+    ValueAreas,
+    /// <summary>
+    /// Areas of values with data points,
+    /// </summary>
+    ValueAreasWithDataPoints,
+    /// <summary>
     /// Stacked areas of values,
     /// </summary>
     ValueStackedAreas,

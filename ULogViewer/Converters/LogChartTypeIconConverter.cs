@@ -44,6 +44,11 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
         var state = parameter as string;
         var key = value switch
         {
+            LogChartType.ValueAreas
+                or LogChartType.ValueAreasWithDataPoints
+                or LogChartType.ValueStackedAreas
+                or LogChartType.ValueStackedAreasWithDataPoints => (this.outline ? "Image/Chart.Areas.Outline" : "Image/Chart.Areas")
+                                                                   + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueStatisticBars
                 or LogChartType.ValueBars
                 or LogChartType.ValueStackedBars => "Image/Chart.Bars"
@@ -54,9 +59,6 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
             LogChartType.ValueLines
                 or LogChartType.ValueLinesWithDataPoints => "Image/Chart.Lines"
                                                             + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
-            LogChartType.ValueStackedAreas
-                or LogChartType.ValueStackedAreasWithDataPoints => (this.outline ? "Image/Chart.Areas.Outline" : "Image/Chart.Areas")
-                                                                   + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.None => "Image/LogProfile.Empty",
             _ => null,
         };
