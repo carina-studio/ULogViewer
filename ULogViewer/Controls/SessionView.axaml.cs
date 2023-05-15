@@ -261,8 +261,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static initializer.
 		static SessionView()
 		{
-			App.Current.PersistentState.SetValue<bool>(IsLogAnalysisPanelTutorialShownKey, true);
-			App.Current.PersistentState.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
+			//App.Current.PersistentState.ResetValue(IsLogAnalysisPanelTutorialShownKey);
+			//App.Current.PersistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
 			//App.Current.PersistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
@@ -553,7 +553,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
-			this.logsShowingModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logsShowingModeButton)).AsNonNull();
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
 				it.ValidationDelay = this.CommitLogFilterParamsDelay;
@@ -767,15 +766,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					ToolTip.SetIsOpen(this.logsSavingButton, false);
 					this.logsSavingButton.IsChecked = true;
-				});
-			});
-			this.logsShowingModeMenu = ((ContextMenu)this.Resources[nameof(logsShowingModeMenu)].AsNonNull()).Also(it =>
-			{
-				it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.logsShowingModeButton.IsChecked = false);
-				it.MenuOpened += (_, _) => this.SynchronizationContext.Post(() => 
-				{
-					ToolTip.SetIsOpen(this.logsShowingModeButton, false);
-					this.logsShowingModeButton.IsChecked = true;
 				});
 			});
 			this.otherActionsMenu = ((ContextMenu)this.Resources[nameof(otherActionsMenu)].AsNonNull()).Also(it =>
@@ -1372,6 +1362,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var result = await new MessageDialog()
 			{
 				Buttons = MessageDialogButtons.YesNo,
+				DefaultResult = MessageDialogResult.No,
 				Icon = MessageDialogIcon.Question,
 				Message = isScriptSet
 					? new FormattedString().Also(it =>
@@ -4808,16 +4799,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void ShowLogsSavingMenu() =>
 			this.logsSavingMenu.Open(this.logsSavingButton);
-
-
-		/// <summary>
-		/// SHow menu of logs showing mode.
-		/// </summary>
-		public void ShowLogsShowingModeMenu()
-		{
-			this.logsShowingModeMenu.PlacementTarget = this.logsShowingModeButton;
-			this.logsShowingModeMenu.Open(this.logsShowingModeButton);
-		}
 
 
 		// Show full log string property.

@@ -352,33 +352,6 @@
 			<MenuItem Command="{Binding #root.SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="{x:Static appInput:KeyGestures.SaveLogs}"/>
 			<MenuItem Command="{Binding #root.SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="{x:Static appInput:KeyGestures.SaveAllLogs}"/>
 		</ContextMenu>
-		
-		<!-- Logs showing mode menu -->
-		<ContextMenu x:Key="logsShowingModeMenu" PlacementMode="Bottom">
-			<MenuItem Command="{Binding ResetTemporarilyShownLogsCommand}" Header="{DynamicResource String/SessionView.ResetTemporarilyShownLogs}" InputGesture="Alt+R">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Checked}">
-						<Image.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="!DataContext.IsShowingAllLogsTemporarily" ElementName="root" FallbackValue="False"/>
-								<Binding Path="!DataContext.IsShowingMarkedLogsTemporarily" ElementName="root" FallbackValue="False"/>
-							</MultiBinding>
-						</Image.IsVisible>
-					</Image>
-				</MenuItem.Icon>
-			</MenuItem>
-			<Separator/>
-			<MenuItem Command="{Binding ShowAllLogsTemporarilyCommand}" Header="{DynamicResource String/SessionView.ShowAllLogsTemporarily}" InputGesture="Alt+A">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" IsVisible="{Binding #root.DataContext.IsShowingAllLogsTemporarily, FallbackValue=False}" Source="{StaticResource Image/Icon.Checked}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-			<MenuItem Command="{Binding ShowMarkedLogsTemporarilyCommand}" Header="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}" InputGesture="Alt+M">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" IsVisible="{Binding #root.DataContext.IsShowingMarkedLogsTemporarily, FallbackValue=False}" Source="{StaticResource Image/Icon.Checked}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-		</ContextMenu>
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
@@ -772,21 +745,19 @@
 							<Image Classes="Icon" Source="{StaticResource Image/ClearFilters}"/>
 						</Button>
 						
-						<!-- Logs showing mode -->
-						<ToggleButton Name="logsShowingModeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogsShowingModeMenu}" ToolTip.Tip="{DynamicResource String/SessionView.LogsShowingMode}">
+						<!-- Show marked logs temporarily -->
+						<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
-								<Panel IsVisible="{Binding !#logsShowingModeButton.IsChecked}">
-									<Image Name="logsShowingModeButtonDefaultIcon" Classes="Icon" Source="{StaticResource Image/Visibility}">
-										<Image.IsVisible>
-											<MultiBinding Converter="{x:Static BoolConverters.And}">
-												<Binding Path="!IsShowingAllLogsTemporarily"/>
-												<Binding Path="!IsShowingMarkedLogsTemporarily"/>
-											</MultiBinding>
-										</Image.IsVisible>
-									</Image>
-									<Image Classes="Icon" IsVisible="{Binding !#logsShowingModeButtonDefaultIcon.IsVisible}" Source="{StaticResource Image/Visibility.Active}"/>
-								</Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Light}" IsVisible="{Binding #logsShowingModeButton.IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+							</Panel>
+						</ToggleButton>
+						
+						<!-- Show all logs temporarily -->
+						<ToggleButton Name="showAllLogsTemporarilyButton" Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingAllLogsTemporarilyCommand}" IsChecked="{Binding IsShowingAllLogsTemporarily, Mode=OneWay}" ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Visibility}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 

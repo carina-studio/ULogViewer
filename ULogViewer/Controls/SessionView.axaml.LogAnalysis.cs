@@ -754,7 +754,7 @@ partial class SessionView
                                 {
                                     window.ShowTutorial(new Tutorial().Also(it =>
                                     {
-                                        it.Anchor = this.FindControl<Control>("logsShowingModeButton");
+                                        it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
                                         it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
                                         it.Dismissed += (_, _) =>
                                             this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
