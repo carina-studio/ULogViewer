@@ -2721,8 +2721,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when application string resources updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
-			this.areLogChartAxesReady = false;
-			this.UpdateLogChartSeries();
+			this.UpdateLogChartPaints();
+			this.SynchronizationContext.Post(() => // To make sure that display name of log property has been updated
+			{
+				this.areLogChartAxesReady = false;
+				this.UpdateLogChartSeries();
+			});
 			this.UpdateLogLevelFilterComboBoxStrings();
 		}
 

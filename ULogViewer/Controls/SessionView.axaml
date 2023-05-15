@@ -830,13 +830,13 @@
 				<Panel.Styles>
 					<Style Selector="Button.ToolBar_Button">
 						<Setter Property="Height" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
-						<Setter Property="Margin" Value="1,0,0,0"/>
+						<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Margin}"/>
 						<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Padding}"/>
 						<Setter Property="Width" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
 					</Style>
 					<Style Selector="ToggleButton.ToolBar_ToggleButton">
 						<Setter Property="Height" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
-						<Setter Property="Margin" Value="1,0,0,0"/>
+						<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Margin}"/>
 						<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Padding}"/>
 						<Setter Property="Width" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
 					</Style>
@@ -1427,7 +1427,7 @@
 						<Border.Styles>
 							<Style Selector="ToggleButton.ToolBar_ToggleButton">
 								<Setter Property="Height" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
-								<Setter Property="Margin" Value="1,0,0,0"/>
+								<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Margin}"/>
 								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.SidePanel.Header.Button.Padding}"/>
 								<Setter Property="Width" Value="{StaticResource Double/SessionView.SidePanel.Header.Button.Size}"/>
 							</Style>

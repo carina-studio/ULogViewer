@@ -212,8 +212,8 @@
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Legend.FontSize">13</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Size">5</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Width">2</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Size">7</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.ToolTip.FontSize">13</sys:Double>
 	<StaticResourceExtension x:Key="Double/SessionView.LogChartTypeMenu.CurrentLogChartType.Opacity" ResourceKey="Double/LogProfileSelectionContextMenu.CurrentLogProfile.Opacity"/>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.FileName.FontSize">14</sys:Double>
@@ -277,6 +277,7 @@
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.FullPanelHint.Text.Margin">10</Thickness>
+	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Margin">1,0,1,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding">3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin">5,5,0,5</Thickness>
