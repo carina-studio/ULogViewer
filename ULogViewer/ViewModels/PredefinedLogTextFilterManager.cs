@@ -37,6 +37,7 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     
     
     // Fields.
+    readonly HashSet<PredefinedLogTextFilter> changingGroupFilters = new();
     readonly SortedObservableList<PredefinedLogTextFilterGroup> groups = new((lhs, rhs) => string.CompareOrdinal(lhs.Name, rhs.Name));
 
 
@@ -110,6 +111,18 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
 
 
     /// <summary>
+    /// Raised after changing group of filter.
+    /// </summary>
+    public event Action<PredefinedLogTextFilterManager, PredefinedLogTextFilter>? FilterGroupChanged;
+    
+    
+    /// <summary>
+    /// Raised before changing group of filter.
+    /// </summary>
+    public event Action<PredefinedLogTextFilterManager, PredefinedLogTextFilter>? FilterGroupChanging;
+
+
+    /// <summary>
     /// Get all groups except for default group.
     /// </summary>
     public IList<PredefinedLogTextFilterGroup> Groups { get; }
@@ -132,6 +145,15 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     }
 
 
+    /// <summary>
+    /// Check whether group of given filter is being changed or not.
+    /// </summary>
+    /// <param name="filter">Filter.</param>
+    /// <returns>True if group of given filter is being changed.</returns>
+    public bool IsFilterGroupChanging(PredefinedLogTextFilter filter) =>
+        this.changingGroupFilters.Contains(filter);
+
+
     /// <inheritdoc/>
     protected override void OnAttachToProfile(PredefinedLogTextFilter filter)
     {
@@ -151,20 +173,41 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
         base.OnProfilePropertyChanged(filter, e);
         if (e.PropertyName == nameof(PredefinedLogTextFilter.GroupName))
         {
-            // remove from old group
-            if (!((PredefinedLogTextFilterGroupImpl)this.DefaultGroup).RemoveFilter(filter))
+            // check state
+            if (!this.changingGroupFilters.Add(filter))
+                throw new InvalidOperationException("Nested filter group change.");
+                                
+            // change group
+            try
             {
-                // ReSharper disable PossibleInvalidCastExceptionInForeachLoop
-                foreach (PredefinedLogTextFilterGroupImpl group in this.groups)
+                // remove from old group
+                this.FilterGroupChanging?.Invoke(this, filter);
+                if (!((PredefinedLogTextFilterGroupImpl)this.DefaultGroup).RemoveFilter(filter))
                 {
-                    if (group.RemoveFilter(filter))
-                        break;
+                    // ReSharper disable PossibleInvalidCastExceptionInForeachLoop
+                    foreach (PredefinedLogTextFilterGroupImpl group in this.groups)
+                    {
+                        if (group.RemoveFilter(filter))
+                        {
+                            if (group.Filters.IsEmpty())
+                            {
+                                this.groups.Remove(group);
+                                group.Dispose();
+                            }
+                            break;
+                        }
+                    }
+                    // ReSharper restore PossibleInvalidCastExceptionInForeachLoop
                 }
-                // ReSharper restore PossibleInvalidCastExceptionInForeachLoop
-            }
 
-            // add to new group
-            this.GetOrCreateGroup(filter.GroupName).AddFilter(filter);
+                // add to new group
+                this.GetOrCreateGroup(filter.GroupName).AddFilter(filter);
+                this.FilterGroupChanged?.Invoke(this, filter);
+            }
+            finally
+            {
+                this.changingGroupFilters.Remove(filter);
+            }
         }
     }
 
@@ -181,6 +224,8 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     public bool RemoveFilter(PredefinedLogTextFilter filter)
     {
         var group = this.GetOrCreateGroup(filter.GroupName);
+        if (this.changingGroupFilters.Remove(filter))
+            this.FilterGroupChanged?.Invoke(this, filter);
         if (group.RemoveFilter(filter) && group != this.DefaultGroup && group.Filters.IsEmpty())
         {
             this.groups.Remove(group);

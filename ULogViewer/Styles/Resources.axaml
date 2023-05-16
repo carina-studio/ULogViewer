@@ -273,6 +273,8 @@
 	<Thickness x:Key="Thickness/SessionView.Menu.MarkColorIcon.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin">10</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterGroup.Margin">0,0,0,5</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterGroup.Padding">0,3,0,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">10</Thickness>

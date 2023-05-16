@@ -369,9 +369,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.TestCommand = new Command<string>(this.Test);
 			this.UnmarkSelectedLogsCommand = new Command(this.UnmarkSelectedLogs, this.canUnmarkSelectedLogs);
 
-			// create collections
-			this.predefinedLogTextFilters = new SortedObservableList<PredefinedLogTextFilter>(ComparePredefinedLogTextFilters);
-
 			// setup properties
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.LogChartXAxes = ListExtensions.AsReadOnly(new[] { this.logChartXAxis });
@@ -574,7 +571,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
 			});
 			this.otherActionsButton = this.Get<ToggleButton>(nameof(otherActionsButton));
-			this.predefinedLogTextFilterListBox = this.Get<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox));
+			this.predefinedLogTextFilterListBox = this.Get<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox)).Also(it =>
+			{
+				it.AddHandler(PointerPressedEvent, this.OnPredefinedLogTextFilterListBoxPointerPressed, RoutingStrategies.Tunnel);
+				it.SelectionChanged += this.OnPredefinedLogTextFilterListBoxSelectionChanged;
+			});
+			this.predefinedLogTextFiltersAndGroupsPanel = this.Get<Panel>(nameof(predefinedLogTextFiltersAndGroupsPanel));
 			this.predefinedLogTextFiltersButton = this.Get<ToggleButton>(nameof(predefinedLogTextFiltersButton));
 			this.predefinedLogTextFiltersPopup = this.Get<Popup>(nameof(predefinedLogTextFiltersPopup)).Also(it =>
 			{

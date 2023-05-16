@@ -1,8 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
@@ -14,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 
@@ -39,11 +43,13 @@ partial class SessionView
 
     // Static fields.
 	static readonly StyledProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
+    static readonly StyledProperty<bool> HasSelectedPredefinedLogTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasSelectedPredefinedLogTextFilters), false);
     static readonly SettingKey<bool> IsShowingHelpButtonOnLogTextFilterConfirmedKey = new("SessionView.IsShowingHelpButtonOnLogTextFilterConfirmed");
     static readonly StyledProperty<bool> ShowHelpButtonOnLogTextFilterProperty = AvaloniaProperty.Register<SessionView, bool>("ShowHelpButtonOnLogTextFilter");
 
 
     // Fields.
+    readonly HashSet<PredefinedLogTextFilter> changingGroupSelectedPredefinedLogTextFilters = new();
     readonly Button clearLogTextFilterButton;
     readonly ScheduledAction commitLogFiltersAction;
     readonly MenuItem filterByLogPropertyMenuItem;
@@ -57,8 +63,9 @@ partial class SessionView
     readonly IntegerTextBox logProcessIdFilterTextBox;
     readonly RegexTextBox logTextFilterTextBox;
 	readonly IntegerTextBox logThreadIdFilterTextBox;
+    IDataTemplate? predefinedLogTextFilterGroupDataTemplate;
     readonly Avalonia.Controls.ListBox predefinedLogTextFilterListBox;
-    readonly SortedObservableList<PredefinedLogTextFilter> predefinedLogTextFilters;
+    readonly Panel predefinedLogTextFiltersAndGroupsPanel;
     readonly ToggleButton predefinedLogTextFiltersButton;
     readonly Popup predefinedLogTextFiltersPopup;
     readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
@@ -72,10 +79,14 @@ partial class SessionView
     // Attach to predefined log text filters
 	void AttachToPredefinedLogTextFilters()
     {
-        this.predefinedLogTextFilters.AddAll(PredefinedLogTextFilterManager.Default.Filters);
+        var manager = PredefinedLogTextFilterManager.Default;
         foreach (var filter in PredefinedLogTextFilterManager.Default.Filters)
             this.AttachToPredefinedLogTextFilter(filter);
-        ((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
+        var groups = manager.Groups;
+        for (var i = 0; i < groups.Count; ++i)
+            this.predefinedLogTextFiltersAndGroupsPanel.Children.Insert(i, this.CreateControl(groups[i]));
+        ((INotifyCollectionChanged)manager.Groups).CollectionChanged += this.OnPredefinedLogTextFilterGroupsChanged;
+        ((INotifyCollectionChanged)manager.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
     }
 
 
@@ -89,7 +100,14 @@ partial class SessionView
     /// </summary>
     public void ClearPredefinedLogTextFilterSelection()
     {
-        this.predefinedLogTextFilterListBox.SelectedItems?.Clear();
+        foreach (var control in this.predefinedLogTextFiltersAndGroupsPanel.Children)
+        {
+            if (control is Avalonia.Controls.ListBox listBox)
+                listBox.SelectedItems?.Clear();
+            else
+                control.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>()?.SelectedItems?.Clear();
+        }
+        this.SetValue(HasSelectedPredefinedLogTextFiltersProperty, false);
         this.commitLogFiltersAction.Reschedule();
     }
 
@@ -113,24 +131,6 @@ partial class SessionView
     }
 
 
-    // Compare predefined log text filters.
-    static int ComparePredefinedLogTextFilters(PredefinedLogTextFilter? x, PredefinedLogTextFilter? y)
-    {
-        if (x == null)
-        {
-            if (y == null)
-                return 0;
-            return -1;
-        }
-        if (y == null)
-            return 1;
-        var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
-        if (result != 0)
-            return result;
-        return x.GetHashCode() - y.GetHashCode();
-    }
-
-
     // Confirm whether keep showing help button on log text filter or not.
     async void ConfirmShowingHelpButtonOnLogTextFilter()
     {
@@ -138,7 +138,7 @@ partial class SessionView
             return;
         if (this.attachedWindow == null)
             return;
-        var dialog = new MessageDialog()
+        var dialog = new MessageDialog
         {
             Buttons = MessageDialogButtons.YesNo,
             DoNotAskOrShowAgain = true,
@@ -158,7 +158,10 @@ partial class SessionView
             return;
         var newName = Utility.GenerateName(filter.Name, name => 
             PredefinedLogTextFilterManager.Default.Filters.FirstOrDefault(it => it.Name == name) != null);
-        var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex);
+        var newFilter = new PredefinedLogTextFilter(this.Application, newName, filter.Regex)
+        {
+            GroupName = filter.GroupName,
+        };
         PredefinedLogTextFilterEditorDialog.Show(this.attachedWindow, newFilter, null);
     }
 
@@ -167,6 +170,38 @@ partial class SessionView
     /// Command to copy predefined log text filter.
     /// </summary>
     public ICommand CopyPredefinedLogTextFilterCommand { get; }
+
+
+    // Create control for predefined log text filter group.
+    Control CreateControl(PredefinedLogTextFilterGroup group)
+    {
+        if (this.predefinedLogTextFilterGroupDataTemplate is null)
+        {
+            var manager = PredefinedLogTextFilterManager.Default;
+            this.predefinedLogTextFilterGroupDataTemplate = this.predefinedLogTextFiltersAndGroupsPanel.DataTemplates.First(it => it.Match(manager.DefaultGroup));
+        }
+        var control = this.predefinedLogTextFilterGroupDataTemplate.Build(group).AsNonNull();
+        control.DataContext = group;
+        control.FindLogicalDescendantOfType<Expander>(true)?.Let(expander =>
+        {
+            expander.GetObservable(Expander.IsExpandedProperty).Subscribe(isExpanded =>
+            {
+                if (isExpanded)
+                    expander.Margin = new(-1);
+            });
+            expander.SizeChanged += (_, _) =>
+            {
+                if (expander.Margin.Left < 0)
+                    expander.Margin = this.Application.FindResourceOrDefault<Thickness>("Thickness/SessionView.PredefinedLogTextFilterGroup.Margin");
+            };
+            expander.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>()?.Let(listBox =>
+            {
+                listBox.AddHandler(PointerPressedEvent, this.OnPredefinedLogTextFilterListBoxPointerPressed, RoutingStrategies.Tunnel);
+                listBox.SelectionChanged += this.OnPredefinedLogTextFilterListBoxSelectionChanged;
+            });
+        });
+        return (Control)control;
+    }
 
 
     /// <summary>
@@ -187,10 +222,23 @@ partial class SessionView
     // Detach from predefined log text filters.
     void DetachFromPredefinedLogTextFilters()
     {
-        ((INotifyCollectionChanged)PredefinedLogTextFilterManager.Default.Filters).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
-        foreach (var filter in this.predefinedLogTextFilters)
+        var manager = PredefinedLogTextFilterManager.Default;
+        ((INotifyCollectionChanged)manager.Groups).CollectionChanged += this.OnPredefinedLogTextFilterGroupsChanged;
+        ((INotifyCollectionChanged)manager.Filters).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
+        foreach (var filter in manager.Filters)
             this.DetachFromPredefinedLogTextFilter(filter);
-        this.predefinedLogTextFilters.Clear();
+        this.predefinedLogTextFiltersAndGroupsPanel.Children.Let(controls =>
+        {
+            for (var i = controls.Count - 1; i >= 0; --i)
+            {
+                var control = controls[i];
+                if (control.DataContext is PredefinedLogTextFilterGroup)
+                {
+                    control.DataContext = null;
+                    controls.RemoveAt(i);
+                }
+            }
+        });
     }
 
 
@@ -209,42 +257,105 @@ partial class SessionView
     public ICommand EditPredefinedLogTextFilterCommand { get; }
 
 
+    /// <summary>
+    /// Whether one or more predefined log text filters are selected or not.
+    /// </summary>
+    public bool HasSelectedPredefinedLogTextFilters => this.GetValue(HasSelectedPredefinedLogTextFiltersProperty);
+
+
     // Called when all log filters applied for filtering.
     void OnLogFiltersApplied(object? sender, EventArgs e)
     {
         // start scrolling to log around current position
         this.StartKeepingCurrentDisplayedLogRange();
     }
+    
+    
+    // Called when list of predefined log text filters changed.
+    void OnPredefinedLogTextFilterGroupsChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                e.NewItems!.Cast<PredefinedLogTextFilterGroup>().Let(groups =>
+                {
+                    var childControls = this.predefinedLogTextFiltersAndGroupsPanel.Children;
+                    for (int i = 0, count = groups.Count; i < count; ++i)
+                        childControls.Insert(e.NewStartingIndex + i, this.CreateControl(groups[i]));
+                });
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                e.OldItems!.Cast<PredefinedLogTextFilterGroup>().Let(groups =>
+                {
+                    var childControls = this.predefinedLogTextFiltersAndGroupsPanel.Children;
+                    for (var i = groups.Count - 1; i >= 0; --i)
+                    {
+                        childControls[e.OldStartingIndex + i].DataContext = null;
+                        childControls.RemoveAt(e.OldStartingIndex + i);
+                    }
+                });
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+    }
+    
+    
+    // Called when pointer pressed on list box of predefined log text filter.
+    void OnPredefinedLogTextFilterListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        var multiSelectionKeyModifiers = KeyModifiers.Shift | (Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control);
+        if ((e.KeyModifiers & multiSelectionKeyModifiers) != 0)
+            return;
+        if (sender is not Avalonia.Controls.ListBox pressedListBox)
+            return;
+        var position = e.GetPosition(pressedListBox);
+        var pressedButton = pressedListBox.InputHitTest(position)?.FindAncestorOfType<Button>(true);
+        if (pressedButton is not null && pressedButton.FindAncestorOfType<Avalonia.Controls.ListBox>() == pressedListBox)
+            return;
+        foreach (var control in this.predefinedLogTextFiltersAndGroupsPanel.Children)
+        {
+            var listBox = control.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>(true);
+            if (listBox is null || ReferenceEquals(listBox, sender))
+                continue;
+            listBox.SelectedItems?.Clear();
+        }
+    }
 
 
     // Called when selection of list box of predefined log text filter has been changed.
     void OnPredefinedLogTextFilterListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
+        var manager = PredefinedLogTextFilterManager.Default;
         foreach (var filter in e.RemovedItems.Cast<PredefinedLogTextFilter>())
-            this.selectedPredefinedLogTextFilters.Remove(filter);
-        foreach (var filter in e.AddedItems.Cast<PredefinedLogTextFilter>())
-            this.selectedPredefinedLogTextFilters.Add(filter);
-        if (this.selectedPredefinedLogTextFilters.Count != this.predefinedLogTextFilterListBox.SelectedItems!.Count)
         {
-            // [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
-            if (this.selectedPredefinedLogTextFilters.IsNotEmpty())
+            if (manager.IsFilterGroupChanging(filter))
             {
-                var isScheduled = this.commitLogFiltersAction?.IsScheduled ?? false;
-                this.selectedPredefinedLogTextFilters.ToArray().Let(it =>
+                this.changingGroupSelectedPredefinedLogTextFilters.Add(filter);
+                this.SynchronizationContext.Post(() =>
                 {
-                    this.SynchronizationContext.Post(() =>
+                    if (this.changingGroupSelectedPredefinedLogTextFilters.Remove(filter))
                     {
-                        this.predefinedLogTextFilterListBox.SelectedItems!.Clear();
-                        foreach (var filter in it)
-                            this.predefinedLogTextFilterListBox.SelectedItems.Add(filter);
-                        if (!isScheduled)
-                            this.commitLogFiltersAction?.Cancel();
-                    });
+                        var groupName = filter.GroupName;
+                        if (groupName is null)
+                            this.predefinedLogTextFilterListBox.SelectedItems?.Add(filter);
+                        else
+                        {
+                            var listBox = this.predefinedLogTextFiltersAndGroupsPanel.Children.FirstOrDefault(it => 
+                                it.DataContext is PredefinedLogTextFilterGroup group
+                                && group.Name == groupName)?.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>();
+                            listBox?.SelectedItems?.Add(filter);
+                        }
+                        this.selectedPredefinedLogTextFilters.Add(filter);
+                    }
                 });
             }
+            this.selectedPredefinedLogTextFilters.Remove(filter);
         }
-        else
-            this.commitLogFiltersAction.Reschedule(this.CommitLogFilterParamsDelay);
+        foreach (var filter in e.AddedItems.Cast<PredefinedLogTextFilter>())
+            this.selectedPredefinedLogTextFilters.Add(filter);
+        this.commitLogFiltersAction.Reschedule(this.CommitLogFilterParamsDelay);
+        this.SetValue(HasSelectedPredefinedLogTextFiltersProperty, this.selectedPredefinedLogTextFilters.IsNotEmpty());
     }
 
 
@@ -255,9 +366,6 @@ partial class SessionView
             return;
         switch (e.PropertyName)
         {
-            case nameof(PredefinedLogTextFilter.Name):
-                this.predefinedLogTextFilters.Sort(filter);
-                break;
             case nameof(PredefinedLogTextFilter.Regex):
                 if (this.predefinedLogTextFilterListBox.SelectedItems!.Contains(filter))
                     this.commitLogFiltersAction.Reschedule();
@@ -273,16 +381,13 @@ partial class SessionView
         {
             case NotifyCollectionChangedAction.Add:
                 foreach (var filter in e.NewItems.AsNonNull().Cast<PredefinedLogTextFilter>())
-                {
                     this.AttachToPredefinedLogTextFilter(filter);
-                    this.predefinedLogTextFilters.Add(filter);
-                }
                 break;
             case NotifyCollectionChangedAction.Remove:
                 foreach (var filter in e.OldItems.AsNonNull().Cast<PredefinedLogTextFilter>())
                 {
                     this.DetachFromPredefinedLogTextFilter(filter);
-                    this.predefinedLogTextFilters.Remove(filter);
+                    this.changingGroupSelectedPredefinedLogTextFilters.Remove(filter);
                     this.selectedPredefinedLogTextFilters.Remove(filter);
                 }
                 break;
@@ -382,12 +487,6 @@ partial class SessionView
 
 
     /// <summary>
-    /// Sorted predefined log text filters.
-    /// </summary>
-    public IList<PredefinedLogTextFilter> PredefinedLogTextFilters => this.predefinedLogTextFilters;
-
-
-    /// <summary>
     /// Definition set of regex syntax highlighting.
     /// </summary>
     public SyntaxHighlightingDefinitionSet RegexSyntaxHighlightingDefinitionSet { get; }
@@ -428,7 +527,16 @@ partial class SessionView
             {
                 foreach (var textFilter in session.LogFiltering.PredefinedTextFilters)
                 {
-                    this.predefinedLogTextFilterListBox.SelectedItems!.Add(textFilter);
+                    var groupName = textFilter.GroupName;
+                    if (groupName is null)
+                        this.predefinedLogTextFilterListBox.SelectedItems?.Add(textFilter);
+                    else
+                    {
+                        var listBox = this.predefinedLogTextFiltersAndGroupsPanel.Children.FirstOrDefault(it => 
+                            it.DataContext is PredefinedLogTextFilterGroup group
+                            && group.Name == groupName)?.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>();
+                        listBox?.SelectedItems?.Add(textFilter);
+                    }
                     this.selectedPredefinedLogTextFilters.Add(textFilter);
                 }
                 this.commitLogFiltersAction.Cancel();
