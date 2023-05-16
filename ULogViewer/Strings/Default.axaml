@@ -948,9 +948,11 @@ return False</sys:String>
 	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">Group</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">Select group</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
 

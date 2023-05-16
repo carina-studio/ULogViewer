@@ -4,15 +4,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:abControls="using:CarinaStudio.Controls"
-		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.PredefinedLogTextFilterEditorDialog"
         Classes="Dialog"
 		Icon="/ULogViewer.ico"
 		ShowInTaskbar="True"
         Width="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.Width}">
+	
+	<Window.Resources>
+		<ContextMenu x:Key="groupNameSelectionMenu" PlacementMode="Bottom"/>
+	</Window.Resources>
 	
 	<Grid RowDefinitions="*,Auto">
 
@@ -26,6 +30,15 @@
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
 						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
 					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
+					
+					<!-- Group -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.GroupName}"/>
+						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
+					</Grid>
+					<Separator Classes="Dialog_Separator_Small"/>
+					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowGroupNameSelectionMenu}" Content="{DynamicResource String/PredefinedLogTextFilterEditorDialog.SelectGroupName}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}"/>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Pattern -->

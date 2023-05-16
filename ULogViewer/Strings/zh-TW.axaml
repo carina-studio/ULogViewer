@@ -905,9 +905,11 @@ return False</sys:String>
 	<sys:String x:Key="String/PopToVariableAction">從堆疊「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">群組</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">選擇群組</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">建立文字篩選</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">編輯文字篩選</sys:String>
 

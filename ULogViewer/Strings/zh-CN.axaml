@@ -912,9 +912,11 @@ return False</sys:String>
 	<sys:String x:Key="String/PopToVariableAction">从堆栈「{0}」取出值至 {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">分组</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名称</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">选择分组</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">创建文字过滤器</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">编辑文字过滤器</sys:String>
 
