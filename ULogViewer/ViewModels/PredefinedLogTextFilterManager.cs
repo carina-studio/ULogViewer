@@ -1,7 +1,9 @@
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,13 +15,37 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 /// </summary>
 class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication, PredefinedLogTextFilter>
 {
+    // Actual implementation of filter group.
+    class PredefinedLogTextFilterGroupImpl : PredefinedLogTextFilterGroup
+    {
+        // Constructor.
+        public PredefinedLogTextFilterGroupImpl(PredefinedLogTextFilterManager manager, string? name) : base(manager.Application, name)
+        { }
+        
+        // Add filter.
+        public new void AddFilter(PredefinedLogTextFilter filter) =>
+            base.AddFilter(filter);
+        
+        // Remove filter.
+        public new bool RemoveFilter(PredefinedLogTextFilter filter) =>
+            base.RemoveFilter(filter);
+    }
+    
+    
     // Static fields.
     static PredefinedLogTextFilterManager? defaultInstance;
+    
+    
+    // Fields.
+    readonly SortedObservableList<PredefinedLogTextFilterGroup> groups = new((lhs, rhs) => string.CompareOrdinal(lhs.Name, rhs.Name));
 
 
     // Constructor.
     PredefinedLogTextFilterManager(IULogViewerApplication app) : base(app)
-    { }
+    {
+        this.DefaultGroup = new PredefinedLogTextFilterGroupImpl(this, null);
+        this.Groups = ListExtensions.AsReadOnly(this.groups);
+    }
 
 
     /// <summary>
@@ -28,25 +54,36 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     /// <param name="filter">Filter.</param>
     public void AddFilter(PredefinedLogTextFilter filter)
     {
+        // check state
         this.VerifyAccess();
         if (filter.Manager != null)
             throw new InvalidOperationException();
+        
+        // change ID if needed
         if (this.GetProfileOrDefault(filter.Id) != null)
             filter.ChangeId();
-        base.AddProfile(filter, true);
+        
+        // add profile
+        this.AddProfile(filter, true);
     }
 
 
     /// <summary>
     /// Get default instance.
     /// </summary>
-    public static PredefinedLogTextFilterManager Default { get => defaultInstance ?? throw new InvalidOperationException(); }
+    public static PredefinedLogTextFilterManager Default => defaultInstance ?? throw new InvalidOperationException();
     
+    
+    /// <summary>
+    /// Get default group of filters.
+    /// </summary>
+    public PredefinedLogTextFilterGroup DefaultGroup { get; }
+
 
     /// <summary>
     /// Get all filters.
     /// </summary>
-    public IReadOnlyList<PredefinedLogTextFilter> Filters { get => base.Profiles; }
+    public IReadOnlyList<PredefinedLogTextFilter> Filters => this.Profiles;
 
 
     /// <summary>
@@ -55,7 +92,27 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     /// <param name="id">ID of filter.</param>
     /// <returns>Filter with given ID or Null if filter cannot be found.</returns>
     public PredefinedLogTextFilter? GetFilterOrDefault(string id) =>
-        base.GetProfileOrDefault(id);
+        this.GetProfileOrDefault(id);
+
+
+    // Get current group or create new one.
+    PredefinedLogTextFilterGroupImpl GetOrCreateGroup(string? groupName)
+    {
+        if (groupName is null)
+            return (PredefinedLogTextFilterGroupImpl)this.DefaultGroup;
+        var groupIndex = this.groups.BinarySearch(groupName, g => g.Name, string.CompareOrdinal);
+        if (groupIndex >= 0)
+            return (PredefinedLogTextFilterGroupImpl)this.groups[groupIndex];
+        var group = new PredefinedLogTextFilterGroupImpl(this, groupName);
+        this.groups.Add(group);
+        return group;
+    }
+
+
+    /// <summary>
+    /// Get all groups except for default group.
+    /// </summary>
+    public IList<PredefinedLogTextFilterGroup> Groups { get; }
 
 
     /// <summary>
@@ -76,8 +133,40 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
 
 
     /// <inheritdoc/>
+    protected override void OnAttachToProfile(PredefinedLogTextFilter filter)
+    {
+        base.OnAttachToProfile(filter);
+        this.GetOrCreateGroup(filter.GroupName).AddFilter(filter);
+    }
+
+
+    /// <inheritdoc/>
     protected override Task<PredefinedLogTextFilter> OnLoadProfileAsync(string fileName, CancellationToken cancellationToken = default) =>
         PredefinedLogTextFilter.LoadAsync(this.Application, fileName);
+
+
+    /// <inheritdoc/>
+    protected override void OnProfilePropertyChanged(PredefinedLogTextFilter filter, PropertyChangedEventArgs e)
+    {
+        base.OnProfilePropertyChanged(filter, e);
+        if (e.PropertyName == nameof(PredefinedLogTextFilter.GroupName))
+        {
+            // remove from old group
+            if (!((PredefinedLogTextFilterGroupImpl)this.DefaultGroup).RemoveFilter(filter))
+            {
+                // ReSharper disable PossibleInvalidCastExceptionInForeachLoop
+                foreach (PredefinedLogTextFilterGroupImpl group in this.groups)
+                {
+                    if (group.RemoveFilter(filter))
+                        break;
+                }
+                // ReSharper restore PossibleInvalidCastExceptionInForeachLoop
+            }
+
+            // add to new group
+            this.GetOrCreateGroup(filter.GroupName).AddFilter(filter);
+        }
+    }
 
 
     /// <inheritdoc/>
@@ -89,6 +178,14 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     /// </summary>
     /// <param name="filter">Filter.</param>
     /// <returns>True if filter has been removed successfully.</returns>
-    public bool RemoveFilter(PredefinedLogTextFilter filter) =>
-        base.RemoveProfile(filter);
+    public bool RemoveFilter(PredefinedLogTextFilter filter)
+    {
+        var group = this.GetOrCreateGroup(filter.GroupName);
+        if (group.RemoveFilter(filter) && group != this.DefaultGroup && group.Filters.IsEmpty())
+        {
+            this.groups.Remove(group);
+            group.Dispose();
+        }
+        return this.RemoveProfile(filter, true);
+    }
 }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels
@@ -16,7 +17,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 	{
 		// Fields.
+		string? groupName;
 		Regex? regex;
+		bool? saveWithGroupName;
 
 
 		// Constructor.
@@ -32,7 +35,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="regex"><see cref="Regex"/> to filter log text.</param>
 		public PredefinedLogTextFilter(IULogViewerApplication app, string name, Regex regex) : base(app, PredefinedLogTextFilterManager.Default.GenerateProfileId(), false)
 		{
+			// ReSharper disable VirtualMemberCallInConstructor
 			this.Name = name;
+			// ReSharper restore VirtualMemberCallInConstructor
 			this.regex = regex;
 		}
 
@@ -51,8 +56,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
 			profile is PredefinedLogTextFilter filter
 			&& filter.Name == this.Name
+			&& filter.groupName == this.groupName
 			&& filter.Regex.ToString() == this.Regex.ToString()
 			&& filter.Regex.Options == this.Regex.Options;
+
+		
+		/// <summary>
+		/// Get or set name of group which contains the filter.
+		/// </summary>
+		public string? GroupName
+		{
+			get => this.groupName;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (string.IsNullOrWhiteSpace(value))
+					value = null;
+				if (this.groupName == value)
+					return;
+				this.groupName = value;
+				this.OnPropertyChanged(nameof(GroupName));
+			}
+		}
 
 
 		/// <summary>
@@ -113,6 +139,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				options |= RegexOptions.Compiled;
 			this.Name = element.GetProperty(nameof(Name)).GetString();
 			this.regex = new Regex(element.GetProperty(nameof(Regex)).GetString().AsNonNull(), options);
+			this.groupName = element.TryGetProperty(nameof(GroupName), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
+				? jsonProperty.GetString()?.Let(it => string.IsNullOrWhiteSpace(it) ? null : it)
+				: null;
 		}
 
 
@@ -124,6 +153,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				writer.WriteString(nameof(Name), it));
 			if (includeId)
 				writer.WriteString(nameof(Id), this.Id);
+			if (this.saveWithGroupName != false && this.groupName is not null)
+				writer.WriteString(nameof(GroupName), this.groupName);
 			this.regex?.Let(it =>
 			{
 				if ((it.Options & RegexOptions.IgnoreCase) != 0)
@@ -131,6 +162,29 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				writer.WriteString(nameof(Regex), it.ToString());
 			});
 			writer.WriteEndObject();
+		}
+
+
+		/// <summary>
+		/// Save filter to file asynchronously.
+		/// </summary>
+		/// <param name="fileName">File name.</param>
+		/// <param name="includeId">True to save with ID.</param>
+		/// <param name="includeGroupName">True to save with group name.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <returns>Task of saving filter.</returns>
+		public async Task SaveAsync(string fileName, bool includeId, bool includeGroupName, CancellationToken cancellationToken)
+		{
+			this.VerifyAccess();
+			this.saveWithGroupName = includeGroupName;
+			try
+			{
+				await this.SaveAsync(fileName, includeId, cancellationToken);
+			}
+			finally
+			{
+				this.saveWithGroupName = null;
+			}
 		}
 	}
 }

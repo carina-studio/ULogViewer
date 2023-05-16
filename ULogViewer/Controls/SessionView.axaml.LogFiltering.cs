@@ -10,7 +10,6 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
-using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -96,7 +95,7 @@ partial class SessionView
 
 
     // Get delay of commit log filters.
-	int CommitLogFilterParamsDelay { get => Math.Max(SettingKeys.MinUpdateLogFilterDelay, Math.Min(SettingKeys.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay))); }
+	int CommitLogFilterParamsDelay => Math.Max(SettingKeys.MinUpdateLogFilterDelay, Math.Min(SettingKeys.MaxUpdateLogFilterDelay, this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay)));
 
 
     // Commit log filters to view-model.
@@ -385,7 +384,7 @@ partial class SessionView
     /// <summary>
     /// Sorted predefined log text filters.
     /// </summary>
-    public IList<PredefinedLogTextFilter> PredefinedLogTextFilters { get => this.predefinedLogTextFilters; }
+    public IList<PredefinedLogTextFilter> PredefinedLogTextFilters => this.predefinedLogTextFilters;
 
 
     /// <summary>
