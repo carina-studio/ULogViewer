@@ -201,7 +201,7 @@ partial class SessionView
             LogChartType.ValueStackedAreas
                 or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue>
             {
-                Fill = new SolidColorPaint(color),
+                Fill = new SolidColorPaint(color.WithAlpha((byte)(color.Alpha * 0.7))),
                 GeometryFill = chartType switch
                 {
                     LogChartType.ValueStackedAreasWithDataPoints => geometryFillColor.Let(it =>
@@ -264,7 +264,7 @@ partial class SessionView
                 Fill = chartType switch
                 {
                     LogChartType.ValueAreas
-                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaintEx(color)
+                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaintEx(color.WithAlpha((byte)(color.Alpha * 0.7)))
                         {
                             BlendMode = this.Application.EffectiveThemeMode switch
                             {
@@ -290,7 +290,7 @@ partial class SessionView
                 {
                     LogChartType.ValueAreasWithDataPoints
                         or LogChartType.ValueCurvesWithDataPoints
-                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(color, lineWidth)
+                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(color, lineWidth + 1)
                     {
                         IsAntialias = true,
                     },
