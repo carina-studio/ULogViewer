@@ -671,7 +671,7 @@
 											<Border Classes="Dialog_Item_Container_Small">
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.PredefinedLogTextFiltersPopup.Header}"/>
 											</Border>
-											<Line Classes="Dialog_Item_Separator_Inner"/>
+											<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}"/>
 											<Grid RowDefinitions="*,Auto,Auto">
 												<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
 													<StackPanel Name="predefinedLogTextFiltersAndGroupsPanel">
@@ -711,12 +711,18 @@
 																</Border>
 															</DataTemplate>
 															<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
-																<Expander Header="{Binding}" HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
-																	<Expander.HeaderTemplate>
-																		<DataTemplate>
-																			<abControls:FormattedTextBlock Arg1="{Binding Name}" Arg2="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #textFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})"/>
-																		</DataTemplate>
-																	</Expander.HeaderTemplate>
+																<Expander HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
+																	<Expander.Header>
+																		<Grid ColumnDefinitions="Auto,*">
+																			<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#textFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Icon.Folder.Outline}"/>
+																			<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=False}">
+																				<DrawingImage>
+																					<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
+																				</DrawingImage>
+																			</Image>
+																			<abControls:FormattedTextBlock Arg1="{Binding Name}" Arg2="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #textFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+																		</Grid>
+																	</Expander.Header>
 																	<ListBox Name="textFilterListBox" Classes="Dialog_Item_ListBox" Items="{Binding Filters}" SelectionMode="Multiple" VirtualizationMode="None"/>
 																</Expander>
 															</DataTemplate>
@@ -727,7 +733,22 @@
 																<Setter Property="Padding" Value="0"/>
 															</Style>
 														</StackPanel.Styles>
-														<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" Items="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None"/>
+														<asControls:GroupBox IsVisible="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="0">
+															<asControls:GroupBox.Header>
+																<Grid ColumnDefinitions="Auto,*">
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Filter.Outline}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=False}">
+																		<DrawingImage>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Filter.Outline}"/>
+																		</DrawingImage>
+																	</Image>
+																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.PredefinedLogTextFiltersPopup.DefaultGroup}" Arg2="{Binding #predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #predefinedLogTextFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+																</Grid>
+															</asControls:GroupBox.Header>
+														</asControls:GroupBox>
+														<Border ClipToBounds="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
+															<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" Items="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None"/>
+														</Border>
 													</StackPanel>
 												</ScrollViewer>
 												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">

@@ -1224,6 +1224,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PerformGC">Force Garbage Collection (GC)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
+	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.DefaultGroup">Default</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">Text filters (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">Need to upgrade to Pro version to enable the feature</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">Reload logs</sys:String>

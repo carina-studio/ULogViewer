@@ -42,7 +42,7 @@ partial class SessionView
     
     
     // Constants.
-    const int PredefinedLogTextFilterGroupControlFirstIndex = 1;
+    const int PredefinedLogTextFilterGroupControlFirstIndex = 2;
 
 
     // Static fields.
