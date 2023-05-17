@@ -438,10 +438,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
 					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
 			});
-			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(it =>
-			{
-				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
-			});
+			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(this.SetupLogAnalysisRuleSetListBox);
+			this.Get<Expander>("keyLogAnalysisRuleSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.logAnalysisResultListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox)).Also(it =>
 			{
 				it.DoubleClickOnItem += this.OnLogAnalysisResultListBoxDoubleClickOnItem;
@@ -481,10 +479,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.keyLogAnalysisRuleSetListBox.Focus();
 				};
 			});
-			this.logAnalysisScriptSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logAnalysisScriptSetListBox)).Also(it =>
-			{
-				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
-			});
+			this.logAnalysisScriptSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logAnalysisScriptSetListBox)).Also(this.SetupLogAnalysisRuleSetListBox);
+			this.Get<Expander>("logAnalysisScriptSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.logChart = this.Get<CartesianChart>(nameof(logChart)).Also(it =>
 			{
 				var chartMargin = this.Application.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Chart.Margin", default);
@@ -562,14 +558,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.markedLogListBox = this.Get<Avalonia.Controls.ListBox>(nameof(markedLogListBox));
-			this.operationCountingAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationCountingAnalysisRuleSetListBox)).Also(it =>
-			{
-				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
-			});
-			this.operationDurationAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationDurationAnalysisRuleSetListBox)).Also(it =>
-			{
-				it.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
-			});
+			this.operationCountingAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationCountingAnalysisRuleSetListBox)).Also(this.SetupLogAnalysisRuleSetListBox);
+			this.Get<Expander>("operationCountingAnalysisRuleSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
+			this.operationDurationAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationDurationAnalysisRuleSetListBox)).Also(this.SetupLogAnalysisRuleSetListBox);
+			this.Get<Expander>("operationDurationAnalysisRuleSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.otherActionsButton = this.Get<ToggleButton>(nameof(otherActionsButton));
 			this.predefinedLogTextFilterListBox = this.Get<Avalonia.Controls.ListBox>(nameof(predefinedLogTextFilterListBox)).Also(it =>
 			{

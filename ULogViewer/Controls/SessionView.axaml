@@ -10,8 +10,6 @@
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
 			 xmlns:asInput="using:CarinaStudio.AppSuite.Input"
-			 xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
-			 xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
 			 xmlns:app="using:CarinaStudio.ULogViewer"
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 			 xmlns:appAnalysisScripting="using:CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting"
@@ -1464,55 +1462,103 @@
 									<StackPanel>
 
 										<!-- Cooperative log analysis script set -->
-										<StackPanel Orientation="Horizontal">
-											<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
-											<Separator Classes="Dialog_Separator_Small"/>
-											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="False" TextTrimming="CharacterEllipsis"/>
-											<abControls:FormattedTextBlock Classes="Dialog_TextBlock" Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.ProVersionOnly}" Format="({0})" TextTrimming="CharacterEllipsis">
-												<abControls:FormattedTextBlock.IsVisible>
+										<Grid Classes="Dialog_Item_Container_Small" ColumnDefinitions="*,Auto">
+											<StackPanel Classes="Dialog_Item_Text_Container">
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
+												<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+													<Grid.IsVisible>
+														<MultiBinding Converter="{x:Static BoolConverters.And}">
+															<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
+															<Binding Path="!IsScriptRunningEnabled" ElementName="root"/>
+														</MultiBinding>
+													</Grid.IsVisible>
+													<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+													<TextBlock Classes="Dialog_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}"/>
+												</Grid>
+												<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+													<Grid.IsVisible>
+														<MultiBinding Converter="{x:Static BoolConverters.And}">
+															<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
+															<Binding Path="!IsProVersionActivated"/>
+															<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
+														</MultiBinding>
+													</Grid.IsVisible>
+													<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+													<TextBlock Classes="Dialog_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.ProVersionOnly}"/>
+												</Grid>
+											</StackPanel>
+											<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}">
+												<ToggleSwitch.IsEnabled>
 													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="!IsProVersionActivated"/>
+														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
+														<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
+														<Binding Path="IsProVersionActivated"/>
 													</MultiBinding>
-												</abControls:FormattedTextBlock.IsVisible>
-											</abControls:FormattedTextBlock>
-										</StackPanel>
-										<ToggleSwitch Classes="Dialog_ToggleSwitch" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}">
-											<ToggleSwitch.IsEnabled>
-												<MultiBinding Converter="{x:Static BoolConverters.And}">
-													<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-													<Binding Path="IsProVersionActivated"/>
+												</ToggleSwitch.IsEnabled>
+											</ToggleSwitch>
+										</Grid>
+										<Line Classes="Dialog_Item_Separator_Inner">
+											<Separator.IsVisible>
+												<MultiBinding Converter="{x:Static BoolConverters.Or}">
+													<Binding Path="IsVisible" ElementName="enableRunningScriptButton"/>
+													<Binding Path="IsVisible" ElementName="editCooperativeLogAnalysisScriptSetPanel"/>
 												</MultiBinding>
-											</ToggleSwitch.IsEnabled>
-										</ToggleSwitch>
-										<StackPanel>
-											<StackPanel.IsVisible>
-												<MultiBinding Converter="{x:Static BoolConverters.And}">
-													<Binding Path="HasLogProfile"/>
-													<Binding Path="!IsBuiltInLogProfile"/>
-													<Binding Path="IsProVersionActivated"/>
-												</MultiBinding>
-											</StackPanel.IsVisible>
-											<Separator Classes="Dialog_Separator_Small"/>
-											<StackPanel IsVisible="{Binding !LogAnalysis.HasCooperativeLogAnalysisScriptSet}" Orientation="Horizontal">
-												<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Add}"/>
-												<abControls:LinkTextBlock Classes="Dialog_Icon_LinkTextBlock" Command="{Binding #root.CreateCooperativeLogAnalysisScriptSet}" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create}"/>
-											</StackPanel>
-											<StackPanel IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}" Orientation="Horizontal">
-												<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Edit.Outline}"/>
-												<abControls:LinkTextBlock Classes="Dialog_Icon_LinkTextBlock" Command="{Binding #root.EditCooperativeLogAnalysisScriptSet}" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit}"/>
+											</Separator.IsVisible>
+										</Line>
+										<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+											<Button Classes="Dialog_Item_Button" Name="enableRunningScriptButton" Command="{Binding #root.EnableRunningScript}" Content="{DynamicResource String/SessionView.EnableRunningScript}">
+												<Button.IsVisible>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
+														<Binding Path="!IsScriptRunningEnabled" ElementName="root"/>
+													</MultiBinding>
+												</Button.IsVisible>
+											</Button>
+											<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #editCooperativeLogAnalysisScriptSetPanel.IsVisible}"/>
+											<StackPanel Name="editCooperativeLogAnalysisScriptSetPanel" IsEnabled="{Binding IsProVersionActivated}" Orientation="Horizontal">
+												<StackPanel.IsVisible>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="HasLogProfile"/>
+														<Binding Path="!IsBuiltInLogProfile"/>
+														<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
+													</MultiBinding>
+												</StackPanel.IsVisible>
+												
+												<!-- Delete -->
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.RemoveCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove}" IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
+												<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
+
+												<!-- Import existing -->
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ImportExistingCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting}"/>
+												<Separator Classes="Dialog_Separator_Small"/>
+
+												<!-- Import from file -->
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ImportCooperativeLogAnalysisScriptFromFile}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile}"/>
+												<Separator Classes="Dialog_Separator_Small"/>
+												
+												<!-- Edit/Create -->
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.CreateCooperativeLogAnalysisScriptSet}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create}" IsVisible="{Binding !LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.EditCooperativeLogAnalysisScriptSet}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit}" IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
+												
 											</StackPanel>
 										</StackPanel>
-										<Separator Classes="Dialog_Separator"/>
+										<Separator Classes="Dialog_Item_Separator"/>
 										
 										<!-- Rule sets and script sets -->
-										<TextBlock Classes="Dialog_TextBlock" Text="{DynamicResource String/SessionView.LogAnalysisRuleSetsPopup.Header}"/>
-										<Grid ColumnDefinitions="*,Auto">
-											<Border Background="{DynamicResource Brush/SessionView.LogAnalysisRuleSetListBox.Background}" BorderBrush="{DynamicResource Brush/Control.Border}" BorderThickness="{DynamicResource Thickness/Control.Border}" CornerRadius="{DynamicResource ControlCornerRadius}">
-												<Panel MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}">
-													<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-														<StackPanel>
+										<Border Classes="Dialog_Item_Container_Small">
+											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.LogAnalysisRuleSetsPopup.Header}"/>
+										</Border>
+										<Grid RowDefinitions="Auto,Auto,Auto">
+											<Panel MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}">
+												<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+													<StackPanel>
 
 														<StackPanel.Styles>
+															<Style Selector="Expander">
+																<Setter Property="HorizontalAlignment" Value="Stretch"/>
+																<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Margin}"/>
+																<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Padding}"/>
+															</Style>
 															<Style Selector="ListBox">
 																<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
 																<Setter Property="BorderThickness" Value="0"/>
@@ -1524,11 +1570,20 @@
 															</Style>
 														</StackPanel.Styles>
 
-															<!-- Key log analysis -->
-															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #keyLogAnalysisRuleSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
-																<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}" TextTrimming="CharacterEllipsis"/>
-															</Border>
-															<ListBox Name="keyLogAnalysisRuleSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" Items="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+														<!-- Key log analysis -->
+														<Expander Name="keyLogAnalysisRuleSetsExpander" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}">
+															<Expander.Header>
+																<Grid ColumnDefinitions="Auto,*">
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#keyLogAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Icon.Flag.Outline}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=False}">
+																		<DrawingImage>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Icon.Flag.Outline}"/>
+																		</DrawingImage>
+																	</Image>
+																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}" Arg2="{Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #keyLogAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+																</Grid>
+															</Expander.Header>
+															<ListBox Name="keyLogAnalysisRuleSetListBox" Items="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1539,17 +1594,17 @@
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																			<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																					<asControls:Image Classes="InPlaceAction_Icon">
-																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
-																						</DrawingImage>
-																					</asControls:Image>
-																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																						</DrawingImage>
+																					</asControls:Image>
+																				</Button>
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+																					<asControls:Image Classes="InPlaceAction_Icon">
+																						<DrawingImage>
+																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
@@ -1572,20 +1627,22 @@
 																	</DataTemplate>
 																</ListBox.ItemTemplate>
 															</ListBox>
+														</Expander>
 
-															<!-- Operation duration analysis -->
-															<Separator Classes="Dialog_Separator_Small">
-																<Separator.IsVisible>
-																	<MultiBinding Converter="{x:Static BoolConverters.And}">
-																		<Binding Path="IsVisible" ElementName="keyLogAnalysisRuleSetListBox"/>
-																		<Binding Path="IsVisible" ElementName="operationDurationAnalysisRuleSetListBox"/>
-																	</MultiBinding>
-																</Separator.IsVisible>
-															</Separator>
-															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #operationDurationAnalysisRuleSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
-																<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}" TextTrimming="CharacterEllipsis"/>
-															</Border>
-															<ListBox Name="operationDurationAnalysisRuleSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsVisible="{Binding RuleSets.Count, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" Items="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+														<!-- Operation duration analysis -->
+														<Expander Name="operationDurationAnalysisRuleSetsExpander" IsVisible="{Binding RuleSets.Count, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}">
+															<Expander.Header>
+																<Grid ColumnDefinitions="Auto,*">
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#operationDurationAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Timer.Outline}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=False}">
+																		<DrawingImage>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Timer.Outline}"/>
+																		</DrawingImage>
+																	</Image>
+																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}" Arg2="{Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #operationDurationAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+																</Grid>
+															</Expander.Header>
+															<ListBox Name="operationDurationAnalysisRuleSetListBox" Items="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1596,17 +1653,17 @@
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																			<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																					<asControls:Image Classes="InPlaceAction_Icon">
-																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
-																						</DrawingImage>
-																					</asControls:Image>
-																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																						</DrawingImage>
+																					</asControls:Image>
+																				</Button>
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+																					<asControls:Image Classes="InPlaceAction_Icon">
+																						<DrawingImage>
+																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
@@ -1629,23 +1686,22 @@
 																	</DataTemplate>
 																</ListBox.ItemTemplate>
 															</ListBox>
+														</Expander>
 
-															<!-- Operation counting analysis -->
-															<Separator Classes="Dialog_Separator_Small">
-																<Separator.IsVisible>
-																	<MultiBinding Converter="{x:Static BoolConverters.And}">
-																		<Binding Path="IsVisible" ElementName="operationCountingAnalysisRuleSetListBox"/>
-																		<MultiBinding Converter="{x:Static BoolConverters.Or}">
-																			<Binding Path="IsVisible" ElementName="keyLogAnalysisRuleSetListBox"/>
-																			<Binding Path="IsVisible" ElementName="operationDurationAnalysisRuleSetListBox"/>
-																		</MultiBinding>
-																	</MultiBinding>
-																</Separator.IsVisible>
-															</Separator>
-															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #operationCountingAnalysisRuleSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
-																<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet}" TextTrimming="CharacterEllipsis"/>
-															</Border>
-															<ListBox Name="operationCountingAnalysisRuleSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" Items="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+														<!-- Operation counting analysis -->
+														<Expander Name="operationCountingAnalysisRuleSetsExpander" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}">
+															<Expander.Header>
+																<Grid ColumnDefinitions="Auto,*">
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#operationCountingAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Layers.Outline}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=False}">
+																		<DrawingImage>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Layers.Outline}"/>
+																		</DrawingImage>
+																	</Image>
+																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet}" Arg2="{Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #operationCountingAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+																</Grid>
+															</Expander.Header>
+															<ListBox Name="operationCountingAnalysisRuleSetListBox" Items="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1656,17 +1712,17 @@
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																			<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																					<asControls:Image Classes="InPlaceAction_Icon">
-																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
-																						</DrawingImage>
-																					</asControls:Image>
-																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																						</DrawingImage>
+																					</asControls:Image>
+																				</Button>
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+																					<asControls:Image Classes="InPlaceAction_Icon">
+																						<DrawingImage>
+																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
@@ -1689,28 +1745,25 @@
 																	</DataTemplate>
 																</ListBox.ItemTemplate>
 															</ListBox>
+														</Expander>
 
-															<!-- Log analysis script -->
-															<Separator Classes="Dialog_Separator_Small">
-																<Separator.IsVisible>
-																	<MultiBinding Converter="{x:Static BoolConverters.And}">
-																		<Binding Path="IsVisible" ElementName="logAnalysisScriptSetListBox"/>
-																		<MultiBinding Converter="{x:Static BoolConverters.Or}">
-																			<Binding Path="IsVisible" ElementName="keyLogAnalysisRuleSetListBox"/>
-																			<Binding Path="IsVisible" ElementName="operationDurationAnalysisRuleSetListBox"/>
-																			<Binding Path="IsVisible" ElementName="operationCountingAnalysisRuleSetListBox"/>
-																		</MultiBinding>
-																	</MultiBinding>
-																</Separator.IsVisible>
-															</Separator>
-															<Border Background="{DynamicResource Brush/Dialog.TextBlock.Background.Header1}" CornerRadius="{StaticResource CornerRadius/ListBoxItem}" IsVisible="{Binding #logAnalysisScriptSetListBox.IsVisible}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding}">
-																<StackPanel Orientation="Horizontal">
-																	<TextBlock FontWeight="Bold" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}" TextTrimming="CharacterEllipsis"/>
-																	<Separator Classes="Dialog_Separator_Small" IsVisible="False"/>
-																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="({0})" IsVisible="False" TextTrimming="CharacterEllipsis"/>
-																</StackPanel>
-															</Border>
-															<ListBox Name="logAnalysisScriptSetListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" IsEnabled="False" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+														<!-- Log analysis script -->
+														<Expander Name="logAnalysisScriptSetsExpander" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
+															<Expander.Header>
+																<Grid ColumnDefinitions="Auto,*">
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Code}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=False}">
+																		<DrawingImage>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
+																		</DrawingImage>
+																	</Image>
+																	<Panel Grid.Column="1" VerticalAlignment="Center">
+																		<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}" Arg2="{Binding #logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #logAnalysisScriptSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" IsVisible="{Binding #root.IsScriptRunningEnabled}" TextTrimming="CharacterEllipsis"/>
+																		<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}" Arg2="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}" Format="{}{0} ({1})" IsVisible="{Binding !#root.IsScriptRunningEnabled}" TextTrimming="CharacterEllipsis"/>
+																	</Panel>
+																</Grid>
+															</Expander.Header>
+															<ListBox Name="logAnalysisScriptSetListBox" IsEnabled="{Binding #root.IsScriptRunningEnabled}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1721,28 +1774,28 @@
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
 																			<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Export}">
-																					<asControls:Image Classes="InPlaceAction_Icon">
-																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
-																						</DrawingImage>
-																					</asControls:Image>
-																				</Button>
-																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
-																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+																					<asControls:Image Classes="InPlaceAction_Icon">
+																						<DrawingImage>
+																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																						</DrawingImage>
+																					</asControls:Image>
+																				</Button>
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
-																				<Button Classes="InPlaceAction_Button" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
 																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
@@ -1754,33 +1807,25 @@
 																	</DataTemplate>
 																</ListBox.ItemTemplate>
 															</ListBox>
-															
-														</StackPanel>
-													</ScrollViewer>
-													<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">
-														<TextBlock.IsVisible>
-															<MultiBinding Converter="{x:Static BoolConverters.And}">
-																<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-																<Binding Path="RuleSets.Count" Source="{x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-																<Binding Path="ScriptSets.Count" Source="{x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-															</MultiBinding>
-														</TextBlock.IsVisible>
-													</TextBlock>
-												</Panel>
-											</Border>
-											<StackPanel Grid.Column="1" VerticalAlignment="Top">
-												<ToggleButton Name="createLogAnalysisRuleSetButton" Classes="BrowseButton" Command="{Binding $parent[UserControl].CreateLogAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/Common.Create}">
-													<Panel>
-														<Image Classes="BrowseButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add.Light}"/>
-														<Image Classes="BrowseButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Add}"/>
-													</Panel>
-												</ToggleButton>
-												<Separator Classes="Dialog_Separator_Small"/>
-												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ImportLogAnalysisRuleSet}" ToolTip.Tip="{DynamicResource String/Common.Import}">
-													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Import}"/>
-												</Button>
-												<Separator Classes="Dialog_Separator_Small"/>
-												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].ClearLogAnalysisRuleSetSelection}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}">
+														</Expander>
+														
+													</StackPanel>
+												</ScrollViewer>
+												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">
+													<TextBlock.IsVisible>
+														<MultiBinding Converter="{x:Static BoolConverters.And}">
+															<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+															<Binding Path="RuleSets.Count" Source="{x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+															<Binding Path="ScriptSets.Count" Source="{x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+														</MultiBinding>
+													</TextBlock.IsVisible>
+												</TextBlock>
+											</Panel>
+											<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
+											<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenLogAnalysisDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+												<Separator Classes="Dialog_Separator"/>
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearLogAnalysisRuleSetSelection}" Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}">
 													<Button.IsEnabled>
 														<MultiBinding Converter="{x:Static BoolConverters.Or}">
 															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="keyLogAnalysisRuleSetListBox" FallbackValue="False"/>
@@ -1790,10 +1835,10 @@
 														</MultiBinding>
 													</Button.IsEnabled>
 												</Button>
-												<Separator Classes="Dialog_Separator"/>
-												<Button Classes="BrowseButton" Command="{Binding $parent[UserControl].OpenLogAnalysisDocumentation}" ToolTip.Tip="{DynamicResource String/Common.Help}">
-													<Image Classes="BrowseButtonIcon" Source="{StaticResource Image/Icon.Question}"/>
-												</Button>
+												<Separator Classes="Dialog_Separator_Small"/>
+												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ImportLogAnalysisRuleSet}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+												<Separator Classes="Dialog_Separator_Small"/>
+												<ToggleButton Name="createLogAnalysisRuleSetButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #root.CreateLogAnalysisRuleSet}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
 											</StackPanel>
 										</Grid>
 									</StackPanel>

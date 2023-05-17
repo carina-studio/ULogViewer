@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
@@ -10,6 +11,7 @@ using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -806,6 +808,29 @@ partial class SessionView
     }
 
 
+    // Called when pointer pressed on list box of log analysis rule sets.
+    void OnLogAnalysisRuleSetListBoxPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        var multiSelectionKeyModifiers = KeyModifiers.Shift | (Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control);
+        if ((e.KeyModifiers & multiSelectionKeyModifiers) != 0)
+            return;
+        if (sender is not Avalonia.Controls.ListBox pressedListBox)
+            return;
+        var position = e.GetPosition(pressedListBox);
+        var pressedButton = pressedListBox.InputHitTest(position)?.FindAncestorOfType<Button>(true);
+        if (pressedButton is not null && pressedButton.FindAncestorOfType<Avalonia.Controls.ListBox>() == pressedListBox)
+            return;
+        if (!ReferenceEquals(sender, this.keyLogAnalysisRuleSetListBox))
+            this.keyLogAnalysisRuleSetListBox.SelectedItems?.Clear();
+        if (!ReferenceEquals(sender, this.logAnalysisScriptSetListBox))
+            this.logAnalysisScriptSetListBox.SelectedItems?.Clear();
+        if (!ReferenceEquals(sender, this.operationCountingAnalysisRuleSetListBox))
+            this.operationCountingAnalysisRuleSetListBox.SelectedItems?.Clear();
+        if (!ReferenceEquals(sender, this.operationDurationAnalysisRuleSetListBox))
+            this.operationDurationAnalysisRuleSetListBox.SelectedItems?.Clear();
+    }
+
+
     // Called when selection of list box of log analysis rule sets has been changed.
     void OnLogAnalysisRuleSetListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
@@ -1156,6 +1181,32 @@ partial class SessionView
                 return uri.LocalPath;
             return null;
         });
+    }
+    
+    
+    // Setup list box of log analysis rule sets.
+    void SetupLogAnalysisRuleSetListBox(Avalonia.Controls.ListBox listBox)
+    {
+        listBox.AddHandler(PointerPressedEvent, this.OnLogAnalysisRuleSetListBoxPointerPressed, RoutingStrategies.Tunnel);
+        listBox.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
+    }
+
+
+    // Setup expander of log analysis rule sets.
+    void SetupLogAnalysisRuleSetsExpander(Expander expander)
+    {
+        // [Workaround] Force relayout to prevent items not showing
+        expander.GetObservable(Expander.IsExpandedProperty).Subscribe(isExpanded =>
+        {
+            if (isExpanded)
+                expander.Margin = new(-1);
+        });
+        // [Workaround] Force relayout to prevent items not showing
+        expander.SizeChanged += (_, _) =>
+        {
+            if (expander.Margin.Left < 0)
+                expander.Margin = this.Application.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Margin");
+        };
     }
 
 

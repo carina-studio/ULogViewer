@@ -205,7 +205,7 @@
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.SubInfo.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight">500</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">500</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Crosshair.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Separator.Width">1</sys:Double>
@@ -242,11 +242,11 @@
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin">0,1,5,1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding">5,0,5,3</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Margin">3,3,3,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Header.Padding">3,6,17,6</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin">0,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Border">1</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Margin">0,5,0,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Padding">0,3,0,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Axis.Padding.Y">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Button.Padding">5</Thickness>

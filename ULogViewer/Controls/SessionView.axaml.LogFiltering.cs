@@ -188,11 +188,13 @@ partial class SessionView
         control.DataContext = group;
         control.FindLogicalDescendantOfType<Expander>(true)?.Let(expander =>
         {
+            // [Workaround] Force relayout to prevent items not showing
             expander.GetObservable(Expander.IsExpandedProperty).Subscribe(isExpanded =>
             {
                 if (isExpanded)
                     expander.Margin = new(-1);
             });
+            // [Workaround] Force relayout to prevent items not showing
             expander.SizeChanged += (_, _) =>
             {
                 if (expander.Margin.Left < 0)
