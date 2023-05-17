@@ -39,6 +39,10 @@ partial class SessionView
             _ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto"),
         };
     });
+    
+    
+    // Constants.
+    const int PredefinedLogTextFilterGroupControlFirstIndex = 1;
 
 
     // Static fields.
@@ -84,7 +88,7 @@ partial class SessionView
             this.AttachToPredefinedLogTextFilter(filter);
         var groups = manager.Groups;
         for (var i = 0; i < groups.Count; ++i)
-            this.predefinedLogTextFiltersAndGroupsPanel.Children.Insert(i, this.CreateControl(groups[i]));
+            this.predefinedLogTextFiltersAndGroupsPanel.Children.Insert(PredefinedLogTextFilterGroupControlFirstIndex + i, this.CreateControl(groups[i]));
         ((INotifyCollectionChanged)manager.Groups).CollectionChanged += this.OnPredefinedLogTextFilterGroupsChanged;
         ((INotifyCollectionChanged)manager.Filters).CollectionChanged += this.OnPredefinedLogTextFiltersChanged;
     }
@@ -281,7 +285,7 @@ partial class SessionView
                 {
                     var childControls = this.predefinedLogTextFiltersAndGroupsPanel.Children;
                     for (int i = 0, count = groups.Count; i < count; ++i)
-                        childControls.Insert(e.NewStartingIndex + i, this.CreateControl(groups[i]));
+                        childControls.Insert(PredefinedLogTextFilterGroupControlFirstIndex + e.NewStartingIndex + i, this.CreateControl(groups[i]));
                 });
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -291,7 +295,7 @@ partial class SessionView
                     for (var i = groups.Count - 1; i >= 0; --i)
                     {
                         childControls[e.OldStartingIndex + i].DataContext = null;
-                        childControls.RemoveAt(e.OldStartingIndex + i);
+                        childControls.RemoveAt(PredefinedLogTextFilterGroupControlFirstIndex + e.OldStartingIndex + i);
                     }
                 });
                 break;
