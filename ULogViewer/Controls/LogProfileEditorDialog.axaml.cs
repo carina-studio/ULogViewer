@@ -84,6 +84,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
 		readonly AppSuite.Controls.ListBox logLevelMapForWritingListBox;
 		readonly AppSuite.Controls.ListBox logPatternListBox;
+		readonly ComboBox logPatternMatchingModeComboBox;
 		readonly ObservableList<LogPattern> logPatterns = new();
 		readonly ComboBox logStringEncodingForReadingComboBox;
 		readonly ComboBox logStringEncodingForWritingComboBox;
@@ -188,6 +189,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
 			this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
 			this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>("logPatternListBox");
+			this.logPatternMatchingModeComboBox = this.Get<ComboBox>(nameof(logPatternMatchingModeComboBox));
 			this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
 			this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
 			this.logWritingFormatListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox));
@@ -794,6 +796,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.LogLevelMapForReading = new Dictionary<string, Logs.LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogLevelMapForWriting = new Dictionary<Logs.LogLevel, string>(this.logLevelMapEntriesForWriting);
+			logProfile.LogPatternMatchingMode = (LogPatternMatchingMode)this.logPatternMatchingModeComboBox.SelectedItem.AsNonNull();
 			logProfile.LogPatterns = this.logPatterns;
 			logProfile.LogStringEncodingForReading = (LogStringEncoding)this.logStringEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.LogStringEncodingForWriting = (LogStringEncoding)this.logStringEncodingForWritingComboBox.SelectedItem.AsNonNull();
@@ -1334,6 +1337,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.SelectDefaultDataSource();
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
+				this.logPatternMatchingModeComboBox.SelectedItem = LogPatternMatchingMode.Sequential;
 				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
 				this.rawLogLevelPropertyComboBox.SelectedItem = nameof(Log.Level);
@@ -1362,6 +1366,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.continuousReadingSwitch.IsChecked = profile.IsContinuousReading;
 				this.logLevelMapEntriesForReading.AddAll(profile.LogLevelMapForReading);
 				this.logLevelMapEntriesForWriting.AddAll(profile.LogLevelMapForWriting);
+				this.logPatternMatchingModeComboBox.SelectedItem = profile.LogPatternMatchingMode;
 				this.logPatterns.AddRange(profile.LogPatterns);
 				this.logStringEncodingForReadingComboBox.SelectedItem = profile.LogStringEncodingForReading;
 				this.logStringEncodingForWritingComboBox.SelectedItem = profile.LogStringEncodingForWriting;

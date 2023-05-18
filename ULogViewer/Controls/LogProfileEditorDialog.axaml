@@ -347,9 +347,16 @@
 							<Button Name="addLogPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
 						</StackPanel>
 						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Log pattern matching mode -->
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
+							<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}" Grid.Column="1"/>
+						</Grid>
+						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Log string encoding for reading -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForReading}"/>
 							<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
 						</Grid>

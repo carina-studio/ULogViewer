@@ -59,6 +59,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		LogChartType logChartType = LogChartType.None;
 		readonly Dictionary<string, LogLevel> logLevelMapForReading = new();
 		readonly Dictionary<LogLevel, string> logLevelMapForWriting = new();
+		LogPatternMatchingMode logPatternMatchingMode = LogPatternMatchingMode.Sequential;
 		IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
 		LogReadingWindow logReadingWindow = LogReadingWindow.StartOfDataSource;
 		LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
@@ -136,6 +137,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
 			this.logLevelMapForWriting.AddAll(template.logLevelMapForWriting);
 			this.logReadingWindow = template.logReadingWindow;
+			this.logPatternMatchingMode = template.logPatternMatchingMode;
 			this.logPatterns = template.logPatterns;
 			this.logStringEncodingForReading = template.logStringEncodingForReading;
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
@@ -869,6 +871,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.OnPropertyChanged(nameof(LogLevelMapForWriting));
 			}
 		}
+		
+		
+		/// <summary>
+		/// Get or set mode of matching raw log lines with patterns.
+		/// </summary>
+		public LogPatternMatchingMode LogPatternMatchingMode
+		{
+			get => this.logPatternMatchingMode;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logPatternMatchingMode == value)
+					return;
+				this.logPatternMatchingMode = value;
+				this.OnPropertyChanged(nameof(LogPatternMatchingMode));
+			}
+		}
 
 
 		/// <summary>
@@ -1079,6 +1099,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(LogLevelMapForWriting):
 						this.LoadLogLevelMapForWritingFromJson(jsonProperty.Value);
 						break;
+					case nameof(LogPatternMatchingMode):
+						if (Enum.TryParse<LogPatternMatchingMode>(jsonProperty.Value.GetString(), out var matchingMode))
+							this.logPatternMatchingMode = matchingMode;
+						break;
 					case nameof(LogPatterns):
 						this.LoadLogPatternsFromJson(jsonProperty.Value);
 						break;
@@ -1241,6 +1265,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.SaveLogLevelMapForReadingToJson(writer);
 			writer.WritePropertyName(nameof(LogLevelMapForWriting));
 			this.SaveLogLevelMapForWritingToJson(writer);
+			if (this.logPatternMatchingMode != LogPatternMatchingMode.Sequential)
+				writer.WriteString(nameof(LogPatternMatchingMode), this.logPatternMatchingMode.ToString());
 			writer.WritePropertyName(nameof(LogPatterns));
 			this.SaveLogPatternsToJson(writer);
 			if (this.logReadingWindow != LogReadingWindow.StartOfDataSource)

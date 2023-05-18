@@ -449,6 +449,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Regex">格式</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">用以比对单一原始日志行的正则表达式。</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Title">日志行格式</sys:String>
+	
+	<!-- LogPatternMatchingMode -->
+	<sys:String x:Key="String/LogPatternMatchingMode.Arbitrary">任意顺序匹配</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">依序匹配</sys:String>
 
 	<!-- LogProfileIcon -->
 	<sys:String x:Key="String/LogProfileIcon.Analysis">分析</sys:String>
@@ -563,6 +567,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将「原始日志等级属性」所指定之属性值对应至日志等级。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">日志等级对照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">将日志等级转换为特定的文字。若特定的等级无法转换，则改为使用日志读取所使用的对照表。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternMatchingMode">日志行格式匹配方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">日志行格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了「日志行格式」但没有定义「显示的日志属性」，这可能导致日志显示错误。您是否要定义「显示的日志属性」？</sys:String>
