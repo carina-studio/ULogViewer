@@ -390,6 +390,24 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">数值堆积面积图 (含资料点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedBars">数值堆积条形图</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStatisticBars">数值计数条形图</sys:String>
+	
+	<!-- LogChartValueGranularity -->
+	<sys:String x:Key="String/LogChartValueGranularity.Billion">十亿 (10⁹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Default">默认</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Gigabytes">京字节 (GB)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Hundred">百 (10²)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredBillion">千亿 (10¹¹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredMillion">亿 (10⁸)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredThousand">十万 (10⁵)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Kilobytes">千字节 (KB)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Megabytes">兆字节 (MB)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Million">百万 (10⁶)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenBillion">百亿 (10¹⁰)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenMillion">千万 (10⁷)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenThousand">万 (10⁴)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Ten">十</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Thousand">千 (10³)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Trillion">兆 (10¹²)</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">文件</sys:String>
@@ -564,6 +582,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">来源日志属性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">指定最多 10 个来源日志属性以产生图表。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">图表类型</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartValueGranularity">数值颗粒度</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">您定义了「图表类型」但没有定义「来源日志属性」。您是否要定义「来源日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>

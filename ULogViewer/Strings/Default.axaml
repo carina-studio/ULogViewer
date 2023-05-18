@@ -403,6 +403,24 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">Stacked area chart of values with data points</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedBars">Stacked bar chart of values</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStatisticBars">Bar chart of count of values</sys:String>
+	
+	<!-- LogChartValueGranularity -->
+	<sys:String x:Key="String/LogChartValueGranularity.Billion">Billion (10⁹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Default">Default</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Gigabytes">Gigabytes (GB)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Hundred">Hundred (10²)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredBillion">Hundred billion (10¹¹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredMillion">Hundred million (10⁸)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredThousand">Hundred thousand (10⁵)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Kilobytes">Kilobytes (KB)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Megabytes">Megabytes (MB)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Million">Million (10⁶)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenBillion">Ten billion (10¹⁰)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenMillion">Ten million (10⁷)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenThousand">Ten thousand (10⁴)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Ten">Ten</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Thousand">Thousand (10³)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Trillion">Trillion (10¹²)</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
@@ -594,6 +612,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">Source log properties</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">Specify at most 10 properties as sources to generate chart.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">Type of chart</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartValueGranularity">Granularity of values</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">You have defined 'Type of chart' without defining 'Source log properties'. Do you want to define 'Source log properties'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
