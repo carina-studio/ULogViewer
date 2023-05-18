@@ -1987,6 +1987,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
+				it.LogPatternMatchingMode = profile.LogPatternMatchingMode;
 				it.LogPatterns = profile.LogPatterns.IsNotEmpty() 
 					? profile.LogPatterns 
 					: new[] { new LogPattern("^(?<Message>.*)", false, false) };
@@ -3386,6 +3387,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.LogWritingFormats):
 					this.UpdateIsLogsWritingAvailable(this.LogProfile);
 					break;
+				case nameof(LogProfile.LogPatternMatchingMode):
 				case nameof(LogProfile.LogPatterns):
 				case nameof(LogProfile.LogStringEncodingForReading):
 				case nameof(LogProfile.RawLogLevelPropertyName):

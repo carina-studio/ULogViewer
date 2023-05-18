@@ -76,6 +76,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. Event logs are also supported by this profile.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android Kernel Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">Android kernel logs stored in one or more files.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android System Memory Monitor</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Realtime system memory information of Android.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android System Trace File</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse System Trace file (*.html) to analyze system and application performance on Android device.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache Access Log Files</sys:String>
@@ -467,8 +469,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Title">Pattern of log line</sys:String>
 	
 	<!-- LogPatternMatchingMode -->
-	<sys:String x:Key="String/LogPatternMatchingMode.Arbitrary">Match in arbitrary order</sys:String>
-	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">Match sequentially</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.Arbitrary">Arbitrary order</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.ArbitraryAfterFirstMatch">Arbitrary order after first one</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">Sequentially</sys:String>
 
 	<!-- LogProfileIcon -->
 	<sys:String x:Key="String/LogProfileIcon.Analysis">Analysis</sys:String>

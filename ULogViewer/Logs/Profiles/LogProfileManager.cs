@@ -31,6 +31,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "AndroidDeviceLog",
         "AndroidFileLog",
         "AndroidKernelLogFile",
+        "AndroidSystemMemoryInfo",
         "AndroidTraceFile",
         "ApacheAccessLogFile",
         "ApacheErrorLogFile",

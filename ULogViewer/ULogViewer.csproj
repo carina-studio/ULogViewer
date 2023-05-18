@@ -152,6 +152,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidDeviceTrace.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidFileLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidKernelLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidSystemMemoryInfo.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/AndroidTraceFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheAccessLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ApacheErrorLogFile.json" />

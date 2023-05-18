@@ -73,6 +73,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一個或多個檔案中的 Android 日誌。此類型亦支援事件日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一個或多個檔案中的 Android 核心日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android 系統記憶體監控</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android 系統的即時記憶體資訊。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系統追蹤檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用以追蹤及分析 Android 系統及應用程式效能的檔案 (*.html)。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache 伺服器存取日誌檔案</sys:String>
@@ -445,6 +447,7 @@ return False</sys:String>
 	
 	<!-- LogPatternMatchingMode -->
 	<sys:String x:Key="String/LogPatternMatchingMode.Arbitrary">任意順序比對</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.ArbitraryAfterFirstMatch">第一個符合後任意順序比對</sys:String>
 	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">循序比對</sys:String>
 
 	<!-- LogProfileIcon -->

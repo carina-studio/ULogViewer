@@ -1,0 +1,115 @@
+{
+  "DataSource": {
+    "Name": "StandardOutput",
+    "Options": {
+      "Command": "adb shell dumpsys meminfo"
+    }
+  },
+  "Icon": "Android",
+  "IsContinuousReading": true,
+  "LogChartSeriesSources": [
+    {
+      "PropertyDisplayName": "Used",
+      "PropertyName": "Extra3",
+      "ValueScaling": 1024
+    },
+    {
+      "PropertyDisplayName": "Used PSS",
+      "PropertyName": "Extra4",
+      "ValueScaling": 1024
+    },
+    {
+      "PropertyDisplayName": "Used Kernel",
+      "PropertyName": "Extra5",
+      "ValueScaling": 1024
+    },
+    {
+      "PropertyDisplayName": "Dalvik PSS",
+      "PropertyName": "Extra10",
+      "ValueScaling": 1024
+    },
+    {
+      "PropertyDisplayName": "Native PSS",
+      "PropertyName": "Extra11",
+      "ValueScaling": 1024
+    }
+  ],
+  "LogChartType": "ValueLinesWithDataPoints",
+  "LogPatternMatchingMode": "ArbitraryAfterFirstMatch",
+  "LogPatterns": [
+    {
+      "Regex": "^\\s*Total PSS by category",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*(?<Extra11>[\\d\\,]+)\\s*KB?: Native",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*(?<Extra10>[\\d\\,]+)\\s*KB?: Dalvik\\s*$",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Total RAM:\\s*(?<Extra1>[\\d\\,]+)\\s*K",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Free RAM:\\s*(?<Extra2>[\\d\\,]+)\\s*K",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Used RAM:\\s*(?<Extra3>[\\d\\,]+)\\s*KB?\\s*\\((?<Extra4>[\\d\\,]+)\\s*KB? used pss \\+ (?<Extra5>[\\d\\,]+)\\s*KB? kernel",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*(ION|DMA-BUF):\\s*(?<Extra6>[\\d\\,]+)\\s*K",
+      "IgnoreCase": true,
+      "IsSkippable": true
+    },
+    {
+      "Regex": "^\\s*GPU:\\s*(?<Extra7>[\\d\\,]+)\\s*K",
+      "IgnoreCase": true,
+      "IsSkippable": true
+    }
+  ],
+  "RestartReadingDelay": 1000,
+  "SortKey": "ReadTime",
+  "TimestampCategoryGranularity": "Minute",
+  "VisibleLogProperties": [
+    {
+      "DisplayName": "Timestamp",
+      "Name": "ReadTime",
+      "Width": 200
+    },
+    {
+      "DisplayName": "Free (KB)",
+      "Name": "Extra2",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Used (KB)",
+      "Name": "Extra3",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Used PSS (KB)",
+      "Name": "Extra4",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Used Kernel (KB)",
+      "Name": "Extra5",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Dalvik PSS (KB)",
+      "Name": "Extra10",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Native PSS (KB)",
+      "Name": "Extra11",
+      "Width": 100
+    }
+  ]
+}

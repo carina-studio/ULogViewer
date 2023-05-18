@@ -13,4 +13,8 @@ enum LogPatternMatchingMode
     /// Match patterns in arbitrary order.
     /// </summary>
     Arbitrary,
+    /// <summary>
+    /// Match patterns in arbitrary order after matching the first pattern.
+    /// </summary>
+    ArbitraryAfterFirstMatch,
 }

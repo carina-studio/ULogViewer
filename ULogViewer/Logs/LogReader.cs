@@ -41,6 +41,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		bool isRestarting;
 		bool isWaitingForDataSource;
 		readonly Dictionary<string, LogLevel> logLevelMap = new();
+		LogPatternMatchingMode logPatternMatchingMode = LogPatternMatchingMode.Sequential;
 		IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
 		readonly ObservableList<Log> logs = new();
 		long logsReadingCacheMemorySize;
@@ -403,6 +404,26 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 				this.isWaitingForDataSource = value;
 				this.OnPropertyChanged(nameof(IsWaitingForDataSource));
+			}
+		}
+		
+		
+		/// <summary>
+		/// Get or set mode of matching raw log lines by patterns.
+		/// </summary>
+		public LogPatternMatchingMode LogPatternMatchingMode
+		{
+			get => this.logPatternMatchingMode;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyDisposed();
+				if (this.state != LogReaderState.Preparing)
+					throw new InvalidOperationException($"Cannot change {nameof(LogPatternMatchingMode)} when state is {this.state}.");
+				if (this.logPatternMatchingMode == value)
+					return;
+				this.logPatternMatchingMode = value;
+				this.OnPropertyChanged(nameof(LogPatternMatchingMode));
 			}
 		}
 
@@ -939,6 +960,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		// Read logs.
 		void ReadLogs(object readingToken, TextReader reader, CancellationToken cancellationToken)
 		{
+			// check state
 			if (cancellationToken.IsCancellationRequested)
 			{
 				this.Logger.LogWarning("Logs reading was cancelled before starting reading");
@@ -946,7 +968,10 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.SynchronizationContext.Post(() => this.OnLogsReadingCompleted(null, 0L));
 				return;
 			}
+			
 			this.Logger.LogDebug("Start reading logs in background");
+			
+			// get state
 			var configuration = this.Application.Configuration;
 			var readLogs = new List<Log>();
 			var readLog = (Log?)null;
@@ -958,6 +983,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var logCount = 0;
 			var accumulatedLogCount = 0;
 			var readingWindow = this.readingWindow;
+			var logPatternMatchingMode = this.logPatternMatchingMode;
 			var logPatterns = this.logPatterns.ToArray().Also(it =>
 			{
 				if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex))
@@ -978,26 +1004,6 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				MaxByteCount = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogReadingStringCacheSizeInMB)) << 20,
 			};
-			void FlushContinuousReadingLog(int updateInterval)
-			{
-				var log = readLog;
-				if (log != null)
-				{
-					readLog = null;
-					var stringSourceCacheByteCount = stringSourceCache.ByteCount;
-					this.pendingLogsSyncContext.Post(() =>
-					{
-						if (this.pendingLogsReadingToken != readingToken)
-						{
-							this.pendingLogsReadingToken = readingToken;
-							this.pendingLogs.Clear();
-						}
-						this.logsReadingCacheMemorySize = stringSourceCacheByteCount;
-						this.pendingLogs.Add(log);
-						this.flushPendingLogsAction.Schedule(updateInterval);
-					});
-				}
-			}
 			var dataSourceOptions = this.DataSource.CreationOptions;
 			var isReadingFromFile = dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
 			var fileName = dataSourceOptions.FileName.Let(it =>
@@ -1017,10 +1023,13 @@ namespace CarinaStudio.ULogViewer.Logs
 			var defaultNonContinuousUpdateInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateInterval);
 			var nonContinuousChunkSize = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateChunkSize);
 			var nonContinuousPaddingInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingPaddingInterval);
+
+			// read logs
 			var stopWatch = new Stopwatch().Also(it => it.Start());
 			var readLineSyncLock = new object();
 			try
 			{
+				// prepare
 				if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.ReadRawLogLinesConcurrently))
 				{
 					this.Logger.LogDebug("Use concurrent reader");
@@ -1034,10 +1043,27 @@ namespace CarinaStudio.ULogViewer.Logs
 				var startReadingTime = stopWatch.ElapsedMilliseconds;
 				int updateInterval;
 				string? logLine;
-				void ReadNextLine()
+				
+				// prepare local functions
+				void FlushContinuousReadingLog(int updateInterval)
 				{
-					++lineNumber;
-					logLine = reader.ReadLine();
+					var log = readLog;
+					if (log != null)
+					{
+						readLog = null;
+						var stringSourceCacheByteCount = stringSourceCache.ByteCount;
+						this.pendingLogsSyncContext.Post(() =>
+						{
+							if (this.pendingLogsReadingToken != readingToken)
+							{
+								this.pendingLogsReadingToken = readingToken;
+								this.pendingLogs.Clear();
+							}
+							this.logsReadingCacheMemorySize = stringSourceCacheByteCount;
+							this.pendingLogs.Add(log);
+							this.flushPendingLogsAction.Schedule(updateInterval);
+						});
+					}
 				}
 				void ReadNextLineSkippable()
 				{
@@ -1104,12 +1130,11 @@ namespace CarinaStudio.ULogViewer.Logs
 						}
 					}
 					else
-					{
-						++lineNumber;
-						logLine = reader.ReadLine();
-					}
+						logLine = this.ReadNextLine(reader, ref lineNumber);
 				}
-				ReadNextLine();
+				
+				// read first line
+				logLine = ReadNextLine(reader, ref lineNumber);
 				if (cancellationToken.IsCancellationRequested)
 				{
 					this.Logger.LogWarning("Logs reading has been cancelled");
@@ -1121,6 +1146,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					return;
 				}
 				this.SynchronizationContext.Post(() => this.OnFirstRawLogDataRead(readingToken));
+				
+				// read logs
 				if (logPatterns.Length == 1 && !logPattern.IsRepeatable && !logPattern.IsSkippable) // special case for single pattern
 				{
 					var logPatternRegex = logPattern.Regex;
@@ -1167,7 +1194,7 @@ namespace CarinaStudio.ULogViewer.Logs
 								this.Logger.LogTrace("'{logLine}' Cannot be matched by pattern '{logPattern}'", logLine, logPattern.Regex);
 #endif
 							}
-							ReadNextLine();
+							logLine = ReadNextLine(reader, ref lineNumber);
 						}
 						finally
 						{
@@ -1191,7 +1218,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
 				}
-				else // general case (1 or more patterns)
+				else if (logPatternMatchingMode == LogPatternMatchingMode.Sequential) // general case (use 1 or more patterns sequentially)
 				{
 					do
 					{
@@ -1290,7 +1317,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 									// need to move to next line if there is only one pattern or this is the first pattern
 									if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-										ReadNextLine();
+										logLine = ReadNextLine(reader, ref lineNumber);
 
 									// move to first pattern
 									logPatternIndex = 0;
@@ -1323,7 +1350,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 								// need to move to next line if there is only one pattern or this is the first pattern
 								if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-									ReadNextLine();
+									logLine = ReadNextLine(reader, ref lineNumber);
 
 								// move to first pattern
 								logPatternIndex = 0;
@@ -1339,7 +1366,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 								// need to move to next line if there is only one pattern or this is the first pattern
 								if (logPatternIndex == 0 || lastLogPatternIndex == 0)
-									ReadNextLine();
+									logLine = ReadNextLine(reader, ref lineNumber);
 
 								// move to first pattern
 								logPatternIndex = 0;
@@ -1368,6 +1395,135 @@ namespace CarinaStudio.ULogViewer.Logs
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
 				}
+				else if (logPatternMatchingMode == LogPatternMatchingMode.Arbitrary
+				         || logPatternMatchingMode == LogPatternMatchingMode.ArbitraryAfterFirstMatch) // general case (use 1 or more patterns in arbitrary order)
+				{
+					// get state
+					var isFirstPatternMatchNeeded = logPatternMatchingMode == LogPatternMatchingMode.ArbitraryAfterFirstMatch
+						&& !logPatterns[0].IsSkippable;
+
+					// prepare local functions
+					var unmatchedPatterns = new HashSet<LogPattern>();
+					void ResetUnmatchedLogPatterns()
+					{
+						foreach (var logPattern in logPatterns)
+						{
+							if (!logPattern.IsSkippable)
+								unmatchedPatterns.Add(logPattern);
+						}
+					}
+					ResetUnmatchedLogPatterns();
+					
+					// read logs
+					var isLineNumberSet = false;
+					var isFirstPatternMatched = false;
+					do
+					{
+						if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
+							break;
+						updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
+						try
+						{
+							// match pattern
+							logPatternIndex = 0;
+							if (!isFirstPatternMatchNeeded || isFirstPatternMatched)
+							{
+								while (logPatternIndex <= lastLogPatternIndex)
+								{
+									logPattern = logPatterns[logPatternIndex];
+									var match = logPattern.Regex.Match(logLine);
+									if (match.Success)
+									{
+										// read log
+										this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
+										unmatchedPatterns.Remove(logPattern);
+
+										// set file name and line number
+										if (!isLineNumberSet && isReadingFromFile)
+										{
+											logBuilder.Set(nameof(Log.LineNumber), lineNumber.ToString());
+											logBuilder.Set(nameof(Log.FileName), fileName);
+											isLineNumberSet = true;
+										}
+
+										// stop matching
+										break;
+									}
+									++logPatternIndex;
+								}
+							}
+							else
+							{
+								var match = logPatterns[0].Regex.Match(logLine);
+								if (match.Success)
+								{
+									// read log
+									this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
+									unmatchedPatterns.Remove(logPattern);
+									isFirstPatternMatched = true;
+									
+									// set file name and line number
+									if (!isLineNumberSet && isReadingFromFile)
+									{
+										logBuilder.Set(nameof(Log.LineNumber), lineNumber.ToString());
+										logBuilder.Set(nameof(Log.FileName), fileName);
+										isLineNumberSet = true;
+									}
+								}
+							}
+
+							// build log
+							if (unmatchedPatterns.IsEmpty())
+							{
+								if (logBuilder.IsNotEmpty())
+								{
+									readLog = logBuilder.BuildAndReset();
+									isLineNumberSet = false;
+									if (!hasPrecondition || precondition.Matches(readLog))
+									{
+										if (isContinuousReading)
+											FlushContinuousReadingLog(updateInterval);
+										else
+										{
+											readLogs.Add(readLog);
+											++logCount;
+											++accumulatedLogCount;
+										}
+									}
+								}
+								ResetUnmatchedLogPatterns();
+							}
+							
+							// move to next line
+							logLine = this.ReadNextLine(reader, ref lineNumber);
+						}
+						finally
+						{
+							if (isContinuousReading)
+								FlushContinuousReadingLog(updateInterval);
+							else if (accumulatedLogCount >= nonContinuousChunkSize || (stopWatch.ElapsedMilliseconds - startReadingTime) >= updateInterval)
+							{
+								if (!hasMaxLogCount || readingWindow == LogReadingWindow.StartOfDataSource)
+								{
+									if (nonContinuousPaddingInterval > 0)
+										Thread.Sleep(nonContinuousPaddingInterval);
+									var logArray = readLogs.ToArray();
+									readLogs.Clear();
+									syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
+								}
+								else if (readLogs.Count > maxLogCount)
+									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
+								accumulatedLogCount = 0;
+								startReadingTime = stopWatch.ElapsedMilliseconds;
+							}
+							prevLogPattern = logPattern;
+						}
+					} while (logLine != null && !cancellationToken.IsCancellationRequested);
+				}
+				else
+					throw new NotImplementedException();
+				
+				// cancellation check
 				if (logLine != null && cancellationToken.IsCancellationRequested)
 					this.Logger.LogWarning("Logs reading has been cancelled");
 			}
@@ -1398,6 +1554,14 @@ namespace CarinaStudio.ULogViewer.Logs
 				// complete reading
 				syncContext.Post(() => this.OnLogsReadingCompleted(exception, finalStringSourceCacheByteCount));
 			}
+		}
+		
+		
+		// Read next raw log line.
+		string? ReadNextLine(TextReader reader, ref int lineNumber)
+		{
+			++lineNumber;
+			return reader.ReadLine();
 		}
 
 
