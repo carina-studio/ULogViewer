@@ -185,10 +185,10 @@ partial class SessionView
                 {
                     if (value.Value.HasValue)
                         point.PrimaryValue = value.Value.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex;
+                    point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
                 },
                 Name = series.Source?.PropertyDisplayName,
-                Padding = 1,
+                Padding = 0,
                 Rx = 0,
                 Ry = 0,
                 TooltipLabelFormatter = point =>
@@ -248,10 +248,10 @@ partial class SessionView
                 {
                     if (value.Value.HasValue)
                         point.PrimaryValue = value.Value.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex;
+                    point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
                 },
                 Name = series.Source?.PropertyDisplayName,
-                Padding = 1,
+                Padding = 0,
                 Rx = 0,
                 Ry = 0,
                 TooltipLabelFormatter = point =>

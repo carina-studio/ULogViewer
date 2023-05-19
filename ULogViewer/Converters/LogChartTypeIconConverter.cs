@@ -51,7 +51,7 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
                                                                    + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueStatisticBars
                 or LogChartType.ValueBars
-                or LogChartType.ValueStackedBars => "Image/Chart.Bars"
+                or LogChartType.ValueStackedBars => (this.outline ? "Image/Chart.Bars.Outline" : "Image/Chart.Bars")
                                                     + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueCurves
                 or LogChartType.ValueCurvesWithDataPoints => "Image/Chart.Curves"
