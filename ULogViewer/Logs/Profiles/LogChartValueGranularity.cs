@@ -10,6 +10,10 @@ enum LogChartValueGranularity
     /// </summary>
     Default,
     /// <summary>
+    /// Byte.
+    /// </summary>
+    Byte,
+    /// <summary>
     /// Kilobytes.
     /// </summary>
     Kilobytes,

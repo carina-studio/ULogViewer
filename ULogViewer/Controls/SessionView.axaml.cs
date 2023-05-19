@@ -1140,6 +1140,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.AttachToRawLogChartSeries(it.Series);
 				if (it.IsMaxTotalSeriesValueCountReached)
 					this.PromptForMaxLogChartSeriesValueCountReached();
+				this.areLogChartAxesReady = false;
+				this.UpdateLogChartAxes();
 			});
 			session.LogFiltering.Let(it =>
 			{

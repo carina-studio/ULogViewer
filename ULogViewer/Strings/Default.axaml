@@ -406,6 +406,7 @@ return False</sys:String>
 	
 	<!-- LogChartValueGranularity -->
 	<sys:String x:Key="String/LogChartValueGranularity.Billion">Billion (10⁹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Byte">Byte</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Default">Default</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Gigabytes">Gigabytes (GB)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Hundred">Hundred (10²)</sys:String>

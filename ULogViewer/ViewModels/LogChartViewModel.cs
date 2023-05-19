@@ -1,5 +1,7 @@
+using Avalonia.Data.Converters;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
@@ -27,6 +29,10 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<LogChartType> ChartTypeProperty = ObservableProperty.Register<LogChartViewModel, LogChartType>(nameof(ChartType), LogChartType.None);
     /// <summary>
+    /// Define <see cref="ChartValueGranularity"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<LogChartValueGranularity> ChartValueGranularityProperty = ObservableProperty.Register<LogChartViewModel, LogChartValueGranularity>(nameof(ChartValueGranularity), LogChartValueGranularity.Default);
+    /// <summary>
     /// Define <see cref="IsChartDefined"/> property.
     /// </summary>
     public static readonly ObservableProperty<bool> IsChartDefinedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsChartDefined), false);
@@ -40,9 +46,18 @@ class LogChartViewModel : SessionComponent
     public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogChartViewModel, double>(nameof(PanelSize), 300,
         coerce: (_, d) => Math.Max(MinPanelSize, d),
         validate: double.IsFinite);
+    /// <summary>
+    /// Define <see cref="XAxisName"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<string?> XAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(XAxisName), null);
+    /// <summary>
+    /// Define <see cref="YAxisName"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<string?> YAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(YAxisName), null);
 
 
     // Static fields.
+    static readonly IValueConverter ChartValueGranularityConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(LogChartValueGranularity));
     static readonly SettingKey<int> LatestPanelSizeKey = new("LogChartViewModel.LatestPanelSize", (int)(PanelSizeProperty.DefaultValue + 0.5));
 
 
@@ -54,6 +69,7 @@ class LogChartViewModel : SessionComponent
     readonly List<IDisposable> observerTokens = new();
     readonly DisplayableLogChartSeriesGenerator markedLogsSeriesGenerator;
     readonly ScheduledAction reportSeriesAction;
+    readonly ScheduledAction updateAxisNamesAction;
 
 
     /// <summary>
@@ -100,6 +116,24 @@ class LogChartViewModel : SessionComponent
                 this.OnPropertyChanged(nameof(MaxSeriesValueCount));
                 this.OnPropertyChanged(nameof(MinSeriesValue));
                 this.OnPropertyChanged(nameof(Series));
+            }
+        });
+        this.updateAxisNamesAction = new(() =>
+        {
+            var valueGranularity = this.LogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default;
+            switch (valueGranularity)
+            {
+                case LogChartValueGranularity.Default:
+                case LogChartValueGranularity.Byte:
+                case LogChartValueGranularity.Kilobytes:
+                case LogChartValueGranularity.Megabytes:
+                case LogChartValueGranularity.Gigabytes:
+                case LogChartValueGranularity.Ten:
+                    this.SetValue(YAxisNameProperty, null);
+                    break;
+                default:
+                    this.SetValue(YAxisNameProperty, ChartValueGranularityConverter.Convert<string?>(valueGranularity));
+                    break;
             }
         });
         
@@ -172,6 +206,12 @@ class LogChartViewModel : SessionComponent
     public LogChartType ChartType => this.GetValue(ChartTypeProperty);
 
 
+    /// <summary>
+    /// Get granularity of values of chart.
+    /// </summary>
+    public LogChartValueGranularity ChartValueGranularity => this.GetValue(ChartValueGranularityProperty);
+
+
     // Convert list of LogChartSeriesSource to list of DisplayableLogChartSeriesSource.
     DisplayableLogChartSeriesSource[] ConvertToDisplayableLogChartSources(IList<LogChartSeriesSource>? properties)
     {
@@ -209,6 +249,49 @@ class LogChartViewModel : SessionComponent
 
             // call base
         base.Dispose(disposing);
+    }
+
+
+    /// <summary>
+    /// Get proper text of label on X axis.
+    /// </summary>
+    /// <param name="value">Value.</param>
+    /// <returns>Text of label on X axis.</returns>
+    public string GetXAxisLabel(double value) =>
+        value.ToString();
+
+
+    /// <summary>
+    /// Get proper text of label on Y axis.
+    /// </summary>
+    /// <param name="value">Value.</param>
+    /// <returns>Text of label on Y axis.</returns>
+    public string GetYAxisLabel(double value)
+    {
+        switch (this.LogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default)
+        {
+            case LogChartValueGranularity.Byte:
+                if (value < 1024)
+                    return $"{value:F0} B";
+                value /= 1024;
+                goto case LogChartValueGranularity.Kilobytes;
+            case LogChartValueGranularity.Kilobytes:
+                if (value < 1024)
+                    return $"{value:F2} KB";
+                value /= 1024;
+                goto case LogChartValueGranularity.Megabytes;
+            case LogChartValueGranularity.Megabytes:
+                if (value < 1024)
+                    return $"{value:F2} MB";
+                value /= 1024;
+                goto case LogChartValueGranularity.Gigabytes;
+            case LogChartValueGranularity.Gigabytes:
+                return $"{value:F2} GB";
+            case LogChartValueGranularity.Ten:
+                return (value * 10).ToString("F0");
+            default:
+                return value.ToString();
+        }
     }
 
 
@@ -297,6 +380,14 @@ class LogChartViewModel : SessionComponent
 
 
     /// <inheritdoc/>
+    protected override void OnApplicationStringsUpdated()
+    {
+        base.OnApplicationStringsUpdated();
+        this.updateAxisNamesAction.Schedule();
+    }
+
+
+    /// <inheritdoc/>
     protected override void OnLogProfileChanged(LogProfile? prevLogProfile, LogProfile? newLogProfile)
     {
         // call base
@@ -309,9 +400,11 @@ class LogChartViewModel : SessionComponent
             this.filteredLogsSeriesGenerator.LogChartType = logChartType;
         this.markedLogsSeriesGenerator.LogChartType = logChartType;
         this.SetValue(ChartTypeProperty, logChartType);
+        this.SetValue(ChartValueGranularityProperty, newLogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default);
         this.ApplyLogChartSeriesSources();
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
+        this.updateAxisNamesAction.Execute();
         this.UpdateCanSetChartType();
     }
 
@@ -355,6 +448,10 @@ class LogChartViewModel : SessionComponent
                 }
                 break;
             }
+            case nameof(LogProfile.LogChartValueGranularity):
+                this.SetValue(ChartValueGranularityProperty, profile.LogChartValueGranularity);
+                this.updateAxisNamesAction.Schedule();
+                break;
         }
     }
 
@@ -427,4 +524,16 @@ class LogChartViewModel : SessionComponent
     {
         this.canSetChartType.Update(this.IsChartDefined && this.Session.IsProVersionActivated && this.LogProfile?.IsBuiltIn != true);
     }
+    
+    
+    /// <summary>
+    /// Get name of X-axis.
+    /// </summary>
+    public string? XAxisName => this.GetValue(XAxisNameProperty);
+
+
+    /// <summary>
+    /// Get name of Y-axis.
+    /// </summary>
+    public string? YAxisName => this.GetValue(YAxisNameProperty);
 }

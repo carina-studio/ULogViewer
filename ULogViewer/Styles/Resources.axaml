@@ -208,6 +208,7 @@
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Crosshair.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.FontSize">10</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Name.FontSize">16</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Separator.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Button.Size">24</sys:Double>

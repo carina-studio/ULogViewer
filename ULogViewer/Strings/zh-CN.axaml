@@ -393,6 +393,7 @@ return False</sys:String>
 	
 	<!-- LogChartValueGranularity -->
 	<sys:String x:Key="String/LogChartValueGranularity.Billion">十亿 (10⁹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.Byte">字节</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Default">默认</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Gigabytes">京字节 (GB)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Hundred">百 (10²)</sys:String>

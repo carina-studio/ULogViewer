@@ -194,7 +194,8 @@ partial class SessionView
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
+                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
                 },
                 Values = series.Values,
             },
@@ -235,7 +236,8 @@ partial class SessionView
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
+                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
                 },
                 Values = series.Values,
             },
@@ -255,7 +257,8 @@ partial class SessionView
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
+                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
                 },
                 Values = series.Values,
             },
@@ -316,7 +319,8 @@ partial class SessionView
                 TooltipLabelFormatter = point =>
                 {
                     var value = series.Values[point.Context.Entity.EntityIndex];
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {point.PrimaryValue}";
+                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
+                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
                 },
                 Values = series.Values,
             },
@@ -555,6 +559,7 @@ partial class SessionView
         switch (e.PropertyName)
         {
             case nameof(LogChartViewModel.ChartType):
+            case nameof(LogChartViewModel.ChartValueGranularity):
             case nameof(LogChartViewModel.IsChartDefined):
                 this.UpdateLogChartSeries();
                 break;
@@ -585,6 +590,10 @@ partial class SessionView
                 break;
             case nameof(LogChartViewModel.Series):
                 this.AttachToRawLogChartSeries(viewModel.Series);
+                break;
+            case nameof(LogChartViewModel.YAxisName):
+                this.areLogChartAxesReady = false;
+                this.UpdateLogChartAxes();
                 break;
         }
     }
@@ -739,6 +748,19 @@ partial class SessionView
             this.logChartSeriesColors[propertyName] = color;
         return color;
     }
+
+
+    // Select proper SKTypeface for displaying.
+    SKTypeface SelectSKTypeface()
+    {
+        var c = this.Application.CultureInfo.Name.Let(it =>
+        {
+            if (it.StartsWith("zh"))
+                return it.EndsWith("TW") ? '繁' : '简';
+            return 'a';
+        });
+        return SKFontManager.Default.MatchCharacter(c);
+    }
     
     
     // Show tutorial of log chart if needed.
@@ -859,6 +881,9 @@ partial class SessionView
     {
         if (this.areLogChartAxesReady)
             return;
+        if (this.DataContext is not Session session)
+            return;
+        var viewModel = session.LogChart;
         var app = this.Application;
         var axisFontSize = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.FontSize", 10.0);
         var axisWidth = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.Width", 2.0);
@@ -888,7 +913,21 @@ partial class SessionView
                 var color = brush.Color;
                 return new SolidColorPaint(new(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5)));
             });
+            axis.Labeler = value =>
+            {
+                if (this.DataContext is Session session)
+                    return session.LogChart.GetYAxisLabel(value);
+                return value.ToString();
+            };
             axis.LabelsPaint = textPaint;
+            axis.Name = viewModel.YAxisName ?? "";
+            axis.NamePaint = string.IsNullOrWhiteSpace(axis.Name)
+                ? null
+                : new SolidColorPaint(textPaint.Color)
+                {
+                    SKTypeface = SKTypeface.FromFamilyName(this.SelectSKTypeface().FamilyName, SKFontStyleWeight.Bold, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright),
+                };
+            axis.NameTextSize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.Axis.Name.FontSize", 18.0);
             axis.Padding = yAxisPadding;
             axis.SeparatorsPaint = separatorBrush.Let(brush =>
             {
@@ -919,13 +958,7 @@ partial class SessionView
         });
         (this.FindResource("ToolTipForeground") as ISolidColorBrush)?.Let(brush =>
         {
-            var c = this.Application.CultureInfo.Name.Let(it =>
-            {
-                if (it.StartsWith("zh"))
-                    return it.EndsWith("TW") ? '繁' : '简';
-                return 'a';
-            });
-            var typeface = SKFontManager.Default.MatchCharacter(c);
+            var typeface = this.SelectSKTypeface();
             var color = brush.Color;
             var skColor = new SKColor(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5));
             this.SetValue(LogChartLegendForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface });
@@ -1048,27 +1081,36 @@ partial class SessionView
         var maxLimit = viewModel.MaxSeriesValue?.Value ?? double.NaN;
         if (double.IsFinite(minLimit) && double.IsFinite(maxLimit))
         {
-            var range = maxLimit - minLimit;
-            var reserved = Math.Max(0.25, range * LogChartYAxisMinMaxReservedRatio);
-            if (maxLimit < (double.MaxValue - 1 - reserved) && minLimit > (double.MinValue + 1 + reserved))
+            if (minLimit >= 0)
             {
-                if (minLimit >= 0)
-                {
-                    this.logChartYAxis.MinLimit = -reserved;
-                    this.logChartYAxis.MaxLimit = maxLimit + reserved;
-                }
-                else if (maxLimit <= 0)
-                {
-                    this.logChartYAxis.MinLimit = minLimit - reserved;
-                    this.logChartYAxis.MaxLimit = reserved;
-                }
-                else
-                {
-                    this.logChartYAxis.MinLimit = minLimit - reserved;
-                    this.logChartYAxis.MaxLimit = maxLimit + reserved;
-                }
-                return;
+                var range = maxLimit;
+                var reserved = Math.Max(0.25, range * LogChartYAxisMinMaxReservedRatio);
+                this.logChartYAxis.MinLimit = -reserved;
+                this.logChartYAxis.MaxLimit = maxLimit < (double.MaxValue - 1 - reserved)
+                    ? maxLimit + reserved
+                    : double.MaxValue - 1;
             }
+            else if (maxLimit <= 0)
+            {
+                var range = -minLimit;
+                var reserved = Math.Max(0.25, range * LogChartYAxisMinMaxReservedRatio);
+                this.logChartYAxis.MinLimit = minLimit > (double.MinValue + 1 + reserved)
+                    ? minLimit - reserved
+                    : double.MinValue + 1;
+                this.logChartYAxis.MaxLimit = reserved;
+            }
+            else
+            {
+                var range = (maxLimit - minLimit);
+                var reserved = Math.Max(0.25, range * LogChartYAxisMinMaxReservedRatio);
+                this.logChartYAxis.MinLimit = minLimit > (double.MinValue + 1 + reserved)
+                    ? minLimit - reserved
+                    : double.MinValue + 1;
+                this.logChartYAxis.MaxLimit = maxLimit < (double.MaxValue - 1 - reserved)
+                    ? maxLimit + reserved
+                    : double.MaxValue - 1;
+            }
+            return;
         }
         this.logChartYAxis.MinLimit = null;
         this.logChartYAxis.MaxLimit = null;
