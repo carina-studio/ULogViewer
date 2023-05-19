@@ -7,6 +7,7 @@ using Avalonia.Styling;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
+using CarinaStudio.ComponentModel;
 using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -17,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Globalization;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -33,6 +35,55 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     /// Property of <see cref="EnableActionsOnCurrentLogProfile"/>.
     /// </summary>
     public static readonly StyledProperty<bool> EnableActionsOnCurrentLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(EnableActionsOnCurrentLogProfile), true);
+    
+    
+    // Adapter of weak event handler.
+    class WeakProductActivationStateChangedHandler : IDisposable
+    {
+        // Fields.
+        readonly WeakReference<Action<IProductManager, string, bool>> handlerRef;
+        int isDisposed;
+        readonly SynchronizationContext? syncContext;
+        readonly IProductManager target;
+
+        // Constructor.
+        public WeakProductActivationStateChangedHandler(IProductManager target, Action<IProductManager, string, bool> handler)
+        {
+            this.handlerRef = new(handler);
+            this.syncContext = SynchronizationContext.Current;
+            this.target = target;
+            target.ProductActivationChanged += this.OnProductActivationStateChanged;
+        }
+
+        // Dispose.
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref this.isDisposed, 1) != 0)
+                return;
+            if (this.syncContext != null && this.syncContext != SynchronizationContext.Current)
+            {
+                try
+                {
+                    this.syncContext.Post(_ => this.target.ProductActivationChanged -= this.OnProductActivationStateChanged, null);
+                    return;
+                }
+                // ReSharper disable EmptyGeneralCatchClause
+                catch
+                { }
+                // ReSharper restore EmptyGeneralCatchClause
+            }
+            this.target.ProductActivationChanged -= this.OnProductActivationStateChanged;
+        }
+
+        // Entry of event handler.
+        void OnProductActivationStateChanged(IProductManager productManager, string productId, bool isActivated)
+        {
+            if (this.handlerRef.TryGetTarget(out var handler))
+                handler(productManager, productId, isActivated);
+            else
+                this.Dispose();
+        }
+    }
 
     
     // Constants.
@@ -54,15 +105,23 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     MenuItem? copyCurrentLogProfileMenuItem;
     MenuItem? editCurrentLogProfileMenuItem;
     MenuItem? exportCurrentLogProfileMenuItem;
-    bool isAttachedToLogicalTree;
+    bool isReady;
     readonly SortedObservableList<object> items;
     readonly LogProfileManager logProfileManager = LogProfileManager.Default;
+    readonly PropertyChangedEventHandler logProfilePropertyChangedHandler;
+    readonly Dictionary<LogProfile, IDisposable> logProfilePropertyChangedHandlerTokens = new();
+    readonly NotifyCollectionChangedEventHandler logProfilesChangedHandler;
+    IDisposable? logProfilesChangedHandlerToken;
     readonly HashSet<LogProfile> pinnedLogProfiles = new();
     readonly Separator pinnedLogProfilesSeparator = new()
     {
         Tag = PinnedLogProfilesTag,
     };
+    readonly Action<IProductManager, string, bool> productActivationChangedHandler;
+    IDisposable? productActivationChangedHandlerToken;
     readonly HashSet<LogProfile> recentlyUsedLogProfiles = new(); // Excluding pinned log profiles
+    readonly NotifyCollectionChangedEventHandler recentlyUsedLogProfilesChangedHandler;
+    IDisposable? recentlyUsedLogProfilesChangedHandlerToken;
     readonly Separator recentlyUsedLogProfilesSeparator = new()
     {
         Tag = RecentlyUsedLogProfilesTag,
@@ -78,6 +137,10 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         this.items = new(this.CompareItems);
         base.Items = this.items;
         this.Items = ListExtensions.AsReadOnly(this.items);
+        this.logProfilesChangedHandler = this.OnLogProfilesChanged;
+        this.logProfilePropertyChangedHandler = this.OnLogProfilePropertyChanged;
+        this.productActivationChangedHandler = this.OnProductActivationChanged;
+        this.recentlyUsedLogProfilesChangedHandler = this.OnRecentlyUsedLogProfilesChanged;
         Grid.SetIsSharedSizeScope(this, true);
         this.MenuClosed += (_, _) =>
         {
@@ -110,6 +173,19 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         {
             this.UpdateActionOnCurrentLogProfileMenuItemStates();
         });
+    }
+    
+    
+    // Finalizer.
+    ~LogProfileSelectionContextMenu()
+    {
+        if (!this.isReady)
+            return;
+        this.logProfilesChangedHandlerToken?.Dispose();
+        this.productActivationChangedHandlerToken?.Dispose();
+        this.recentlyUsedLogProfilesChangedHandlerToken?.Dispose();
+        foreach (var token in this.logProfilePropertyChangedHandlerTokens.Values)
+            token.Dispose();
     }
 
 
@@ -470,11 +546,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
     {
         base.OnAttachedToLogicalTree(e);
-        this.isAttachedToLogicalTree = true;
-        (LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
-            it.CollectionChanged += this.OnLogProfilesChanged);
-        (LogProfileManager.Default.RecentlyUsedProfiles as INotifyCollectionChanged)?.Let(it =>
-            it.CollectionChanged += this.OnRecentlyUsedLogProfilesChanged);
+        if (this.isReady)
+            return;
+        this.logProfilesChangedHandlerToken = (LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
+            it.AddWeakCollectionChangedEventHandler(this.logProfilesChangedHandler));
+        this.recentlyUsedLogProfilesChangedHandlerToken = (LogProfileManager.Default.RecentlyUsedProfiles as INotifyCollectionChanged)?.Let(it =>
+            it.AddWeakCollectionChangedEventHandler(this.recentlyUsedLogProfilesChangedHandler));
         this.items.AddAll(new List<object>().Also(it =>
         {
             if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
@@ -497,7 +574,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             var recentlyUsedLogProfiles = LogProfileManager.Default.RecentlyUsedProfiles;
             foreach (var logProfile in LogProfileManager.Default.Profiles)
             {
-                logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
+                this.logProfilePropertyChangedHandlerTokens[logProfile] = logProfile.AddWeakPropertyChangedEventHandler(this.logProfilePropertyChangedHandler);
                 if (logProfile.IsTemplate)
                     continue;
                 if (logProfile.IsPinned)
@@ -518,27 +595,10 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             else
             {
                 this.SetValue(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
-                it.ProductActivationChanged += this.OnProductActivationChanged;
+                this.productActivationChangedHandlerToken = new WeakProductActivationStateChangedHandler(it, this.productActivationChangedHandler);
             }
         });
-    }
-
-
-    /// <inheritdoc/>
-    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-    {
-        this.isAttachedToLogicalTree = false;
-        (LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
-            it.CollectionChanged -= this.OnLogProfilesChanged);
-        (LogProfileManager.Default.RecentlyUsedProfiles as INotifyCollectionChanged)?.Let(it =>
-            it.CollectionChanged -= this.OnRecentlyUsedLogProfilesChanged);
-        foreach (var logProfile in LogProfileManager.Default.Profiles)
-            logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
-        this.items.Clear();
-        this.pinnedLogProfiles.Clear();
-        this.recentlyUsedLogProfiles.Clear();
-        App.Current.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
-        base.OnDetachedFromLogicalTree(e);
+        this.isReady = true;
     }
 
 
@@ -638,7 +698,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             case NotifyCollectionChangedAction.Add:
                 foreach (var logProfile in e.NewItems!.Cast<LogProfile>())
                 {
-                    logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
+                    this.logProfilePropertyChangedHandlerTokens[logProfile] = logProfile.AddWeakPropertyChangedEventHandler(this.logProfilePropertyChangedHandler);
                     if (logProfile.IsTemplate)
                         continue;
                     if (logProfile.IsPinned)
@@ -667,7 +727,11 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
             case NotifyCollectionChangedAction.Remove:
                 foreach (var logProfile in e.OldItems!.Cast<LogProfile>())
                 {
-                    logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+                    if (this.logProfilePropertyChangedHandlerTokens.TryGetValue(logProfile, out var token))
+                    {
+                        token.Dispose();
+                        this.logProfilePropertyChangedHandlerTokens.Remove(logProfile);
+                    }
                     this.items.RemoveAll(it => it is MenuItem menuItem && menuItem.DataContext == logProfile);
                     this.pinnedLogProfiles.Remove(logProfile);
                     this.recentlyUsedLogProfiles.Remove(logProfile);
@@ -806,7 +870,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     // Update visibility of actions on current log profile.
     void UpdateActionOnCurrentLogProfileMenuItemsVisibility()
     {
-        if (this.isAttachedToLogicalTree)
+        if (this.isReady)
         {
             if (this.CurrentLogProfile != null && this.EnableActionsOnCurrentLogProfile)
             {
