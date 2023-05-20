@@ -166,12 +166,30 @@ partial class SessionView
     ISeries CreateLogChartSeries(LogChartViewModel viewModel, DisplayableLogChartSeries series)
     {
         // select color
-        var color = SelectLogChartSeriesColor(series.Source?.PropertyName);
+        var seriesColor = SelectLogChartSeriesColor(series.Source?.PropertyName);
+        var overlappedSeriesColor = seriesColor.Let(it =>
+        {
+            it.ToHsl(out var h, out var s, out var l);
+            return this.Application.EffectiveThemeMode switch
+            {
+                ThemeMode.Dark => SKColor.FromHsl(h, s, l * 0.5f),
+                _ => SKColor.FromHsl(h, s, Math.Min(100, l * 2)),
+            };
+        });
         
         // load resources
-        var geometryFillColor = this.Application.FindResourceOrDefault("Brush/WorkingArea.Background", Brushes.Black);
+        var backgroundColor = this.Application.FindResourceOrDefault("Brush/WorkingArea.Background", Brushes.Black).Let(it =>
+        {
+            var color = it.Color;
+            return new SKColor(color.R, color.G, color.B, (byte)(color.A * it.Opacity + 0.5));
+        });
         var geometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 5.0);
         var lineWidth = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 1.0);
+        var colorBlendingMode = this.Application.EffectiveThemeMode switch
+        {
+            ThemeMode.Dark => SKBlendMode.Screen,
+            _ => SKBlendMode.Multiply,
+        };
         
         // create series
         var chartType = viewModel.ChartType;
@@ -180,7 +198,7 @@ partial class SessionView
             LogChartType.ValueStatisticBars 
                 or LogChartType.ValueBars => new ColumnSeries<DisplayableLogChartSeriesValue>
             {
-                Fill = new SolidColorPaint(color),
+                Fill = new SolidColorPaint(seriesColor),
                 Mapping = (value, point) =>
                 {
                     if (value.Value.HasValue)
@@ -202,20 +220,16 @@ partial class SessionView
             LogChartType.ValueStackedAreas
                 or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue>
             {
-                Fill = new SolidColorPaint(color.WithAlpha((byte)(color.Alpha * 0.7))),
+                Fill = new SolidColorPaint(seriesColor),
                 GeometryFill = chartType switch
                 {
-                    LogChartType.ValueStackedAreasWithDataPoints => geometryFillColor.Let(it =>
-                    {
-                        var color = it.Color;
-                        return new SolidColorPaint(new(color.R, color.G, color.B, (byte)(color.A * it.Opacity + 0.5)));
-                    }),
+                    LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(seriesColor),
                     _ => null,
                 },
                 GeometrySize = geometrySize,
                 GeometryStroke = chartType switch
                 {
-                    LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(color, lineWidth)
+                    LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
                     {
                         IsAntialias = true,
                     },
@@ -229,7 +243,7 @@ partial class SessionView
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = series.Source?.PropertyDisplayName,
-                Stroke = new SolidColorPaint(color, lineWidth)
+                Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                 {
                     IsAntialias = true,
                 },
@@ -243,7 +257,7 @@ partial class SessionView
             },
             LogChartType.ValueStackedBars => new StackedColumnSeries<DisplayableLogChartSeriesValue>
             {
-                Fill = new SolidColorPaint(color),
+                Fill = new SolidColorPaint(seriesColor),
                 Mapping = (value, point) =>
                 {
                     if (value.Value.HasValue)
@@ -267,13 +281,9 @@ partial class SessionView
                 Fill = chartType switch
                 {
                     LogChartType.ValueAreas
-                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaintEx(color.WithAlpha((byte)(color.Alpha * 0.7)))
+                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaintEx(seriesColor.WithAlpha((byte)(seriesColor.Alpha * 0.8)))
                         {
-                            BlendMode = this.Application.EffectiveThemeMode switch
-                            {
-                                ThemeMode.Dark => SKBlendMode.Lighten,
-                                _ => SKBlendMode.Darken,
-                            },
+                            BlendMode = colorBlendingMode,
                         },
                     _ => null,
                 },
@@ -281,11 +291,7 @@ partial class SessionView
                 {
                     LogChartType.ValueAreasWithDataPoints
                         or LogChartType.ValueCurvesWithDataPoints
-                        or LogChartType.ValueLinesWithDataPoints => geometryFillColor.Let(it =>
-                        {
-                            var color = it.Color;
-                            return new SolidColorPaint(new(color.R, color.G, color.B, (byte)(color.A * it.Opacity + 0.5)));
-                        }),
+                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(seriesColor),
                     _ => null,
                 },
                 GeometrySize = geometrySize,
@@ -293,10 +299,10 @@ partial class SessionView
                 {
                     LogChartType.ValueAreasWithDataPoints
                         or LogChartType.ValueCurvesWithDataPoints
-                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(color, lineWidth + 1)
-                    {
-                        IsAntialias = true,
-                    },
+                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
+                        {
+                            IsAntialias = true,
+                        },
                     _ => null,
                 },
                 LineSmoothness = chartType switch
@@ -312,7 +318,7 @@ partial class SessionView
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = series.Source?.PropertyDisplayName,
-                Stroke = new SolidColorPaint(color, lineWidth)
+                Stroke = new SolidColorPaint(overlappedSeriesColor)
                 {
                     IsAntialias = true,
                 },
