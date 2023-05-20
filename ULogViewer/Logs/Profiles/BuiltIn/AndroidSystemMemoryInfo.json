@@ -78,34 +78,43 @@
       "Width": 200
     },
     {
-      "DisplayName": "Free (KB)",
+      "DisplayName": "Free",
       "Name": "Extra2",
+      "Quantifier": "KB",
       "Width": 100
     },
     {
-      "DisplayName": "Used (KB)",
+      "DisplayName": "Used",
       "Name": "Extra3",
+      "Quantifier": "KB",
       "Width": 100
     },
     {
-      "DisplayName": "Used PSS (KB)",
-      "Name": "Extra4",
-      "Width": 100
-    },
-    {
-      "DisplayName": "Used Kernel (KB)",
+      "DisplayName": "Used",
       "Name": "Extra5",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Kernel",
       "Width": 100
     },
     {
-      "DisplayName": "Dalvik PSS (KB)",
+      "DisplayName": "Used",
+      "Name": "Extra4",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "PSS",
+      "Width": 100
+    },
+    {
+      "DisplayName": "PSS",
       "Name": "Extra10",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Dalvik",
       "Width": 100
     },
     {
-      "DisplayName": "Native PSS (KB)",
+      "DisplayName": "PSS",
       "Name": "Extra11",
-      "Width": 100
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Native"
     }
   ]
 }

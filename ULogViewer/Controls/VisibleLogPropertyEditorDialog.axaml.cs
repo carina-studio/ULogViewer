@@ -24,6 +24,8 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 	readonly ComboBox foregroundColorComboBox;
 	bool isDisplayNameSameAsName;
 	readonly ComboBox nameComboBox;
+	readonly TextBox quantifierTextBox;
+	readonly TextBox secondaryDisplayNameTextBox;
 	readonly ToggleSwitch specifyWidthSwitch;
 	readonly IntegerTextBox widthTextBox;
 
@@ -52,6 +54,8 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 					this.displayNameComboBox.SelectedItem = name;
 			});
 		});
+		this.quantifierTextBox = this.Get<TextBox>(nameof(quantifierTextBox));
+		this.secondaryDisplayNameTextBox = this.Get<TextBox>(nameof(secondaryDisplayNameTextBox));
 		this.specifyWidthSwitch = this.Get<ToggleSwitch>(nameof(specifyWidthSwitch));
 		this.widthTextBox = this.Get<IntegerTextBox>(nameof(widthTextBox)).Also(it =>
 		{
@@ -67,7 +71,12 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				? this.customDisplayNameTextBox.Text?.Trim() ?? ""
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
 		var width = this.specifyWidthSwitch.IsChecked.GetValueOrDefault() ? (int?)this.widthTextBox.Value : null;
-		return Task.FromResult((object?)new LogProperty((string)this.nameComboBox.SelectedItem.AsNonNull(), displayName, null, null, (LogPropertyForegroundColor)this.foregroundColorComboBox.SelectedItem!, width));
+		return Task.FromResult((object?)new LogProperty(
+			(string)this.nameComboBox.SelectedItem.AsNonNull(), 
+			displayName, 
+			this.secondaryDisplayNameTextBox.Text?.Trim(), 
+			this.quantifierTextBox.Text?.Trim(), 
+			(LogPropertyForegroundColor)this.foregroundColorComboBox.SelectedItem!, width));
 	}
 
 
@@ -115,6 +124,8 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				this.customDisplayNameTextBox.Text = property.DisplayName.Trim();
 			}
 			this.foregroundColorComboBox.SelectedItem = property.ForegroundColor;
+			this.quantifierTextBox.Text = property.Quantifier?.Trim();
+			this.secondaryDisplayNameTextBox.Text = property.SecondaryDisplayName?.Trim();
 			property.Width.Let(it =>
 			{
 				this.specifyWidthSwitch.IsChecked = it.HasValue;

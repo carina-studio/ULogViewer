@@ -273,7 +273,11 @@
 						<TextBlock Text="{Binding NameForLogProperty}" VerticalAlignment="Center"/>
 					</StackPanel>
 				</ToolTip.Tip>
-				<TextBlock Text="{Binding DisplayName}" HorizontalAlignment="Stretch" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+				<Grid ClipToBounds="True" ColumnDefinitions="Auto,Auto,*">
+					<TextBlock FontWeight="Bold" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>	
+					<abControls:FormattedTextBlock Arg1="{Binding SecondaryDisplayName}" Format=" - {0}" Grid.Column="1" IsVisible="{Binding SecondaryDisplayName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+					<abControls:FormattedTextBlock Arg1="{Binding Quantifier}" Format=" ({0})" Grid.Column="2" IsVisible="{Binding Quantifier, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Opacity="{StaticResource Double/SessionView.LogHeader.Quantifier.Opacity}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+				</Grid>
 			</Border>
 		</DataTemplate>
 

@@ -1410,6 +1410,9 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.DisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Color of text</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartSeriesSourceEditorDialog.Name"/>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Quantifier">Quantifier</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description">For example, 'KB', 'cm'.</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName">Secondary display name</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the column width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column width</sys:String>

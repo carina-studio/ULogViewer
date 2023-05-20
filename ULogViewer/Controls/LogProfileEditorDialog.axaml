@@ -500,7 +500,11 @@
 												<ColumnDefinition Width="*"/>
 												<ColumnDefinition Width="Auto"/>
 											</Grid.ColumnDefinitions>
-											<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											<StackPanel Orientation="Horizontal" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+												<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+												<abControls:FormattedTextBlock Arg1="{Binding SecondaryDisplayName}" Format=" - {0}" IsVisible="{Binding SecondaryDisplayName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+												<abControls:FormattedTextBlock Arg1="{Binding Quantifier}" Format=" ({0})" IsVisible="{Binding Quantifier, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											</StackPanel>
 											<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.Empty}" Format="({0})" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 											<Border Classes="InPlaceAction_Reserved"/>
 											<abControls:FormattedTextBlock Arg1="{Binding Name}" Format="({0})" Grid.Column="1" Margin="{StaticResource Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>

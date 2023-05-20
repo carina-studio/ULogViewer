@@ -1362,6 +1362,9 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.DisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">文字色彩</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartSeriesSourceEditorDialog.Name"/>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Quantifier">数量词</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description">例如「千字节」、「厘米」。</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName">次要显示名称</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定栏位宽度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">显示的日志属性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">栏位宽度</sys:String>
