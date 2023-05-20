@@ -76,6 +76,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.NameForLogProperty = logProperty.Name;
 			this.DisplayName = LogPropertyNameConverter.Default.Convert(this.displayNameId);
 			this.ForegroundColor = logProperty.ForegroundColor;
+			this.Quantifier = logProperty.Quantifier;
+			this.SecondaryDisplayName = logProperty.SecondaryDisplayName;
 			this.Width = logProperty.Width;
 			app.StringsUpdated += this.OnApplicationStringsUpdated;
 		}
@@ -206,6 +208,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Raised when property changed.
 		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
+		
+		
+		/// <summary>
+		/// Quantifier to display on UI.
+		/// </summary>
+		public string? Quantifier { get; }
+		
+		
+		/// <summary>
+		/// Secondary name to display on UI.
+		/// </summary>
+		public string? SecondaryDisplayName { get; }
 
 
 		/// <summary>
@@ -214,7 +228,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="resolveDisplayName">True to resolve display name to readable value.</param>
 		/// <returns><see cref="LogProperty"/>.</returns>
 		public LogProperty ToLogProperty(bool resolveDisplayName = true) =>
-			new(this.NameForLogProperty, resolveDisplayName ? this.DisplayName : this.displayNameId, this.ForegroundColor, this.Width);
+			new(this.NameForLogProperty, resolveDisplayName ? this.DisplayName : this.displayNameId, this.SecondaryDisplayName, this.Quantifier, this.ForegroundColor, this.Width);
 
 
 		/// <summary>

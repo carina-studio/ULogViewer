@@ -776,6 +776,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				var name = logPropertyElement.GetProperty(nameof(LogProperty.Name)).GetString().AsNonNull();
 				var displayName = default(string);
+				var secondaryDisplayName = default(string);
+				var quantifier = default(string);
 				var foregroundColor = LogPropertyForegroundColor.Level;
 				var width = default(int?);
 				if (logPropertyElement.TryGetProperty(nameof(LogProperty.DisplayName), out var jsonElement)
@@ -789,12 +791,22 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					foregroundColor = fColor;
 				}
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.Quantifier), out jsonElement)
+				    && jsonElement.ValueKind == JsonValueKind.String)
+				{
+					quantifier = jsonElement.GetString();
+				}
+				if (logPropertyElement.TryGetProperty(nameof(LogProperty.SecondaryDisplayName), out jsonElement)
+				    && jsonElement.ValueKind == JsonValueKind.String)
+				{
+					secondaryDisplayName = jsonElement.GetString();
+				}
 				if (logPropertyElement.TryGetProperty(nameof(LogProperty.Width), out jsonElement)
 					&& jsonElement.ValueKind == JsonValueKind.Number)
 				{
 					width = jsonElement.GetInt32();
 				}
-				logProperties.Add(new LogProperty(name, displayName, foregroundColor, width));
+				logProperties.Add(new LogProperty(name, displayName, secondaryDisplayName, quantifier, foregroundColor, width));
 			}
 			this.visibleLogProperties = logProperties.AsReadOnly();
 		}
@@ -1485,6 +1497,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					if (it != LogPropertyForegroundColor.Level)
 						writer.WriteString(nameof(LogProperty.ForegroundColor), it.ToString());
 				});
+				property.Quantifier?.Let(it => writer.WriteString(nameof(LogProperty.Quantifier), it));
+				property.SecondaryDisplayName?.Let(it => writer.WriteString(nameof(LogProperty.SecondaryDisplayName), it));
 				property.Width?.Let(it => writer.WriteNumber(nameof(LogProperty.Width), it));
 				writer.WriteEndObject();
 			}
