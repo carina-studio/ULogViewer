@@ -696,6 +696,8 @@ return False</sys:String>
 	<!-- LogProperty -->
 	<sys:String x:Key="String/LogProperty.Action">Action</sys:String>
 	<sys:String x:Key="String/LogProperty.Author">Author</sys:String>
+	<sys:String x:Key="String/LogProperty.Available">Available</sys:String>
+	<sys:String x:Key="String/LogProperty.Average">Average</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimeSpan">Beginning Time Span</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimestamp">Beginning Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningValue">Beginning Value</sys:String>
@@ -739,12 +741,15 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra9">Extra 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">File</sys:String>
 	<sys:String x:Key="String/LogProperty.ID">ID</sys:String>
+	<sys:String x:Key="String/LogProperty.Invalid">Invalid</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">Key</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">Level</sys:String>
 	<sys:String x:Key="String/LogProperty.LevelString">Level</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">Line Number</sys:String>
+	<sys:String x:Key="String/LogProperty.Maximum">Maximum</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">Message</sys:String>
 	<sys:String x:Key="String/LogProperty.Method">Method</sys:String>
+	<sys:String x:Key="String/LogProperty.Minimum">Minimum</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">Name</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">Node</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">Number</sys:String>
@@ -771,6 +776,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">Relative Beginning Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">Relative Ending Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeTimestamp">Relative Timestamp</sys:String>
+	<sys:String x:Key="String/LogProperty.Remaining">Remaining</sys:String>
 	<sys:String x:Key="String/LogProperty.Request">Request</sys:String>
 	<sys:String x:Key="String/LogProperty.Response">Response</sys:String>
 	<sys:String x:Key="String/LogProperty.Result">Result</sys:String>
@@ -780,6 +786,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Speed">Speed</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">Start</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">Status</sys:String>
+	<sys:String x:Key="String/LogProperty.Sum">Sum</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">Summary</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">Tag</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">Tags</sys:String>
@@ -790,11 +797,15 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Timestamp">Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.TimestampString">Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.Title">Title</sys:String>
+	<sys:String x:Key="String/LogProperty.Total">Total</sys:String>
 	<sys:String x:Key="String/LogProperty.Type">Type</sys:String>
+	<sys:String x:Key="String/LogProperty.Unavailable">Unavailable</sys:String>
 	<sys:String x:Key="String/LogProperty.Uri">URL</sys:String>
 	<sys:String x:Key="String/LogProperty.UserAgent">User Agent</sys:String>
 	<sys:String x:Key="String/LogProperty.UserId">UID</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">User</sys:String>
+	<sys:String x:Key="String/LogProperty.Using">Using</sys:String>
+	<sys:String x:Key="String/LogProperty.Valid">Valid</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">Value</sys:String>
 	<sys:String x:Key="String/LogProperty.Value1">Value 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Value10">Value 10</sys:String>

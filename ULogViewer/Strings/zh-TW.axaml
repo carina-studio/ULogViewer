@@ -659,6 +659,8 @@ return False</sys:String>
 	<!-- LogProperty -->
 	<sys:String x:Key="String/LogProperty.Action">動作</sys:String>
 	<sys:String x:Key="String/LogProperty.Author">作者</sys:String>
+	<sys:String x:Key="String/LogProperty.Available">可使用</sys:String>
+	<sys:String x:Key="String/LogProperty.Average">平均</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimeSpan">起始時距</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimestamp">起始時間</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningValue">起始值</sys:String>
@@ -701,12 +703,15 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra8">附加資料 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra9">附加資料 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">檔案</sys:String>
+	<sys:String x:Key="String/LogProperty.Invalid">無效</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">鍵值</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">等級</sys:String>
 	<sys:String x:Key="String/LogProperty.LevelString">等級</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">行號</sys:String>
+	<sys:String x:Key="String/LogProperty.Maximum">最大值</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">訊息</sys:String>
 	<sys:String x:Key="String/LogProperty.Method">方法</sys:String>
+	<sys:String x:Key="String/LogProperty.Minimum">最小值</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">名稱</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">節點</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">編號</sys:String>
@@ -732,6 +737,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeBeginningTimestamp">相對起始時間</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeEndingTimestamp">相對結束時間</sys:String>
 	<sys:String x:Key="String/LogProperty.RelativeTimestamp">相對時間</sys:String>
+	<sys:String x:Key="String/LogProperty.Remaining">剩餘</sys:String>
 	<sys:String x:Key="String/LogProperty.Request">請求</sys:String>
 	<sys:String x:Key="String/LogProperty.Response">回應</sys:String>
 	<sys:String x:Key="String/LogProperty.Result">結果</sys:String>
@@ -741,6 +747,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Speed">速度</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">開始</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">狀態</sys:String>
+	<sys:String x:Key="String/LogProperty.Sum">總和</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">摘要</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">標籤</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">標籤組</sys:String>
@@ -750,10 +757,14 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Timestamp">時間</sys:String>
 	<sys:String x:Key="String/LogProperty.TimestampString">時間</sys:String>
 	<sys:String x:Key="String/LogProperty.Title">標題</sys:String>
+	<sys:String x:Key="String/LogProperty.Total">總量</sys:String>
 	<sys:String x:Key="String/LogProperty.Type">類型</sys:String>
+	<sys:String x:Key="String/LogProperty.Unavailable">無法使用</sys:String>
 	<sys:String x:Key="String/LogProperty.Uri">網址</sys:String>
 	<sys:String x:Key="String/LogProperty.UserAgent">使用者媒介</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
+	<sys:String x:Key="String/LogProperty.Using">使用中</sys:String>
+	<sys:String x:Key="String/LogProperty.Valid">有效</sys:String>
 	<sys:String x:Key="String/LogProperty.Value">值</sys:String>
 	<sys:String x:Key="String/LogProperty.Value1">值 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Value10">值 10</sys:String>

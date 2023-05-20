@@ -100,6 +100,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				{
 					it.Add("Action");
 					it.Add("Author");
+					it.Add("Available");
+					it.Add("Average");
 					it.Add("BeginningValue");
 					it.Add("Child");
 					it.Add("Children");
@@ -114,8 +116,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("EndingValue");
 					it.Add("EndPoint");
 					it.Add("ID");
+					it.Add("Invalid");
 					it.Add("Key");
+					it.Add("Maximum");
 					it.Add("Method");
+					it.Add("Minimum");
 					it.Add("Name");
 					it.Add("Node");
 					it.Add("Number");
@@ -138,6 +143,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("RelativeBeginningTimestamp");
 					it.Add("RelativeEndingTimestamp");
 					it.Add("RelativeTimestamp");
+					it.Add("Remaining");
 					it.Add("Request");
 					it.Add("Response");
 					it.Add("Result");
@@ -146,10 +152,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Speed");
 					it.Add("Start");
 					it.Add("Status");
+					it.Add("Sum");
 					it.Add("Tag");
 					it.Add("Type");
+					it.Add("Total");
+					it.Add("Unavailable");
 					it.Add("Uri");
 					it.Add("UserAgent");
+					it.Add("Using");
+					it.Add("Valid");
 					it.Add("Value");
 					it.Add("Value1");
 					it.Add("Value10");

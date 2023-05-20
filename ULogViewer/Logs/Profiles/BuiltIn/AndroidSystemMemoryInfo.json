@@ -78,26 +78,26 @@
       "Width": 200
     },
     {
-      "DisplayName": "Free",
+      "DisplayName": "Available",
       "Name": "Extra2",
       "Quantifier": "KB",
       "Width": 100
     },
     {
-      "DisplayName": "Used",
+      "DisplayName": "Using",
       "Name": "Extra3",
       "Quantifier": "KB",
       "Width": 100
     },
     {
-      "DisplayName": "Used",
+      "DisplayName": "Using",
       "Name": "Extra5",
       "Quantifier": "KB",
       "SecondaryDisplayName": "Kernel",
       "Width": 100
     },
     {
-      "DisplayName": "Used",
+      "DisplayName": "Using",
       "Name": "Extra4",
       "Quantifier": "KB",
       "SecondaryDisplayName": "PSS",
