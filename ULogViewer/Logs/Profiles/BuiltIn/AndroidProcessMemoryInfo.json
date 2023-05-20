@@ -1,0 +1,136 @@
+{
+  "DataSource": {
+    "Name": "StandardOutput",
+    "Options": {
+      "Command": "adb shell dumpsys meminfo {process name}"
+    }
+  },
+  "Icon": "Android",
+  "IsContinuousReading": true,
+  "IsTemplate": true,
+  "LogChartSeriesSources": [
+    {
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra1"
+    },
+    {
+      "PropertyDisplayName": "RSS",
+      "PropertyName": "Extra2"
+    },
+    {
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra10",
+      "SecondaryPropertyDisplayName": "Java"
+    },
+    {
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra11",
+      "SecondaryPropertyDisplayName": "Native"
+    },
+    {
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra12",
+      "SecondaryPropertyDisplayName": "Graphics"
+    },
+    {
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra13",
+      "SecondaryPropertyDisplayName": "Private Other"
+    },
+    {
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra14",
+      "SecondaryPropertyDisplayName": "System"
+    }
+  ],
+  "LogChartType": "ValueLinesWithDataPoints",
+  "LogChartValueGranularity": "Kilobytes",
+  "LogPatternMatchingMode": "ArbitraryAfterFirstMatch",
+  "LogPatterns": [
+    {
+      "Regex": "^\\s*App Summary",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Java Heap:\\s*(?<Extra10>[\\d\\,]+)",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Native Heap:\\s*(?<Extra11>[\\d\\,]+)",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Graphics:\\s*(?<Extra12>[\\d\\,]+)",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*Private Other:\\s*(?<Extra13>[\\d\\,]+)",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*System:\\s*(?<Extra14>[\\d\\,]+)",
+      "IgnoreCase": true
+    },
+    {
+      "Regex": "^\\s*TOTAL PSS:\\s*(?<Extra1>[\\d\\,]+)\\s*TOTAL RSS:\\s*(?<Extra2>[\\d\\,]+)",
+      "IgnoreCase": true
+    }
+  ],
+  "RestartReadingDelay": 1000,
+  "SortKey": "ReadTime",
+  "TimestampCategoryGranularity": "Minute",
+  "VisibleLogProperties": [
+    {
+      "DisplayName": "Timestamp",
+      "Name": "ReadTime",
+      "Width": 200
+    },
+    {
+      "DisplayName": "PSS",
+      "Name": "Extra1",
+      "Quantifier": "KB",
+      "Width": 100
+    },
+    {
+      "DisplayName": "RSS",
+      "Name": "Extra2",
+      "Quantifier": "KB",
+      "Width": 100
+    },
+    {
+      "DisplayName": "PSS",
+      "Name": "Extra10",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Java",
+      "Width": 100
+    },
+    {
+      "DisplayName": "PSS",
+      "Name": "Extra11",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Native",
+      "Width": 100
+    },
+    {
+      "DisplayName": "PSS",
+      "Name": "Extra12",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Graphics",
+      "Width": 100
+    },
+    {
+      "DisplayName": "PSS",
+      "Name": "Extra13",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "Private Other",
+      "Width": 100
+    },
+    {
+    "DisplayName": "PSS",
+      "Name": "Extra14",
+      "Quantifier": "KB",
+      "SecondaryDisplayName": "System",
+      "Width": 100
+    }
+  ]
+}

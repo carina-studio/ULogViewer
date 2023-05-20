@@ -73,6 +73,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一個或多個檔案中的 Android 日誌。此類型亦支援事件日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一個或多個檔案中的 Android 核心日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo">Android 處理程序記憶體監控</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo.Description">Android 特定處理程序的即時記憶體資訊。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android 系統記憶體監控</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android 系統的即時記憶體資訊。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系統追蹤檔案</sys:String>

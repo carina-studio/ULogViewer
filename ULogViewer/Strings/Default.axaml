@@ -76,6 +76,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. Event logs are also supported by this profile.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android Kernel Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">Android kernel logs stored in one or more files.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo">Android Process Memory Monitor</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo.Description">Realtime memory information of specific process of Android.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android System Memory Monitor</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Realtime system memory information of Android.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android System Trace File</sys:String>

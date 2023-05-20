@@ -73,8 +73,10 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一个或多个文件中的 Android 日志。此类型亦支援事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">在一个或多个文件中的 Android 核心日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo">Android 进程内存监控</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo.Description">Android 特定进程的实时内存信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android 系统内存监控</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android 系统的实时内存资讯。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android 系统的实时内存信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系统追踪文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用于追踪及分析 Android 系统及应用程序效能的文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache 服务器存取日志文件</sys:String>
