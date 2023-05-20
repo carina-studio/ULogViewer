@@ -318,7 +318,7 @@ partial class SessionView
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = series.Source?.PropertyDisplayName,
-                Stroke = new SolidColorPaint(overlappedSeriesColor)
+                Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                 {
                     IsAntialias = true,
                 },

@@ -214,7 +214,7 @@
 	<sys:Double x:Key="Double/SessionView.LogChart.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Legend.FontSize">13</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Size">7</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Width">1</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Width">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.ToolTip.FontSize">13</sys:Double>
 	<StaticResourceExtension x:Key="Double/SessionView.LogChartTypeMenu.CurrentLogChartType.Opacity" ResourceKey="Double/LogProfileSelectionContextMenu.CurrentLogProfile.Opacity"/>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.FileName.FontSize">14</sys:Double>
