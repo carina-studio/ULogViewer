@@ -12,15 +12,19 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
     /// </summary>
     /// <param name="propertyName">Name of property of log.</param>
     /// <param name="displayName">Name which is suitable to display on chart.</param>
+    /// <param name="secondaryDisplayName">Secondary name to display on chart.</param>
+    /// <param name="quantifier">Quantifier to display on chart.</param>
     /// <param name="defaultValue">Default value if value cannot be got from log property.</param>
     /// <param name="scaling">Scaling on value got from log property.</param>
-    public LogChartSeriesSource(string propertyName, string? displayName, double? defaultValue, double scaling)
+    public LogChartSeriesSource(string propertyName, string? displayName, string? secondaryDisplayName, string? quantifier, double? defaultValue, double scaling)
     {
         if (!double.IsFinite(scaling))
             throw new ArgumentOutOfRangeException(nameof(scaling));
         this.DefaultValue = defaultValue?.Let(it => double.IsFinite(it) ? (double?)it : null);
         this.PropertyDisplayName = displayName ?? propertyName;
         this.PropertyName = propertyName;
+        this.Quantifier = quantifier;
+        this.SecondaryPropertyDisplayName = secondaryDisplayName;
         this.ValueScaling = scaling;
     }
     
@@ -37,6 +41,8 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
         && this.DefaultValue.Equals(source.DefaultValue)
         && this.PropertyName == source.PropertyName
         && this.PropertyDisplayName == source.PropertyDisplayName
+        && this.Quantifier == source.Quantifier
+        && this.SecondaryPropertyDisplayName == source.SecondaryPropertyDisplayName
         && Math.Abs(this.ValueScaling - source.ValueScaling) <= Double.Epsilon * 2;
 
 
@@ -71,6 +77,18 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
     /// Name of property of log.
     /// </summary>
     public string PropertyName { get; }
+    
+    
+    /// <summary>
+    /// Quantifier to display on chart.
+    /// </summary>
+    public string? Quantifier { get; }
+    
+    
+    /// <summary>
+    /// Secondary name of property to display on chart.
+    /// </summary>
+    public string? SecondaryPropertyDisplayName { get; }
 
 
     // Get readable string.

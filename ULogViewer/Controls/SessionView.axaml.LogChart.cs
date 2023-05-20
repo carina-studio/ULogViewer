@@ -22,6 +22,7 @@ using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Avalonia;
 using LiveChartsCore.SkiaSharpView.Drawing;
+using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using Microsoft.Extensions.Logging;
@@ -32,6 +33,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -191,6 +193,64 @@ partial class SessionView
             _ => SKBlendMode.Multiply,
         };
         
+        // generate name of series
+        var seriesNameBuffer = new StringBuilder(series.Source?.PropertyDisplayName);
+        series.Source?.SecondaryPropertyDisplayName.Let(it =>
+        {
+            if (string.IsNullOrEmpty(it))
+                return;
+            seriesNameBuffer.Append(" - ");
+            seriesNameBuffer.Append(it);
+        });
+        series.Source?.Quantifier.Let(it =>
+        {
+            if (string.IsNullOrEmpty(it))
+                return;
+            seriesNameBuffer.Append(" (");
+            seriesNameBuffer.Append(it);
+            seriesNameBuffer.Append(')');
+        });
+        
+        // prepare tooltip generator
+        string FormatToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue, TVisual, LabelGeometry> point)
+        {
+            // name
+            var buffer = new StringBuilder();
+            var source = series.Source;
+            var value = series.Values[point.Context.Entity.EntityIndex];
+            buffer.Append(value.Label ?? series.Source?.PropertyDisplayName);
+            source?.SecondaryPropertyDisplayName.Let(it =>
+            {
+                if (string.IsNullOrEmpty(it))
+                    return;
+                buffer.Append(" - ");
+                buffer.Append(it);
+            });
+            buffer.Append(": ");
+            
+            // value
+            var viewModel = (this.DataContext as Session)?.LogChart;
+            buffer.Append(viewModel?.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString());
+            switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
+            {
+                case LogChartValueGranularity.Byte:
+                case LogChartValueGranularity.Kilobytes:
+                case LogChartValueGranularity.Megabytes:
+                case LogChartValueGranularity.Gigabytes:
+                    break;
+                default:
+                    source?.Quantifier.Let(it =>
+                    {
+                        if (string.IsNullOrEmpty(it))
+                            return;
+                        buffer.Append(' ');
+                        buffer.Append(it);
+                    });
+                    break;
+            }
+            return buffer.ToString();
+        }
+        
         // create series
         var chartType = viewModel.ChartType;
         return chartType switch
@@ -205,16 +265,11 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
                 },
-                Name = series.Source?.PropertyDisplayName,
+                Name = seriesNameBuffer.ToString(),
                 Padding = 0,
                 Rx = 0,
                 Ry = 0,
-                TooltipLabelFormatter = point =>
-                {
-                    var value = series.Values[point.Context.Entity.EntityIndex];
-                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
-                },
+                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
             LogChartType.ValueStackedAreas
@@ -242,17 +297,12 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
-                Name = series.Source?.PropertyDisplayName,
+                Name = seriesNameBuffer.ToString(),
                 Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                 {
                     IsAntialias = true,
                 },
-                TooltipLabelFormatter = point =>
-                {
-                    var value = series.Values[point.Context.Entity.EntityIndex];
-                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
-                },
+                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
             LogChartType.ValueStackedBars => new StackedColumnSeries<DisplayableLogChartSeriesValue>
@@ -264,16 +314,11 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
                 },
-                Name = series.Source?.PropertyDisplayName,
+                Name = seriesNameBuffer.ToString(),
                 Padding = 0,
                 Rx = 0,
                 Ry = 0,
-                TooltipLabelFormatter = point =>
-                {
-                    var value = series.Values[point.Context.Entity.EntityIndex];
-                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
-                },
+                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
             _ => new LineSeries<DisplayableLogChartSeriesValue>
@@ -317,17 +362,20 @@ partial class SessionView
                         point.PrimaryValue = value.Value.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
-                Name = series.Source?.PropertyDisplayName,
-                Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
+                Name = seriesNameBuffer.ToString(),
+                Stroke = chartType switch
                 {
-                    IsAntialias = true,
+                    LogChartType.ValueAreas
+                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaint(overlappedSeriesColor, lineWidth)
+                        {
+                            IsAntialias = true,
+                        },
+                    _ => new SolidColorPaint(seriesColor, lineWidth)
+                    {
+                        IsAntialias = true,
+                    },
                 },
-                TooltipLabelFormatter = point =>
-                {
-                    var value = series.Values[point.Context.Entity.EntityIndex];
-                    var valueText = (this.DataContext as Session)?.LogChart.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString();
-                    return $"{value.Label ?? series.Source?.PropertyDisplayName}: {valueText}";
-                },
+                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
         };

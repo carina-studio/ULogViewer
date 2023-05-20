@@ -30,6 +30,8 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
                     break;
             }
         };
+        this.Quantifier = source.Quantifier;
+        this.SecondaryPropertyDisplayName = source.SecondaryPropertyDisplayName;
         this.ValueScaling = source.ValueScaling;
     }
     
@@ -61,8 +63,20 @@ class DisplayableLogChartSeriesSource : BaseDisposable, INotifyPropertyChanged
     /// Get name of log property for series.
     /// </summary>
     public string PropertyName => this.logProperty.Name;
-    
-    
+
+
+    /// <summary>
+    /// Quantifier to display on chart.
+    /// </summary>
+    public string? Quantifier { get; }
+
+
+    /// <summary>
+    /// Secondary name of property to display on chart.
+    /// </summary>
+    public string? SecondaryPropertyDisplayName { get; }
+
+
     /// <summary>
     /// Scaling on value got from log property.
     /// </summary>

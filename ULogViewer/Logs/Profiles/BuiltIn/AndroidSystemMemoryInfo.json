@@ -9,24 +9,28 @@
   "IsContinuousReading": true,
   "LogChartSeriesSources": [
     {
-      "PropertyDisplayName": "Used",
+      "PropertyDisplayName": "Using",
       "PropertyName": "Extra3"
     },
     {
-      "PropertyDisplayName": "Used PSS",
-      "PropertyName": "Extra4"
+      "PropertyDisplayName": "Using",
+      "PropertyName": "Extra4",
+      "SecondaryPropertyDisplayName": "PSS"
     },
     {
-      "PropertyDisplayName": "Used Kernel",
-      "PropertyName": "Extra5"
+      "PropertyDisplayName": "Using",
+      "PropertyName": "Extra5",
+      "SecondaryPropertyDisplayName": "Kernel"
     },
     {
-      "PropertyDisplayName": "Dalvik PSS",
-      "PropertyName": "Extra10"
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra10",
+      "SecondaryPropertyDisplayName": "Dalvik"
     },
     {
-      "PropertyDisplayName": "Native PSS",
-      "PropertyName": "Extra11"
+      "PropertyDisplayName": "PSS",
+      "PropertyName": "Extra11",
+      "SecondaryPropertyDisplayName": "Native"
     }
   ],
   "LogChartType": "ValueLinesWithDataPoints",

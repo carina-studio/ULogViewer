@@ -44,6 +44,8 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	readonly ComboBox displayNameComboBox;
 	bool isDisplayNameSameAsName;
 	readonly ComboBox nameComboBox;
+	readonly TextBox quantifierTextBox;
+	readonly TextBox secondaryDisplayNameTextBox;
 	readonly RealNumberTextBox valueScalingTextBox;
 
 
@@ -80,6 +82,8 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 					this.displayNameComboBox.SelectedItem = name;
 			});
 		});
+		this.quantifierTextBox = this.Get<TextBox>(nameof(quantifierTextBox));
+		this.secondaryDisplayNameTextBox = this.Get<TextBox>(nameof(secondaryDisplayNameTextBox));
 		this.valueScalingTextBox = this.Get<RealNumberTextBox>(nameof(valueScalingTextBox)).Also(it =>
 		{
 			it.GetObservable(RealNumberTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
@@ -109,6 +113,8 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 				: (string)this.displayNameComboBox.SelectedItem.AsNonNull();
 		return Task.FromResult((object?)new LogChartSeriesSource((string)this.nameComboBox.SelectedItem.AsNonNull(), 
 			displayName, 
+			this.secondaryDisplayNameTextBox.Text?.Trim(),
+			this.quantifierTextBox.Text?.Trim(),
 			this.defaultValueTextBox.Value,
 			this.valueScalingTextBox.Value.GetValueOrDefault()));
 	}
@@ -137,6 +143,8 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 				this.customDisplayNameSwitch.IsChecked = true;
 				this.customDisplayNameTextBox.Text = source.PropertyDisplayName.Trim();
 			}
+			this.quantifierTextBox.Text = source.Quantifier?.Trim();
+			this.secondaryDisplayNameTextBox.Text = source.SecondaryPropertyDisplayName?.Trim();
 			this.valueScalingTextBox.Value = source.ValueScaling;
 		}
 		this.SynchronizationContext.Post(this.nameComboBox.Focus);

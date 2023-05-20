@@ -74,6 +74,23 @@
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
+					
+					<!-- Secondary display name -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName}"/>
+						<TextBox Name="secondaryDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+					</Grid>
+					<Separator Classes="Dialog_Item_Separator"/>
+					
+					<!-- Quantifier -->
+					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Quantifier}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Quantifier.Description}"/>
+						</StackPanel>
+						<TextBox Name="quantifierTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="32" Watermark="{DynamicResource String/Common.None}"/>
+					</Grid>
 					
 					<!-- Properties for direct number value -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsDirectNumberValueSeries}">

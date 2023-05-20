@@ -386,6 +386,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">Specific number if value cannot be got from property.</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">Display name</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">Property</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier">Quantifier</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier.Description">Quantifier of property value such as 'KB' and 'cm'.</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName">Secondary display name</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">Source log property of chart</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">Scaling of value</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">The number which the value of property will be multiplied by.</sys:String>
@@ -1292,7 +1295,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">Average quantity</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalByteSize">Total size in bytes</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">Total duration</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuntity">Total quantity</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuantity">Total quantity</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">{0} Selected</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection is {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
@@ -1421,9 +1424,9 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.DisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Color of text</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartSeriesSourceEditorDialog.Name"/>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Quantifier">Quantifier</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description">For example, 'KB', 'cm'.</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName">Secondary display name</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier.Description"/>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the column width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column width</sys:String>

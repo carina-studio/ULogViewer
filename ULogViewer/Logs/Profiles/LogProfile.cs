@@ -706,6 +706,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					defaultValue = doubleValue;
 				}
+				var quantifier = default(string);
+				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.Quantifier), out jsonProperty)
+				    && jsonProperty.ValueKind == JsonValueKind.String)
+				{
+					quantifier = jsonProperty.GetString();
+				}
+				var secondaryPropertyDisplayName = default(string);
+				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.SecondaryPropertyDisplayName), out jsonProperty)
+				    && jsonProperty.ValueKind == JsonValueKind.String)
+				{
+					secondaryPropertyDisplayName = jsonProperty.GetString();
+				}
 				var valueScaling = 1.0;
 				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.ValueScaling), out jsonProperty)
 				    && jsonProperty.ValueKind == JsonValueKind.Number
@@ -713,7 +725,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				{
 					valueScaling = doubleValue;
 				}
-				sources.Add(new LogChartSeriesSource(propertyName, propertyDisplayName, defaultValue, valueScaling));
+				sources.Add(new LogChartSeriesSource(propertyName, propertyDisplayName, secondaryPropertyDisplayName, quantifier, defaultValue, valueScaling));
 			}
 			this.logChartSeriesSources = sources.AsReadOnly();
 		}
@@ -1430,6 +1442,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (source.PropertyDisplayName != source.PropertyName)
 					writer.WriteString(nameof(LogChartSeriesSource.PropertyDisplayName), source.PropertyDisplayName);
 				writer.WriteString(nameof(LogChartSeriesSource.PropertyName), source.PropertyName);
+				source.Quantifier?.Let(it => writer.WriteString(nameof(LogChartSeriesSource.Quantifier), it));
+				source.SecondaryPropertyDisplayName?.Let(it => writer.WriteString(nameof(LogChartSeriesSource.SecondaryPropertyDisplayName), it));
 				if (Math.Abs(source.ValueScaling - 1) > double.Epsilon * 2)
 					writer.WriteNumber(nameof(LogChartSeriesSource.ValueScaling), source.ValueScaling);
 				writer.WriteEndObject();
