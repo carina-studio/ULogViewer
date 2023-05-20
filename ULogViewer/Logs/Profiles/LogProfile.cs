@@ -149,6 +149,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.Name = template.Name;
 			// ReSharper restore VirtualMemberCallInConstructor
 			this.rawLogLevelPropertyName = template.rawLogLevelPropertyName;
+			this.restartReadingDelay = template.restartReadingDelay;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
 			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
