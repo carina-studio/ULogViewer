@@ -118,6 +118,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logStringEncodingForWriting = template.logStringEncodingForWriting;
 			this.logWritingFormats = template.logWritingFormats;
 			this.Name = template.Name;
+			this.restartReadingDelay = template.restartReadingDelay;
 			this.sortDirection = template.sortDirection;
 			this.sortKey = template.sortKey;
 			this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
