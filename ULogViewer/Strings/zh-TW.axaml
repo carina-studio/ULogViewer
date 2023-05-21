@@ -646,6 +646,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">匯出日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">無法匯出日誌類型至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">無法從 '{0}' 匯入日誌類型。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet">協同日誌分析</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasLogChart">圖表</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ImportLogProfile">匯入…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>

@@ -653,6 +653,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">导出日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法输出日志类型至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">无法从 '{0}' 输出日志类型。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet">协同日志分析</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasLogChart">图表</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ImportLogProfile">导入…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系统管理员身份</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">连续读取</sys:String>

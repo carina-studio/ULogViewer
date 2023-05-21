@@ -683,6 +683,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">Unable to import profile from '{0}'.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet">Cooperative log analysis</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasLogChart">Chart</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ImportLogProfile">Import…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>

@@ -1,6 +1,5 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!-- Resources -->
 	<Styles.Resources>
@@ -103,7 +102,9 @@
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background.Pro">#00000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#00000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border.Pro">#00000000</SolidColorBrush>
 
 			<!-- LogStringPropertyDialog -->
 			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#30ffffff</SolidColorBrush>
@@ -173,6 +174,14 @@
 	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label">
 		<Setter Property="Background" Value="{DynamicResource Brush/LogProfileSelectionDialog.Label.Background}"/>
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush/LogProfileSelectionDialog.Label.Border}"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="{DynamicResource CornerRadius/LogProfileSelectionDialog.Label}"/>
+		<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Label.Margin}"/>
+		<Setter Property="Padding" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Label.Padding}"/>
+	</Style>
+	<Style Selector="Border.LogProfileSelectionDialog_LogProfile_Label_Pro">
+		<Setter Property="Background" Value="{DynamicResource Brush/LogProfileSelectionDialog.Label.Background.Pro}"/>
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush/LogProfileSelectionDialog.Label.Border.Pro}"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="{DynamicResource CornerRadius/LogProfileSelectionDialog.Label}"/>
 		<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Label.Margin}"/>

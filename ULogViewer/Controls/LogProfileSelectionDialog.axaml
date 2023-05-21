@@ -3,8 +3,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
-        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-        xmlns:appProfiles="clr-namespace:CarinaStudio.ULogViewer.Logs.Profiles;assembly=ULogViewer"
+        xmlns:abConverters="using:CarinaStudio.Data.Converters"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:appProfiles="using:CarinaStudio.ULogViewer.Logs.Profiles"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileSelectionDialog"
@@ -90,8 +92,17 @@
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
 									</WrapPanel.IsEnabled>
-									<Border Classes="LogProfileSelectionDialog_LogProfile_Label">
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding !#proDataSourceProviderLabel.IsVisible}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.DisplayName}"/>
+									</Border>
+									<Border Name="proDataSourceProviderLabel" Classes="LogProfileSelectionDialog_LogProfile_Label_Pro" IsVisible="{Binding DataSourceProvider, Converter={x:Static appControls:LogProfileSelectionDialog.ProDataSourceProviderConverter}}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.DisplayName}"/>
+									</Border>
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label_Pro" IsVisible="{Binding LogChartType, Converter={x:Static abConverters:ObjectConverters.IsNotEquivalentTo}, ConverterParameter={x:Static appProfiles:LogChartType.None}}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.HasLogChart}"/>
+									</Border>
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label_Pro" IsVisible="{Binding CooperativeLogAnalysisScriptSet, Converter={x:Static ObjectConverters.IsNotNull}}">
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsBuiltIn}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.BuiltInLogProfile}"/>

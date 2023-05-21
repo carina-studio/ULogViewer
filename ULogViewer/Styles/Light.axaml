@@ -66,7 +66,9 @@
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#cccccc</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background.Pro">#c5b7e1</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#808080</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border.Pro">#a893d2</SolidColorBrush>
 
 			<!-- LogStringPropertyDialog -->
 			<SolidColorBrush x:Key="Brush/LogStringPropertyDialog.FoundText.Background">#20000000</SolidColorBrush>

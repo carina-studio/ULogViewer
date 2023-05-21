@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
@@ -7,6 +8,7 @@ using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -25,8 +27,15 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to select <see cref="LogProfile"/>.
 	/// </summary>
-	partial class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
+		/// <summary>
+		/// Converter to convert from <see cref="ILogDataSourceProvider"/> to bool which indicates whether the provider is Pro-version only or not.
+		/// </summary>
+		public static readonly IValueConverter ProDataSourceProviderConverter = new FuncValueConverter<ILogDataSourceProvider, bool>(provider =>
+			provider is not null && (provider.IsProVersionOnly || provider is ScriptLogDataSourceProvider));
+		
+		
 		// Static fields.
 		static readonly StyledProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
 		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>("IsProVersionActivated");
