@@ -3528,20 +3528,23 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
 				{
-					switch (e.Key)
-                    {
-						case Key.A:
-							(this.DataContext as Session)?.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
-							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
-							break;
-						case Key.M:
-							(this.DataContext as Session)?.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
-							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
-							break;
-						case Key.R:
-							(this.DataContext as Session)?.ResetTemporarilyShownLogsCommand.TryExecute();
-							this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
-							break;
+					if (!ReferenceEquals(e.Source, this.logTextFilterTextBox))
+					{
+						switch (e.Key)
+						{
+							case Key.A:
+								(this.DataContext as Session)?.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
+								this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
+								break;
+							case Key.M:
+								(this.DataContext as Session)?.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
+								this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
+								break;
+							case Key.R:
+								(this.DataContext as Session)?.ResetTemporarilyShownLogsCommand.TryExecute();
+								this.SynchronizationContext.Post(this.Focus); // [Workaround] Get focus back to prevent unexpected focus lost.
+								break;
+						}
 					}
 				}
 				else
