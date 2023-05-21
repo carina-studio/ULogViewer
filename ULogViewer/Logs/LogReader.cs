@@ -54,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		object? pendingLogsReadingToken;
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new();
 		LogReadingPrecondition precondition;
+		bool printTraceLogs;
 		string? rawLogLevelPropertyName;
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
@@ -87,6 +88,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
+			this.printTraceLogs = this.Application.IsDebugMode;
 			this.readingTaskFactory = readingTaskFactory;
 			this.readOnlyLogLevelMap = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMap);
 
@@ -1023,6 +1025,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			var defaultNonContinuousUpdateInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateInterval);
 			var nonContinuousChunkSize = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateChunkSize);
 			var nonContinuousPaddingInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingPaddingInterval);
+			var printTraceLogs = this.printTraceLogs;
 
 			// read logs
 			var stopWatch = new Stopwatch().Also(it => it.Start());
@@ -1090,7 +1093,7 @@ namespace CarinaStudio.ULogViewer.Logs
 								++lineNumber;
 							else
 							{
-								this.Logger.LogTrace("No line read, skip patterns");
+								this.Logger.LogTrace("No line read, skip pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 
 								// skip all skippable patterns because of no line read
 								while (logPatternIndex <= lastLogPatternIndex)
@@ -1098,6 +1101,8 @@ namespace CarinaStudio.ULogViewer.Logs
 									++logPatternIndex;
 									if (logPatternIndex > lastLogPatternIndex)
 										break;
+									if (printTraceLogs)
+										this.Logger.LogTrace("Move to pattern {index}/{total}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 									if (!logPatterns[logPatternIndex].IsSkippable)
 										break;
 								}
@@ -1121,6 +1126,8 @@ namespace CarinaStudio.ULogViewer.Logs
 										}
 									}
 									logPatternIndex = 0;
+									if (printTraceLogs)
+										this.Logger.LogTrace("Reset to pattern 0/{total}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 								}
 
 								// wait for reading line
@@ -1145,6 +1152,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					this.Logger.LogWarning("No raw log line read");
 					return;
 				}
+				if (printTraceLogs)
+					this.Logger.LogTrace("Start with matching mode {mode}, pattern 0/{t}: '{pattern}'", logPatternMatchingMode, lastLogPatternIndex, logPatterns[0].Regex);
 				this.SynchronizationContext.Post(() => this.OnFirstRawLogDataRead(readingToken));
 				
 				// read logs
@@ -1188,12 +1197,8 @@ namespace CarinaStudio.ULogViewer.Logs
 									}
 								}
 							}
-							else
-							{
-#if DEBUG
-								this.Logger.LogTrace("'{logLine}' Cannot be matched by pattern '{logPattern}'", logLine, logPattern.Regex);
-#endif
-							}
+							else if (printTraceLogs)
+								this.Logger.LogTrace("'{logLine}' Cannot be matched by pattern {index}/{t}: '{logPattern}'", logLine, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
 							logLine = ReadNextLine(reader, ref lineNumber);
 						}
 						finally
@@ -1262,9 +1267,15 @@ namespace CarinaStudio.ULogViewer.Logs
 											}
 										}
 										logPatternIndex = 0;
+										if (this.printTraceLogs)
+											this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 									}
 									else
+									{
 										++logPatternIndex;
+										if (this.printTraceLogs)
+											this.Logger.LogTrace("Move to pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
+									}
 								}
 
 								// read next line or skip patterns
@@ -1276,6 +1287,8 @@ namespace CarinaStudio.ULogViewer.Logs
 								if (logPatternIndex < lastLogPatternIndex)
 								{
 									++logPatternIndex;
+									if (this.printTraceLogs)
+										this.Logger.LogTrace("Move to pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 									continue;
 								}
 
@@ -1302,15 +1315,17 @@ namespace CarinaStudio.ULogViewer.Logs
 
 								// move to first pattern
 								logPatternIndex = 0;
+								if (this.printTraceLogs)
+									this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 							}
 							else if (logPattern.IsRepeatable)
 							{
 								// drop this log if this pattern never be matched
 								if (prevLogPattern != logPattern)
 								{
-#if DEBUG
-									this.Logger.LogTrace("'{logLine}' Cannot be matched as 1st line of repeatable pattern '{logPattern}'", logLine, logPattern.Regex);
-#endif
+									// print log
+									if (printTraceLogs)
+										this.Logger.LogTrace("'{logLine}' Cannot be matched as 1st line of repeatable pattern {index}/{t}: '{logPattern}'", logLine, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
 
 									// drop log
 									logBuilder.Reset();
@@ -1321,6 +1336,8 @@ namespace CarinaStudio.ULogViewer.Logs
 
 									// move to first pattern
 									logPatternIndex = 0;
+									if (this.printTraceLogs)
+										this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 									continue;
 								}
 
@@ -1328,6 +1345,8 @@ namespace CarinaStudio.ULogViewer.Logs
 								if (logPatternIndex != lastLogPatternIndex)
 								{
 									++logPatternIndex;
+									if (this.printTraceLogs)
+										this.Logger.LogTrace("Move to pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 									continue;
 								}
 
@@ -1354,12 +1373,14 @@ namespace CarinaStudio.ULogViewer.Logs
 
 								// move to first pattern
 								logPatternIndex = 0;
+								if (this.printTraceLogs)
+									this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 							}
 							else
 							{
-#if DEBUG
-								this.Logger.LogTrace("'{logLine}' cannot be matched by pattern '{logPattern}'", logLine, logPattern.Regex);
-#endif
+								// print log
+								if (printTraceLogs)
+									this.Logger.LogTrace("'{logLine}' cannot be matched by pattern {index}/{t}: '{logPattern}'", logLine, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
 
 								// drop log
 								logBuilder.Reset();
@@ -1370,6 +1391,8 @@ namespace CarinaStudio.ULogViewer.Logs
 
 								// move to first pattern
 								logPatternIndex = 0;
+								if (this.printTraceLogs)
+									this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 							}
 						}
 						finally
@@ -1401,6 +1424,8 @@ namespace CarinaStudio.ULogViewer.Logs
 					// get state
 					var isFirstPatternMatchNeeded = logPatternMatchingMode == LogPatternMatchingMode.ArbitraryAfterFirstMatch
 						&& !logPatterns[0].IsSkippable;
+					if (isFirstPatternMatchNeeded && printTraceLogs)
+						this.Logger.LogTrace("Need to match first log");
 
 					// prepare local functions
 					var unmatchedPatterns = new HashSet<LogPattern>();
@@ -1447,6 +1472,8 @@ namespace CarinaStudio.ULogViewer.Logs
 										}
 
 										// stop matching
+										if (printTraceLogs)
+											this.Logger.LogTrace("Matched by pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPattern.Regex);
 										break;
 									}
 									++logPatternIndex;
@@ -1469,6 +1496,10 @@ namespace CarinaStudio.ULogViewer.Logs
 										logBuilder.Set(nameof(Log.FileName), fileName);
 										isLineNumberSet = true;
 									}
+									
+									// print log
+									if (printTraceLogs)
+										this.Logger.LogTrace("First log matched by pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 								}
 							}
 
@@ -1516,7 +1547,6 @@ namespace CarinaStudio.ULogViewer.Logs
 								accumulatedLogCount = 0;
 								startReadingTime = stopWatch.ElapsedMilliseconds;
 							}
-							prevLogPattern = logPattern;
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
 				}
