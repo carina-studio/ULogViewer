@@ -61,6 +61,12 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		});
 		this.customDisplayNameTextBox = this.Get<TextBox>(nameof(customDisplayNameTextBox)).Also(it =>
 		{
+			it.LostFocus += (_, _) =>
+			{
+				var text = it.Text;
+				if (string.IsNullOrWhiteSpace(text))
+					it.Text = null;
+			};
 			it.GetObservable(TextBox.TextProperty).Subscribe(this.InvalidateInput);
 		});
 		this.defaultValueTextBox = this.Get<RealNumberTextBox>(nameof(defaultValueTextBox)).Also(it =>
@@ -154,6 +160,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	/// <inheritdoc/>
 	protected override bool OnValidateInput() =>
 		base.OnValidateInput()
+		&& (this.customDisplayNameSwitch.IsChecked == false || !string.IsNullOrWhiteSpace(this.customDisplayNameTextBox.Text))
 		&& this.defaultValueTextBox.IsTextValid
 		&& this.valueScalingTextBox.IsTextValid;
 

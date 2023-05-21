@@ -65,7 +65,7 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
-						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.None}"/>
+						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.Required}"/>
 					</Grid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
