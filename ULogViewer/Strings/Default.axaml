@@ -265,7 +265,7 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools">Android SDK Platform Tools</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">'Android Device Log', 'Android Device Event Log' and 'Android Device System Trace' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK Platform Tools. Please add path of 'platform-tools' folder of Android SDK Platform Tools to PATH environment variable after installation.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">'Android Device Log', 'Android Device Event Log', 'Android Device System Trace', 'Android Process Memory Monitor' and 'Android System Memory Monitor' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK Platform Tools. Please add path of 'platform-tools' folder of Android SDK Platform Tools to PATH environment variable after installation.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure Command-Line Interface (CLI)</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data source uses Azure Command-Line Interface (CLI) to read log data or access functions of Azure. Please add path of folder contains 'az' command to PATH environment variable after installation.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>

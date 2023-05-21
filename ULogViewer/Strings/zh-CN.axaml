@@ -251,7 +251,7 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools">Android SDK 平台工具</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">「Android 设备日志」、「Android 设备事件日志」及「Android 设备系统追踪」内建日志类型会使用跟随 Android SDK 平台工具发布之 Android Debug Bridge (ADB)。安装完成后请将 Android SDK 中的 'platform-tools' 资料夹路径加至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">「Android 设备日志」、「Android 设备事件日志」、「Android 设备系统追踪」、「Android 进程内存监控」及「Android 系统内存监控」内建日志类型会使用跟随 Android SDK 平台工具发布之 Android Debug Bridge (ADB)。安装完成后请将 Android SDK 中的 'platform-tools' 资料夹路径加至 PATH 环境变量。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure 命令行接口 (CLI)</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 资料库」及「SQL Server 资料库」资料来源使用 Azure 命令行接口 (CLI) 读取日志资料或调用 Azure 功能。安装完成后请将包含 'az' 指令之资料夹路径加至 PATH 环境变量。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
