@@ -6,6 +6,7 @@
 + Cooperative log analysis scripts are added to the following built-in log profiles for common cases:
     + Android Device Log
     + Android Log Files
+    + Android System Memory Monitor
     + ULogViewer Log File
 + Support embedding **Log data source script** into log profile and set it as data source of log profile.
 + Support rendering values of log properties as chart. The following types of charts are supported:
