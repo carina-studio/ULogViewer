@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
 + 版本：2.0
-+ 更新時間：2023/4/27
++ 更新時間：2023/5/22
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -22,7 +22,7 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 ## 外部相依性
 
 ### Android SDK 平台工具
-若要使用 **「Android 裝置日誌」** 、 **「Android 裝置事件日誌」** 及 **「Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
+若要使用 **「Android 裝置日誌」** 、 **「Android 裝置事件日誌」** 、 **「Android 裝置系統追蹤」** 、 **「Android 系統記憶體監控」** 及 **「Android 處理程序記憶體監控」** 日誌類型，您必須先安裝 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
 
 ### Azure 命令列介面 (CLI)
 若要使用 **「Azure 命令列介面 (CLI)」**、**「MySQL 資料庫」** 及 **「SQL Server 資料庫」** 資料來源之完整功能，您必須先安裝 [Azure 命令列介面 (CLI)](https://docs.microsoft.com/cli/azure/)。
