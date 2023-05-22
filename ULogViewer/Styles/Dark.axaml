@@ -44,7 +44,7 @@
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background.Pro">#422e6B</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#222222</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border">#444444</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Border.Pro">#583d8f</SolidColorBrush>
 
 			<!-- SessionView -->
