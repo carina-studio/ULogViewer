@@ -58,7 +58,7 @@
       "IgnoreCase": true
     },
     {
-      "Regex": "^\\s*Used RAM:\\s*(?<Extra3>[\\d\\,]+)\\s*KB?\\s*\\((?<Extra4>[\\d\\,]+)\\s*(KB?)? used pss \\+ (?<Extra5>[\\d\\,]+)\\s*(KB?)? kernel",
+      "Regex": "^\\s*Used RAM:\\s*(?<Extra3>[\\d\\,]+)\\s*KB?\\s*\\((?<Extra4>[\\d\\,]+)\\s*(KB?)? used pss\\s+\\+\\s+(?<Extra5>[\\d\\,]+)\\s*(KB?)? kernel",
       "IgnoreCase": true
     },
     {
