@@ -72,7 +72,7 @@
       "IgnoreCase": true
     },
     {
-      "Regex": "^\\s*TOTAL PSS:\\s*(?<Extra1>[\\d\\,]+)\\s*TOTAL RSS:\\s*(?<Extra2>[\\d\\,]+)",
+      "Regex": "^\\s*TOTAL(\\s+PSS)?:\\s*(?<Extra1>[\\d\\,]+)\\s*(TOTAL RSS:\\s*(?<Extra2>[\\d\\,]+))?",
       "IgnoreCase": true
     }
   ],
