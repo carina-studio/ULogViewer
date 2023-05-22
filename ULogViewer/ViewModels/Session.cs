@@ -521,6 +521,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 		// Static fields.
 		static readonly LinkedList<Session> activationHistoryList = new();
+		static readonly SettingKey<bool> areAllPanelsHiddenKey = new("Session.AreAllPanelsHidden", false);
 		static readonly TaskFactory defaultLogsReadingTaskFactory = new(TaskScheduler.Default);
 		static readonly List<DisplayableLog> displayableLogsToDispose = new();
 		static readonly ScheduledAction disposeDisplayableLogsAction = new(App.Current, () =>
@@ -833,6 +834,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly MutableObservableBoolean canSearchLogPropertyOnInternet = new();
 		readonly MutableObservableBoolean canSetLogProfile = new();
 		readonly MutableObservableBoolean canShowAllLogsTemporarily = new();
+		readonly ScheduledAction checkAreAllPanelsHiddenAction;
 		readonly ScheduledAction checkDataSourceErrorsAction;
 		readonly ScheduledAction checkIsWaitingForDataSourcesAction;
 		readonly ScheduledAction checkLogsMemoryUsageAction;
@@ -933,7 +935,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// create components
 			var internalAccessor = new InternalAccessorImpl(this);
-			this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(this.AttachToComponent);
+			this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(it =>
+			{
+				this.AttachToComponent(it);
+				it.GetValueAsObservable(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty).Subscribe(_ =>
+					this.checkAreAllPanelsHiddenAction?.Schedule());
+			});
 			this.LogChart = new LogChartViewModel(this, internalAccessor).Also(this.AttachToComponent);
 			this.LogFiltering = new LogFilteringViewModel(this, internalAccessor).Also(it =>
 			{
@@ -950,7 +957,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.selectLogsToReportActions?.Schedule();
 				});
 			});
-			this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(this.AttachToComponent);
+			this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(it =>
+			{
+				this.AttachToComponent(it);
+				it.GetValueAsObservable(LogAnalysisViewModel.IsPanelVisibleProperty).Subscribe(_ =>
+					this.checkAreAllPanelsHiddenAction?.Schedule());
+			});
 			this.LogSelection = new LogSelectionViewModel(this, internalAccessor).Also(it =>
 			{
 				this.AttachToComponent(it);
@@ -960,7 +972,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.AllComponentsCreated?.Invoke();
 
 			// create scheduled actions
-			this.checkDataSourceErrorsAction = new ScheduledAction(() =>
+			this.checkAreAllPanelsHiddenAction = new(() =>
+			{
+				if (this.IsDisposed)
+					return;
+				this.PersistentState.SetValue<bool>(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProperty)
+				                                                           && !this.GetValue(IsMarkedLogsPanelVisibleProperty)
+				                                                           && !this.LogCategorizing.IsTimestampCategoriesPanelVisible
+				                                                           && !this.LogAnalysis.IsPanelVisible);
+			});
+			this.checkDataSourceErrorsAction = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
@@ -990,7 +1011,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				this.checkIsWaitingForDataSourcesAction?.Schedule();
 			});
-			this.checkIsWaitingForDataSourcesAction = new ScheduledAction(() =>
+			this.checkIsWaitingForDataSourcesAction = new(() =>
 			{
 				if (this.IsDisposed)
 					return;
@@ -1011,7 +1032,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
 				}
 			});
-			this.checkLogsMemoryUsageAction = new ScheduledAction(() =>
+			this.checkLogsMemoryUsageAction = new(() =>
 			{
 				// check state
 				if (this.IsDisposed)
@@ -1310,6 +1331,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
 			}
 #pragma warning restore CS0612
+			
+			// hide all panels if needed
+			if (this.PersistentState.GetValueOrDefault(areAllPanelsHiddenKey))
+				this.SetValue(IsMarkedLogsPanelVisibleProperty, false);
 
 			// set initial log profile
 			if (initLogProfile != null)
@@ -3615,6 +3640,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateCanSetIPEndPoint(profile);
 				this.UpdateCanSetUri(profile);
 				this.UpdateCanSetWorkingDirectory(profile);
+			}
+			else if (property == IsLogFilesPanelVisibleProperty
+				|| property == IsMarkedLogsPanelVisibleProperty)
+			{
+				this.checkAreAllPanelsHiddenAction.Schedule();
 			}
 			else if (property == IsReadingLogsProperty
 				|| property == IsRemovingLogFilesProperty)

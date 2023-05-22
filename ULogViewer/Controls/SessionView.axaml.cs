@@ -1263,6 +1263,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				|| session.IsLogFilesPanelVisible
 				|| session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 			{
+				// select proper width of side panel
 				sidePanelColumn.Width = new GridLength(new[] {
 					session.LogAnalysis.PanelSize,
 					session.LogFilesPanelSize,
@@ -1270,6 +1271,21 @@ namespace CarinaStudio.ULogViewer.Controls
 					session.LogCategorizing.TimestampCategoriesPanelSize,
 				}.Max());
 				Grid.SetColumnSpan(this.logListBoxContainer, 1);
+				
+				// make sure that only one panel is visible
+				if (session.IsMarkedLogsPanelVisible)
+				{
+					session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
+					session.LogAnalysis.IsPanelVisible = false;
+					session.IsLogFilesPanelVisible = false;
+				}
+				else if (session.LogCategorizing.IsTimestampCategoriesPanelVisible)
+				{
+					session.LogAnalysis.IsPanelVisible = false;
+					session.IsLogFilesPanelVisible = false;
+				}
+				else if (session.LogAnalysis.IsPanelVisible)
+					session.IsLogFilesPanelVisible = false;
 			}
 			else
 			{
