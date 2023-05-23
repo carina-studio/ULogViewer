@@ -21,6 +21,7 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
         if (!double.IsFinite(scaling))
             throw new ArgumentOutOfRangeException(nameof(scaling));
         this.DefaultValue = defaultValue?.Let(it => double.IsFinite(it) ? (double?)it : null);
+        this.HasValueScaling = Math.Abs(1 - scaling) >= (double.Epsilon * 2);
         this.PropertyDisplayName = displayName ?? propertyName;
         this.PropertyName = propertyName;
         this.Quantifier = quantifier;
@@ -53,6 +54,12 @@ public class LogChartSeriesSource : IEquatable<LogChartSeriesSource>
 
     /// <inheritdoc/>
     public override int GetHashCode() => this.PropertyName.GetHashCode();
+    
+    
+    /// <summary>
+    /// Check whether <see cref="ValueScaling"/> is not 1.0 or not.
+    /// </summary>
+    public bool HasValueScaling { get; }
 
 
     /// <summary>
