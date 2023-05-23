@@ -663,31 +663,38 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.IsScrollingToLatestLogNeeded = false;
 					if (this.showLogPropertyMenuItem == null)
 						return;
-					var log = (this.logListBox.SelectedItems)?.Count == 1 
+					var selectionCount = this.logListBox.SelectedItems?.Count ?? 0;
+					var log = selectionCount == 1 
 						? (this.logListBox.SelectedItems[0] as DisplayableLog)
 						: null;
-					if (log != null && this.lastClickedLogPropertyView?.Tag is DisplayableLogProperty property)
+					var property = this.lastClickedLogPropertyView?.Tag as DisplayableLogProperty;
+					var propertyDisplayName = property?.DisplayName.Let(it =>
 					{
-						var displayName = property.DisplayName;
-						if (string.IsNullOrWhiteSpace(displayName))
-							displayName = Converters.LogPropertyNameConverter.Default.Convert(property.Name);
+						if (string.IsNullOrWhiteSpace(it))
+							it = Converters.LogPropertyNameConverter.Default.Convert(property.Name);
+						return it;
+					});
+					if (log is not null && property is not null)
+					{
 						var propertyValue = (this.DataContext as Session)?.LogSelection.SelectedLogStringPropertyValue?.ToString();
 						if (string.IsNullOrWhiteSpace(propertyValue))
-							propertyValue = displayName;
+							propertyValue = propertyDisplayName;
 						else if (propertyValue.Length > 16)
 							propertyValue = $"{propertyValue[..16]}…";
-						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", displayName);
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.FilterByLogProperty", propertyValue);
 						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetFormattedString("SessionView.SearchLogPropertyOnInternet", propertyValue);
-						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", displayName);
+						this.showLogPropertyMenuItem.Header = this.Application.GetFormattedString("SessionView.ShowLogProperty", propertyDisplayName);
 					}
 					else
 					{
-						this.copyLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
 						this.filterByLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.FilterByLogProperty.Disabled");
 						this.searchLogPropertyOnInternetMenuItem!.Header = this.Application.GetString("SessionView.SearchLogPropertyOnInternet.Disabled");
 						this.showLogPropertyMenuItem.Header = this.Application.GetString("SessionView.ShowLogProperty.Disabled");
 					}
+					if (selectionCount > 0 && property is not null)
+						this.copyLogPropertyMenuItem!.Header = this.Application.GetFormattedString("SessionView.CopyLogProperty", propertyDisplayName);
+					else
+						this.copyLogPropertyMenuItem!.Header = this.Application.GetString("SessionView.CopyLogProperty.Disabled");
 				};
 			});
 			this.logChartTypeMenu = ((ContextMenu)this.Resources[nameof(logChartTypeMenu)].AsNonNull()).Also(it =>
@@ -1526,35 +1533,55 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (!this.canCopyLogProperty.Value)
 				return;
-			if (this.logListBox.SelectedItems?.Count != 1)
+			var selection = this.logListBox.SelectedItems;
+			if (selection is null || selection.Count == 0)
 				return;
 
-			// find property and log
+			// find property
 			var clickedPropertyView = this.lastClickedLogPropertyView;
 			if (clickedPropertyView == null || clickedPropertyView.Tag is not DisplayableLogProperty property)
 				return;
 			var listBoxItem = clickedPropertyView.FindLogicalAncestorOfType<ListBoxItem>();
 			if (listBoxItem == null)
 				return;
-			var log = (listBoxItem.DataContext as DisplayableLog);
-			if (log == null || this.logListBox.SelectedItems[0] != log)
-				return;
 
 			// copy
-			this.CopyLogProperty(log, property);
+			this.CopyLogProperty(selection.Cast<DisplayableLog>(), property);
 		}
-		void CopyLogProperty(DisplayableLog log, DisplayableLogProperty property)
+		void CopyLogProperty(IList<DisplayableLog> logs, DisplayableLogProperty property)
 		{
 			// check state
 			if (this.Application is not App app)
 				return;
-
-			// get property value
-			if (!log.TryGetProperty<object?>(property.Name, out var value) || value == null)
+			if (logs.IsEmpty())
 				return;
+			
+			// copy
+			if (logs.Count == 1)
+			{
+				// get property value
+				if (!logs[0].TryGetProperty<object?>(property.Name, out var value) || value is null)
+					return;
 
-			// copy value
-			app.Clipboard?.SetTextAsync(value.ToString() ?? "");
+				// copy value
+				app.Clipboard?.SetTextAsync(value.ToString() ?? "");
+			}
+			else
+			{
+				// collect property values
+				var buffer = new StringBuilder();
+				foreach (var log in logs)
+				{
+					if (!log.TryGetProperty<object?>(property.Name, out var value) || value is null)
+						continue;
+					if (buffer.Length > 0)
+						buffer.AppendLine();
+					buffer.Append(value);
+				}
+				
+				// copy value
+				app.Clipboard?.SetTextAsync(buffer.ToString());
+			}
 		}
 
 
@@ -1848,18 +1875,11 @@ namespace CarinaStudio.ULogViewer.Controls
 						}));
 						it.PointerPressed += (_, _) =>
 						{
+							var selectionCount = this.logListBox.SelectedItems?.Count ?? 0;
 							this.lastClickedLogPropertyView = it;
 							(this.DataContext as Session)?.LogSelection.Let(it => it.SelectedLogProperty = logProperty);
-							if (this.logListBox.SelectedItems?.Count == 1)
-							{
-								this.canCopyLogProperty.Update(true);
-								this.canShowLogProperty.Update(isStringProperty);
-							}
-							else
-							{
-								this.canCopyLogProperty.Update(false);
-								this.canShowLogProperty.Update(false);
-							}
+							this.canCopyLogProperty.Update(selectionCount > 0);
+							this.canShowLogProperty.Update(selectionCount == 1 && isStringProperty);
 						};
 						if (actualPropertyView is CarinaStudio.Controls.TextBlock textBlock 
 							&& width != null
@@ -3303,17 +3323,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				var selectionCount = this.logListBox.SelectedItems!.Count;
 				var hasSelectedItems = (selectionCount > 0);
 				var hasSingleSelectedItem = (selectionCount == 1);
-				var logProperty = hasSingleSelectedItem
-					? this.lastClickedLogPropertyView?.Tag as DisplayableLogProperty
-					: null;
+				var logProperty = this.lastClickedLogPropertyView?.Tag as DisplayableLogProperty;
 
 				// update command states
-				this.canCopyLogProperty.Update(hasSingleSelectedItem && logProperty != null);
+				this.canCopyLogProperty.Update(hasSelectedItems && logProperty is not null);
 				this.canCopyLogText.Update(hasSingleSelectedItem);
 				this.canMarkSelectedLogs.Update(hasSelectedItems && session.MarkLogsCommand.CanExecute(null));
 				this.canMarkUnmarkSelectedLogs.Update(hasSelectedItems && session.MarkUnmarkLogsCommand.CanExecute(null));
 				this.canShowFileInExplorer.Update(hasSelectedItems && session.IsLogFileNeeded);
-				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty != null && DisplayableLog.HasStringProperty(logProperty.Name));
+				this.canShowLogProperty.Update(hasSingleSelectedItem && logProperty is not null && DisplayableLog.HasStringProperty(logProperty.Name));
 				this.canUnmarkSelectedLogs.Update(hasSelectedItems && session.UnmarkLogsCommand.CanExecute(null));
 
 				// select single marked log
