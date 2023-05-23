@@ -229,7 +229,7 @@ partial class SessionView
     void DetachFromPredefinedLogTextFilters()
     {
         var manager = PredefinedLogTextFilterManager.Default;
-        ((INotifyCollectionChanged)manager.Groups).CollectionChanged += this.OnPredefinedLogTextFilterGroupsChanged;
+        ((INotifyCollectionChanged)manager.Groups).CollectionChanged -= this.OnPredefinedLogTextFilterGroupsChanged;
         ((INotifyCollectionChanged)manager.Filters).CollectionChanged -= this.OnPredefinedLogTextFiltersChanged;
         foreach (var filter in manager.Filters)
             this.DetachFromPredefinedLogTextFilter(filter);
