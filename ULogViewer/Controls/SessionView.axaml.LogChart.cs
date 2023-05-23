@@ -180,6 +180,7 @@ partial class SessionView
         });
         
         // load resources
+        var animationSpeed = this.Application.FindResourceOrDefault("TimeSpan/Animation.Slow", TimeSpan.FromMilliseconds(500));
         var backgroundColor = this.Application.FindResourceOrDefault("Brush/WorkingArea.Background", Brushes.Black).Let(it =>
         {
             var color = it.Color;
@@ -212,13 +213,13 @@ partial class SessionView
         });
         
         // prepare tooltip generator
-        string FormatToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue, TVisual, LabelGeometry> point)
+        string FormatToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
         {
             // name
             var buffer = new StringBuilder();
             var source = series.Source;
             var value = series.Values[point.Context.Entity.EntityIndex];
-            buffer.Append(value.Label ?? series.Source?.PropertyDisplayName);
+            buffer.Append(value?.Label ?? series.Source?.PropertyDisplayName);
             source?.SecondaryPropertyDisplayName.Let(it =>
             {
                 if (string.IsNullOrEmpty(it))
@@ -256,25 +257,30 @@ partial class SessionView
         return chartType switch
         {
             LogChartType.ValueStatisticBars 
-                or LogChartType.ValueBars => new ColumnSeries<DisplayableLogChartSeriesValue>
+                or LogChartType.ValueBars => new ColumnSeries<DisplayableLogChartSeriesValue?>
             {
+                AnimationsSpeed = chartType switch
+                {
+                    LogChartType.ValueStatisticBars => TimeSpan.Zero,
+                    _ => animationSpeed,
+                },
                 Fill = new SolidColorPaint(seriesColor),
                 Mapping = (value, point) =>
                 {
-                    if (value.Value.HasValue)
-                        point.PrimaryValue = value.Value.Value;
+                    point.PrimaryValue = value!.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
                 },
                 Name = seriesNameBuffer.ToString(),
-                Padding = 0,
+                Padding = 0.5,
                 Rx = 0,
                 Ry = 0,
                 TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
             LogChartType.ValueStackedAreas
-                or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue>
+                or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue?>
             {
+                AnimationsSpeed = animationSpeed,
                 Fill = new SolidColorPaint(seriesColor),
                 GeometryFill = chartType switch
                 {
@@ -293,8 +299,7 @@ partial class SessionView
                 LineSmoothness = 0,
                 Mapping = (value, point) =>
                 {
-                    if (value.Value.HasValue)
-                        point.PrimaryValue = value.Value.Value;
+                    point.PrimaryValue = value!.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = seriesNameBuffer.ToString(),
@@ -305,13 +310,13 @@ partial class SessionView
                 TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
-            LogChartType.ValueStackedBars => new StackedColumnSeries<DisplayableLogChartSeriesValue>
+            LogChartType.ValueStackedBars => new StackedColumnSeries<DisplayableLogChartSeriesValue?>
             {
+                AnimationsSpeed = animationSpeed,
                 Fill = new SolidColorPaint(seriesColor),
                 Mapping = (value, point) =>
                 {
-                    if (value.Value.HasValue)
-                        point.PrimaryValue = value.Value.Value;
+                    point.PrimaryValue = value!.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
                 },
                 Name = seriesNameBuffer.ToString(),
@@ -321,8 +326,9 @@ partial class SessionView
                 TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
             },
-            _ => new LineSeries<DisplayableLogChartSeriesValue>
+            _ => new LineSeries<DisplayableLogChartSeriesValue?>
             {
+                AnimationsSpeed = animationSpeed,
                 Fill = chartType switch
                 {
                     LogChartType.ValueAreas
@@ -358,8 +364,7 @@ partial class SessionView
                 },
                 Mapping = (value, point) =>
                 {
-                    if (value.Value.HasValue)
-                        point.PrimaryValue = value.Value.Value;
+                    point.PrimaryValue = value!.Value;
                     point.SecondaryValue = point.Context.Entity.EntityIndex;
                 },
                 Name = seriesNameBuffer.ToString(),

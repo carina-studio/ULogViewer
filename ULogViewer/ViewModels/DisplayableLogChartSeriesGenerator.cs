@@ -67,7 +67,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     int maxSeriesValueCount;
     readonly ScheduledAction reportMinMaxValuesAction;
     readonly ObservableList<DisplayableLogChartSeries> series = new();
-    ObservableList<DisplayableLogChartSeriesValue>[] seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
+    ObservableList<DisplayableLogChartSeriesValue?>[] seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue?>>();
     SeriesValueType seriesValueType = SeriesValueType.Undefined;
     int totalSeriesValueCount;
     Dictionary<string, (int /* count */, int /* index */)>[] valueStatistics = Array.Empty<Dictionary<string, (int, int)>>();
@@ -190,7 +190,10 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
                                        {
                                            var memorySize = Memory.EstimateArrayInstanceSize(IntPtr.Size, it.Length);
                                            foreach (var values in it)
-                                               memorySize += Memory.EstimateCollectionInstanceSize(SeriesValueMemorySize, values.Capacity);
+                                           {
+                                               memorySize += Memory.EstimateCollectionInstanceSize(IntPtr.Size, values.Capacity);
+                                               memorySize += SeriesValueMemorySize * values.Count;
+                                           }
                                            return memorySize;
                                        });
     
@@ -224,7 +227,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
         this.series.Clear();
         this.valueStatistics = Array.Empty<Dictionary<string, (int, int)>>();
         this.valueStatisticStringsMemorySize = 0L;
-        this.seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue>>();
+        this.seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue?>>();
         this.maxSeriesValueCount = 0;
         this.OnPropertyChanged(nameof(MaxSeriesValueCount));
         this.totalSeriesValueCount = 0;
@@ -268,7 +271,7 @@ class DisplayableLogChartSeries
     /// </summary>
     /// <param name="source">Source to generate the series.</param>
     /// <param name="values">List of values in series.</param>
-    public DisplayableLogChartSeries(DisplayableLogChartSeriesSource? source, IList<DisplayableLogChartSeriesValue> values)
+    public DisplayableLogChartSeries(DisplayableLogChartSeriesSource? source, IList<DisplayableLogChartSeriesValue?> values)
     {
         this.Source = source;
         this.Values = ListExtensions.AsReadOnly(values);
@@ -284,7 +287,7 @@ class DisplayableLogChartSeries
     /// <summary>
     /// List of values in series.
     /// </summary>
-    public IList<DisplayableLogChartSeriesValue> Values { get; }
+    public IList<DisplayableLogChartSeriesValue?> Values { get; }
 }
 
 
@@ -294,4 +297,4 @@ class DisplayableLogChartSeries
 /// <param name="Log">Related log.</param>
 /// <param name="Value">Value.</param>
 /// <param name="Label">Label.</param>
-record struct DisplayableLogChartSeriesValue(DisplayableLog? Log, double? Value, string? Label = null);
+record DisplayableLogChartSeriesValue(DisplayableLog? Log, double Value, string? Label = null);

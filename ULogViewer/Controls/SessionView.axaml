@@ -995,7 +995,7 @@
 				
 					<!-- Chart -->
 					<lvc:CartesianChart Name="logChart" 
-					                    AnimationsSpeed="{StaticResource TimeSpan/Animation}"
+					                    AnimationsSpeed="{StaticResource TimeSpan/Animation.Fast}"
 					                    Background="{x:Static Brushes.Transparent}" 
 					                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
 					                    LegendPosition="Right"
