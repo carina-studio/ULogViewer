@@ -665,7 +665,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						return;
 					var selectionCount = this.logListBox.SelectedItems?.Count ?? 0;
 					var log = selectionCount == 1 
-						? (this.logListBox.SelectedItems[0] as DisplayableLog)
+						? (this.logListBox.SelectedItems?[0] as DisplayableLog)
 						: null;
 					var property = this.lastClickedLogPropertyView?.Tag as DisplayableLogProperty;
 					var propertyDisplayName = property?.DisplayName.Let(it =>

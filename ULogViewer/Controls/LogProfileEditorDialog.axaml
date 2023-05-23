@@ -166,6 +166,8 @@
 								</Button.IsEnabled>
 							</Button>
 						</StackPanel>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Allow multiple files -->
@@ -362,6 +364,8 @@
                             </asControls:ListBox>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logPatternListBox.IsVisible}"/>
 							<Button Name="addLogPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns"/>
 						</StackPanel>
 						<Separator Classes="Dialog_Item_Separator"/>
 						
@@ -370,6 +374,8 @@
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
 							<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}" Grid.Column="1"/>
 						</Grid>
+						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatternMatchingMode"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Log string encoding for reading -->
