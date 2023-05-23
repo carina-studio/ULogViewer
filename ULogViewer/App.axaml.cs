@@ -549,12 +549,13 @@ namespace CarinaStudio.ULogViewer
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
 			await LogDataSourceProviders.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(0.25);
+			this.UpdateSplashWindowProgress(0.4);
 
 			// initialize predefined log text filters
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
 			await PredefinedLogTextFilterManager.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(0.5);
+			await this.WaitForSplashWindowAnimationAsync();
+			this.UpdateSplashWindowProgress(0.6);
 
 			// initialize log analysis rules
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));
@@ -562,11 +563,11 @@ namespace CarinaStudio.ULogViewer
 			await LogAnalysisScriptSetManager.InitializeAsync(this);
 			await OperationCountingAnalysisRuleSetManager.InitializeAsync(this);
 			await OperationDurationAnalysisRuleSetManager.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(0.6);
+			this.UpdateSplashWindowProgress(0.7);
 
 			// initialize log profiles
 			await LogProfileManager.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(0.75);
+			this.UpdateSplashWindowProgress(0.85);
 
 			// complete initializing text shell manager
 			await initTextShellManagerTask;
