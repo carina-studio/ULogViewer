@@ -1573,6 +1573,7 @@
 										<Border Classes="Dialog_Item_Container_Small">
 											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.LogAnalysisRuleSetsPopup.Header}"/>
 										</Border>
+										<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding #noLogAnalysisRuleSetsTextBlock.IsVisible}"/>
 										<Grid RowDefinitions="Auto,Auto,Auto">
 											<Panel MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}">
 												<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -1836,10 +1837,11 @@
 														
 													</StackPanel>
 												</ScrollViewer>
-												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">
+												<TextBlock Name="noLogAnalysisRuleSetsTextBlock" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">
 													<TextBlock.IsVisible>
 														<MultiBinding Converter="{x:Static BoolConverters.And}">
 															<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
+															<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 															<Binding Path="RuleSets.Count" Source="{x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 															<Binding Path="ScriptSets.Count" Source="{x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
 														</MultiBinding>
