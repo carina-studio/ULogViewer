@@ -2,7 +2,7 @@
 	"DataSource": {
 		"Name": "StandardOutput",
 		"Options": {
-			"Command": "xcrun simctl spawn {device-id} log stream"
+			"Command": "xcrun simctl spawn ##device-id## log stream"
 		}
 	},
 	"Icon": "MobileDevices",

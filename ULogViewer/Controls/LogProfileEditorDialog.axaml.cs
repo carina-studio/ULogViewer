@@ -1496,6 +1496,12 @@ namespace CarinaStudio.ULogViewer.Controls
 								this.SetValue(IsValidDataSourceOptionsProperty, false);
 								return false;
 							}
+							if (optionName == nameof(LogDataSourceOptions.Command)
+							    && this.dataSourceOptions.CheckPlaceholderInCommand())
+							{
+								this.SetValue(IsValidDataSourceOptionsProperty, false);
+								return false;
+							}
 							break;
 					}
 				}

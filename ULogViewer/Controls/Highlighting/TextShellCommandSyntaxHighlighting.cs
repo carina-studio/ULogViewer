@@ -17,6 +17,7 @@ static partial class TextShellCommandSyntaxHighlighting
     static Regex? IORedirectPattern;
     static Regex? OptionPattern;
     static Regex? PipePattern;
+    static Regex? PlaceholderPattern;
     static Regex? SqArgEndPattern;
     static Regex? SqArgStartPattern;
 
@@ -35,6 +36,7 @@ static partial class TextShellCommandSyntaxHighlighting
         IORedirectPattern ??= CreateIORedirectPattern();
         OptionPattern ??= CreateOptionPattern();
         PipePattern ??= CreatePipePattern();
+        PlaceholderPattern ??= CreatePlaceholderPattern();
         SqArgEndPattern ??= CreateSqArgEndPattern();
         SqArgStartPattern ??= CreateSqArgStartPattern();
 
@@ -67,6 +69,14 @@ static partial class TextShellCommandSyntaxHighlighting
         {
             Foreground = app.FindResourceOrDefault<IBrush>("Brush/TextShellCommandSyntaxHighlighting.Pipe", Brushes.Yellow),
             Pattern = PipePattern,
+        });
+        
+        // place holder
+        definitionSet.TokenDefinitions.Add(new(name: "Placeholder")
+        {
+            Foreground = app.FindResourceOrDefault<IBrush>("Brush/TextShellCommandSyntaxHighlighting.Placeholder", Brushes.Red),
+            Pattern = PlaceholderPattern,
+            TextDecorations = TextDecorations.Underline,
         });
 
         // quoted argument
@@ -101,6 +111,8 @@ static partial class TextShellCommandSyntaxHighlighting
     private static partial Regex CreateOptionPattern();
     [GeneratedRegex(@"(?<=(^|[^\|]))\|(?=($|[^\|]))")]
     private static partial Regex CreatePipePattern();
+    [GeneratedRegex(@"(?<=\S\s+)\#\#\S*\#\#")]
+    private static partial Regex CreatePlaceholderPattern();
     [GeneratedRegex(@"(?<=[^\\](\\\\)*)'")]
     private static partial Regex CreateSqArgEndPattern();
     [GeneratedRegex(@"'")]

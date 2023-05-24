@@ -2,7 +2,7 @@
   "DataSource": {
     "Name": "StandardOutput",
     "Options": {
-      "Command": "adb shell dumpsys meminfo {process name}"
+      "Command": "adb shell dumpsys meminfo ##process-name##"
     }
   },
   "Icon": "Android",

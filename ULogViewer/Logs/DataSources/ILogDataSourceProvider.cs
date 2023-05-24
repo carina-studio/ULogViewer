@@ -9,6 +9,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
 {
@@ -96,6 +97,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	public struct LogDataSourceOptions
 	{
 		// Static fields.
+		static Regex? commandArgPattern;
 		static readonly IList<string> emptyCommands = Array.Empty<string>();
 		static volatile bool isOptionPropertyInfoMapReady;
 		static volatile IList<string> optionNames = Array.Empty<string>();
@@ -111,6 +113,35 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set category to read log data.
 		/// </summary>
 		public string? Category { get; set; }
+		
+		
+		/// <summary>
+		/// Check whether there is one or more placeholders in <see cref="Command"/> or not.
+		/// </summary>
+		/// <returns></returns>
+		public bool CheckPlaceholderInCommand()
+		{
+			var command = this.Command;
+			if (string.IsNullOrWhiteSpace(command))
+				return false;
+			commandArgPattern ??= new("[\\S]+|'[^']*'|\"[^\"]*\"", RegexOptions.Compiled);
+			var match = commandArgPattern.Match(command);
+			while (match.Success)
+			{
+				var arg = match.Value;
+				var argLength = arg.Length;
+				if (argLength >= 4
+				    && arg[0] == '#'
+				    && arg[1] == '#'
+				    && arg[argLength - 1] == '#'
+				    && arg[argLength - 2] == '#')
+				{
+					return true;
+				}
+				match = match.NextMatch();
+			}
+			return false;
+		}
 
 
 		/// <summary>

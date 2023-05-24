@@ -2,7 +2,7 @@
 	"DataSource": {
 		"Name": "StandardOutput",
 		"Options": {
-			"Command": "idevicesyslog -u {device-id} --no-colors"
+			"Command": "idevicesyslog -u ##device-id## --no-colors"
 		}
 	},
 	"Icon": "MobileDevices",
