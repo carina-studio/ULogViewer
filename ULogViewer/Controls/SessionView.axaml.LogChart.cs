@@ -623,7 +623,8 @@ partial class SessionView
                 this.UpdateLogChartSeries();
                 break;
             case nameof(LogChartViewModel.IsMaxTotalSeriesValueCountReached):
-                this.PromptForMaxLogChartSeriesValueCountReached();
+                if (viewModel.IsMaxTotalSeriesValueCountReached)
+                    this.PromptForMaxLogChartSeriesValueCountReached();
                 break;
             case nameof(LogChartViewModel.IsPanelVisible):
                 this.UpdateLogChartPanelVisibility();
@@ -691,6 +692,8 @@ partial class SessionView
     async void PromptForMaxLogChartSeriesValueCountReached()
     {
         if (!this.PersistentState.GetValueOrDefault(PromptWhenMaxTotalLogSeriesValueCountReachedKey))
+            return;
+        if (this.DataContext is not Session session || !session.IsProVersionActivated)
             return;
         if (this.attachedWindow is null)
             return;

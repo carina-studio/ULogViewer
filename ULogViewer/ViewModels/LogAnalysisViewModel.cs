@@ -1,5 +1,4 @@
 using CarinaStudio.AppSuite;
-using CarinaStudio.AppSuite.Product;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -112,6 +111,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedAnalyzers = new();
     readonly ScriptDisplayableLogAnalyzer coopScriptLogAnalyzer;
     readonly IDisposable displayLogPropertiesObserverToken;
+    readonly IDisposable isProVersionActivatedObserverToken;
     bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
@@ -265,7 +265,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.coopScriptLogAnalyzer.ScriptSets.Clear();
             if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) 
                 && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
-                && this.Application.ProductManager.IsProductActivated(Products.Professional))
+                && this.Session.IsProVersionActivated)
             {
                 var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
                 if (scriptSet != null)
@@ -345,7 +345,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             {
                 this.scriptLogAnalyzer.ScriptSets.Clear();
                 if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) 
-                    && this.Application.ProductManager.IsProductActivated(Products.Professional))
+                    && this.Session.IsProVersionActivated)
                 {
                     this.Logger.LogTrace("Update log analysis with {scriptSetsCount} script sets", this.logAnalysisScriptSets.Count);
                     this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
@@ -391,9 +391,14 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.scriptLogAnalyzer.LogProperties.Clear();
             this.scriptLogAnalyzer.LogProperties.AddAll(properties);
         });
-
-        // attach to product manager
-        this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
+        this.isProVersionActivatedObserverToken = session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
+        {
+            if (!isInit && isActivated)
+            {
+                this.updateCoopScriptLogAnalysisAction.Schedule();
+                this.updateScriptLogAnalysisAction.Schedule();
+            }
+        });
 
         // restore state
 #pragma warning disable CS0612
@@ -577,12 +582,10 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        // detach from product manager
-        this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
-
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReadersDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
+        this.isProVersionActivatedObserverToken.Dispose();
 
         // detach from analyzers
         this.DetachFromAnalyzer(this.coopScriptLogAnalyzer, true);
@@ -848,17 +851,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
                     this.updateCoopScriptLogAnalysisAction.Schedule();
             }
-        }
-    }
-
-
-    // Called when activation state of product changed.
-    void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
-    {
-        if (productId == Products.Professional && isActivated)
-        {
-            this.updateCoopScriptLogAnalysisAction.Schedule();
-            this.updateScriptLogAnalysisAction.Schedule();
         }
     }
 

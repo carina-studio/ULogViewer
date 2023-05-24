@@ -3983,6 +3983,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.IsProVersionActivated):
 					this.ShowLogChartTutorial();
 					this.UpdateToolsMenuItems();
+					if (session.LogChart.IsMaxTotalSeriesValueCountReached)
+						this.PromptForMaxLogChartSeriesValueCountReached();
 					break;
 				case nameof(Session.IsReadingLogs):
 					if (session.IsReadingLogs)
