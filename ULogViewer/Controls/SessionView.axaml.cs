@@ -100,6 +100,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			return brush;
 		});
+		/// <summary>
+		/// Debug logger for <see cref="CarinaStudio.Controls.TextBlock"/> used by <see cref="SessionView"/>.
+		/// </summary>
+		public static readonly ILogger TextBlockDebugLogger = App.Current.LoggerFactory.CreateLogger("SessionView.CsTextBlock");
 
 
         // Implementation of LogLevelNameConverter.
@@ -152,7 +156,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
-
 
 		// Fields.
 		bool areAllTutorialsShown;
@@ -1774,6 +1777,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Bind(BackgroundProperty, new Binding { Path = nameof(DisplayableLog.LevelBackgroundBrush) });
 							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
 							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+							it.DebugLogger = TextBlockDebugLogger;
 							it.Foreground = levelForegroundBrush;
 							it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
@@ -1790,6 +1794,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Bind(SyntaxHighlightingTextBlock.DefinitionSetProperty, new Binding { Path = nameof(DisplayableLog.TextHighlightingDefinitionSet) });
 							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
 							it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+							it.DebugLogger = TextBlockDebugLogger;
 							if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
 								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 							if (isMultiLineProperty)
@@ -2174,7 +2179,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						break;
 				}
 			}
-
+			
 			// build item template for marked log list box
 			var propertyInMarkedItem = Global.Run(() => 
 				messageProperty
@@ -2913,7 +2918,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProperties.IsEmpty())
 				return;
 			var logPropertyCount = logProperties.Count;
-
+			
 			// build headers
 			var app = (App)this.Application;
 			var analysisResultIndicatorSize = 0.0;
