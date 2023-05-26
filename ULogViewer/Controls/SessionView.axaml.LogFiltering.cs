@@ -273,7 +273,8 @@ partial class SessionView
     void OnLogFiltersApplied(object? sender, EventArgs e)
     {
         // start scrolling to log around current position
-        this.StartKeepingCurrentDisplayedLogRange();
+        if ((sender as LogFilteringViewModel)?.IsFilteringNeeded == true)
+            this.StartKeepingCurrentDisplayedLogRange();
     }
     
     
