@@ -35,7 +35,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Sample">Sample [0-9] \s \d HH:mm:ss 中文</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs">内存使用上限 ({0}, {1}%)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description">当进程的内存使用量超过上限时，日志读取将暂时停用。</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">需要升级至专业版</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">需要升级至专业版。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">变更日志类型后重设套用的规则集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">脚本编辑器字体及大小</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时显示输入界面</sys:String>
@@ -287,6 +287,8 @@
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">从每个文件中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 {0} (包含)。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">日志类型所定义之最大日志读取数量</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly">需要升级至专业版。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion">升级至专业版前您可以设置一次。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">日志读取数量设置</sys:String>
 
 	<!-- FilterCombinationMode -->
@@ -611,7 +613,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">从每个资料来源中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 2147483647 (包含)。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名称</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升级至专业版</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升级至专业版。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">原始日志等级属性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">该日志属性将用于提供日志等级的原始值。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新开始读取日志的延迟 (毫秒)</sys:String>
@@ -663,7 +665,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已订选</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">订选/移除订选日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升级至专业版</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升级至专业版。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">最近使用的日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">删除日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles">清除纪录</sys:String>
@@ -1184,7 +1186,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日志分析脚本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">动作计数分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">需要升级至专业版</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">需要升级至专业版。</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">运行「{0}」之脚本以分析日志时发生错误：</sys:String>

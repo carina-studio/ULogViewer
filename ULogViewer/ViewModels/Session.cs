@@ -223,6 +223,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsMarkedLogsPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsMarkedLogsPanelVisible), true);
 		/// <summary>
+		/// Property of <see cref="IsSpecifyingMaxLogReadingCountAllowed"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsSpecifyingMaxLogReadingCountAllowedProperty = ObservableProperty.Register<Session, bool>(nameof(IsSpecifyingMaxLogReadingCountAllowed), false);
+		/// <summary>
 		/// Property of <see cref="IsProcessingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsProcessingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessingLogs));
@@ -592,6 +596,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		});
 		static readonly HashSet<Session> instances = new();
 		static readonly TaskFactory ioTaskFactory = new(new FixedThreadsTaskScheduler(1));
+		static readonly MutableObservableBoolean isSpecifyingMaxLogReadingCountAllowed = new(true);
 		static readonly SettingKey<double> latestLogFilesPanelSizeKey = new("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
 		static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
 		[Obsolete]
@@ -844,6 +849,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		bool hasLogDataSourceCreationFailure;
 		bool isInitLogProfile;
 		bool isRestoringState;
+		readonly IDisposable isSpecifyingMaxLogReadingCountAllowedObserverToken;
 		readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 		readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
 			PathComparer.Default.Compare(lhs.FileName, rhs.FileName));
@@ -1304,6 +1310,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			});
 			this.checkLogsMemoryUsageAction.Schedule();
 			this.updateTitleAndIconAction.Execute();
+			
+			// attach to self properties
+			this.isSpecifyingMaxLogReadingCountAllowedObserverToken = isSpecifyingMaxLogReadingCountAllowed.Subscribe(isAllowed =>
+			{
+				this.SetValue(IsSpecifyingMaxLogReadingCountAllowedProperty, isAllowed);
+			});
 		
 			// attach to log profile manager
 			(LogProfileManager.Default.Profiles as INotifyCollectionChanged)?.Let(it =>
@@ -2256,6 +2268,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.Logger.LogDebug("Dispose displayable log group '{group}'", this.displayableLogGroup);
 			this.displayableLogGroup = this.displayableLogGroup.DisposeAndReturnNull();
 			this.checkLogsMemoryUsageAction.Cancel();
+			
+			// detach from self properties
+			this.isSpecifyingMaxLogReadingCountAllowedObserverToken.Dispose();
 
 			// detach from log profile
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
@@ -2751,6 +2766,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			 get => this.GetValue(IsMarkedLogsPanelVisibleProperty);
 			 set => this.SetValue(IsMarkedLogsPanelVisibleProperty, value);
 		}
+
+
+		/// <summary>
+		/// Check whether specifying max log reading count is allowed or not.
+		/// </summary>
+		public bool IsSpecifyingMaxLogReadingCountAllowed => this.GetValue(IsSpecifyingMaxLogReadingCountAllowedProperty);
 
 
 		/// <summary>
@@ -3607,7 +3628,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
 		{
 			if (productId == Products.Professional)
+			{
+				// update state
 				this.SetValue(IsProVersionActivatedProperty, isActivated);
+				isSpecifyingMaxLogReadingCountAllowed.Update(true);
+			}
 		}
 
 

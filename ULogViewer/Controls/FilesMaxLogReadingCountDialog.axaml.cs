@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
@@ -15,8 +16,10 @@ namespace CarinaStudio.ULogViewer.Controls;
 class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Static fields.
+	static readonly StyledProperty<bool> CanSpecifyMaxLogReadingCountProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(CanSpecifyMaxLogReadingCount), true);
 	static readonly StyledProperty<bool> ConfirmMaxLogReadingCountForLargeFilesProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>("ConfirmMaxLogReadingCountForLargeFiles");
 	static readonly StyledProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(IsCancellationAllowed), true);
+	static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(IsProVersionActivated), false);
 	static readonly StyledProperty<int?> MaxLogReadingCountOfLogProfileProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, int?>(nameof(MaxLogReadingCountOfLogProfile));
 	public static readonly StyledProperty<string?> MessageProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, string?>(nameof(Message));
 
@@ -38,8 +41,20 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 			it.GetObservable(IntegerTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
 		});
 		this.SetValue(ConfirmMaxLogReadingCountForLargeFilesProperty, this.Settings.GetValueOrDefault(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles));
+		this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
+		this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 		this.Settings.SettingChanged += this.OnSettingChanged;
 		this.GetObservable(ConfirmMaxLogReadingCountForLargeFilesProperty).Subscribe(confirm => this.Settings.SetValue<bool>(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles, confirm));
+	}
+
+
+	/// <summary>
+	/// Get or set whether <see cref="MaxLogReadingCount"/> can be specified or not.
+	/// </summary>
+	public bool CanSpecifyMaxLogReadingCount
+	{
+		get => this.GetValue(CanSpecifyMaxLogReadingCountProperty);
+		set => this.SetValue(CanSpecifyMaxLogReadingCountProperty, value);
 	}
 
 
@@ -67,6 +82,10 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		get => this.GetValue(IsCancellationAllowedProperty);
 		set => this.SetValue(IsCancellationAllowedProperty, value);
 	}
+	
+	
+	// Whether Pro-version is activated or not.
+	public bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
 
 
 	// Log reading window selected by user.
@@ -80,6 +99,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 	/// <inheritdoc/>
 	protected override void OnClosed(EventArgs e)
 	{
+		this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
 		this.Settings.SettingChanged -= this.OnSettingChanged;
 		base.OnClosed(e);
 	}
@@ -100,6 +120,14 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		base.OnEnterKeyClickedOnInputControl(control);
 		if (control == this.maxLogReadingCountTextBox)
 			this.GenerateResultCommand.TryExecute();
+	}
+
+
+	// Called when activation state of product changed.
+	void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
+	{
+		if (productId == Products.Professional)
+			this.SetValue(IsProVersionActivatedProperty, isActivated);
 	}
 
 
@@ -139,11 +167,15 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		}
 		this.logReadingWindowComboBox.SelectedItem = this.InitialLogReadingWindow;
 		this.maxLogReadingCountTextBox.Maximum = maximum;
-		this.maxLogReadingCountTextBox.Value = this.InitialMaxLogReadingCount?.Let(c => Math.Max(Math.Min(c, maximum), 1));
+		if (this.CanSpecifyMaxLogReadingCount)
+			this.maxLogReadingCountTextBox.Value = this.InitialMaxLogReadingCount?.Let(c => Math.Max(Math.Min(c, maximum), 1));
 		this.SynchronizationContext.Post(() =>
 		{
-			this.maxLogReadingCountTextBox.Focus();
-			this.maxLogReadingCountTextBox.SelectAll();
+			if (this.CanSpecifyMaxLogReadingCount)
+			{
+				this.maxLogReadingCountTextBox.Focus();
+				this.maxLogReadingCountTextBox.SelectAll();
+			}
 		});
 	}
 
