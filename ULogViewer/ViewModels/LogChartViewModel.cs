@@ -9,6 +9,7 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -54,6 +55,10 @@ class LogChartViewModel : SessionComponent
     /// Define <see cref="YAxisName"/> property.
     /// </summary>
     public static readonly ObservableProperty<string?> YAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(YAxisName), null);
+    
+    
+    // Constants.
+    const string TempChartTypeStateKey = "LogChartViewModel.TempChartType";
 
 
     // Static fields.
@@ -197,6 +202,16 @@ class LogChartViewModel : SessionComponent
         // dispose old sources
         foreach (var source in sourcesToDispose)
             source.Dispose();
+    }
+
+
+    // Apply type of log chart to generators.
+    void ApplyLogChartType(LogChartType chartType)
+    {
+        this.allLogsSeriesGenerator.LogChartType = chartType;
+        if (this.filteredLogsSeriesGenerator is not null)
+            this.filteredLogsSeriesGenerator.LogChartType = chartType;
+        this.markedLogsSeriesGenerator.LogChartType = chartType;
     }
 
 
@@ -395,10 +410,7 @@ class LogChartViewModel : SessionComponent
         
         // setup properties to generate series
         var logChartType = newLogProfile?.LogChartType ?? LogChartType.None;
-        this.allLogsSeriesGenerator.LogChartType = logChartType;
-        if (this.filteredLogsSeriesGenerator is not null)
-            this.filteredLogsSeriesGenerator.LogChartType = logChartType;
-        this.markedLogsSeriesGenerator.LogChartType = logChartType;
+        this.ApplyLogChartType(logChartType);
         this.SetValue(ChartTypeProperty, logChartType);
         this.SetValue(ChartValueGranularityProperty, newLogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default);
         this.ApplyLogChartSeriesSources();
@@ -434,10 +446,7 @@ class LogChartViewModel : SessionComponent
             {
                 var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
                 var logChartType = profile.LogChartType;
-                this.allLogsSeriesGenerator.LogChartType = logChartType;
-                if (this.filteredLogsSeriesGenerator is not null)
-                    this.filteredLogsSeriesGenerator.LogChartType = logChartType;
-                this.markedLogsSeriesGenerator.LogChartType = logChartType;
+                this.ApplyLogChartType(logChartType);
                 this.SetValue(ChartTypeProperty, logChartType);
                 this.SetValue(IsChartDefinedProperty, profile.LogChartType != LogChartType.None && this.allLogsSeriesGenerator.LogChartSeriesSources.IsNotEmpty());
                 if (!isPrevChartDefined 
@@ -453,6 +462,32 @@ class LogChartViewModel : SessionComponent
                 this.updateAxisNamesAction.Schedule();
                 break;
         }
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnRestoreState(JsonElement element)
+    {
+        base.OnRestoreState(element);
+        if (element.TryGetProperty(TempChartTypeStateKey, out var jsonProperty)
+            && jsonProperty.ValueKind == JsonValueKind.String
+            && Enum.TryParse<LogChartType>(jsonProperty.GetString(), out var chartType))
+        {
+            this.ApplyLogChartType(chartType);
+            this.SetValue(ChartTypeProperty, chartType);
+        }
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnSaveState(Utf8JsonWriter writer)
+    {
+        base.OnSaveState(writer);
+        this.LogProfile?.Let(it =>
+        {
+            if (it.IsBuiltIn && it.LogChartType != this.GetValue(ChartTypeProperty))
+                writer.WriteString(TempChartTypeStateKey, this.GetValue(ChartTypeProperty).ToString());
+        });
     }
 
 
@@ -508,7 +543,16 @@ class LogChartViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        this.LogProfile?.Let(it => it.LogChartType = chartType);
+        this.LogProfile?.Let(it =>
+        {
+            if (!it.IsBuiltIn)
+                it.LogChartType = chartType;
+            else if (chartType != LogChartType.None)
+            {
+                this.ApplyLogChartType(chartType);
+                this.SetValue(ChartTypeProperty, chartType);
+            }
+        });
     }
     
     
@@ -522,7 +566,7 @@ class LogChartViewModel : SessionComponent
     // Update whether setting type of log chart is available or not.
     void UpdateCanSetChartType()
     {
-        this.canSetChartType.Update(this.IsChartDefined && this.Session.IsProVersionActivated && this.LogProfile?.IsBuiltIn != true);
+        this.canSetChartType.Update(this.IsChartDefined && this.Session.IsProVersionActivated);
     }
     
     
