@@ -964,7 +964,7 @@
 						
 						<!-- Reset zoom -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogChartZoom}">
-							<Image Classes="Icon" Source="{StaticResource Image/Fit}"/>
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
 						</Button>
 						
 						<!-- Scroll to start -->
