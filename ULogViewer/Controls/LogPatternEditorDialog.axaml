@@ -2,13 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
-		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-        xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
-        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogPatternEditorDialog"
         Classes="Dialog"
@@ -33,7 +28,7 @@
 					<StackPanel>
 	
 						<!-- Pattern -->
-						<Border Classes="Dialog_Item_Container">
+						<asControls:DialogItemBorder>
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
@@ -42,7 +37,7 @@
 									<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 								</Grid>
 							</StackPanel>
-						</Border>
+						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -50,17 +45,17 @@
 						<Separator Classes="Dialog_Item_Separator"/>
 			
 						<!-- Repeatable -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
 							<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
 			
 						<!-- Skippable -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
 							<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 
 					</StackPanel>
 				</Border>

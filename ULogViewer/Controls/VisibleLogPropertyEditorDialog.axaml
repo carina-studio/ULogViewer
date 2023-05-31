@@ -40,7 +40,7 @@
 				<StackPanel>
 
 					<!-- Name -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Name}"/>
 						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" Items="{x:Static appLogs:Log.PropertyNames}" VirtualizationMode="None">
 							<ComboBox.ItemTemplate>
@@ -52,11 +52,11 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Display name -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.DisplayName}"/>
 						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" Items="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}" VirtualizationMode="None">
 							<ComboBox.ItemTemplate>
@@ -69,52 +69,52 @@
 							</ComboBox.ItemTemplate>
 						</ComboBox>
 						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Custom display name -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Secondary display name -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.SecondaryDisplayName}"/>
 						<TextBox Name="secondaryDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Quantifier -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+					<asControls:DialogItemGrid>
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Quantifier}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Quantifier.Description}"/>
 						</StackPanel>
 						<TextBox Name="quantifierTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="32" Watermark="{DynamicResource String/Common.None}"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Foreground color -->
 					<StackPanel IsVisible="{Binding #nameComboBox.SelectedItem, Converter={x:Static abConverters:ObjectConverters.IsNotEquivalentTo}, ConverterParameter=Level}">
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.ForegroundColor}"/>
 							<asControls:EnumComboBox Name="foregroundColorComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appProfiles:LogPropertyForegroundColor}" Grid.Column="1"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
 					</StackPanel>
 
 					<!-- Width -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.SpecifyWidth}"/>
 						<ToggleSwitch Name="specifyWidthSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Width}"/>
 						<abControls:IntegerTextBox Name="widthTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsEnabled="{Binding #specifyWidthSwitch.IsChecked}" IsNullValueAllowed="False"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 
 				</StackPanel>
 			</Border>

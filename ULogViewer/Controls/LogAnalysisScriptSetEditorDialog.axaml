@@ -43,36 +43,36 @@
 						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
 							
 							<!-- Name -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
 								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Icon -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
 								<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}" Grid.Column="1"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Icon color -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
 								<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 							
 						</StackPanel>
 
 						<!-- Contextual-based -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description}"/>
 							</StackPanel>
 							<ToggleSwitch Name="contextBasedToggleSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 
 					</StackPanel>
 				</Border>
@@ -83,19 +83,19 @@
 					<StackPanel>
 
 						<!-- Setup script -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Analysis script -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
 

@@ -46,18 +46,18 @@
 
 						<!-- Display Name -->
 						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
 								<TextBox Name="displayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Supported source options -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{DynamicResource String/Common.None}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<ListBox Name="supportedSourceOptionListBox" Classes="Dialog_Item_ListBox" Items="{Binding $parent[Window].SupportedSourceOptions}" VirtualizationMode="None">
 							<ListBox.ItemTemplate>
@@ -94,28 +94,28 @@
 					<StackPanel>
 
 						<!-- Opening reader script -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Reading line script -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Closing reader script -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}"/>
 

@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogReadingPreconditionDialog"
 		Name="window"
@@ -26,16 +27,16 @@
 				<StackPanel>
 			
 					<!-- Description -->
-					<Border Classes="Dialog_Item_Container">
+					<asControls:DialogItemBorder>
 						<Grid ColumnDefinitions="Auto,*">
 							<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored}"/>
 							<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
 						</Grid>
-					</Border>
+					</asControls:DialogItemBorder>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Timestamps -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+					<asControls:DialogItemGrid>
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps.Description}">
@@ -72,7 +73,7 @@
 							</Grid>
 						</StackPanel>
 						<ToggleSwitch Name="timestampsSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<Grid ColumnDefinitions="*,Auto,*" IsEnabled="{Binding #timestampsSwitch.IsChecked}">
 						<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_Item_TextBox" TextAlignment="Center"/>
@@ -94,13 +95,13 @@
 						</StackPanel.IsVisible>
 
 						<!-- Files -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto" IsVisible="{Binding #window.IsReadingFromFiles}">
+						<asControls:DialogItemGrid IsVisible="{Binding #window.IsReadingFromFiles}">
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}"/>
 							</StackPanel>
 							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding $parent[Window].SelectPreconditionForFiles, Mode=TwoWay}" Grid.Column="1"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 
 					</StackPanel>
 

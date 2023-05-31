@@ -26,23 +26,23 @@
 				<StackPanel>
 
 					<!-- Name -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
 						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Group -->
-					<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.GroupName}"/>
 						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
-					</Grid>
+					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Separator_Small"/>
 					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowGroupNameSelectionMenu}" Content="{DynamicResource String/PredefinedLogTextFilterEditorDialog.SelectGroupName}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}"/>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Pattern -->
-					<Border Classes="Dialog_Item_Container">
+					<asControls:DialogItemBorder>
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description}"/>
@@ -51,7 +51,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 							</Grid>
 						</StackPanel>
-					</Border>
+					</asControls:DialogItemBorder>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 					<Line Classes="Dialog_Item_Separator_Inner"/>

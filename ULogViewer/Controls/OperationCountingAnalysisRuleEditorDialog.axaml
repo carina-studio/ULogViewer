@@ -39,14 +39,14 @@
 						<StackPanel>
 					
 							<!-- Operation name -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.OperationName}"/>
 								<TextBox Name="operationNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Pattern -->
-							<Border Classes="Dialog_Item_Container">
+							<asControls:DialogItemBorder>
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
 									<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}"/>
@@ -55,7 +55,7 @@
 										<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 									</Grid>
 								</StackPanel>
-							</Border>
+							</asControls:DialogItemBorder>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -63,7 +63,7 @@
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Level -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<asControls:DialogItemGrid>
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level}"/>
 									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Level.Description}"/>
@@ -78,23 +78,23 @@
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
 								</ComboBox>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Conditions -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<asControls:DialogItemGrid>
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
 									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description}"/>
 								</StackPanel>
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].Conditions.Count}" Text="{DynamicResource String/Common.None}"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Interval -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+							<asControls:DialogItemGrid>
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationCountingAnalysisRuleEditorDialog.Interval}"/>
 									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#intervalTextBox.IsTextValid}">
@@ -103,7 +103,7 @@
 									</Grid>
 								</StackPanel>
 								<abControls:TimeSpanTextBox Name="intervalTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.Required}"/>
-							</Grid>
+							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/TimeSpanTextBox.FormatDescription}" TextWrapping="Wrap"/>
 
@@ -116,7 +116,7 @@
 						<StackPanel>
 
 							<!-- Result type -->
-							<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
 								<ComboBox Name="resultTypeComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
 									<ComboBox.ItemTemplate>
@@ -131,7 +131,7 @@
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
 								</ComboBox>
-							</Grid>
+							</asControls:DialogItemGrid>
 
 						</StackPanel>
 					</Border>

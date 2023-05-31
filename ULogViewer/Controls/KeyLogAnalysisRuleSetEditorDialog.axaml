@@ -2,11 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleSetEditorDialog"
         Classes="Dialog"
@@ -35,24 +33,24 @@
 					<StackPanel>
 
 						<!-- Name -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
 							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Icon -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Icon}"/>
 							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Icon color -->
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="Auto,*">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor}"/>
 							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 
 					</StackPanel>
 				</Border>
@@ -62,10 +60,10 @@
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>
 
-						<Grid Classes="Dialog_Item_Container" ColumnDefinitions="*,Auto">
+						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-						</Grid>
+						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].Rules.Count}" Items="{Binding $parent[Window].Rules}" VirtualizationMode="None">
 							<asControls:ListBox.ItemTemplate>

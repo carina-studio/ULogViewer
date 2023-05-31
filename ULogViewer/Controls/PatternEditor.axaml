@@ -5,7 +5,6 @@
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.PatternEditor"
 		Height="{StaticResource Double/PatternEditor.MinHeight}"

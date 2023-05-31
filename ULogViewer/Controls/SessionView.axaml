@@ -672,9 +672,9 @@
 								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="True">
 									<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
 										<StackPanel>
-											<Border Classes="Dialog_Item_Container_Small">
+											<asControls:CompactDialogItemBorder>
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.PredefinedLogTextFiltersPopup.Header}"/>
-											</Border>
+											</asControls:CompactDialogItemBorder>
 											<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}"/>
 											<Grid RowDefinitions="*,Auto,Auto">
 												<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
@@ -1487,7 +1487,7 @@
 									<StackPanel>
 
 										<!-- Cooperative log analysis script set -->
-										<Grid Classes="Dialog_Item_Container_Small" ColumnDefinitions="*,Auto">
+										<asControls:CompactDialogItemGrid>
 											<StackPanel Classes="Dialog_Item_Text_Container">
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
 												<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
@@ -1521,7 +1521,7 @@
 													</MultiBinding>
 												</ToggleSwitch.IsEnabled>
 											</ToggleSwitch>
-										</Grid>
+										</asControls:CompactDialogItemGrid>
 										<Line Classes="Dialog_Item_Separator_Inner">
 											<Separator.IsVisible>
 												<MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -1570,9 +1570,9 @@
 										<Separator Classes="Dialog_Item_Separator"/>
 										
 										<!-- Rule sets and script sets -->
-										<Border Classes="Dialog_Item_Container_Small">
+										<asControls:CompactDialogItemBorder>
 											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.LogAnalysisRuleSetsPopup.Header}"/>
-										</Border>
+										</asControls:CompactDialogItemBorder>
 										<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding #noLogAnalysisRuleSetsTextBlock.IsVisible}"/>
 										<Grid RowDefinitions="Auto,Auto,Auto">
 											<Panel MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}">
