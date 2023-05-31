@@ -85,6 +85,7 @@ partial class SessionView
     
     
     // Constants.
+    const double LogBarChartXCoordinateScaling = 1.3;
     const long DurationToDropClickEvent = 500;
     const double PointerDistanceToDropClickEvent = 5;
     const int LogChartXAxisMinValueCount = 10;
@@ -268,7 +269,7 @@ partial class SessionView
                 Mapping = (value, point) =>
                 {
                     point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
+                    point.SecondaryValue = point.Context.Entity.EntityIndex * LogBarChartXCoordinateScaling;
                 },
                 Name = seriesNameBuffer.ToString(),
                 Padding = 0.5,
@@ -317,7 +318,7 @@ partial class SessionView
                 Mapping = (value, point) =>
                 {
                     point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex * 1.3;
+                    point.SecondaryValue = point.Context.Entity.EntityIndex * LogBarChartXCoordinateScaling;
                 },
                 Name = seriesNameBuffer.ToString(),
                 Padding = 0,
@@ -502,7 +503,12 @@ partial class SessionView
         {
             if (point.Context.Series.Values is not IList<DisplayableLogChartSeriesValue> values)
                 continue;
-            var index = (int)(point.SecondaryValue + 0.5);
+            var index = point.Context.Series switch
+            {
+                ColumnSeries<DisplayableLogChartSeriesValue>
+                    or StackedColumnSeries<DisplayableLogChartSeriesValue> => (int)(point.SecondaryValue / LogBarChartXCoordinateScaling + 0.5),
+                _ => (int)(point.SecondaryValue + 0.5),
+            };
             if (index < 0 || index >= values.Count)
                 continue;
             var candidateLog = values[index].Log;
