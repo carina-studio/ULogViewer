@@ -42,6 +42,14 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<bool> IsPanelVisibleProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsPanelVisible), false);
     /// <summary>
+    /// Define <see cref="IsXAxisInverted"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<bool> IsXAxisInvertedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsXAxisInverted), false);
+    /// <summary>
+    /// Define <see cref="IsYAxisInverted"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<bool> IsYAxisInvertedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsYAxisInverted), false);
+    /// <summary>
     /// Define <see cref="PanelSize"/> property.
     /// </summary>
     public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogChartViewModel, double>(nameof(PanelSize), 300,
@@ -345,6 +353,18 @@ class LogChartViewModel : SessionComponent
 
 
     /// <summary>
+    /// Check whether X-axis is needed to be inverted or not.
+    /// </summary>
+    public bool IsXAxisInverted => this.GetValue(IsXAxisInvertedProperty);
+    
+    
+    /// <summary>
+    /// Check whether Y-axis is needed to be inverted or not.
+    /// </summary>
+    public bool IsYAxisInverted => this.GetValue(IsYAxisInvertedProperty);
+
+
+    /// <summary>
     /// Get known maximum value of all series.
     /// </summary>
     public DisplayableLogChartSeriesValue? MaxSeriesValue => this.activeSeriesGenerator.MaxSeriesValue;
@@ -416,6 +436,7 @@ class LogChartViewModel : SessionComponent
         this.ApplyLogChartSeriesSources();
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
+        this.SetValue(IsXAxisInvertedProperty, newLogProfile?.SortDirection != SortDirection.Ascending);
         this.updateAxisNamesAction.Execute();
         this.UpdateCanSetChartType();
     }
@@ -460,6 +481,9 @@ class LogChartViewModel : SessionComponent
             case nameof(LogProfile.LogChartValueGranularity):
                 this.SetValue(ChartValueGranularityProperty, profile.LogChartValueGranularity);
                 this.updateAxisNamesAction.Schedule();
+                break;
+            case nameof(LogProfile.SortDirection):
+                this.SetValue(IsXAxisInvertedProperty, profile.SortDirection != SortDirection.Ascending);
                 break;
         }
     }

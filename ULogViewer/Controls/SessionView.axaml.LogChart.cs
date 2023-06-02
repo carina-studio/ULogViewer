@@ -636,6 +636,11 @@ partial class SessionView
                 this.UpdateLogChartPanelVisibility();
                 this.ShowLogChartTutorial();
                 break;
+            case nameof(LogChartViewModel.IsXAxisInverted):
+            case nameof(LogChartViewModel.IsYAxisInverted):
+                this.areLogChartAxesReady = false;
+                this.UpdateLogChartAxes();
+                break;
             case nameof(LogChartViewModel.MaxSeriesValue):
             case nameof(LogChartViewModel.MinSeriesValue):
                 this.updateLogChartYAxisLimitAction.Schedule();
@@ -970,6 +975,7 @@ partial class SessionView
         });
         this.logChartXAxis.Let(axis =>
         {
+            axis.IsInverted = viewModel.IsXAxisInverted;
             axis.LabelsPaint = null;
             axis.TextSize = (float)axisFontSize;
             axis.ZeroPaint = null;
@@ -981,6 +987,7 @@ partial class SessionView
                 var color = brush.Color;
                 return new SolidColorPaint(new(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5)));
             });
+            axis.IsInverted = viewModel.IsYAxisInverted;
             axis.Labeler = value =>
             {
                 if (this.DataContext is Session session)
