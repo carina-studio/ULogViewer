@@ -1210,7 +1210,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure">登出 Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">登出 Azure (专业版)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">使用 进程ID (Process ID) 筛选日志</sys:String>
-	<sys:String x:Key="String/SessionView.LogPropertyName">属性名称：</sys:String>
+	<sys:String x:Key="String/SessionView.LogPropertyName">属性名称：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">日志时间长度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日志时间/最大日志时距 (点击以选取该日志)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距 (点击以选取该日志)</sys:String>

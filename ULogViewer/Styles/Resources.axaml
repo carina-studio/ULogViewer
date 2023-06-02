@@ -222,7 +222,6 @@
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Indicator.Size">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Summary.FontSize">13</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogHeader.MinWidth">25</sys:Double>
-	<sys:Double x:Key="Double/SessionView.LogHeader.Quantifier.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.ColorIndicator.Width">8</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.Item.MaxWidth">65536</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size">14</sys:Double>
@@ -259,8 +258,8 @@
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Indicator.Margin">2,1,0,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Summary.Margin">0,1,0,1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileListBox.Item.Padding">6</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,3,8</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,5,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,8,-8,8</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogHeader.Padding">5,0,0,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.ColorIndicator.Border">0,0,2,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Column.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Padding">0,0,20,0</Thickness>

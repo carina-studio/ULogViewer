@@ -63,6 +63,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
 		/// <summary>
+		/// <see cref="IValueConverter"/> to convert quantifier of log to text on control.
+		/// </summary>
+		public static readonly IValueConverter LogQuantifierConverter = new FuncValueConverter<string?, string?>(quantifier =>
+		{
+			if (string.IsNullOrWhiteSpace(quantifier))
+				return null;
+			return $" ({quantifier})";
+		});
+		/// <summary>
+		/// <see cref="IValueConverter"/> to convert secondary displayable log name to text on control.
+		/// </summary>
+		public static readonly IValueConverter LogSecondaryDisplayNameConverter = new FuncValueConverter<string?, string?>(name =>
+		{
+			if (string.IsNullOrWhiteSpace(name))
+				return null;
+			return $" - {name}";
+		});
+		/// <summary>
 		/// <see cref="IValueConverter"/> to convert from <see cref="Session.IsLogsReadingPaused"/> to icon of pause/resume reading logs.
 		/// </summary>
 		public static readonly IValueConverter PauseResumeReadingLogsIconConverter = new FuncValueConverter<bool, IImage?>(isPaused =>

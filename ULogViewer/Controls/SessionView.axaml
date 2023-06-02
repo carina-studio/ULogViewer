@@ -266,18 +266,26 @@
 
 		<!-- Log header template-->
 		<DataTemplate x:Key="logHeaderTemplate" x:CompileBindings="True" x:DataType="appViewModels:DisplayableLogProperty">
-			<Border Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
+			<Border Name="border" Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
 				<ToolTip.Tip>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{DynamicResource String/SessionView.LogPropertyName}" VerticalAlignment="Center"/>
-						<TextBlock Text="{Binding NameForLogProperty}" VerticalAlignment="Center"/>
+					<StackPanel>
+						<TextBlock IsVisible="{ReflectionBinding #textBlock.IsTextTrimmed}" TextTrimming="CharacterEllipsis">
+							<TextBlock.Inlines>
+								<Run FontWeight="Bold" Text="{Binding DisplayName}"/>
+								<Run Text="{Binding SecondaryDisplayName, Converter={x:Static appControls:SessionView.LogSecondaryDisplayNameConverter}}"/>
+								<Run Foreground="{DynamicResource Brush/SessionView.LogHeader.Quantifier.Foreground}" Text="{Binding Quantifier, Converter={x:Static appControls:SessionView.LogQuantifierConverter}}"/>
+							</TextBlock.Inlines>
+						</TextBlock>
+						<abControls:FormattedTextBlock Arg1="{Binding NameForLogProperty}" Format="{DynamicResource String/SessionView.LogPropertyName}" TextTrimming="CharacterEllipsis"/>
 					</StackPanel>
 				</ToolTip.Tip>
-				<Grid ClipToBounds="True" ColumnDefinitions="Auto,Auto,*">
-					<TextBlock FontWeight="Bold" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>	
-					<abControls:FormattedTextBlock Arg1="{Binding SecondaryDisplayName}" DebugLogger="{x:Static appControls:SessionView.TextBlockDebugLogger}" Format=" - {0}" Grid.Column="1" IsVisible="{Binding SecondaryDisplayName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
-					<abControls:FormattedTextBlock Arg1="{Binding Quantifier}" DebugLogger="{x:Static appControls:SessionView.TextBlockDebugLogger}" Format=" ({0})" Grid.Column="2" IsVisible="{Binding Quantifier, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Opacity="{StaticResource Double/SessionView.LogHeader.Quantifier.Opacity}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
-				</Grid>
+				<abControls:TextBlock Name="textBlock" ShowToolTipWhenTextTrimmed="False" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center">
+					<abControls:TextBlock.Inlines>
+						<Run FontWeight="Bold" Text="{Binding DisplayName}"/>
+						<Run Text="{Binding SecondaryDisplayName, Converter={x:Static appControls:SessionView.LogSecondaryDisplayNameConverter}}"/>
+						<Run Foreground="{DynamicResource Brush/SessionView.LogHeader.Quantifier.Foreground}" Text="{Binding Quantifier, Converter={x:Static appControls:SessionView.LogQuantifierConverter}}"/>
+					</abControls:TextBlock.Inlines>
+				</abControls:TextBlock>
 			</Border>
 		</DataTemplate>
 
