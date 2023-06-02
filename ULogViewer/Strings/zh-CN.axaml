@@ -450,7 +450,6 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若这是 Azure 上的资源则 ULogViewer 将自动设定相关环境，例如登录或更新防火墙规则。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">选取 Azure 上的资源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">资料来源参数</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">您可以点击这里以列出并选取 Azure 上的资源。</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">调试</sys:String>

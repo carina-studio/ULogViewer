@@ -11,58 +11,55 @@
         Width="{DynamicResource Double/LogPatternEditorDialog.Width}">
 	
 	<!-- Content -->
-	<Panel>
-		<DockPanel>
+	<DockPanel>
 
-			<!-- Control buttons -->
-			<Border Classes="Dialog_ControlButtonsPanel">
-				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Border Classes="Dialog_ContentPanel_WithItemsGroups">
+			<Border Classes="Dialog_ItemsGroup_Container">
+				<StackPanel>
+
+					<!-- Pattern -->
+					<asControls:DialogItemBorder>
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
+							<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#patternEditor.IsPatternTextValid}">
+								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
+							</Grid>
+						</StackPanel>
+					</asControls:DialogItemBorder>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
+					<Separator Classes="Dialog_Item_Separator"/>
+		
+					<!-- Repeatable -->
+					<asControls:DialogItemGrid>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
+						<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+					</asControls:DialogItemGrid>
+					<Separator Classes="Dialog_Item_Separator"/>
+		
+					<!-- Skippable -->
+					<asControls:DialogItemGrid>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
+						<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+					</asControls:DialogItemGrid>
+
 				</StackPanel>
 			</Border>
-	
-			<!-- Content -->
-			<Border Classes="Dialog_ContentPanel_WithItemsGroups">
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-	
-						<!-- Pattern -->
-						<asControls:DialogItemBorder>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
-								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#patternEditor.IsPatternTextValid}">
-									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-									<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
-								</Grid>
-							</StackPanel>
-						</asControls:DialogItemBorder>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-			
-						<!-- Repeatable -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
-							<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-			
-						<!-- Skippable -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
-							<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-
-					</StackPanel>
-				</Border>
-			</Border>
-			
-		</DockPanel>
-		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter"/>
-	</Panel>
+		</Border>
+		
+	</DockPanel>
 	
 </Window>

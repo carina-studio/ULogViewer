@@ -466,7 +466,6 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will setup environment automatically if it is the resource on Azure. For ex, logging in or updating firewall rules.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select resources on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources">You can click here to view and select resources on Azure.</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">Debug</sys:String>

@@ -141,9 +141,6 @@
 			
 		</DockPanel>
 
-		<!-- Tutorial -->
-		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter"/>
-
 	</Panel>
 	
 </Window>

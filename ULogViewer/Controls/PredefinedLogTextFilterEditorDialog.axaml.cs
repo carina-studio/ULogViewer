@@ -6,6 +6,7 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
+using CarinaStudio.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -211,7 +212,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.SynchronizationContext.Post(() =>
 			{
-				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.nameTextBox))
+				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.nameTextBox))
 					this.nameTextBox.Focus();
 			});
 		}

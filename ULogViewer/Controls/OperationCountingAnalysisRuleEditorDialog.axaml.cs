@@ -6,6 +6,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
+using CarinaStudio.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet.Rule"/>.
 	/// </summary>
-	partial class OperationCountingAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class OperationCountingAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ObservableList<DisplayableLogAnalysisCondition> conditions = new();
@@ -51,7 +52,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Conditions.
-		public IList<DisplayableLogAnalysisCondition> Conditions { get => this.conditions; }
+		public IList<DisplayableLogAnalysisCondition> Conditions => this.conditions;
 
 
 		// Generate result.
@@ -94,7 +95,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.operationNameTextBox))
+				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
 					this.operationNameTextBox.Focus();
 			});
 		}

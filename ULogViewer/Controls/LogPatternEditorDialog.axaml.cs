@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.VisualTree;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Editor of <see cref="LogPattern"/>.
 	/// </summary>
-	partial class LogPatternEditorDialog : InputDialog<IULogViewerApplication>
+	class LogPatternEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly PatternEditor patternEditor;
@@ -63,7 +64,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.patternEditor))
+				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.patternEditor))
 					this.patternEditor.Focus();
 			});
 		}

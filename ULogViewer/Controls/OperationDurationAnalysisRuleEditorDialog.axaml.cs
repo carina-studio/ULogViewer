@@ -7,6 +7,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.VisualTree;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="OperationDurationAnalysisRuleSet.Rule"/>.
 	/// </summary>
-	partial class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ObservableList<DisplayableLogAnalysisCondition> beginningConditions = new();
@@ -114,19 +115,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Beginning conditions.
 		/// </summary>
-		public IList<DisplayableLogAnalysisCondition> BeginningConditions { get => this.beginningConditions; }
+		public IList<DisplayableLogAnalysisCondition> BeginningConditions => this.beginningConditions;
 
 
 		/// <summary>
 		/// Post-actions for beginning of operation.
 		/// </summary>
-		public IList<ContextualBasedAnalysisAction> BeginningPostActions { get => this.beginningPostActions; }
+		public IList<ContextualBasedAnalysisAction> BeginningPostActions => this.beginningPostActions;
 
 
 		/// <summary>
 		/// Pre-actions for beginning of operation.
 		/// </summary>
-		public IList<ContextualBasedAnalysisAction> BeginningPreActions { get => this.beginningPreActions; }
+		public IList<ContextualBasedAnalysisAction> BeginningPreActions => this.beginningPreActions;
 
 
 		/// <summary>
@@ -205,25 +206,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Ending conditions.
 		/// </summary>
-		public IList<DisplayableLogAnalysisCondition> EndingConditions { get => this.endingConditions; }
+		public IList<DisplayableLogAnalysisCondition> EndingConditions => this.endingConditions;
 
 
 		/// <summary>
 		/// Post-actions for ending of operation.
 		/// </summary>
-		public IList<ContextualBasedAnalysisAction> EndingPostActions { get => this.endingPostActions; }
+		public IList<ContextualBasedAnalysisAction> EndingPostActions => this.endingPostActions;
 
 
 		/// <summary>
 		/// Pre-actions for ending of operation.
 		/// </summary>
-		public IList<ContextualBasedAnalysisAction> EndingPreActions { get => this.endingPreActions; }
+		public IList<ContextualBasedAnalysisAction> EndingPreActions => this.endingPreActions;
 
 
 		/// <summary>
 		/// Ending variables.
 		/// </summary>
-		public IList<string> EndingVariables { get => this.endingVariables; }
+		public IList<string> EndingVariables => this.endingVariables;
 
 
 		// Generate result.
@@ -303,7 +304,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				if (!this.beginningPatternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.operationNameTextBox))
+				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				if (presenter is null || !this.beginningPatternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
 					this.operationNameTextBox.Focus();
 			});
 		}

@@ -2,12 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
@@ -27,7 +25,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="LogDataSourceOptions"/>.
 /// </summary>
-partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	/// <summary>
 	/// Type of database source.
@@ -73,7 +71,6 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	static readonly StyledProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
 	static readonly StyledProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
 	static readonly StyledProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
-	static readonly SettingKey<bool> IsSelectAzureResourcesTutorialShownKey = new("LogDataSourceOptionsDialog.IsSelectAzureResourcesTutorialShown");
 	static readonly StyledProperty<bool> IsSelectingFileNameProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingFileName));
 	static readonly StyledProperty<bool> IsSelectingWorkingDirectoryProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingWorkingDirectory));
 	static readonly StyledProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
@@ -130,17 +127,17 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 		this.categoryTextBox = this.Get<TextBox>(nameof(categoryTextBox));
 		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox)).Also(it =>
 		{
-			it.GotFocus += (_, e) =>
+			it.GotFocus += (_, _) =>
 			{
 				this.saveCommandTextBoxSelectionAction?.Cancel();
 				it.SelectionStart = this.commandTextBoxSelection.Start.GetValueOrDefault();
 				it.SelectionEnd = this.commandTextBoxSelection.End.GetValueOrDefault();
 			};
-			it.LostFocus += (_, e) =>
+			it.LostFocus += (_, _) =>
 				this.saveCommandTextBoxSelectionAction?.Cancel();
-			it.GetObservable(TextBox.SelectionEndProperty).Subscribe(end =>
+			it.GetObservable(TextBox.SelectionEndProperty).Subscribe(_ =>
 				this.saveCommandTextBoxSelectionAction?.Schedule());
-			it.GetObservable(TextBox.SelectionStartProperty).Subscribe(start =>
+			it.GetObservable(TextBox.SelectionStartProperty).Subscribe(_ =>
 				this.saveCommandTextBoxSelectionAction?.Schedule());
 		});
 		this.connectionStringStringTextBox = this.Get<TextBox>(nameof(connectionStringStringTextBox));
@@ -159,9 +156,9 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			if (this.commandTextBox.IsFocused)
 				this.commandTextBoxSelection = new(this.commandTextBox.SelectionStart, this.commandTextBox.SelectionEnd);
 		});
-		this.setupCommands.CollectionChanged += (_, e) => this.InvalidateInput();
+		this.setupCommands.CollectionChanged += (_, _) => this.InvalidateInput();
 		this.setupCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(setupCommandsListBox));
-		this.teardownCommands.CollectionChanged += (_, e) => this.InvalidateInput();
+		this.teardownCommands.CollectionChanged += (_, _) => this.InvalidateInput();
 		this.teardownCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(teardownCommandsListBox));
 		this.uriTextBox = this.Get<UriTextBox>(nameof(uriTextBox));
 		this.userNameTextBox = this.Get<TextBox>(nameof(userNameTextBox));
@@ -209,8 +206,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public ILogDataSourceProvider? DataSourceProvider
 	{
-		get => this.GetValue<ILogDataSourceProvider?>(DataSourceProviderProperty);
-		set => this.SetValue<ILogDataSourceProvider?>(DataSourceProviderProperty, value);
+		get => this.GetValue(DataSourceProviderProperty);
+		set => this.SetValue(DataSourceProviderProperty, value);
 	}
 
 
@@ -254,7 +251,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 
 
 	/// <summary>
-	/// Comand to edit setup/teardown command.
+	/// Command to edit setup/teardown command.
 	/// </summary>
 	public ICommand EditSetupTeardownCommandCommand { get; }
 
@@ -267,17 +264,17 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			options.Category = this.categoryTextBox.Text?.Trim();
 		if (this.IsCommandSupported)
 			options.Command = this.commandTextBox.Text?.Trim();
-		if (this.GetValue<bool>(IsConnectionStringSupportedProperty))
+		if (this.GetValue(IsConnectionStringSupportedProperty))
 			options.ConnectionString = this.connectionStringStringTextBox.Text?.Trim();
 		if (this.IsEncodingSupported)
 			options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
 		if (this.IsFileNameSupported)
 			options.FileName = this.fileNameTextBox.Text?.Trim();
-		if (this.GetValue<bool>(IsFormatJsonDataSupportedProperty))
+		if (this.GetValue(IsFormatJsonDataSupportedProperty))
 			options.FormatJsonData = this.formatJsonDataSwitch.IsChecked.GetValueOrDefault();
-		if (this.GetValue<bool>(IsFormatXmlDataSupportedProperty))
+		if (this.GetValue(IsFormatXmlDataSupportedProperty))
 			options.FormatXmlData = this.formatXmlDataSwitch.IsChecked.GetValueOrDefault();
-		if (this.GetValue<bool>(IsIncludeStandardErrorSupportedProperty))
+		if (this.GetValue(IsIncludeStandardErrorSupportedProperty))
 			options.IncludeStandardError = this.includeStderrSwitch.IsChecked.GetValueOrDefault();
 		if (this.IsIPEndPointSupported)
 		{
@@ -290,7 +287,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			options.QueryString = this.queryStringTextBox.Text?.Trim();
 		if (this.IsPasswordSupported)
 			options.Password = this.passwordTextBox.Text?.Trim();
-		if (this.GetValue<bool>(IsResourceOnAzureSupportedProperty))
+		if (this.GetValue(IsResourceOnAzureSupportedProperty))
 			options.IsResourceOnAzure = this.isResourceOnAzureSwitch.IsChecked.GetValueOrDefault();
 		if (this.IsSetupCommandsSupported)
 			options.SetupCommands = this.setupCommands;
@@ -300,7 +297,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			options.Uri = this.uriTextBox.Object;
 		if (this.IsUserNameSupported)
 			options.UserName = this.userNameTextBox.Text?.Trim();
-		if (this.GetValue<bool>(IsUseTextShellSupportedProperty))
+		if (this.GetValue(IsUseTextShellSupportedProperty))
 			options.UseTextShell = this.useTextShellSwitch.IsChecked.GetValueOrDefault();
 		if (this.IsWorkingDirectorySupported)
 			options.WorkingDirectory = this.workingDirectoryTextBox.Text?.Trim();
@@ -309,25 +306,25 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 
 
 	// Data source options states.
-	bool IsCategoryRequired { get => this.GetValue<bool>(IsCategoryRequiredProperty); }
-	bool IsCategorySupported { get => this.GetValue<bool>(IsCategorySupportedProperty); }
-	bool IsCommandRequired { get => this.GetValue<bool>(IsCommandRequiredProperty); }
-	bool IsCommandSupported { get => this.GetValue<bool>(IsCommandSupportedProperty); }
-	bool IsFileNameSupported { get => this.GetValue<bool>(IsFileNameSupportedProperty); }
-	bool IsEncodingSupported { get => this.GetValue<bool>(IsEncodingSupportedProperty); }
-	bool IsIPEndPointSupported { get => this.GetValue<bool>(IsIPEndPointSupportedProperty); }
-	bool IsPasswordRequired { get => this.GetValue<bool>(IsPasswordRequiredProperty); }
-	bool IsPasswordSupported { get => this.GetValue<bool>(IsPasswordSupportedProperty); }
-	bool IsQueryStringRequired { get => this.GetValue<bool>(IsQueryStringRequiredProperty); }
-	bool IsQueryStringSupported { get => this.GetValue<bool>(IsQueryStringSupportedProperty); }
-	bool IsSetupCommandsRequired { get => this.GetValue<bool>(IsSetupCommandsRequiredProperty); }
-	bool IsSetupCommandsSupported { get => this.GetValue<bool>(IsSetupCommandsSupportedProperty); }
-	bool IsTeardownCommandsRequired { get => this.GetValue<bool>(IsTeardownCommandsRequiredProperty); }
-	bool IsTeardownCommandsSupported { get => this.GetValue<bool>(IsTeardownCommandsSupportedProperty); }
-	bool IsUserNameRequired { get => this.GetValue<bool>(IsUserNameRequiredProperty); }
-	bool IsUserNameSupported { get => this.GetValue<bool>(IsUserNameSupportedProperty); }
-	bool IsUriSupported { get => this.GetValue<bool>(IsUriSupportedProperty); }
-	bool IsWorkingDirectorySupported { get => this.GetValue<bool>(IsWorkingDirectorySupportedProperty); }
+	bool IsCategoryRequired => this.GetValue(IsCategoryRequiredProperty);
+	bool IsCategorySupported => this.GetValue(IsCategorySupportedProperty);
+	bool IsCommandRequired => this.GetValue(IsCommandRequiredProperty);
+	bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
+	bool IsFileNameSupported => this.GetValue(IsFileNameSupportedProperty);
+	bool IsEncodingSupported => this.GetValue(IsEncodingSupportedProperty);
+	bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
+	bool IsPasswordRequired => this.GetValue(IsPasswordRequiredProperty);
+	bool IsPasswordSupported => this.GetValue(IsPasswordSupportedProperty);
+	bool IsQueryStringRequired => this.GetValue(IsQueryStringRequiredProperty);
+	bool IsQueryStringSupported => this.GetValue(IsQueryStringSupportedProperty);
+	bool IsSetupCommandsRequired => this.GetValue(IsSetupCommandsRequiredProperty);
+	bool IsSetupCommandsSupported => this.GetValue(IsSetupCommandsSupportedProperty);
+	bool IsTeardownCommandsRequired => this.GetValue(IsTeardownCommandsRequiredProperty);
+	bool IsTeardownCommandsSupported => this.GetValue(IsTeardownCommandsSupportedProperty);
+	bool IsUserNameRequired => this.GetValue(IsUserNameRequiredProperty);
+	bool IsUserNameSupported => this.GetValue(IsUserNameSupportedProperty);
+	bool IsUriSupported => this.GetValue(IsUriSupportedProperty);
+	bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
 
 
 	/// <summary>
@@ -347,8 +344,8 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// </summary>
 	public bool IsTemplate
 	{
-		get =>this.GetValue<bool>(IsTemplateProperty);
-		set => this.SetValue<bool>(IsTemplateProperty, value);
+		get =>this.GetValue(IsTemplateProperty);
+		set => this.SetValue(IsTemplateProperty, value);
 	}
 
 
@@ -486,7 +483,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.commandTextBox.Text = options.Command;
 			firstEditor ??= this.commandTextBox;
 		}
-		if (this.GetValue<bool>(IsConnectionStringSupportedProperty))
+		if (this.GetValue(IsConnectionStringSupportedProperty))
 		{
 			this.connectionStringStringTextBox.Text = options.ConnectionString;
 			firstEditor ??= this.connectionStringStringTextBox;
@@ -496,11 +493,11 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.fileNameTextBox.Text = options.FileName;
 			firstEditor ??= this.fileNameTextBox;
 		}
-		if (this.GetValue<bool>(IsFormatJsonDataSupportedProperty))
+		if (this.GetValue(IsFormatJsonDataSupportedProperty))
 			this.formatJsonDataSwitch.IsChecked = options.FormatJsonData;
-		if (this.GetValue<bool>(IsFormatXmlDataSupportedProperty))
+		if (this.GetValue(IsFormatXmlDataSupportedProperty))
 			this.formatXmlDataSwitch.IsChecked = options.FormatXmlData;
-		if (this.GetValue<bool>(IsIncludeStandardErrorSupportedProperty))
+		if (this.GetValue(IsIncludeStandardErrorSupportedProperty))
 			this.includeStderrSwitch.IsChecked = options.IncludeStandardError;
 		if (this.IsWorkingDirectorySupported)
 		{
@@ -516,7 +513,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			});
 			firstEditor ??= this.ipAddressTextBox;
 		}
-		if (this.GetValue<bool>(IsResourceOnAzureSupportedProperty))
+		if (this.GetValue(IsResourceOnAzureSupportedProperty))
 			this.isResourceOnAzureSwitch.IsChecked = options.IsResourceOnAzure;
 		if (this.IsUriSupported)
 		{
@@ -548,7 +545,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			this.setupCommands.AddRange(options.SetupCommands);
 			firstEditor ??= this.setupCommandsListBox;
 		}
-		if (this.GetValue<bool>(IsUseTextShellSupportedProperty))
+		if (this.GetValue(IsUseTextShellSupportedProperty))
 		{
 			this.useTextShellSwitch.IsChecked = options.UseTextShell;
 			firstEditor ??= this.useTextShellSwitch;
@@ -561,30 +558,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 
 		// move focus to first editor
 		if (firstEditor != null)
-		{
-			if (this.GetValue<bool>(IsAzureRelatedDataSourceProviderProperty)
-				&& this.IsCommandSupported
-				&& !this.PersistentState.GetValueOrDefault(IsSelectAzureResourcesTutorialShownKey))
-			{
-				this.Get<TutorialPresenter>("tutorialPresenter").Let(presenter =>
-				{
-					presenter.ShowTutorial(new Tutorial().Also(it =>
-					{
-						it.Anchor = this.Get<Control>("selectAzureResourcesButton");
-						it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/LogDataSourceOptionsDialog.Tutorial.SelectAzureResources"));
-						it.Dismissed += (_, e) =>
-						{
-							this.PersistentState.SetValue<bool>(IsSelectAzureResourcesTutorialShownKey, true);
-							firstEditor.Focus();
-						};
-						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-						it.IsSkippingAllTutorialsAllowed = false;
-					}));
-				});
-			}
-			else
-				firstEditor.Focus();
-		}
+			this.SynchronizationContext.Post(firstEditor.Focus);
 		else
 			this.SynchronizationContext.Post(this.Close);
 
@@ -614,7 +588,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 			return false;
 		if (this.IsCommandRequired && string.IsNullOrWhiteSpace(this.commandTextBox.Text))
 			return false;
-		if (this.GetValue<bool>(IsConnectionStringRequiredProperty) && string.IsNullOrWhiteSpace(this.connectionStringStringTextBox.Text))
+		if (this.GetValue(IsConnectionStringRequiredProperty) && string.IsNullOrWhiteSpace(this.connectionStringStringTextBox.Text))
 			return false;
 		if (this.IsIPEndPointSupported && !this.ipAddressTextBox.IsTextValid)
 			return false;
@@ -641,75 +615,75 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	// Refresh state of all options.
 	void RefreshOptionStates()
 	{
-		var provider = this.GetValue<ILogDataSourceProvider?>(DataSourceProviderProperty);
+		var provider = this.GetValue(DataSourceProviderProperty);
 		if (provider != null)
 		{
-			var isTemplate = this.GetValue<bool>(IsTemplateProperty);
-			this.SetValue<Uri?>(CategoryReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Category)));
-			this.SetValue<Uri?>(CommandReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Command)));
-			this.SetValue<Uri?>(ConnectionStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.ConnectionString)));
-			this.SetValue<bool>(IsAzureRelatedDataSourceProviderProperty, provider is AzureCliLogDataSourceProvider);
-			this.SetValue<bool>(IsCategoryRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
-			this.SetValue<bool>(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
-			this.SetValue<bool>(IsCommandRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
-			this.SetValue<bool>(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
-			this.SetValue<bool>(IsConnectionStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ConnectionString)));
-			this.SetValue<bool>(IsConnectionStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ConnectionString)));
-			this.SetValue<bool>(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
-			this.SetValue<bool>(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
-			this.SetValue<bool>(IsFormatJsonDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatJsonData)));
-			this.SetValue<bool>(IsFormatXmlDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatXmlData)));
-			this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IncludeStandardError)));
-			this.SetValue<bool>(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
-			this.SetValue<bool>(IsPasswordRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
-			this.SetValue<bool>(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
-			this.SetValue<bool>(IsQueryStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
-			this.SetValue<bool>(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
-			this.SetValue<bool>(IsResourceOnAzureSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IsResourceOnAzure)));
-			this.SetValue<bool>(IsSetupCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.SetupCommands)));
-			this.SetValue<bool>(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
-			this.SetValue<bool>(IsTeardownCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
-			this.SetValue<bool>(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
-			this.SetValue<bool>(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
-			this.SetValue<bool>(IsUserNameRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
-			this.SetValue<bool>(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
-			this.SetValue<bool>(IsUseTextShellSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell)));
-			this.SetValue<bool>(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)));
-			this.SetValue<Uri?>(QueryStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.QueryString)));
+			var isTemplate = this.GetValue(IsTemplateProperty);
+			this.SetValue(CategoryReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Category)));
+			this.SetValue(CommandReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.Command)));
+			this.SetValue(ConnectionStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.ConnectionString)));
+			this.SetValue(IsAzureRelatedDataSourceProviderProperty, provider is AzureCliLogDataSourceProvider);
+			this.SetValue(IsCategoryRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
+			this.SetValue(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
+			this.SetValue(IsCommandRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
+			this.SetValue(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
+			this.SetValue(IsConnectionStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ConnectionString)));
+			this.SetValue(IsConnectionStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ConnectionString)));
+			this.SetValue(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
+			this.SetValue(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
+			this.SetValue(IsFormatJsonDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatJsonData)));
+			this.SetValue(IsFormatXmlDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatXmlData)));
+			this.SetValue(IsIncludeStandardErrorSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IncludeStandardError)));
+			this.SetValue(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
+			this.SetValue(IsPasswordRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
+			this.SetValue(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
+			this.SetValue(IsQueryStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
+			this.SetValue(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
+			this.SetValue(IsResourceOnAzureSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IsResourceOnAzure)));
+			this.SetValue(IsSetupCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.SetupCommands)));
+			this.SetValue(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
+			this.SetValue(IsTeardownCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
+			this.SetValue(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
+			this.SetValue(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
+			this.SetValue(IsUserNameRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
+			this.SetValue(IsUserNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UserName)));
+			this.SetValue(IsUseTextShellSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell)));
+			this.SetValue(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)));
+			this.SetValue(QueryStringReferenceUriProperty, provider.GetSourceOptionReferenceUri(nameof(LogDataSourceOptions.QueryString)));
 		}
 		else
 		{
-			this.SetValue<Uri?>(CategoryReferenceUriProperty, null);
-			this.SetValue<Uri?>(CommandReferenceUriProperty, null);
-			this.SetValue<Uri?>(ConnectionStringReferenceUriProperty, null);
-			this.SetValue<bool>(IsAzureRelatedDataSourceProviderProperty, false);
-			this.SetValue<bool>(IsCategoryRequiredProperty, false);
-			this.SetValue<bool>(IsCategorySupportedProperty, false);
-			this.SetValue<bool>(IsCommandRequiredProperty, false);
-			this.SetValue<bool>(IsCommandSupportedProperty, false);
-			this.SetValue<bool>(IsConnectionStringRequiredProperty, false);
-			this.SetValue<bool>(IsConnectionStringSupportedProperty, false);
-			this.SetValue<bool>(IsEncodingSupportedProperty, false);
-			this.SetValue<bool>(IsFileNameSupportedProperty, false);
-			this.SetValue<bool>(IsFormatJsonDataSupportedProperty, false);
-			this.SetValue<bool>(IsFormatXmlDataSupportedProperty, false);
-			this.SetValue<bool>(IsIncludeStandardErrorSupportedProperty, false);
-			this.SetValue<bool>(IsIPEndPointSupportedProperty, false);
-			this.SetValue<bool>(IsPasswordRequiredProperty, false);
-			this.SetValue<bool>(IsPasswordSupportedProperty, false);
-			this.SetValue<bool>(IsQueryStringRequiredProperty, false);
-			this.SetValue<bool>(IsQueryStringSupportedProperty, false);
-			this.SetValue<bool>(IsResourceOnAzureSupportedProperty, false);
-			this.SetValue<bool>(IsSetupCommandsRequiredProperty, false);
-			this.SetValue<bool>(IsSetupCommandsSupportedProperty, false);
-			this.SetValue<bool>(IsTeardownCommandsRequiredProperty, false);
-			this.SetValue<bool>(IsTeardownCommandsSupportedProperty, false);
-			this.SetValue<bool>(IsUriSupportedProperty, false);
-			this.SetValue<bool>(IsUserNameRequiredProperty, false);
-			this.SetValue<bool>(IsUserNameRequiredProperty, false);
-			this.SetValue<bool>(IsUseTextShellSupportedProperty, false);
-			this.SetValue<bool>(IsWorkingDirectorySupportedProperty, false);
-			this.SetValue<Uri?>(QueryStringReferenceUriProperty, null);
+			this.SetValue(CategoryReferenceUriProperty, null);
+			this.SetValue(CommandReferenceUriProperty, null);
+			this.SetValue(ConnectionStringReferenceUriProperty, null);
+			this.SetValue(IsAzureRelatedDataSourceProviderProperty, false);
+			this.SetValue(IsCategoryRequiredProperty, false);
+			this.SetValue(IsCategorySupportedProperty, false);
+			this.SetValue(IsCommandRequiredProperty, false);
+			this.SetValue(IsCommandSupportedProperty, false);
+			this.SetValue(IsConnectionStringRequiredProperty, false);
+			this.SetValue(IsConnectionStringSupportedProperty, false);
+			this.SetValue(IsEncodingSupportedProperty, false);
+			this.SetValue(IsFileNameSupportedProperty, false);
+			this.SetValue(IsFormatJsonDataSupportedProperty, false);
+			this.SetValue(IsFormatXmlDataSupportedProperty, false);
+			this.SetValue(IsIncludeStandardErrorSupportedProperty, false);
+			this.SetValue(IsIPEndPointSupportedProperty, false);
+			this.SetValue(IsPasswordRequiredProperty, false);
+			this.SetValue(IsPasswordSupportedProperty, false);
+			this.SetValue(IsQueryStringRequiredProperty, false);
+			this.SetValue(IsQueryStringSupportedProperty, false);
+			this.SetValue(IsResourceOnAzureSupportedProperty, false);
+			this.SetValue(IsSetupCommandsRequiredProperty, false);
+			this.SetValue(IsSetupCommandsSupportedProperty, false);
+			this.SetValue(IsTeardownCommandsRequiredProperty, false);
+			this.SetValue(IsTeardownCommandsSupportedProperty, false);
+			this.SetValue(IsUriSupportedProperty, false);
+			this.SetValue(IsUserNameRequiredProperty, false);
+			this.SetValue(IsUserNameRequiredProperty, false);
+			this.SetValue(IsUseTextShellSupportedProperty, false);
+			this.SetValue(IsWorkingDirectorySupportedProperty, false);
+			this.SetValue(QueryStringReferenceUriProperty, null);
 		}
 	}
 
@@ -812,7 +786,7 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// <summary>x
 	/// Setup commands.
 	/// </summary>
-	public IList<string> SetupCommands { get => this.setupCommands; }
+	public IList<string> SetupCommands => this.setupCommands;
 
 
 	/// <summary>
@@ -831,5 +805,5 @@ partial class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogVi
 	/// <summary>
 	/// Teardown commands.
 	/// </summary>
-	public IList<string> TeardownCommands { get => this.teardownCommands; }
+	public IList<string> TeardownCommands => this.teardownCommands;
 }

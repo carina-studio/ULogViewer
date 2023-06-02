@@ -69,9 +69,6 @@
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
-
-		<!-- Tutorial -->
-		<asControls:FullWindowTutorialPresenter Name="tutorialPresenter" Grid.RowSpan="2"/>
 		
 	</Grid>
   

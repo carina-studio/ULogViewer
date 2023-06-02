@@ -1,13 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
+using CarinaStudio.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="KeyLogAnalysisRuleSet.Rule"/>.
 /// </summary>
-partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 {
 	// Fields.
 	readonly ComboBox byteSizeUnitComboBox;
@@ -73,7 +73,7 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 	/// <summary>
 	/// Conditions to match log.
 	/// </summary>
-	public IList<DisplayableLogAnalysisCondition> Conditions { get => this.conditions; }
+	public IList<DisplayableLogAnalysisCondition> Conditions => this.conditions;
 
 
 	// Generate result.
@@ -122,7 +122,8 @@ partial class KeyLogAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IUL
 		}
 		this.SynchronizationContext.Post(() =>
 		{
-			if (!this.patternEditor.ShowTutorialIfNeeded(this.Get<TutorialPresenter>("tutorialPresenter"), this.patternEditor))
+			var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+			if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.patternEditor))
 				this.patternEditor.Focus();
 		});
 	}
