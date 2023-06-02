@@ -2,8 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.VisualTree;
@@ -20,6 +23,12 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 	{
+		/// <summary>
+		/// Key of persistent state tp indicate whether tutorial of group name has been shown or not.
+		/// </summary>
+		public static readonly SettingKey<bool> IsGroupNameTutorialShownKey = new("PredefinedLogTextFilterEditorDialog.IsGroupNameTutorialShown", true);
+		
+		
 		// Static fields.
 		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<PredefinedLogTextFilter, PredefinedLogTextFilterEditorDialog> DialogWithEditingRuleSets = new();
@@ -213,8 +222,34 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SynchronizationContext.Post(() =>
 			{
 				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
-				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.nameTextBox))
-					this.nameTextBox.Focus();
+				if (presenter is not null)
+				{
+					if (!this.PersistentState.GetValueOrDefault(IsGroupNameTutorialShownKey))
+					{
+						this.PersistentState.SetValue<bool>(IsGroupNameTutorialShownKey, true);
+						if (PredefinedLogTextFilterManager.Default.Groups.IsEmpty())
+						{
+							presenter.ShowTutorial(new Tutorial().Also(it =>
+							{
+								it.Anchor = this.FindControl<Control>("groupNameItemContainer");
+								it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Tutorial.GroupName"));
+								it.Dismissed += (_, _) =>
+								{
+									if (this.IsClosed)
+										return;
+									if (!this.patternEditor.ShowTutorialIfNeeded(presenter, this.nameTextBox))
+										this.nameTextBox.Focus();
+								};
+								it.Icon = this.FindResourceOrDefault<IImage>("Image/Icon.Lightbulb.Colored");
+								it.IsSkippingAllTutorialsAllowed = false;
+							}));
+							return;
+						}
+					}
+					if (this.patternEditor.ShowTutorialIfNeeded(presenter, this.nameTextBox))
+						return;
+				}
+				this.nameTextBox.Focus();
 			});
 		}
 

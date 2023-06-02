@@ -33,7 +33,7 @@
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Group -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItemGrid Name="groupNameItemContainer">
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.GroupName}"/>
 						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
 					</asControls:DialogItemGrid>

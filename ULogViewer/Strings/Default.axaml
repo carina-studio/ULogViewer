@@ -1002,6 +1002,7 @@ return False</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">Select group</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Tutorial.GroupName">Now you can set group of text filter.</sys:String>
 
 	<!-- Product -->
 	<sys:String x:Key="String/Product.ULogViewer-Pro">ULogViewer Pro</sys:String>

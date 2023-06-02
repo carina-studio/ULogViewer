@@ -10,6 +10,7 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -219,11 +220,8 @@ namespace CarinaStudio.ULogViewer
 
 		// Create main window.
         protected override AppSuite.Controls.MainWindow OnCreateMainWindow() => new MainWindow().Also(it =>
-		{
-			var info = new MainWindowInfo()
-			{
-				//
-			};
+        {
+	        var info = new MainWindowInfo();
 			this.mainWindowInfoMap.Add(it, info);
 		});
 
@@ -669,7 +667,11 @@ namespace CarinaStudio.ULogViewer
 				if (settings.GetValueOrDefault(LegacySaveMemoryAggressivelySettingKey))
 					settings.SetValue<MemoryUsagePolicy>(SettingKeys.MemoryUsagePolicy, MemoryUsagePolicy.LessMemoryUsage);
 			}
-		}
+			
+			// determine whether tutorials are needed to be shown or not
+			if (oldVersion == 4)
+				this.PersistentState.SetValue<bool>(PredefinedLogTextFilterEditorDialog.IsGroupNameTutorialShownKey, false);
+        }
 
 
 		// URI of package manifest.
@@ -702,7 +704,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Version of settings.
-		protected override int SettingsVersion => 4;
+		protected override int SettingsVersion => 5;
 
 
 		// Setup internal test cases.

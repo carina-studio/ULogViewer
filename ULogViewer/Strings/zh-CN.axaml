@@ -966,6 +966,7 @@ return False</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">选择分组</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">创建文字过滤器</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">编辑文字过滤器</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Tutorial.GroupName">现在您可以为文字筛选分组。</sys:String>
 
 	<!-- Product -->
 	<sys:String x:Key="String/Product.ULogViewer-Pro">ULogViewer 专业版</sys:String>
