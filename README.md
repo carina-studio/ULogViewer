@@ -1,17 +1,52 @@
-# ULogViewer [![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/releases/tag/2.0.22.423) ![](https://img.shields.io/github/downloads/carina-studio/ULogViewer/total) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
+# ULogViewer 
+[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/releases/tag/2.0.22.423) ![](https://img.shields.io/github/downloads/carina-studio/ULogViewer/total) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
-ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading, parsing and analysing various type of logs.
+ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading, parsing and analysing various type of logs. Please visit the [Website](https://carinastudio.azurewebsites.net/ULogViewer/) for more details.
+
+ULogViewer 是一個由 C# 撰寫並基於 [.NET](https://dotnet.microsoft.com/) 的跨平台通用日誌檢視器，支援多種形式之日誌讀取、解析與分析。請參閱 [網站](https://carinastudio.azurewebsites.net/ULogViewer/) 以取得更多資訊。
+
+<img alt="ULogViewer" src="https://carinastudio.azurewebsites.net/ULogViewer/Banner.png"/>
 
 ## 📥 Download
+### 3.0.1.603 (Preview)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x86-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-win-x86.zip)
 
-### Stable
-| Operating System | Download | Version | Screenshot |
-|:----------------:|:--------:|:-------:|:----------:|
-| Windows 8/10/11  |[x86](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-win-x86.zip) &#124; [x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-win-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-win-arm64.zip)|2.0.22.423|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Windows.png)|
-|   macOS 11/12    |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-osx-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-osx-arm64.zip)|2.0.22.423|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_macOS.png)|
-|         Linux    |[x64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-linux-x64.zip) &#124; [arm64](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-linux-arm64.zip)|2.0.22.423|[<img src="https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora_Thumb.png" width="150"/>](https://carinastudio.azurewebsites.net/ULogViewer/Screenshots/Screenshot_Fedora.png)|
+[![](https://img.shields.io/badge/macOS-arm64%20(M1/M2)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-osx-arm64.zip)
+[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-osx-x64.zip)
 
-- [Installation and Upgrade Guide](https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade)
+[![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-linux-x64.zip)
+[![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.603/ULogViewer-3.0.1.603-linux-arm64.zip)
+
+### 2.0.22.423
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x86-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-win-x86.zip)
+
+[![](https://img.shields.io/badge/macOS-arm64%20(M1/M2)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-osx-arm64.zip)
+[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-osx-x64.zip)
+
+[![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-linux-x64.zip)
+[![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-linux-arm64.zip)
+
+## 📣 What's Change in 3.0 (Preview)
+- Support embedding log analysis script and log data source script into log profile.
+- Support rendering values of log properties as chart.
+- Add new ways of matching raw log lines by patterns to make log parsing more flexible.
+- Allow grouping of defined text filters.
+- Syntax highlighting for ```Regular Expression```, ```Date and Time Format```, ```Time Span Format```, ```Query String (SQL)``` and ```Command-Line Shell Command```.
+- Highlight text sequences in logs which are matched by text filter.
+- Highlight PID and TID which are same as PID and TID of selected log.
+- Add ```Windows Event Log File``` log data source to support reading data from ```Windows XML Event Log``` (*.evtx) files.
+- Add 10 built-in log profiles and templates.
+- Support ```Python 3.4``` as script language.
+- Support searching selected property of log on the Internet.
+- Add more log properties.
+- Allow editing pattern (Regular Expression) directly in text area.
+- Select proper scale factor of screen on ```Linux``` automatically.
+
+[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#PreviewChangeList)
 
 ## 📣 What's Change in 2.0
 - Log analysis including finding key logs, calculating duration of operation, even writing your own script to analyze logs.
@@ -27,94 +62,7 @@ ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform unive
 - Adding ```zh-CN``` language support.
 - UI/UX Improvement.
 
-## 🗄 Log data sources
-- Standard Output (stdout).
-- Files.
-- Windows Event Logs (Windows only).
-- HTTP/HTTPS.
-- TCP (without SSL).
-- UDP.
-- SQLite Database.
-- Azure CLI [Pro][v2.0+].
-- MySQL Database [Pro][v2.0+].
-- SQL Server Database [Pro][v2.0+].
-- Log Data Source Script [Pro][v2.0+].
-
-## 📖 Log profiles
-Each log profile defines:
-- What log data source should be used.
-- How to parse log data into structured logs.
-- What properties of log should be displayed in the list.
-- How to output logs back to text (ex, copying).
-
-Currently there are 28 built-in log profiles:
-- Android Device Event Log.
-- Android Device Log.
-- Android Device System Trace [macOS/Linux][v2.0+].
-- Android Log Files.
-- Android Kernel Log Files.
-- Android System Trace File.
-- Azure Webapp log Files [Pro][v2.0+].
-- Azure Webapp Log Stream [Template][Pro][v2.0+].
-- Git Log.
-- Git Log (Simple).
-- Linux Kernel Log [Linux].
-- Linux Kernel Log Files.
-- Linux Real-time System Wide Log [Linux][v2.0+].
-- Linux System Log [Linux].
-- Linux System Log Files.
-- macOS Installation Log [macOS].
-- macOS Real-time System Wide Log [macOS].
-- macOS System Log Files.
-- NLog (TCP).
-- Raw Text In Files.
-- Raw HTTP/HTTPS Response.
-- Raw Text From TCP Client.
-- ULogViewer Log File [v2.0+].
-- ULogViewer Real-time Log [v2.0+].
-- Windows Event Logs (Application) [Windows].
-- Windows Event Logs (System) [Windows].
-- Windows Event Logs (Secutiry) [Windows].
-- Windows Event Logs (Setup) [Windows].
-
-You can also create, copy or export your own log profiles according to your requirement.
-
-## 🔍 Log filtering
-Log filtering is the most important feature in ULogViewer which helps you to find and analyze the problem from logs.
-You can filter logs by:
-- Text filter described by regular expression.
-- Level(Priority) of log.
-- Process ID of log if available.
-- Thread ID of log if available.
-
-For text filter, you can also predefine some filters you may use frequently and filter logs by cobination of these text filters.
-
-[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering)
-
-## 📌 Log marking
-When viewing logs, you can mark some logs with different colors which are important for you. There is a separated side panel to list all marked logs to help you to jump to marked log quickly.
-Marked logs will be kept if you are viewing logs from files so that you don't need to mark them again when you open log files next time.
-
-## 📊 Log Analysis (v2.0+)
-Except for log filtering, you can also define rule sets or write scripts to analyze logs. Log analysis runs in background separately and generate results to a separated side panel. Currently there are 3 type of log analysis are supported:
-- **Key Log Analysis**
-
-  Find log with specific text pattern and level. You can extract information from log and put it to the result message.
-- **Operation Duration Analysis**
-
-  Find operation marked by specific starting and ending logs and calculate the duration of it. You can extract information from log and put it to the result message.
-- **Log Analysis Script**
-
-  Write script to analyze logs according to your requirement completely.
-
-[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis)
-
-## 📔 Other Topics
-- [How Does ULogViewer Read and Parse Logs](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs)
-- [Log Filtering](https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering)
-- [Scripting in Carina Studio Application](https://carinastudio.azurewebsites.net/Scripting)
-- [Log Analysis](https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis)
-- [Log Data Source Script](https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource)
+[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#StableChangeList)
 
 ## 🤝 Dependencies
 - [.NET](https://dotnet.microsoft.com/)
