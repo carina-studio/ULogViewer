@@ -186,21 +186,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		INotifyCollectionChanged? attachedLogs;
 		readonly ForwardedObservableBoolean canAddLogFiles;
-		readonly ObservableCommandState canAddLogFilesToSession = new();
+		readonly ObservableCommandState<Session.LogDataSourceParams<string>> canAddLogFilesToSession = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canEditLogProfile = new();
 		readonly MutableObservableBoolean canMarkSelectedLogs = new();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new();
-		readonly ObservableCommandState canReloadLogs = new();
-		readonly ObservableCommandState canResetLogProfileToSession = new();
+		readonly ObservableCommandState<object?> canReloadLogs = new();
+		readonly ObservableCommandState<object?> canResetLogProfileToSession = new();
 		readonly MutableObservableBoolean canRestartAsAdmin = new(Platform.IsWindows && !App.Current.IsRunningAsAdministrator);
-		readonly ObservableCommandState canSaveLogs = new();
-		readonly ObservableCommandState canSetIPEndPoint = new();
+		readonly ObservableCommandState<LogsSavingOptions> canSaveLogs = new();
+		readonly ObservableCommandState<IPEndPoint> canSetIPEndPoint = new();
 		readonly ForwardedObservableBoolean canSetLogProfile;
-		readonly ObservableCommandState canSetLogProfileToSession = new();
-		readonly ObservableCommandState canSetUri = new();
-		readonly ObservableCommandState canSetWorkingDirectory = new();
+		readonly ObservableCommandState<LogProfile> canSetLogProfileToSession = new();
+		readonly ObservableCommandState<Uri> canSetUri = new();
+		readonly ObservableCommandState<string> canSetWorkingDirectory = new();
 		readonly MutableObservableBoolean canShowFileInExplorer = new();
 		readonly MutableObservableBoolean canShowLogProperty = new();
 		readonly MutableObservableBoolean canShowWorkingDirectoryInExplorer = new();
@@ -1160,14 +1160,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// attach to command
-			this.canAddLogFilesToSession.Bind(session.AddLogFileCommand);
+			this.canAddLogFilesToSession.Bind(session.AddLogFileCommand, new Session.LogDataSourceParams<string>());
 			this.canReloadLogs.Bind(session.ReloadLogsCommand);
 			this.canResetLogProfileToSession.Bind(session.ResetLogProfileCommand);
-			this.canSaveLogs.Bind(session.SaveLogsCommand);
-			this.canSetIPEndPoint.Bind(session.SetIPEndPointCommand);
-			this.canSetLogProfileToSession.Bind(session.SetLogProfileCommand);
-			this.canSetUri.Bind(session.SetUriCommand);
-			this.canSetWorkingDirectory.Bind(session.SetWorkingDirectoryCommand);
+			this.canSaveLogs.Bind(session.SaveLogsCommand, new LogsSavingOptions(Array.Empty<DisplayableLog>()));
+			this.canSetIPEndPoint.Bind(session.SetIPEndPointCommand, new IPEndPoint(IPAddress.Loopback, 80));
+			this.canSetLogProfileToSession.Bind(session.SetLogProfileCommand, LogProfileManager.Default.EmptyProfile);
+			this.canSetUri.Bind(session.SetUriCommand, new Uri("dummy://localhost"));
+			this.canSetWorkingDirectory.Bind(session.SetWorkingDirectoryCommand, "");
 			this.canShowWorkingDirectoryInExplorer.Update(Platform.IsOpeningFileManagerSupported && session.HasWorkingDirectory);
 
 			// start auto scrolling
