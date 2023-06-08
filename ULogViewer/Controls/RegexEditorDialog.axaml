@@ -97,7 +97,12 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].CapturedGroups.Count}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].CapturedGroups.Count}"/>
-							<ListBox Classes="Dialog_Item_ListBox" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].CapturedGroups.Count}" Items="{Binding $parent[Window].CapturedGroups}" VirtualizationMode="None">
+							<ListBox Classes="Dialog_Item_ListBox" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].CapturedGroups.Count}" ItemsSource="{Binding $parent[Window].CapturedGroups}">
+								<ListBox.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel/>
+									</ItemsPanelTemplate>
+								</ListBox.ItemsPanel>
 								<ListBox.ItemTemplate>
 									<DataTemplate>
 										<Grid>

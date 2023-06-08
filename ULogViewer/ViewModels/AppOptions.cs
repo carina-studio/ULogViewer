@@ -189,9 +189,13 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public IList<FontFamilyInfo> InstalledFontFamilies { get; } = new List<FontFamilyInfo>().Also(it =>
 	{
 		// get installed fonts
-		foreach (var familyName in FontManager.Current.GetInstalledFontFamilyNames())
-			it.Add(new(familyName, false));
-		
+		foreach (var font in FontManager.Current.SystemFonts)
+		{
+			var name = font.FamilyNames.FirstOrDefault();
+			if (!string.IsNullOrEmpty(name))
+				it.Add(new(name, false));
+		}
+
 		// sort
 		// ReSharper disable StringCompareIsCultureSpecific.1
 		var comparison = new Comparison<FontFamilyInfo>((lhs, rhs) => string.Compare(lhs.Name, rhs.Name));

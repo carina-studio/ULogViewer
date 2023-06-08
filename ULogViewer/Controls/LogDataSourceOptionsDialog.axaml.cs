@@ -558,7 +558,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 		// move focus to first editor
 		if (firstEditor != null)
-			this.SynchronizationContext.Post(firstEditor.Focus);
+			this.SynchronizationContext.Post(() => firstEditor.Focus());
 		else
 			this.SynchronizationContext.Post(this.Close);
 
@@ -725,15 +725,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			await (Path.GetDirectoryName(this.fileNameTextBox.Text?.Trim())?.LetAsync(async path =>
 			{
 				if (path.IsValidFilePath() && await CarinaStudio.IO.Directory.ExistsAsync(path))
-					options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
+					options.SuggestedStartLocation = await this.StorageProvider.TryGetFolderFromPathAsync(path);
 			}) ?? Task.CompletedTask);
 		});
-		var fileName = (await this.StorageProvider.OpenFilePickerAsync(options)).Let(it =>
-		{
-			if (it.Count != 1 || !it[0].TryGetUri(out var uri))
-				return null;
-			return uri.LocalPath;
-		});
+		var fileName = (await this.StorageProvider.OpenFilePickerAsync(options)).Let(it => 
+			it.Count == 1 ? it[0].TryGetLocalPath() : null);
 		if (!string.IsNullOrEmpty(fileName))
 			this.fileNameTextBox.Text = fileName;
 		this.SetValue(IsSelectingFileNameProperty, false);
@@ -768,15 +764,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			await (this.workingDirectoryTextBox.Text?.Trim().LetAsync(async path =>
 			{
 				if (path.IsValidFilePath() && await CarinaStudio.IO.Directory.ExistsAsync(path))
-					options.SuggestedStartLocation = new Avalonia.Platform.Storage.FileIO.BclStorageFolder(path);
+					options.SuggestedStartLocation = await this.StorageProvider.TryGetFolderFromPathAsync(path);
 			}) ?? Task.CompletedTask);
 		});
-		var dirPath = (await this.StorageProvider.OpenFolderPickerAsync(options)).Let(it =>
-		{
-			if (it.Count != 1 || !it[0].TryGetUri(out var uri))
-				return null;
-			return uri.LocalPath;
-		});
+		var dirPath = (await this.StorageProvider.OpenFolderPickerAsync(options)).Let(it => 
+			it.Count == 1 ? it[0].TryGetLocalPath() : null);
 		if (!string.IsNullOrEmpty(dirPath))
 			this.workingDirectoryTextBox.Text = dirPath;
 		this.SetValue(IsSelectingWorkingDirectoryProperty, false);

@@ -21,7 +21,7 @@
 		WindowStartupLocation="Manual">
 	
 	<Window.Resources>
-		<ContextMenu x:Key="addSupportedSourceOptionMenu" PlacementMode="Bottom"/>
+		<ContextMenu x:Key="addSupportedSourceOptionMenu" Placement="Bottom"/>
 	</Window.Resources>
 
 	<DockPanel>
@@ -59,7 +59,12 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<ListBox Name="supportedSourceOptionListBox" Classes="Dialog_Item_ListBox" Items="{Binding $parent[Window].SupportedSourceOptions}" VirtualizationMode="None">
+						<ListBox Name="supportedSourceOptionListBox" Classes="Dialog_Item_ListBox" ItemsSource="{Binding $parent[Window].SupportedSourceOptions}">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
 							<ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,*">

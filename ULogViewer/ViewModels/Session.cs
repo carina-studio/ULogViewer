@@ -5,6 +5,7 @@ using CarinaStudio.AppSuite.Product;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.IO;
@@ -1283,11 +1284,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var icon = Global.Run(() =>
 				{
 					if (logProfile == null)
-					{
-						var res = (object?)null;
-						app?.Resources.TryGetResource("Image/Icon.Tab", out res);
-						return res as IImage;
-					}
+						return app?.FindResourceOrDefault<IImage>("Image/Icon.Tab");
 					if (app != null)
 						return LogProfileIconConverter.Default.Convert(logProfile, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
@@ -1919,7 +1916,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (logWriter.State == LogWriterState.Stopped)
 			{
 				this.Logger.LogDebug("Logs writing completed, start setting to clipboard");
-				var clipboard = app.Clipboard;
+				var clipboard = app.LatestActiveWindow?.Clipboard;
 				if (clipboard != null)
 				{
 					await clipboard.SetTextAsync(dataOutput.String ?? "");

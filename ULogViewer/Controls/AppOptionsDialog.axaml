@@ -54,7 +54,7 @@
 									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
 								</Grid>
 							</StackPanel>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
+							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<TextBlock Text="{Binding Converter={x:Static asViewModels:ApplicationOptions.ThemeModeConverter}}"/>
@@ -131,7 +131,7 @@
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<Grid ColumnDefinitions="*,Auto,*">
-							<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
+							<ComboBox Classes="Dialog_ComboBox" ItemsSource="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="*,Auto">
@@ -161,7 +161,7 @@
 							</StackPanel>
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<ComboBox Classes="Dialog_ComboBox" Items="{Binding InstalledFontFamilies}" SelectedItem="{Binding PatternFontFamily, Mode=TwoWay}">
+						<ComboBox Classes="Dialog_ComboBox" ItemsSource="{Binding InstalledFontFamilies}" SelectedItem="{Binding PatternFontFamily, Mode=TwoWay}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,Auto">
@@ -200,7 +200,7 @@
 						<!-- Initial log profile -->
 						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.InitialLogProfile}"/>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding LogProfiles}" SelectedItem="{Binding InitialLogProfile, Mode=TwoWay}">
+							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding LogProfiles}" SelectedItem="{Binding InitialLogProfile, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="Auto,*">
@@ -343,7 +343,7 @@
 						<!-- Default text shell -->
 						<asControls:DialogItemGrid>
 							<TextBlock Name="defaultTextShellLabel" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.DefaultTextShell}"/>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
+							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate x:CompileBindings="True" x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
 										<TextBlock Text="{ReflectionBinding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>

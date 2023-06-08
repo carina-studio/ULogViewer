@@ -92,13 +92,14 @@ namespace CarinaStudio.ULogViewer
 					this.tabControlSelectionChangedAction?.Schedule(); // Should not call OnTabControlSelectionChanged() directly because of timing issue that SelectedIndex will be changed temporarily when attaching to Workspace
 				});
 			});
-			this.tabItems.AddRange(this.tabControl.Items!.Cast<TabItem>());
-			this.tabControl.Items = this.tabItems;
+			this.tabItems.AddRange(this.tabControl.Items.Cast<TabItem>());
+			this.tabControl.Items.Clear();
+			this.tabControl.ItemsSource = this.tabItems;
 
 			// setup native menu items
 			if (Platform.IsMacOS)
 			{
-				NativeMenu.GetMenu(this).Let(nativeMenu =>
+				NativeMenu.GetMenu(this)?.Let(nativeMenu =>
 				{
 					for (var i = nativeMenu.Items.Count - 1; i >= 0; --i)
 					{
@@ -141,7 +142,7 @@ namespace CarinaStudio.ULogViewer
 			// create scheduled actions
 			this.focusOnTabItemContentAction = new(() =>
 			{
-				((this.tabControl.SelectedItem as TabItem)?.Content as IControl)?.Focus();
+				((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
 			});
 			this.selectAndSetLogProfileAction = new(this.SelectAndSetLogProfile);
 			this.updateSysTaskBarAction = new(() =>
@@ -189,7 +190,7 @@ namespace CarinaStudio.ULogViewer
 			// attach to property change
 			this.GetObservable(IsActiveProperty).Subscribe(isActive =>
 			{
-				if (isActive && FocusManager.Instance?.Current is not TextBox)
+				if (isActive && this.FocusManager?.GetFocusedElement() is not TextBox)
 					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
 			});
 
@@ -298,7 +299,7 @@ namespace CarinaStudio.ULogViewer
 		TabItem CreateSessionTabItem(Session session)
 		{
 			// create header
-			var header = (Control)this.sessionTabItemHeaderTemplate.Build(session);
+			var header = this.sessionTabItemHeaderTemplate.Build(session).AsNonNull();
 			if (Platform.IsMacOS)
 			{
 				header.ContextMenu = null;
@@ -375,8 +376,8 @@ namespace CarinaStudio.ULogViewer
 				this.Logger.LogTrace("[Performance] Took {duration} ms to detach session from tab item", time - startTime);
 				startTime = time;
             }
-			(tabItem.Content as IControl)?.Let(it => it.DataContext = null);
-			(tabItem.Header as IControl)?.Let(it => it.DataContext = null);
+			(tabItem.Content as Control)?.Let(it => it.DataContext = null);
+			(tabItem.Header as Control)?.Let(it => it.DataContext = null);
 			if (startTime > 0)
 				this.Logger.LogTrace("[Performance] Took {duration} ms to detach session from session view and header", this.stopwatch.ElapsedMilliseconds - startTime);
 		}
@@ -576,7 +577,7 @@ namespace CarinaStudio.ULogViewer
 			// [Workaround] Remove bindings to window to prevent window leakage
 			if (Platform.IsMacOS) 
 			{
-				NativeMenu.GetMenu(this).Let(menu =>
+				NativeMenu.GetMenu(this)?.Let(menu =>
 				{
 					foreach (var item in menu.Items)
 					{
@@ -996,7 +997,7 @@ namespace CarinaStudio.ULogViewer
 				throw new InternalStateCorruptedException();
 
 			// find tab item
-			var tabItem = (sender as IControl)?.FindAncestorOfType<TabItem>();
+			var tabItem = (sender as Control)?.FindAncestorOfType<TabItem>();
 			if (tabItem == null)
 				return;
 			var index = this.tabItems.IndexOf(tabItem);

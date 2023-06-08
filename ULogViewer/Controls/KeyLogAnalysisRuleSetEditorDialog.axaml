@@ -65,7 +65,12 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].Rules.Count}" Items="{Binding $parent[Window].Rules}" VirtualizationMode="None">
+						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].Rules.Count}" ItemsSource="{Binding $parent[Window].Rules}">
+							<asControls:ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</asControls:ListBox.ItemsPanel>
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">

@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
@@ -22,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="KeyLogAnalysisRuleSet"/>.
 /// </summary>
-partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
+class KeyLogAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
@@ -45,7 +44,6 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	/// </summary>
 	public KeyLogAnalysisRuleSetEditorDialog()
 	{
-		var b = this.FindResource("TextControlForeground");
 		this.CopyRuleCommand = new Command<ListBoxItem>(this.CopyRule);
 		this.EditRuleCommand = new Command<ListBoxItem>(this.EditRule);
 		this.RemoveRuleCommand = new Command<ListBoxItem>(this.RemoveRule);
@@ -61,7 +59,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		this.ruleListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (_, e) => this.EditRule((KeyLogAnalysisRuleSet.Rule)e.Item);
-			it.SelectionChanged += (_, e) =>
+			it.SelectionChanged += (_, _) =>
 			{
 				this.SynchronizationContext.Post(() =>
 				{
@@ -70,7 +68,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 				});
 			};
 		});
-		this.rules.CollectionChanged += (_, e) => this.validateParametersAction?.Schedule();
+		this.rules.CollectionChanged += (_, _) => this.validateParametersAction?.Schedule();
 		this.validateParametersAction = new(() =>
 		{
 			if (this.IsClosed)
@@ -78,10 +76,10 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 			if (string.IsNullOrWhiteSpace(this.nameTextBox.Text)
 				|| this.rules.IsEmpty())
 			{
-				this.SetValue<bool>(AreValidParametersProperty, false);
+				this.SetValue(AreValidParametersProperty, false);
 			}
 			else
-				this.SetValue<bool>(AreValidParametersProperty, true);
+				this.SetValue(AreValidParametersProperty, true);
 		});
 	}
 
@@ -119,7 +117,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	{
 		// validate parameters
 		this.validateParametersAction.ExecuteIfScheduled();
-		if (!this.GetValue<bool>(AreValidParametersProperty))
+		if (!this.GetValue(AreValidParametersProperty))
 			return;
 		
 		// setup rule set
@@ -243,7 +241,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 			{
 				this.LayoutUpdated -= OnLayoutUpdated;
 				this.MoveToCenterOfOwner();
-			};
+			}
 			this.LayoutUpdated += OnLayoutUpdated; 
 		}
 		else
@@ -279,7 +277,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 			}
 		}
 		this.validateParametersAction.Execute();
-		this.SynchronizationContext.Post(this.nameTextBox.Focus);
+		this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
 	}
 
 
@@ -328,7 +326,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 	/// <summary>
 	/// Rules.
 	/// </summary>
-	public IList<KeyLogAnalysisRuleSet.Rule> Rules { get => this.rules; }
+	public IList<KeyLogAnalysisRuleSet.Rule> Rules => this.rules;
 
 
 	/// <summary>
@@ -341,7 +339,7 @@ partial class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULog
 		// show existing dialog
 		if (ruleSet != null && DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
 		{
-			dialog?.ActivateAndBringToFront();
+			dialog.ActivateAndBringToFront();
 			return;
 		}
 

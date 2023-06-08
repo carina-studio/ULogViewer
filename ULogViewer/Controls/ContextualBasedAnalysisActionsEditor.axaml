@@ -10,7 +10,7 @@
 	
 	<UserControl.Resources>
 
-		<ContextMenu x:Key="addActionMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="addActionMenu" Placement="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].AddCopyVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Variable}"/>
@@ -53,7 +53,12 @@
 	</UserControl.Resources>
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:ListBox Name="actionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Actions.Count}" Items="{Binding $parent[UserControl].Actions}" VirtualizationMode="None">
+		<asControls:ListBox Name="actionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Actions.Count}" ItemsSource="{Binding $parent[UserControl].Actions}">
+			<asControls:ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel/>
+				</ItemsPanelTemplate>
+			</asControls:ListBox.ItemsPanel>
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnDefinitions="*,Auto">

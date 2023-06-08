@@ -31,7 +31,7 @@
 	<UserControl.Resources>
 
 		<!-- Create log analysis rule set menu -->
-		<ContextMenu x:Key="createLogAnalysisRuleSetMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="createLogAnalysisRuleSetMenu" Placement="Bottom">
 			<MenuItem Command="{Binding #root.CreateKeyLogAnalysisRuleSet}" Header="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Flag.Outline}"/>
@@ -200,10 +200,10 @@
 		</ContextMenu>
 		
 		<!-- Log chart type menu -->
-		<ContextMenu x:Key="logChartTypeMenu" PlacementMode="Top"/>
+		<ContextMenu x:Key="logChartTypeMenu" Placement="Top"/>
 
 		<!-- Log file action menu -->
-		<ContextMenu x:Key="logFileActionMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="logFileActionMenu" Placement="Bottom">
 			<MenuItem Command="{Binding #root.CopyLogFileNameCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFileName}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
@@ -245,7 +245,7 @@
 		</ContextMenu>
 
 		<!-- Log filter combination mode menu -->
-		<ContextMenu x:Key="logFilterCombinationModeMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="logFilterCombinationModeMenu" Placement="Bottom">
 			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Auto}" Header="{DynamicResource String/FilterCombinationMode.Auto}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/FilterCombinationMode.Auto.Outline}"/>
@@ -350,7 +350,7 @@
 		</ContextMenu>
 
 		<!-- Log profile selection menu -->
-		<appControls:LogProfileSelectionContextMenu x:Key="logProfileSelectionMenu" PlacementMode="Bottom"/>
+		<appControls:LogProfileSelectionContextMenu x:Key="logProfileSelectionMenu" Placement="Bottom"/>
 
 		<!-- Log property tool tip template -->
 		<DataTemplate x:Key="logPropertyToolTipTemplate">
@@ -358,13 +358,13 @@
 		</DataTemplate>
 
 		<!-- Logs saving menu -->
-		<ContextMenu x:Key="logsSavingMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="logsSavingMenu" Placement="Bottom">
 			<MenuItem Command="{Binding #root.SaveLogsCommand}" Header="{DynamicResource String/SessionView.SaveLogs}" InputGesture="{x:Static appInput:KeyGestures.SaveLogs}"/>
 			<MenuItem Command="{Binding #root.SaveAllLogsCommand}" Header="{DynamicResource String/SessionView.SaveAllLogs}" InputGesture="{x:Static appInput:KeyGestures.SaveAllLogs}"/>
 		</ContextMenu>
 
 		<!-- Other actions menu -->
-		<ContextMenu x:Key="otherActionsMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="otherActionsMenu" Placement="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].Application.ShowApplicationOptionsDialog}" Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
@@ -446,13 +446,13 @@
 		</ContextMenu>
 
 		<!-- Test menu -->
-		<ContextMenu x:Key="testMenu" PlacementMode="Left">
+		<ContextMenu x:Key="testMenu" Placement="Left">
 			<MenuItem Command="{Binding #root.TestCommand}" CommandParameter="RestartApp" Header="Restart application"/>
 			<MenuItem Command="{Binding #root.TestCommand}" CommandParameter="RestartRootWindows" Header="Restart root windows"/>
 		</ContextMenu>
 
 		<!-- Working directory menu -->
-		<ContextMenu x:Key="workingDirectoryActionsMenu" PlacementMode="Top">
+		<ContextMenu x:Key="workingDirectoryActionsMenu" Placement="Top">
 			<MenuItem Command="{Binding #root.ShowWorkingDirectoryInExplorerCommand}" Header="{DynamicResource String/SessionView.ShowWorkingDirectoryInExplorer}">
 				<MenuItem.Icon>
 					<Border Classes="MenuItem_Icon">
@@ -590,7 +590,7 @@
 					<StackPanel Name="toolBarOtherLogFilterItemsPanel" Orientation="Horizontal">
 
 						<!-- Level filter -->
-						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="false" Items="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
+						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="false" ItemsSource="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
 							<ia:Interaction.Behaviors>
 								<iaCore:DataTriggerBehavior Binding="{Binding #root.ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
 									<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
@@ -735,7 +735,13 @@
 																			<abControls:FormattedTextBlock Arg1="{Binding Name}" Arg2="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #textFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																		</Grid>
 																	</Expander.Header>
-																	<ListBox Name="textFilterListBox" Classes="Dialog_Item_ListBox" Items="{Binding Filters}" SelectionMode="Multiple" VirtualizationMode="None"/>
+																	<ListBox Name="textFilterListBox" Classes="Dialog_Item_ListBox" ItemsSource="{Binding Filters}" SelectionMode="Multiple">
+																		<ListBox.ItemsPanel>
+																			<ItemsPanelTemplate>
+																				<StackPanel/>
+																			</ItemsPanelTemplate>
+																		</ListBox.ItemsPanel>
+																	</ListBox>
 																</Expander>
 															</DataTemplate>
 														</StackPanel.DataTemplates>
@@ -759,7 +765,13 @@
 															</asControls:GroupBox.Header>
 														</asControls:GroupBox>
 														<Border ClipToBounds="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
-															<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" Items="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None"/>
+															<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" SelectionMode="Multiple">
+																<ListBox.ItemsPanel>
+																	<ItemsPanelTemplate>
+																		<StackPanel/>
+																	</ItemsPanelTemplate>
+																</ListBox.ItemsPanel>
+															</ListBox>
 														</Border>
 													</StackPanel>
 												</ScrollViewer>
@@ -916,7 +928,7 @@
 			</Panel>
 
 			<!-- ListBox -->
-			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasLogProfile}" Items="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple" VirtualizationMode="Simple">
+			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasLogProfile}" ItemsSource="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple">
 				<asControls:ListBox.Resources>
 					<sys:Double x:Key="ToolTipContentMaxWidth">400</sys:Double>
 				</asControls:ListBox.Resources>
@@ -1420,7 +1432,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" DoubleClickOnItem="OnMarkedLogListBoxDoubleClickOnItem" IsVisible="{Binding HasMarkedLogs}" Items="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single"/>
+					<asControls:ListBox Classes="Log" Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" DoubleClickOnItem="OnMarkedLogListBoxDoubleClickOnItem" IsVisible="{Binding HasMarkedLogs}" ItemsSource="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single"/>
 				</Grid>
 
 				<!-- Timestamp categories -->
@@ -1431,7 +1443,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" Items="{Binding LogCategorizing.TimestampCategories}">
+					<asControls:ListBox Classes="Log" Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" ItemsSource="{Binding LogCategorizing.TimestampCategories}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate x:CompileBindings="True" x:DataType="appCategorizing:DisplayableLogCategory">
 								<Grid ColumnDefinitions="Auto,*">
@@ -1490,7 +1502,7 @@
 									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Light}"/>
 								</Panel>
 							</ToggleButton>
-							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" PlacementMode="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
+							<Popup Name="logAnalysisRuleSetsPopup" IsLightDismissEnabled="True" Placement="Bottom" PlacementTarget="{Binding #logAnalysisRuleSetsButton}" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.Width}" WindowManagerAddShadowHint="True">
 								<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding}">
 									<StackPanel>
 
@@ -1617,7 +1629,12 @@
 																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}" Arg2="{Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #keyLogAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="keyLogAnalysisRuleSetListBox" Items="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+															<ListBox Name="keyLogAnalysisRuleSetListBox" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
+																<ListBox.ItemsPanel>
+																	<ItemsPanelTemplate>
+																		<StackPanel/>
+																	</ItemsPanelTemplate>
+																</ListBox.ItemsPanel>
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1676,7 +1693,12 @@
 																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}" Arg2="{Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #operationDurationAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="operationDurationAnalysisRuleSetListBox" Items="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+															<ListBox Name="operationDurationAnalysisRuleSetListBox" ItemsSource="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
+																<ListBox.ItemsPanel>
+																	<ItemsPanelTemplate>
+																		<StackPanel/>
+																	</ItemsPanelTemplate>
+																</ListBox.ItemsPanel>
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1735,7 +1757,12 @@
 																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet}" Arg2="{Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #operationCountingAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="operationCountingAnalysisRuleSetListBox" Items="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+															<ListBox Name="operationCountingAnalysisRuleSetListBox" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
+																<ListBox.ItemsPanel>
+																	<ItemsPanelTemplate>
+																		<StackPanel/>
+																	</ItemsPanelTemplate>
+																</ListBox.ItemsPanel>
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -1797,7 +1824,12 @@
 																	</Panel>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="logAnalysisScriptSetListBox" IsEnabled="{Binding #root.IsScriptRunningEnabled}" Items="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple" VirtualizationMode="None">
+															<ListBox Name="logAnalysisScriptSetListBox" IsEnabled="{Binding #root.IsScriptRunningEnabled}" ItemsSource="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple">
+																<ListBox.ItemsPanel>
+																	<ItemsPanelTemplate>
+																		<StackPanel/>
+																	</ItemsPanelTemplate>
+																</ListBox.ItemsPanel>
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
@@ -2143,7 +2175,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" Items="{Binding LogFiles}">
+					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" ItemsSource="{Binding LogFiles}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<DockPanel>

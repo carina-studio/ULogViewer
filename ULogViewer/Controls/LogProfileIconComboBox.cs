@@ -3,8 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml.Templates;
-using Avalonia.Styling;
 using CarinaStudio.AppSuite.Converters;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -15,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// <see cref="ComboBox"/> to select <see cref="LogProfileIcon"/>.
 /// </summary>
-class LogProfileIconComboBox : ComboBox, IStyleable
+class LogProfileIconComboBox : ComboBox
 {
     /// <summary>
     /// Property of <see cref="IconColor"/>.
@@ -28,7 +26,7 @@ class LogProfileIconComboBox : ComboBox, IStyleable
 
 
     // Fields.
-    readonly DataTemplate dataTemplate;
+    readonly FuncDataTemplate dataTemplate;
 
 
     /// <summary>
@@ -36,69 +34,65 @@ class LogProfileIconComboBox : ComboBox, IStyleable
     /// </summary>
     public LogProfileIconComboBox()
     {
-        this.dataTemplate = new DataTemplate()
+        this.dataTemplate = new FuncDataTemplate(typeof(LogProfileIcon), (_, _) =>
         {
-            Content = new Func<IServiceProvider, object>(_ =>
+            var rootPanel = new Grid().Also(rootPanel =>
             {
-                var rootPanel = new Grid().Also(rootPanel =>
+                rootPanel.ColumnDefinitions.Add(new ColumnDefinition(0, GridUnitType.Auto));
+                rootPanel.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            });
+            new Panel().Also(iconPanel =>
+            {
+                iconPanel.Classes.Add("ComboBoxItem_Icon");
+                var isSelectedObserverToken = EmptyDisposable.Default;
+                var selectedIcon = new Image().Also(image =>
                 {
-                    rootPanel.ColumnDefinitions.Add(new ColumnDefinition(0, GridUnitType.Auto));
-                    rootPanel.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
-                });
-                new Panel().Also(iconPanel =>
-                {
-                    iconPanel.Classes.Add("ComboBoxItem_Icon");
-                    var isSelectedObserverToken = EmptyDisposable.Default;
-                    var selectedIcon = new Image().Also(image =>
+                    image.Classes.Add("Icon");
+                    image.AttachedToLogicalTree += (_, _) =>
                     {
-                        image.Classes.Add("Icon");
-                        image.AttachedToLogicalTree += (_, e) =>
+                        var comboBoxItem = image.FindLogicalAncestorOfType<ComboBoxItem>();
+                        if (comboBoxItem != null)
                         {
-                            var comboBoxItem = image.FindLogicalAncestorOfType<ComboBoxItem>();
-                            if (comboBoxItem != null)
-                            {
-                                isSelectedObserverToken = comboBoxItem.GetObservable(ComboBoxItem.IsSelectedProperty).Subscribe(isSelected =>
-                                    image.IsVisible = isSelected);
-                            }
-                            else
-                                image.IsVisible = false;
-                        };
-                        image.DetachedFromLogicalTree += (_, e) =>
-                        {
-                            isSelectedObserverToken.Dispose();
-                        };
-                        image.Bind(Image.SourceProperty, new Binding()
-                        {
-                            Converter = LogProfileIconConverter.Default,
-                            ConverterParameter = "Light",
-                        });
-                    });
-                    var icon = new Image().Also(image =>
+                            isSelectedObserverToken = comboBoxItem.GetObservable(ComboBoxItem.IsSelectedProperty).Subscribe(isSelected =>
+                                image.IsVisible = isSelected);
+                        }
+                        else
+                            image.IsVisible = false;
+                    };
+                    image.DetachedFromLogicalTree += (_, _) =>
                     {
-                        image.Classes.Add("Icon");
-                        image.Bind(Image.SourceProperty, new Binding() 
-                        { 
-                            Converter = LogProfileIconConverter.Default,
-                            ConverterParameter = this.GetValue<LogProfileIconColor>(IconColorProperty),
-                        });
+                        isSelectedObserverToken.Dispose();
+                    };
+                    image.Bind(Image.SourceProperty, new Binding()
+                    {
+                        Converter = LogProfileIconConverter.Default,
+                        ConverterParameter = "Light",
                     });
-                    selectedIcon.GetObservable(Image.IsVisibleProperty).Subscribe(isVisible =>
-                        icon.IsVisible = !isVisible);
-                    iconPanel.Children.Add(icon);
-                    iconPanel.Children.Add(selectedIcon);
-                    rootPanel.Children.Add(iconPanel);
                 });
-                new TextBlock().Also(textBlock =>
+                var icon = new Image().Also(image =>
                 {
-                    textBlock.Classes.Add("ComboBoxItem_TextBlock");
-                    textBlock.Bind(TextBlock.TextProperty, new Binding() { Converter = LogProfileIconNameConverter });
-                    Grid.SetColumn(textBlock, 1);
-                    rootPanel.Children.Add(textBlock);
+                    image.Classes.Add("Icon");
+                    image.Bind(Image.SourceProperty, new Binding() 
+                    { 
+                        Converter = LogProfileIconConverter.Default,
+                        ConverterParameter = this.GetValue(IconColorProperty),
+                    });
                 });
-				return new ControlTemplateResult(rootPanel, this.FindNameScope().AsNonNull());
-            }),
-            DataType = typeof(LogProfileIcon),
-        };
+                selectedIcon.GetObservable(Image.IsVisibleProperty).Subscribe(isVisible =>
+                    icon.IsVisible = !isVisible);
+                iconPanel.Children.Add(icon);
+                iconPanel.Children.Add(selectedIcon);
+                rootPanel.Children.Add(iconPanel);
+            });
+            new TextBlock().Also(textBlock =>
+            {
+                textBlock.Classes.Add("ComboBoxItem_TextBlock");
+                textBlock.Bind(TextBlock.TextProperty, new Binding() { Converter = LogProfileIconNameConverter });
+                Grid.SetColumn(textBlock, 1);
+                rootPanel.Children.Add(textBlock);
+            });
+            return rootPanel;
+        });
         this.DataTemplates.Add(this.dataTemplate);
         this.GetObservable(IconColorProperty).Subscribe(_ =>
         {
@@ -111,7 +105,7 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                 this.SelectedIndex = selectedIndex;
             }
         });
-        base.Items = Enum.GetValues<LogProfileIcon>();
+        base.ItemsSource = Enum.GetValues<LogProfileIcon>();
         this.SelectedIndex = 0;
     }
 
@@ -121,15 +115,15 @@ class LogProfileIconComboBox : ComboBox, IStyleable
     /// </summary>
     public LogProfileIconColor IconColor
     {
-        get => this.GetValue<LogProfileIconColor>(IconColorProperty);
-        set => this.SetValue<LogProfileIconColor>(IconColorProperty, value);
+        get => this.GetValue(IconColorProperty);
+        set => this.SetValue(IconColorProperty, value);
     }
 
 
     /// <summary>
     /// Get items.
     /// </summary>
-    public new object? Items { get => base.Items; }
+    public new object? ItemsSource => base.Items;
 
 
     /// <summary>
@@ -144,5 +138,5 @@ class LogProfileIconComboBox : ComboBox, IStyleable
 
 
     /// <inheritdoc/>
-    Type IStyleable.StyleKey => typeof(ComboBox);
+    protected override Type StyleKeyOverride => typeof(ComboBox);
 }

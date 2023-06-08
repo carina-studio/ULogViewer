@@ -41,7 +41,7 @@ partial class ScriptLogDataSourceProviderSelectionDialog : CarinaStudio.Controls
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		this.SynchronizationContext.Post(this.providerListBox.Focus);
+		this.SynchronizationContext.Post(() => this.providerListBox.Focus());
 	}
 
 

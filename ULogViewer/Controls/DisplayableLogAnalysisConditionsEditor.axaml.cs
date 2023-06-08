@@ -48,9 +48,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.addConditionButton = this.Get<ToggleButton>(nameof(addConditionButton));
 			this.addConditionMenu = ((ContextMenu)this.Resources[nameof(addConditionMenu)].AsNonNull()).Also(it =>
 			{
-				it.MenuClosed += (_, e) => 
+				it.Closed += (_, e) => 
 					this.SynchronizationContext.Post(() => this.addConditionButton.IsChecked = false);
-				it.MenuOpened += (_, e) => 
+				it.Opened += (_, e) => 
 				{
 					if (Platform.IsMacOS)
 					{

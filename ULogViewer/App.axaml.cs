@@ -2,7 +2,6 @@ using System.Runtime;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 using CarinaStudio.AppSuite;
@@ -144,7 +143,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Fields.
-		Controls.AppOptionsDialog? appOptionsDialog;
+		AppOptionsDialog? appOptionsDialog;
 		IResourceProvider? compactResources;
 		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = Array.Empty<ExternalDependency>();
@@ -338,9 +337,9 @@ namespace CarinaStudio.ULogViewer
 				this.compactResourcesToken = this.compactResourcesToken.DisposeAndReturnNull();
 			else
 			{
-				this.compactResources ??= new ResourceInclude()
+				this.compactResources ??= new ResourceInclude(new Uri("avares://ULogViewer/"))
 				{
-					Source = new Uri("avares://ULogViewer/Styles/Resources-Compact.axaml")
+					Source = new Uri("/Styles/Resources-Compact.axaml", UriKind.Relative)
 				};
 				this.compactResourcesToken ??= this.AddCustomResource(this.compactResources);
 			}
@@ -348,8 +347,8 @@ namespace CarinaStudio.ULogViewer
 			// load styles
 			var uri = themeMode switch
 			{
-				ThemeMode.Light => new Uri("avares://ULogViewer/Styles/Light.axaml"),
-				_ => new Uri($"avares://ULogViewer/Styles/Dark.axaml"),
+				ThemeMode.Light => new Uri("/Styles/Light.axaml", UriKind.Relative),
+				_ => new Uri("/Styles/Dark.axaml", UriKind.Relative),
 			};
 			return new StyleInclude(new Uri("avares://ULogViewer/")).Also(it =>
 			{
@@ -508,7 +507,7 @@ namespace CarinaStudio.ULogViewer
 			this.UpdateSplashWindowProgress(0.15);
 
 			// initialize control fonts
-			Controls.ControlFonts.Initialize(this);
+			ControlFonts.Initialize(this);
 
 			// initialize search providers
 			Net.SearchProviderManager.Initialize(this);
@@ -516,7 +515,7 @@ namespace CarinaStudio.ULogViewer
 			// find menu items
 			if (Platform.IsMacOS)
 			{
-				NativeMenu.GetMenu(this).Let(menu =>
+				NativeMenu.GetMenu(this)?.Let(menu =>
 				{
 					for (var i = menu.Items.Count - 1; i >= 0 ; --i)
 					{
@@ -700,7 +699,7 @@ namespace CarinaStudio.ULogViewer
 
 
         // Releasing type.
-        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.Preview;
+        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.Development;
 
 
 		// Version of settings.
@@ -733,7 +732,7 @@ namespace CarinaStudio.ULogViewer
 
 			// show dialog
 			owner?.ActivateAndBringToFront();
-			this.appOptionsDialog = new Controls.AppOptionsDialog()
+			this.appOptionsDialog = new AppOptionsDialog()
 			{
 				InitSectionName = section,
 			};

@@ -153,7 +153,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 			this.secondaryDisplayNameTextBox.Text = source.SecondaryPropertyDisplayName?.Trim();
 			this.valueScalingTextBox.Value = source.ValueScaling;
 		}
-		this.SynchronizationContext.Post(this.nameComboBox.Focus);
+		this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
 	}
 
 

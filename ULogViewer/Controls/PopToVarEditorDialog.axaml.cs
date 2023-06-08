@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="PopToVariableAction"/>.
 	/// </summary>
-	partial class PopToVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class PopToVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly TextBox stackTextBox;
@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.stackTextBox.Text = action.Stack;
 				this.varTextBox.Text = action.Variable;
 			}
-			this.SynchronizationContext.Post(this.stackTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.stackTextBox.Focus());
 		}
 
 

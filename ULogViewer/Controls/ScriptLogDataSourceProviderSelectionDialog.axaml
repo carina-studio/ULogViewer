@@ -23,7 +23,7 @@
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderSelectionDialog.Message}"/>
-			<asControls:ListBox Name="providerListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" Items="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
+			<asControls:ListBox Name="providerListBox" Classes="Dialog_ListBox" Height="{StaticResource Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height}" ItemsSource="{x:Static appDataSources:LogDataSourceProviders.ScriptProviders}">
 				<asControls:ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*">

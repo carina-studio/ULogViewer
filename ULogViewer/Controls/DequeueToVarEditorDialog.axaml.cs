@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="DequeueToVariableAction"/>.
 	/// </summary>
-	partial class DequeueToVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class DequeueToVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly TextBox queueTextBox;
@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.queueTextBox.Text = action.Queue;
 				this.varTextBox.Text = action.Variable;
 			}
-			this.SynchronizationContext.Post(this.queueTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.queueTextBox.Focus());
 		}
 
 

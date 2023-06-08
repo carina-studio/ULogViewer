@@ -11,13 +11,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Windows.Input;
+// ReSharper disable AccessToDisposedClosure
 
 namespace CarinaStudio.ULogViewer.Controls;
 
 /// <summary>
 /// Dialog to manage <see cref="ScriptLogDataSourceProvider"/>s.
 /// </summary>
-partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogViewerApplication>
+class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("ScriptLogDataSourceProvidersDialog.DonotShowRestrictionsWithNonProVersion");
@@ -132,17 +133,14 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		// select file
 		var fileName = (await this.StorageProvider.SaveFilePickerAsync(new()
 		{
-			FileTypeChoices = new FilePickerFileType[]
+			FileTypeChoices = new[]
 			{
 				new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
 				{
-					Patterns = new string[] { "*.json" }
+					Patterns = new[] { "*.json" }
 				}
 			}
-		}))?.Let(it =>
-		{
-			return it.TryGetUri(out var uri) ? uri.LocalPath : null;
-		});
+		}))?.Let(it => it.TryGetLocalPath());
 		if (string.IsNullOrEmpty(fileName))
 			return;
 		
@@ -194,18 +192,14 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		// select file
 		var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
 		{
-			FileTypeFilter = new FilePickerFileType[]
+			FileTypeFilter = new[]
 			{
 				new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
 				{
-					Patterns = new string[] { "*.json" }
+					Patterns = new[] { "*.json" }
 				}
 			}
-		}))?.Let(it =>
-		{
-			return it.Count == 1 && it[0].TryGetUri(out var uri)
-				? uri.LocalPath : null;
-		});
+		})).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
 		if (string.IsNullOrEmpty(fileName))
 			return;
 		
@@ -269,7 +263,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 				}
 			}, 300);
 		}
-		this.SynchronizationContext.Post(this.providerListBox.Focus);
+		this.SynchronizationContext.Post(() => this.providerListBox.Focus());
 	}
 
 
@@ -288,8 +282,8 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 		var logProfileCount = LogProfileManager.Default.Profiles.Count(it => it.DataSourceProvider == provider);
 		var result = await new MessageDialog()
 		{
-			Buttons = AppSuite.Controls.MessageDialogButtons.YesNo,
-			Icon = AppSuite.Controls.MessageDialogIcon.Question,
+			Buttons = MessageDialogButtons.YesNo,
+			Icon = MessageDialogIcon.Question,
 			Message = logProfileCount > 0 
 				? new FormattedString().Also(it =>
 				{
@@ -303,7 +297,7 @@ partial class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<
 					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider"));
 				}),
 		}.ShowDialog(this);
-		if (result != AppSuite.Controls.MessageDialogResult.Yes)
+		if (result != MessageDialogResult.Yes)
 			return;
 		LogDataSourceProviders.RemoveScriptProvider(provider);
 		provider.Dispose();

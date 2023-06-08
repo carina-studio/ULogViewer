@@ -835,12 +835,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						Patterns = new[] { "*.json" }
 					}
 				}
-			})).Let(it =>
-			{
-				if (it.Count == 1 && it[0].TryGetUri(out var uri))
-					return uri.LocalPath;
-				return null;
-			});
+			})).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
 			if (string.IsNullOrEmpty(fileName))
 				return;
 			
@@ -889,12 +884,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						Patterns = new[] { "*.json" }
 					}
 				}
-			})).Let(it =>
-			{
-				if (it.Count == 1 && it[0].TryGetUri(out var uri))
-					return uri.LocalPath;
-				return null;
-			});
+			})).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
 			if (string.IsNullOrEmpty(fileName))
 				return;
 			
@@ -1419,7 +1409,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// setup initial focus
-			this.SynchronizationContext.Post(this.nameTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
 			
 			// check Pro-version only parameters
 			if ((this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider)?.IsProVersionOnly == true

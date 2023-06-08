@@ -190,7 +190,7 @@
 						<StackPanel IsVisible="{Binding $parent[Window].IsEncodingSupported}">
 							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Encoding}"/>
-								<ComboBox Name="encodingComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding $parent[Window].Encodings}">
+								<ComboBox Name="encodingComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding $parent[Window].Encodings}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<TextBlock Text="{Binding EncodingName}"/>
@@ -316,7 +316,7 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].SetupCommands.Count}" Items="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].SetupCommands.Count}" ItemsSource="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #setupCommandsListBox.IsVisible}"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -329,7 +329,7 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TeardownCommands.Count}" Items="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TeardownCommands.Count}" ItemsSource="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #teardownCommandsListBox.IsVisible}"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
 							<Separator Classes="Dialog_Item_Separator"/>

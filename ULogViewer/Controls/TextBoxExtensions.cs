@@ -17,9 +17,11 @@ static class TextBoxExtensions
         {
             var text = textBox.Text;
             if (!string.IsNullOrEmpty(text))
-                _ = App.Current.Clipboard.AsNonNull().SetTextAsync(text);
+                _ = TopLevel.GetTopLevel(textBox)?.Clipboard?.SetTextAsync(text);
         }
+        // ReSharper disable EmptyGeneralCatchClause
         catch
         { }
+        // ReSharper restore EmptyGeneralCatchClause
     }
 }

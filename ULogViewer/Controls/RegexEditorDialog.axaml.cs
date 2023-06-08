@@ -18,7 +18,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Editor of <see cref="Regex"/>.
 	/// </summary>
-	partial class RegexEditorDialog : InputDialog<IULogViewerApplication>
+	class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// List of property names of log.
@@ -73,11 +73,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.testAction = new ScheduledAction(() =>
 			{
 				var regex = this.regexTextBox.Object;
-				var testLine = this.GetValue<string?>(TestLogLineProperty);
+				var testLine = this.GetValue(TestLogLineProperty);
 				this.capturedGroups.Clear();
 				if (!this.regexTextBox.IsTextValid || regex == null || string.IsNullOrEmpty(testLine))
 				{
-					this.SetValue<bool>(HasTestResultProperty, false);
+					this.SetValue(HasTestResultProperty, false);
 					return;
 				}
 				var match = regex.Match(testLine);
@@ -94,7 +94,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 					this.SetValue(TestResultProperty, false);
-				this.SetValue<bool>(HasTestResultProperty, true);
+				this.SetValue(HasTestResultProperty, true);
 			});
 			this.testLogLineTextBox = this.FindControl<TextBox>(nameof(testLogLineTextBox)).AsNonNull();
 		}
@@ -126,16 +126,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Whether group capturing is enabled or not.
 		public bool IsCapturingGroupsEnabled
 		{
-			get => this.GetValue<bool>(IsCapturingGroupsEnabledProperty);
-			set => this.SetValue<bool>(IsCapturingGroupsEnabledProperty, value);
+			get => this.GetValue(IsCapturingGroupsEnabledProperty);
+			set => this.SetValue(IsCapturingGroupsEnabledProperty, value);
 		}
 
 
 		// Whether log property capturing is enabled or not.
 		public bool IsCapturingLogPropertiesEnabled
 		{
-			get => this.GetValue<bool>(IsCapturingLogPropertiesEnabledProperty);
-			set => this.SetValue<bool>(IsCapturingLogPropertiesEnabledProperty, value);
+			get => this.GetValue(IsCapturingLogPropertiesEnabledProperty);
+			set => this.SetValue(IsCapturingLogPropertiesEnabledProperty, value);
 		}
 
 
@@ -182,7 +182,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.regexTextBox.IgnoreCase = this.IgnoreCase ?? true;
-			this.SynchronizationContext.Post(this.regexTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.regexTextBox.Focus());
 		}
 
 

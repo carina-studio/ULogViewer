@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using System;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
     /// <summary>
     /// Dialog to let user select precondition of log reading.
     /// </summary>
-    partial class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
+    class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
     {
         // Static fields.
         static readonly StyledProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<LogReadingPreconditionDialog, bool>(nameof(IsCancellationAllowed), true);
@@ -44,7 +43,7 @@ namespace CarinaStudio.ULogViewer.Controls
             });
             this.timestampsSwitch = this.Get<ToggleSwitch>(nameof(timestampsSwitch)).Also(it =>
             {
-                it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(isChecked => 
+                it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => 
                 {
                     this.InvalidateInput();
                 });
@@ -67,21 +66,21 @@ namespace CarinaStudio.ULogViewer.Controls
         // Whether cancellation is allowed or not.
         public bool IsCancellationAllowed
         {
-            get => this.GetValue<bool>(IsCancellationAllowedProperty);
-            set => this.SetValue<bool>(IsCancellationAllowedProperty, value);
+            get => this.GetValue(IsCancellationAllowedProperty);
+            set => this.SetValue(IsCancellationAllowedProperty, value);
         }
 
 
         // Whether logs will be read from files or not.
         public bool IsReadingFromFiles
         {
-            get => this.GetValue<bool>(IsReadingFromFilesProperty);
-            set => this.SetValue<bool>(IsReadingFromFilesProperty, value);
+            get => this.GetValue(IsReadingFromFilesProperty);
+            set => this.SetValue(IsReadingFromFilesProperty, value);
         }
 
 
         // Called when closing.
-        protected override void OnClosing(CancelEventArgs e)
+        protected override void OnClosing(WindowClosingEventArgs e)
         {
             if (!this.isResultGenerated && !this.IsCancellationAllowed)
                 e.Cancel = true;

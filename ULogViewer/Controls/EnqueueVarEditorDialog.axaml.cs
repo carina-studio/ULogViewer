@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="EnqueueVariableAction"/>.
 	/// </summary>
-	partial class EnqueueVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class EnqueueVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly TextBox queueTextBox;
@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.queueTextBox.Text = action.Queue;
 				this.varTextBox.Text = action.Variable;
 			}
-			this.SynchronizationContext.Post(this.varTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.varTextBox.Focus());
 		}
 
 

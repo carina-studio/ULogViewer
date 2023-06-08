@@ -193,7 +193,12 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#endingVariableListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="endingVariableListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].EndingVariables.Count}" Items="{Binding $parent[Window].EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled" VirtualizationMode="None">
+						<asControls:ListBox Name="endingVariableListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].EndingVariables.Count}" ItemsSource="{Binding $parent[Window].EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+							<asControls:ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</asControls:ListBox.ItemsPanel>
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,Auto">
@@ -262,7 +267,7 @@
 						<!-- Result type -->
 						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.ResultType}"/>
-							<ComboBox Name="resultTypeComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" Items="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
+							<ComboBox Name="resultTypeComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="Auto,*">

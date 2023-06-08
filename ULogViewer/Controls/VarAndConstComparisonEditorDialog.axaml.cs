@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="VariableAndConstantComparisonCondition"/>.
 	/// </summary>
-	partial class VarAndConstComparisonEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class VarAndConstComparisonEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ComboBox comparisonTypeComboBox;
@@ -65,7 +65,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.comparisonTypeComboBox.SelectedItem = ComparisonType.Equivalent;
-			this.SynchronizationContext.Post(this.varTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.varTextBox.Focus());
 		}
 
 

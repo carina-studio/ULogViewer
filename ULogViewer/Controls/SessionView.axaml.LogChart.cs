@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Styling;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;

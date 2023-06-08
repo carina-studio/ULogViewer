@@ -244,7 +244,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 			this.validateParametersAction.Schedule();
-			this.SynchronizationContext.Post(this.nameTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
 		}
 
 

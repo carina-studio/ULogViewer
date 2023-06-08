@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using Avalonia.Styling;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
@@ -25,7 +24,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// <see cref="ContextMenu"/> to select log profile.
 /// </summary>
-class LogProfileSelectionContextMenu : ContextMenu, IStyleable
+class LogProfileSelectionContextMenu : ContextMenu
 {
     /// <summary>
     /// Property of <see cref="CurrentLogProfile"/>.
@@ -135,14 +134,13 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     public LogProfileSelectionContextMenu()
     {
         this.items = new(this.CompareItems);
-        base.Items = this.items;
-        this.Items = ListExtensions.AsReadOnly(this.items);
+        this.ItemsSource = ListExtensions.AsReadOnly(this.items);
         this.logProfilesChangedHandler = this.OnLogProfilesChanged;
         this.logProfilePropertyChangedHandler = this.OnLogProfilePropertyChanged;
         this.productActivationChangedHandler = this.OnProductActivationChanged;
         this.recentlyUsedLogProfilesChangedHandler = this.OnRecentlyUsedLogProfilesChanged;
         Grid.SetIsSharedSizeScope(this, true);
-        this.MenuClosed += (_, _) =>
+        this.Closed += (_, _) =>
         {
             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
@@ -161,7 +159,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 var isCurrentLogProfile = currentLogProfile != null && ReferenceEquals(menuItem.DataContext, currentLogProfile);
                 (panel.Children[0] as Avalonia.Controls.TextBlock)?.Let(it =>
                     it.FontWeight = isCurrentLogProfile ? FontWeight.Bold : FontWeight.Normal);
-                (panel.Children[2] as Control)?.Let(it =>
+                panel.Children[2].Let(it =>
                     it.IsVisible = isCurrentLogProfile);
             }
         });
@@ -511,17 +509,13 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         if (logProfile == null || window == null)
             return;
         _ = logProfile.ExportAsync(window);
-    } 
-
-
-    /// <inheritdoc/>
-    Type IStyleable.StyleKey => typeof(ContextMenu);
+    }
 
 
     /// <summary>
     /// Get items of menu.
     /// </summary>
-    public new object? Items { get; }
+    public new object? ItemsSource { get; }
 
 
     /// <summary>
@@ -844,6 +838,10 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
         LogProfileManager.Default.RemoveProfile(logProfile);
         this.LogProfileRemoved?.Invoke(this, logProfile);
     }
+    
+    
+    /// <inheritdoc/>
+    protected override Type StyleKeyOverride => typeof(ContextMenu);
 
 
     // Try find menu item for given log profile.

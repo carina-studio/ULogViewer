@@ -10,7 +10,7 @@
 	
 	<UserControl.Resources>
 
-		<ContextMenu x:Key="addConditionMenu" PlacementMode="Bottom">
+		<ContextMenu x:Key="addConditionMenu" Placement="Bottom">
 			<MenuItem Command="{Binding $parent[UserControl].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
 			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}">
 				<MenuItem.Icon>
@@ -22,7 +22,12 @@
 	</UserControl.Resources>
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:ListBox Name="conditionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Conditions.Count}" Items="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch" VirtualizationMode="None">
+		<asControls:ListBox Name="conditionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Conditions.Count}" ItemsSource="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch">
+			<asControls:ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel/>
+				</ItemsPanelTemplate>
+			</asControls:ListBox.ItemsPanel>
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid ColumnDefinitions="*,Auto">

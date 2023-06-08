@@ -19,7 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="OperationDurationAnalysisRuleSet"/>.
 	/// </summary>
-	partial class OperationDurationAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
+	class OperationDurationAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 	{
 		// Static fields.
 		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
@@ -58,10 +58,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditRule((OperationDurationAnalysisRuleSet.Rule)e.Item);
 			});
-			this.rules.CollectionChanged += (_, e) => this.validateParametersAction!.Schedule();
+			this.rules.CollectionChanged += (_, _) => this.validateParametersAction!.Schedule();
 			this.validateParametersAction = new(() =>
 			{
-				this.SetValue<bool>(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
+				this.SetValue(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
 			});
 		}
 
@@ -162,7 +162,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// validate parameters
 			this.validateParametersAction.ExecuteIfScheduled();
-			if (!this.GetValue<bool>(AreValidParametersProperty))
+			if (!this.GetValue(AreValidParametersProperty))
 				return;
 			
 			// create rule set
@@ -274,7 +274,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					this.LayoutUpdated -= OnLayoutUpdated;
 					this.MoveToCenterOfOwner();
-				};
+				}
 				this.LayoutUpdated += OnLayoutUpdated; 
 			}
 			else
@@ -310,7 +310,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 			this.validateParametersAction.Schedule();
-			this.SynchronizationContext.Post(this.nameTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
 		}
 
 
@@ -345,7 +345,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Rules.
 		/// </summary>
-		public IList<OperationDurationAnalysisRuleSet.Rule> Rules { get => this.rules; }
+		public IList<OperationDurationAnalysisRuleSet.Rule> Rules => this.rules;
 
 
 		/// <summary>
@@ -358,7 +358,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show existing dialog
 			if (ruleSet != null && DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
 			{
-				dialog?.ActivateAndBringToFront();
+				dialog.ActivateAndBringToFront();
 				return;
 			}
 

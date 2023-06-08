@@ -344,9 +344,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				}
 			}))?.Let(it =>
 			{
-				if (!it.TryGetUri(out var uri))
+				var path = it.TryGetLocalPath();
+				if (string.IsNullOrEmpty(path))
 					return null;
-				var path = uri.LocalPath;
 				if (!PathEqualityComparer.Default.Equals(Path.GetExtension(path), ".json"))
 					path += ".json";
 				return path;

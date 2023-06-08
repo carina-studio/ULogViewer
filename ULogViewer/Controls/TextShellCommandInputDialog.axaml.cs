@@ -55,7 +55,7 @@ class TextShellCommandInputDialog : InputDialog
     {
         base.OnOpened(e);
         this.commandTextBox.Text = this.InitialCommand;
-        this.SynchronizationContext.Post(this.commandTextBox.Focus);
+        this.SynchronizationContext.Post(() => this.commandTextBox.Focus());
     }
 
 

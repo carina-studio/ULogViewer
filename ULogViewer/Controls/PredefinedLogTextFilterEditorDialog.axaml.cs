@@ -52,9 +52,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			AvaloniaXamlLoader.Load(this);
 			this.groupNameSelectionMenu = ((ContextMenu)this.Resources[nameof(groupNameSelectionMenu)]!).Also(it =>
 			{
-				it.Items = this.groupMenuItems;
-				it.MenuClosed += (_, _) => this.selectGroupNameButton!.IsChecked = false;
-				it.MenuOpened += (_, _) => this.selectGroupNameButton!.IsChecked = true;
+				it.ItemsSource = this.groupMenuItems;
+				it.Closed += (_, _) => this.selectGroupNameButton!.IsChecked = false;
+				it.Opened += (_, _) => this.selectGroupNameButton!.IsChecked = true;
 			});
 			this.groupNameTextBox = this.Get<TextBox>(nameof(groupNameTextBox)).Also(it =>
 			{

@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="PushVariableAction"/>.
 	/// </summary>
-	partial class PushVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class PushVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly TextBox stackTextBox;
@@ -57,7 +57,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.stackTextBox.Text = action.Stack;
 				this.varTextBox.Text = action.Variable;
 			}
-			this.SynchronizationContext.Post(this.varTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.varTextBox.Focus());
 		}
 
 

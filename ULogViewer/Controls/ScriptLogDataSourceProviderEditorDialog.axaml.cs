@@ -23,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="ScriptLogDataSourceProvider"/>s.
 /// </summary>
-partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialog<IULogViewerApplication>
+class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialog<IULogViewerApplication>
 {
 	// Supported source option.
 	public class SupportedSourceOption
@@ -103,9 +103,9 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		this.addSupportedSourceOptionButton = this.Get<ToggleButton>(nameof(addSupportedSourceOptionButton));
 		this.addSupportedSourceOptionMenu = ((ContextMenu)this.Resources[nameof(addSupportedSourceOptionMenu)].AsNonNull()).Also(it =>
 		{
-			it.Items = this.unsupportedSourceOptionMenuItems;
-			it.MenuClosed += (_, _) => this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = false);
-			it.MenuOpened += (_, _) =>
+			it.ItemsSource = this.unsupportedSourceOptionMenuItems;
+			it.Closed += (_, _) => this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = false);
+			it.Opened += (_, _) =>
 			{
 				ToolTip.SetIsOpen(this.addSupportedSourceOptionButton, false);
 				this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = true);
@@ -262,7 +262,7 @@ partial class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.In
 		base.OnOpened(e);
 
 		// setup initial window size and position
-		(this.Screens.ScreenFromWindow(this.PlatformImpl.AsNonNull()) ?? this.Screens.Primary)?.Let(screen =>
+		(this.Screens.ScreenFromWindow(this) ?? this.Screens.Primary)?.Let(screen =>
 		{
 			var workingArea = screen.WorkingArea;
 			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);

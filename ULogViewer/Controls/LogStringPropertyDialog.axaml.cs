@@ -96,7 +96,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									};
 								});
 							}
-							menuItem.Items = subItems;
+							menuItem.ItemsSource = subItems;
 						}
 					}
 				});
@@ -192,7 +192,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Log?.TryGetProperty(this.LogPropertyName, out value);
 				return value;
 			});
-			this.SynchronizationContext.Post(this.findTextTextBox.Focus);
+			this.SynchronizationContext.Post(() => this.findTextTextBox.Focus());
 		}
 
 

@@ -52,7 +52,7 @@ static partial class Utility
                 return false;
             
             // load image
-            var geometry = App.Current.FindResourceOrDefault<Geometry>($"Geometry/{resName}");
+            var geometry = App.Current.FindResourceOrDefault<Geometry?>($"Geometry/{resName}");
             if (geometry != null)
             {
                 image = new DrawingImage(new GeometryDrawing().Also(it =>
@@ -62,7 +62,7 @@ static partial class Utility
                 }));
             }
             else
-                image = App.Current.FindResourceOrDefault<IImage>($"Image/{resName}");
+                image = App.Current.FindResourceOrDefault<IImage?>($"Image/{resName}");
             if (image == null)
                 continue;
             
@@ -107,19 +107,14 @@ static partial class Utility
         // select file
         var fileName = (await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions().Also(options =>
         {
-            options.FileTypeChoices = new FilePickerFileType[]
+            options.FileTypeChoices = new[]
             {
                 new FilePickerFileType(App.Current.GetStringNonNull("FileFormat.Png")).Also(it =>
                 {
-                    it.Patterns = new string[] { "*.png" };
+                    it.Patterns = new[] { "*.png" };
                 })
             };
-        })))?.Let(file =>
-        {
-            if (file.TryGetUri(out var uri))
-                return uri.LocalPath;
-            return null;
-        });
+        })))?.Let(file => file.TryGetLocalPath());
         if (string.IsNullOrEmpty(fileName))
             return false;
 
@@ -144,6 +139,7 @@ static partial class Utility
             // convert to bitmap
             var bitmap = new RenderTargetBitmap(outputSize, new(96, 96)).Also(bitmap =>
             {
+                /*
                 bitmap.CreateDrawingContext(new ImmediateRenderer(new Panel())).Use(idc =>
                 {
                     using var dc = new DrawingContext(idc, false);
@@ -151,6 +147,7 @@ static partial class Utility
                     var srcSideLength = Math.Max(srcSize.Width, srcSize.Height);
                     image.Draw(dc, new((srcSize.Width - srcSideLength) / 2, (srcSize.Height - srcSideLength) / 2, srcSideLength, srcSideLength), new(0, 0, outputSize.Width, outputSize.Height), BitmapInterpolationMode.HighQuality);
                 });
+                */
             });
 
             // save to file

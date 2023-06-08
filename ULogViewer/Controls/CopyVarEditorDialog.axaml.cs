@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="CopyVariableAction"/>.
 /// </summary>
-partial class CopyVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+class CopyVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Fields.
 	readonly TextBox sourceVarTextBox;
@@ -57,7 +57,7 @@ partial class CopyVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 			this.sourceVarTextBox.Text = action.SourceVariable.Trim();
 			this.targetVarTextBox.Text = action.TargetVariable.Trim();
 		}
-		this.SynchronizationContext.Post(this.sourceVarTextBox.Focus);
+		this.SynchronizationContext.Post(() => this.sourceVarTextBox.Focus());
 	}
 
 

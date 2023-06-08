@@ -15,7 +15,7 @@
         Width="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.Width}">
 	
 	<Window.Resources>
-		<ContextMenu x:Key="groupNameSelectionMenu" PlacementMode="Bottom"/>
+		<ContextMenu x:Key="groupNameSelectionMenu" Placement="Bottom"/>
 	</Window.Resources>
 	
 	<Grid RowDefinitions="*,Auto">

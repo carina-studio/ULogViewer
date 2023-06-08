@@ -175,7 +175,6 @@
 			</Setter>
 			<Setter Property="Padding" Value="0"/>
 			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-			<Setter Property="VirtualizationMode" Value="None"/>
 		</Style>
 	</Window.Styles>
 	
@@ -203,7 +202,12 @@
 						<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.PinnedLogProfiles}"/>
 					</Border>
 					<Border Classes="Dialog_ItemsGroup_Container">
-						<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged">
+						<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding $parent[Window].PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
 							<ListBox.Styles>
 								<Style Selector="ListBoxItem">
 									<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -223,7 +227,12 @@
 					</Border>
 					<Border Classes="Dialog_ItemsGroup_Container">
 						<StackPanel>
-							<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged">
+							<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding $parent[Window].RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged">
+								<ListBox.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel/>
+									</ItemsPanelTemplate>
+								</ListBox.ItemsPanel>
 								<ListBox.Styles>
 									<Style Selector="ListBoxItem">
 										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -248,7 +257,12 @@
 						</Panel>
 					</Border>
 					<Border Classes="Dialog_ItemsGroup_Container">
-						<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].OtherLogProfiles}" SelectionChanged="OnOtherLogProfilesSelectionChanged">
+						<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding $parent[Window].OtherLogProfiles}" SelectionChanged="OnOtherLogProfilesSelectionChanged">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
 							<ListBox.Styles>
 								<Style Selector="ListBoxItem">
 									<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -267,7 +281,12 @@
 						<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}"/>
 					</Border>
 					<Border Classes="Dialog_ItemsGroup_Container">
-						<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" Items="{Binding $parent[Window].TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged">
+						<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding $parent[Window].TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
 							<ListBox.Styles>
 								<Style Selector="ListBoxItem">
 									<Setter Property="HorizontalContentAlignment" Value="Stretch"/>

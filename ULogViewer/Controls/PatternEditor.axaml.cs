@@ -4,13 +4,10 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Configuration;
 using CarinaStudio.Input.Platform;
 using CarinaStudio.Threading;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -18,7 +15,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit pattern in <see cref="Regex"/>.
 /// </summary>
-partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
+class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 {
 	/// <summary>
 	/// Property of <see cref="IsCapturingGroupsEnabled"/>.
@@ -122,8 +119,9 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 				? RegexOptions.IgnoreCase
 				: RegexOptions.None;
 			var data = BitConverter.GetBytes((int)options);
-			_ = App.Current.Clipboard!.SetTextAndDataAsync(patternText, RegexOptionsFormat, data);
+			_ = TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAndDataAsync(patternText, RegexOptionsFormat, data);
 		}
+		// ReSharper disable once EmptyGeneralCatchClause
 		catch
 		{ }
 	}
@@ -145,8 +143,8 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 		{
 			IgnoreCase = this.patternTextBox.IgnoreCase,
 			InitialRegexText = this.patternTextBox.Text,
-			IsCapturingGroupsEnabled = this.GetValue<bool>(IsCapturingGroupsEnabledProperty),
-			IsCapturingLogPropertiesEnabled = this.GetValue<bool>(IsCapturingLogPropertiesEnabledProperty),
+			IsCapturingGroupsEnabled = this.GetValue(IsCapturingGroupsEnabledProperty),
+			IsCapturingLogPropertiesEnabled = this.GetValue(IsCapturingLogPropertiesEnabledProperty),
 		}.ShowDialog<Regex?>(this.window);
 		this.hasDialog = false;
 		if (regex == null)
@@ -156,8 +154,7 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 		}
 		
 		// update pattern
-		if (regex != null)
-			this.patternTextBox.IgnoreCase = (regex.Options & RegexOptions.IgnoreCase) != 0;
+		this.patternTextBox.IgnoreCase = (regex.Options & RegexOptions.IgnoreCase) != 0;
 		this.patternTextBox.Object = regex;
 		this.SetAndRaise(PatternProperty, ref this.pattern, regex);
 		this.patternTextBox.Focus();
@@ -226,7 +223,7 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
 			return;
 		
 		// get data from clipboard
-		var clipboard = App.Current.Clipboard;
+		var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
 		if (clipboard == null)
 			return;
         var text = await clipboard.GetTextAsync();
@@ -240,10 +237,10 @@ partial class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerAppli
             (await clipboard.GetDataAsync(RegexOptionsFormat))?.Let(it => 
                 options = (RegexOptions)BitConverter.ToInt32((byte[])it));
         }
+        // ReSharper disable once EmptyGeneralCatchClause
         catch
         { }
-
-		// confirm replacing current pattern
+        // confirm replacing current pattern
         if (this.pattern != null)
         {
 			this.hasDialog = true;

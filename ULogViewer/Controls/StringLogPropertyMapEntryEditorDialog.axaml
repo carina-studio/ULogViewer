@@ -34,7 +34,7 @@
 
 			<!-- Name -->
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/StringLogPropertyMapEntryEditorDialog.Name}"/>
-			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" Items="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
+			<ComboBox Name="nameComboBox" Classes="Dialog_ComboBox" ItemsSource="{x:Static appLogs:Log.PropertyNames}" PropertyChanged="OnEditorControlPropertyChanged">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*">

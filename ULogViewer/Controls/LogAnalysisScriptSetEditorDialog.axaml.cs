@@ -22,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit log analysis script set.
 /// </summary>
-partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
+class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
 {
 	// Constants.
 	const int InitSizeSetDelay = 100;
@@ -282,7 +282,7 @@ partial class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.Applicati
 
 		// setup initial window size and position
 		this.initSizeSetStopWatch.Start();
-		(this.Screens.ScreenFromWindow(this.PlatformImpl.AsNonNull()) ?? this.Screens.Primary)?.Let(screen =>
+		(this.Screens.ScreenFromWindow(this) ?? this.Screens.Primary)?.Let(screen =>
 		{
 			var workingArea = screen.WorkingArea;
 			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);

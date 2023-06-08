@@ -1,5 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Globalization;
@@ -40,12 +41,9 @@ namespace CarinaStudio.ULogViewer.Converters
 			if (value is LogLevel level && targetType == typeof(IBrush))
 			{
 				var state = parameter as string;
-				object? brush;
 				if (string.IsNullOrEmpty(state))
-					this.app.Styles.TryGetResource($"Brush/ULogViewer.LogLevel.{level}.{this.prefix}", out brush);
-				else
-					this.app.Styles.TryGetResource($"Brush/ULogViewer.LogLevel.{level}.{this.prefix}.{state}", out brush);
-				return brush as IBrush;
+					return this.app.FindResourceOrDefault<IBrush>($"Brush/ULogViewer.LogLevel.{level}.{this.prefix}");
+				return this.app.FindResourceOrDefault<IBrush>($"Brush/ULogViewer.LogLevel.{level}.{this.prefix}.{state}");
 			}
 			return null;
 		}

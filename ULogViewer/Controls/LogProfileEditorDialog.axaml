@@ -22,7 +22,6 @@
 	<Window.Styles>
 		<Style Selector="ListBox">
 			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
-			<Setter Property="VirtualizationMode" Value="None"/>
 		</Style>
 		<Style Selector="ListBoxItem">
 			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -127,7 +126,7 @@
 									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 								</Grid>
 							</StackPanel>
-							<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" Items="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
+							<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="Auto,Auto,Auto,*">
@@ -230,7 +229,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName.Description}"/>
 							</StackPanel>
-							<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" Items="{x:Static appLogs:Log.PropertyNames}">
+							<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<StackPanel Orientation="Horizontal">
@@ -252,7 +251,7 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" Items="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,*">
@@ -298,7 +297,7 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" Items="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+							<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" ItemsSource="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
                             	<asControls:ListBox.ItemTemplate>
                             		<DataTemplate DataType="{x:Type appLogs:LogPattern}">
                             			<Grid>
@@ -407,7 +406,7 @@
 									<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
-							<asControls:ListBox Name="timestampFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimestampFormatsForReading.Count}" Items="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+							<asControls:ListBox Name="timestampFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimestampFormatsForReading.Count}" ItemsSource="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 								<asControls:ListBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="*,Auto">
@@ -463,7 +462,7 @@
 									<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
-							<asControls:ListBox Name="timeSpanFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimeSpanFormatsForReading.Count}" Items="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+							<asControls:ListBox Name="timeSpanFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimeSpanFormatsForReading.Count}" ItemsSource="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 								<asControls:ListBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="*,Auto">
@@ -514,7 +513,7 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" Items="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+							<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 								<asControls:ListBox.ItemTemplate>
 									<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
 										<Grid>
@@ -640,7 +639,7 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="logWritingFormatListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogWritingFormats.Count}" Items="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<asControls:ListBox Name="logWritingFormatListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogWritingFormats.Count}" ItemsSource="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,Auto">
@@ -693,7 +692,7 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="logLevelMapForWritingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForWriting.Count}" Items="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+						<asControls:ListBox Name="logLevelMapForWritingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForWriting.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="*,*">

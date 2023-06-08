@@ -132,6 +132,6 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				this.widthTextBox.Value = it ?? 100;
 			});
 		}
-		this.SynchronizationContext.Post(this.nameComboBox.Focus);
+		this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
 	}
 }

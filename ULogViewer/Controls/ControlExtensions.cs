@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using System;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -15,11 +14,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <param name="control">Parent control.</param>
 		/// <param name="name">Name of child control.</param>
 		/// <returns>Child control with specific name or null if no child control found.</returns>
-		public static T? FindChildControl<T>(this IControl control, string name) where T : class, IControl
+		public static T? FindChildControl<T>(this Control control, string name) where T : Control
 		{
 			if (control is ContentControl contentControl)
 			{
-				if (contentControl.Content is not IControl child)
+				if (contentControl.Content is not Control child)
 					return null;
 				if (child.Name == name)
 					return (T)child;

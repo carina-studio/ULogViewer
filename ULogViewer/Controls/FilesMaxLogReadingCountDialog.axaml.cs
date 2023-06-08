@@ -106,7 +106,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 
 
 	/// <inheritdoc/>
-	protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+	protected override void OnClosing(WindowClosingEventArgs e)
 	{
 		if (!this.IsCancellationAllowed && !this.isResultGenerated)
 			e.Cancel = true;

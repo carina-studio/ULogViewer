@@ -517,12 +517,7 @@ partial class SessionView
                     Patterns = new[] { "*.json" }
                 }
             }
-        })).Let(it =>
-        {
-            if (it.Count == 1 && it[0].TryGetUri(out var uri))
-                return uri.LocalPath;
-            return null;
-        });
+        })).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
         if (string.IsNullOrEmpty(fileName))
             return;
         
@@ -622,12 +617,12 @@ partial class SessionView
         var point = e.GetCurrentPoint(this.logAnalysisResultListBox);
         var hitControl = this.logAnalysisResultListBox.InputHitTest(point.Position).Let(it =>
         {
-            if (it == null)
-                return (IVisual?)null;
-            var listBoxItem = it.FindAncestorOfType<ListBoxItem>(true);
+            if (it is not Visual visual)
+                return default(Visual);
+            var listBoxItem = visual.FindAncestorOfType<ListBoxItem>(true);
             if (listBoxItem != null)
                 return listBoxItem;
-            return it.FindAncestorOfType<ScrollBar>(true);
+            return visual.FindAncestorOfType<ScrollBar>(true);
         });
         if (hitControl == null)
             this.SynchronizationContext.Post(() => this.logAnalysisResultListBox.SelectedItems!.Clear());
@@ -817,7 +812,7 @@ partial class SessionView
         if (sender is not Avalonia.Controls.ListBox pressedListBox)
             return;
         var position = e.GetPosition(pressedListBox);
-        var pressedButton = pressedListBox.InputHitTest(position)?.FindAncestorOfType<Button>(true);
+        var pressedButton = (pressedListBox.InputHitTest(position) as Visual)?.FindAncestorOfType<Button>(true);
         if (pressedButton is not null && pressedButton.FindAncestorOfType<Avalonia.Controls.ListBox>() == pressedListBox)
             return;
         if (!ReferenceEquals(sender, this.keyLogAnalysisRuleSetListBox))
@@ -976,14 +971,13 @@ partial class SessionView
         {
             if (sender == session.LogAnalysis.KeyLogAnalysisRuleSets)
                 return this.keyLogAnalysisRuleSetListBox.SelectedItems;
-            else if (sender == session.LogAnalysis.LogAnalysisScriptSets)
+            if (sender == session.LogAnalysis.LogAnalysisScriptSets)
                 return this.logAnalysisScriptSetListBox.SelectedItems;
-            else if (sender == session.LogAnalysis.OperationCountingAnalysisRuleSets)
+            if (sender == session.LogAnalysis.OperationCountingAnalysisRuleSets)
                 return this.operationCountingAnalysisRuleSetListBox.SelectedItems;
-            else if (sender == session.LogAnalysis.OperationDurationAnalysisRuleSets)
+            if (sender == session.LogAnalysis.OperationDurationAnalysisRuleSets)
                 return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
-            else
-                throw new NotImplementedException();
+            throw new NotSupportedException();
         });
         switch (e.Action)
         {
@@ -1150,9 +1144,9 @@ partial class SessionView
             }
         }))?.Let(it =>
         {
-            if (!it.TryGetUri(out var uri))
+            var path = it.TryGetLocalPath();
+            if (string.IsNullOrEmpty(path))
                 return null;
-            var path = uri.LocalPath;
             if (!PathEqualityComparer.Default.Equals(Path.GetExtension(path), ".json"))
                 path += ".json";
             return path;
@@ -1175,12 +1169,7 @@ partial class SessionView
                     Patterns = new[] { "*.json" }
                 }
             }
-        })).Let(it =>
-        {
-            if (it.Count == 1 && it[0].TryGetUri(out var uri))
-                return uri.LocalPath;
-            return null;
-        });
+        })).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
     }
     
     

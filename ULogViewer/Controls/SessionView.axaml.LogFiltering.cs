@@ -206,7 +206,7 @@ partial class SessionView
                 listBox.SelectionChanged += this.OnPredefinedLogTextFilterListBoxSelectionChanged;
             });
         });
-        return (Control)control;
+        return control;
     }
 
 
@@ -317,7 +317,7 @@ partial class SessionView
         if (sender is not Avalonia.Controls.ListBox pressedListBox)
             return;
         var position = e.GetPosition(pressedListBox);
-        var pressedButton = pressedListBox.InputHitTest(position)?.FindAncestorOfType<Button>(true);
+        var pressedButton = (pressedListBox.InputHitTest(position) as Visual)?.FindAncestorOfType<Button>(true);
         if (pressedButton is not null && pressedButton.FindAncestorOfType<Avalonia.Controls.ListBox>() == pressedListBox)
             return;
         foreach (var control in this.predefinedLogTextFiltersAndGroupsPanel.Children)

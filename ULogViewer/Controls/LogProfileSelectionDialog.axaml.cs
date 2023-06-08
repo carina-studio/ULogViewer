@@ -258,9 +258,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						Patterns = new[] { "*.json" }
 					}
 				}
-			})).Let(it => it.Count == 1 && it[0].TryGetUri(out var uri)
-					? uri.LocalPath 
-					: null);
+			})).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
 			if (string.IsNullOrEmpty(fileName))
 				return;
 
