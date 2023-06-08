@@ -5,7 +5,6 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Styling;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
@@ -183,7 +182,7 @@ partial class SessionView
         
         // load resources
         var animationSpeed = this.Application.FindResourceOrDefault("TimeSpan/Animation.Slow", TimeSpan.FromMilliseconds(500));
-        var backgroundColor = this.Application.FindResourceOrDefault("Brush/WorkingArea.Background", Brushes.Black).Let(it =>
+        var backgroundColor = this.Application.FindResourceOrDefault<ISolidColorBrush>("Brush/WorkingArea.Background", Brushes.Black).Let(it =>
         {
             var color = it.Color;
             return new SKColor(color.R, color.G, color.B, (byte)(color.A * it.Opacity + 0.5));
@@ -962,10 +961,10 @@ partial class SessionView
         var axisFontSize = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.FontSize", 10.0);
         var axisWidth = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.Width", 2.0);
         var yAxisPadding = app.FindResourceOrDefault("Thickness/SessionView.LogChart.Axis.Padding.Y", default(Thickness)).Let(t => new Padding(t.Left, t.Top, t.Right, t.Bottom));
-        var textBrush = app.FindResourceOrDefault("TextControlForeground", Brushes.Black);
-        var crosshairBrush = app.FindResourceOrDefault("Brush/SessionView.LogChart.Axis.Crosshair", Brushes.Black);
+        var textBrush = app.FindResourceOrDefault<ISolidColorBrush>("TextControlForeground", Brushes.Black);
+        var crosshairBrush = app.FindResourceOrDefault<ISolidColorBrush>("Brush/SessionView.LogChart.Axis.Crosshair", Brushes.Black);
         var crosshairWidth = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.Crosshair.Width", 1.0);
-        var separatorBrush = app.FindResourceOrDefault("Brush/SessionView.LogChart.Axis.Separator", Brushes.Black);
+        var separatorBrush = app.FindResourceOrDefault<ISolidColorBrush>("Brush/SessionView.LogChart.Axis.Separator", Brushes.Black);
         this.logChartYAxisCrosshairPaint = crosshairBrush.Let(brush =>
         {
             var color = brush.Color;
@@ -1025,14 +1024,14 @@ partial class SessionView
     // Update paints for log chart.
     void UpdateLogChartPaints()
     {
-        (this.FindResource("ToolTipBackground") as ISolidColorBrush)?.Let(brush =>
+        this.Application.FindResourceOrDefault<ISolidColorBrush?>("ToolTipBackground")?.Let(brush =>
         {
             var color = brush.Color;
             var skColor = new SKColor(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5));
             this.SetValue(LogChartLegendBackgroundPaintProperty, new SolidColorPaint(skColor));
             this.SetValue(LogChartToolTipBackgroundPaintProperty, new SolidColorPaint(skColor));
         });
-        (this.FindResource("ToolTipForeground") as ISolidColorBrush)?.Let(brush =>
+        this.Application.FindResourceOrDefault<ISolidColorBrush?>("ToolTipForeground")?.Let(brush =>
         {
             var typeface = this.SelectSKTypeface();
             var color = brush.Color;
