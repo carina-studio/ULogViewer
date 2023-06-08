@@ -134,7 +134,7 @@ class LogProfileSelectionContextMenu : ContextMenu
     public LogProfileSelectionContextMenu()
     {
         this.items = new(this.CompareItems);
-        this.ItemsSource = ListExtensions.AsReadOnly(this.items);
+        base.ItemsSource = ListExtensions.AsReadOnly(this.items);
         this.logProfilesChangedHandler = this.OnLogProfilesChanged;
         this.logProfilePropertyChangedHandler = this.OnLogProfilePropertyChanged;
         this.productActivationChangedHandler = this.OnProductActivationChanged;
@@ -515,7 +515,7 @@ class LogProfileSelectionContextMenu : ContextMenu
     /// <summary>
     /// Get items of menu.
     /// </summary>
-    public new object? ItemsSource { get; }
+    public new object? ItemsSource => base.ItemsSource;
 
 
     /// <summary>
