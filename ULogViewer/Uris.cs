@@ -22,11 +22,11 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Application package manifest (Development).
 		/// </summary>
-		public static readonly Uri DevelopmentAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Preview.json");
+		public static readonly Uri DevelopmentAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Development.json");
 		/// <summary>
 		/// Application package manifest (Preview).
 		/// </summary>
-		public static readonly Uri PreviewAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Development.json");
+		public static readonly Uri PreviewAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Preview.json");
 		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>
