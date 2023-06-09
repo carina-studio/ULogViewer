@@ -156,7 +156,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
-		const int ScrollingToLatestLogInterval = 66;
+		const int ScrollingToLatestLogInterval = 100;
 		const int ScrollingToTargetLogRangeInterval = 200;
 
 
@@ -2087,7 +2087,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// complete
 				return itemPanel;
-			});
+			}, true);
 		}
 
 
@@ -2244,7 +2244,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 				}
 				return itemPanel;
-			});
+			}, true);
 		}
 
 
@@ -3259,8 +3259,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// keep current log time info
-			this.updateLatestDisplayedLogRangeAction.Cancel();
-			this.UpdateLatestDisplayedLogRange();
+			this.updateLatestDisplayedLogRangeAction.Execute();
 
 			// scroll to target
 			if (this.targetLogRangeToScrollTo != null)
@@ -3358,7 +3357,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.targetLogRangeToScrollTo != null)
 					this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
 				else if (this.IsScrollingToLatestLogNeeded)
-					this.scrollToLatestLogAction.Schedule();
+					this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
@@ -3861,7 +3860,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (property == BoundsProperty)
 			{
 				if (this.IsScrollingToLatestLogNeeded)
-					this.scrollToLatestLogAction.Schedule();
+					this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 				if (this.IsScrollingToLatestLogAnalysisResultNeeded)
 					this.scrollToLatestLogAnalysisResultAction.Schedule();
 			}
@@ -4308,7 +4307,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					else
 					{
-						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 3);
+						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 2);
 						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 					}
 				}
