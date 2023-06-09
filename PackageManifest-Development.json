@@ -1,71 +1,84 @@
 {
   "Name": "ULogViewer",
-  "Version": "3.0.1.524",
-  "PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/3.0.1.524",
+  "Version": "3.0.2.610",
+  "PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/3.0.2.610",
   "Packages": [
     {
       "Architecture": "Arm64",
-      "BaseVersion": "3.0.1.421",
+      "BaseVersion": "3.0.1.603",
       "OperatingSystem": "Linux",
-      "SHA256": "CB3816EC7AD06FCE47855FB9AC350B2249FEE1A0C975DABDD3F96D923D182BDE",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.421-3.0.1.524-linux-arm64.zip"
+      "SHA256": "247E38A9325B3C7D3358AE8484DF9C67705B2B4076E2CF188BDF1A0835D18C60",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.1.603-3.0.2.610-linux-arm64.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "3.0.1.421",
+      "BaseVersion": "3.0.1.603",
       "OperatingSystem": "Linux",
-      "SHA256": "F710BE0EC8B77428B69420281663CE6EFEBFEF5BCD6F587FCD02DF945334A70C",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.421-3.0.1.524-linux-x64.zip"
+      "SHA256": "45BFEBCFD876ED56F40B29C827F986F24A2581EECE187D0EC5934B2FAD7716C1",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.1.603-3.0.2.610-linux-x64.zip"
     },
     {
       "Architecture": "Arm64",
-      "BaseVersion": "3.0.1.421",
+      "BaseVersion": "3.0.1.603",
       "OperatingSystem": "Windows",
-      "SHA256": "831D455DD2ECFA2692F04C190DA3653584B64C4CEA263A9084BC03112ABD72C7",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.421-3.0.1.524-win-arm64.zip"
+      "SHA256": "E7C19179F3768399A8FDBAB9D0B16565B1FBDDC1C197DB8DF6B616BFFE61DE04",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.1.603-3.0.2.610-win-arm64.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "3.0.1.421",
+      "BaseVersion": "3.0.1.603",
       "OperatingSystem": "Windows",
-      "SHA256": "EAFBFA968810D741D6A4C55C7A6305D8F43A89807F6CE04F0478E844E4C04AD4",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.421-3.0.1.524-win-x64.zip"
+      "SHA256": "56FDA208F33B2EBD6031C9A8DF6BC9FAD349E9AAF393D5353963A376D432D4C9",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.1.603-3.0.2.610-win-x64.zip"
+    },
+    {
+      "Architecture": "X86",
+      "BaseVersion": "3.0.1.603",
+      "OperatingSystem": "Windows",
+      "SHA256": "C33E8DE660B43679D56D1825B8709A0C940A5812302274D815B1BBF38F3AB3B3",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.1.603-3.0.2.610-win-x86.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Linux",
-      "SHA256": "5794BF83D719A5CF0A00E69E4071C63794442EBFF4378ED621806CB000A21984",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.524-linux-arm64.zip"
+      "SHA256": "EE580BD7B4FD18FBF9F8E5E0E499FEAFD76E0FEA6A7E3D553EB2D8A95A5C7C1E",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-linux-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Linux",
-      "SHA256": "1156715BB8618CC867A89A24DA2026280EC60026782D250E7BB62815F7D0F311",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.524-linux-x64.zip"
+      "SHA256": "59F7013AC207F8E37995F5EE0C32920EFF8250BCD0FBCD0EB70B409BD675B149",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-linux-x64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "OSX",
-      "SHA256": "91E2CDE96E4BA80F693470F62A9A950EFEDB895B8B6AB3D4368F3D0498F5172F",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.524-osx-arm64.zip"
+      "SHA256": "F358C7BD30E580BCA0A617762FB115A687018CDB1D7324703789CDCA017C449C",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-osx-arm64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Windows",
-      "SHA256": "AD4962C11275DE77544D5C153056CB8CE91DCA076401B03F65D0B929EC5F400C",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.524-win-arm64.zip"
+      "SHA256": "3F0D0732DC8D0E958E8BC33321994824E693F1D37572EF8BB6C46FF951E7EA5A",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-win-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "OSX",
-      "SHA256": "FE74B2ED3B70B07D0DE7B72C0FD751988080952234DFAB07A74E71B8005E6EED",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.524-osx-x64.zip"
+      "SHA256": "E3DC4C3781FB0089632D6AD84677B1407457A81F89DB3262ADF8CD2644D918D7",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-osx-x64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Windows",
-      "SHA256": "C65C1E7AF2B137901310AC1C348B210D5EB9AE0647C6E01A1897236D0AA6E330",
-      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.1.524/ULogViewer-3.0.1.524-win-x64.zip"
+      "SHA256": "387BBFCAE056DE40CCD54EB6F4A4D785597ED86178DA4F88532D51D48F19DB7C",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-win-x64.zip"
+    },
+    {
+      "Architecture": "X86",
+      "OperatingSystem": "Windows",
+      "SHA256": "5744862787F1CCE5D26E2AB7F3027640B0035574EA4B3453F7DCD36B0D3AA180",
+      "Uri": "https://github.com/carina-studio/ULogViewer/releases/download/3.0.2.610/ULogViewer-3.0.2.610-win-x86.zip"
     }
   ]
 }
