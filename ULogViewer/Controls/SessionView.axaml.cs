@@ -156,7 +156,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
-		const int ScrollingToLatestLogInterval = 66;
+		const int ScrollingToLatestLogInterval = 100;
 		const int ScrollingToTargetLogRangeInterval = 200;
 
 
@@ -3349,7 +3349,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.targetLogRangeToScrollTo != null)
 					this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
 				else if (this.IsScrollingToLatestLogNeeded)
-					this.scrollToLatestLogAction.Schedule();
+					this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
@@ -3852,7 +3852,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (property == BoundsProperty)
 			{
 				if (this.IsScrollingToLatestLogNeeded)
-					this.scrollToLatestLogAction.Schedule();
+					this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 				if (this.IsScrollingToLatestLogAnalysisResultNeeded)
 					this.scrollToLatestLogAnalysisResultAction.Schedule();
 			}
@@ -4295,18 +4295,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					var distanceY = session.LogProfile.SortDirection == SortDirection.Ascending
 						? (extent.Height - viewport.Height) - currentOffset.Y
 						: -currentOffset.Y;
-					if (Math.Abs(distanceY) < 1)
-						this.scrollToLatestLogAction.Cancel();
-					else if (Math.Abs(distanceY) <= 5 || !smoothScrolling)
-					{
-						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
-						this.scrollToLatestLogAction.Cancel();
-					}
-					else
-					{
-						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 3);
-						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
-					}
+					scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
+					this.scrollToLatestLogAction.Cancel();
 				}
 			});
 		}
