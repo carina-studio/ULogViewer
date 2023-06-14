@@ -227,6 +227,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		DisplayableLog[]? latestDisplayedLogRange;
 		readonly List<DisplayableLog> latestDisplayedMarkedLogs = new();
 		DisplayableLog? latestSelectedDisplayableLog;
+		int latestTargetLogRangeScrollingDirection;
 		readonly ContextMenu logActionMenu;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
@@ -260,6 +261,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
+		int targetLogRangeScrollingDirectionChangeCount;
 		DisplayableLog[]? targetLogRangeToScrollTo;
 		readonly List<DisplayableLog> targetMarkedLogsToScrollTo = new();
 		readonly ToggleButton testButton;
@@ -1297,6 +1299,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (this.targetLogRangeToScrollTo == null)
 				return;
 			this.Logger.LogWarning("Clear target range of log to scroll to");
+			this.latestTargetLogRangeScrollingDirection = 0;
+			this.targetLogRangeScrollingDirectionChangeCount = 0;
 			this.targetLogRangeToScrollTo = null;
 			this.targetMarkedLogsToScrollTo.Clear();
 			this.scrollToTargetLogRangeAction.Cancel();
@@ -4356,7 +4360,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		void ScrollToLog(Session session, int index, DisplayableLog log, bool moveToCenter)
 		{
-			this.ClearTargetLogRangeToScrollTo();
+			if (this.targetLogRangeToScrollTo is not null)
+			{
+				if (this.targetLogRangeToScrollTo[0] != this.targetLogRangeToScrollTo[1]
+				    || this.targetLogRangeToScrollTo[0] != log)
+				{
+					this.ClearTargetLogRangeToScrollTo();
+				}
+			}
 			bool isLogVisible = this.logListBox.ItemContainerGenerator.Let(it =>
 			{
 				foreach (var container in it.Containers)
@@ -4470,6 +4481,25 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				}
 			}
+			var scrollDirection = (targetCenterIndex - displayedCenterIndex);
+			if (this.latestTargetLogRangeScrollingDirection != 0
+			    && (this.latestTargetLogRangeScrollingDirection > 0) != (scrollDirection > 0))
+			{
+				++this.targetLogRangeScrollingDirectionChangeCount;
+				if (this.targetLogRangeScrollingDirectionChangeCount >= 3)
+				{
+					this.Logger.LogWarning("Scrolling direction has been changed too many times");
+					this.Logger.LogTrace("Complete scrolling to target log range: [{targetStartIndex}, {targetEndIndex}], center: {targetCenterIndex}", targetStartIndex, targetEndIndex, targetCenterIndex);
+					if (targetCenterIndex < displayedStartIndex || targetCenterIndex >= displayedEndIndex)
+						this.logListBox.ScrollIntoView(targetCenterIndex);
+					this.ClearTargetLogRangeToScrollTo();
+					return;
+				}
+			}
+			else
+				this.targetLogRangeScrollingDirectionChangeCount = 0;
+			this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
+			this.latestTargetLogRangeScrollingDirection = scrollDirection;
 			this.logListBox.ScrollIntoView(indexToScrollTo);
 		}
 
