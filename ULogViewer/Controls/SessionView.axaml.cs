@@ -4342,18 +4342,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					var currentOffset = scrollViewer.Offset;
 					var distanceY = (extent.Height - viewport.Height) - currentOffset.Y;
-					if (distanceY < 1)
-						this.scrollToLatestLogAnalysisResultAction.Cancel();
-					else if (Math.Abs(distanceY) <= 5 || !smoothScrolling)
-					{
-						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
-						this.scrollToLatestLogAnalysisResultAction.Cancel();
-					}
-					else
-					{
-						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 3);
-						this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
-					}
+					scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
+					this.scrollToLatestLogAnalysisResultAction.Cancel();
 				}
 			});
 		}
