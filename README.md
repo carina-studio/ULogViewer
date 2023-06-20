@@ -30,7 +30,7 @@ ULogViewer 是一個由 C# 撰寫並基於 [.NET](https://dotnet.microsoft.com/)
 [![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-linux-x64.zip)
 [![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/2.0.22.423/ULogViewer-2.0.22.423-linux-arm64.zip)
 
-## 📣 What's Change in 3.0 (Preview)
+## 📣 What's Change in 3.0 (RC)
 - Support embedding log analysis script and log data source script into log profile.
 - Support rendering values of log properties as chart.
 - Add new ways of matching raw log lines by patterns to make log parsing more flexible.
