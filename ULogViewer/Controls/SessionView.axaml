@@ -438,6 +438,11 @@
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
+			<MenuItem Command="{Binding #root.Application.OpenFeedbackPage}" Header="{DynamicResource String/Common.Feedback}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Chat.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding #root.Application.ShowApplicationInfoDialog}" Header="{DynamicResource String/SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>

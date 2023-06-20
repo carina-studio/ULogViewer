@@ -398,6 +398,9 @@ namespace CarinaStudio.ULogViewer
 				case "CheckForUpdate":
 					this.CheckForApplicationUpdate();
 					break;
+				case "Feedback":
+					this.OpenFeedbackPage();
+					break;
 				case "Shutdown":
 					this.Shutdown();
 					break;
@@ -671,6 +674,13 @@ namespace CarinaStudio.ULogViewer
 			if (oldVersion == 4)
 				this.PersistentState.SetValue<bool>(PredefinedLogTextFilterEditorDialog.IsGroupNameTutorialShownKey, false);
         }
+        
+        
+        /// <summary>
+        /// Open feedback page.
+        /// </summary>
+        public void OpenFeedbackPage() =>
+	        Platform.OpenLink("https://github.com/carina-studio/ULogViewer/issues");
 
 
 		// URI of package manifest.
