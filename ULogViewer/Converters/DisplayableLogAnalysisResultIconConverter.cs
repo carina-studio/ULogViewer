@@ -1,6 +1,5 @@
 using Avalonia.Media;
 using CarinaStudio.AppSuite;
-using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System.Globalization;
@@ -38,12 +37,9 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
         };
         if (type.HasValue)
         {
-            IImage? image;
             if ((parameter as string) != "Light")
-                app.TryGetResource($"Image/DisplayableLogAnalysisResult.{type.Value}.Colored", out image);
-            else
-                app.TryGetResource($"Image/DisplayableLogAnalysisResult.{type.Value}.Light", out image);
-            return image;
+                return app.FindResourceOrDefault<IImage?>($"Image/DisplayableLogAnalysisResult.{type.Value}.Colored");
+            return app.FindResourceOrDefault<IImage?>($"Image/DisplayableLogAnalysisResult.{type.Value}.Light");
         }
         return null;
     }

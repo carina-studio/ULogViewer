@@ -256,7 +256,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Arg1 = entry.Value.Key;
 							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
 						}),
-						Title = this.Application.GetResourceObservable("String/LogProfileEditorDialog.LogLevelMapForReading"),
+						Title = this.GetResourceObservable("String/LogProfileEditorDialog.LogLevelMapForReading"),
 					}.ShowDialog(this);
 					continue;
 				}

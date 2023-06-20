@@ -424,7 +424,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			AvaloniaXamlLoader.Load(this);
 
 			// load resources
-			if (this.Application.TryGetResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
+			if (this.Application.TryFindResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
 				this.minLogListBoxSizeToCloseSidePanel = doubleRes.GetValueOrDefault();
 			this.minLogTextFilterItemsPanelWidth = this.FindResourceOrDefault<double>("Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth", 300);
 
