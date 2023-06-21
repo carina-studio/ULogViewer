@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -56,27 +57,65 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
                 {
                     var xmlDocument = new XmlDocument();
                     xmlDocument.LoadXml(payload);
-                    var eventDataNode = xmlDocument.FirstChild;
-                    while (eventDataNode != null)
+                    var containerNode = xmlDocument.FirstChild;
+                    while (containerNode != null)
                     {
-                        if (eventDataNode.NodeType == XmlNodeType.Element && eventDataNode.Name == "EventData")
+                        if (containerNode.NodeType == XmlNodeType.Element)
                         {
-                            var dataNode = eventDataNode.FirstChild;
-                            while (dataNode != null)
+                            if (containerNode.Name == "EventData")
                             {
-                                if (dataNode.NodeType == XmlNodeType.Element && dataNode.Name == "Data")
+                                var dataNode = containerNode.FirstChild;
+                                while (dataNode is not null)
                                 {
-                                    if (dataNode.Attributes?.Count > 0)
-                                        return new StringReader(eventDataNode.InnerXml.Trim());
-                                    if (dataNode.FirstChild is XmlText dataText)
-                                        return new StringReader(dataText.Value ?? "");
-                                    break;
+                                    if (dataNode.NodeType == XmlNodeType.Element && dataNode.Name == "Data")
+                                    {
+                                        if (dataNode.Attributes?.Count == 0 && dataNode.FirstChild is XmlText dataText)
+                                            return new StringReader(dataText.Value ?? "");
+                                        var dataLines = new StringBuilder();
+                                        do
+                                        {
+                                            if (dataLines.Length > 0)
+                                                dataLines.AppendLine();
+                                            try
+                                            {
+                                                if (dataNode.Name == "Data")
+                                                {
+                                                    var nameAttr = dataNode.Attributes?["Name"];
+                                                    if (nameAttr is not null)
+                                                    {
+                                                        dataLines.Append(nameAttr.Value);
+                                                        dataLines.Append(": ");
+                                                        dataLines.Append(dataNode.InnerXml.Trim());
+                                                    }
+                                                    else if (dataNode.FirstChild is not null)
+                                                    {
+                                                        dataLines.Append("Data: ");
+                                                        dataLines.Append(dataNode.InnerXml.Trim());
+                                                    }
+                                                }
+                                                else if (dataNode.FirstChild is not null)
+                                                {
+                                                    dataLines.Append(dataNode.Name);
+                                                    dataLines.Append(": ");
+                                                    dataLines.Append(dataNode.InnerXml.Trim());
+                                                }
+                                            }
+                                            finally
+                                            {
+                                                dataNode = dataNode.NextSibling;
+                                            }
+                                        } while (dataNode is not null);
+                                        return new StringReader(dataLines.ToString());
+                                    }
+                                    dataNode = dataNode.NextSibling;
                                 }
-                                dataNode = dataNode.NextSibling;
+                                return new StringReader("");
                             }
-                            break;
+                            if (containerNode.Name == "UserData")
+                                return new StringReader(containerNode.InnerXml.Trim());
+                            return new StringReader(containerNode.OuterXml.Trim());
                         }
-                        eventDataNode = eventDataNode.NextSibling;
+                        containerNode = containerNode.NextSibling;
                     }
                     return new StringReader("");
                 }
@@ -87,7 +126,7 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
             }) ?? new StringReader("");
             
             // generate lines for record
-            recordLines.Enqueue($"<Timestamp>{record.Timestamp.DateTime:yyyy/MM/dd HH:mm:ss}</Timestamp>");
+            recordLines.Enqueue($"<Timestamp>{record.Timestamp.DateTime.ToLocalTime():yyyy/MM/dd HH:mm:ss}</Timestamp>");
             recordLines.Enqueue($"<Computer>{WebUtility.HtmlEncode(record.Computer)}</Computer>");
             recordLines.Enqueue($"<UserName>{WebUtility.HtmlEncode(record.UserName)}</UserName>");
             recordLines.Enqueue($"<Category>{WebUtility.HtmlEncode(record.Channel)}</Category>");
