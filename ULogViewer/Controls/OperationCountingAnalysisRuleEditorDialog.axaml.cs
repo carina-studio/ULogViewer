@@ -1,12 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
-using CarinaStudio.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -95,7 +93,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				var presenter = this.TutorialPresenter;
 				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
 					this.operationNameTextBox.Focus();
 			});

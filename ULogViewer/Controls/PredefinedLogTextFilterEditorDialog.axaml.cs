@@ -9,7 +9,6 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
-using CarinaStudio.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -221,7 +220,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.SynchronizationContext.Post(() =>
 			{
-				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				var presenter = this.TutorialPresenter;
 				if (presenter is not null)
 				{
 					if (!this.PersistentState.GetValueOrDefault(IsGroupNameTutorialShownKey))
