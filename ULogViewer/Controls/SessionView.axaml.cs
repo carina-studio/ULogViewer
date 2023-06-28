@@ -1978,7 +1978,7 @@ namespace CarinaStudio.ULogViewer.Controls
 										session.UnmarkLogsCommand.TryExecute(new[] { log });
 									else
 									{
-										if (this.sidePanelContainer.IsVisible)
+										if (this.sidePanelContainer.IsVisible && this.Settings.GetValueOrDefault(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs))
 											session.IsMarkedLogsPanelVisible = true;
 										session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
 										{
@@ -2668,7 +2668,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
-			if (this.sidePanelContainer.IsVisible)
+			if (this.sidePanelContainer.IsVisible && this.Settings.GetValueOrDefault(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs))
 				session.IsMarkedLogsPanelVisible = true;
 			session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
 			{
@@ -2696,7 +2696,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (log.MarkedColor == MarkColor.None)
 				{
-					if (this.sidePanelContainer.IsVisible)
+					if (this.sidePanelContainer.IsVisible && this.Settings.GetValueOrDefault(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs))
 						session.IsMarkedLogsPanelVisible = true;
 					break;
 				}
