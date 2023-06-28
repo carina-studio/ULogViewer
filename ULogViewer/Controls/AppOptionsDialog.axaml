@@ -257,6 +257,13 @@
 							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectLogReadingPreconditionForFiles, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Switch to marked logs panel -->
+						<asControls:DialogItemGrid>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs}"/>
+							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SwitchToMarkedLogsPanelAfterMarkingLogs, Mode=TwoWay}"/>
+						</asControls:DialogItemGrid>
+						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Enable scrolling to latest logs automatically -->
 						<asControls:DialogItemGrid>

@@ -120,6 +120,10 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<bool> ShowLogChartPanelIfDefined = new(nameof(ShowLogChartPanelIfDefined), true);
 	/// <summary>
+	/// Switch to panel of marked logs automatically after marking logs.
+	/// </summary>
+	public static readonly SettingKey<bool> SwitchToMarkedLogsPanelAfterMarkingLogs = new(nameof(SwitchToMarkedLogsPanelAfterMarkingLogs), false);
+	/// <summary>
 	/// Delay of updating log filter after changing related parameters in milliseconds.
 	/// </summary>
 	public static readonly SettingKey<int> UpdateLogFilterDelay = new(nameof(UpdateLogFilterDelay), 500);

@@ -397,6 +397,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(ShowLogChartPanelIfDefined));
 		else if (key == AppSuite.SettingKeys.ShowProcessInfo)
 			this.OnPropertyChanged(nameof(ShowProcessInfo));
+		else if (key == SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs)
+			this.OnPropertyChanged(nameof(SwitchToMarkedLogsPanelAfterMarkingLogs));
 		else if (key == SettingKeys.UpdateLogFilterDelay)
 			this.OnPropertyChanged(nameof(UpdateLogFilterDelay));
 		else
@@ -597,6 +599,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo);
 		set => this.Settings.SetValue<bool>(AppSuite.SettingKeys.ShowProcessInfo, value);
+	}
+	
+	
+	/// <summary>
+	/// Switch to panel of marked logs automatically after marking logs.
+	/// </summary>
+	public bool SwitchToMarkedLogsPanelAfterMarkingLogs
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs);
+		set => this.Settings.SetValue<bool>(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs, value);
 	}
 
 
