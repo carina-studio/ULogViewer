@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
-using CarinaStudio.VisualTree;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				var presenter = this.TutorialPresenter;
 				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.patternEditor))
 					this.patternEditor.Focus();
 			});

@@ -7,7 +7,6 @@ using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
-using CarinaStudio.VisualTree;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
@@ -20,7 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="OperationDurationAnalysisRuleSet.Rule"/>.
 	/// </summary>
-	class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ObservableList<DisplayableLogAnalysisCondition> beginningConditions = new();
@@ -304,7 +303,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.SynchronizationContext.Post(() =>
 			{
-				var presenter = this.FindDescendantOfTypeAndName<TutorialPresenter>("PART_TutorialPresenter");
+				var presenter = this.TutorialPresenter;
 				if (presenter is null || !this.beginningPatternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
 					this.operationNameTextBox.Focus();
 			});
