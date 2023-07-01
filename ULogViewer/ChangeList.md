@@ -7,6 +7,7 @@
     + Android Device Log
     + Android Log Files
     + Android System Memory Monitor
+    + Specific Android Device Log
     + ULogViewer Log File
 + Support embedding **Log data source script** into log profile and set it as data source of log profile.
 + Support rendering values of log properties as chart. The following types of charts are supported:
@@ -47,6 +48,8 @@
 
 + Add new built-in log profile templates: 
     + Android Process Memory Monitor
+    + Specific Android Device Event Log
+    + Specific Android Device Log
     + Specific Apple Device Log
     + Specific Apple Device Simulator Log
     + Windows Event Log
@@ -99,6 +102,7 @@
 + Other UI/UX Improvement.
 
 ## Behavior Changes
++ Will not switch to **'Marked logs'** panel automatically after marking logs. You can change this behavior in application options.
 + Change **'Save memory usage aggressively'** setting to **'Policy of memory usage'** to provide better control of balance of CPU/memory usage. 
 + Use **⌘** key for multi-selection of items on **macOS** instead of using **Ctrl**.
 + Align application activation/deactivation behavior on **macOS**.
