@@ -174,9 +174,11 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
-		<EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceEventLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceSimulatorLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
