@@ -1,7 +1,7 @@
 # User Agreement of ULogViewer
  ---
-+ Version: 2.0
-+ Update: 2023/5/22
++ Version: 2.1
++ Update: 2023/7/1
 
 This is the User Agreement of ULogViewer which you need to read before you using ULogViewer. The User Agreement may be updated in the future and you can check it on the website of ULogViewer. It means that you have agreed this User Agreement once you start using ULogViewer.
 
@@ -22,7 +22,7 @@ ULogViewer has built-in Debug Mode which is disabled by default. You can enable 
 ## External Dependencies
 
 ### Android SDK Platform Tools
-In order to use **'Android Device Log'**, **'Android Device Event Log'**, **'Android Device System Trace'**, **'Android System Memory Monitor'** and **'Android Process Memory Monitor'** log profiles, you need to install [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools) or [Android Studio](https://developer.android.com/studio) on your device first.
+In order to use **'Android Device Log'**, **'Android Device Event Log'**, **'Android Device System Trace'**, **'Android System Memory Monitor'**, **'Android Process Memory Monitor'**, **'Specific Android Device Event Log'** and **'Specific Android Device Log'** log profiles, you need to install [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools) or [Android Studio](https://developer.android.com/studio) on your device first.
 
 ### Azure Command-Line Interface (CLI)
 In order to use full features of **'Azure CLI'**, **'MySQL Database'** and **'SQL Server Database'** data sources, you need to install [Azure CLI](https://docs.microsoft.com/cli/azure/) on your device first.
