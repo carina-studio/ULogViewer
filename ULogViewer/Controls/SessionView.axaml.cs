@@ -5297,13 +5297,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Get and keep range of logs which are currently displayed.
 		void UpdateLatestDisplayedLogRange()
 		{
-			if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session session)
+			if (this.logListBox.ItemCount <= 0 || this.DataContext is not Session session)
 			{
 				if (this.latestDisplayedLogRange != null)
 				{
 					this.SynchronizationContext.Post(() =>
 					{
-						if (this.logListBox.GetItemCount() <= 0 || this.DataContext is not Session)
+						if (this.logListBox.ItemCount <= 0 || this.DataContext is not Session)
 						{
 							if (this.latestDisplayedLogRange != null)
 							{

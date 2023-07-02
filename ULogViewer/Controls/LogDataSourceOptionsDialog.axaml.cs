@@ -742,7 +742,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		this.SynchronizationContext.Post(() =>
 		{
 			listBox.SelectedItems?.Clear();
-			if (index < 0 || index >= listBox.GetItemCount())
+			if (index < 0 || index >= listBox.ItemCount)
 				return;
 			listBox.Focus();
 			listBox.SelectedIndex = index;
