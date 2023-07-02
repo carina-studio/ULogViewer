@@ -214,12 +214,12 @@ partial class SessionView
         });
         
         // prepare tooltip generator
-        string FormatToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
+        string FormatYToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
         {
             // name
             var buffer = new StringBuilder();
             var source = series.Source;
-            var value = series.Values[point.Context.Entity.EntityIndex];
+            var value = series.Values[point.Context.Entity.MetaData?.EntityIndex ?? 0];
             buffer.Append(value?.Label ?? series.Source?.PropertyDisplayName);
             source?.SecondaryPropertyDisplayName.Let(it =>
             {
@@ -269,14 +269,14 @@ partial class SessionView
                 Mapping = (value, point) =>
                 {
                     point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex * LogBarChartXCoordinateScaling;
+                    point.SecondaryValue = (point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling;
                 },
                 Name = seriesNameBuffer.ToString(),
                 Padding = 0.5,
                 Rx = 0,
                 Ry = 0,
-                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
+                YToolTipLabelFormatter = FormatYToolTipLabel,
             },
             LogChartType.ValueStackedAreas
                 or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue?>
@@ -301,15 +301,15 @@ partial class SessionView
                 Mapping = (value, point) =>
                 {
                     point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex;
+                    point.SecondaryValue = point.Context.Entity.MetaData?.EntityIndex ?? 0;
                 },
                 Name = seriesNameBuffer.ToString(),
                 Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                 {
                     IsAntialias = true,
                 },
-                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
+                YToolTipLabelFormatter = FormatYToolTipLabel,
             },
             LogChartType.ValueStackedBars => new StackedColumnSeries<DisplayableLogChartSeriesValue?>
             {
@@ -318,14 +318,14 @@ partial class SessionView
                 Mapping = (value, point) =>
                 {
                     point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex * LogBarChartXCoordinateScaling;
+                    point.SecondaryValue = (point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling;
                 },
                 Name = seriesNameBuffer.ToString(),
                 Padding = 0,
                 Rx = 0,
                 Ry = 0,
-                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
+                YToolTipLabelFormatter = FormatYToolTipLabel,
             },
             _ => new LineSeries<DisplayableLogChartSeriesValue?>
             {
@@ -366,7 +366,7 @@ partial class SessionView
                 Mapping = (value, point) =>
                 {
                     point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.EntityIndex;
+                    point.SecondaryValue = point.Context.Entity.MetaData?.EntityIndex ?? 0;
                 },
                 Name = seriesNameBuffer.ToString(),
                 Stroke = chartType switch
@@ -381,8 +381,8 @@ partial class SessionView
                         IsAntialias = true,
                     },
                 },
-                TooltipLabelFormatter = FormatToolTipLabel,
                 Values = series.Values,
+                YToolTipLabelFormatter = FormatYToolTipLabel,
             },
         };
     }

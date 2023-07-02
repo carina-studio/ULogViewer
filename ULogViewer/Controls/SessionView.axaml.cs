@@ -506,12 +506,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Get<Expander>("logAnalysisScriptSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.logChart = this.Get<CartesianChart>(nameof(logChart)).Also(it =>
 			{
-				var chartMargin = this.Application.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Chart.Margin", default);
-				it.DrawMargin = new Margin(
-					chartMargin.Left == 0 ? float.NaN : (float)chartMargin.Left, 
-					chartMargin.Top == 0 ? float.NaN : (float)chartMargin.Top, 
-					chartMargin.Right == 0 ? float.NaN : (float)chartMargin.Right, 
-					chartMargin.Bottom == 0 ? float.NaN : (float)chartMargin.Bottom);
 				it.DataPointerDown += (_, e) => this.OnLogChartDataPointerDown(e);
 				it.DoubleTapped += (_, e) =>
 				{
