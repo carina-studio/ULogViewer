@@ -14,6 +14,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Scripting;
@@ -32,7 +33,6 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
-using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView.Avalonia;
 using Microsoft.Extensions.Logging;
 using System;
@@ -4980,7 +4980,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var persistentState = this.PersistentState;
 			if (!persistentState.GetValueOrDefault(IsSelectingLogProfileToStartTutorialShownKey))
 			{
-				if (App.CurrentOrNull?.IsFirstLaunch == false)
+				if (IAppSuiteApplication.CurrentOrNull?.IsFirstLaunch == false)
 				{
 					// no need to show this tutorial for upgrade case
 					persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
@@ -5219,7 +5219,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			switch (command)
 			{
 				case "RestartApp":
-					App.CurrentOrNull?.Restart();
+					(IAppSuiteApplication.CurrentOrNull as App)?.Restart();
 					break;
 				case "RestartRootWindows":
 					this.Application.RestartRootWindowsAsync();

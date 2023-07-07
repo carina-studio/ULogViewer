@@ -5,7 +5,6 @@ using CarinaStudio.AppSuite.Product;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.IO;
@@ -5292,7 +5291,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Trigger GC if needed.
 		static void TriggerGC()
 		{
-			var app = App.CurrentOrNull;
+			var app = IAppSuiteApplication.CurrentOrNull;
 			if (app == null)
 				return;
 			var isHighMemoryUsage = instances.FirstOrDefault(it => it.GetValue(IsHighMemoryUsageToStopReadingLogsProperty)) is not null;

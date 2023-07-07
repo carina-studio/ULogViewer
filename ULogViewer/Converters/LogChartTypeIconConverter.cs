@@ -1,7 +1,6 @@
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using CarinaStudio.AppSuite;
-using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System.Globalization;
@@ -31,7 +30,7 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
     // Constructor.
     LogChartTypeIconConverter(bool outline)
     {
-        this.app = App.CurrentOrNull;
+        this.app = IAppSuiteApplication.CurrentOrNull;
         this.outline = outline;
     }
 
