@@ -3183,11 +3183,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double click on log list box.
+		// ReSharper disable UnusedParameter.Local
 		void OnLogListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
 			this.ShowLogStringProperty();
 			e.Handled = true;
 		}
+		// ReSharper restore UnusedParameter.Local
 
 
 		// Called when pointer pressed on log list box.
@@ -3268,6 +3270,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when log list box selection changed.
+		// ReSharper disable UnusedParameter.Local
 		void OnLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems.Count > 0)
@@ -3278,6 +3281,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.latestSelectedDisplayableLog = null;
 			this.OnLogListBoxSelectionChanged();
 		}
+		// ReSharper restore UnusedParameter.Local
 		void OnLogListBoxSelectionChanged()
 		{
 			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
@@ -3711,19 +3715,23 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when double clicked on item of marked log list box.
+		// ReSharper disable UnusedParameter.Local
 		void OnMarkedLogListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
 			if (e.Item is DisplayableLog log)
-				this.OnMarkedLogSelected(log);
+				this.OnMarkedLogSelected(log, true);
 		}
+		// ReSharper restore UnusedParameter.Local
 
 
         // Called when selection in marked log list box has been changed.
+        // ReSharper disable UnusedParameter.Local
         void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (this.markedLogListBox.SelectedItem is DisplayableLog log)
-				this.OnMarkedLogSelected(log);
+				this.OnMarkedLogSelected(log, this.markedLogListBox.IsFocused);
 		}
+        // ReSharper restore UnusedParameter.Local
 
 
 		// Called when marked logs changed.
@@ -3732,21 +3740,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 
 		// Called when selecting a marked log.
-		void OnMarkedLogSelected(DisplayableLog log)
+		void OnMarkedLogSelected(DisplayableLog log, bool selectedByUser)
 		{
 			if (this.DataContext is not Session session)
 				return;
 			var index = session.Logs.IndexOf(log);
 			this.logListBox.Let(it =>
 			{
-				it.SelectedItems!.Clear();
-				if (index >= 0)
+				if (selectedByUser || it.SelectedItems?.Count != 1 || it.SelectedItems[0] != log)
 				{
-					it.SelectedIndex = index;
-					this.ScrollToLog(session, index, log, true);
+					it.SelectedItems!.Clear();
+					if (index >= 0)
+					{
+						it.SelectedIndex = index;
+						this.ScrollToLog(session, index, log, true);
+					}
+					else
+						this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
 				}
-				else
-					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
 				it.Focus();
 			});
 			this.IsScrollingToLatestLogNeeded = false;
