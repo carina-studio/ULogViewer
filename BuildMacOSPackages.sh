@@ -3,6 +3,7 @@ RID_LIST=("osx.11.0-arm64" "osx-x64")
 PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
+TESTING_MODE_BUILD="false"
 ICON_VERSION="2"
 CERT_NAME="" # Name of certification to sign the application
 
@@ -43,7 +44,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
     
     # build
-    dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID
+    dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID -p:TestingModeBuild=$TESTING_MODE_BUILD
     if [ "$?" != "0" ]; then
         exit
     fi
@@ -58,7 +59,7 @@ for i in "${!RID_LIST[@]}"; do
         exit
     fi
 
-    # copy .app directory to output directoty
+    # copy .app directory to output directory
     mv ./$APP_NAME/bin/$CONFIG/net7.0/$RID/publish/$APP_NAME.app ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app
     if [ "$?" != "0" ]; then
         exit

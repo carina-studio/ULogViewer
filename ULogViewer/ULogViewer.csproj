@@ -28,6 +28,10 @@
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(TestingModeBuild)'=='True'">
+		<DefineConstants>TESTING_MODE_BUILD</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<CFBundleName>ULogViewer</CFBundleName>
 		<CFBundleExecutable>ULogViewer</CFBundleExecutable>
