@@ -62,9 +62,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.101.628-preview" />
-		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.101.628-preview" />
-		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.2.101.628-preview" />
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.2.101.708" />
+		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.2.101.708" />
+		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.2.101.708" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.0.1.1" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-beta.700-11.0.0-preview4" />
