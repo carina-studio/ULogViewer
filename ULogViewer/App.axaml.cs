@@ -602,7 +602,7 @@ namespace CarinaStudio.ULogViewer
 		// Select whether to enter testing mode or not.
         protected override bool OnSelectEnteringTestingMode()
         {
-#if DEBUG
+#if DEBUG || TESTING_MODE_BUILD
 			return true;
 #else
 			return base.OnSelectEnteringTestingMode();
