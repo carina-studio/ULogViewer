@@ -1,15 +1,15 @@
-﻿using System;
+﻿using CarinaStudio.AppSuite;
 
 namespace CarinaStudio.ULogViewer
 {
 	/// <summary>
 	/// Interface of ULogViewer application.
 	/// </summary>
-	interface IULogViewerApplication : AppSuite.IAppSuiteApplication
+	interface IULogViewerApplication : IAppSuiteApplication
 	{
 		/// <summary>
-		/// Check whether application is running for testing purpose or not.
+		/// Get instance of <see cref="IULogViewerApplication"/> of current process.
 		/// </summary>
-		bool IsTesting { get; }
+		public static new IULogViewerApplication Current => (IULogViewerApplication)IAppSuiteApplication.Current;
 	}
 }

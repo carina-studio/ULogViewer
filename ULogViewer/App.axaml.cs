@@ -207,10 +207,6 @@ namespace CarinaStudio.ULogViewer
 		protected override bool IsMultipleProcessesSupported => false;
 
 
-		/// <inheritdoc/>
-		public bool IsTesting => false;
-
-
 		// Program entry.
 		[STAThread]
 		static void Main(string[] args) => BuildApplication<App>()
@@ -385,6 +381,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Called when user click the native menu item.
+		// ReSharper disable once UnusedParameter.Local
 		void OnNativeMenuItemClick(object? sender, EventArgs e)
 		{
 			switch ((sender as NativeMenuItem)?.CommandParameter as string)
