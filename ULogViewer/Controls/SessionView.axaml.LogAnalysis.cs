@@ -11,7 +11,6 @@ using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Controls;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -63,6 +62,7 @@ partial class SessionView
     readonly HashSet<LogAnalysisScriptSet> selectedLogAnalysisScriptSets = new();
     readonly HashSet<OperationCountingAnalysisRuleSet> selectedOperationCountingAnalysisRuleSets = new();
     readonly HashSet<OperationDurationAnalysisRuleSet> selectedOperationDurationAnalysisRuleSets = new();
+    readonly ScheduledAction smoothScrollToLatestLogAnalysisResultAction;
     readonly ScheduledAction updateLogAnalysisAction;
 
 
@@ -787,17 +787,24 @@ partial class SessionView
         {
             case NotifyCollectionChangedAction.Add:
                 if (this.IsScrollingToLatestLogAnalysisResultNeeded)
-                    this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                {
+                    if (!this.scrollToLatestLogAnalysisResultAction.IsScheduled)
+                        this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                }
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (session.LogAnalysis.AnalysisResults.IsEmpty())
+                {
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
+                    this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+                }
                 break;
             case NotifyCollectionChangedAction.Reset:
                 if (session.LogAnalysis.AnalysisResults.IsEmpty())
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                 else
                     this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 break;
         }
     }
@@ -1128,6 +1135,55 @@ partial class SessionView
     /// Command to remove given operation duration analysis rule set.
     /// </summary>
     public ICommand RemoveOperationDurationAnalysisRuleSetCommand { get; }
+    
+    
+    // Scroll to latest log analysis result.
+    void ScrollToLatestLogAnalysisResult(bool smoothScrolling = true)
+    {
+        // check state
+        if (!this.IsScrollingToLatestLogAnalysisResultNeeded)
+            return;
+        if (this.DataContext is not Session session)
+            return;
+        if (session.LogAnalysis.AnalysisResults.IsEmpty() || session.LogProfile == null || !session.IsActivated)
+            return;
+				
+        // cancel scrolling
+        if (this.logAnalysisResultListBox.ContextMenu?.IsOpen == true || this.logMarkingMenu.IsOpen)
+        {
+            this.IsScrollingToLatestLogAnalysisResultNeeded = false;
+            return;
+        }
+
+        // scroll to latest analysis result
+        this.logAnalysisResultScrollViewer?.Let(scrollViewer =>
+        {
+            var extent = scrollViewer.Extent;
+            var viewport = scrollViewer.Viewport;
+            if (extent.Height > viewport.Height)
+            {
+                var currentOffset = scrollViewer.Offset;
+                var distanceY = (extent.Height - viewport.Height) - currentOffset.Y;
+                if (Math.Abs(distanceY) <= 1)
+                {
+                    this.scrollToLatestLogAnalysisResultAction.Cancel();
+                    this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+                }
+                if (Math.Abs(distanceY) <= 5 || !smoothScrolling)
+                {
+                    scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
+                    this.scrollToLatestLogAnalysisResultAction.Cancel();
+                    this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+                }
+                else
+                {
+                    scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 1.5);
+                    this.scrollToLatestLogAnalysisResultAction.Cancel();
+                    this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                }
+            }
+        });
+    }
 
 
     // Show UI for user to select file to export log analysis rule set.

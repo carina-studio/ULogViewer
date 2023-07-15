@@ -156,7 +156,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Constants.
 		const int AutoAddLogFilesDelay = 0;
-		const int ScrollingToLatestLogInterval = 100;
+		const int ScrollingToLatestLogInterval = 80;
 		const int ScrollingToTargetLogRangeInterval = 200;
 
 
@@ -261,6 +261,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
+		readonly ScheduledAction smoothScrollToLatestLogAction;
 		int targetLogRangeScrollingDirectionChangeCount;
 		DisplayableLog[]? targetLogRangeToScrollTo;
 		readonly List<DisplayableLog> targetMarkedLogsToScrollTo = new();
@@ -900,9 +901,28 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				this.SelectAndSetWorkingDirectory();
 			});
-			this.scrollToLatestLogAction = new(() => this.ScrollToLatestLog());
-			this.scrollToLatestLogAnalysisResultAction = new(() => this.ScrollToLatestLogAnalysisResult());
+			this.commitLogFiltersAction = new(this.CommitLogFilters);
+			this.scrollToLatestLogAction = new(() =>
+			{
+				this.smoothScrollToLatestLogAction!.Cancel();
+				this.ScrollToLatestLog(false);
+			});
+			this.scrollToLatestLogAnalysisResultAction = new(() =>
+			{
+				this.smoothScrollToLatestLogAnalysisResultAction!.Cancel();
+				this.ScrollToLatestLogAnalysisResult(false);
+			});
 			this.scrollToTargetLogRangeAction = new(this.ScrollToTargetLogRange);
+			this.smoothScrollToLatestLogAction = new(() =>
+			{
+				this.scrollToLatestLogAction.Cancel();
+				this.ScrollToLatestLog(true);
+			});
+			this.smoothScrollToLatestLogAnalysisResultAction = new(() =>
+			{
+				this.scrollToLatestLogAnalysisResultAction.Cancel();
+				this.ScrollToLatestLogAnalysisResult(true);
+			});
 			this.updateLogAnalysisAction = new(() =>
 			{
 				if (this.DataContext is not Session session)
@@ -920,7 +940,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				session.LogAnalysis.LogAnalysisScriptSets.Clear();
 				session.LogAnalysis.LogAnalysisScriptSets.AddAll(selectedLaScriptSets);
 			});
-			this.commitLogFiltersAction = new(this.CommitLogFilters);
 			this.updateLogChartXAxisLimitAction = new(this.UpdateLogChartXAxisLimit);
 			this.updateLogChartYAxisLimitAction = new(this.UpdateLogChartYAxisLimit);
 			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
@@ -1174,9 +1193,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.IsScrollingToLatestLogNeeded = false;
 			});
 			if (session.HasLogs && this.IsScrollingToLatestLogNeeded)
+			{
 				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				this.smoothScrollToLatestLogAction.Cancel();
+			}
 			if (session.LogAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
+			{
 				this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+				this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+			}
 
 			// sync log filters to UI
 			this.SyncLogTextFiltersBack();
@@ -2316,7 +2341,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// stop auto scrolling
 			this.scrollToLatestLogAction.Cancel();
+			this.smoothScrollToLatestLogAction.Cancel();
 			this.scrollToLatestLogAnalysisResultAction.Cancel();
+			this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
 
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
@@ -3359,7 +3386,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (this.targetLogRangeToScrollTo != null)
 					this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
 				else if (this.IsScrollingToLatestLogNeeded)
-					this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				{
+					if (!this.scrollToLatestLogAction.IsScheduled)
+						this.smoothScrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				}
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
@@ -3869,9 +3899,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (property == BoundsProperty)
 			{
 				if (this.IsScrollingToLatestLogNeeded)
-					this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				{
+					if (!this.scrollToLatestLogAction.IsScheduled)
+						this.smoothScrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				}
 				if (this.IsScrollingToLatestLogAnalysisResultNeeded)
-					this.scrollToLatestLogAnalysisResultAction.Schedule();
+				{
+					if (!this.scrollToLatestLogAnalysisResultAction.IsScheduled)
+						this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+				}
 			}
 			else if (property == DataContextProperty)
 			{
@@ -3889,14 +3925,20 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.ClearTargetLogRangeToScrollTo();
 				}
 				else
+				{
 					this.scrollToLatestLogAction.Cancel();
+					this.smoothScrollToLatestLogAction.Cancel();
+				}
 			}
 			else if (property == IsScrollingToLatestLogAnalysisResultNeededProperty)
 			{
 				if ((bool)change.NewValue!)
 					this.ScrollToLatestLogAnalysisResult(false);
 				else
+				{
 					this.scrollToLatestLogAnalysisResultAction.Cancel();
+					this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+				}
 			}
 		}
 
@@ -3918,9 +3960,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					break;
 				case nameof(Session.HasLogs):
 					if (!session.HasLogs)
+					{
 						this.scrollToLatestLogAction.Cancel();
+						this.smoothScrollToLatestLogAction.Cancel();
+					}
 					else if (this.IsScrollingToLatestLogNeeded)
-						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					{
+						if (!this.scrollToLatestLogAction.IsScheduled)
+							this.smoothScrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+					}
 					break;
 				case nameof(Session.HasWorkingDirectory):
 					this.canShowWorkingDirectoryInExplorer.Update(Platform.IsOpeningFileManagerSupported && session.HasWorkingDirectory);
@@ -3929,7 +3977,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (!session.IsActivated)
 					{
 						this.scrollToLatestLogAction.Cancel();
+						this.smoothScrollToLatestLogAction.Cancel();
 						this.scrollToLatestLogAnalysisResultAction.Cancel();
+						this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
 					}
 					else
 					{
@@ -4308,51 +4358,22 @@ namespace CarinaStudio.ULogViewer.Controls
 						? (extent.Height - viewport.Height) - currentOffset.Y
 						: -currentOffset.Y;
 					if (Math.Abs(distanceY) < 1)
+					{
 						this.scrollToLatestLogAction.Cancel();
+						this.smoothScrollToLatestLogAction.Cancel();
+					}
 					else if (Math.Abs(distanceY) <= 5 || !smoothScrolling)
 					{
 						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
 						this.scrollToLatestLogAction.Cancel();
+						this.smoothScrollToLatestLogAction.Cancel();
 					}
 					else
 					{
-						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 2);
-						this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 1.5);
+						this.scrollToLatestLogAction.Cancel();
+						this.smoothScrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
 					}
-				}
-			});
-		}
-		
-		
-		// Scroll to latest log analysis result.
-		void ScrollToLatestLogAnalysisResult(bool smoothScrolling = true)
-		{
-			// check state
-			if (!this.IsScrollingToLatestLogAnalysisResultNeeded)
-				return;
-			if (this.DataContext is not Session session)
-				return;
-			if (session.LogAnalysis.AnalysisResults.IsEmpty() || session.LogProfile == null || !session.IsActivated)
-				return;
-				
-			// cancel scrolling
-			if (this.logAnalysisResultListBox.ContextMenu?.IsOpen == true || this.logMarkingMenu.IsOpen)
-			{
-				this.IsScrollingToLatestLogAnalysisResultNeeded = false;
-				return;
-			}
-
-			// scroll to latest analysis result
-			this.logAnalysisResultScrollViewer?.Let(scrollViewer =>
-			{
-				var extent = scrollViewer.Extent;
-				var viewport = scrollViewer.Viewport;
-				if (extent.Height > viewport.Height)
-				{
-					var currentOffset = scrollViewer.Offset;
-					var distanceY = (extent.Height - viewport.Height) - currentOffset.Y;
-					scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
-					this.scrollToLatestLogAnalysisResultAction.Cancel();
 				}
 			});
 		}

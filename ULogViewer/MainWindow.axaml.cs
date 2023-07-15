@@ -187,7 +187,7 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.tabControlSelectionChangedAction = new(this.OnTabControlSelectionChanged);
 
-			// attach to property change
+			// attach to self
 			this.GetObservable(IsActiveProperty).Subscribe(isActive =>
 			{
 				if (isActive && this.FocusManager?.GetFocusedElement() is not TextBox)
@@ -957,7 +957,7 @@ namespace CarinaStudio.ULogViewer
 							tabItem.DataContext = null;
 							this.tabItems.RemoveAt(startIndex + i);
 							if (startTime > 0)
-								this.Logger.LogTrace("[Performance ] Took {duration} ms to remove tab from position {index}", this.stopwatch.ElapsedMilliseconds - startTime, startIndex + i);
+								this.Logger.LogTrace("[Performance] Took {duration} ms to remove tab from position {index}", this.stopwatch.ElapsedMilliseconds - startTime, startIndex + i);
 						}
 						if (workspace.Sessions.IsEmpty() && this.HasMultipleMainWindows)
 						{
@@ -986,35 +986,6 @@ namespace CarinaStudio.ULogViewer
 			else
 				workspace.ActiveSession = (Session)(this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
 			this.focusOnTabItemContentAction.Schedule();
-		}
-
-
-		// Called when close button on tab item clicked.
-		void OnTabItemCloseButtonClick(object? sender, RoutedEventArgs e)
-		{
-			// check state
-			if (this.DataContext is not Workspace workspace)
-				throw new InternalStateCorruptedException();
-
-			// find tab item
-			var tabItem = (sender as Control)?.FindAncestorOfType<TabItem>();
-			if (tabItem == null)
-				return;
-			var index = this.tabItems.IndexOf(tabItem);
-
-			// select neighbor tab item
-			if (this.tabControl.SelectedIndex == index)
-			{
-				if (index < this.tabItems.Count - 2)
-					this.tabControl.SelectedIndex = (index + 1);
-				else if (index > 0)
-					this.tabControl.SelectedIndex = (index - 1);
-				else
-					workspace.ActiveSession = workspace.CreateAndAttachSession();
-			}
-
-			// close session
-			workspace.DetachAndCloseSession((Session)tabItem.DataContext.AsNonNull());
 		}
 
 
