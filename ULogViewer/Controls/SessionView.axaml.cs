@@ -397,7 +397,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.LogChartXAxes = ListExtensions.AsReadOnly(new[] { this.logChartXAxis });
 			this.LogChartYAxes = ListExtensions.AsReadOnly(new[] { this.logChartYAxis });
-			this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog)));
 			this.ValidLogLevels = ListExtensions.AsReadOnly(this.validLogLevels);
 
 			// create value converters
@@ -1684,6 +1683,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			var markIndicatorCornerRadius = app.FindResourceOrDefault<CornerRadius>("CornerRadius/SessionView.LogListBox.MarkIndicator.Border");
 			var markIndicatorMargin = app.FindResourceOrDefault("Thickness/SessionView.LogListBox.MarkIndicator.Margin", new Thickness(1));
 			var markIndicatorWidth = (markIndicatorSize + markIndicatorMargin.Left + markIndicatorMargin.Right);
+			var multiLineIndicatorMargin = app.FindResourceOrDefault("Thickness/SessionView.LogListBox.MultiLineIndicator.Margin", new Thickness());
+			var multiLineIndicatorOpacity = app.FindResourceOrDefault("Double/SessionView.LogListBox.MultiLineIndicator.Opacity", 0.5);
 			var itemBorderThickness = app.FindResourceOrDefault("Thickness/SessionView.LogListBox.Item.Column.Border", new Thickness(1));
 			var itemCornerRadius = app.FindResourceOrDefault<CornerRadius>("CornerRadius/SessionView.LogListBox.Item.Column.Border");
 			var itemPadding = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.Item.Padding");
@@ -1703,14 +1704,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				var itemPanel = new Panel().Also(it =>
 				{
-					it.Children.Add(new Border().Also(border =>
+					it.Bind(Panel.BackgroundProperty, new Binding
 					{
-						border.Bind(Border.BackgroundProperty, new Binding
-						{
-							Converter = Converters.MarkColorToBackgroundConverter.Default,
-							Path = nameof(DisplayableLog.MarkedColor)
-						});
-					}));
+						Converter = Converters.MarkColorToBackgroundConverter.Default,
+						Path = nameof(DisplayableLog.MarkedColor)
+					});
 				});
 				var itemGrid = new Grid().Also(it =>
 				{
@@ -1822,21 +1820,28 @@ namespace CarinaStudio.ULogViewer.Controls
 					var actualPropertyView = propertyView;
 					if (isMultiLineProperty)
 					{
-						propertyView = new StackPanel().Also(it =>
+						propertyView = new DockPanel().Also(it =>
 						{
-							it.Children.Add(propertyView);
-							it.Children.Add(new LinkTextBlock().Also(viewDetails =>
+							it.Children.Add(new Border().Also(border =>
 							{
-								viewDetails.Command = new Command(() =>
+								DockPanel.SetDock(border, Dock.Right);
+								border.Background = Brushes.Transparent;
+								border.Child = new Avalonia.Controls.Image().Also(multiLineIcon =>
 								{
-									if (viewDetails.FindLogicalAncestorOfType<ListBoxItem>()?.DataContext is DisplayableLog log)
-										this.ShowLogStringProperty(log, logProperty);
+									multiLineIcon.Classes.Add("Icon");
+									multiLineIcon.IsHitTestVisible = true;
+									multiLineIcon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/MultiLine");
 								});
-								viewDetails.HorizontalAlignment = HorizontalAlignment.Left;
-								viewDetails.Bind(IsVisibleProperty, new Binding() { Path = $"HasExtraLinesOf{logProperty.Name}" });
-								viewDetails.BindToResource(Avalonia.Controls.TextBlock.TextProperty, "String/SessionView.ViewFullLogMessage");
+								border.Height = markIndicatorSize;
+								border.Margin = multiLineIndicatorMargin;
+								border.Bind(IsVisibleProperty, new Binding { Path = $"HasExtraLinesOf{logProperty.Name}" });
+								border.Opacity = multiLineIndicatorOpacity;
+								border.Width = markIndicatorSize;
+								border.BindToResource(ToolTip.TipProperty, "String/SessionView.MultiLineLogProperty");
+								border.VerticalAlignment = VerticalAlignment.Center;
 							}));
-							it.Orientation = Orientation.Vertical;
+							it.Children.Add(propertyView);
+							it.HorizontalAlignment = HorizontalAlignment.Left;
 						});
 					}
 					propertyView = new Border().Also(it =>
@@ -4101,8 +4106,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
 				this.SetValue(IsScriptRunningEnabledProperty, (bool)e.Value);
-			else if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
-				this.SetValue(MaxDisplayLineCountForEachLogProperty, Math.Max(1, (int)e.Value));
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 				this.OnShowHelpButtonOnLogTextFilterSettingChanged((bool)e.Value);
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)

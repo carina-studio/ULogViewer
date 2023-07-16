@@ -227,6 +227,7 @@
 	<sys:Double x:Key="Double/SessionView.LogListBox.LogAnalysisResultIndicator.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MarkIndicator.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MinSizeToCloseSidePanel">100</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogListBox.MultiLineIndicator.Opacity">0.3</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogsProgressBar.Height">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
@@ -266,6 +267,7 @@
 	<Thickness x:Key="Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin">3,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.MarkIndicator.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.MarkIndicator.Margin">3,0,3,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogListBox.MultiLineIndicator.Margin">8,0,0,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Padding">0,0,0,20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Border.Selected">1</Thickness>

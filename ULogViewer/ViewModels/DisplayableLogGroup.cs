@@ -2,7 +2,6 @@
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
@@ -75,7 +74,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ILogger logger;
 		readonly SortedList<byte, LogReaderInfo> logReaderInfosByLocalId = new();
 		readonly Dictionary<LogReader, LogReaderInfo> logReaderInfosByLogReader = new();
-		int maxDisplayLineCount;
+		readonly int maxDisplayLineCount = 1;
 		long memorySize = BaseMemorySize 
 		                  + (Memory.EstimateCollectionInstanceSize(LogReaderInfoKeyValuePairMemorySize, 0) << 1);
 		readonly Random random = new();
@@ -117,7 +116,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// setup properties
 			this.Application = app;
 			this.LogProfile = profile;
-			this.maxDisplayLineCount = Math.Max(1, app.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog));
 			this.MemoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 			this.TextHighlightingDefinitionSet = new($"Text Highlighting of {this}");
 			this.CheckLogExtras();
@@ -766,6 +764,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when setting changed.
 		void OnSettingChanged(object? sender, SettingChangedEventArgs e)
 		{
+			/*
 			if (e.Key == SettingKeys.MaxDisplayLineCountForEachLog)
 			{
 				this.maxDisplayLineCount = (int)e.Value;
@@ -776,6 +775,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					log = log.Next;
 				}
 			}
+			*/
 		}
 
 

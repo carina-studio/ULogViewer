@@ -266,6 +266,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	/// <summary>
 	/// Get or set maximum number of lines to display for each log.
 	/// </summary>
+	[Obsolete]
 	public int MaxDisplayLineCountForEachLog
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog);
@@ -352,8 +353,10 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(LogFontSize));
 		else if (key == SettingKeys.MaxContinuousLogCount)
 			this.OnPropertyChanged(nameof(MaxContinuousLogCount));
+#pragma warning disable CS0612
 		else if (key == SettingKeys.MaxDisplayLineCountForEachLog)
 			this.OnPropertyChanged(nameof(MaxDisplayLineCountForEachLog));
+#pragma warning restore CS0612
 		else if (key == SettingKeys.MemoryUsagePolicy)
 			this.OnPropertyChanged(nameof(MemoryUsagePolicy));
 		else if (key == SettingKeys.PatternFontFamily)

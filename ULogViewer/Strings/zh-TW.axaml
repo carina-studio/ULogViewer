@@ -1222,6 +1222,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">標記/解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">為了維持應用程式的效能，圖表因資料點過多而被暫時停用。您可以移除一些日誌或移除一些圖表的屬性以減少資料點數量。</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有記憶體使用量</sys:String>
+	<sys:String x:Key="String/SessionView.MultiLineLogProperty">此屬性包含多行文字
+(點兩下以檢視所有文字)</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">目前的日誌類型不允許加入多個檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」需要腳本執行功能，您需要在使用之前啟用腳本執行。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">「{0}」需要系統管理員身分，是否要以系統管理員身分重新啟動應用程式並使用此日誌類型？</sys:String>

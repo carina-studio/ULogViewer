@@ -1,5 +1,6 @@
 ﻿using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Configuration;
+using System;
 
 namespace CarinaStudio.ULogViewer;
 
@@ -62,6 +63,7 @@ static class SettingKeys
 	/// <summary>
 	/// Maximum line count to display for each log.
 	/// </summary>
+	[Obsolete]
 	public static readonly SettingKey<int> MaxDisplayLineCountForEachLog = new(nameof(MaxDisplayLineCountForEachLog), 5);
 	/// <summary>
 	/// Policy of memory usage.
