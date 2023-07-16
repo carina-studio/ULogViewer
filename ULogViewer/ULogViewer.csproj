@@ -72,7 +72,7 @@
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.3.15.715-dev" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.0.1.1" />
-		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-beta.802-11.0.0-rc1.1" />
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-beta.850" />
 		<PackageReference Include="MySqlConnector" Version="2.3.0-beta.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="System.Data.Common" Version="4.3.0" />

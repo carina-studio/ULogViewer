@@ -216,23 +216,9 @@ partial class SessionView
         // prepare tooltip generator
         string FormatYToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
         {
-            // name
-            var buffer = new StringBuilder();
             var source = series.Source;
-            var value = series.Values[point.Context.Entity.MetaData?.EntityIndex ?? 0];
-            buffer.Append(value?.Label ?? series.Source?.PropertyDisplayName);
-            source?.SecondaryPropertyDisplayName.Let(it =>
-            {
-                if (string.IsNullOrEmpty(it))
-                    return;
-                buffer.Append(" - ");
-                buffer.Append(it);
-            });
-            buffer.Append(": ");
-            
-            // value
             var viewModel = (this.DataContext as Session)?.LogChart;
-            buffer.Append(viewModel?.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString());
+            var buffer = new StringBuilder(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString());
             switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
             {
                 case LogChartValueGranularity.Byte:
@@ -268,8 +254,7 @@ partial class SessionView
                 Fill = new SolidColorPaint(seriesColor),
                 Mapping = (value, point) =>
                 {
-                    point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = (point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling;
+                    point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
                 },
                 Name = seriesNameBuffer.ToString(),
                 Padding = 0.5,
@@ -300,8 +285,7 @@ partial class SessionView
                 LineSmoothness = 0,
                 Mapping = (value, point) =>
                 {
-                    point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.MetaData?.EntityIndex ?? 0;
+                    point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
                 },
                 Name = seriesNameBuffer.ToString(),
                 Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
@@ -317,8 +301,7 @@ partial class SessionView
                 Fill = new SolidColorPaint(seriesColor),
                 Mapping = (value, point) =>
                 {
-                    point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = (point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling;
+                    point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
                 },
                 Name = seriesNameBuffer.ToString(),
                 Padding = 0,
@@ -365,8 +348,7 @@ partial class SessionView
                 },
                 Mapping = (value, point) =>
                 {
-                    point.PrimaryValue = value!.Value;
-                    point.SecondaryValue = point.Context.Entity.MetaData?.EntityIndex ?? 0;
+                    point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
                 },
                 Name = seriesNameBuffer.ToString(),
                 Stroke = chartType switch
@@ -506,8 +488,8 @@ partial class SessionView
             var index = point.Context.Series switch
             {
                 ColumnSeries<DisplayableLogChartSeriesValue>
-                    or StackedColumnSeries<DisplayableLogChartSeriesValue> => (int)(point.SecondaryValue / LogBarChartXCoordinateScaling + 0.5),
-                _ => (int)(point.SecondaryValue + 0.5),
+                    or StackedColumnSeries<DisplayableLogChartSeriesValue> => (int)(point.Coordinate.SecondaryValue / LogBarChartXCoordinateScaling + 0.5),
+                _ => (int)(point.Coordinate.SecondaryValue + 0.5),
             };
             if (index < 0 || index >= values.Count)
                 continue;
