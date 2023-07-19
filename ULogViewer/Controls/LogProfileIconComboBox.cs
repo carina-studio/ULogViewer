@@ -67,8 +67,12 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                         {
                             isSelectedObserverToken.Dispose();
                         };
-                        image.Bind(Image.SourceProperty, new Binding()
+                        image.Bind(Image.SourceProperty, new MultiBinding
                         {
+                            Bindings =
+                            {
+                                new Binding(),
+                            },
                             Converter = LogProfileIconConverter.Default,
                             ConverterParameter = "Light",
                         });
@@ -76,10 +80,14 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                     var icon = new Image().Also(image =>
                     {
                         image.Classes.Add("Icon");
-                        image.Bind(Image.SourceProperty, new Binding() 
+                        image.Bind(Image.SourceProperty, new MultiBinding
                         { 
+                            Bindings =
+                            {
+                                new Binding(),
+                            },
                             Converter = LogProfileIconConverter.Default,
-                            ConverterParameter = this.GetValue<LogProfileIconColor>(IconColorProperty),
+                            ConverterParameter = this.GetValue(IconColorProperty),
                         });
                     });
                     selectedIcon.GetObservable(Image.IsVisibleProperty).Subscribe(isVisible =>

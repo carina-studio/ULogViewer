@@ -46,8 +46,22 @@
 											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
 										</MultiBinding>
 									</Panel.IsEnabled>
-									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
-									<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
+									<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
+										<Image.Source>
+											<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+												<Binding Path="Icon"/>
+												<Binding Path="IconColor"/>
+											</MultiBinding>
+										</Image.Source>
+									</Image>
+									<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+										<Image.Source>
+											<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+												<Binding Path="Icon"/>
+												<Binding Path="IconColor"/>
+											</MultiBinding>
+										</Image.Source>
+									</Image>
 								</Panel>
 								
 								<!-- Name -->

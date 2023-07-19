@@ -1289,7 +1289,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						return res as IImage;
 					}
 					if (app != null)
-						return LogProfileIconConverter.Default.Convert(logProfile, typeof(IImage), null, app.CultureInfo) as IImage;
+						return LogProfileIconConverter.Default.Convert(new object?[] { logProfile }, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
 				});
 

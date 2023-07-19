@@ -1627,8 +1627,22 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
+																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -1686,8 +1700,22 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
+																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -1745,8 +1773,22 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
+																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -1807,8 +1849,22 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
 																		<Grid ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-																				<Image Classes="Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
+																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
+																					<Image.Source>
+																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+																							<Binding Path="Icon"/>
+																							<Binding Path="IconColor"/>
+																						</MultiBinding>
+																					</Image.Source>
+																				</Image>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
