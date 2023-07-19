@@ -1285,7 +1285,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (logProfile == null)
 						return app?.FindResourceOrDefault<IImage>("Image/Icon.Tab");
 					if (app != null)
-						return LogProfileIconConverter.Default.Convert(logProfile, typeof(IImage), null, app.CultureInfo) as IImage;
+						return LogProfileIconConverter.Default.Convert(new object?[] { logProfile }, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
 				});
 

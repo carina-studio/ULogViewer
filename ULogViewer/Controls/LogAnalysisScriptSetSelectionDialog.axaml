@@ -30,8 +30,22 @@
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*">
 							<Panel VerticalAlignment="Center">
-								<Image Classes="ListBoxItem_Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}" IsVisible="{Binding $parent[ListBoxItem].IsSelected}"/>
-								<Image Classes="ListBoxItem_Icon" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"/>
+								<Image Classes="ListBoxItem_Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+									<Image.Source>
+										<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+											<Binding Path="Icon"/>
+											<Binding Path="IconColor"/>
+										</MultiBinding>
+									</Image.Source>
+								</Image>
+								<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
+									<Image.Source>
+										<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+											<Binding Path="Icon"/>
+											<Binding Path="IconColor"/>
+										</MultiBinding>
+									</Image.Source>
+								</Image>
 							</Panel>
 							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
 						</Grid>

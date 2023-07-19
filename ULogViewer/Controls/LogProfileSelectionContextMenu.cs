@@ -381,8 +381,13 @@ class LogProfileSelectionContextMenu : ContextMenu
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Bind(Avalonia.Controls.Image.SourceProperty, new Binding
+            icon.Bind(Avalonia.Controls.Image.SourceProperty, new MultiBinding
             {
+                Bindings = 
+                {
+                    new Binding { Path = nameof(LogProfile.Icon) },
+                    new Binding { Path = nameof(LogProfile.IconColor) }
+                },
                 Converter = LogProfileIconConverter.Default,
             });
         });

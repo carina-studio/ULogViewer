@@ -198,8 +198,22 @@
 									<DataTemplate>
 										<Grid ColumnDefinitions="Auto,*">
 											<Panel Classes="ComboBoxItem_Icon">
-												<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}, ConverterParameter=Light}"/>
-												<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+												<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}">
+													<Image.Source>
+														<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
+															<Binding Path="Icon"/>
+															<Binding Path="IconColor"/>
+														</MultiBinding>
+													</Image.Source>
+												</Image>
+												<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}">
+													<Image.Source>
+														<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+															<Binding Path="Icon"/>
+															<Binding Path="IconColor"/>
+														</MultiBinding>
+													</Image.Source>
+												</Image>
 											</Panel>
 											<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
 										</Grid>

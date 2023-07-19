@@ -1,8 +1,10 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
+using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Converters
@@ -10,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Converters
 	/// <summary>
 	/// <see cref="IValueConverter"/> to convert from <see cref="LogProfileIcon"/> or <see cref="LogProfile"/> to <see cref="IImage"/>.
 	/// </summary>
-	class LogProfileIconConverter : IValueConverter
+	class LogProfileIconConverter : IMultiValueConverter
 	{
 		/// <summary>
 		/// Default instance.
@@ -30,63 +32,75 @@ namespace CarinaStudio.ULogViewer.Converters
 
 
 		// Convert.
-		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+		public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
 		{
 			// check target type
 			if (!typeof(IImage).IsAssignableFrom(targetType) && targetType != typeof(object))
 				return null;
-
+			
 			// select name of icon
-			var iconName = (string?)null;
+			string? iconName;
 			var iconColor = LogProfileIconColor.Default;
-			if (value is ILogProfileIconSource iconSource)
+			if (values.IsEmpty())
+				return null;
+			if (values.Count == 1)
 			{
-				if (iconSource is LogProfile profile 
-					&& profile == LogProfileManager.Default.EmptyProfile)
+				if (values[0] is ILogProfileIconSource iconSource)
 				{
-					iconName = "Empty";
+					if (iconSource is LogProfile profile 
+					    && profile == LogProfileManager.Default.EmptyProfile)
+					{
+						iconName = "Empty";
+					}
+					else
+					{
+						iconName = iconSource.Icon.ToString();
+						iconColor = iconSource.IconColor;
+					}
 				}
+				else if (values[0] is LogProfileIcon icon)
+					iconName = icon.ToString();
 				else
-				{
-					iconName = iconSource.Icon.ToString();
-					iconColor = iconSource.IconColor;
-				}
+					return null;
 			}
-			else if (value is LogProfileIcon icon)
+			else if (values[0] is LogProfileIcon icon && values[1] is LogProfileIconColor color)
+			{
 				iconName = icon.ToString();
+				iconColor = color;
+			}
 			else
 				return null;
 			
 			// select color of icon if specified
-			if (parameter is LogProfileIconColor)
-				iconColor = (LogProfileIconColor)parameter;
+			if (parameter is LogProfileIconColor colorByParam)
+				iconColor = colorByParam;
 			else if (parameter is string strParam && Enum.TryParse<LogProfileIconColor>(strParam, out var iconColorParam))
 				iconColor = iconColorParam;
 
 			// get image
 			var modeParam = parameter as string;
 			var image = (IImage?)null;
-			if (modeParam != null)
-				app.Resources.TryGetResource<IImage>($"Image/LogProfile.{iconName}.{modeParam}", out image);
-			if (image == null)
+			if (modeParam is not null)
+				app.Resources.TryGetResource($"Image/LogProfile.{iconName}.{modeParam}", out image);
+			if (image is null)
 				app.Resources.TryGetResource($"Image/LogProfile.{iconName}", out image);
-			if (image == null)
+			if (image is null)
 			{
-				if (modeParam != null)
+				if (modeParam is not null)
 					app.Resources.TryGetResource($"Image/LogProfile.File.{modeParam}", out image);
-				if (image == null)
+				if (image is null)
 					app.Resources.TryGetResource($"Image/LogProfile.File", out image);
 			}
-			if (image == null)
+			if (image is null)
 				return null;
 			
 			// apply color
-			if (iconColor != LogProfileIconColor.Default && modeParam == null)
+			if (iconColor != LogProfileIconColor.Default && modeParam is null)
 			{
 				var geometry = ((image as DrawingImage)?.Drawing as GeometryDrawing)?.Geometry;
 				if (geometry != null && app.Styles.TryGetResource<IBrush>($"Brush/LogProfileIconColor.{iconColor}", out var brush))
 				{
-					image = new DrawingImage(new GeometryDrawing()
+					image = new DrawingImage(new GeometryDrawing
 					{
 						Brush = brush,
 						Geometry = geometry,
