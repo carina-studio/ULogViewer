@@ -42,12 +42,7 @@
 					<!-- Name -->
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
-							<ComboBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel/>
-								</ItemsPanelTemplate>
-							</ComboBox.ItemsPanel>
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
@@ -63,12 +58,7 @@
 					<!-- Display name -->
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.DisplayName}"/>
-						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
-							<ComboBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel/>
-								</ItemsPanelTemplate>
-							</ComboBox.ItemsPanel>
+						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">

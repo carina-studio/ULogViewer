@@ -40,12 +40,7 @@
 					<!-- Name -->
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{x:Static appControls:LogChartSeriesSourceEditorDialog.LogChartPropertyNames}">
-							<ComboBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel/>
-								</ItemsPanelTemplate>
-							</ComboBox.ItemsPanel>
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appControls:LogChartSeriesSourceEditorDialog.LogChartPropertyNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
@@ -61,12 +56,7 @@
 					<!-- Display name -->
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DisplayName}"/>
-						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
-							<ComboBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel/>
-								</ItemsPanelTemplate>
-							</ComboBox.ItemsPanel>
+						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">

@@ -126,7 +126,7 @@
 									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 								</Grid>
 							</StackPanel>
-							<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
+							<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="Auto,Auto,Auto,*">
@@ -229,7 +229,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName.Description}"/>
 							</StackPanel>
-							<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
+							<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<StackPanel Orientation="Horizontal">

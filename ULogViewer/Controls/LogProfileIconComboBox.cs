@@ -1,12 +1,16 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
+using Avalonia.Markup.Xaml.Templates;
 using CarinaStudio.AppSuite.Converters;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
+using TextBlock = Avalonia.Controls.TextBlock;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -25,16 +29,12 @@ class LogProfileIconComboBox : ComboBox
     static readonly EnumConverter LogProfileIconNameConverter = new(App.CurrentOrNull, typeof(LogProfileIcon));
 
 
-    // Fields.
-    readonly FuncDataTemplate dataTemplate;
-
-
     /// <summary>
     /// Initialize new <see cref="LogProfileIconComboBox"/>.
     /// </summary>
     public LogProfileIconComboBox()
     {
-        this.dataTemplate = new FuncDataTemplate(typeof(LogProfileIcon), (_, _) =>
+        var dataTemplate = new FuncDataTemplate(typeof(LogProfileIcon), (_, _) =>
         {
             var rootPanel = new Grid().Also(rootPanel =>
             {
@@ -63,7 +63,7 @@ class LogProfileIconComboBox : ComboBox
                     {
                         isSelectedObserverToken.Dispose();
                     };
-                    image.Bind(Image.SourceProperty, new Binding()
+                    image.Bind(Image.SourceProperty, new Binding
                     {
                         Converter = LogProfileIconConverter.Default,
                         ConverterParameter = "Light",
@@ -72,13 +72,13 @@ class LogProfileIconComboBox : ComboBox
                 var icon = new Image().Also(image =>
                 {
                     image.Classes.Add("Icon");
-                    image.Bind(Image.SourceProperty, new Binding() 
+                    image.Bind(Image.SourceProperty, new Binding
                     { 
                         Converter = LogProfileIconConverter.Default,
                         ConverterParameter = this.GetValue(IconColorProperty),
                     });
                 });
-                selectedIcon.GetObservable(Image.IsVisibleProperty).Subscribe(isVisible =>
+                selectedIcon.GetObservable(IsVisibleProperty).Subscribe(isVisible =>
                     icon.IsVisible = !isVisible);
                 iconPanel.Children.Add(icon);
                 iconPanel.Children.Add(selectedIcon);
@@ -87,17 +87,17 @@ class LogProfileIconComboBox : ComboBox
             new TextBlock().Also(textBlock =>
             {
                 textBlock.Classes.Add("ComboBoxItem_TextBlock");
-                textBlock.Bind(TextBlock.TextProperty, new Binding() { Converter = LogProfileIconNameConverter });
+                textBlock.Bind(TextBlock.TextProperty, new Binding { Converter = LogProfileIconNameConverter });
                 Grid.SetColumn(textBlock, 1);
                 rootPanel.Children.Add(textBlock);
             });
             return rootPanel;
         });
-        this.DataTemplates.Add(this.dataTemplate);
+        this.DataTemplates.Add(dataTemplate);
         this.GetObservable(IconColorProperty).Subscribe(_ =>
         {
-            this.DataTemplates.Remove(this.dataTemplate);
-            this.DataTemplates.Add(this.dataTemplate);
+            this.DataTemplates.Remove(dataTemplate);
+            this.DataTemplates.Add(dataTemplate);
             var selectedIndex = this.SelectedIndex;
             if (selectedIndex >= 0)
             {
@@ -123,7 +123,15 @@ class LogProfileIconComboBox : ComboBox
     /// <summary>
     /// Get items.
     /// </summary>
-    public new object? ItemsSource => base.Items;
+    public new object? ItemsSource => base.ItemsSource;
+
+
+    /// <inheritdoc/>
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        this.ItemsPanel = this.FindResourceOrDefault<ItemsPanelTemplate>("ItemsPanelTemplate/StackPanel");
+    }
 
 
     /// <summary>
