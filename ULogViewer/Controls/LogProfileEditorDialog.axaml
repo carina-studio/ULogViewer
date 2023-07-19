@@ -233,10 +233,10 @@
 							<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" Items="{x:Static appLogs:Log.PropertyNames}">
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
-										<StackPanel Orientation="Horizontal">
+										<Grid ColumnDefinitions="*,Auto">
 											<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											<TextBlock Opacity="0.3" Text="{Binding StringFormat={} ({0})}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										</StackPanel>
+											<TextBlock Grid.Column="1" Opacity="0.3" Text="{Binding StringFormat={} ({0})}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										</Grid>
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
