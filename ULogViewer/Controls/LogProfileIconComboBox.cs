@@ -34,6 +34,7 @@ class LogProfileIconComboBox : ComboBox
     /// </summary>
     public LogProfileIconComboBox()
     {
+        var isInitializing = true;
         var dataTemplate = new FuncDataTemplate(typeof(LogProfileIcon), (_, _) =>
         {
             var rootPanel = new Grid().Also(rootPanel =>
@@ -104,6 +105,8 @@ class LogProfileIconComboBox : ComboBox
         this.DataTemplates.Add(dataTemplate);
         this.GetObservable(IconColorProperty).Subscribe(_ =>
         {
+            if (isInitializing)
+                return;
             this.DataTemplates.Remove(dataTemplate);
             this.DataTemplates.Add(dataTemplate);
             var selectedIndex = this.SelectedIndex;
@@ -115,6 +118,7 @@ class LogProfileIconComboBox : ComboBox
         });
         base.ItemsSource = Enum.GetValues<LogProfileIcon>();
         this.SelectedIndex = 0;
+        isInitializing = false;
     }
 
 
