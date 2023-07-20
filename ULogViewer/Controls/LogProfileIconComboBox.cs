@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Converters;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -27,16 +28,13 @@ class LogProfileIconComboBox : ComboBox, IStyleable
     static readonly EnumConverter LogProfileIconNameConverter = new(App.CurrentOrNull, typeof(LogProfileIcon));
 
 
-    // Fields.
-    readonly DataTemplate dataTemplate;
-
-
     /// <summary>
     /// Initialize new <see cref="LogProfileIconComboBox"/>.
     /// </summary>
     public LogProfileIconComboBox()
     {
-        this.dataTemplate = new DataTemplate()
+        var isInitializing = true;
+        var dataTemplate = new DataTemplate()
         {
             Content = new Func<IServiceProvider, object>(_ =>
             {
@@ -52,7 +50,7 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                     var selectedIcon = new Image().Also(image =>
                     {
                         image.Classes.Add("Icon");
-                        image.AttachedToLogicalTree += (_, e) =>
+                        image.AttachedToLogicalTree += (_, _) =>
                         {
                             var comboBoxItem = image.FindLogicalAncestorOfType<ComboBoxItem>();
                             if (comboBoxItem != null)
@@ -63,7 +61,7 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                             else
                                 image.IsVisible = false;
                         };
-                        image.DetachedFromLogicalTree += (_, e) =>
+                        image.DetachedFromLogicalTree += (_, _) =>
                         {
                             isSelectedObserverToken.Dispose();
                         };
@@ -107,20 +105,26 @@ class LogProfileIconComboBox : ComboBox, IStyleable
             }),
             DataType = typeof(LogProfileIcon),
         };
-        this.DataTemplates.Add(this.dataTemplate);
+        this.DataTemplates.Add(dataTemplate);
         this.GetObservable(IconColorProperty).Subscribe(_ =>
         {
-            this.DataTemplates.Remove(this.dataTemplate);
-            this.DataTemplates.Add(this.dataTemplate);
+            if (isInitializing)
+                return;
+            this.DataTemplates.Remove(dataTemplate);
+            this.DataTemplates.Add(dataTemplate);
             var selectedIndex = this.SelectedIndex;
-            if (selectedIndex >= 0)
+            Dispatcher.UIThread.Post(() =>
             {
-                this.SelectedIndex = -1;
-                this.SelectedIndex = selectedIndex;
-            }
+                if (selectedIndex >= 0)
+                {
+                    this.SelectedIndex = -1;
+                    this.SelectedIndex = selectedIndex;
+                }
+            });
         });
         base.Items = Enum.GetValues<LogProfileIcon>();
         this.SelectedIndex = 0;
+        isInitializing = false;
     }
 
 
