@@ -612,12 +612,15 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
     {
         if (sender is not LogProfile logProfile)
             return;
+        MenuItem? menuItem;
         switch (e.PropertyName)
         {
             case nameof(LogProfile.DataSourceProvider):
                 this.UpdateActionOnCurrentLogProfileMenuItemStates();
                 break;
             case nameof(LogProfile.IsPinned):
+                if (this.TryFindMenuItem(logProfile, out menuItem))
+                    this.items.Sort(menuItem);
                 if (logProfile.IsPinned)
                 {
                     if (this.pinnedLogProfiles.Add(logProfile)
@@ -639,10 +642,12 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                         this.items.Remove(this.pinnedLogProfilesSeparator);
                     }
                     if (LogProfileManager.Default.RecentlyUsedProfiles.Contains(logProfile)
-                        && this.recentlyUsedLogProfiles.Add(logProfile)
-                        && this.recentlyUsedLogProfiles.Count == 1)
+                        && this.recentlyUsedLogProfiles.Add(logProfile))
                     {
-                        this.items.Add(this.recentlyUsedLogProfilesSeparator);
+                        if (this.recentlyUsedLogProfiles.Count == 1)
+                            this.items.Add(this.recentlyUsedLogProfilesSeparator);
+                        if (menuItem is not null)
+                            this.items.Sort(menuItem);
                     }
                 }
                 break;
@@ -685,7 +690,7 @@ class LogProfileSelectionContextMenu : ContextMenu, IStyleable
                 }
                 break;
             case nameof(LogProfile.Name):
-                if (this.TryFindMenuItem(logProfile, out var menuItem))
+                if (this.TryFindMenuItem(logProfile, out menuItem))
                     this.items.Sort(menuItem);
                 break;
         }
