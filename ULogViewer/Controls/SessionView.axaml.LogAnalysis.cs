@@ -4,7 +4,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
@@ -418,16 +417,16 @@ partial class SessionView
     {
         // select file
         if (this.DataContext is not Session session
-            || !session.IsProVersionActivated)
+            || !session.IsProVersionActivated
+            || this.attachedWindow is null)
         {
             return;
         }
         var profile = session.LogProfile;
         if (profile is null)
             return;
-        var fileName = await this.SelectLogAnalysisScriptSetFileAsync();
+        var fileName = await FileSystemItemSelection.SelectFileToImportLogAnalysisRuleSetAsync(this.attachedWindow);
         if (string.IsNullOrEmpty(fileName) 
-            || this.attachedWindow is null 
             || this.DataContext != session 
             || !ReferenceEquals(session.LogProfile, profile))
         {
@@ -510,61 +509,67 @@ partial class SessionView
     public async void ImportLogAnalysisRuleSet()
     {
         // check state
-        if (this.attachedWindow == null)
+        if (this.attachedWindow is null)
             return;
         
         // select file
-        var fileName = (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
-        {
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
-                {
-                    Patterns = new[] { "*.json" }
-                }
-            }
-        })).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
+        var fileName = await FileSystemItemSelection.SelectFileToImportLogAnalysisRuleSetAsync(this.attachedWindow);
         if (string.IsNullOrEmpty(fileName))
             return;
         
         // try loading rule set
         var klaRuleSet = await Global.RunOrDefaultAsync(async () => await KeyLogAnalysisRuleSet.LoadAsync(this.Application, fileName, true));
-        var laScriptSet = klaRuleSet == null
+        var laScriptSet = klaRuleSet is null
             ? await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName))
             : null;
-        var ocaRuleSet = klaRuleSet == null && laScriptSet == null
+        var ocaRuleSet = klaRuleSet is null && laScriptSet is null
             ? await Global.RunOrDefaultAsync(async () => await OperationCountingAnalysisRuleSet.LoadAsync(this.Application, fileName, true))
             : null;
-        var odaRuleSet = klaRuleSet == null && laScriptSet == null && ocaRuleSet == null
+        var odaRuleSet = klaRuleSet is null && laScriptSet is null && ocaRuleSet is null
             ? await Global.RunOrDefaultAsync(async () => await OperationDurationAnalysisRuleSet.LoadAsync(this.Application, fileName, true))
             : null;
-        if (this.attachedWindow == null)
+        if (this.attachedWindow is null)
             return;
-        if (klaRuleSet == null 
-            && laScriptSet == null
-            && ocaRuleSet == null
-            && odaRuleSet == null)
+        if (klaRuleSet is null 
+            && laScriptSet is null
+            && ocaRuleSet is null
+            && odaRuleSet is null)
         {
-            _ = new MessageDialog()
+            if (this.attachedWindow is MainWindow mainWindow)
             {
-                Icon = MessageDialogIcon.Error,
-                Message = new FormattedString().Also(it =>
+                mainWindow.AddNotification(new Notification().Also(it =>
                 {
-                    it.Arg1 = fileName;
-                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToImportLogAnalysisRuleSet"));
-                }),
-            }.ShowDialog(this.attachedWindow);
+                    it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+                    it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+                    {
+                        it.Arg1 = fileName;
+                        it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToImportLogAnalysisRuleSet"));
+                    }));
+                }));
+            }
+            else
+            {
+                _ = new MessageDialog
+                {
+                    Icon = MessageDialogIcon.Error,
+                    Message = new FormattedString().Also(it =>
+                    {
+                        it.Arg1 = fileName;
+                        it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToImportLogAnalysisRuleSet"));
+                    }),
+                }.ShowDialog(this.attachedWindow);
+            }
             return;
         }
 
         // edit and add rule set
-        if (klaRuleSet != null)
+        if (klaRuleSet is not null)
             KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, klaRuleSet);
-        else if (laScriptSet != null)
+        else if (laScriptSet is not null)
             LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, laScriptSet);
-        else if (ocaRuleSet != null)
+        else if (ocaRuleSet is not null)
             OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, ocaRuleSet);
-        else if (odaRuleSet != null)
+        else if (odaRuleSet is not null)
             OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, odaRuleSet);
     }
 
@@ -1245,25 +1250,6 @@ partial class SessionView
                 }
             }
         });
-    }
-
-
-    // Select file of log analysis script set.
-    async Task<string?> SelectLogAnalysisScriptSetFileAsync()
-    {
-        // select file
-        if (this.attachedWindow is null)
-            return null;
-        return (await this.attachedWindow.StorageProvider.OpenFilePickerAsync(new()
-        {
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
-                {
-                    Patterns = new[] { "*.json" }
-                }
-            }
-        })).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
     }
     
     

@@ -23,7 +23,7 @@ public static class FileSystemItemSelection
             DefaultExtension = ".json",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetStringNonNull("FileFormat.Json", "JSON"))
+                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetStringNonNull("FileFormat.Json", "Json"))
                 {
                     Patterns = new[] { "*.json" }
                 }
@@ -52,7 +52,7 @@ public static class FileSystemItemSelection
             DefaultExtension = ".json",
             FileTypeChoices = new[]
             {
-                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetStringNonNull("FileFormat.Json", "JSON"))
+                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetStringNonNull("FileFormat.Json", "Json"))
                 {
                     Patterns = new[] { "*.json" }
                 }
@@ -66,5 +66,25 @@ public static class FileSystemItemSelection
                 path += ".json";
             return path;
         });
+    }
+
+
+    /// <summary>
+    /// Let user select a file to import log analysis rule set.
+    /// </summary>
+    /// <param name="window">Window.</param>
+    /// <returns>Task of selecting a file.</returns>
+    public static async Task<string?> SelectFileToImportLogAnalysisRuleSetAsync(Window window)
+    {
+        return (await window.StorageProvider.OpenFilePickerAsync(new()
+        {
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetStringNonNull("FileFormat.Json", "Json"))
+                {
+                    Patterns = new[] { "*.json" }
+                }
+            }
+        })).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
     }
 }
