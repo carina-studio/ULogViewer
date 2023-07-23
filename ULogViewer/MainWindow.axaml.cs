@@ -3,11 +3,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
-using Avalonia.VisualTree;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Product;
@@ -34,7 +32,7 @@ namespace CarinaStudio.ULogViewer
 	/// <summary>
 	/// Main window.
 	/// </summary>
-	class MainWindow : MainWindow<IULogViewerApplication, Workspace>
+	class MainWindow : MainWindow<IULogViewerApplication, Workspace>, INotificationPresenter
 	{
 		// Constants.
 		const string DraggingSessionKey = "DraggingSettion";
@@ -54,6 +52,7 @@ namespace CarinaStudio.ULogViewer
 		bool areULogViewerInitialDialogsShown;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
+		readonly NotificationPresenter notificationPresenter;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
 		readonly Dictionary<SessionView, List<IDisposable>> sessionViewPropertyObserverTokens = new();
@@ -84,7 +83,8 @@ namespace CarinaStudio.ULogViewer
 			this.sessionTabItemHeaderTemplate = (DataTemplate)this.DataTemplates.First(it => it is DataTemplate dt && dt.DataType == typeof(Session));
 
 			// setup controls
-			this.tabControl = this.FindControl<AppSuite.Controls.TabControl>(nameof(tabControl)).AsNonNull().Also(it =>
+			this.notificationPresenter = this.Get<NotificationPresenter>(nameof(notificationPresenter));
+			this.tabControl = this.Get<AppSuite.Controls.TabControl>(nameof(tabControl)).Also(it =>
 			{
 				it.GetObservable(Avalonia.Controls.TabControl.SelectedIndexProperty).Subscribe(_ =>
 				{
@@ -197,6 +197,15 @@ namespace CarinaStudio.ULogViewer
 			// start stopwatch
 			if (this.Application.IsDebugMode)
 				this.stopwatch.Start();
+		}
+
+
+		/// <inheritdoc/>
+		public void AddNotification(Notification notification)
+		{
+			if (notification.Icon is null)
+				notification.BindToResource(Notification.IconProperty, this, "Image/Icon.Information.Colored");
+			this.notificationPresenter.AddNotification(notification);
 		}
 
 
