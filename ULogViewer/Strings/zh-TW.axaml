@@ -658,6 +658,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">日誌類型已匯出至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">沒有描述的自訂日誌類型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>

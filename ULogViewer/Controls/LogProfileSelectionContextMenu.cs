@@ -4,6 +4,7 @@ using Avalonia.Data;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.ComponentModel;
@@ -507,13 +508,54 @@ class LogProfileSelectionContextMenu : ContextMenu
 
 
     // Export current log profile.
-    void ExportCurrentLogProfile()
+    async void ExportCurrentLogProfile()
     {
+        // check state
         var logProfile = this.CurrentLogProfile;
         var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
-        if (logProfile == null || window == null)
+        if (logProfile is null || window is null)
             return;
-        _ = logProfile.ExportAsync(window);
+        
+        // select a file
+        var fileName = await FileSystemItemSelection.SelectFileToExportLogProfileAsync(window);
+        if (string.IsNullOrEmpty(fileName))
+            return;
+        
+        // copy and export log profile
+        var copiedProfile = new LogProfile(logProfile);
+        try
+        {
+            await copiedProfile.SaveAsync(fileName, false);
+        }
+        catch
+        {
+            if (this.LogProfileExportingFailed?.Invoke(this, logProfile, fileName) != true)
+            {
+                _ = new MessageDialog
+                {
+                    Icon = MessageDialogIcon.Error,
+                    Message = new FormattedString().Also(it =>
+                    {
+                        it.Arg1 = fileName;
+                        it.BindToResource(FormattedString.FormatProperty, window, "String/LogProfileSelectionDialog.FailedToExportLogProfile");
+                    }),
+                }.ShowDialog(window);
+            }
+            return;
+        }
+        
+        // complete
+        if (this.LogProfileExported?.Invoke(this, logProfile, fileName) == true)
+            return;
+        _ = new MessageDialog
+        {
+            Icon = MessageDialogIcon.Success,
+            Message = new FormattedString().Also(it =>
+            {
+                it.Arg1 = fileName;
+                it.BindToResource(FormattedString.FormatProperty, window, "String/LogProfileSelectionDialog.LogProfileExported");
+            }),
+        }.ShowDialog(window);
     }
 
 
@@ -527,6 +569,18 @@ class LogProfileSelectionContextMenu : ContextMenu
     /// Raised when new log profile was just created.
     /// </summary>
     public event Action<LogProfileSelectionContextMenu, LogProfile>? LogProfileCreated;
+    
+    
+    /// <summary>
+    /// Raised when log profile has been exported.
+    /// </summary>
+    public event Func<LogProfileSelectionContextMenu, LogProfile, string, bool>? LogProfileExported; 
+
+
+    /// <summary>
+    /// Raised when failed to export log profile.
+    /// </summary>
+    public event Func<LogProfileSelectionContextMenu, LogProfile, string, bool>? LogProfileExportingFailed; 
 
 
     /// <summary>

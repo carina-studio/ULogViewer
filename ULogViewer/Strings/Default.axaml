@@ -695,6 +695,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">Profile has been exported to '{0}'.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">Custom profile without description.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>

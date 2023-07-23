@@ -766,10 +766,49 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.LogProfileCreated += (_, logProfile) =>
 					this.OnLogProfileCreatedByLogProfileSelectionMenu(logProfile);
-				it.LogProfileSelected += async (_, logProfile) => 
+				it.LogProfileExported += (_, _, fileName) =>
 				{
-					await this.SetLogProfileAsync(logProfile);
+					if (this.attachedWindow is not MainWindow mainWindow)
+						return false;
+					mainWindow.AddNotification(new Notification().Also(it =>
+					{
+						if (Platform.IsOpeningFileManagerSupported)
+						{
+							it.Actions = new[]
+							{
+								new NotificationAction().Also(it =>
+								{
+									it.Command = new Command(() => Platform.OpenFileManager(fileName));
+									it.Bind(NotificationAction.NameProperty, this.Application.GetObservableString("SessionView.ShowFileInExplorer"));
+								})
+							};
+						}
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
+						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+						{
+							it.Arg1 = fileName;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("LogProfileSelectionDialog.LogProfileExported"));
+						}));
+					}));
+					return true;
 				};
+				it.LogProfileExportingFailed += (_, _, fileName) =>
+				{
+					if (this.attachedWindow is not MainWindow mainWindow)
+						return false;
+					mainWindow.AddNotification(new Notification().Also(it =>
+					{
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+						{
+							it.Arg1 = fileName;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("LogProfileSelectionDialog.FailedToExportLogProfile"));
+						}));
+					}));
+					return true;
+				};
+				it.LogProfileSelected += async (_, logProfile) =>
+					await this.SetLogProfileAsync(logProfile);
 				it.Closed += (_, _) => this.SynchronizationContext.Post(() => this.selectAndSetLogProfileDropDownButton.IsChecked = false);
 				it.Opened += (_, _) => this.SynchronizationContext.Post(() =>
 				{

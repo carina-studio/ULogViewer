@@ -657,7 +657,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">日志类型删除后将无法复原，您是否确定要删除日志类型「{0}」？</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">编辑日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">导出日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法输出日志类型至 '{0}'。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">无法导出日志类型至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">无法从 '{0}' 输出日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet">协同日志分析</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.HasLogChart">图表</sys:String>
@@ -665,6 +665,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系统管理员身份</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">连续读取</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目录</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">日志类型已导出至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">没有描述的自定义日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日志类型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已订选</sys:String>

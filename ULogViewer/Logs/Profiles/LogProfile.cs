@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Platform.Storage;
-using CarinaStudio.AppSuite.Data;
+﻿using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -20,7 +18,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CarinaStudio.IO;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles
 {
@@ -323,58 +320,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// <inheritdoc/>
 		public override bool Equals(IProfile<IULogViewerApplication>? profile) =>
 			this.Id == profile?.Id;
-		
-
-		/// <summary>
-		/// Export the profile asynchronously.
-		/// </summary>
-		/// <param name="window">Window.</param>
-		/// <returns>Task of exporting. The result will be True if profile has been exported successfully.</returns>
-		public async Task<bool> ExportAsync(Window window)
-		{
-			// select file
-			var fileName = (await window.StorageProvider.SaveFilePickerAsync(new()
-			{
-				FileTypeChoices = new[]
-				{
-					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
-					{
-						Patterns = new[] { "*.json" }
-					}
-				}
-			}))?.Let(it =>
-			{
-				var path = it.TryGetLocalPath();
-				if (string.IsNullOrEmpty(path))
-					return null;
-				if (!PathEqualityComparer.Default.Equals(Path.GetExtension(path), ".json"))
-					path += ".json";
-				return path;
-			});
-			if (string.IsNullOrEmpty(fileName))
-				return false;
-
-			// copy profile and save
-			var copiedProfile = new LogProfile(this);
-			try
-			{
-				await copiedProfile.SaveAsync(fileName, false);
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, "Unable to export log profile '{name}' to '{fileName}'", this.Name, fileName);
-				_ = new AppSuite.Controls.MessageDialog()
-				{
-					Icon = AppSuite.Controls.MessageDialogIcon.Error,
-					Message = new FormattedString().Also(it =>
-					{
-						it.Arg1 = fileName;
-						it.Bind(FormattedString.FormatProperty, window.GetResourceObservable("String/LogProfileSelectionDialog.FailedToExportLogProfile"));
-					}),
-				}.ShowDialog(window);
-			}
-			return true;
-		}
 
 
 		/// <summary>
