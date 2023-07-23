@@ -11,7 +11,6 @@ using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
@@ -23,7 +22,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -289,7 +287,7 @@ partial class SessionView
             return;
         
         // select file
-        var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
+        var fileName = await FileSystemItemSelection.SelectFileToExportLogAnalysisRuleSetAsync(this.attachedWindow);
         if (string.IsNullOrEmpty(fileName))
             return;
         
@@ -302,7 +300,9 @@ partial class SessionView
         {
             this.Logger.LogError(ex, "Failed to export key log analysis rule set '{ruleSetId}' to '{fileName}'", ruleSet.Id, fileName);
             this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
+            return;
         }
+        this.OnExportLogAnalysisRuleSetSucceeded(ruleSet.Name, fileName);
     }
 
 
@@ -320,7 +320,7 @@ partial class SessionView
             return;
         
         // select file
-        var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
+        var fileName = await FileSystemItemSelection.SelectFileToExportLogAnalysisRuleSetAsync(this.attachedWindow);
         if (string.IsNullOrEmpty(fileName))
             return;
         
@@ -333,7 +333,9 @@ partial class SessionView
         {
             this.Logger.LogError(ex, "Failed to export log analysis script set '{scriptSetId}' to '{fileName}'", scriptSet.Id, fileName);
             this.OnExportLogAnalysisRuleSetFailed(scriptSet.Name, fileName);
+            return;
         }
+        this.OnExportLogAnalysisRuleSetSucceeded(scriptSet.Name, fileName);
     }
 
 
@@ -351,7 +353,7 @@ partial class SessionView
             return;
         
         // select file
-        var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
+        var fileName = await FileSystemItemSelection.SelectFileToExportLogAnalysisRuleSetAsync(this.attachedWindow);
         if (string.IsNullOrEmpty(fileName))
             return;
         
@@ -364,7 +366,9 @@ partial class SessionView
         {
             this.Logger.LogError(ex, "Failed to export operation counting analysis rule set '{ruleSetId}' to '{fileName}'", ruleSet.Id,  fileName);
             this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
+            return;
         }
+        this.OnExportLogAnalysisRuleSetSucceeded(ruleSet.Name, fileName);
     }
 
 
@@ -382,7 +386,7 @@ partial class SessionView
             return;
         
         // select file
-        var fileName = await this.SelectFileToExportLogAnalysisRuleSetAsync();
+        var fileName = await FileSystemItemSelection.SelectFileToExportLogAnalysisRuleSetAsync(this.attachedWindow);
         if (string.IsNullOrEmpty(fileName))
             return;
         
@@ -395,7 +399,9 @@ partial class SessionView
         {
             this.Logger.LogError(ex, "Failed to export operation duration analysis rule set '{ruleSetId}' to '{fileName}'", ruleSet.Id, fileName);
             this.OnExportLogAnalysisRuleSetFailed(ruleSet.Name, fileName);
+            return;
         }
+        this.OnExportLogAnalysisRuleSetSucceeded(ruleSet.Name, fileName);
     }
 
 
@@ -569,21 +575,77 @@ partial class SessionView
         get => this.GetValue(IsScrollingToLatestLogAnalysisResultNeededProperty);
         set => this.SetValue(IsScrollingToLatestLogAnalysisResultNeededProperty, value);
     }
-
-
+    
+    
     // Called when failed to export log analysis rule set.
     void OnExportLogAnalysisRuleSetFailed(string? ruleSetName, string fileName)
     {
-        if (this.attachedWindow != null)
+        if (this.attachedWindow is MainWindow mainWindow)
         {
-            _ = new MessageDialog()
+            mainWindow.AddNotification(new Notification().Also(it =>
+            {
+                it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+                it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+                {
+                    it.Arg1 = ruleSetName;
+                    it.Arg2 = fileName;
+                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToExportLogAnalysisRuleSet"));
+                }));
+            }));
+        }
+        else if (this.attachedWindow is not null)
+        {
+            _ = new MessageDialog
             {
                 Icon = MessageDialogIcon.Error,
                 Message = new FormattedString().Also(it =>
                 {
                     it.Arg1 = ruleSetName;
                     it.Arg2 = fileName;
-                    it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/SessionView.FailedToExportLogAnalysisRuleSet"));
+                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.FailedToExportLogAnalysisRuleSet"));
+                }),
+            }.ShowDialog(this.attachedWindow);
+        }
+    }
+
+
+    // Called when succeeded to export log analysis rule set.
+    void OnExportLogAnalysisRuleSetSucceeded(string? ruleSetName, string fileName)
+    {
+        if (this.attachedWindow is MainWindow mainWindow)
+        {
+            mainWindow.AddNotification(new Notification().Also(it =>
+            {
+                if (Platform.IsOpeningFileManagerSupported)
+                {
+                    it.Actions = new[]
+                    {
+                        new NotificationAction().Also(it =>
+                        {
+                            it.Command = new Command(() => Platform.OpenFileManager(fileName));
+                            it.Bind(NotificationAction.NameProperty, this.Application.GetObservableString("SessionView.ShowFileInExplorer"));
+                        })
+                    };
+                }
+                it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
+                it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+                {
+                    it.Arg1 = ruleSetName;
+                    it.Arg2 = fileName;
+                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogAnalysisRuleSetExported"));
+                }));
+            }));
+        }
+        else if (this.attachedWindow is not null)
+        {
+            _ = new MessageDialog
+            {
+                Icon = MessageDialogIcon.Success,
+                Message = new FormattedString().Also(it =>
+                {
+                    it.Arg1 = ruleSetName;
+                    it.Arg2 = fileName;
+                    it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogAnalysisRuleSetExported"));
                 }),
             }.ShowDialog(this.attachedWindow);
         }
@@ -1182,30 +1244,6 @@ partial class SessionView
                     this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
                 }
             }
-        });
-    }
-
-
-    // Show UI for user to select file to export log analysis rule set.
-    async Task<string?> SelectFileToExportLogAnalysisRuleSetAsync()
-    {
-        if (this.attachedWindow == null)
-            return null;
-        return (await this.attachedWindow.StorageProvider.SaveFilePickerAsync(new ()
-        {
-            DefaultExtension = ".json",
-            FileTypeChoices = new[]
-            {
-                new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json")) { Patterns = new[] { "*.json" }}
-            }
-        }))?.Let(it =>
-        {
-            var path = it.TryGetLocalPath();
-            if (string.IsNullOrEmpty(path))
-                return null;
-            if (!PathEqualityComparer.Default.Equals(Path.GetExtension(path), ".json"))
-                path += ".json";
-            return path;
         });
     }
 

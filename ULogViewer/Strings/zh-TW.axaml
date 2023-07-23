@@ -1174,6 +1174,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">位元組大小</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">時距</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">數量</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">規則集或腳本「{0}」已匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">協同日誌分析腳本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">已停用</sys:String>
