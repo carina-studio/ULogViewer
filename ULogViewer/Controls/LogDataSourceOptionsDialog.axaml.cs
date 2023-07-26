@@ -759,16 +759,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		if (this.IsSelectingWorkingDirectory)
 			return;
 		this.SetValue(IsSelectingWorkingDirectoryProperty, true);
-		var options = await new FolderPickerOpenOptions().AlsoAsync(async options =>
-		{
-			await (this.workingDirectoryTextBox.Text?.Trim().LetAsync(async path =>
-			{
-				if (path.IsValidFilePath() && await CarinaStudio.IO.Directory.ExistsAsync(path))
-					options.SuggestedStartLocation = await this.StorageProvider.TryGetFolderFromPathAsync(path);
-			}) ?? Task.CompletedTask);
-		});
-		var dirPath = (await this.StorageProvider.OpenFolderPickerAsync(options)).Let(it => 
-			it.Count == 1 ? it[0].TryGetLocalPath() : null);
+		var dirPath = await FileSystemItemSelection.SelectWorkingDirectory(this, this.workingDirectoryTextBox.Text?.Trim());
 		if (!string.IsNullOrEmpty(dirPath))
 			this.workingDirectoryTextBox.Text = dirPath;
 		this.SetValue(IsSelectingWorkingDirectoryProperty, false);

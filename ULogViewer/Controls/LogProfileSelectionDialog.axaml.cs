@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
-using Avalonia.Platform.Storage;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Product;
@@ -286,16 +285,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void ImportLogProfile()
 		{
 			// select file
-			var fileName = (await this.StorageProvider.OpenFilePickerAsync(new()
-			{
-				FileTypeFilter = new[]
-				{
-					new FilePickerFileType(this.Application.GetStringNonNull("FileFormat.Json"))
-					{
-						Patterns = new[] { "*.json" }
-					}
-				}
-			})).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
+			var fileName = await FileSystemItemSelection.SelectFileToImportLogProfileAsync(this);
 			if (string.IsNullOrEmpty(fileName))
 				return;
 

@@ -279,6 +279,16 @@
 	<!-- FileSizeUnit -->
 	<sys:String x:Key="String/FileSizeUnit.Bits">位元</sys:String>
 	<sys:String x:Key="String/FileSizeUnit.Bytes">位元組</sys:String>
+	
+	<!-- FileSystemItemSelection -->
+	<sys:String x:Key="String/FileSystemItemSelection.ExportLogAnalysisRuleSet">匯出日誌分析規則集或腳本</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportLogProfile">匯出日誌類型</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportLogs">匯出日誌</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportScriptLogDataSourceProvider">匯出日誌資料來源腳本</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportLogAnalysisRuleSet">匯入日誌分析規則集或腳本</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportLogProfile">匯入日誌類型</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportScriptLogDataSourceProvider">匯入日誌資料來源腳本</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.SelectWorkingDirectory">選擇工作目錄</sys:String>
 
 	<!-- FilesMaxLogReadingCountDialog -->
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>

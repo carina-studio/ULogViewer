@@ -4314,19 +4314,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			// select target file
 			this.isSelectingFileToSaveLogs = true;
 			var app = this.Application;
-			var fileName = (await this.attachedWindow.StorageProvider.SaveFilePickerAsync(new()
-			{
-				FileTypeChoices = new FilePickerFileType[]
-				{
-					new(app.GetStringNonNull("FileFormat.Text")) { Patterns = new[] { "*.txt" } },
-					new(app.GetStringNonNull("FileFormat.Log")) { Patterns = new[] { "*.log" } },
-					new(app.GetStringNonNull("FileFormat.Json")) { Patterns = new[] { "*.json" } },
-					new(app.GetStringNonNull("FileFormat.All")) { Patterns = new[] { "*.*" } },
-				},
-				Title = saveAllLogs
+			var fileName = await FileSystemItemSelection.SelectFileToExportLogsAsync(
+				this.attachedWindow,
+				saveAllLogs
 					? app.GetString("SessionView.SaveAllLogs")
-					: app.GetString("SessionView.SaveLogs"),
-			}))?.Let(it => it.TryGetLocalPath());
+					: app.GetString("SessionView.SaveLogs"));
 			this.isSelectingFileToSaveLogs = false;
 			if (string.IsNullOrEmpty(fileName))
 				return;
@@ -4699,7 +4691,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		async void SelectAndSetWorkingDirectory()
 		{
 			// check state
-			if (this.attachedWindow == null)
+			if (this.attachedWindow is null)
 			{
 				this.Logger.LogError("Unable to set working directory without attaching to window");
 				return;
@@ -4709,10 +4701,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.autoSetWorkingDirectoryAction.Cancel();
 
 			// select directory
-			var directory = (await this.attachedWindow.StorageProvider.OpenFolderPickerAsync(new()
-			{
-				Title = this.Application.GetStringNonNull("SessionView.SetWorkingDirectory"),
-			})).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
+			var directory = await FileSystemItemSelection.SelectWorkingDirectory(this.attachedWindow);
 			if (string.IsNullOrWhiteSpace(directory))
 				return;
 
