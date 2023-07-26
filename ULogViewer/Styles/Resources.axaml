@@ -84,6 +84,8 @@
 	
 	<!-- LogProfileEditorDialog -->
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">600</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.LogPattern.Description.FontSize">12</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.LogPattern.Description.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">600</sys:Double>

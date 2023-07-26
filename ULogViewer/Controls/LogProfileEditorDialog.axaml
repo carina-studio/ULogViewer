@@ -300,7 +300,7 @@
 							<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" ItemsSource="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
                             	<asControls:ListBox.ItemTemplate>
                             		<DataTemplate DataType="{x:Type appLogs:LogPattern}">
-                            			<Grid>
+                            			<Grid RowDefinitions="Auto,*">
 	                                        <Grid.ColumnDefinitions>
 		                                        <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
 		                                        <ColumnDefinition Width="*"/>
@@ -319,6 +319,7 @@
 		                                        </Image>
 	                                        </StackPanel>
 	                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Regex}" TextTrimming="None" VerticalAlignment="Center"/>
+	                                        <abControls:TextBlock FontSize="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Opacity="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                             				<Border Classes="InPlaceAction_Reserved"/>
                                             <StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
                             					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">

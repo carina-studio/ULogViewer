@@ -714,13 +714,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				if (useCompiledRegex)
 					options |= RegexOptions.Compiled;
 				var regex = new Regex(logPatternElement.GetProperty("Regex").GetString()!, options);
+				var description = logPatternElement.TryGetProperty(nameof(LogPattern.Description), out jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
+					? jsonProperty.GetString()
+					: null;
 				var isRepeatable = false;
 				var isSkippable = false;
 				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsRepeatable), out jsonProperty))
 					isRepeatable = jsonProperty.GetBoolean();
 				if (logPatternElement.TryGetProperty(nameof(LogPattern.IsSkippable), out jsonProperty))
 					isSkippable = jsonProperty.GetBoolean();
-				logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable));
+				logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable, description));
 			}
 			this.logPatterns = logPatterns.AsReadOnly();
 		}
@@ -1429,6 +1432,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				writer.WriteStartObject();
 				writer.WriteString(nameof(LogPattern.Regex), pattern.Regex.ToString());
+				if (!string.IsNullOrWhiteSpace(pattern.Description))
+					writer.WriteString(nameof(LogPattern.Description), pattern.Description);
 				if ((pattern.Regex.Options & RegexOptions.IgnoreCase) != 0)
 					writer.WriteBoolean(nameof(RegexOptions.IgnoreCase), true);
 				if (pattern.IsRepeatable)

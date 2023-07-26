@@ -16,6 +16,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	class LogPatternEditorDialog : InputDialog<IULogViewerApplication>
 	{
 		// Fields.
+		readonly TextBox descriptionTextBox;
 		readonly PatternEditor patternEditor;
 		readonly ToggleSwitch repeatableSwitch;
 		readonly ToggleSwitch skippableSwitch;
@@ -27,6 +28,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogPatternEditorDialog()
 		{
 			AvaloniaXamlLoader.Load(this);
+			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
 			this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
 			{
 				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
@@ -39,7 +41,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Generate result.
 		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
-			var newLogPattern = new LogPattern(this.patternEditor.Pattern.AsNonNull(), this.repeatableSwitch.IsChecked.GetValueOrDefault(), this.skippableSwitch.IsChecked.GetValueOrDefault());
+			var newLogPattern = new LogPattern(
+				this.patternEditor.Pattern.AsNonNull(), 
+				this.repeatableSwitch.IsChecked.GetValueOrDefault(), 
+				this.skippableSwitch.IsChecked.GetValueOrDefault(),
+				this.descriptionTextBox.Text?.Trim());
 			return Task.FromResult((object?)newLogPattern);
 		}
 
@@ -57,6 +63,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var logPattern = this.LogPattern;
 			if (logPattern != null)
 			{
+				this.descriptionTextBox.Text = logPattern.Description?.Trim();
 				this.patternEditor.Pattern = logPattern.Regex;
 				this.repeatableSwitch.IsChecked = logPattern.IsRepeatable;
 				this.skippableSwitch.IsChecked = logPattern.IsSkippable;

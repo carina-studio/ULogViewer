@@ -42,6 +42,13 @@
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
 					<Separator Classes="Dialog_Item_Separator"/>
+					
+					<!-- Description -->
+					<asControls:DialogItemGrid>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Description}"/>
+						<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.None}"/>
+					</asControls:DialogItemGrid>
+					<Separator Classes="Dialog_Item_Separator"/>
 		
 					<!-- Repeatable -->
 					<asControls:DialogItemGrid>

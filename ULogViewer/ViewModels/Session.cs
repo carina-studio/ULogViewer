@@ -2023,7 +2023,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.LogPatternMatchingMode = profile.LogPatternMatchingMode;
 				it.LogPatterns = profile.LogPatterns.IsNotEmpty() 
 					? profile.LogPatterns 
-					: new[] { new LogPattern("^(?<Message>.*)", false, false) };
+					: new[] { new LogPattern("^(?<Message>.*)", false, false, null) };
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 				{

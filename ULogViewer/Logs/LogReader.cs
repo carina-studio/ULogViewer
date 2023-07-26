@@ -996,7 +996,7 @@ namespace CarinaStudio.ULogViewer.Logs
 						if ((logPattern.Regex.Options & RegexOptions.Compiled) == 0)
 						{
 							var regex = new Regex(logPattern.Regex.ToString(), logPattern.Regex.Options | RegexOptions.Compiled);
-							it[i] = new(regex, logPattern.IsRepeatable, logPattern.IsSkippable);
+							it[i] = new(regex, logPattern.IsRepeatable, logPattern.IsSkippable, null);
 						}
 					}
 				}
