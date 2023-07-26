@@ -72,12 +72,28 @@
 							</asControls:ListBox.ItemsPanel>
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
-									<Grid ColumnDefinitions="Auto,*,Auto">
+									<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,*">
 										<Panel Classes="ListBoxItem_Icon">
 											<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
 											<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
 										</Panel>
 										<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding OperationName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{x:Static appControls:OperationDurationAnalysisRuleSetEditorDialog.PatternDefinitionSet}" 
+											FontSize="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize}"
+											Grid.Column="1"
+											Grid.ColumnSpan="2"
+											Grid.Row="1"
+											Opacity="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity}"
+											Text="{Binding BeginningPattern}"
+											TextTrimming="None"/>
+										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{x:Static appControls:OperationDurationAnalysisRuleSetEditorDialog.PatternDefinitionSet}" 
+											FontSize="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize}"
+											Grid.Column="1"
+											Grid.ColumnSpan="2"
+											Grid.Row="2"
+											Opacity="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity}"
+											Text="{Binding EndingPattern}"
+											TextTrimming="None"/>
 										<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 										<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">

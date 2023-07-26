@@ -45,9 +45,9 @@
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Width">500</sys:Double>
-	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Margin">0,3,0,0</Thickness>
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.MaxHeight">300</sys:Double>
@@ -144,6 +144,8 @@
 
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize">12</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Width">500</sys:Double>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
@@ -154,6 +156,8 @@
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize">12</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Width">500</sys:Double>
 
 	<!-- PatternEditor -->

@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -21,6 +22,12 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// </summary>
 	class OperationDurationAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 	{
+		/// <summary>
+		/// Definition set of patterns of rule.
+		/// </summary>
+		public static readonly SyntaxHighlightingDefinitionSet PatternDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(IAvaloniaApplication.Current);
+		
+		
 		// Static fields.
 		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationDurationAnalysisRuleSet, OperationDurationAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();

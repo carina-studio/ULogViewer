@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -19,8 +20,14 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet"/>.
 	/// </summary>
-	partial class OperationCountingAnalysisRuleSetEditorDialog : AppSuite.Controls.Window<IULogViewerApplication>
+	class OperationCountingAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 	{
+		/// <summary>
+		/// Definition set of patterns of rule.
+		/// </summary>
+		public static readonly SyntaxHighlightingDefinitionSet PatternDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(IAvaloniaApplication.Current);
+		
+		
 		// Static fields.
 		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationCountingAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 		static readonly Dictionary<OperationCountingAnalysisRuleSet, OperationCountingAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
@@ -56,7 +63,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.DoubleClickOnItem += (_, e) => this.EditRule((OperationCountingAnalysisRuleSet.Rule)e.Item);
 			});
-			this.rules.CollectionChanged += (_, e) => this.validateParametersAction!.Schedule();
+			this.rules.CollectionChanged += (_, _) => this.validateParametersAction!.Schedule();
 			this.validateParametersAction = new(() =>
 			{
 				this.SetValue<bool>(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
@@ -96,7 +103,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// validate parameters
 			this.validateParametersAction.ExecuteIfScheduled();
-			if (!this.GetValue<bool>(AreValidParametersProperty))
+			if (!this.GetValue(AreValidParametersProperty))
 				return;
 			
 			// create rule set
