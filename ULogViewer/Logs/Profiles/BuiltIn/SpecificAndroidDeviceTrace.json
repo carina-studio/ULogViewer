@@ -1,0 +1,88 @@
+{
+  "DataSource": {
+    "Name": "StandardOutput",
+    "Options": {
+      "Command": "cat trace.html",
+      "SetupCommands": [
+        "adb -s ##device-id## shell perfetto --out /data/misc/perfetto-traces/trace.proto --time 5s aidl am audio binder_driver binder_lock camera dalvik database disk freq gfx hal idle input memory memreclaim network nnapi pm power res rro rs sched sm ss sync vibrator video view webview wm",
+        "adb -s ##device-id## pull /data/misc/perfetto-traces/trace.proto .",
+        "adb -s ##device-id## shell rm /data/misc/perfetto-traces/trace.proto",
+        "traceconv systrace trace.proto trace.html",
+        "rm trace.proto"
+      ],
+      "TeardownCommands": [
+        "rm trace.html"
+      ]
+    }
+  },
+  "ColorIndicator": "None",
+  "Icon": "Phone",
+  "IsTemplate": true,
+  "LogPatterns": [
+    {
+      "Regex": "^[\\s]*(?<ThreadName>.*)\\-(?<ThreadId>[\\d]+)[\\s]+\\([\\s]*(?<ProcessId>[\\d\\-]+)\\)[\\s]+\\[(?<Extra1>[\\d]+)]*\\][\\s]+(?<Extra2>[\\d\\w\\.])(?<Extra3>[\\d\\w\\.])(?<Extra4>[\\d\\w\\.])(?<Extra5>[\\d\\w\\.])[\\D]+(?<TimeSpan>[\\d]+\\.[\\d]+)[\\s]*\\:[\\s]*(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+    }
+  ],
+  "LogStringEncodingForReading": "Plane",
+  "LogStringEncodingForWriting": "Plane",
+  "LogWritingFormats": [
+    "{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Extra2}{Extra3}{Extra4}{Extra5} {TimeSpan}: {SourceName}: {Message}"
+  ],
+  "SortDirection": "Ascending",
+  "SortKey": "TimeSpan",
+  "TimeSpanEncodingForReading": "TotalSeconds",
+	"TimeSpanFormatForDisplaying": "dd\\ h\\:mm\\:ss\\.ffffff",
+	"TimeSpanFormatForWriting": "dd\\ h\\:mm\\:ss\\.ffffff",
+  "VisibleLogProperties": [
+    {
+			"DisplayName": "RelativeTimestamp",
+			"Name": "TimeSpan",
+			"Width": 170
+		},
+		{
+			"DisplayName": "Cpu",
+			"Name": "Extra1",
+			"Width": 60
+		},
+		{
+			"DisplayName": "irqs-off",
+			"Name": "Extra2",
+			"Width": 50
+		},
+		{
+			"DisplayName": "need-resched",
+			"Name": "Extra3",
+			"Width": 50
+		},
+		{
+			"DisplayName": "hardirq/softirq",
+			"Name": "Extra4",
+			"Width": 50
+		},
+		{
+			"DisplayName": "preempt-depth",
+			"Name": "Extra5",
+			"Width": 50
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 60
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 60
+		},
+    {
+      "Name": "ThreadName",
+      "Width": 100
+    },
+    {
+      "DisplayName": "Tag",
+      "Name": "SourceName",
+      "Width": 100
+    },
+    {
+      "Name": "Message"
+    }
+  ]
+}

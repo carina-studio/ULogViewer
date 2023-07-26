@@ -115,13 +115,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public string? Category { get; set; }
 		
 		
-		/// <summary>
-		/// Check whether there is one or more placeholders in <see cref="Command"/> or not.
-		/// </summary>
-		/// <returns></returns>
-		public bool CheckPlaceholderInCommand()
+		// Check whether there is one or more placeholders in given command or not.
+		static bool CheckPlaceholderInCommand(string? command)
 		{
-			var command = this.Command;
 			if (string.IsNullOrWhiteSpace(command))
 				return false;
 			commandArgPattern ??= new("[\\S]+|'[^']*'|\"[^\"]*\"", RegexOptions.Compiled);
@@ -139,6 +135,28 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return true;
 				}
 				match = match.NextMatch();
+			}
+			return false;
+		}
+		
+		
+		/// <summary>
+		/// Check whether there is one or more placeholders in <see cref="Command"/>, <see cref="SetupCommands"/>, <see cref="TeardownCommands"/> or not.
+		/// </summary>
+		/// <returns></returns>
+		public bool CheckPlaceholderInCommands()
+		{
+			if (CheckPlaceholderInCommand(this.Command))
+				return true;
+			foreach (var command in this.SetupCommands)
+			{
+				if (CheckPlaceholderInCommand(command))
+					return true;
+			}
+			foreach (var command in this.TeardownCommands)
+			{
+				if (CheckPlaceholderInCommand(command))
+					return true;
 			}
 			return false;
 		}

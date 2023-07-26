@@ -51,6 +51,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "RawTcpServer",
         "SpecificAndroidDeviceEventLog",
         "SpecificAndroidDeviceLog",
+        "SpecificAndroidDeviceTrace",
         "SpecificAppleDeviceLog",
         "TcpNLog",
         "ULogViewerLog",

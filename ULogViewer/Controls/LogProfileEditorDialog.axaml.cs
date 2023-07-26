@@ -1468,7 +1468,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								return false;
 							}
 							if (optionName == nameof(LogDataSourceOptions.Command)
-							    && this.dataSourceOptions.CheckPlaceholderInCommand())
+							    && this.dataSourceOptions.CheckPlaceholderInCommands())
 							{
 								this.SetValue(IsValidDataSourceOptionsProperty, false);
 								return false;
