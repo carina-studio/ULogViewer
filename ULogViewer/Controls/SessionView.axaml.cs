@@ -1148,6 +1148,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound += this.OnExternalDependencyNotFound;
 			session.LogDataSourceScriptRuntimeErrorOccurred += this.OnLogDataSourceScriptRuntimeErrorOccurred;
+			session.LogsSavingCompleted += this.OnLogsSavingCompleted;
 			session.PropertyChanged += this.OnSessionPropertyChanged;
 			this.attachedLogs = session.Logs as INotifyCollectionChanged;
 			if (this.attachedLogs != null)
@@ -2325,6 +2326,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound -= this.OnExternalDependencyNotFound;
 			session.LogDataSourceScriptRuntimeErrorOccurred -= this.OnLogDataSourceScriptRuntimeErrorOccurred;
+			session.LogsSavingCompleted -= this.OnLogsSavingCompleted;
 			session.PropertyChanged -= this.OnSessionPropertyChanged;
 			if (this.attachedLogs != null)
 			{
@@ -3478,6 +3480,71 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (removedLogs.Contains(this.targetLogRangeToScrollTo[0]) || removedLogs.Contains(this.targetLogRangeToScrollTo[1]))
 						this.ClearTargetLogRangeToScrollTo();
 				}
+			}
+		}
+		
+		
+		// Called when logs saving completed.
+		void OnLogsSavingCompleted(Session session, string fileName, bool success)
+		{
+			if (this.attachedWindow is MainWindow mainWindow)
+			{
+				mainWindow.AddNotification(new Notification().Also(it =>
+				{
+					if (success)
+					{
+						if (Platform.IsOpeningFileManagerSupported)
+						{
+							it.Actions = new[]
+							{
+								new NotificationAction().Also(it =>
+								{
+									it.Command = new Command(() => Platform.OpenFileManager(fileName));
+									it.Bind(NotificationAction.NameProperty, this.Application.GetObservableString("SessionView.ShowFileInExplorer"));
+								})
+							};
+						}
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
+						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+						{
+							it.Arg1 = fileName;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogsSaved"));
+						}));
+					}
+					else
+					{
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
+						{
+							it.Arg1 = fileName;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogsSavingFailed"));
+						}));
+					}
+				}));
+			}
+			else if (this.attachedWindow is not null)
+			{
+				new MessageDialog().Also(it =>
+				{
+					if (success)
+					{
+						it.Icon = MessageDialogIcon.Success;
+						it.Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = fileName;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogsSaved"));
+						});
+					}
+					else
+					{
+						it.Icon = MessageDialogIcon.Error;
+						it.Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = fileName;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.LogsSavingFailed"));
+						});
+					}
+				}).ShowDialog(this.attachedWindow);
 			}
 		}
 

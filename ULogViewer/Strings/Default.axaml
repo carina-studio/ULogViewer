@@ -705,7 +705,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">Profile has been exported to '{0}'.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">Profile has been exported to '{0}' successfully.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">Custom profile without description.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
@@ -1147,6 +1147,7 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">It cannot be recovered once you delete the script. Are you sure to delete log data source script '{0}' and {1} related log profile(s)?</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">Unable to export data source script '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">Unable to import data source script from '{0}'.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">Data source script '{0}' has been exported to '{1}' successfully.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
 
@@ -1231,7 +1232,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">Size in bytes</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">Duration</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">Quantity</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">Rule set or script '{0}' has been exported to '{1}'.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">Rule set or script '{0}' has been exported to '{1}' successfully.</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">Cooperative log analysis script</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">Disabled</sys:String>
@@ -1270,6 +1271,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Progress of log filtering</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
 	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">Logs reading has been disabled temporarily because of high memory usage ({0}).</sys:String>
+	<sys:String x:Key="String/SessionView.LogsSaved">Logs have been saved to '{0}' successfully.</sys:String>
+	<sys:String x:Key="String/SessionView.LogsSavingFailed">Failed to save logs to '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">Mode of showing logs</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>

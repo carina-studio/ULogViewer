@@ -668,7 +668,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">需要系統管理員身分</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">連續讀取</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">需要工作目錄</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">日誌類型已匯出至 '{0}'。</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">日誌類型已成功匯出至 '{0}'。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">沒有描述的自訂日誌類型。</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
@@ -1104,6 +1104,7 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">腳本刪除後將無法復原，您是否確定要刪除日誌資料來源腳本「{0}」以及相關的 {1} 個日誌類型？</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">無法將日誌資料來源腳本「{0}」匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">無法自檔案 '{0}' 匯入日誌資料來源腳本。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">日誌資料來源腳本「{0}」已成功匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌資料來源腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
 
@@ -1184,7 +1185,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">位元組大小</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">時距</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">數量</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">規則集或腳本「{0}」已匯出至 '{1}'。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">規則集或腳本「{0}」已成功匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">分析規則集</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">協同日誌分析腳本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">已停用</sys:String>
@@ -1223,6 +1224,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日誌篩選進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此分頁日誌記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">因為高度記憶體使用 ({0})，日誌讀取已暫時停用。</sys:String>
+	<sys:String x:Key="String/SessionView.LogsSaved">已成功將日誌儲存至 '{0}'。</sys:String>
+	<sys:String x:Key="String/SessionView.LogsSavingFailed">無法將日誌儲存至 '{0}'。</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">日誌顯示模式</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>

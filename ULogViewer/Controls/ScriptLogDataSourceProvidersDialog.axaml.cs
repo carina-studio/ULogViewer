@@ -142,7 +142,7 @@ class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogVie
 		catch (Exception ex)
 		{
 			this.Logger.LogError(ex, "Failed to export script log data source provider to '{fileName}'", fileName);
-			_ = new MessageDialog()
+			_ = new MessageDialog
 			{
 				Icon = MessageDialogIcon.Error,
 				Message = new FormattedString().Also(it =>
@@ -152,7 +152,18 @@ class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogVie
 					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.FailedToExportProvider"));
 				})
 			}.ShowDialog(this);
+			return;
 		}
+		_ = new MessageDialog
+		{
+			Icon = MessageDialogIcon.Success,
+			Message = new FormattedString().Also(it =>
+			{
+				it.Arg1 = provider.DisplayName;
+				it.Arg2 = fileName;
+				it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.ProviderExported"));
+			})
+		}.ShowDialog(this);
 	}
 
 
@@ -190,7 +201,7 @@ class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogVie
 		ex =>
 		{
 			this.Logger.LogError(ex, "Failed to import script log data source provider from '{fileName}'", fileName);
-			_ = new MessageDialog()
+			_ = new MessageDialog
 			{
 				Icon = MessageDialogIcon.Error,
 				Message = new FormattedString().Also(it =>
@@ -208,7 +219,7 @@ class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogVie
 			LogDataSourceProviders.ScriptProviders.FirstOrDefault(it => it.DisplayName == name) != null);
 		
 		// edit provider and import
-		var newProvider = await new ScriptLogDataSourceProviderEditorDialog()
+		var newProvider = await new ScriptLogDataSourceProviderEditorDialog
 		{
 			Provider = new ScriptLogDataSourceProvider(provider, newName),
 		}.ShowDialog<ScriptLogDataSourceProvider?>(this);

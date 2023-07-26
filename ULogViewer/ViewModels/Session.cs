@@ -3042,6 +3042,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
+		/// Raised when complete saving logs to file.
+		/// </summary>
+		public event Action<Session, string, bool>? LogsSavingCompleted;
+
+
+		/// <summary>
 		/// Get list of marked <see cref="DisplayableLog"/>s .
 		/// </summary>
 		public IList<DisplayableLog> MarkedLogs { get; }
@@ -4386,7 +4392,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Save logs.
-		async void SaveLogs(LogsSavingOptions? options)
+		async Task SaveLogs(LogsSavingOptions? options)
 		{
 			// check state
 			if (options == null)
@@ -4505,9 +4511,15 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				else
 					this.Logger.LogDebug("Logs saving completed");
+				if (!this.IsDisposed)
+					this.LogsSavingCompleted?.Invoke(this, options.FileName, true);
 			}
 			else
+			{
 				this.Logger.LogError("Logs saving failed");
+				if (!this.IsDisposed)
+					this.LogsSavingCompleted?.Invoke(this, options.FileName, false);
+			}
 		}
 
 
