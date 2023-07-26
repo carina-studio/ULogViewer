@@ -343,9 +343,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             return;
         var delay = this.ProcessingPriority switch
         {
-            DisplayableLogProcessingPriority.Default => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayDefault),
+            DisplayableLogProcessingPriority.Default => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessingDelayDefault),
             DisplayableLogProcessingPriority.Realtime => 0,
-            _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessinDelayBackground),
+            _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessingDelayBackground),
         };
         this.InvalidateProcessing(delay);
     }

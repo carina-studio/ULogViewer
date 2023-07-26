@@ -4404,7 +4404,9 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.scrollToLatestLogAction.Cancel();
 						this.smoothScrollToLatestLogAction.Cancel();
 					}
-					else if (Math.Abs(distanceY) <= 5 || !smoothScrolling)
+					else if (Math.Abs(distanceY) <= 5 
+					         || !smoothScrolling 
+					         || !this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseSmoothLogScrolling))
 					{
 						scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
 						this.scrollToLatestLogAction.Cancel();

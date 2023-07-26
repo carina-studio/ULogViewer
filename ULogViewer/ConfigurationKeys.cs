@@ -5,28 +5,16 @@ namespace CarinaStudio.ULogViewer;
 /// <summary>
 /// Configuration keys.
 /// </summary>
-sealed class ConfigurationKeys
+abstract class ConfigurationKeys
 {
     /// <summary>
     /// Interval of updating continuous logs reading in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> ContinuousLogsReadingUpdateInterval = new(nameof(ContinuousLogsReadingUpdateInterval), 100);
     /// <summary>
-    /// Delay before compiling current script source when editing in milliseconds.
-    /// </summary>
-    public static readonly SettingKey<int> DelayToCompileScriptWhenEditing = new(nameof(DelayToCompileScriptWhenEditing), 500);
-    /// <summary>
     /// Delay before restarting contextual-based log analysis in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> DelayToRestartContextualBasedLogAnalysis = new(nameof(DelayToRestartContextualBasedLogAnalysis), 1000);
-    /// <summary>
-    /// Interval between each displayable log chunk filtering in milliseconds.
-    /// </summary>
-    public static readonly SettingKey<int> DisplayableLogChunkFilteringPaddingInterval = new(nameof(DisplayableLogChunkFilteringPaddingInterval), 50);
-    /// <summary>
-    /// Size of chunk of displayable log filtering.
-    /// </summary>
-    public static readonly SettingKey<int> DisplayableLogChunkFilteringSize = new(nameof(DisplayableLogChunkFilteringSize), 16384);
     /// <summary>
     /// Interval between each displayable log chunk processing in milliseconds.
     /// </summary>
@@ -54,11 +42,11 @@ sealed class ConfigurationKeys
     /// <summary>
     /// Delay before start processing displayable logs in milliseconds.
     /// </summary>
-    public static readonly SettingKey<int> DisplayableLogProcessinDelayBackground = new(nameof(DisplayableLogProcessinDelayBackground), 1000);
+    public static readonly SettingKey<int> DisplayableLogProcessingDelayBackground = new(nameof(DisplayableLogProcessingDelayBackground), 1000);
     /// <summary>
     /// Delay before start processing displayable logs in milliseconds.
     /// </summary>
-    public static readonly SettingKey<int> DisplayableLogProcessinDelayDefault = new(nameof(DisplayableLogProcessinDelayDefault), 500);
+    public static readonly SettingKey<int> DisplayableLogProcessingDelayDefault = new(nameof(DisplayableLogProcessingDelayDefault), 500);
     /// <summary>
     /// Delay before applying log analysis parameters in milliseconds.
     /// </summary>
@@ -116,17 +104,17 @@ sealed class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<bool> ReadRawLogLinesConcurrently = new(nameof(ReadRawLogLinesConcurrently), false);
     /// <summary>
-    /// Timeout before calaulating size of one or more files.
+    /// Timeout before calculating size of one or more files.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToCancelFileSizeCalculation = new(nameof(TimeoutToCancelFileSizeCalculation), 5 * 1000);
-    /// <summary>
-    /// Timeout before notifying user that network connection is needed for product activation.
-    /// </summary>
-    public static readonly SettingKey<int> TimeoutToNotifyNetworkConnectionForProductActivation = new(nameof(TimeoutToNotifyNetworkConnectionForProductActivation), 3 * 60 * 1000);
     /// <summary>
     /// Whether regular expression should be compiled before using or not.
     /// </summary>
     public static readonly SettingKey<bool> UseCompiledRegex = new(nameof(UseCompiledRegex), true);
+    /// <summary>
+    /// Smooth scrolling of logs.
+    /// </summary>
+    public static readonly SettingKey<bool> UseSmoothLogScrolling = new(nameof(UseSmoothLogScrolling), true);
 
 
     // Constructor.

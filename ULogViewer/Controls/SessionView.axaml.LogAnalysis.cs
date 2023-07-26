@@ -1236,7 +1236,9 @@ partial class SessionView
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                     this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 }
-                if (Math.Abs(distanceY) <= 5 || !smoothScrolling)
+                if (Math.Abs(distanceY) <= 5 
+                    || !smoothScrolling 
+                    || !this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseSmoothLogScrolling))
                 {
                     scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
