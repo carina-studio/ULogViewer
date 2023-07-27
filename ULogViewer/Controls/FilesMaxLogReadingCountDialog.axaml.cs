@@ -155,7 +155,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 	}
 
 
-	// Dialog opened.
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
@@ -165,10 +165,6 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 			this.SynchronizationContext.Post(this.Close);
 			return;
 		}
-		this.logReadingWindowComboBox.SelectedItem = this.InitialLogReadingWindow;
-		this.maxLogReadingCountTextBox.Maximum = maximum;
-		if (this.CanSpecifyMaxLogReadingCount)
-			this.maxLogReadingCountTextBox.Value = this.InitialMaxLogReadingCount?.Let(c => Math.Max(Math.Min(c, maximum), 1));
 		this.SynchronizationContext.Post(() =>
 		{
 			if (this.CanSpecifyMaxLogReadingCount)
@@ -177,6 +173,18 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 				this.maxLogReadingCountTextBox.SelectAll();
 			}
 		});
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
+		var maximum = this.MaxLogReadingCountOfLogProfile?.Let(c => Math.Min(int.MaxValue, c)) ?? int.MaxValue;
+		this.logReadingWindowComboBox.SelectedItem = this.InitialLogReadingWindow;
+		this.maxLogReadingCountTextBox.Maximum = maximum;
+		if (this.CanSpecifyMaxLogReadingCount)
+			this.maxLogReadingCountTextBox.Value = this.InitialMaxLogReadingCount?.Let(c => Math.Max(Math.Min(c, maximum), 1));
 	}
 
 

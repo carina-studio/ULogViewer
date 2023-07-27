@@ -88,10 +88,10 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-        // Window opened
-        protected override void OnOpened(EventArgs e)
+        /// <inheritdoc/>
+        protected override void OnOpening(EventArgs e)
         {
-            base.OnOpened(e);
+            base.OnOpening(e);
             var precondition = this.Precondition;
             if (!precondition.TimestampRange.IsUniversal)
             {

@@ -60,9 +60,16 @@ class LogWritingFormatEditorDialog : InputDialog
     protected override void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
+        this.SynchronizationContext.Post(() => this.formatTextBox.Focus());
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnOpening(EventArgs e)
+    {
+        base.OnOpening(e);
         if (!string.IsNullOrWhiteSpace(this.Format))
             this.formatTextBox.Text = this.Format;
-        this.SynchronizationContext.Post(() => this.formatTextBox.Focus());
     }
 
 

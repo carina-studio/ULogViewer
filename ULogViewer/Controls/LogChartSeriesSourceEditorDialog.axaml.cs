@@ -130,6 +130,14 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
+		this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
 		var source = this.Source;
 		if (source == null)
 		{
@@ -153,7 +161,6 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 			this.secondaryDisplayNameTextBox.Text = source.SecondaryPropertyDisplayName?.Trim();
 			this.valueScalingTextBox.Value = source.ValueScaling;
 		}
-		this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
 	}
 
 

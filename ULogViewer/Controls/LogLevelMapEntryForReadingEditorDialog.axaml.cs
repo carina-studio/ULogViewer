@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="KeyValuePair{String, LogLevel}"/>.
 	/// </summary>
-	partial class LogLevelMapEntryForReadingEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class LogLevelMapEntryForReadingEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ComboBox logLevelComboBox;
@@ -45,23 +46,30 @@ namespace CarinaStudio.ULogViewer.Controls
         private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		// Called when opened.
+        /// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
-			var entry = this.Entry;
-			if (entry == null)
-				this.logLevelComboBox.SelectedItem = LogLevel.Info;
-			else
-			{
-				this.logLevelComboBox.SelectedItem = entry.Value.Value;
-				this.textBox.Text = entry.Value.Key;
-			}
-			this.textBox.Focus();
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.textBox.Focus());
 		}
 
 
-		// Called when property of text box changed.
+        /// <inheritdoc/>
+        protected override void OnOpening(EventArgs e)
+        {
+	        base.OnOpening(e);
+	        var entry = this.Entry;
+	        if (entry == null)
+		        this.logLevelComboBox.SelectedItem = LogLevel.Info;
+	        else
+	        {
+		        this.logLevelComboBox.SelectedItem = entry.Value.Value;
+		        this.textBox.Text = entry.Value.Key;
+	        }
+        }
+
+
+        // Called when property of text box changed.
 		void OnTextBoxPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 		{
 			if (e.Property == TextBox.TextProperty)

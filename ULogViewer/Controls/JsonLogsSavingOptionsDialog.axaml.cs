@@ -167,17 +167,20 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	}
 
 
-	// Dialog opened.
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		var options = this.LogsSavingOptions;
-		if (options != null)
-		{
-			this.logPropertyMap.AddRange(options.LogPropertyMap);
-		}
-		else
+		if (this.LogsSavingOptions is null)
 			this.SynchronizationContext.Post(this.Close);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
+		this.LogsSavingOptions?.Let(it => this.logPropertyMap.AddRange(it.LogPropertyMap));
 	}
 
 

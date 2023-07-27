@@ -96,6 +96,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	readonly ToggleSwitch formatJsonDataSwitch;
 	readonly ToggleSwitch formatXmlDataSwitch;
 	readonly ToggleSwitch includeStderrSwitch;
+	Control? initFocusedControl;
 	readonly IPAddressTextBox ipAddressTextBox;
 	readonly ToggleSwitch isResourceOnAzureSwitch;
 	readonly TextBox passwordTextBox;
@@ -447,9 +448,26 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	}
 
 
-	// Called when opened.
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
+		// call base
+		base.OnOpened(e);
+		
+		// move focus to first editor
+		if (this.initFocusedControl is not null)
+			this.SynchronizationContext.Post(() => this.initFocusedControl.Focus());
+		else
+			this.SynchronizationContext.Post(this.Close);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		// call base
+		base.OnOpening(e);
+		
 		// remove last visible separator
 		this.Get<Panel>("itemsPanel").Let(it =>
 		{
@@ -472,26 +490,25 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		
 		// put options to control, must keep same order as controls in window
 		var options = this.Options;
-		var firstEditor = (Control?)null;
 		if (this.IsCategorySupported)
 		{
 			this.categoryTextBox.Text = options.Category;
-			firstEditor ??= this.categoryTextBox;
+			this.initFocusedControl ??= this.categoryTextBox;
 		}
 		if (this.IsCommandSupported)
 		{
 			this.commandTextBox.Text = options.Command;
-			firstEditor ??= this.commandTextBox;
+			this.initFocusedControl ??= this.commandTextBox;
 		}
 		if (this.GetValue(IsConnectionStringSupportedProperty))
 		{
 			this.connectionStringStringTextBox.Text = options.ConnectionString;
-			firstEditor ??= this.connectionStringStringTextBox;
+			this.initFocusedControl ??= this.connectionStringStringTextBox;
 		}
 		if (this.IsFileNameSupported)
 		{
 			this.fileNameTextBox.Text = options.FileName;
-			firstEditor ??= this.fileNameTextBox;
+			this.initFocusedControl ??= this.fileNameTextBox;
 		}
 		if (this.GetValue(IsFormatJsonDataSupportedProperty))
 			this.formatJsonDataSwitch.IsChecked = options.FormatJsonData;
@@ -502,7 +519,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		if (this.IsWorkingDirectorySupported)
 		{
 			this.workingDirectoryTextBox.Text = options.WorkingDirectory;
-			firstEditor ??= this.workingDirectoryTextBox;
+			this.initFocusedControl ??= this.workingDirectoryTextBox;
 		}
 		if (this.IsIPEndPointSupported)
 		{
@@ -511,59 +528,50 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 				this.ipAddressTextBox.Object = it.Address;
 				this.portTextBox.Value = it.Port;
 			});
-			firstEditor ??= this.ipAddressTextBox;
+			this.initFocusedControl ??= this.ipAddressTextBox;
 		}
 		if (this.GetValue(IsResourceOnAzureSupportedProperty))
 			this.isResourceOnAzureSwitch.IsChecked = options.IsResourceOnAzure;
 		if (this.IsUriSupported)
 		{
 			this.uriTextBox.Object = options.Uri;
-			firstEditor ??= this.uriTextBox;
+			this.initFocusedControl ??= this.uriTextBox;
 		}
 		if (this.IsEncodingSupported)
 		{
 			this.encodingComboBox.SelectedItem = options.Encoding ?? Encoding.UTF8;
-			firstEditor ??= this.encodingComboBox;
+			this.initFocusedControl ??= this.encodingComboBox;
 		}
 		if (this.IsQueryStringSupported)
 		{
 			this.queryStringTextBox.Text = options.QueryString;
-			firstEditor ??= this.queryStringTextBox;
+			this.initFocusedControl ??= this.queryStringTextBox;
 		}
 		if (this.IsUserNameSupported)
 		{
 			this.userNameTextBox.Text = options.UserName;
-			firstEditor ??= this.userNameTextBox;
+			this.initFocusedControl ??= this.userNameTextBox;
 		}
 		if (this.IsPasswordSupported)
 		{
 			this.passwordTextBox.Text = options.Password;
-			firstEditor ??= this.passwordTextBox;
+			this.initFocusedControl ??= this.passwordTextBox;
 		}
 		if (this.IsSetupCommandsSupported)
 		{
 			this.setupCommands.AddRange(options.SetupCommands);
-			firstEditor ??= this.setupCommandsListBox;
+			this.initFocusedControl ??= this.setupCommandsListBox;
 		}
 		if (this.GetValue(IsUseTextShellSupportedProperty))
 		{
 			this.useTextShellSwitch.IsChecked = options.UseTextShell;
-			firstEditor ??= this.useTextShellSwitch;
+			this.initFocusedControl ??= this.useTextShellSwitch;
 		}
 		if (this.IsTeardownCommandsSupported)
 		{
 			this.teardownCommands.AddRange(options.TeardownCommands);
-			firstEditor ??= this.teardownCommandsListBox;
+			this.initFocusedControl ??= this.teardownCommandsListBox;
 		}
-
-		// move focus to first editor
-		if (firstEditor != null)
-			this.SynchronizationContext.Post(() => firstEditor.Focus());
-		else
-			this.SynchronizationContext.Post(this.Close);
-
-		// call base
-		base.OnOpened(e);
 	}
 
 

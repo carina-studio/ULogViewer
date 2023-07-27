@@ -60,19 +60,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			var logPattern = this.LogPattern;
-			if (logPattern != null)
-			{
-				this.descriptionTextBox.Text = logPattern.Description?.Trim();
-				this.patternEditor.Pattern = logPattern.Regex;
-				this.repeatableSwitch.IsChecked = logPattern.IsRepeatable;
-				this.skippableSwitch.IsChecked = logPattern.IsSkippable;
-			}
 			this.SynchronizationContext.Post(() =>
 			{
 				var presenter = this.TutorialPresenter;
 				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.patternEditor))
 					this.patternEditor.Focus();
+			});
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
+			this.LogPattern?.Let(it =>
+			{
+				this.descriptionTextBox.Text = it.Description?.Trim();
+				this.patternEditor.Pattern = it.Regex;
+				this.repeatableSwitch.IsChecked = it.IsRepeatable;
+				this.skippableSwitch.IsChecked = it.IsSkippable;
 			});
 		}
 

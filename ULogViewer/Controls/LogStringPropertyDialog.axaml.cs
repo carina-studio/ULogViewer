@@ -182,17 +182,24 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.findTextTextBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			this.propertyValueTextBox.Text = this.LogPropertyName.Let(_ =>
 			{
 				var value = "";
 				this.Log?.TryGetProperty(this.LogPropertyName, out value);
 				return value;
 			});
-			this.SynchronizationContext.Post(() => this.findTextTextBox.Focus());
 		}
 
 

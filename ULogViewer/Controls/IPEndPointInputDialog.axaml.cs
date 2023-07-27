@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
     /// <summary>
     /// Dialog to let user input an <see cref="IPEndPoint"/>.
     /// </summary>
-    partial class IPEndPointInputDialog : AppSuite.Controls.InputDialog
+    class IPEndPointInputDialog : AppSuite.Controls.InputDialog
     {
         // Fields.
         readonly IPAddressTextBox ipAddressTextBox;
@@ -45,20 +45,27 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-        // Window opened
+        /// <inheritdoc/>
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            this.InitialIPEndPoint?.Let(it =>
-            {
-                this.ipAddressTextBox.Object = it.Address;
-                this.portTextBox.Value = it.Port;
-            });
             this.SynchronizationContext.Post(_ =>
             {
                 this.ipAddressTextBox.SelectAll();
                 this.ipAddressTextBox.Focus();
             }, null);
+        }
+
+
+        /// <inheritdoc/>
+        protected override void OnOpening(EventArgs e)
+        {
+            base.OnOpening(e);
+            this.InitialIPEndPoint?.Let(it =>
+            {
+                this.ipAddressTextBox.Object = it.Address;
+                this.portTextBox.Value = it.Port;
+            });
         }
 
 

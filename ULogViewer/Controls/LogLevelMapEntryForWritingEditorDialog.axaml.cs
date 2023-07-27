@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="KeyValuePair{LogLevel, String}"/>.
 	/// </summary>
-	partial class LogLevelMapEntryForWritingEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class LogLevelMapEntryForWritingEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ComboBox logLevelComboBox;
@@ -45,19 +46,26 @@ namespace CarinaStudio.ULogViewer.Controls
 		private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
+			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.logLevelComboBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			var entry = this.Entry;
-			if (entry == null)
+			if (entry is null)
 				this.logLevelComboBox.SelectedItem = LogLevel.Undefined;
 			else
 			{
 				this.logLevelComboBox.SelectedItem = entry.Value.Key;
 				this.textBox.Text = entry.Value.Value;
 			}
-			this.logLevelComboBox.Focus();
-			base.OnOpened(e);
 		}
 
 

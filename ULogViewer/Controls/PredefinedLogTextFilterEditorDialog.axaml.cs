@@ -194,30 +194,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			var filter = this.editingFilter;
-			if (filter == null)
-			{
-				this.Bind(TitleProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Title.Create"));
-				this.patternEditor.Pattern = this.initialPattern;
-			}
-			else
-			{
-				this.Bind(TitleProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Title.Edit"));
-				this.groupNameTextBox.Text = filter.GroupName;
-				this.nameTextBox.Text = filter.Name;
-				this.patternEditor.Pattern = filter.Regex;
-			}
-			PredefinedLogTextFilterManager.Default.Groups.Let(groups =>
-			{
-				if (groups is INotifyCollectionChanged notifyCollectionChanged)
-					notifyCollectionChanged.CollectionChanged += this.OnFilterGroupsChanged;
-				foreach (var group in groups)
-					this.groupMenuItems.Add(this.CreateGroupMenuItem(group));
-			});
 			this.SynchronizationContext.Post(() =>
 			{
 				var presenter = this.TutorialPresenter;
@@ -249,6 +229,33 @@ namespace CarinaStudio.ULogViewer.Controls
 						return;
 				}
 				this.nameTextBox.Focus();
+			});
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
+			var filter = this.editingFilter;
+			if (filter is null)
+			{
+				this.Bind(TitleProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Title.Create"));
+				this.patternEditor.Pattern = this.initialPattern;
+			}
+			else
+			{
+				this.Bind(TitleProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Title.Edit"));
+				this.groupNameTextBox.Text = filter.GroupName;
+				this.nameTextBox.Text = filter.Name;
+				this.patternEditor.Pattern = filter.Regex;
+			}
+			PredefinedLogTextFilterManager.Default.Groups.Let(groups =>
+			{
+				if (groups is INotifyCollectionChanged notifyCollectionChanged)
+					notifyCollectionChanged.CollectionChanged += this.OnFilterGroupsChanged;
+				foreach (var group in groups)
+					this.groupMenuItems.Add(this.CreateGroupMenuItem(group));
 			});
 		}
 

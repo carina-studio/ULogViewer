@@ -432,7 +432,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			// attach to product manager
@@ -459,6 +459,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				else
 					this.Close();
 			});
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
+			this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
 		}
 
 

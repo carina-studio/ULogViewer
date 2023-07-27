@@ -12,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
     /// <summary>
     /// Dialog to select <see cref="DateTime"/>.
     /// </summary>
-    partial class DateTimeSelectionDialog : AppSuite.Controls.InputDialog
+    class DateTimeSelectionDialog : AppSuite.Controls.InputDialog
     {
         // Fields.
         readonly DateTimeTextBox dateTimeTextBox;
@@ -61,20 +61,27 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-        // Dialog opened.
+        /// <inheritdoc/>
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            this.FindControl<Avalonia.Controls.TextBlock>("messageTextBlock").AsNonNull().Text = this.Message ?? " ";
-            this.InitialDateTime?.Let(it =>
-            {
-                this.dateTimeTextBox.Value = it;
-            });
             this.SynchronizationContext.Post(_ =>
             {
                 this.dateTimeTextBox.Focus();
                 this.dateTimeTextBox.SelectAll();
             }, null);
+        }
+
+
+        /// <inheritdoc/>
+        protected override void OnOpening(EventArgs e)
+        {
+            base.OnOpening(e);
+            this.FindControl<Avalonia.Controls.TextBlock>("messageTextBlock").AsNonNull().Text = this.Message ?? " ";
+            this.InitialDateTime?.Let(it =>
+            {
+                this.dateTimeTextBox.Value = it;
+            });
         }
 
 
