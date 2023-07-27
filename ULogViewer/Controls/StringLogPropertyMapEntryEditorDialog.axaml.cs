@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -11,7 +12,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit entry of log property (<see cref="KeyValuePair{String, String}"/>).
 	/// </summary>
-	partial class StringLogPropertyMapEntryEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class StringLogPropertyMapEntryEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly TextBox mappedNameTextBox;
@@ -52,16 +53,23 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			var entry = this.Entry;
 			this.nameComboBox.SelectedItem = entry.Key;
 			if (this.nameComboBox.SelectedIndex < 0)
 				this.nameComboBox.SelectedItem = nameof(Logs.Log.Message);
 			this.mappedNameTextBox.Text = entry.Value;
-			this.nameComboBox.Focus();
 		}
 
 

@@ -98,12 +98,20 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 	}
 
 
-	// Called when opened.
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
+		this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
 		var property = this.LogProperty;
-		if (property == null)
+		if (property is null)
 		{
 			this.displayNameComboBox.SelectedItem = nameof(Log.Message);
 			this.isDisplayNameSameAsName = true;
@@ -132,6 +140,5 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 				this.widthTextBox.Value = it ?? 100;
 			});
 		}
-		this.SynchronizationContext.Post(() => this.nameComboBox.Focus());
 	}
 }

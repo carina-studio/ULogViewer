@@ -62,16 +62,23 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-        // Window opened
+        /// <inheritdoc/>
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            this.uriTextBox.Object = this.InitialUri;
             this.SynchronizationContext.Post(_ =>
             {
                 this.uriTextBox.SelectAll();
                 this.uriTextBox.Focus();
             }, null);
+        }
+
+
+        /// <inheritdoc/>
+        protected override void OnOpening(EventArgs e)
+        {
+            base.OnOpening(e);
+            this.uriTextBox.Object = this.InitialUri;
         }
 
 

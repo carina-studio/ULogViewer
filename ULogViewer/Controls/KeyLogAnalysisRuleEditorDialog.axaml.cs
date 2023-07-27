@@ -98,8 +98,21 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
+		this.SynchronizationContext.Post(() =>
+		{
+			var presenter = this.TutorialPresenter;
+			if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.patternEditor))
+				this.patternEditor.Focus();
+		});
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
 		var rule = this.Rule;
-		if (rule == null)
+		if (rule is null)
 		{
 			this.byteSizeUnitComboBox.SelectedItem = default(IO.FileSizeUnit);
 			this.durationUnitComboBox.SelectedItem = default(TimeSpanUnit);
@@ -119,12 +132,6 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 			this.quantityVarNameTextBox.Text = rule.QuantityVariableName;
 			this.resultTypeComboBox.SelectedItem = rule.ResultType;
 		}
-		this.SynchronizationContext.Post(() =>
-		{
-			var presenter = this.TutorialPresenter;
-			if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.patternEditor))
-				this.patternEditor.Focus();
-		});
 	}
 
 

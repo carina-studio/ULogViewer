@@ -71,12 +71,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Dialog opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() =>
+			{
+				var presenter = this.TutorialPresenter;
+				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
+					this.operationNameTextBox.Focus();
+			});
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			var rule = this.Rule;
-			if (rule != null)
+			if (rule is not null)
 			{
 				this.conditions.AddAll(rule.Conditions);
 				this.intervalTextBox.Value = rule.Interval;
@@ -91,12 +104,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
 				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Frequency;
 			}
-			this.SynchronizationContext.Post(() =>
-			{
-				var presenter = this.TutorialPresenter;
-				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
-					this.operationNameTextBox.Focus();
-			});
 		}
 
 

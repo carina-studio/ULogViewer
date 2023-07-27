@@ -73,17 +73,24 @@ namespace CarinaStudio.ULogViewer.Controls
         }
 
 
-        // Dialog opened.
+        /// <inheritdoc/>
         protected override void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            this.formatTextBox.Text = this.InitialFormat;
-            this.updateSampleResultAction.Execute();
             this.SynchronizationContext.Post(_ =>
             {
                 this.formatTextBox.Focus();
                 this.formatTextBox.SelectAll();
             }, null);
+        }
+
+
+        /// <inheritdoc/>
+        protected override void OnOpening(EventArgs e)
+        {
+            base.OnOpening(e);
+            this.formatTextBox.Text = this.InitialFormat;
+            this.updateSampleResultAction.Execute();
         }
 
 

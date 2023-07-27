@@ -54,8 +54,15 @@ class TextShellCommandInputDialog : InputDialog
     protected override void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        this.commandTextBox.Text = this.InitialCommand;
         this.SynchronizationContext.Post(() => this.commandTextBox.Focus());
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnOpening(EventArgs e)
+    {
+        base.OnOpening(e);
+        this.commandTextBox.Text = this.InitialCommand;
     }
 
 

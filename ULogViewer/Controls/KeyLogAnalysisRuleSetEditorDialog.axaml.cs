@@ -5,7 +5,6 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
@@ -63,8 +62,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 			{
 				this.SynchronizationContext.Post(() =>
 				{
-					it.SelectedItem?.Let(item =>
-						it.ScrollIntoView(item));
+					it.SelectedItem?.Let(it.ScrollIntoView);
 				});
 			};
 		});
@@ -229,20 +227,21 @@ class KeyLogAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
+		this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
 		var ruleSet = this.editingRuleSet;
-		if (ruleSet != null)
+		if (ruleSet is not null)
 		{
 			this.iconColorComboBox.SelectedItem = ruleSet.IconColor;
 			this.iconComboBox.SelectedItem = ruleSet.Icon;
 			this.nameTextBox.Text = ruleSet.Name;
 			this.rules.AddRange(ruleSet.Rules);
-			// [Workaround] Prevent wrong initial position because of ListBox which shows rules
-			void OnLayoutUpdated(object? sender, EventArgs e)
-			{
-				this.LayoutUpdated -= OnLayoutUpdated;
-				this.MoveToCenterOfOwner();
-			}
-			this.LayoutUpdated += OnLayoutUpdated; 
 		}
 		else
 		{
@@ -277,7 +276,6 @@ class KeyLogAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 			}
 		}
 		this.validateParametersAction.Execute();
-		this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
 	}
 
 

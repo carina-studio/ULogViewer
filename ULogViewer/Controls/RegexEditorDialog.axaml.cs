@@ -139,10 +139,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.regexTextBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			var testLogLineDescriptionTextBlock = this.Get<TextBlock>("testLogLineDescriptionTextBlock");
 			if (this.IsCapturingGroupsEnabled)
 			{
@@ -182,7 +190,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.regexTextBox.IgnoreCase = this.IgnoreCase ?? true;
-			this.SynchronizationContext.Post(() => this.regexTextBox.Focus());
 		}
 
 

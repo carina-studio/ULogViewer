@@ -5,7 +5,6 @@ using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
@@ -66,7 +65,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.rules.CollectionChanged += (_, _) => this.validateParametersAction!.Schedule();
 			this.validateParametersAction = new(() =>
 			{
-				this.SetValue<bool>(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
+				this.SetValue(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
 			});
 		}
 
@@ -199,24 +198,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Dialog opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			var ruleSet = this.ruleSet;
-			if (ruleSet != null)
+			if (ruleSet is not null)
 			{
 				this.iconColorComboBox.SelectedItem = ruleSet.IconColor;
 				this.iconComboBox.SelectedItem = ruleSet.Icon;
 				this.nameTextBox.Text = ruleSet.Name;
 				this.rules.AddAll(ruleSet.Rules);
-				// [Workaround] Prevent wrong initial position because of ListBox which shows rules
-				void OnLayoutUpdated(object? sender, EventArgs e)
-				{
-					this.LayoutUpdated -= OnLayoutUpdated;
-					this.MoveToCenterOfOwner();
-				};
-				this.LayoutUpdated += OnLayoutUpdated; 
 			}
 			else
 			{
@@ -251,7 +251,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 			this.validateParametersAction.Schedule();
-			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
 		}
 
 
