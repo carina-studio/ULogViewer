@@ -9,9 +9,7 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CarinaStudio.AppSuite.Data;
@@ -24,11 +22,6 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
 {
-	// Constants.
-	const int InitSizeSetDelay = 100;
-	const int InitSizeSetTimeout = 1000;
-
-
 	// Static fields.
 	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>(nameof(AreValidParameters), d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
@@ -38,16 +31,11 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 
 	// Fields.
 	bool areValidParameters;
-	readonly ScheduledAction completeSettingInitSizeAction;
 	readonly ToggleSwitch contextBasedToggleSwitch;
-	Size? expectedInitSize;
 	string? fileNameToSave;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
-	readonly IDisposable initBoundsObserverToken;
-	readonly IDisposable initHeightObserverToken;
-	readonly Stopwatch initSizeSetStopWatch = new();
-	readonly IDisposable initWidthObserverToken;
+	bool isScriptSetShown;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	readonly ScheduledAction validateParametersAction;
@@ -63,36 +51,9 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
-		this.completeSettingInitSizeAction = new(() =>
-		{
-			if (!this.expectedInitSize.HasValue)
-				return;
-			var expectedSize = this.expectedInitSize.Value;
-			if (this.IsOpened && this.initSizeSetStopWatch.ElapsedMilliseconds <= InitSizeSetTimeout)
-			{
-				if (Math.Abs(this.Bounds.Width - expectedSize.Width) > 10
-					|| Math.Abs(this.Bounds.Height - expectedSize.Height) > 10)
-				{
-					this.completeSettingInitSizeAction!.Schedule(InitSizeSetDelay);
-					return;
-				}
-			}
-			this.initSizeSetStopWatch.Stop();
-			this.initBoundsObserverToken!.Dispose();
-			this.initHeightObserverToken!.Dispose();
-			this.initWidthObserverToken!.Dispose();
-			this.OnInitialSizeSet();
-		});
 		this.contextBasedToggleSwitch = this.Get<ToggleSwitch>(nameof(contextBasedToggleSwitch));
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
-		this.initBoundsObserverToken = this.GetObservable(BoundsProperty).Subscribe(bounds =>
-		{
-			this.OnInitialWidthChanged(bounds.Width);
-			this.OnInitialHeightChanged(bounds.Height);
-		});
-		this.initHeightObserverToken = this.GetObservable(HeightProperty).Subscribe(this.OnInitialHeightChanged);
-		this.initWidthObserverToken = this.GetObservable(WidthProperty).Subscribe(this.OnInitialWidthChanged);
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
@@ -200,38 +161,46 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 		{
 			Dialogs.Remove(this.scriptSetToEdit);
 		}
-		this.completeSettingInitSizeAction.ExecuteIfScheduled();
 		base.OnClosed(e);
 	}
 
 
-	// Called when initial height of window changed.
-	void OnInitialHeightChanged(double height)
+	/// <inheritdoc/>
+	protected override void OnFirstMeasurementCompleted(Size measuredSize)
 	{
-		if (!this.IsOpened || !this.expectedInitSize.HasValue)
-			return;
-		var expectedHeight = this.expectedInitSize.Value.Height;
-		if (Math.Abs(expectedHeight - height) <= 1 && Math.Abs(expectedHeight - this.Bounds.Height) <= 1)
-			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
-		else
+		// call base
+		base.OnFirstMeasurementCompleted(measuredSize);
+		
+		// setup initial window size and position
+		(this.Screens.ScreenFromWindow(this) ?? this.Screens.Primary)?.Let(screen =>
 		{
-			this.Height = expectedHeight;
-			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
-		}
+			var workingArea = screen.WorkingArea;
+			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
+			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
+			var scaling = screen.Scaling;
+			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2); // in device pixels
+			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
+			var sysDecorSize = this.GetSystemDecorationSizes();
+			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
+			this.Width = (workingArea.Width * widthRatio) / scaling;
+			this.Height = ((workingArea.Height * heightRatio) / scaling) - sysDecorSize.Top - sysDecorSize.Bottom;
+		});
 	}
 
 
-	// Called when initial size of window has been set.
-	async void OnInitialSizeSet()
+	/// <inheritdoc/>
+	protected override async void OnOpened(EventArgs e)
 	{
-		if (this.IsClosed)
-			return;
+		// call base
+		base.OnOpened(e);
+		
+		// check number of script
 		if (this.scriptSetToEdit == null
-			&& !this.Application.ProductManager.IsProductActivated(Products.Professional))
+		    && !this.Application.ProductManager.IsProductActivated(Products.Professional))
 		{
 			if (!LogAnalysisScriptSetManager.Default.CanAddScriptSet)
 			{
-				await new MessageDialog()
+				await new MessageDialog
 				{
 					Icon = MessageDialogIcon.Warning,
 					Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
@@ -242,7 +211,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 			}
 			if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
 			{
-				var messageDialog = new MessageDialog()
+				var messageDialog = new MessageDialog
 				{
 					DoNotAskOrShowAgain = false,
 					Icon = MessageDialogIcon.Information,
@@ -253,56 +222,24 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 					this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
 			}
 		}
+		
+		// enable running script
 		await this.RequestEnablingRunningScriptAsync();
-		this.nameTextBox.Focus();
-	}
 
-
-	// Called when initial width of window changed.
-	void OnInitialWidthChanged(double width)
-	{
-		if (!this.IsOpened || !this.expectedInitSize.HasValue)
-			return;
-		var expectedWidth = this.expectedInitSize.Value.Width;
-		if (Math.Abs(expectedWidth - width) <= 1 && Math.Abs(expectedWidth - this.Bounds.Width) <= 1)
-			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
-		else
+		// setup initial focus
+		this.SynchronizationContext.Post(() =>
 		{
-			this.Width = expectedWidth;
-			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
-		}
+			this.nameTextBox.Focus();
+		});
 	}
 
 
 	/// <inheritdoc/>
-	protected override void OnOpened(EventArgs e)
+	protected override void OnOpening(EventArgs e)
 	{
 		// call base
-		base.OnOpened(e);
-
-		// setup initial window size and position
-		this.initSizeSetStopWatch.Start();
-		(this.Screens.ScreenFromWindow(this) ?? this.Screens.Primary)?.Let(screen =>
-		{
-			var workingArea = screen.WorkingArea;
-			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
-			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
-			var scaling = Platform.IsMacOS ? 1.0 : screen.Scaling;
-			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2); // in device pixels
-			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
-			var width = (workingArea.Width * widthRatio) / scaling;
-			var height = (workingArea.Height * heightRatio) / scaling;
-			var sysDecorSize = this.GetSystemDecorationSizes();
-			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
-			this.expectedInitSize = new Size(width, height - sysDecorSize.Top - sysDecorSize.Bottom);
-			this.expectedInitSize.Value.Let(it =>
-			{
-				this.Width = it.Width;
-				this.Height = it.Height;
-			});
-		});
-		this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
-
+		base.OnOpening(e);
+		
 		// show script
 		var scriptSet = this.scriptSetToEdit;
 		if (scriptSet != null)
@@ -320,17 +257,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
 			this.contextBasedToggleSwitch.IsChecked = true;
 		}
-
-		// setup initial focus
-		var scrollViewer = this.Get<ScrollViewer>("contentScrollViewer");
-		(scrollViewer.Content as Control)?.Let(it => it.Opacity = 0);
-		this.SynchronizationContext.Post(() =>
-		{
-			scrollViewer.ScrollToHome();
-			if (!this.IsEmbeddedScriptSet)
-				this.nameTextBox.Focus();
-			(scrollViewer.Content as Control)?.Let(it => it.Opacity = 1);
-		});
+		this.isScriptSetShown = true;
 	}
 
 

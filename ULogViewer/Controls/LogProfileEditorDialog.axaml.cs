@@ -1299,9 +1299,69 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.ProductStateChanged += this.OnProductStateChanged;
 			});
 
-			// setup initial state and focus
+			// close if profile is built-in
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile?.IsBuiltIn == true)
+				this.SynchronizationContext.Post(this.Close);
+
+			// call base
+			base.OnOpened(e);
+
+			// show hint of 'learn about logs reading and parsing'
+			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
+			{
+				var result = await new MessageDialog
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					Icon = MessageDialogIcon.Question,
+					Message = this.GetResourceObservable("String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
+					Title = this.GetObservable(TitleProperty),
+				}.ShowDialog(this);
+				if (this.IsOpened)
+				{
+					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
+					if (result == MessageDialogResult.Yes)
+						Platform.OpenLink(LogsReadingAndParsingPageUri);
+					else
+						this.nameTextBox.Focus();
+				}
+			}
+
+			// setup initial focus
+			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
+			
+			// check Pro-version only parameters
+			if ((this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider)?.IsProVersionOnly == true
+			    && !this.Application.ProductManager.IsProductActivated(Products.Professional))
+			{
+				await new MessageDialog
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = profile?.Name;
+						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams"));
+					}),
+				}.ShowDialog(this);
+				await Task.Delay(300); // [Workaround] Prevent crashing when closing two windows immediately on macOS
+				if (!this.IsClosed)
+					this.Close();
+			}
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			// call base
+			base.OnOpening(e);
+			
+			// check Pro-version
+			this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
+
+			// setup initial state
+			var profile = this.LogProfile;
+			if (profile is null)
 			{
 				this.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.Title.Create"));
 				this.allowMultipleFilesSwitch.IsChecked = true;
@@ -1359,56 +1419,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.visibleLogProperties.AddRange(profile.VisibleLogProperties);
 				this.workingDirNeededSwitch.IsChecked = profile.IsWorkingDirectoryNeeded;
 			}
-			else
-				this.SynchronizationContext.Post(this.Close);
 			
 			// update state
 			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet != null);
 			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, this.embeddedScriptLogDataSourceProvider != null);
-
-			// call base
-			base.OnOpened(e);
-
-			// show hint of 'learn about logs reading and parsing'
-			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
-			{
-				var result = await new MessageDialog
-				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Question,
-					Message = this.GetResourceObservable("String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst"),
-					Title = this.GetObservable(TitleProperty),
-				}.ShowDialog(this);
-				if (this.IsOpened)
-				{
-					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
-					if (result == MessageDialogResult.Yes)
-						Platform.OpenLink(LogsReadingAndParsingPageUri);
-					else
-						this.nameTextBox.Focus();
-				}
-			}
-
-			// setup initial focus
-			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
-			
-			// check Pro-version only parameters
-			if ((this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider)?.IsProVersionOnly == true
-			    && !this.Application.ProductManager.IsProductActivated(Products.Professional))
-			{
-				await new MessageDialog
-				{
-					Icon = MessageDialogIcon.Error,
-					Message = new FormattedString().Also(it =>
-					{
-						it.Arg1 = profile?.Name;
-						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams"));
-					}),
-				}.ShowDialog(this);
-				await Task.Delay(300); // [Workaround] Prevent crashing when closing two windows immediately on macOS
-				if (!this.IsClosed)
-					this.Close();
-			}
 		}
 
 

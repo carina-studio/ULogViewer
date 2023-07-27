@@ -47,17 +47,23 @@ namespace CarinaStudio.ULogViewer.Controls
 			Task.FromResult<object?>(new PopToVariableAction(this.stackTextBox.Text.AsNonNull().Trim(), this.varTextBox.Text.AsNonNull().Trim()));
 
 
-		// Dialog opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			var action = this.Action;
-			if (action != null)
-			{
-				this.stackTextBox.Text = action.Stack;
-				this.varTextBox.Text = action.Variable;
-			}
 			this.SynchronizationContext.Post(() => this.stackTextBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
+			this.Action?.Let(it =>
+			{
+				this.stackTextBox.Text = it.Stack;
+				this.varTextBox.Text = it.Variable;
+			});
 		}
 
 

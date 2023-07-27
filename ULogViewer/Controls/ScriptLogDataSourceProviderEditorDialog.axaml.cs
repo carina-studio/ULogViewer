@@ -11,7 +11,6 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -64,11 +63,6 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	}
 
 
-	// Constants.
-	const int InitSizeSetDelay = 100;
-	const int InitSizeSetTimeout = 1000;
-
-
 	// Static fields.
 	static readonly StyledProperty<bool> IsEmbeddedProviderProperty = AvaloniaProperty.Register<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(IsEmbeddedProvider));
 
@@ -76,13 +70,11 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	// Fields.
 	readonly ToggleButton addSupportedSourceOptionButton;
 	readonly ContextMenu addSupportedSourceOptionMenu;
-	readonly ScheduledAction completeSettingInitSizeAction;
+	Uri? closingReaderScriptDocumentUri;
 	readonly TextBox displayNameTextBox;
-	Size? expectedInitSize;
-	readonly IDisposable initBoundsObserverToken;
-	readonly IDisposable initHeightObserverToken;
-	readonly Stopwatch initSizeSetStopWatch = new();
-	readonly IDisposable initWidthObserverToken;
+	bool isProviderShown;
+	Uri? openingReaderScriptDocumentUri;
+	Uri? readingLineScriptDocumentUri;
 	readonly Avalonia.Controls.ListBox supportedSourceOptionListBox;
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<MenuItem> unsupportedSourceOptionMenuItems = new((lhs, rhs) => string.Compare(lhs.DataContext as string, rhs.DataContext as string, true, CultureInfo.InvariantCulture));
@@ -111,37 +103,10 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 				this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = true);
 			};
 		});
-		this.completeSettingInitSizeAction = new(() =>
-		{
-			if (!this.expectedInitSize.HasValue)
-				return;
-			var expectedSize = this.expectedInitSize.Value;
-			if (this.IsOpened && this.initSizeSetStopWatch.ElapsedMilliseconds <= InitSizeSetTimeout)
-			{
-				if (Math.Abs(this.Bounds.Width - expectedSize.Width) > 10
-					|| Math.Abs(this.Bounds.Height - expectedSize.Height) > 10)
-				{
-					this.completeSettingInitSizeAction!.Schedule(InitSizeSetDelay);
-					return;
-				}
-			}
-			this.initSizeSetStopWatch.Stop();
-			this.initBoundsObserverToken!.Dispose();
-			this.initHeightObserverToken!.Dispose();
-			this.initWidthObserverToken!.Dispose();
-			this.OnInitialSizeSet();
-		});
 		this.displayNameTextBox = this.Get<TextBox>(nameof(displayNameTextBox)).Also(it =>
 		{
 			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 		});
-		this.initBoundsObserverToken = this.GetObservable(BoundsProperty).Subscribe(bounds =>
-		{
-			this.OnInitialWidthChanged(bounds.Width);
-			this.OnInitialHeightChanged(bounds.Height);
-		});
-		this.initHeightObserverToken = this.GetObservable(HeightProperty).Subscribe(this.OnInitialHeightChanged);
-		this.initWidthObserverToken = this.GetObservable(WidthProperty).Subscribe(this.OnInitialWidthChanged);
 		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox));
 	}
 
@@ -206,83 +171,54 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 
 
 	/// <inheritdoc/>
-	protected override void OnClosed(EventArgs e)
-	{
-		this.completeSettingInitSizeAction.ExecuteIfScheduled();
-		base.OnClosed(e);
-	}
-
-
-	// Called when initial height of window changed.
-	void OnInitialHeightChanged(double height)
-	{
-		if (!this.IsOpened || !this.expectedInitSize.HasValue)
-			return;
-		var expectedHeight = this.expectedInitSize.Value.Height;
-		if (Math.Abs(expectedHeight - height) <= 1 && Math.Abs(expectedHeight - this.Bounds.Height) <= 1)
-			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
-		else
-		{
-			this.Height = expectedHeight;
-			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
-		}
-	}
-
-
-	// Called when initial size of window has been set.
-	async void OnInitialSizeSet()
-	{
-		if (this.IsClosed)
-			return;
-		await this.RequestEnablingRunningScriptAsync();
-		this.displayNameTextBox.Focus();
-	}
-
-
-	// Called when initial width of window changed.
-	void OnInitialWidthChanged(double width)
-	{
-		if (!this.IsOpened || !this.expectedInitSize.HasValue)
-			return;
-		var expectedWidth = this.expectedInitSize.Value.Width;
-		if (Math.Abs(expectedWidth - width) <= 1 && Math.Abs(expectedWidth - this.Bounds.Width) <= 1)
-			this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
-		else
-		{
-			this.Width = expectedWidth;
-			this.completeSettingInitSizeAction.Reschedule(InitSizeSetDelay);
-		}
-	}
-
-
-	/// <inheritdoc/>
-	protected override void OnOpened(EventArgs e)
+	protected override void OnFirstMeasurementCompleted(Size measuredSize)
 	{
 		// call base
-		base.OnOpened(e);
-
+		base.OnFirstMeasurementCompleted(measuredSize);
+		
 		// setup initial window size and position
 		(this.Screens.ScreenFromWindow(this) ?? this.Screens.Primary)?.Let(screen =>
 		{
 			var workingArea = screen.WorkingArea;
 			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
 			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
-			var scaling = Platform.IsMacOS ? 1.0 : screen.Scaling;
+			var scaling = screen.Scaling;
 			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2); // in device pixels
 			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
-			var width = (workingArea.Width * widthRatio) / scaling;
-			var height = (workingArea.Height * heightRatio) / scaling;
 			var sysDecorSize = this.GetSystemDecorationSizes();
 			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
-			this.expectedInitSize = new(width, height - sysDecorSize.Top - sysDecorSize.Bottom);
-			this.expectedInitSize.Value.Let(it =>
-			{
-				this.Width = it.Width;
-				this.Height = it.Height;
-			});
+			this.Width = (workingArea.Width * widthRatio) / scaling;
+			this.Height = ((workingArea.Height * heightRatio) / scaling) - sysDecorSize.Top - sysDecorSize.Bottom;
 		});
-		this.completeSettingInitSizeAction.Schedule(InitSizeSetDelay);
+	}
 
+
+	/// <inheritdoc/>
+	protected override async void OnOpened(EventArgs e)
+	{
+		// call base
+		base.OnOpened(e);
+		
+		// request running script
+		await this.RequestEnablingRunningScriptAsync();
+
+		// setup initial focus
+		this.SynchronizationContext.Post(() =>
+		{
+			if (this.IsEmbeddedProvider)
+				this.supportedSourceOptionListBox.Focus();
+			else
+				this.displayNameTextBox.Focus();
+		});
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		// call base
+		base.OnOpening(e);
+		
 		// show provider
 		var provider = this.Provider;
 		if (provider != null)
@@ -297,19 +233,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 		}
 		foreach (var option in this.unsupportedSourceOptions)
 			this.unsupportedSourceOptionMenuItems.Add(this.CreateUnsupportedSourceOptionMenuItem(option));
-
-		// setup initial focus
-		var scrollViewer = this.Get<ScrollViewer>("contentScrollViewer");
-		(scrollViewer.Content as Control)?.Let(it => it.Opacity = 0);
-		this.SynchronizationContext.Post(() =>
-		{
-			scrollViewer.ScrollToHome();
-			if (this.IsEmbeddedProvider)
-				this.supportedSourceOptionListBox.Focus();
-			else
-				this.displayNameTextBox.Focus();
-			(scrollViewer.Content as Control)?.Let(it => it.Opacity = 1);
-		});
+		this.isProviderShown = true;
 	}
 
 

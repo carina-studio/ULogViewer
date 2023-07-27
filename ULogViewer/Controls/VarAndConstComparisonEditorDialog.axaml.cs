@@ -52,10 +52,18 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Dialog opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
+			this.SynchronizationContext.Post(() => this.varTextBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
 			var condition = this.Condition;
 			if (condition != null)
 			{
@@ -65,7 +73,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else
 				this.comparisonTypeComboBox.SelectedItem = ComparisonType.Equivalent;
-			this.SynchronizationContext.Post(() => this.varTextBox.Focus());
 		}
 
 

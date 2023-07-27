@@ -47,17 +47,23 @@ class CopyVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication
 		Task.FromResult<object?>(new CopyVariableAction(this.sourceVarTextBox.Text.AsNonNull().Trim(), this.targetVarTextBox.Text.AsNonNull().Trim()));
 
 
-	// Dialog opened.
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		var action = this.Action;
-		if (action != null)
-		{
-			this.sourceVarTextBox.Text = action.SourceVariable.Trim();
-			this.targetVarTextBox.Text = action.TargetVariable.Trim();
-		}
 		this.SynchronizationContext.Post(() => this.sourceVarTextBox.Focus());
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
+		this.Action?.Let(it =>
+		{
+			this.sourceVarTextBox.Text = it.SourceVariable.Trim();
+			this.targetVarTextBox.Text = it.TargetVariable.Trim();
+		});
 	}
 
 

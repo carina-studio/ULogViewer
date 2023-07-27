@@ -47,17 +47,23 @@ namespace CarinaStudio.ULogViewer.Controls
 			Task.FromResult<object?>(new DequeueToVariableAction(this.queueTextBox.Text.AsNonNull().Trim(), this.varTextBox.Text.AsNonNull().Trim()));
 
 
-		// Dialog opened.
+		/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
-			var action = this.Action;
-			if (action != null)
-			{
-				this.queueTextBox.Text = action.Queue;
-				this.varTextBox.Text = action.Variable;
-			}
 			this.SynchronizationContext.Post(() => this.queueTextBox.Focus());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnOpening(EventArgs e)
+		{
+			base.OnOpening(e);
+			this.Action?.Let(it =>
+			{
+				this.queueTextBox.Text = it.Queue;
+				this.varTextBox.Text = it.Variable;
+			});
 		}
 
 
