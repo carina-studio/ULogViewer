@@ -48,6 +48,7 @@
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin">0,2,0,0</Thickness>
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.MaxHeight">300</sys:Double>
@@ -89,6 +90,7 @@
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">600</sys:Double>
+	<Thickness x:Key="Thickness/LogProfileEditorDialog.LogPattern.Description.Margin">0,2,0,0</Thickness>
 	<Thickness x:Key="Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin">20,0,0,0</Thickness>
 
 	<!-- LogProfileSelectionContextMenu -->
@@ -147,6 +149,7 @@
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,2,0,0</Thickness>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
@@ -159,6 +162,7 @@
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Width">500</sys:Double>
+	<Thickness x:Key="Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,2,0,0</Thickness>
 
 	<!-- PatternEditor -->
 	<sys:Double x:Key="Double/PatternEditor.MinHeight">130</sys:Double>

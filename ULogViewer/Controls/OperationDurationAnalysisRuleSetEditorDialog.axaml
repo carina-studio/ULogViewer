@@ -83,6 +83,7 @@
 											Grid.Column="1"
 											Grid.ColumnSpan="2"
 											Grid.Row="1"
+											Margin="{StaticResource Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}"
 											Opacity="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity}"
 											Text="{Binding BeginningPattern}"
 											TextTrimming="None"/>
@@ -91,6 +92,7 @@
 											Grid.Column="1"
 											Grid.ColumnSpan="2"
 											Grid.Row="2"
+											Margin="{StaticResource Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}"
 											Opacity="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity}"
 											Text="{Binding EndingPattern}"
 											TextTrimming="None"/>

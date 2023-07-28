@@ -10,6 +10,7 @@
 
 	<!-- LogProfileEditorDialog -->
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">500</sys:Double>
+	<Thickness x:Key="Thickness/LogProfileEditorDialog.LogPattern.Description.Margin">0,1,0,0</Thickness>
 
 	<!-- LogProfileIconColorComboBox -->
 	<CornerRadius x:Key="CornerRadius/LogProfileIconColorComboBox.Icon">0</CornerRadius>
@@ -28,12 +29,21 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,3</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">10,8,10,8</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin">5,0,5,3</Thickness>
+	
+	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin">0,1,0,0</Thickness>
 
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
+	
+	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
+	<Thickness x:Key="Thickness/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,1,0,0</Thickness>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
+	
+	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<Thickness x:Key="Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,1,0,0</Thickness>
 
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">0</CornerRadius>

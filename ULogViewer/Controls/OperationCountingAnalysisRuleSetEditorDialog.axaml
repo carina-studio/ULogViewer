@@ -84,6 +84,7 @@
 											Grid.Column="1"
 											Grid.ColumnSpan="2"
 											Grid.Row="1"
+											Margin="{StaticResource Thickness/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}"
 											Opacity="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity}"
 											Text="{Binding Pattern}"
 											TextTrimming="None"/>
