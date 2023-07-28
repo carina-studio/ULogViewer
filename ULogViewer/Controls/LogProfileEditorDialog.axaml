@@ -514,7 +514,7 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+							<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 								<asControls:ListBox.ItemTemplate>
 									<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
 										<Grid>
