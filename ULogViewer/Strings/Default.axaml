@@ -469,6 +469,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP address</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">This is the resource on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">Password</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ProcessId">Process identifier (PID)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ProcessName">Process name</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.QueryString">Query string</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.SelectFileName">Select file…</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.SelectWorkingDirectory">Select directory…</sys:String>

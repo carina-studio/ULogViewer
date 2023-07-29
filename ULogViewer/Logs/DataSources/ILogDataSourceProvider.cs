@@ -196,6 +196,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& Equals(this.IPEndPoint, options.IPEndPoint)
 					&& this.IsResourceOnAzure == options.IsResourceOnAzure
 					&& this.Password == options.Password
+					&& this.ProcessId == options.ProcessId
+					&& this.ProcessName == options.ProcessName
 					&& this.QueryString == options.QueryString
 					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
 					&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
@@ -380,6 +382,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							crypto ??= new Crypto(App.Current);
 							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 							break;
+						case nameof(ProcessId):
+							options.ProcessId = jsonProperty.Value.ValueKind == JsonValueKind.Number && jsonProperty.Value.TryGetInt32(out var processId)
+								? processId
+								: null;
+							break;
+						case nameof(ProcessName):
+							options.ProcessName = jsonProperty.Value.GetString();
+							break;
 						case nameof(QueryString):
 							options.QueryString = jsonProperty.Value.GetString();
 							break;
@@ -446,6 +456,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set command to start process.
 		/// </summary>
 		public string? Password { get; set; }
+		
+		
+		/// <summary>
+		/// Get or set ID of process (PID).
+		/// </summary>
+		public int? ProcessId { get; set; }
+		
+		
+		/// <summary>
+		/// Get or set process name.
+		/// </summary>
+		public string? ProcessName { get; set; }
 
 
 		/// <summary>
@@ -464,11 +486,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			try
 			{
 				jsonWriter.WriteStartObject();
-				this.Category?.Let(it => jsonWriter.WriteString(nameof(Category), it));
-				this.Command?.Let(it => jsonWriter.WriteString(nameof(Command), it));
-				this.ConnectionString?.Let(it => jsonWriter.WriteString(nameof(ConnectionString), it));
-				this.Encoding?.Let(it => jsonWriter.WriteString(nameof(Encoding), it.WebName));
-				this.FileName?.Let(it => jsonWriter.WriteString(nameof(FileName), it));
+				this.Category?.Let(it => 
+					jsonWriter.WriteString(nameof(Category), it));
+				this.Command?.Let(it => 
+					jsonWriter.WriteString(nameof(Command), it));
+				this.ConnectionString?.Let(it => 
+					jsonWriter.WriteString(nameof(ConnectionString), it));
+				this.Encoding?.Let(it => 
+					jsonWriter.WriteString(nameof(Encoding), it.WebName));
+				this.FileName?.Let(it => 
+					jsonWriter.WriteString(nameof(FileName), it));
 				if (this.FormatJsonData)
 					jsonWriter.WriteBoolean(nameof(FormatJsonData), true);
 				if (this.FormatXmlData)
@@ -490,7 +517,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					crypto = new Crypto(App.Current);
 					jsonWriter.WriteString(nameof(Password), crypto.Encrypt(it));
 				});
-				this.QueryString?.Let(it => jsonWriter.WriteString(nameof(QueryString), it));
+				this.ProcessId?.Let(it =>
+					jsonWriter.WriteNumber(nameof(ProcessId), it));
+				this.ProcessName?.Let(it =>
+					jsonWriter.WriteString(nameof(ProcessName), it));
+				this.QueryString?.Let(it => 
+					jsonWriter.WriteString(nameof(QueryString), it));
 				this.setupCommands?.Let(it =>
 				{
 					if (it.IsNotEmpty())
@@ -513,7 +545,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						jsonWriter.WriteEndArray();
 					}
 				});
-				this.Uri?.Let(it => jsonWriter.WriteString(nameof(Uri), it.ToString()));
+				this.Uri?.Let(it => 
+					jsonWriter.WriteString(nameof(Uri), it.ToString()));
 				this.UserName?.Let(it =>
 				{
 					crypto ??= new Crypto(App.Current);

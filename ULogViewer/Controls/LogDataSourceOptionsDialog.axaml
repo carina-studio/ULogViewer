@@ -185,6 +185,24 @@
 							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
+						
+						<!-- Process ID -->
+						<StackPanel IsVisible="{Binding $parent[Window].IsProcessIdSupported}">
+							<asControls:DialogItemGrid>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ProcessId}"/>
+								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItemGrid>
+							<Separator Classes="Dialog_Item_Separator"/>
+						</StackPanel>
+						
+						<!-- Process name -->
+						<StackPanel IsVisible="{Binding $parent[Window].IsProcessNameSupported}">
+							<asControls:DialogItemGrid>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ProcessName}"/>
+								<TextBox Name="processNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="128" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItemGrid>
+							<Separator Classes="Dialog_Item_Separator"/>
+						</StackPanel>
 
 						<!-- Encoding -->
 						<StackPanel IsVisible="{Binding $parent[Window].IsEncodingSupported}">

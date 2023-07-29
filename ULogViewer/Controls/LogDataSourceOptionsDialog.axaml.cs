@@ -68,6 +68,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	static readonly StyledProperty<bool> IsIPEndPointSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIPEndPointSupported));
 	static readonly StyledProperty<bool> IsPasswordRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordRequired));
 	static readonly StyledProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
+	static readonly StyledProperty<bool> IsProcessIdSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsProcessIdSupported));
+	static readonly StyledProperty<bool> IsProcessNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsProcessNameSupported));
 	static readonly StyledProperty<bool> IsQueryStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringRequired));
 	static readonly StyledProperty<bool> IsQueryStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsQueryStringSupported));
 	static readonly StyledProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
@@ -101,6 +103,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	readonly ToggleSwitch isResourceOnAzureSwitch;
 	readonly TextBox passwordTextBox;
 	readonly IntegerTextBox portTextBox;
+	readonly IntegerTextBox processIdTextBox;
+	readonly TextBox processNameTextBox;
 	readonly TextBox queryStringTextBox;
 	readonly ScheduledAction saveCommandTextBoxSelectionAction;
 	readonly ObservableList<string> setupCommands = new();
@@ -151,6 +155,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		this.isResourceOnAzureSwitch = this.Get<ToggleSwitch>(nameof(isResourceOnAzureSwitch));
 		this.passwordTextBox = this.Get<TextBox>(nameof(passwordTextBox));
 		this.portTextBox = this.Get<IntegerTextBox>(nameof(portTextBox));
+		this.processIdTextBox = this.Get<IntegerTextBox>(nameof(processIdTextBox));
+		this.processNameTextBox = this.Get<TextBox>(nameof(processNameTextBox));
 		this.queryStringTextBox = this.Get<TextBox>(nameof(queryStringTextBox));
 		this.saveCommandTextBoxSelectionAction = new(() =>
 		{
@@ -288,6 +294,10 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			options.QueryString = this.queryStringTextBox.Text?.Trim();
 		if (this.IsPasswordSupported)
 			options.Password = this.passwordTextBox.Text?.Trim();
+		if (this.IsProcessIdSupported)
+			options.ProcessId = (int?)this.processIdTextBox.Value;
+		if (this.IsProcessNameSupported)
+			options.ProcessName = this.processNameTextBox.Text?.Trim();
 		if (this.GetValue(IsResourceOnAzureSupportedProperty))
 			options.IsResourceOnAzure = this.isResourceOnAzureSwitch.IsChecked.GetValueOrDefault();
 		if (this.IsSetupCommandsSupported)
@@ -316,6 +326,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
 	bool IsPasswordRequired => this.GetValue(IsPasswordRequiredProperty);
 	bool IsPasswordSupported => this.GetValue(IsPasswordSupportedProperty);
+	bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProperty);
+	bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProperty);
 	bool IsQueryStringRequired => this.GetValue(IsQueryStringRequiredProperty);
 	bool IsQueryStringSupported => this.GetValue(IsQueryStringSupportedProperty);
 	bool IsSetupCommandsRequired => this.GetValue(IsSetupCommandsRequiredProperty);
@@ -537,6 +549,16 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.uriTextBox.Object = options.Uri;
 			this.initFocusedControl ??= this.uriTextBox;
 		}
+		if (this.IsProcessIdSupported)
+		{
+			this.processIdTextBox.Value = options.ProcessId;
+			this.initFocusedControl ??= this.processIdTextBox;
+		}
+		if (this.IsProcessNameSupported)
+		{
+			this.processNameTextBox.Text = options.ProcessName?.Trim();
+			this.initFocusedControl ??= this.processNameTextBox;
+		}
 		if (this.IsEncodingSupported)
 		{
 			this.encodingComboBox.SelectedItem = options.Encoding ?? Encoding.UTF8;
@@ -645,6 +667,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
 			this.SetValue(IsPasswordRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
 			this.SetValue(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
+			this.SetValue(IsProcessIdSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId)));
+			this.SetValue(IsProcessNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName)));
 			this.SetValue(IsQueryStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
 			this.SetValue(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
 			this.SetValue(IsResourceOnAzureSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IsResourceOnAzure)));
@@ -679,6 +703,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsIPEndPointSupportedProperty, false);
 			this.SetValue(IsPasswordRequiredProperty, false);
 			this.SetValue(IsPasswordSupportedProperty, false);
+			this.SetValue(IsProcessIdSupportedProperty, false);
+			this.SetValue(IsProcessNameSupportedProperty, false);
 			this.SetValue(IsQueryStringRequiredProperty, false);
 			this.SetValue(IsQueryStringSupportedProperty, false);
 			this.SetValue(IsResourceOnAzureSupportedProperty, false);

@@ -33,13 +33,19 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 		// Constructor.
 		public SupportedSourceOption(string name, bool isRequired)
 		{
-			this.CanBeRequired = !LogDataSourceOptions.IsValueTypeOption(name) && name switch
-			{
-				nameof(LogDataSourceOptions.Encoding)
-				or nameof(LogDataSourceOptions.SetupCommands)
-				or nameof(LogDataSourceOptions.TeardownCommands) => false,
-				_ => true,
-			};
+			this.CanBeRequired = LogDataSourceOptions.IsValueTypeOption(name)
+				? name switch
+				{
+					nameof(LogDataSourceOptions.ProcessId) => true,
+					_ => false,
+				}
+				: name switch
+				{
+					nameof(LogDataSourceOptions.Encoding)
+						or nameof(LogDataSourceOptions.SetupCommands)
+						or nameof(LogDataSourceOptions.TeardownCommands) => false,
+					_ => true,
+				};
 			this.isRequired = this.CanBeRequired ? isRequired : null;
 			this.Name = name;
 		}

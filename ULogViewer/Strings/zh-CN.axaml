@@ -453,6 +453,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP 地址</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">这是 Azure 上的资源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">密码</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ProcessId">进程识别码 (PID)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ProcessName">进程名称</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.QueryString">查询字符串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.SelectFileName">选择文件…</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.SelectWorkingDirectory">选择目录…</sys:String>
