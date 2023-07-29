@@ -71,6 +71,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> CanSetIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetIPEndPoint));
 		/// <summary>
+		/// Property of <see cref="CanSetProcessId"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanSetProcessIdProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetProcessId));
+		/// <summary>
+		/// Property of <see cref="CanSetProcessName"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanSetProcessNameProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetProcessName));
+		/// <summary>
 		/// Property of <see cref="CanSetUri"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> CanSetUriProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetUri));
@@ -223,6 +231,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsMarkedLogsPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsMarkedLogsPanelVisible), true);
 		/// <summary>
+		/// Property of <see cref="IsProcessIdNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsProcessIdNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessIdNeeded), false);
+		/// <summary>
+		/// Property of <see cref="IsProcessIdSupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsProcessIdSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessIdSupported), false);
+		/// <summary>
+		/// Property of <see cref="IsProcessNameNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsProcessNameNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessNameNeeded), false);
+		/// <summary>
+		/// Property of <see cref="IsProcessNameSupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsProcessNameSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessNameSupported), false);
+		/// <summary>
 		/// Property of <see cref="IsSpecifyingMaxLogReadingCountAllowed"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsSpecifyingMaxLogReadingCountAllowedProperty = ObservableProperty.Register<Session, bool>(nameof(IsSpecifyingMaxLogReadingCountAllowed), false);
@@ -352,6 +376,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="MinLogTimeSpan"/>.
 		/// </summary>
 		public static readonly ObservableProperty<TimeSpan?> MinLogTimeSpanProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(MinLogTimeSpan));
+		/// <summary>
+		/// Property of <see cref="ProcessId"/>.
+		/// </summary>
+		public static readonly ObservableProperty<int?> ProcessIdProperty = ObservableProperty.Register<Session, int?>(nameof(ProcessId));
+		/// <summary>
+		/// Property of <see cref="ProcessName"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> ProcessNameProperty = ObservableProperty.Register<Session, string?>(nameof(ProcessName));
 		/// <summary>
 		/// Property of <see cref="Title"/>.
 		/// </summary>
@@ -907,6 +939,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.SearchLogPropertyOnInternetCommand = new Command<Net.SearchProvider>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(CanSetIPEndPointProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
+			this.SetProcessIdCommand = new Command<int?>(this.SetProcessId, this.GetValueAsObservable(CanSetProcessIdProperty));
+			this.SetProcessNameCommand = new Command<string?>(this.SetProcessName, this.GetValueAsObservable(CanSetProcessNameProperty));
 			this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(CanSetUriProperty));
 			this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(CanSetWorkingDirectoryProperty));
 			this.ShowAllLogsTemporarilyCommand = new Command(this.ShowAllLogsTemporarily, this.canShowAllLogsTemporarily);
@@ -1586,6 +1620,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		/// <summary>
+		/// Check whether process ID can be set to session or not.
+		/// </summary>
+		public bool CanSetProcessId => this.GetValue(CanSetProcessIdProperty);
+		
+		
+		/// <summary>
+		/// Check whether process name can be set to session or not.
+		/// </summary>
+		public bool CanSetProcessName => this.GetValue(CanSetProcessNameProperty);
+		
+		
+		/// <summary>
 		/// Check whether URI can be set to session or not.
 		/// </summary>
 		public bool CanSetUri => this.GetValue(CanSetUriProperty);
@@ -2117,6 +2163,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.SetValue(IPEndPointProperty, creationOptions.IPEndPoint);
 			}
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId)) 
+			    && creationOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)))
+			{
+				this.SetValue(ProcessIdProperty, creationOptions.ProcessId);
+			}
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName)) 
+			    && creationOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
+			{
+				this.SetValue(ProcessNameProperty, creationOptions.ProcessName);
+			}
 			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
 				&& creationOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 			{
@@ -2380,17 +2436,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.UpdateCanPauseResumeLogsReading();
 					this.UpdateCanReloadLogs(profile);
 					this.updateCanStopReadingLogsAction.Execute();
-					this.SetValue(HasLogFilesProperty, false);
-					this.SetValue(HasLogReadersProperty, false);
-					this.SetValue(HasWorkingDirectoryProperty, false);
+					this.ResetValue(HasLogFilesProperty);
+					this.ResetValue(HasLogReadersProperty);
+					this.ResetValue(HasWorkingDirectoryProperty);
 					this.SetValue(IsLogFileNeededProperty, profile != null 
 						&& profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
 						&& !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)));
-					this.SetValue(IPEndPointProperty, null);
-					this.SetValue(IsLogsReadingPausedProperty, false);
-					this.SetValue(UriProperty, null);
-					this.SetValue(WorkingDirectoryNameProperty, null);
-					this.SetValue(WorkingDirectoryPathProperty, null);
+					this.ResetValue(IPEndPointProperty);
+					this.ResetValue(IsLogsReadingPausedProperty);
+					this.ResetValue(ProcessIdProperty);
+					this.ResetValue(ProcessNameProperty);
+					this.ResetValue(UriProperty);
+					this.ResetValue(WorkingDirectoryNameProperty);
+					this.ResetValue(WorkingDirectoryPathProperty);
 					this.AllLogReadersDisposed?.Invoke();
 				}
 			}
@@ -2768,6 +2826,30 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether specifying max log reading count is allowed or not.
 		/// </summary>
 		public bool IsSpecifyingMaxLogReadingCountAllowed => this.GetValue(IsSpecifyingMaxLogReadingCountAllowedProperty);
+		
+		
+		/// <summary>
+		/// Check whether PID is needed or not.
+		/// </summary>
+		public bool IsProcessIdNeeded => this.GetValue(IsProcessIdNeededProperty);
+		
+		
+		/// <summary>
+		/// Check whether PID is supported or not.
+		/// </summary>
+		public bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProperty);
+		
+		
+		/// <summary>
+		/// Check whether process name is needed or not.
+		/// </summary>
+		public bool IsProcessNameNeeded => this.GetValue(IsProcessNameNeededProperty);
+		
+		
+		/// <summary>
+		/// Check whether process name is supported or not.
+		/// </summary>
+		public bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProperty);
 
 
 		/// <summary>
@@ -3665,6 +3747,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateCanPauseResumeLogsReading();
 				this.UpdateCanReloadLogs(profile);
 				this.UpdateCanSetIPEndPoint(profile);
+				this.UpdateCanSetProcessId(profile);
+				this.UpdateCanSetProcessName(profile);
 				this.UpdateCanSetUri(profile);
 				this.UpdateCanSetWorkingDirectory(profile);
 			}
@@ -3782,6 +3866,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Command to pause or resume logs reading.
 		/// </summary>
 		public ICommand PauseResumeLogsReadingCommand { get; }
+
+
+		/// <summary>
+		/// Get process ID to read logs.
+		/// </summary>
+		public int? ProcessId => this.GetValue(ProcessIdProperty);
+
+
+		/// <summary>
+		/// Get process name to read logs.
+		/// </summary>
+		public string? ProcessName => this.GetValue(ProcessNameProperty);
 
 
 		// Reload log file.
@@ -3977,6 +4073,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canShowAllLogsTemporarily.Update(false);
 			this.UpdateCanAddLogFile(null);
 			this.UpdateCanSetIPEndPoint(null);
+			this.UpdateCanSetProcessId(null);
+			this.UpdateCanSetProcessName(null);
 			this.UpdateCanSetUri(null);
 			this.UpdateCanSetWorkingDirectory(null);
 			this.ResetValue(HasLogColorIndicatorProperty);
@@ -4095,7 +4193,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(IsLogFileNeededProperty, false);
 				this.SetValue(IsLogFileSupportedProperty, isFileNameSupported);
 			}
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
 				{
@@ -4105,17 +4203,54 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				else
 				{
-					this.SetValue(IsIPEndPointNeededProperty, true);
+					this.SetValue(IsIPEndPointNeededProperty, dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)));
 					this.SetValue(IsIPEndPointSupportedProperty, true);
 				}
 			}
 			else
 			{
-				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint));
-				this.SetValue(IsIPEndPointNeededProperty, false);
-				this.SetValue(IsIPEndPointSupportedProperty, isSupported);
+				this.ResetValue(IsIPEndPointNeededProperty);
+				this.ResetValue(IsIPEndPointSupportedProperty);
 			}
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId)))
+			{
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)))
+				{
+					useDefaultDataSourceOptions = true;
+					this.ResetValue(IsProcessIdNeededProperty);
+					this.ResetValue(IsProcessIdSupportedProperty);
+				}
+				else
+				{
+					this.SetValue(IsProcessIdNeededProperty, dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ProcessId)));
+					this.SetValue(IsProcessIdSupportedProperty, true);
+				}
+			}
+			else
+			{
+				this.ResetValue(IsProcessIdNeededProperty);
+				this.ResetValue(IsProcessIdSupportedProperty);
+			}
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName)))
+			{
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
+				{
+					useDefaultDataSourceOptions = true;
+					this.ResetValue(IsProcessNameNeededProperty);
+					this.ResetValue(IsProcessNameSupportedProperty);
+				}
+				else
+				{
+					this.SetValue(IsProcessNameNeededProperty, dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ProcessName)));
+					this.SetValue(IsProcessNameSupportedProperty, true);
+				}
+			}
+			else
+			{
+				this.ResetValue(IsProcessNameNeededProperty);
+				this.ResetValue(IsProcessNameSupportedProperty);
+			}
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)))
 			{
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
 				{
@@ -4125,15 +4260,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				else
 				{
-					this.SetValue(IsUriNeededProperty, true);
+					this.SetValue(IsUriNeededProperty, dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)));
 					this.SetValue(IsUriSupportedProperty, true);
 				}
 			}
 			else
 			{
-				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri));
-				this.SetValue(IsUriNeededProperty, false);
-				this.SetValue(IsUriSupportedProperty, isSupported);
+				this.ResetValue(IsUriNeededProperty);
+				this.ResetValue(IsUriSupportedProperty);
 			}
 			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
 			    || profile.IsWorkingDirectoryNeeded)
@@ -4159,6 +4293,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update state
 			this.UpdateCanSetIPEndPoint(profile);
+			this.UpdateCanSetProcessId(profile);
+			this.UpdateCanSetProcessName(profile);
 			this.UpdateCanSetUri(profile);
 			this.UpdateCanSetWorkingDirectory(profile);
 
@@ -4812,6 +4948,108 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 
 
+		// Set process ID.
+		void SetProcessId(int? processId)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (processId is null)
+				throw new ArgumentNullException(nameof(processId));
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set process ID.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)))
+				throw new InternalStateCorruptedException($"Cannot set process ID because it is already specified.");
+
+			// check current process ID
+			if (this.logReaders.IsNotEmpty())
+			{
+				var currentDataSourceOptions = this.logReaders.First().DataSource.CreationOptions;
+				if (Equals(currentDataSourceOptions.ProcessId, processId))
+				{
+					this.Logger.LogDebug("Set to same process ID");
+					return;
+				}
+				dataSourceOptions = currentDataSourceOptions;
+			}
+
+			// dispose current log readers
+			this.DisposeLogReaders(true);
+
+			this.Logger.LogDebug("Set process ID to {pid}", processId.Value);
+
+			// create data source
+			dataSourceOptions.ProcessId = processId;
+			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
+			if (dataSource is null)
+			{
+				this.hasLogDataSourceCreationFailure = true;
+				this.checkDataSourceErrorsAction.Schedule();
+				return;
+			}
+
+			// create log reader
+			this.CreateLogReader(dataSource, new(), null, null);
+		}
+		
+		
+		/// <summary>
+		/// Command to set process ID.
+		/// </summary>
+		public ICommand SetProcessIdCommand { get; }
+		
+		
+		// Set process name.
+		void SetProcessName(string? processName)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (string.IsNullOrWhiteSpace(processName))
+				throw new ArgumentNullException(nameof(processName));
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set process name.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
+				throw new InternalStateCorruptedException($"Cannot set process name because it is already specified.");
+
+			// check current process name
+			if (this.logReaders.IsNotEmpty())
+			{
+				var currentDataSourceOptions = this.logReaders.First().DataSource.CreationOptions;
+				if (currentDataSourceOptions.ProcessName == processName)
+				{
+					this.Logger.LogDebug("Set to same process name");
+					return;
+				}
+				dataSourceOptions = currentDataSourceOptions;
+			}
+
+			// dispose current log readers
+			this.DisposeLogReaders(true);
+
+			this.Logger.LogDebug("Set process name to {name}", processName);
+
+			// create data source
+			dataSourceOptions.ProcessName = processName;
+			var dataSource = this.CreateLogDataSourceOrNull(profile.DataSourceProvider, dataSourceOptions);
+			if (dataSource is null)
+			{
+				this.hasLogDataSourceCreationFailure = true;
+				this.checkDataSourceErrorsAction.Schedule();
+				return;
+			}
+
+			// create log reader
+			this.CreateLogReader(dataSource, new(), null, null);
+		}
+		
+		
+		/// <summary>
+		/// Command to set process name.
+		/// </summary>
+		public ICommand SetProcessNameCommand { get; }
+
+
 		/// <summary>
 		/// Save current state to JSON data.
 		/// </summary>
@@ -5121,50 +5359,86 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			}
 			
 			// check IP end point
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint))
+			    || dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
-				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
-				{
-					this.ResetValue(IsIPEndPointNeededProperty);
-					this.ResetValue(IsIPEndPointSupportedProperty);
-				}
-				else
-				{
-					this.Logger.LogDebug("No IP endpoint specified, waiting for setting IP endpoint");
-					this.SetValue(IsIPEndPointNeededProperty, true);
-					this.SetValue(IsIPEndPointSupportedProperty, true);
-					canStartReading = false;
-				}
+				this.ResetValue(IsIPEndPointNeededProperty);
+				this.ResetValue(IsIPEndPointSupportedProperty);
+			}
+			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
+			{
+				this.Logger.LogDebug("No IP endpoint specified, waiting for setting IP endpoint");
+				this.SetValue(IsIPEndPointNeededProperty, true);
+				this.SetValue(IsIPEndPointSupportedProperty, true);
+				canStartReading = false;
 			}
 			else
 			{
-				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint));
 				this.ResetValue(IsIPEndPointNeededProperty);
-				this.SetValue(IsIPEndPointSupportedProperty, isSupported);
+				this.SetValue(IsIPEndPointSupportedProperty, true);
 			}
 			this.UpdateCanSetIPEndPoint(profile);
 			
-			// check URI
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			// check process ID
+			if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId))
+			    || dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)))
 			{
-				if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
-				{
-					this.ResetValue(IsUriNeededProperty);
-					this.ResetValue(IsUriSupportedProperty);
-				}
-				else
-				{
-					this.Logger.LogDebug("Need URI, waiting for setting URI");
-					this.SetValue(IsUriNeededProperty, true);
-					this.SetValue(IsUriSupportedProperty, true);
-					canStartReading = false;
-				}
+				this.ResetValue(IsProcessIdNeededProperty);
+				this.ResetValue(IsProcessIdSupportedProperty);
+			}
+			else if(dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ProcessId)))
+			{
+				this.Logger.LogDebug("No process ID specified, waiting for setting process ID");
+				this.SetValue(IsProcessIdNeededProperty, true);
+				this.SetValue(IsProcessIdSupportedProperty, true);
+				canStartReading = false;
 			}
 			else
 			{
-				var isSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri));
+				this.ResetValue(IsProcessIdNeededProperty);
+				this.SetValue(IsProcessIdSupportedProperty, true);
+			}
+			this.UpdateCanSetProcessId(profile);
+
+			// check process name
+			if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName))
+			    || dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
+			{
+					this.ResetValue(IsProcessNameNeededProperty);
+					this.ResetValue(IsProcessNameSupportedProperty);
+			}
+			else if(dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ProcessName)))
+			{
+				this.Logger.LogDebug("No process name specified, waiting for setting process name");
+				this.SetValue(IsProcessNameNeededProperty, true);
+				this.SetValue(IsProcessNameSupportedProperty, true);
+				canStartReading = false;
+			}
+			else
+			{
+				this.ResetValue(IsProcessNameNeededProperty);
+				this.SetValue(IsProcessNameSupportedProperty, true);
+			}
+			this.UpdateCanSetProcessName(profile);
+
+			// check URI
+			if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri))
+			    || dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+			{
 				this.ResetValue(IsUriNeededProperty);
-				this.SetValue(IsUriSupportedProperty, isSupported);
+				this.ResetValue(IsUriSupportedProperty);
+			}
+			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
+			{
+				this.Logger.LogDebug("Need URI, waiting for setting URI");
+				this.SetValue(IsUriNeededProperty, true);
+				this.SetValue(IsUriSupportedProperty, true);
+				canStartReading = false;
+			}
+			else
+			{
+				this.ResetValue(IsUriNeededProperty);
+				this.SetValue(IsUriSupportedProperty, true);
 			}
 			this.UpdateCanSetUri(profile);
 			
@@ -5426,8 +5700,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		// Update whether IP end point can be set or not.
-		void UpdateCanSetIPEndPoint() =>
-			this.UpdateCanSetIPEndPoint(this.LogProfile);
 		void UpdateCanSetIPEndPoint(LogProfile? profile)
 		{
 			if (this.IsDisposed)
@@ -5447,9 +5719,47 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 		
 		
+		// Update whether process ID can be set or not.
+		void UpdateCanSetProcessId(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.ResetValue(CanSetProcessIdProperty);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanSetProcessIdProperty);
+				return;
+			}
+			this.SetValue(CanSetProcessIdProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId))
+			                                       && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)));
+		}
+		
+		
+		// Update whether process name can be set or not.
+		void UpdateCanSetProcessName(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.ResetValue(CanSetProcessNameProperty);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanSetProcessNameProperty);
+				return;
+			}
+			this.SetValue(CanSetProcessNameProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName))
+			                                         && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)));
+		}
+		
+		
 		// Update whether URI can be set or not.
-		void UpdateCanSetUri() =>
-			this.UpdateCanSetUri(this.LogProfile);
 		void UpdateCanSetUri(LogProfile? profile)
 		{
 			if (this.IsDisposed)
@@ -5470,8 +5780,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		// Update whether working directory can be set or not.
-		void UpdateCanSetWorkingDirectory() =>
-			this.UpdateCanSetWorkingDirectory(this.LogProfile);
 		void UpdateCanSetWorkingDirectory(LogProfile? profile)
 		{
 			if (this.IsDisposed)

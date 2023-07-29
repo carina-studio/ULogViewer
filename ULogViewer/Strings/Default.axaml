@@ -1338,6 +1338,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogChartType">Change type of chart</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId">Select/Change process identifier (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName">Select/Change process name</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily</sys:String>

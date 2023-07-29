@@ -1302,6 +1302,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">选择/变更 IP 端点</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogChartType">改变图表类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">选择/变更日志类型</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId">选择/变更进程识别码 (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName">选择/变更进程名称</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">选择/变成 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志</sys:String>

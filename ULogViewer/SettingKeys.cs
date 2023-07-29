@@ -106,6 +106,14 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<bool> SelectLogReadingPreconditionForFiles = new(nameof(SelectLogReadingPreconditionForFiles), true);
 	/// <summary>
+	/// Select process ID immediately when it is needed.
+	/// </summary>
+	public static readonly SettingKey<bool> SelectProcessIdWhenNeeded = new(nameof(SelectProcessIdWhenNeeded), true);
+	/// <summary>
+	/// Select process name immediately when it is needed.
+	/// </summary>
+	public static readonly SettingKey<bool> SelectProcessNameWhenNeeded = new(nameof(SelectProcessNameWhenNeeded), true);
+	/// <summary>
 	/// Select URI immediately when it is needed.
 	/// </summary>
 	public static readonly SettingKey<bool> SelectUriWhenNeeded = new(nameof(SelectUriWhenNeeded), true);
