@@ -530,40 +530,70 @@
 
 						<!-- Set working directory -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding CanSetWorkingDirectory}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsWorkingDirectoryNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
 						</Button>
 
 						<!-- Add files -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.AddLogFilesCommand}" IsVisible="{Binding CanAddLogFile}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsLogFileNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
 						</Button>
 
 						<!-- Set URI -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding CanSetUri}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-								</DrawingImage>
-							</Image>
+							<Panel>
+								<Image Classes="Icon">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+									</DrawingImage>
+								</Image>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsUriNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
 						</Button>
 
 						<!-- Set IP endpoint -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetIPEndPointCommand}" IsVisible="{Binding CanSetIPEndPoint}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
-							<Image Classes="Icon">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
-								</DrawingImage>
-							</Image>
+							<Panel>
+								<Image Classes="Icon">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+									</DrawingImage>
+								</Image>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsIPEndPointNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
 						</Button>
 						
 						<!-- Set process ID -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessIdCommand}" IsVisible="{Binding CanSetProcessId}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
-							<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessIdNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
 						</Button>
 						
 						<!-- Set process name -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessNameCommand}" IsVisible="{Binding CanSetProcessName}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
-							<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
+							<Panel>
+								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessNameNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
 						</Button>
 
 						<!-- Save logs -->
@@ -848,7 +878,7 @@
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.Update.Colored}"/>
 								</Border>
 							</Panel>
 						</ToggleButton>
