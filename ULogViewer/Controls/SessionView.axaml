@@ -529,17 +529,17 @@
 						</ToggleButton>
 
 						<!-- Set working directory -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding IsWorkingDirectoryNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding CanSetWorkingDirectory}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder}"/>
 						</Button>
 
 						<!-- Add files -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.AddLogFilesCommand}" IsVisible="{Binding IsLogFileNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.AddLogFilesCommand}" IsVisible="{Binding CanAddLogFile}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile}"/>
 						</Button>
 
 						<!-- Set URI -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding IsUriNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding CanSetUri}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
 							<Image Classes="Icon">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
@@ -548,7 +548,7 @@
 						</Button>
 
 						<!-- Set IP endpoint -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetIPEndPointCommand}" IsVisible="{Binding IsIPEndPointNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetIPEndPointCommand}" IsVisible="{Binding CanSetIPEndPoint}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
 							<Image Classes="Icon">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
@@ -557,12 +557,12 @@
 						</Button>
 						
 						<!-- Set process ID -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessIdCommand}" IsVisible="{Binding IsProcessIdNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessIdCommand}" IsVisible="{Binding CanSetProcessId}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
 							<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 						</Button>
 						
 						<!-- Set process name -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessNameCommand}" IsVisible="{Binding IsProcessNameNeeded}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessNameCommand}" IsVisible="{Binding CanSetProcessName}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
 							<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 						</Button>
 
@@ -580,7 +580,7 @@
 						</ToggleButton>
 
 						<!-- Clear files -->
-						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding AreFileBasedLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
+						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding IsLogFileSupported}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete}"/>
 						</Button>
 						
@@ -1128,7 +1128,20 @@
 			<DockPanel>
 
 				<!-- Right part -->
-				<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" DockPanel.Dock="Right">
+				<Grid DockPanel.Dock="Right">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/> <!-- [0] Filtering/Analyzing progress -->
+						<ColumnDefinition Width="Auto"/> <!-- [1] Saving logs -->
+						<ColumnDefinition Width="Auto"/> <!-- [2] Waiting for data sources -->
+						<ColumnDefinition Width="Auto"/> <!-- [3] URI -->
+						<ColumnDefinition Width="Auto"/> <!-- [4] IP endpoint -->
+						<ColumnDefinition Width="Auto"/> <!-- [5] Process ID -->
+						<ColumnDefinition Width="Auto"/> <!-- [6] Process name -->
+						<ColumnDefinition Width="Auto"/> <!-- [7] Working directory -->
+						<ColumnDefinition Width="Auto"/> <!-- [8] High memory usage -->
+						<ColumnDefinition Width="Auto"/> <!-- [9] Error message -->
+						<ColumnDefinition Width="Auto"/> <!-- [10] Process info -->
+					</Grid.ColumnDefinitions>
 
 					<!-- Filtering progress -->
 					<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding LogFiltering.IsFiltering}" Orientation="Horizontal">
@@ -1206,7 +1219,7 @@
 					</StackPanel>
 
 					<!-- IP endpoint -->
-					<StackPanel Grid.Column="3" IsVisible="{Binding HasIPEndPoint}" Orientation="Horizontal">
+					<StackPanel Grid.Column="4" IsVisible="{Binding HasIPEndPoint}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
@@ -1215,9 +1228,31 @@
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding IPEndPoint}"/>
 					</StackPanel>
+					
+					<!-- Process ID -->
+					<StackPanel Grid.Column="5" IsVisible="{Binding ProcessId, Converter={x:Static ObjectConverters.IsNotNull}}" Orientation="Horizontal">
+						<Separator Classes="StatusBar_Separator"/>
+						<Image Classes="StatusBar_IconWithText">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process.Outline}"/>
+							</DrawingImage>
+						</Image>
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding ProcessId}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.ProcessId}"/>
+					</StackPanel>
+					
+					<!-- Process name -->
+					<StackPanel Grid.Column="6" IsVisible="{Binding ProcessName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Orientation="Horizontal">
+						<Separator Classes="StatusBar_Separator"/>
+						<Image Classes="StatusBar_IconWithText">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process.Outline}"/>
+							</DrawingImage>
+						</Image>
+						<TextBlock Classes="StatusBar_TextBlock" Text="{Binding ProcessName}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.ProcessName}"/>
+					</StackPanel>
 
 					<!-- Working directory -->
-					<StackPanel Grid.Column="4" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
+					<StackPanel Grid.Column="7" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<ToggleButton Name="workingDirectoryActionsButton" Classes="StatusBar_ToggleButton" Command="{Binding #root.ShowWorkingDirectoryActions}" ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
 							<StackPanel Orientation="Horizontal">
@@ -1237,7 +1272,7 @@
 					</StackPanel>
 					
 					<!-- High memory usage -->
-					<StackPanel Grid.Column="6" IsVisible="{Binding IsHighMemoryUsageToStopReadingLogs}" Orientation="Horizontal">
+					<StackPanel Grid.Column="8" IsVisible="{Binding IsHighMemoryUsageToStopReadingLogs}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
@@ -1248,7 +1283,7 @@
 					</StackPanel>
 
 					<!-- Error message -->
-					<StackPanel Grid.Column="6" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+					<StackPanel Grid.Column="9" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
@@ -1257,7 +1292,7 @@
 						</Image>
 						<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 					</StackPanel>
-					<StackPanel Grid.Column="6" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+					<StackPanel Grid.Column="9" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
 						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
@@ -1267,10 +1302,10 @@
 					</StackPanel>
 
 					<!-- Process info -->
-					<StackPanel Grid.Column="7" IsVisible="{Binding #root.IsProcessInfoVisible}" Orientation="Horizontal">
+					<StackPanel Grid.Column="10" IsVisible="{Binding #root.IsProcessInfoVisible}" Orientation="Horizontal">
 						<Separator Classes="StatusBar_Separator"/>
 						<StackPanel IsVisible="{Binding #root.Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
-							<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed.Outline}"/>
 								</DrawingImage>
@@ -1280,7 +1315,7 @@
 								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding #root.Application.ProcessInfo.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.UIResponseDuration}"/>
 							</Panel>
 						</StackPanel>
-						<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}">
+						<Image Classes="StatusBar_IconWithText">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu.Outline}"/>
 							</DrawingImage>
@@ -1290,7 +1325,7 @@
 							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding #root.Application.ProcessInfo.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.CpuUsage}"/>
 						</Panel>
 						<StackPanel Orientation="Horizontal">
-							<Image Classes="StatusBar_IconWithText" ToolTip.Tip="{DynamicResource String/SessionView.MemoryUsage}">
+							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory.Outline}"/>
 								</DrawingImage>

@@ -12,6 +12,7 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
     readonly EventHandler appStringsUpdatedHandler; // Need to keep as strong reference
     // ReSharper restore PrivateFieldCanBeConvertedToLocalVariable
     readonly IDisposable appStringsUpdatedHandlerToken;
+    string displayName;
 
 
     /// <summary>
@@ -23,6 +24,7 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
         this.appStringsUpdatedHandler = (_, _) => 
             this.OnPropertyChanged(nameof(DisplayName));
         this.appStringsUpdatedHandlerToken = this.Application.AddWeakEventHandler(nameof(IApplication.StringsUpdated), this.appStringsUpdatedHandler);
+        this.displayName = this.Application.GetStringNonNull("EmbeddedScriptLogDataSourceProvider.DisplayName");
     }
 
 
@@ -39,7 +41,7 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
     /// </summary>
     public new string DisplayName
     {
-        get => this.Application.GetStringNonNull("EmbeddedScriptLogDataSourceProvider.DisplayName");
+        get => this.displayName;
         set => throw new InvalidOperationException();
     }
 
@@ -50,4 +52,12 @@ class EmbeddedScriptLogDataSourceProvider : ScriptLogDataSourceProvider, ILogDat
 
     /// <inheritdoc/>
     public override bool IsProVersionOnly => true;
+
+
+    /// <inheritdoc/>
+    protected override string OnUpdateDisplayName()
+    {
+        this.displayName = this.Application.GetStringNonNull("EmbeddedScriptLogDataSourceProvider.DisplayName");
+        return this.displayName;
+    }
 }

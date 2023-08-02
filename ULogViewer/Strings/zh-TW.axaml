@@ -42,6 +42,8 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在從檔案讀取日誌前指定前置讀取條件 (當條件支援時)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">當需要處理程序識別碼 (PID) 時立即顯示輸入介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">當需要處理程序名稱時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">當需要 URI 時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字篩選欄位中顯示「說明」按鈕</sys:String>
@@ -1254,6 +1256,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定義的文字篩選 (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.DefaultGroup">預設群組</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">文字篩選 (可多選)</sys:String>
+	<sys:String x:Key="String/SessionView.ProcessId">處理程序識別碼 (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.ProcessName">處理程序名稱</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升級至專業版以啟用此功能</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">重新載入日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">變更日誌讀取前置條件…</sys:String>
@@ -1292,7 +1296,10 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogChartType">變更圖表類型</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">選取/變更日誌類型</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId">選取/變更處理程序識別碼 (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Invalid">無效的處理程序識別碼 (PID)。</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Message">請輸入一個處理程序識別碼 (PID)：</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName">選取/變更處理程序名稱</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName.Message">請輸入一個處理程序名稱：</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">選取/變更 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌</sys:String>

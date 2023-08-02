@@ -38,10 +38,12 @@
 	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">需要升级至专业版。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">变更日志类型后重设套用的规则集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">脚本编辑器字体及大小</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时显示输入界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志文件时立即开启文件选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新页面后开启日志类型选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从文件读取日志前指定前置读取条件（当条件支持时）</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">当需要进程识别码 (PID) 时立即显示输入界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">当需要进程名称时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即开启目录选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字筛选栏位中显示「说明」按钮</sys:String>
@@ -1265,6 +1267,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">已定义的文字筛选 (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.DefaultGroup">默认分组</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">文字筛选 (可多选)</sys:String>
+	<sys:String x:Key="String/SessionView.ProcessId">进程识别码 (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.ProcessName">进程名称</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升级至专业版以启用此功能</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">重新读入日志</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">变更日志读取前置条件…</sys:String>
@@ -1303,7 +1307,10 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogChartType">改变图表类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">选择/变更日志类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId">选择/变更进程识别码 (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Invalid">无效的进程识别码 (PID)。</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Message">请输入一个进程识别码 (PID)：</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName">选择/变更进程名称</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName.Message">请输入一个进程名称：</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">选择/变成 URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志</sys:String>

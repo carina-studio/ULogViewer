@@ -155,7 +155,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Constants.
-		const int AutoAddLogFilesDelay = 0;
 		const int ScrollingToLatestLogInterval = 80;
 		const int ScrollingToTargetLogRangeInterval = 200;
 
@@ -215,6 +214,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
+		bool isAutoSettingLogsReadingParameters;
 		bool isInitializing = true;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -309,23 +309,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canAddLogFiles = new(ForwardedObservableBoolean.CombinationMode.And, false, this.canAddLogFilesToSession, this.isNotAddingLogFiles);
 			this.canAddLogFiles.Subscribe(value =>
 			{
-				if (value 
-					&& this.isLogFileNeededAfterLogProfileSet 
-					&& this.isAttachedToLogicalTree)
-				{
-					this.isLogFileNeededAfterLogProfileSet = false;
-					this.autoAddLogFilesAction?.Reschedule(AutoAddLogFilesDelay);
-				}
+				if (value)
+					this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.canSetIPEndPoint.Subscribe(value =>
 			{
-				if (value 
-					&& this.isIPEndPointNeededAfterLogProfileSet 
-					&& this.isAttachedToLogicalTree)
-				{
-					this.isIPEndPointNeededAfterLogProfileSet = false;
-					this.autoSetIPEndPointAction?.Reschedule(AutoAddLogFilesDelay);
-				}
+				if (value)
+					this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.canSetLogProfile = new ForwardedObservableBoolean(ForwardedObservableBoolean.CombinationMode.Or,
 				false,
@@ -334,47 +324,27 @@ namespace CarinaStudio.ULogViewer.Controls
 			);
 			this.canSetProcessId.Subscribe(value =>
 			{
-				if (value 
-				    && this.isProcessIdNeededAfterLogProfileSet 
-				    && this.isAttachedToLogicalTree)
-				{
-					this.isProcessIdNeededAfterLogProfileSet = false;
-					this.autoSetProcessIdAction?.Reschedule(AutoAddLogFilesDelay);
-				}
+				if (value)
+					this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.canSetProcessName.Subscribe(value =>
 			{
-				if (value 
-				    && this.isProcessNameNeededAfterLogProfileSet 
-				    && this.isAttachedToLogicalTree)
-				{
-					this.isProcessNameNeededAfterLogProfileSet = false;
-					this.autoSetProcessNameAction?.Reschedule(AutoAddLogFilesDelay);
-				}
+				if (value)
+					this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.canSetUri.Subscribe(value =>
 			{
-				if (value 
-					&& this.isUriNeededAfterLogProfileSet 
-					&& this.isAttachedToLogicalTree)
-				{
-					this.isUriNeededAfterLogProfileSet = false;
-					this.autoSetUriAction?.Reschedule(AutoAddLogFilesDelay);
-				}
+				if (value)
+					this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.canSetWorkingDirectory.Subscribe(value =>
 			{
-				if (value 
-					&& this.isWorkingDirNeededAfterLogProfileSet 
-					&& this.isAttachedToLogicalTree)
-				{
-					this.isWorkingDirNeededAfterLogProfileSet = false;
-					this.autoSetWorkingDirectoryAction?.Reschedule(AutoAddLogFilesDelay);
-				}
+				if (value)
+					this.AutoSelectAndSetLogsReadingParameters();
 			});
 
 			// create commands
-			this.AddLogFilesCommand = new Command(this.AddLogFiles, this.canAddLogFiles);
+			this.AddLogFilesCommand = new Command(this.AddLogFilesAsync, this.canAddLogFiles);
 			this.CopyKeyLogAnalysisRuleSetCommand = new Command<KeyLogAnalysisRuleSet>(this.CopyKeyLogAnalysisRuleSet);
 			this.CopyLogAnalysisScriptSetCommand = new Command<LogAnalysisScriptSet>(this.CopyLogAnalysisScriptSet);
 			this.CopyLogFileNameCommand = new Command<string>(this.CopyLogFileName);
@@ -407,12 +377,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);
-			this.SelectAndSetIPEndPointCommand = new Command(this.SelectAndSetIPEndPoint, this.canSetIPEndPoint);
+			this.SelectAndSetIPEndPointCommand = new Command(this.SelectAndSetIPEndPointAsync, this.canSetIPEndPoint);
 			this.SelectAndSetLogProfileCommand = new Command(this.SelectAndSetLogProfileAsync, this.canSetLogProfile);
-			this.SelectAndSetProcessIdCommand = new Command(this.SelectAndSetProcessId, this.canSetProcessId);
-			this.SelectAndSetProcessNameCommand = new Command(this.SelectAndSetProcessName, this.canSetProcessName);
-			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUri, this.canSetUri);
-			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectory, this.canSetWorkingDirectory);
+			this.SelectAndSetProcessIdCommand = new Command(this.SelectAndSetProcessIdAsync, this.canSetProcessId);
+			this.SelectAndSetProcessNameCommand = new Command(this.SelectAndSetProcessNameAsync, this.canSetProcessName);
+			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUriAsync, this.canSetUri);
+			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectoryAsync, this.canSetWorkingDirectory);
 			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
 			this.ShowLogFileActionMenuCommand = new Command<Control>(this.ShowLogFileActionMenu);
 			this.ShowLogFileInExplorerCommand = new Command<string>(this.ShowLogFileInExplorer);
@@ -569,7 +539,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logLevelFilterComboBox = this.Get<ComboBox>(nameof(logLevelFilterComboBox)).Also(it =>
 			{
 				if (Platform.IsMacOS)
-					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
+					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logListBox = this.logListBoxContainer.FindControl<Avalonia.Controls.ListBox>(nameof(logListBox))!.Also(it =>
 			{
@@ -588,19 +558,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logProcessIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logProcessIdFilterTextBox))!.Also(it =>
 			{
 				if (Platform.IsMacOS)
-					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
+					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
 				it.ValidationDelay = this.CommitLogFilterParamsDelay;
 				if (Platform.IsMacOS)
-					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
+					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logThreadIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				if (Platform.IsMacOS)
-					(this.Application as AppSuite.AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
+					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.markedLogListBox = this.Get<Avalonia.Controls.ListBox>(nameof(markedLogListBox));
 			this.operationCountingAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(operationCountingAnalysisRuleSetListBox)).Also(this.SetupLogAnalysisRuleSetListBox);
@@ -929,11 +899,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.showLogPropertyMenuItem.AsNonNull();
 			
 			// create scheduled actions
-			this.autoAddLogFilesAction = new(() =>
+			this.autoAddLogFilesAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || session.HasLogReaders)
+				if (this.DataContext is not Session session || session.HasLogReaders || this.isAutoSettingLogsReadingParameters)
 					return;
-				this.AddLogFiles();
+				this.isLogFileNeededAfterLogProfileSet = false;
+				this.isAutoSettingLogsReadingParameters = true;
+				await this.AddLogFilesAsync();
+				this.isAutoSettingLogsReadingParameters = false;
+				this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.autoCloseSidePanelAction = new(() =>
 			{
@@ -949,35 +923,55 @@ namespace CarinaStudio.ULogViewer.Controls
 					session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 				}
 			});
-			this.autoSetIPEndPointAction = new(() =>
+			this.autoSetIPEndPointAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || session.HasLogReaders)
+				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
 					return;
-				this.SelectAndSetIPEndPoint();
+				this.isIPEndPointNeededAfterLogProfileSet = false;
+				this.isAutoSettingLogsReadingParameters = true;
+				await this.SelectAndSetIPEndPointAsync();
+				this.isAutoSettingLogsReadingParameters = false;
+				this.AutoSelectAndSetLogsReadingParameters();
 			});
-			this.autoSetProcessIdAction = new(() =>
+			this.autoSetProcessIdAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || session.HasLogReaders)
+				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
 					return;
-				this.SelectAndSetProcessId();
+				this.isProcessIdNeededAfterLogProfileSet = false;
+				this.isAutoSettingLogsReadingParameters = true;
+				await this.SelectAndSetProcessIdAsync();
+				this.isAutoSettingLogsReadingParameters = false;
+				this.AutoSelectAndSetLogsReadingParameters();
 			});
-			this.autoSetProcessNameAction = new(() =>
+			this.autoSetProcessNameAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || session.HasLogReaders)
+				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
 					return;
-				this.SelectAndSetProcessName();
+				this.isProcessNameNeededAfterLogProfileSet = false;
+				this.isAutoSettingLogsReadingParameters = true;
+				await this.SelectAndSetProcessNameAsync();
+				this.isAutoSettingLogsReadingParameters = false;
+				this.AutoSelectAndSetLogsReadingParameters();
 			});
-			this.autoSetUriAction = new(() =>
+			this.autoSetUriAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || session.HasLogReaders)
+				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
 					return;
-				this.SelectAndSetUri();
+				this.isUriNeededAfterLogProfileSet = false;
+				this.isAutoSettingLogsReadingParameters = true;
+				await this.SelectAndSetUriAsync();
+				this.isAutoSettingLogsReadingParameters = false;
+				this.AutoSelectAndSetLogsReadingParameters();
 			});
-			this.autoSetWorkingDirectoryAction = new(() =>
+			this.autoSetWorkingDirectoryAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || session.HasLogReaders)
+				if (this.DataContext is not Session session || session.HasLogReaders || this.isAutoSettingLogsReadingParameters)
 					return;
-				this.SelectAndSetWorkingDirectory();
+				this.isWorkingDirNeededAfterLogProfileSet = false;
+				this.isAutoSettingLogsReadingParameters = true;
+				await this.SelectAndSetWorkingDirectoryAsync();
+				this.isAutoSettingLogsReadingParameters = false;
+				this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.commitLogFiltersAction = new(this.CommitLogFilters);
 			this.scrollToLatestLogAction = new(() =>
@@ -1060,7 +1054,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Add log files.
-		async void AddLogFiles()
+		async Task AddLogFilesAsync()
 		{
 			// check state
 			if (this.attachedWindow == null)
@@ -1243,14 +1237,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				this.canEditLogProfile.Update(true);
 				this.SetValue(HasLogProfileProperty, true);
-				if (session.IsIPEndPointNeeded)
-					this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
-				else if (session.IsLogFileNeeded)
-					this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
-				else if (session.IsUriNeeded)
-					this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
-				else if (session.IsWorkingDirectoryNeeded)
-					this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
 				this.OnLogProfileSet(profile);
 			}
 
@@ -1370,6 +1356,26 @@ namespace CarinaStudio.ULogViewer.Controls
 			// update UI
 			this.OnDisplayLogPropertiesChanged();
 			this.updateStatusBarStateAction.Schedule();
+		}
+		
+		
+		// Show UI automatically to let user set parameters for logs reading.
+		void AutoSelectAndSetLogsReadingParameters()
+		{
+			if (this.attachedWindow is null || this.isAutoSettingLogsReadingParameters)
+				return;
+			if (this.canSetIPEndPoint.Value && this.isIPEndPointNeededAfterLogProfileSet)
+				this.autoSetIPEndPointAction.Schedule();
+			else if (this.canAddLogFiles.Value && this.isLogFileNeededAfterLogProfileSet)
+				this.autoAddLogFilesAction.Schedule();
+			else if (this.canSetUri.Value && this.isUriNeededAfterLogProfileSet)
+				this.autoSetUriAction.Schedule();
+			else if (this.canSetWorkingDirectory.Value && this.isWorkingDirNeededAfterLogProfileSet)
+				this.autoSetWorkingDirectoryAction.Schedule();
+			else if (this.canSetProcessId.Value && this.isProcessIdNeededAfterLogProfileSet)
+				this.autoSetProcessIdAction.Schedule();
+			else if (this.canSetProcessName.Value && this.isProcessNameNeededAfterLogProfileSet)
+				this.autoSetProcessNameAction.Schedule();
 		}
 
 
@@ -2553,7 +2559,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (currentLogProfile == null)
 						return true;
-					if (session.AreFileBasedLogs)
+					if (session.IsLogFileSupported)
 					{
 						if (filePaths.IsEmpty())
 							return true;
@@ -2904,42 +2910,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(IsScriptRunningEnabledProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript));
 
 			// select parameters for reading logs
-			if (this.canSetIPEndPoint.Value
-			    && this.isIPEndPointNeededAfterLogProfileSet)
-			{
-				this.isIPEndPointNeededAfterLogProfileSet = false;
-				this.autoSetIPEndPointAction.Reschedule(AutoAddLogFilesDelay);
-			}
-			else if (this.canAddLogFiles.Value 
-			         && this.isLogFileNeededAfterLogProfileSet)
-			{
-				this.isLogFileNeededAfterLogProfileSet = false;
-				this.autoAddLogFilesAction.Reschedule(AutoAddLogFilesDelay);
-			}
-			else if (this.canSetUri.Value 
-			         && this.isUriNeededAfterLogProfileSet)
-			{
-				this.isUriNeededAfterLogProfileSet = false;
-				this.autoSetUriAction.Reschedule(AutoAddLogFilesDelay);
-			}
-			else if (this.canSetWorkingDirectory.Value 
-			         && this.isWorkingDirNeededAfterLogProfileSet)
-			{
-				this.isWorkingDirNeededAfterLogProfileSet = false;
-				this.autoSetWorkingDirectoryAction.Reschedule(AutoAddLogFilesDelay);
-			}
-			else if (this.canSetProcessId.Value
-			         && this.isProcessIdNeededAfterLogProfileSet)
-			{
-				this.isProcessIdNeededAfterLogProfileSet = false;
-				this.autoSetProcessIdAction.Reschedule(AutoAddLogFilesDelay);
-			}
-			else if (this.canSetProcessName.Value
-			         && this.isProcessNameNeededAfterLogProfileSet)
-			{
-				this.isProcessNameNeededAfterLogProfileSet = false;
-				this.autoSetProcessNameAction.Reschedule(AutoAddLogFilesDelay);
-			}
+			this.AutoSelectAndSetLogsReadingParameters();
 
 			// check administrator role
 			this.ConfirmRestartingAsAdmin();
@@ -3014,13 +2985,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			// build headers
 			var app = (App)this.Application;
 			var analysisResultIndicatorSize = 0.0;
-			var analysisResultIndicatorMargin = new Thickness();
-			var markIndicatorSize = app.TryFindResource("Double/SessionView.LogListBox.MarkIndicator.Size", out var rawResource) ? (double)rawResource! : default;
-			var markIndicatorMargin = app.TryFindResource("Thickness/SessionView.LogListBox.MarkIndicator.Margin", out rawResource) ? (Thickness)rawResource! : default;
-			var splitterWidth = app.TryFindResource("Double/GridSplitter.Thickness", out rawResource) ? (double)rawResource! : default;
-			var minHeaderWidth = app.TryFindResource("Double/SessionView.LogHeader.MinWidth", out rawResource) ? (double)rawResource! : default;
-			var itemPadding = app.TryFindResource("Thickness/SessionView.LogListBox.Item.Padding", out rawResource) ? (Thickness)rawResource! : default;
-			var colorIndicatorWidth = app.TryFindResource("Double/SessionView.LogListBox.ColorIndicator.Width", out rawResource) ? (double)rawResource! : default;
+			var analysisResultIndicatorMargin = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin");
+			var markIndicatorSize = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.MarkIndicator.Size");
+			var markIndicatorMargin = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.MarkIndicator.Margin");
+			var splitterWidth = app.FindResourceOrDefault<double>("Double/GridSplitter.Thickness");
+			var minHeaderWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogHeader.MinWidth");
+			var itemPadding = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.Item.Padding");
+			var colorIndicatorWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.ColorIndicator.Width");
 			var headerTemplate = (DataTemplate)this.Resources["logHeaderTemplate"].AsNonNull();
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
@@ -3039,8 +3010,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
-						if (app.TryFindResource("Image/Mark", out rawResource))
-							image.Source = (IImage)rawResource!;
+						image.Source = app.FindResourceOrDefault<IImage>("Image/Mark");
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;
@@ -3061,8 +3031,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
-						if (app.TryFindResource("Image/Icon.Analysis", out rawResource))
-							image.Source = (IImage)rawResource!;
+						image.Source = app.FindResourceOrDefault<IImage>("Image/Icon.Analysis");
 					});
 					border.Height = analysisResultIndicatorSize;
 					border.Margin = analysisResultIndicatorMargin;
@@ -3305,6 +3274,17 @@ namespace CarinaStudio.ULogViewer.Controls
         // Called when log profile set.
         void OnLogProfileSet(LogProfile profile)
 		{
+			// show UI automatically to let user select parameters
+			if (this.DataContext is not Session session)
+				return;
+			this.isIPEndPointNeededAfterLogProfileSet = session.IsIPEndPointNeeded && this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
+			this.isLogFileNeededAfterLogProfileSet = session.IsLogFileNeeded && this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
+			this.isProcessIdNeededAfterLogProfileSet = session.IsProcessIdNeeded && this.Settings.GetValueOrDefault(SettingKeys.SelectProcessIdWhenNeeded);
+			this.isProcessNameNeededAfterLogProfileSet = session.IsProcessNameNeeded && this.Settings.GetValueOrDefault(SettingKeys.SelectProcessNameWhenNeeded);
+			this.isUriNeededAfterLogProfileSet = session.IsUriNeeded && this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
+			this.isWorkingDirNeededAfterLogProfileSet = session.IsWorkingDirectoryNeeded && this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
+			this.AutoSelectAndSetLogsReadingParameters();
+			
 			// reset auto scrolling
 			this.IsScrollingToLatestLogNeeded = profile.IsContinuousReading;
 
@@ -3714,7 +3694,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Key.O:
-							this.AddLogFiles();
+							_ = this.AddLogFilesAsync();
 							break;
 						case Key.P:
 							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
@@ -4703,7 +4683,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Select and set IP endpoint.
-		async void SelectAndSetIPEndPoint()
+		async Task SelectAndSetIPEndPointAsync()
 		{
 			// check state
 			if (this.attachedWindow == null)
@@ -4744,7 +4724,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Select and set log profile.
 		/// </summary>
-		public async void SelectAndSetLogProfileAsync()
+		public async Task SelectAndSetLogProfileAsync()
 		{
 			// check state
 			this.VerifyAccess();
@@ -4771,9 +4751,52 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Select and set process ID.
-		async void SelectAndSetProcessId()
+		async Task SelectAndSetProcessIdAsync()
 		{
+			// check state
+			this.VerifyAccess();
+			if (this.attachedWindow is null)
+			{
+				this.Logger.LogError("Unable to set process ID without attaching to window");
+				return;
+			}
+			if (this.DataContext is not Session session)
+			{
+				this.Logger.LogError("Unable to set process ID without session");
+				return;
+			}
 			
+			// select process ID
+			this.autoSetProcessIdAction.Cancel();
+			int? processId;
+			var processIdText = session.ProcessId?.ToString();
+			while (true)
+			{
+				processIdText = (await new TextInputDialog
+				{
+					InitialText = processIdText,
+					Message = this.Application.GetObservableString("SessionView.SetProcessId.Message"),
+					MaxTextLength = 10,
+					Title = this.Application.GetObservableString("SessionView.SetProcessId"),
+				}.ShowDialog(this.attachedWindow))?.Trim();
+				if (string.IsNullOrEmpty(processIdText) || this.attachedWindow is null)
+					return;
+				if (int.TryParse(processIdText, out var pid) && pid >= 0)
+				{
+					processId = pid;
+					break;
+				}
+				await new MessageDialog
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = this.Application.GetObservableString("SessionView.SetProcessId.Invalid"),
+				}.ShowDialog(this.attachedWindow);
+			}
+			if (this.DataContext != session)
+				return;
+			
+			// set process ID
+			session.SetProcessIdCommand.TryExecute(processId);
 		}
 		
 		
@@ -4784,9 +4807,35 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 		
 		// Select and set process name.
-		async void SelectAndSetProcessName()
+		async Task SelectAndSetProcessNameAsync()
 		{
+			// check state
+			this.VerifyAccess();
+			if (this.attachedWindow is null)
+			{
+				this.Logger.LogError("Unable to set process name without attaching to window");
+				return;
+			}
+			if (this.DataContext is not Session session)
+			{
+				this.Logger.LogError("Unable to set process name without session");
+				return;
+			}
 			
+			// select process name
+			this.autoSetProcessNameAction.Cancel();
+			var processName = (await new TextInputDialog
+			{
+				InitialText = session.ProcessName,
+				Message = this.Application.GetObservableString("SessionView.SetProcessName.Message"),
+				MaxTextLength = 128,
+				Title = this.Application.GetObservableString("SessionView.SetProcessName"),
+			}.ShowDialog(this.attachedWindow))?.Trim();
+			if (string.IsNullOrEmpty(processName) || this.DataContext != session)
+				return;
+			
+			// set process name
+			session.SetProcessNameCommand.TryExecute(processName);
 		}
 		
 		
@@ -4797,7 +4846,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Select and set URI.
-		async void SelectAndSetUri()
+		async Task SelectAndSetUriAsync()
         {
 			// check state
 			if (this.attachedWindow == null)
@@ -4837,7 +4886,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Select and set working directory.
-		async void SelectAndSetWorkingDirectory()
+		async Task SelectAndSetWorkingDirectoryAsync()
 		{
 			// check state
 			if (this.attachedWindow is null)
@@ -4937,7 +4986,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			if (session.LogProfile == logProfile)
 				return true;
-			
+
 			// check administrator role
 			var isRestartingAsAdminNeeded = false;
 			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
@@ -4962,9 +5011,14 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.isIPEndPointNeededAfterLogProfileSet = false;
 			this.isLogFileNeededAfterLogProfileSet = false;
 			this.isRestartingAsAdminConfirmed = false;
+			this.isProcessIdNeededAfterLogProfileSet = false;
+			this.isProcessNameNeededAfterLogProfileSet = false;
 			this.isUriNeededAfterLogProfileSet = false;
 			this.isWorkingDirNeededAfterLogProfileSet = false;
 			this.autoAddLogFilesAction.Cancel();
+			this.autoSetIPEndPointAction.Cancel();
+			this.autoSetProcessIdAction.Cancel();
+			this.autoSetProcessNameAction.Cancel();
 			this.autoSetUriAction.Cancel();
 			this.autoSetWorkingDirectoryAction.Cancel();
 			session.ResetLogProfileCommand.TryExecute(null);
@@ -4975,72 +5029,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Logger.LogError("Unable to set log profile '{logProfileName}' ({logProfileId}) to session", logProfile.Name, logProfile.Id);
 				return false;
 			}
-			if (session.IsIPEndPointNeeded)
-			{
-				this.isIPEndPointNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
-				if (this.canSetIPEndPoint.Value 
-					&& this.isIPEndPointNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoSetIPEndPointAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsLogFileNeeded)
-			{
-				this.isLogFileNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
-				if (this.canAddLogFiles.Value 
-					&& this.isLogFileNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoAddLogFilesAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsUriNeeded)
-			{
-				this.isUriNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
-				if (this.canSetUri.Value 
-					&& this.isUriNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoSetUriAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsWorkingDirectoryNeeded)
-			{
-				this.isWorkingDirNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
-				if (this.canSetWorkingDirectory.Value 
-					&& this.isWorkingDirNeededAfterLogProfileSet
-					&& this.isAttachedToLogicalTree)
-				{
-					this.autoSetWorkingDirectoryAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsProcessIdNeeded)
-			{
-				this.isProcessIdNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectProcessIdWhenNeeded);
-				if (this.canSetProcessId.Value 
-				    && this.isProcessIdNeededAfterLogProfileSet
-				    && this.isAttachedToLogicalTree)
-				{
-					this.autoSetProcessIdAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
-			else if (session.IsProcessNameNeeded)
-			{
-				this.isProcessNameNeededAfterLogProfileSet = this.Settings.GetValueOrDefault(SettingKeys.SelectProcessNameWhenNeeded);
-				if (this.canSetProcessName.Value 
-				    && this.isProcessNameNeededAfterLogProfileSet
-				    && this.isAttachedToLogicalTree)
-				{
-					this.autoSetProcessNameAction.Reschedule(AutoAddLogFilesDelay);
-				}
-			}
 			this.OnLogProfileSet(logProfile);
 
 			// restart as administrator role
 			if (isRestartingAsAdminNeeded)
 				this.RestartAsAdministrator();
-			
+
 			// complete
 			return true;
 		}

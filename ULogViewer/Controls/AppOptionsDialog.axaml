@@ -257,6 +257,20 @@
 							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Select PID when needed -->
+						<asControls:DialogItemGrid>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectProcessIdWhenNeeded}"/>
+							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectProcessIdWhenNeeded, Mode=TwoWay}"/>
+						</asControls:DialogItemGrid>
+						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Select process name when needed -->
+						<asControls:DialogItemGrid>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectProcessNameWhenNeeded}"/>
+							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectProcessNameWhenNeeded, Mode=TwoWay}"/>
+						</asControls:DialogItemGrid>
+						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Select reading precondition for files -->
 						<asControls:DialogItemGrid>

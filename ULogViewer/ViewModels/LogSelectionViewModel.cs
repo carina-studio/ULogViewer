@@ -99,7 +99,7 @@ class LogSelectionViewModel : SessionComponent
         this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, new ForwardedObservableBoolean(ForwardedObservableBoolean.CombinationMode.And,
             false, 
             hasSelectedLogsObservable, 
-            session.GetValueAsObservable(Session.AreFileBasedLogsProperty)));
+            session.GetValueAsObservable(Session.IsLogFileSupportedProperty)));
         this.SelectAllLogsCommand = new Command(this.SelectAllLogs, session.GetValueAsObservable(Session.HasLogsProperty));
         this.SelectLogDurationEndingLogCommand = new Command(this.SelectLogDurationEndingLog, this.canSelectLogsDurationEndingLog);
         this.SelectLogDurationStartingLogCommand = new Command(this.SelectLogDurationStartingLog, this.canSelectLogsDurationStartingLog);

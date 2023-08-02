@@ -394,6 +394,10 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(SelectLogProfileForNewSession));
 		else if (key == SettingKeys.SelectLogReadingPreconditionForFiles)
 			this.OnPropertyChanged(nameof(SelectLogReadingPreconditionForFiles));
+		else if (key == SettingKeys.SelectProcessIdWhenNeeded)
+			this.OnPropertyChanged(nameof(SelectProcessIdWhenNeeded));
+		else if (key == SettingKeys.SelectProcessNameWhenNeeded)
+			this.OnPropertyChanged(nameof(SelectProcessNameWhenNeeded));
 		else if (key == SettingKeys.SelectUriWhenNeeded)
 			this.OnPropertyChanged(nameof(SelectUriWhenNeeded));
 		else if (key == SettingKeys.SelectWorkingDirectoryWhenNeeded)
@@ -556,6 +560,26 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles);
 		set => this.Settings.SetValue<bool>(SettingKeys.SelectLogReadingPreconditionForFiles, value);
+	}
+	
+	
+	/// <summary>
+	/// Get or set whether to select process ID immediately when they are needed or not.
+	/// </summary>
+	public bool SelectProcessIdWhenNeeded
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.SelectProcessIdWhenNeeded);
+		set => this.Settings.SetValue<bool>(SettingKeys.SelectProcessIdWhenNeeded, value);
+	}
+	
+	
+	/// <summary>
+	/// Get or set whether to select process name immediately when they are needed or not.
+	/// </summary>
+	public bool SelectProcessNameWhenNeeded
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.SelectProcessNameWhenNeeded);
+		set => this.Settings.SetValue<bool>(SettingKeys.SelectProcessNameWhenNeeded, value);
 	}
 
 
