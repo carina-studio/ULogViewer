@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CarinaStudio.ULogViewer.Controls.StandardOutputCommandDialog"
+        Classes="Dialog"
+        Name="window"
+        Title="{DynamicResource String/StandardOutputCommandDialog.Title}"
+        Width="{DynamicResource Double/LogDataSourceOptionsDialog.Width}">
+
+	<DockPanel>
+
+		<!-- Control buttons -->
+		<Border Classes="Dialog_ControlButtonsPanel">
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Content -->
+		<Border Classes="Dialog_ContentPanel_WithItemsGroups">
+			<Border Classes="Dialog_ItemsGroup_Container">
+				<StackPanel>
+					
+					<!-- Command -->
+					<asControls:DialogItemBorder>
+						<TextBlock Classes="Dialog_TextBlock_Label" 
+						           Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
+					</asControls:DialogItemBorder>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<asControls:SyntaxHighlightingTextBox Name="commandTextBox" 
+					                                      Classes="Dialog_Item_TextBox" 
+					                                      DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}"
+					                                      FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}"
+					                                      Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}"
+					                                      HorizontalAlignment="Stretch"
+					                                      TextAlignment="Left"
+					                                      Watermark="{DynamicResource String/Common.None}"/>
+					
+					<!-- Use text shell -->
+					<StackPanel IsVisible="{Binding #window.UseTextShell, Converter={x:Static ObjectConverters.IsNotNull}}">
+						<Separator Classes="Dialog_Item_Separator"/>
+						<asControls:DialogItemGrid>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UseTextShell}"/>
+							<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+						</asControls:DialogItemGrid>
+						<Separator Classes="Dialog_Separator_Small"/>
+						<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{DynamicResource String/Common.Options.WithDialog}"/>
+						<Separator Classes="Dialog_Item_Separator"/>
+					</StackPanel>
+					
+				</StackPanel>
+			</Border>
+		</Border>
+		
+	</DockPanel>
+	
+</Window>

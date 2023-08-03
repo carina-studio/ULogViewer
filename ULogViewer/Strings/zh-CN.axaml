@@ -1360,6 +1360,9 @@ return None</sys:String>
 
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 资料库</sys:String>
+	
+	<!-- StandardOutputCommandDialog -->
+	<sys:String x:Key="String/StandardOutputCommandDialog.Title">标准输出 (stdout) 指令</sys:String>
 
 	<!-- StandardOutputLogDataSource -->
 	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">找不到指令 '{0}'。请确认指令或可执行档已安装且其路径已加入至 PATH 环境变量。</sys:String>

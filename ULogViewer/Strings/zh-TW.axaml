@@ -1349,6 +1349,9 @@ return None</sys:String>
 
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 資料庫</sys:String>
+	
+	<!-- StandardOutputCommandDialog -->
+	<sys:String x:Key="String/StandardOutputCommandDialog.Title">標準輸出 (stdout) 指令</sys:String>
 
 	<!-- StandardOutputLogDataSource -->
 	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">找不到指令 '{0}'。請確認指令或可執行檔已安裝且其路徑已加入至 PATH 環境變數。</sys:String>

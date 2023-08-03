@@ -1396,6 +1396,9 @@ return None</sys:String>
 
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server Database</sys:String>
+	
+	<!-- StandardOutputCommandDialog -->
+	<sys:String x:Key="String/StandardOutputCommandDialog.Title">Command for standard output (stdout)</sys:String>
 
 	<!-- StandardOutputLogDataSource -->
 	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find command '{0}'. Please make sure that command or executable has been installed and its path has been added to PATH environment variable.</sys:String>
