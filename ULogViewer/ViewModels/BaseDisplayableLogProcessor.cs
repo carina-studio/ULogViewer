@@ -45,6 +45,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     readonly Comparison<DisplayableLog> logComparison;
     volatile ILogger? logger;
     MemoryUsagePolicy memoryUsagePolicy;
+    DisplayableLogProcessingPriority processingPriority;
     readonly ScheduledAction processNextChunkAction;
     Comparison<DisplayableLog> sourceLogComparison;
     IList<DisplayableLog> sourceLogs;
@@ -71,14 +72,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
         // setup properties
         this.baseMemorySize = Memory.EstimateInstanceSize(this.GetType());
-        this.ChunkSize = priority switch
-        {
-            DisplayableLogProcessingPriority.Background => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeBackground),
-            DisplayableLogProcessingPriority.Realtime => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeRealtime),
-            _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeDefault),
-        };
         this.logComparison = comparison;
-        this.ProcessingPriority = priority;
+        this.processingPriority = priority;
         this.ProcessingTaskFactory = BaseDisplayableLogProcessors.GetProcessingTaskFactory(priority);
         this.sourceLogComparison = comparison;
         this.sourceLogs = sourceLogs;
@@ -147,7 +142,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <summary>
     /// Get size of processing chunk.
     /// </summary>
-    protected virtual int ChunkSize { get; }
+    protected virtual int ChunkSize => this.processingPriority switch
+    {
+        DisplayableLogProcessingPriority.Background => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeBackground),
+        DisplayableLogProcessingPriority.Realtime => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeRealtime),
+        _ => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingSizeDefault),
+    };
 
 
     /// <summary>
@@ -341,7 +341,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 #endif
         if (this.IsDisposed)
             return;
-        var delay = this.ProcessingPriority switch
+        var delay = this.processingPriority switch
         {
             DisplayableLogProcessingPriority.Default => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogProcessingDelayDefault),
             DisplayableLogProcessingPriority.Realtime => 0,
@@ -718,7 +718,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.RecycleInternalDisplayableLogList(logs);
 
         // wait for previous chunks
-        var paddingInterval = this.ProcessingPriority switch
+        var paddingInterval = this.processingPriority switch
         {
             DisplayableLogProcessingPriority.Default => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingIntervalDefault),
             DisplayableLogProcessingPriority.Realtime => this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DisplayableLogChunkProcessingPaddingIntervalRealtime),
@@ -744,9 +744,25 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Get priority of logs processing.
+    /// Get or set priority of logs processing.
     /// </summary>
-    public DisplayableLogProcessingPriority ProcessingPriority { get; }
+    public DisplayableLogProcessingPriority ProcessingPriority
+    {
+        get => this.processingPriority;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.processingPriority == value)
+                return;
+            this.processingPriority = value;
+            this.currentProcessingParams?.Let(it =>
+            {
+                it.MaxConcurrencyLevel = Math.Min(BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.processingPriority), Math.Max(1, this.MaxConcurrencyLevel));
+            });
+            this.OnPropertyChanged(nameof(ProcessingPriority));
+        }
+    }
     
 
     /// <summary>
@@ -963,7 +979,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
         this.currentProcessingParams = new ProcessingParams(processingToken).Also(it => 
         {
-            it.MaxConcurrencyLevel = Math.Min(BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.ProcessingPriority), Math.Max(1, this.MaxConcurrencyLevel));
+            it.MaxConcurrencyLevel = Math.Min(BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.processingPriority), Math.Max(1, this.MaxConcurrencyLevel));
         });
         this.unprocessedLogs.AddAll(this.sourceLogs.Reverse(), true);
         for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)

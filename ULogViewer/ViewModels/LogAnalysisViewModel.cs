@@ -109,9 +109,13 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     readonly DisplayableLog?[] analysisResultComparisonTempLogs2 = new DisplayableLog?[3];
     readonly SortedObservableList<DisplayableLogAnalysisResult> analysisResults;
     readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedAnalyzers = new();
+    DisplayableLogProcessingPriority baseScriptLogAnalysisPriority;
     readonly ScriptDisplayableLogAnalyzer coopScriptLogAnalyzer;
     readonly IDisposable displayLogPropertiesObserverToken;
     readonly IDisposable isProVersionActivatedObserverToken;
+    readonly IDisposable isReadingLogsContinuouslyObserverToken;
+    readonly IDisposable isReadingLogsObserverToken;
+    readonly IDisposable isRemovingLogFilesObserverToken;
     bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
@@ -192,7 +196,16 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
         this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
-        this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
+        this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
+        {
+            this.AttachToAnalyzer(it);
+            this.baseScriptLogAnalysisPriority = it.ProcessingPriority;
+            it.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(ScriptDisplayableLogAnalyzer.ProcessingPriority))
+                    this.Logger.LogDebug("Set priority of script log analysis to {priority}", it.ProcessingPriority);
+            };
+        });
         
         // setup properties
         this.AnalysisResults = new Collections.SafeReadOnlyList<DisplayableLogAnalysisResult>(this.analysisResults);
@@ -354,6 +367,17 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                     this.Logger.LogTrace("Update log analysis with 0 script sets");
             }
         });
+        var updateScriptLogAnalysisPriorityAction = new ScheduledAction(() =>
+        {
+            if (this.IsDisposed)
+                return;
+            if (session.IsRemovingLogFiles)
+                this.scriptLogAnalyzer.ProcessingPriority = DisplayableLogProcessingPriority.Background;
+            else if (session.IsReadingLogs && !session.IsReadingLogsContinuously)
+                this.scriptLogAnalyzer.ProcessingPriority = DisplayableLogProcessingPriority.Background;
+            else
+                this.scriptLogAnalyzer.ProcessingPriority = this.baseScriptLogAnalysisPriority;
+        });
 
         // attach to self properties
         this.GetValueAsObservable(IsCooperativeLogAnalysisScriptSetEnabledProperty).Subscribe(isEnabled =>
@@ -399,6 +423,12 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.updateScriptLogAnalysisAction.Schedule();
             }
         });
+        this.isReadingLogsContinuouslyObserverToken = session.GetValueAsObservable(Session.IsReadingLogsContinuouslyProperty).Subscribe(_ =>
+            updateScriptLogAnalysisPriorityAction.Schedule());
+        this.isReadingLogsObserverToken = session.GetValueAsObservable(Session.IsReadingLogsProperty).Subscribe(_ =>
+            updateScriptLogAnalysisPriorityAction.Schedule());
+        this.isRemovingLogFilesObserverToken = session.GetValueAsObservable(Session.IsRemovingLogFilesProperty).Subscribe(_ =>
+            updateScriptLogAnalysisPriorityAction.Schedule());
 
         // restore state
 #pragma warning disable CS0612
@@ -588,6 +618,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         this.Session.AllLogReadersDisposed -= this.OnAllLogReadersDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
         this.isProVersionActivatedObserverToken.Dispose();
+        this.isReadingLogsContinuouslyObserverToken.Dispose();
+        this.isReadingLogsObserverToken.Dispose();
+        this.isRemovingLogFilesObserverToken.Dispose();
 
         // detach from analyzers
         this.DetachFromAnalyzer(this.coopScriptLogAnalyzer, true);
