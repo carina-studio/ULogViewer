@@ -36,7 +36,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Initialize new <see cref="Workspace"/> instance.
 		/// </summary>
 		/// <param name="savedState">Saved state in JSON format.</param>
-		public Workspace(JsonElement? savedState) : base()
+		public Workspace(JsonElement? savedState)
 		{
 			// setup properties
 			this.Sessions = ListExtensions.AsReadOnly(this.sessions);
@@ -63,7 +63,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Attach given session to this workspace.
 		/// </summary>
-		/// <param name="index">Index of position to place sessopn in <see cref="Sessions"/>.</param>
+		/// <param name="index">Index of position to place session in <see cref="Sessions"/>.</param>
 		/// <param name="session">Session to attach.</param>
 		public void AttachSession(int index, Session session)
 		{
@@ -145,9 +145,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// add log files
 			foreach (var filePath in filePaths)
 			{
-				var param = new Session.LogDataSourceParams<string>()
+				var param = new Session.LogFileParams
 				{
-					Source = filePath,
+					FileName = filePath,
 				};
 				if (!session.AddLogFileCommand.TryExecute(param))
 				{
@@ -333,7 +333,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Update title.
-        protected override string? OnUpdateTitle()
+        protected override string OnUpdateTitle()
         {
 			var titleBuilder = new StringBuilder("ULogViewer");
 			var postfixBuilder = new StringBuilder();

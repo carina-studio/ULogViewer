@@ -413,38 +413,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Parameters of log data source.
-		/// </summary>
-		/// <typeparam name="TSource">Type of source of log data.</typeparam>
-		public class LogDataSourceParams<TSource>
-		{
-			/// <summary>
-			/// Precondition of log reading.
-			/// </summary>
-			public LogReadingPrecondition Precondition { get; set; }
-
-
-			/// <summary>
-			/// Window of data source to read logs from.
-			/// </summary>
-			public LogReadingWindow? ReadingWindow { get; set; }
-
-
-			/// <summary>
-			/// Maximum number of logs to be read from data source.
-			/// </summary>
-			public int? MaxLogReadingCount { get; set; }
-
-
-			/// <summary>
-			/// Source of log data.
-			/// </summary>
-			[System.Diagnostics.CodeAnalysis.AllowNull]
-			public TSource Source { get; set; }
-		}
-
-
-		/// <summary>
 		/// Information of log file.
 		/// </summary>
 		public abstract class LogFileInfo : INotifyPropertyChanged
@@ -522,6 +490,36 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			/// <inheritdoc/>
 			public event PropertyChangedEventHandler? PropertyChanged;
+		}
+		
+		
+		/// <summary>
+		/// Parameters of log file.
+		/// </summary>
+		public class LogFileParams
+		{
+			/// <summary>
+			/// File name.
+			/// </summary>
+			public string? FileName { get; set; }
+			
+			
+			/// <summary>
+			/// Precondition of log reading.
+			/// </summary>
+			public LogReadingPrecondition Precondition { get; set; }
+
+
+			/// <summary>
+			/// Window of data source to read logs from.
+			/// </summary>
+			public LogReadingWindow? ReadingWindow { get; set; }
+
+
+			/// <summary>
+			/// Maximum number of logs to be read from data source.
+			/// </summary>
+			public int? MaxLogReadingCount { get; set; }
 		}
 
 
@@ -902,14 +900,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.activationHistoryListNode = new LinkedListNode<Session>(this);
 
 			// create commands
-			this.AddLogFileCommand = new Command<LogDataSourceParams<string>?>(this.AddLogFile, this.GetValueAsObservable(CanAddLogFileProperty));
+			this.AddLogFileCommand = new Command<LogFileParams?>(this.AddLogFile, this.GetValueAsObservable(CanAddLogFileProperty));
 			this.ClearLogFilesCommand = new Command(this.ClearLogFiles, this.canClearLogFiles);
 			this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
 			this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
 			this.MarkLogsCommand = new Command<MarkingLogsParams>(this.MarkLogs, this.canMarkUnmarkLogs);
 			this.MarkUnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.MarkUnmarkLogs, this.canMarkUnmarkLogs);
 			this.PauseResumeLogsReadingCommand = new Command(this.PauseResumeLogsReading, this.canPauseResumeLogsReading);
-			this.ReloadLogFileCommand = new Command<LogDataSourceParams<string>?>(this.ReloadLogFile, this.canClearLogFiles);
+			this.ReloadLogFileCommand = new Command<LogFileParams?>(this.ReloadLogFile, this.canClearLogFiles);
 			this.ReloadLogsCommand = new Command(() => 
 			{
 				this.ScheduleReloadingLogs(false, false);
@@ -1417,15 +1415,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Add file.
-		void AddLogFile(LogDataSourceParams<string>? param)
+		void AddLogFile(LogFileParams? param)
 		{
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (param == null)
-				throw new ArgumentNullException(nameof(param));
-			var fileName = param.Source;
-			if (fileName == null)
+			var fileName = param?.FileName;
+			if (param is null || string.IsNullOrEmpty(fileName))
 				throw new ArgumentException("No file name specified.");
 			if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
 			{
@@ -1467,7 +1463,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to add log file.
 		/// </summary>
-		/// <remarks>Type of command parameter is <see cref="LogDataSourceParams{String}"/>.</remarks>
+		/// <remarks>Type of command parameter is <see cref="LogFileParams"/>.</remarks>
 		public ICommand AddLogFileCommand { get; }
 
 
@@ -3836,25 +3832,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Reload log file.
-		void ReloadLogFile(LogDataSourceParams<string>? param)
+		void ReloadLogFile(LogFileParams? param)
 		{
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			var fileName = param?.Source;
-			if (param == null || fileName == null)
+			var fileName = param?.FileName;
+			if (param is null || string.IsNullOrEmpty(fileName))
 				return;
 			
 			// find log reader
 			var logReader = this.logReaders.FirstOrDefault(it => it.DataSource.CreationOptions.FileName == fileName);
-			if (logReader == null)
+			if (logReader is null)
 				return;
 			
 			// check state
 			if (!this.logFileInfoMapByLogReader.TryGetValue(logReader, out var logFileInfo) || logFileInfo.IsPredefined)
 				return;
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				return;
 			
 			// do nothing if all parameters are same
@@ -3876,7 +3872,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Command to reload added log file.
 		/// </summary>
-		/// <remarks>Type of parameter is <see cref="LogDataSourceParams{String}"/>.</remarks>
+		/// <remarks>Type of parameter is <see cref="LogFileParams"/>.</remarks>
 		public ICommand ReloadLogFileCommand { get; }
 
 

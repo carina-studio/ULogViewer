@@ -187,7 +187,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		INotifyCollectionChanged? attachedLogs;
 		readonly ForwardedObservableBoolean canAddLogFiles;
-		readonly ObservableCommandState<Session.LogDataSourceParams<string>> canAddLogFilesToSession = new();
+		readonly ObservableCommandState<Session.LogFileParams> canAddLogFilesToSession = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		readonly MutableObservableBoolean canEditLogProfile = new();
@@ -1148,10 +1148,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				// add log files
 				foreach (var fileName in fileNameList)
 				{
-					session.AddLogFileCommand.Execute(new Session.LogDataSourceParams<string>()
+					session.AddLogFileCommand.Execute(new Session.LogFileParams
 					{
+						FileName = fileName,
 						Precondition = precondition,
-						Source = fileName,
 					});
 				}
 				return true;
@@ -1241,7 +1241,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// attach to command
-			this.canAddLogFilesToSession.Bind(session.AddLogFileCommand, new Session.LogDataSourceParams<string>());
+			this.canAddLogFilesToSession.Bind(session.AddLogFileCommand, new Session.LogFileParams());
 			this.canReloadLogs.Bind(session.ReloadLogsCommand);
 			this.canResetLogProfileToSession.Bind(session.ResetLogProfileCommand);
 			this.canSaveLogs.Bind(session.SaveLogsCommand, new LogsSavingOptions(Array.Empty<DisplayableLog>()));
