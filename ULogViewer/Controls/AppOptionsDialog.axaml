@@ -236,6 +236,13 @@
 							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Select command when needed -->
+						<asControls:DialogItemGrid>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectCommandWhenNeeded}"/>
+							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectCommandWhenNeeded, Mode=TwoWay}"/>
+						</asControls:DialogItemGrid>
+						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Select IP endpoint when needed -->
 						<asControls:DialogItemGrid>

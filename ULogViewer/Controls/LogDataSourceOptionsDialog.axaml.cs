@@ -56,7 +56,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	static readonly StyledProperty<bool> IsAzureRelatedDataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsAzureRelatedDataSourceProvider");
 	static readonly StyledProperty<bool> IsCategoryRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategoryRequired));
 	static readonly StyledProperty<bool> IsCategorySupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCategorySupported));
-	static readonly StyledProperty<bool> IsCommandRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandRequired));
 	static readonly StyledProperty<bool> IsCommandSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsCommandSupported));
 	static readonly StyledProperty<bool> IsConnectionStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringRequired");
 	static readonly StyledProperty<bool> IsConnectionStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringSupported");
@@ -319,7 +318,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	// Data source options states.
 	bool IsCategoryRequired => this.GetValue(IsCategoryRequiredProperty);
 	bool IsCategorySupported => this.GetValue(IsCategorySupportedProperty);
-	bool IsCommandRequired => this.GetValue(IsCommandRequiredProperty);
 	bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
 	bool IsFileNameSupported => this.GetValue(IsFileNameSupportedProperty);
 	bool IsEncodingSupported => this.GetValue(IsEncodingSupportedProperty);
@@ -616,8 +614,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			return false;
 		if (this.IsCategoryRequired && string.IsNullOrWhiteSpace(this.categoryTextBox.Text))
 			return false;
-		if (this.IsCommandRequired && string.IsNullOrWhiteSpace(this.commandTextBox.Text))
-			return false;
 		if (this.GetValue(IsConnectionStringRequiredProperty) && string.IsNullOrWhiteSpace(this.connectionStringStringTextBox.Text))
 			return false;
 		if (this.IsIPEndPointSupported && !this.ipAddressTextBox.IsTextValid)
@@ -655,7 +651,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsAzureRelatedDataSourceProviderProperty, provider is AzureCliLogDataSourceProvider);
 			this.SetValue(IsCategoryRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Category)));
 			this.SetValue(IsCategorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Category)));
-			this.SetValue(IsCommandRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)));
 			this.SetValue(IsCommandSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)));
 			this.SetValue(IsConnectionStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ConnectionString)));
 			this.SetValue(IsConnectionStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ConnectionString)));
@@ -691,7 +686,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsAzureRelatedDataSourceProviderProperty, false);
 			this.SetValue(IsCategoryRequiredProperty, false);
 			this.SetValue(IsCategorySupportedProperty, false);
-			this.SetValue(IsCommandRequiredProperty, false);
 			this.SetValue(IsCommandSupportedProperty, false);
 			this.SetValue(IsConnectionStringRequiredProperty, false);
 			this.SetValue(IsConnectionStringSupportedProperty, false);

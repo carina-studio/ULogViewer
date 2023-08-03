@@ -106,16 +106,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
 							</asControls:DialogItemBorder>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsCommandRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
-									</iaCore:DataTriggerBehavior>
-									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsCommandRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
-									</iaCore:DataTriggerBehavior>
-								</ia:Interaction.Behaviors>
-							</asControls:SyntaxHighlightingTextBox>
+							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}"/>
 							<Button Name="selectAzureResourcesButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectAzureResources}" Content="{DynamicResource String/LogDataSourceOptionsDialog.SelectAzureResources}" HorizontalAlignment="Right" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}"/>
 							<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].CommandReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}"/>

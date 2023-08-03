@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.DataSources;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -30,7 +32,10 @@ class StandardOutputCommandDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	{
 		this.CommandSyntaxHighlightingDefinitionSet = Highlighting.TextShellCommandSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
-		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox));
+		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox)).Also(it =>
+		{
+			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
+		});
 		this.useTextShellSwitch = this.Get<ToggleSwitch>(nameof(useTextShellSwitch));
 	}
 	
@@ -58,10 +63,23 @@ class StandardOutputCommandDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 
 
 	/// <inheritdoc/>
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
+	{
+		base.OnEnterKeyClickedOnInputControl(control);
+		if (control == this.commandTextBox)
+			this.GenerateResultCommand.TryExecute();
+	}
+
+
+	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		this.SynchronizationContext.Post(() => this.commandTextBox.Focus());
+		this.SynchronizationContext.Post(() =>
+		{
+			this.commandTextBox.Focus();
+			this.commandTextBox.SelectAll();
+		});
 	}
 
 
@@ -72,8 +90,20 @@ class StandardOutputCommandDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 		this.commandTextBox.Text = this.Command;
 		this.GetValue<bool?>(UseTextShellProperty)?.Let(it => this.useTextShellSwitch.IsChecked = it);
 	}
-	
-	
+
+
+	/// <inheritdoc/>
+	protected override bool OnValidateInput()
+	{
+		if (!base.OnValidateInput())
+			return false;
+		var command = this.commandTextBox.Text;
+		if (string.IsNullOrWhiteSpace(command))
+			return true;
+		return !(new LogDataSourceOptions { Command = command }.CheckPlaceholderInCommands());
+	}
+
+
 	/// <summary>
 	/// Show options dialog of default text shell.
 	/// </summary>

@@ -38,6 +38,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">需要升級至專業版。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">變更日誌類型後重設套用的規則集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">腳本編輯器字型及大小</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">當需要指令時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">當需要 IP 端點時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
@@ -1292,6 +1293,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">選取最接近指定時間戳的日誌</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">指定的時間戳</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">選取最接近指定時間戳的日誌</sys:String>
+	<sys:String x:Key="String/SessionView.SetCommand">選取/變更指令</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">選取/變更 IP 端點</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogChartType">變更圖表類型</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">選取/變更日誌類型</sys:String>

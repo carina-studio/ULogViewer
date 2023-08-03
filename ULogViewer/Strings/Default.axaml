@@ -38,6 +38,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont.Sample">if (x == 0) { 
     Context.Logger.LogDebug(msg); 
 }</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">Show input dialog when command is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show input dialog when IP endpoint is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
@@ -1339,6 +1340,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">Select log nearest to specified timestamp</sys:String>
+	<sys:String x:Key="String/SessionView.SetCommand">Select/Change command</sys:String>
 	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogChartType">Change type of chart</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>

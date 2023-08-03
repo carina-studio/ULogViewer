@@ -90,6 +90,10 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<int> ScriptEditorFontSize = new(nameof(ScriptEditorFontSize), Platform.IsMacOS ? 13 : 14);
 	/// <summary>
+	/// Select command immediately when they are needed.
+	/// </summary>
+	public static readonly SettingKey<bool> SelectCommandWhenNeeded = new(nameof(SelectCommandWhenNeeded), true);
+	/// <summary>
 	/// Select IP endpoint immediately when they are needed.
 	/// </summary>
 	public static readonly SettingKey<bool> SelectIPEndPointWhenNeeded = new(nameof(SelectIPEndPointWhenNeeded), true);

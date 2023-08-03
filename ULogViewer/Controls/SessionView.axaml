@@ -547,6 +547,20 @@
 								</Border>
 							</Panel>
 						</Button>
+						
+						<!-- Set command -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetCommandCommand}" IsVisible="{Binding CanSetCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetCommand}">
+							<Panel>
+								<Image Classes="Icon">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Terminal}"/>
+									</DrawingImage>
+								</Image>
+								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsCommandNeeded}">
+									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								</Border>
+							</Panel>
+						</Button>
 
 						<!-- Set URI -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding CanSetUri}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">

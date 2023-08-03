@@ -386,6 +386,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 		}
 		else if (key == SettingKeys.ScriptEditorFontSize)
 			this.OnPropertyChanged(nameof(ScriptEditorFontSize));
+		else if (key == SettingKeys.SelectCommandWhenNeeded)
+			this.OnPropertyChanged(nameof(SelectCommandWhenNeeded));
 		else if (key == SettingKeys.SelectIPEndPointWhenNeeded)
 			this.OnPropertyChanged(nameof(SelectIPEndPointWhenNeeded));
 		else if (key == SettingKeys.SelectLogFilesWhenNeeded)
@@ -520,6 +522,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontSize);
 		set => this.Settings.SetValue<int>(SettingKeys.ScriptEditorFontSize, value);
+	}
+	
+	
+	/// <summary>
+	/// Get or set whether to select command immediately when they are needed or not.
+	/// </summary>
+	public bool SelectCommandWhenNeeded
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.SelectCommandWhenNeeded);
+		set => this.Settings.SetValue<bool>(SettingKeys.SelectCommandWhenNeeded, value);
 	}
 
 

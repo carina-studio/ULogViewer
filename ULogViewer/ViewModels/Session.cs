@@ -63,6 +63,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> CanAddLogFileProperty = ObservableProperty.Register<Session, bool>(nameof(CanAddLogFile));
 		/// <summary>
+		/// Property of <see cref="CanSetCommand"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> CanSetCommandProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetCommand));
+		/// <summary>
 		/// Property of <see cref="CanSetIPEndPoint"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> CanSetIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetIPEndPoint));
@@ -86,6 +90,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="CanStopReadingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> CanStopReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(CanStopReadingLogs));
+		/// <summary>
+		/// Property of <see cref="Command"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> CommandProperty = ObservableProperty.Register<Session, string?>(nameof(Command));
 		/// <summary>
 		/// Property of <see cref="CustomTitle"/>.
 		/// </summary>
@@ -186,6 +194,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsBuiltInLogProfile"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsBuiltInLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(IsBuiltInLogProfile));
+		/// <summary>
+		/// Property of <see cref="IsCommandNeeded"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsCommandNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsCommandNeeded));
+		/// <summary>
+		/// Property of <see cref="IsCommandSupported"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsCommandSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsCommandSupported));
 		/// <summary>
 		/// Property of <see cref="IsCopyingLogs"/>.
 		/// </summary>
@@ -393,6 +409,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<Uri?> UriProperty = ObservableProperty.Register<Session, Uri?>(nameof(Uri));
 		/// <summary>
+		/// Property of <see cref="UseTextShellToExecuteCommand"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool?> UseTextShellToExecuteCommandProperty = ObservableProperty.Register<Session, bool?>(nameof(UseTextShellToExecuteCommand));
+		/// <summary>
 		/// Property of <see cref="ValidLogLevels"/>.
 		/// </summary>
 		public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProperty = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), Array.Empty<Logs.LogLevel>());
@@ -410,6 +430,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <see cref="IValueConverter"/> to convert from logs operation progress to readable string.
 		/// </summary>
 		public static readonly IValueConverter LogsOperationProgressConverter = new AppSuite.Converters.RatioToPercentageConverter(1);
+
+
+		/// <summary>
+		/// Parameters for command for reading logs.
+		/// </summary>
+		public class CommandParams
+		{
+			/// <summary>
+			/// Command to execute.
+			/// </summary>
+			public string? Command { get; set; }
+			
+			
+			/// <summary>
+			/// Whether text-shell should be used to execute command or not.
+			/// </summary>
+			public bool? UseTextShell { get; set; }
+		}
 
 
 		/// <summary>
@@ -917,6 +955,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ResetTemporarilyShownLogsCommand = new Command(this.ResetTemporarilyShownLogs, this.GetValueAsObservable(HasLogProfileProperty));
 			this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 			this.SearchLogPropertyOnInternetCommand = new Command<Net.SearchProvider>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
+			this.SetCommandCommand = new Command<CommandParams?>(this.SetCommand, this.GetValueAsObservable(CanSetCommandProperty));
 			this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(CanSetIPEndPointProperty));
 			this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
 			this.SetProcessIdCommand = new Command<int?>(this.SetProcessId, this.GetValueAsObservable(CanSetProcessIdProperty));
@@ -1570,6 +1609,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		/// <summary>
+		/// Check whether command can be set to session or not.
+		/// </summary>
+		public bool CanSetCommand => this.GetValue(CanSetCommandProperty);
+		
+		
+		/// <summary>
 		/// Check whether IP end point can be set to session or not.
 		/// </summary>
 		public bool CanSetIPEndPoint => this.GetValue(CanSetIPEndPointProperty);
@@ -1600,7 +1645,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Check whether logs reading can be started in current state or not.
-		bool CanStartReadingLogs => !this.GetValue(IsHibernatedProperty)
+		bool CanStartReadingLogs => !this.GetValue(IsCommandNeededProperty) 
+		                            && !this.GetValue(IsHibernatedProperty)
 		                            && !this.GetValue(IsIPEndPointNeededProperty)
 		                            && !this.GetValue(IsLogFileNeededProperty)
 		                            && !this.GetValue(IsProcessIdNeededProperty)
@@ -1684,14 +1730,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.logFileInfoList.Clear();
 			this.ResetValue(HasLogFilesProperty);
 			this.UpdateCanAddLogFile();
+			this.ResetValue(CommandProperty);
 			this.ResetValue(IPEndPointProperty);
 			this.ResetValue(ProcessIdProperty);
 			this.ResetValue(ProcessNameProperty);
 			this.ResetValue(UriProperty);
 			this.ResetValue(HasWorkingDirectoryProperty);
+			this.ResetValue(UseTextShellToExecuteCommandProperty);
 			this.ResetValue(WorkingDirectoryNameProperty);
 			this.ResetValue(WorkingDirectoryPathProperty);
 		}
+
+
+		/// <summary>
+		/// Get command for reading logs.
+		/// </summary>
+		public string? Command => this.GetValue(CommandProperty);
 
 
 		// Compare displayable logs.
@@ -2673,6 +2727,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether current log profile is a built-in log profile or not.
 		/// </summary>
 		public bool IsBuiltInLogProfile => this.GetValue(IsBuiltInLogProfileProperty);
+		
+		
+		/// <summary>
+		/// Check whether command is needed or not.
+		/// </summary>
+		public bool IsCommandNeeded => this.GetValue(IsCommandNeededProperty);
+		
+		
+		/// <summary>
+		/// Check whether command is supported or not.
+		/// </summary>
+		public bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
 
 
 		/// <summary>
@@ -3697,6 +3763,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateCanAddLogFile(profile);
 				this.UpdateCanPauseResumeLogsReading();
 				this.UpdateCanReloadLogs(profile);
+				this.UpdateCanSetCommand(profile);
 				this.UpdateCanSetIPEndPoint(profile);
 				this.UpdateCanSetProcessId(profile);
 				this.UpdateCanSetProcessName(profile);
@@ -4024,6 +4091,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
 			this.UpdateCanAddLogFile(null);
+			this.UpdateCanSetCommand(null);
 			this.UpdateCanSetIPEndPoint(null);
 			this.UpdateCanSetProcessId(null);
 			this.UpdateCanSetProcessName(null);
@@ -4152,6 +4220,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					                             && profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName))
 					                             && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)));
 				}
+				if (jsonState.TryGetProperty(nameof(Command), out jsonValue) && jsonValue.ValueKind == JsonValueKind.String)
+					this.SetValue(CommandProperty, jsonValue.GetString());
 				if (jsonState.TryGetProperty(nameof(IPEndPoint), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Object
 				    && jsonValue.TryGetProperty(nameof(IPEndPoint.Address), out var jsonAddress) 
 				    && jsonAddress.ValueKind == JsonValueKind.String
@@ -4177,6 +4247,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				    && Uri.TryCreate(jsonUri.GetString(), UriKind.Absolute, out var uri))
 				{
 					this.SetValue(UriProperty, uri);
+				}
+				if (jsonState.TryGetProperty(nameof(UseTextShellToExecuteCommand), out jsonValue))
+				{
+					if (jsonValue.ValueKind == JsonValueKind.False)
+						this.SetValue(UseTextShellToExecuteCommandProperty, false);
+					else if (jsonValue.ValueKind == JsonValueKind.False)
+						this.SetValue(UseTextShellToExecuteCommandProperty, true);
 				}
 				if (jsonState.TryGetProperty(nameof(WorkingDirectoryPath), out var jsonWorkingDir)
 				    && jsonWorkingDir.ValueKind == JsonValueKind.String)
@@ -4532,6 +4609,56 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <remarks>The type of parameter is <see cref="Net.SearchProvider"/>.</remarks>
 		public ICommand SearchLogPropertyOnInternetCommand { get; }
+		
+		
+		// Set command.
+		void SetCommand(CommandParams? param)
+		{
+			// check parameter and state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			var command = param?.Command;
+			if (param is null || string.IsNullOrEmpty(command))
+				return;
+			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set command.");
+			var dataSourceOptions = profile.DataSourceOptions;
+			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)))
+				throw new InternalStateCorruptedException("Cannot set command because it is already specified.");
+			var isUsingTextShellSupported = profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell));
+
+			// check current command
+			if (this.logReaders.IsNotEmpty())
+			{
+				var currentDataSourceOptions = this.logReaders.First().DataSource.CreationOptions;
+				if (currentDataSourceOptions.Command == command)
+				{
+					if (!isUsingTextShellSupported 
+					    || (param.UseTextShell ?? this.GetValue(UseTextShellToExecuteCommandProperty) ?? currentDataSourceOptions.UseTextShell) == currentDataSourceOptions.UseTextShell)
+					{
+						this.Logger.LogDebug("Set to same command");
+						return;
+					}
+				}
+			}
+
+			// dispose current log readers
+			this.DisposeLogReaders();
+
+			this.Logger.LogDebug("Set command to '{command}'", command);
+
+			// start reading logs
+			this.SetValue(CommandProperty, command);
+			if (isUsingTextShellSupported && param.UseTextShell.HasValue)
+				this.SetValue(UseTextShellToExecuteCommandProperty, param.UseTextShell);
+			this.StartReadingLogs();
+		}
+
+
+		/// <summary>
+		/// Command to set command.
+		/// </summary>
+		/// <remarks>Type of command parameter is <see cref="CommandParams"/>.</remarks>
+		public ICommand SetCommandCommand { get; }
 
 
 		// Set IP endpoint.
@@ -4758,6 +4885,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					}
 					jsonWriter.WriteEndArray();
 				}
+				this.GetValue(CommandProperty).Let(it =>
+				{
+					if (!string.IsNullOrEmpty(it))
+						jsonWriter.WriteString(nameof(Command), it);
+				});
 				this.GetValue(IPEndPointProperty)?.Let(it =>
 				{
 					jsonWriter.WritePropertyName(nameof(IPEndPoint));
@@ -4773,6 +4905,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						jsonWriter.WriteString(nameof(ProcessName), it);
 				});
 				this.GetValue(UriProperty)?.Let(it => jsonWriter.WriteString(nameof(Uri), it.ToString()));
+				this.GetValue(UseTextShellToExecuteCommandProperty)?.Let(it => jsonWriter.WriteBoolean(nameof(UseTextShellToExecuteCommand), it));
 				this.GetValue(WorkingDirectoryPathProperty).Let(it =>
 				{
 					if (!string.IsNullOrEmpty(it))
@@ -5023,6 +5156,43 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.ResetValue(IsLogFileSupportedProperty);
 			}
 			this.UpdateCanAddLogFile(profile);
+			
+			// check command
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)))
+			{
+				// command
+				this.SetValue(IsCommandSupportedProperty, true);
+				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)))
+				{
+					this.ResetValue(IsCommandNeededProperty);
+					this.SetValue(CommandProperty, defaultDataSourceOptions.Command);
+				}
+				else if (!string.IsNullOrEmpty(this.GetValue(CommandProperty)))
+				{
+					this.ResetValue(IsCommandNeededProperty);
+					defaultDataSourceOptions.Command = this.GetValue(CommandProperty);
+				}
+				else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)))
+				{
+					this.Logger.LogDebug("No command specified, wait for setting command");
+					this.SetValue(IsCommandNeededProperty, true);
+				}
+				else
+					this.ResetValue(IsCommandNeededProperty);
+				
+				// use text-shell
+				if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell)))
+				{
+					this.GetValue(UseTextShellToExecuteCommandProperty)?.Let(it =>
+						defaultDataSourceOptions.UseTextShell = it);
+				}
+			}
+			else
+			{
+				this.ResetValue(IsCommandNeededProperty);
+				this.ResetValue(IsCommandSupportedProperty);
+			}
+			this.UpdateCanSetCommand(profile);
 
 			// check IP end point
 			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)))
@@ -5427,6 +5597,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		}
 		
 		
+		// Update whether command can be set or not.
+		void UpdateCanSetCommand(LogProfile? profile)
+		{
+			if (this.IsDisposed)
+				return;
+			if (profile is null)
+			{
+				this.ResetValue(CanSetCommandProperty);
+				return;
+			}
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			{
+				this.ResetValue(CanSetCommandProperty);
+				return;
+			}
+			this.SetValue(CanSetCommandProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command))
+			                                     && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)));
+		}
+		
+		
 		// Update whether IP end point can be set or not.
 		void UpdateCanSetIPEndPoint(LogProfile? profile)
 		{
@@ -5674,6 +5864,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public Uri? Uri =>
 			this.GetValue(UriProperty);
+		
+		
+		/// <summary>
+		/// Check whether text-shell should be used for executing command for reading logs or not.
+		/// </summary>
+		public bool? UseTextShellToExecuteCommand => this.GetValue(UseTextShellToExecuteCommandProperty);
 
 
 		/// <summary>

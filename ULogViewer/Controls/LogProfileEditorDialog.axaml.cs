@@ -1471,7 +1471,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					switch (optionName)
 					{
 						case nameof(LogDataSourceOptions.Category):
-						case nameof(LogDataSourceOptions.Command):
 						case nameof(LogDataSourceOptions.ConnectionString):
 						case nameof(LogDataSourceOptions.Password):
 						case nameof(LogDataSourceOptions.QueryString):
@@ -1481,8 +1480,9 @@ namespace CarinaStudio.ULogViewer.Controls
 								this.SetValue(IsValidDataSourceOptionsProperty, false);
 								return false;
 							}
-							if (optionName == nameof(LogDataSourceOptions.Command)
-							    && this.dataSourceOptions.CheckPlaceholderInCommands())
+							break;
+						case nameof(LogDataSourceOptions.Command):
+							if (this.dataSourceOptions.CheckPlaceholderInCommands())
 							{
 								this.SetValue(IsValidDataSourceOptionsProperty, false);
 								return false;
