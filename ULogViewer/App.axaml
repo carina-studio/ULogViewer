@@ -5,10 +5,20 @@
 	<!-- Resources -->
 	<Application.Resources>
 		<ResourceDictionary>
+			
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="/Styles/Resources.axaml"/>
 				<ResourceInclude Source="/Styles/Icons.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
+			
+			<!-- Pro version native menu -->
+			<NativeMenuItem x:Key="NativeMenuItem/App.ProVersion" Header="{DynamicResource String/Common.UpgradeToProVersion}">
+				<NativeMenu>
+					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="ActivateProVersion" Header="{DynamicResource String/Common.ActivateProVersion.WithDialog}"/>
+					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="PurchaseProVersion" Header="{DynamicResource String/Common.PurchaseProVersion}"/>
+				</NativeMenu>
+			</NativeMenuItem>
+			
 		</ResourceDictionary>
 	</Application.Resources>
 
