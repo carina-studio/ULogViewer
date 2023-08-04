@@ -3546,6 +3546,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.TimestampFormatForDisplaying):
 				case nameof(LogProfile.TimestampEncodingForReading):
 				case nameof(LogProfile.TimestampFormatsForReading):
+                case nameof(LogProfile.WorkingDirectoryRequirement):
 					this.ScheduleReloadingLogs(true, false);
 					break;
 				case nameof(LogProfile.LogReadingWindow):
@@ -5311,7 +5312,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.UpdateCanSetUri(profile);
 			
 			// check working directory
-			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)))
+			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)) 
+			    && profile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored)
 			{
 				this.SetValue(IsWorkingDirectorySupportedProperty, true);
 				if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
@@ -5326,7 +5328,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.ResetValue(IsWorkingDirectoryNeededProperty);
 					defaultDataSourceOptions.WorkingDirectory = this.GetValue(WorkingDirectoryPathProperty);
 				}
-				else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)) || profile.IsWorkingDirectoryNeeded)
+				else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)) 
+				         || profile.WorkingDirectoryRequirement == LogProfilePropertyRequirement.Required)
 				{
 					this.Logger.LogDebug("No working directory specified, wait for setting working directory");
 					this.SetValue(IsWorkingDirectoryNeededProperty, true);
@@ -5713,6 +5716,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				return;
 			}
 			this.SetValue(CanSetWorkingDirectoryProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+			                                              && profile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored
 			                                              && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)));
 		}
 
@@ -5799,47 +5803,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var dataSourceProvider = profile.DataSourceProvider;
 			var isFileNameSupported = dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName));
 			var isFileNameSet = isFileNameSupported && dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
-			var allowMultipleFiles = false;
-			var maxLogFileCount = 0;
-			
-			// check file name
-			if (isFileNameSupported)
-			{
-				allowMultipleFiles = !isFileNameSet && profile.AllowMultipleFiles;
-				maxLogFileCount = allowMultipleFiles ? DisplayableLogGroup.MaxLogReaderCount : 1;
-			}
-
-			// check IP end point
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
-			{
-				if (allowMultipleFiles)
-					--maxLogFileCount;
-			}
-			else if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)) && allowMultipleFiles)
-				--maxLogFileCount;
-			
-			// check URI
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
-			{
-				if (allowMultipleFiles)
-					--maxLogFileCount;
-			}
-			else if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)) && allowMultipleFiles)
-				--maxLogFileCount;
-
-			// check working directory
-			if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory))
-			    || profile.IsWorkingDirectoryNeeded)
-			{
-				if (allowMultipleFiles)
-					--maxLogFileCount;
-			}
-			else if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)) && allowMultipleFiles)
-				--maxLogFileCount;
+			var maxLogFileCount = isFileNameSupported
+				? (isFileNameSet || !profile.AllowMultipleFiles ? 1 : DisplayableLogGroup.MaxLogReaderCount)
+				: 0;
 
 			// update state
-			if (maxLogFileCount < 0)
-				maxLogFileCount = 0;
 			this.Logger.LogTrace("Max log file count: {count}", maxLogFileCount);
 			this.SetValue(MaxLogFileCountProperty, maxLogFileCount);
 		}

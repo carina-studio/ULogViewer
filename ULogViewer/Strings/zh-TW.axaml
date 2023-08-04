@@ -598,7 +598,6 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定為範本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">範本無法被直接使用，但可以用於包含部分參數並複製成為新的日誌類型。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">必須選擇工作目錄</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何讀取及解析日誌》 以幫助您建立日誌類型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日誌分析</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日誌圖表設定</sys:String>
@@ -652,7 +651,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">指定有哪些日誌屬性可以在檢視器中看見。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">您定義了「顯示的日誌屬性」但沒有定義「日誌行格式」，這可能導致日誌顯示錯誤。您是否要定義「日誌行格式」？</sys:String>
-
+	<sys:String x:Key="String/LogProfileEditorDialog.WorkingDirectoryRequirement">工作目錄需求</sys:String>
+	
+	<!-- LogProfilePropertyRequirement -->
+	<sys:String x:Key="String/LogProfilePropertyRequirement.Ignored">忽略</sys:String>
+	<sys:String x:Key="String/LogProfilePropertyRequirement.Optional">可選擇</sys:String>
+	<sys:String x:Key="String/LogProfilePropertyRequirement.Required">必要</sys:String>
+	
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CopyCurrentLogProfile">複製「{0}」…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(目前使用)</sys:String>

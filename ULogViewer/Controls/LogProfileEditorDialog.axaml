@@ -178,11 +178,11 @@
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
-						<!-- Is working directory needed -->
+						<!-- Working directory requirement -->
 						<StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
 							<asControls:DialogItemGrid>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsWorkingDirectoryNeeded}"/>
-								<ToggleSwitch Name="workingDirNeededSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.WorkingDirectoryRequirement}"/>
+								<asControls:EnumComboBox Name="workingDirPriorityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogProfilePropertyRequirement}" Grid.Column="1"/>
 							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>

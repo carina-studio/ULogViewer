@@ -2620,8 +2620,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (filePaths.IsEmpty())
 					{
-						it.Filter = logProfile => (logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)) 
-						                           || logProfile.IsWorkingDirectoryNeeded) 
+						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+						                          && logProfile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored
 						                          && !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
 					}
 					else if (filePaths.Count > 1)

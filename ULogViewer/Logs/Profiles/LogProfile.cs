@@ -51,7 +51,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool isPinned;
 		readonly SettingKey<bool>? isPinnedSettingKey;
 		bool isTemplate;
-		bool isWorkingDirectoryNeeded;
 		IList<LogChartSeriesSource> logChartSeriesSources = Array.Empty<LogChartSeriesSource>();
 		LogChartType logChartType = LogChartType.None;
 		LogChartValueGranularity logChartValueGranularity = LogChartValueGranularity.Default;
@@ -84,6 +83,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		string? timestampFormatForWriting;
 		IList<string> timestampFormatsForReading = Array.Empty<string>();
 		IList<LogProperty> visibleLogProperties = Array.Empty<LogProperty>();
+		private LogProfilePropertyRequirement workingDirectoryRequirement = LogProfilePropertyRequirement.Optional;
 
 
 		// Constructor.
@@ -129,7 +129,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.isAdministratorNeeded = template.isAdministratorNeeded;
 			this.isContinuousReading = template.isContinuousReading;
 			this.isPinned = template.isPinned;
-			this.isWorkingDirectoryNeeded = template.isWorkingDirectoryNeeded;
 			this.logChartSeriesSources = template.logChartSeriesSources;
 			this.logChartType = template.logChartType;
 			this.logChartValueGranularity = template.logChartValueGranularity;
@@ -163,6 +162,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.timestampFormatForWriting = template.timestampFormatForWriting;
 			this.timestampFormatsForReading = template.timestampFormatsForReading;
 			this.visibleLogProperties = template.visibleLogProperties;
+			this.workingDirectoryRequirement = template.workingDirectoryRequirement;
 		}
 
 
@@ -460,24 +460,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Check whether properties of profile is valid or not.
 		/// </summary>
 		public bool IsValid { get; private set; }
-
-
-		/// <summary>
-		/// Get or set whether working directory is needed to be set before reading logs or not.
-		/// </summary>
-		public bool IsWorkingDirectoryNeeded
-		{
-			get => this.isWorkingDirectoryNeeded;
-			set
-			{
-				this.VerifyAccess();
-				this.VerifyBuiltIn();
-				if (this.isWorkingDirectoryNeeded == value)
-					return;
-				this.isWorkingDirectoryNeeded = value;
-				this.OnPropertyChanged(nameof(IsWorkingDirectoryNeeded));
-			}
-		}
 
 
 		/// <summary>
@@ -1014,6 +996,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		protected override void OnLoad(JsonElement element)
 		{
 			var useEmbeddedDataSourceProvider = false;
+			var workingDirPriority = default(LogProfilePropertyRequirement?);
 			foreach (var jsonProperty in element.EnumerateObject())
 			{
 				switch (jsonProperty.Name)
@@ -1076,8 +1059,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(IsTemplate):
 						this.isTemplate = jsonProperty.Value.GetBoolean();
 						break;
-					case nameof(IsWorkingDirectoryNeeded):
-						this.isWorkingDirectoryNeeded = jsonProperty.Value.GetBoolean();
+					case "IsWorkingDirectoryNeeded": // For compatibility
+						workingDirPriority ??= jsonProperty.Value.GetBoolean()
+							? LogProfilePropertyRequirement.Required
+							: LogProfilePropertyRequirement.Optional;
 						break;
 					case nameof(LogChartSeriesSources):
 						this.LoadLogChartSeriesSourcesFromJson(jsonProperty.Value);
@@ -1207,11 +1192,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(VisibleLogProperties):
 						this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
 						break;
+					case nameof(WorkingDirectoryRequirement):
+						if (jsonProperty.Value.ValueKind == JsonValueKind.String
+						    && Enum.TryParse<LogProfilePropertyRequirement>(jsonProperty.Value.GetString(), out var priority))
+						{
+							workingDirPriority = priority;
+						}
+						break;
 					default:
 						this.Logger.LogWarning("Unknown property of profile: {name}", jsonProperty.Name);
 						break;
 				}
 			}
+			this.workingDirectoryRequirement = workingDirPriority.GetValueOrDefault();
 			if (useEmbeddedDataSourceProvider)
 				this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider ?? throw new ArgumentException("Embedded script log data source not found.");
 		}
@@ -1249,8 +1242,6 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteBoolean(nameof(IsPinned), true);
 			if (this.isTemplate)
 				writer.WriteBoolean(nameof(IsTemplate), true);
-			if (this.isWorkingDirectoryNeeded)
-				writer.WriteBoolean(nameof(IsWorkingDirectoryNeeded), true);
 			if (this.logChartSeriesSources.IsNotEmpty())
 			{
 				writer.WritePropertyName(nameof(LogChartSeriesSources));
@@ -1318,6 +1309,12 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				writer.WritePropertyName(nameof(VisibleLogProperties));
 				this.SaveVisibleLogPropertiesToJson(writer);
+			}
+			if (this.workingDirectoryRequirement != LogProfilePropertyRequirement.Optional)
+			{
+				writer.WriteString(nameof(WorkingDirectoryRequirement), this.workingDirectoryRequirement.ToString());
+				if (this.workingDirectoryRequirement == LogProfilePropertyRequirement.Required)
+					writer.WriteBoolean("IsWorkingDirectoryNeeded", true); // For compatibility
 			}
 			writer.WriteEndObject();
 		}
@@ -1815,6 +1812,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.visibleLogProperties = new List<LogProperty>(value).AsReadOnly();
 				this.OnPropertyChanged(nameof(VisibleLogProperties));
 				this.Validate();
+			}
+		}
+		
+		
+		/// <summary>
+		/// Requirement of working directory.
+		/// </summary>
+		public LogProfilePropertyRequirement WorkingDirectoryRequirement
+		{
+			get => this.workingDirectoryRequirement;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.workingDirectoryRequirement == value)
+					return;
+				this.workingDirectoryRequirement = value;
+				this.OnPropertyChanged(nameof(WorkingDirectoryRequirement));
 			}
 		}
 	}

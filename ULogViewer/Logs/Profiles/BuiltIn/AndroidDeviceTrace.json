@@ -83,5 +83,6 @@
     {
       "Name": "Message"
     }
-  ]
+  ],
+  "WorkingDirectoryRequirement": "Ignored"
 }

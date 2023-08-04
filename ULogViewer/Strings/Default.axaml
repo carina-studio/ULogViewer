@@ -635,7 +635,6 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as template</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">Template cannot be used directly but can be cloned as new log profile with partial parameters.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsWorkingDirectoryNeeded">Need to select working directory</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">Log Chart</sys:String>
@@ -689,7 +688,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You have defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.WorkingDirectoryRequirement">Requirement of working directory</sys:String>
 
+	<!-- LogProfilePropertyRequirement -->
+	<sys:String x:Key="String/LogProfilePropertyRequirement.Ignored">Ignored</sys:String>
+	<sys:String x:Key="String/LogProfilePropertyRequirement.Optional">Optional</sys:String>
+	<sys:String x:Key="String/LogProfilePropertyRequirement.Required">Required</sys:String>
+	
 	<!-- LogProfileSelectionContextMenu -->
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CopyCurrentLogProfile">Copy '{0}'…</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionContextMenu.CurrentLogProfile">(Current)</sys:String>

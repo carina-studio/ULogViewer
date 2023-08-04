@@ -107,7 +107,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly AppSuite.Controls.ListBox timestampFormatsForReadingListBox;
 		readonly AppSuite.Controls.ListBox visibleLogPropertyListBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new();
-		readonly ToggleSwitch workingDirNeededSwitch;
+		readonly ComboBox workingDirPriorityComboBox;
 
 
 		/// <summary>
@@ -207,7 +207,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatForWritingTextBox = this.Get<TextBox>("timestampFormatForWritingTextBox");
 			this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
 			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>("visibleLogPropertyListBox");
-			this.workingDirNeededSwitch = this.Get<ToggleSwitch>("workingDirNeededSwitch");
+			this.workingDirPriorityComboBox = this.Get<ComboBox>(nameof(workingDirPriorityComboBox));
 
 			// attach to log data source providers
 			LogDataSourceProviders.All.Let(allProviders =>
@@ -792,7 +792,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.IsAdministratorNeeded = this.adminNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsContinuousReading = this.continuousReadingSwitch.IsChecked.GetValueOrDefault();
 			logProfile.IsTemplate = isTemplate;
-			logProfile.IsWorkingDirectoryNeeded = this.workingDirNeededSwitch.IsChecked.GetValueOrDefault();
 			logProfile.LogLevelMapForReading = new Dictionary<string, Logs.LogLevel>(this.logLevelMapEntriesForReading);
 			logProfile.LogLevelMapForWriting = new Dictionary<Logs.LogLevel, string>(this.logLevelMapEntriesForWriting);
 			logProfile.LogPatternMatchingMode = (LogPatternMatchingMode)this.logPatternMatchingModeComboBox.SelectedItem.AsNonNull();
@@ -815,6 +814,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
 			logProfile.TimestampFormatsForReading = this.timestampFormatsForReading;
 			logProfile.VisibleLogProperties = this.visibleLogProperties;
+			logProfile.WorkingDirectoryRequirement = (LogProfilePropertyRequirement)this.workingDirPriorityComboBox.SelectedItem.AsNonNull();
 			return logProfile;
 		}
 
@@ -1377,6 +1377,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.timeSpanEncodingForReadingComboBox.SelectedItem = LogTimeSpanEncoding.Custom;
 				this.timestampCategoryGranularityComboBox.SelectedItem = TimestampDisplayableLogCategoryGranularity.Day;
 				this.timestampEncodingForReadingComboBox.SelectedItem = LogTimestampEncoding.Custom;
+				this.workingDirPriorityComboBox.SelectedItem = LogProfilePropertyRequirement.Optional;
 			}
 			else if (!profile.IsBuiltIn)
 			{
@@ -1417,7 +1418,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;
 				this.timestampFormatsForReading.AddRange(profile.TimestampFormatsForReading);
 				this.visibleLogProperties.AddRange(profile.VisibleLogProperties);
-				this.workingDirNeededSwitch.IsChecked = profile.IsWorkingDirectoryNeeded;
+				this.workingDirPriorityComboBox.SelectedItem = profile.WorkingDirectoryRequirement;
 			}
 			
 			// update state
