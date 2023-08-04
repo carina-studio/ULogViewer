@@ -120,6 +120,8 @@
 	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">从一个或多个文件中读取未分析的原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp">HTTP/HTTPS 原始通信内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">送出 HTTP/HTTPS 请求并读取未分析的响应内容。通常用于测试及调试时使用。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput">标准输出 (stdout) 原始内容</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput.Description">执行指令并读取来自其标准输出 (stdout) 及标准错误 (stderr) 的原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客户端原始内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">特定 Android 设备事件日志</sys:String>

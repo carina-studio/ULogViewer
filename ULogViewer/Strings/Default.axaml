@@ -123,6 +123,8 @@
 	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">Read raw text from one or more files without parsing. It is usually used for testing and debugging purpose.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp">Raw HTTP/HTTPS Response</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">Send HTTP/HTTPS request and read raw text from response without parsing. It is usually used for testing and debugging purpose.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput">Raw Text From Standard Output (stdout)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput.Description">Run command and read raw text from its standard output (stdout) as well as standard error (stderr). It is usually used for testing and debugging purpose.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">Raw Text From TCP Client</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">Start TCP server and read raw text from client without parsing. It is usually used for testing and debugging purpose.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">Specific Android Device Event Log</sys:String>

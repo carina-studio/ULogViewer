@@ -1,0 +1,7 @@
+﻿{
+	"DataSource": {
+		"Name": "StandardOutput"
+	},
+	"Icon": "Terminal",
+	"SortKey": "Id"
+}
