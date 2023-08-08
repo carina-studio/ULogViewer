@@ -193,34 +193,22 @@
 						<!-- Initial log profile -->
 						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.InitialLogProfile}"/>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding LogProfiles}" SelectedItem="{Binding InitialLogProfile, Mode=TwoWay}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="Auto,*">
-											<Panel Classes="ComboBoxItem_Icon">
-												<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}">
-													<Image.Source>
-														<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
-															<Binding Path="Icon"/>
-															<Binding Path="IconColor"/>
-														</MultiBinding>
-													</Image.Source>
-												</Image>
-												<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}">
-													<Image.Source>
-														<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-															<Binding Path="Icon"/>
-															<Binding Path="IconColor"/>
-														</MultiBinding>
-													</Image.Source>
-												</Image>
-											</Panel>
-											<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
-										</Grid>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
+							<Grid ColumnDefinitions="Auto,*" DataContext="{Binding InitialLogProfile}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+								<Panel Classes="ComboBoxItem_Icon">
+									<Image Classes="Icon" IsVisible="{Binding #window.HasInitialLogProfile}">
+										<Image.Source>
+											<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+												<Binding Path="Icon"/>
+												<Binding Path="IconColor"/>
+											</MultiBinding>
+										</Image.Source>
+									</Image>
+								</Panel>
+								<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
+							</Grid>
 						</asControls:DialogItemGrid>
+						<Separator Classes="Dialog_Separator_Small"/>
+						<ToggleButton Name="initLogProfileButton" Classes="Dialog_Item_ToggleButton" Content="{DynamicResource String/AppOptionsDialog.SelectInitialLogProfile}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Select log profile for new session -->

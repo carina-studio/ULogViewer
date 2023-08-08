@@ -9,6 +9,10 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -29,7 +33,12 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	public static readonly IValueConverter TextShellConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(TextShell));
 
 
+	// Static fields.
+	static readonly StyledProperty<bool> HasInitialLogProfileProperty = AvaloniaProperty.Register<AppOptionsDialog, bool>(nameof(HasInitialLogProfile));
+	
+
 	// Fields.
+	private LogProfileSelectionContextMenu? logProfileSelectionMenu;
 	readonly ScheduledAction refreshDataContextAction;
 
 
@@ -46,6 +55,18 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		}
 		this.Get<IntegerTextBox>("continuousReadingUpdateIntervalTextBox").Also(it =>
 			it.LostFocus += (_, _) => CoerceIntegerValue(it));
+		this.Get<ToggleButton>("initLogProfileButton").Also(it =>
+		{
+			it.GetObservable(ToggleButton.IsCheckedProperty).Subscribe(async isChecked =>
+			{
+				if (isChecked != true)
+					return;
+				var logProfile = await this.SelectLogProfileAsync(it);
+				it.IsChecked = false;
+				if (logProfile is not null && this.DataContext is AppOptions appOptions)
+					appOptions.InitialLogProfile = logProfile;
+			});
+		});
 		this.Get<IntegerTextBox>("maxContinuousLogCountTextBox").Also(it =>
 			it.LostFocus += (_, _) => CoerceIntegerValue(it));
 		this.Get<IntegerTextBox>("updateLogFilterDelayTextBox").Also(it =>
@@ -59,6 +80,12 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 			this.DataContext = dataContext;
 		});
 	}
+
+
+	/// <summary>
+	/// Check whether initial log profile is not empty or not.
+	/// </summary>
+	public bool HasInitialLogProfile => this.GetValue(HasInitialLogProfileProperty);
 
 
 	/// <summary>
@@ -87,6 +114,8 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	{
 		if (sender is not AppOptions appOptions)
 			return;
+		if (e.PropertyName == nameof(AppOptions.InitialLogProfile))
+			this.SetValue(HasInitialLogProfileProperty, appOptions.InitialLogProfile != LogProfileManager.Default.EmptyProfile);
 	}
 
 
@@ -137,8 +166,33 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 			(change.NewValue as AppOptions)?.Let(it => 
 			{
 				it.PropertyChanged += this.OnAppOptionsPropertyChanged;
+				this.SetValue(HasInitialLogProfileProperty, it.InitialLogProfile != LogProfileManager.Default.EmptyProfile);
 			});
 		}
+    }
+    
+    
+    // Select log profile.
+    async Task<LogProfile?> SelectLogProfileAsync(Control anchor)
+    {
+	    if (this.logProfileSelectionMenu?.IsOpen == true)
+		    this.logProfileSelectionMenu.Close();
+	    var taskSource = new TaskCompletionSource<LogProfile?>();
+	    var closedHandler = new EventHandler<RoutedEventArgs>((_, _) =>
+		    this.SynchronizationContext.Post(() => taskSource.TrySetResult(null)));
+	    var logProfileSelectedHandler = new Action<LogProfileSelectionContextMenu, LogProfile>((_, profile) => taskSource.TrySetResult(profile));
+	    this.logProfileSelectionMenu ??= new LogProfileSelectionContextMenu
+	    {
+		    Placement = PlacementMode.Bottom,
+		    ShowEmptyLogProfile = true,
+	    };
+	    this.logProfileSelectionMenu.Closed += closedHandler;
+	    this.logProfileSelectionMenu.LogProfileSelected += logProfileSelectedHandler;
+	    this.logProfileSelectionMenu.Open(anchor);
+	    var logProfile = await taskSource.Task;
+	    this.logProfileSelectionMenu.Closed -= closedHandler;
+	    this.logProfileSelectionMenu.LogProfileSelected -= logProfileSelectedHandler;
+	    return logProfile;
     }
 
 

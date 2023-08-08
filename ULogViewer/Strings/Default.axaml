@@ -39,6 +39,7 @@
     Context.Logger.LogDebug(msg); 
 }</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">Show input dialog when command is needed</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">Select profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show input dialog when IP endpoint is needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
