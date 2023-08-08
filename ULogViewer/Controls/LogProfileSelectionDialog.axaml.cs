@@ -38,7 +38,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 		// Static fields.
 		static readonly StyledProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
-		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>("IsProVersionActivated");
+		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(IsProVersionActivated));
 
 
 		// Fields.
@@ -342,6 +342,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Check whether ULogViewer Pro has been activated or not.
+		/// </summary>
+		public bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
+
+
 		// Called when list of all log profiles changed.
 		void OnAllLogProfilesChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -465,6 +471,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <inheritdoc/>
 		protected override void OnOpening(EventArgs e)
 		{
+			this.Screens.Let(it =>
+			{
+				(it.ScreenFromWindow(this) ?? it.Primary)?.Let(it =>
+				{
+					this.CanResize = true;
+					this.Height = Math.Max(this.MinHeight, it.WorkingArea.Height / it.Scaling * 0.75);
+				});
+			});
 			base.OnOpening(e);
 			this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
 		}
@@ -795,6 +809,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Remove log profile from all categories.
+		// ReSharper disable once IdentifierTypo
 		void UncategorizeLogProfile(LogProfile logProfile)
 		{
 			this.otherLogProfiles.Remove(logProfile);

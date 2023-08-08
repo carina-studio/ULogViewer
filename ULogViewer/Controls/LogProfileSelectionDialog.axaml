@@ -12,8 +12,12 @@
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileSelectionDialog"
         Classes="Dialog"
 		Name="window"
+        Height="{StaticResource Double/LogProfileSelectionDialog.Height}"
+        MinHeight="{StaticResource Double/LogProfileSelectionDialog.MinHeight}"
+        MinWidth="{StaticResource Double/LogProfileSelectionDialog.Width}"
+        SizeToContent="Manual"
         Title="{DynamicResource String/LogProfileSelectionDialog.Title}"
-        Width="{DynamicResource Double/LogProfileSelectionDialog.Width}">
+        Width="{StaticResource Double/LogProfileSelectionDialog.Width}">
 
 	<!-- Styles -->
 	<Window.Styles>
@@ -124,7 +128,7 @@
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsContinuousReading}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.IsContinuousReading}"/>
 									</Border>
-									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsWorkingDirectoryNeeded}">
+									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding WorkingDirectoryRequirement, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static appProfiles:LogProfilePropertyRequirement.Required}}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsAdministratorNeeded}">
@@ -207,7 +211,7 @@
 		</Border>
 
 		<!-- Log profiles -->
-		<ScrollViewer Name="scrollViewer" MaxHeight="{DynamicResource Double/LogProfileSelectionDialog.Content.MaxHeight}">
+		<ScrollViewer Name="scrollViewer">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 				<!-- Pinned profiles -->
