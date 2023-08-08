@@ -35,6 +35,10 @@ class LogProfileSelectionContextMenu : ContextMenu
     /// Property of <see cref="EnableActionsOnCurrentLogProfile"/>.
     /// </summary>
     public static readonly StyledProperty<bool> EnableActionsOnCurrentLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(EnableActionsOnCurrentLogProfile), true);
+    /// <summary>
+    /// Property of <see cref="ShowEmptyLogProfile"/>.
+    /// </summary>
+    public static readonly StyledProperty<bool> ShowEmptyLogProfileProperty = AvaloniaProperty.Register<LogProfileSelectionContextMenu, bool>(nameof(ShowEmptyLogProfile), false);
     
     
     // Adapter of weak event handler.
@@ -104,6 +108,7 @@ class LogProfileSelectionContextMenu : ContextMenu
     Separator? actionsOnCurrentLogProfileSeparator;
     MenuItem? copyCurrentLogProfileMenuItem;
     MenuItem? editCurrentLogProfileMenuItem;
+    private MenuItem? emptyLogProfileMenuItem;
     MenuItem? exportCurrentLogProfileMenuItem;
     bool isReady;
     readonly SortedObservableList<object> items;
@@ -171,6 +176,18 @@ class LogProfileSelectionContextMenu : ContextMenu
         this.GetObservable(IsProVersionActivatedProperty).Subscribe(_ =>
         {
             this.UpdateActionOnCurrentLogProfileMenuItemStates();
+        });
+        this.GetObservable(ShowEmptyLogProfileProperty).Subscribe(show =>
+        {
+            if (!this.isReady)
+                return;
+            if (show)
+            {
+                this.emptyLogProfileMenuItem ??= this.CreateMenuItem(this.logProfileManager.EmptyProfile);
+                this.items.Add(this.emptyLogProfileMenuItem);
+            }
+            else if (this.emptyLogProfileMenuItem is not null)
+                this.items.Remove(this.emptyLogProfileMenuItem);
         });
     }
     
@@ -243,7 +260,7 @@ class LogProfileSelectionContextMenu : ContextMenu
                 return CompareLogProfiles(lhsLogProfile, rhsLogProfile);
             return -1;
         }
-        else if (rhsLogProfile.IsPinned)
+        if (rhsLogProfile.IsPinned)
             return 1;
         if (this.recentlyUsedLogProfiles.Contains(lhsLogProfile))
         {
@@ -254,13 +271,18 @@ class LogProfileSelectionContextMenu : ContextMenu
         }
         if (this.recentlyUsedLogProfiles.Contains(rhsLogProfile))
             return 1;
-        return CompareLogProfiles(lhsLogProfile, rhsLogProfile);
+        return this.CompareLogProfiles(lhsLogProfile, rhsLogProfile);
     }
 
 
     // Compare log profiles.
-    static int CompareLogProfiles(LogProfile lhs, LogProfile rhs)
+    int CompareLogProfiles(LogProfile lhs, LogProfile rhs)
     {
+        var logProfileManager = this.logProfileManager;
+        if (lhs == logProfileManager.EmptyProfile)
+            return -1;
+        if (rhs == logProfileManager.EmptyProfile)
+            return 1;
         var result = string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture);
         if (result != 0)
             return result;
@@ -444,7 +466,7 @@ class LogProfileSelectionContextMenu : ContextMenu
                 }
             });
         });
-        menuItem.Bind(MenuItem.IsEnabledProperty, new MultiBinding().Also(it =>
+        menuItem.Bind(IsEnabledProperty, new MultiBinding().Also(it =>
         {
             it.Bindings.Add(new Binding
             {
@@ -651,6 +673,11 @@ class LogProfileSelectionContextMenu : ContextMenu
                 this.productActivationChangedHandlerToken = new WeakProductActivationStateChangedHandler(it, this.productActivationChangedHandler);
             }
         });
+        if (this.GetValue(ShowEmptyLogProfileProperty))
+        {
+            this.emptyLogProfileMenuItem = this.CreateMenuItem(this.logProfileManager.EmptyProfile);
+            this.items.Add(this.emptyLogProfileMenuItem);
+        }
         this.isReady = true;
     }
 
@@ -901,6 +928,16 @@ class LogProfileSelectionContextMenu : ContextMenu
         // remove log profile
         LogProfileManager.Default.RemoveProfile(logProfile);
         this.LogProfileRemoved?.Invoke(this, logProfile);
+    }
+
+
+    /// <summary>
+    /// Get or set whether empty log profile should be shown or not.
+    /// </summary>
+    public bool ShowEmptyLogProfile
+    {
+        get => this.GetValue(ShowEmptyLogProfileProperty);
+        set => this.SetValue(ShowEmptyLogProfileProperty, value);
     }
     
     
