@@ -77,9 +77,9 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="System.Data.Common" Version="4.3.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.117" />
-		<PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0-preview.5.23280.8" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0-preview.7.23375.6" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-preview.5.23280.8" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-preview.7.23375.6" />
 	</ItemGroup>
 	
 	<!-- Trimming options -->
