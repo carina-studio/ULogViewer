@@ -130,6 +130,7 @@ partial class SessionView
     bool areLogChartAxesReady;
     INotifyCollectionChanged? attachedRawLogChartSeries;
     bool isLogChartDoubleTapped;
+    private bool isPointerPressedOnLogChart;
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
@@ -539,6 +540,7 @@ partial class SessionView
         var point = e.GetCurrentPoint(this.logChart);
         if (point.Properties.IsLeftButtonPressed)
         {
+            this.isPointerPressedOnLogChart = true;
             this.logChartPointerDownPosition = point.Position;
             this.logChartPointerDownWatch.Restart();
         }
@@ -550,6 +552,9 @@ partial class SessionView
     {
         if (e.InitialPressMouseButton == MouseButton.Left)
         {
+            // reset state
+            this.isPointerPressedOnLogChart = false;
+            
             // double click
             if (this.isLogChartDoubleTapped)
             {
@@ -1092,26 +1097,29 @@ partial class SessionView
         }
         var reserved = maxValueCount * LogChartXAxisMinMaxReservedRatio;
         var isSnappedToEdge = false;
-        if (minLimit < 0.5)
+        if (!this.isPointerPressedOnLogChart)
         {
-            minLimit = -reserved;
-            axis.MinLimit = null;
-            isSnappedToEdge = true;
-            if (maxLimit < minLimit + LogChartXAxisMinValueCount)
+            if (minLimit < 0.5)
             {
-                maxLimit = minLimit + LogChartXAxisMinValueCount + 0.0001;
-                axis.MaxLimit = maxLimit;
+                minLimit = -reserved;
+                axis.MinLimit = null;
+                isSnappedToEdge = true;
+                if (maxLimit < minLimit + LogChartXAxisMinValueCount)
+                {
+                    maxLimit = minLimit + LogChartXAxisMinValueCount + 0.0001;
+                    axis.MaxLimit = maxLimit;
+                }
             }
-        }
-        if (maxLimit > maxValueCount - 0.5)
-        {
-            maxLimit = maxValueCount + reserved;
-            axis.MaxLimit = null;
-            isSnappedToEdge = true;
-            if (minLimit > maxLimit - LogChartXAxisMinValueCount)
+            if (maxLimit > maxValueCount - 0.5)
             {
-                minLimit = maxLimit - LogChartXAxisMinValueCount - 0.0001;
-                axis.MinLimit = minLimit;
+                maxLimit = maxValueCount + reserved;
+                axis.MaxLimit = null;
+                isSnappedToEdge = true;
+                if (minLimit > maxLimit - LogChartXAxisMinValueCount)
+                {
+                    minLimit = maxLimit - LogChartXAxisMinValueCount - 0.0001;
+                    axis.MinLimit = minLimit;
+                }
             }
         }
         if (!isSnappedToEdge && (maxLimit - minLimit) < LogChartXAxisMinValueCount)
