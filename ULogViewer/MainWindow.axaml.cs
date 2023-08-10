@@ -874,10 +874,10 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		protected override async Task OnNotifyReactivatingProVersionNeededAsync()
+		protected override async Task<bool> OnNotifyReactivatingProVersionNeededAsync()
 		{
 			await this.ShowReactivatingProVersionHintDialogAsync();
-			await base.OnNotifyReactivatingProVersionNeededAsync();
+			return await base.OnNotifyReactivatingProVersionNeededAsync();
 		}
 
 
