@@ -3962,10 +3962,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// clear logs
 			var isContinuousReading = profile.IsContinuousReading;
-			if (isContinuousReading 
-				&& !recreateLogReaders
-				&& !this.GetValue(HasAllDataSourceErrorsProperty)
-				&& !this.GetValue(HasPartialDataSourceErrorsProperty))
+			var clearLogsOnly = isContinuousReading
+			                    && !recreateLogReaders
+			                    && !this.GetValue(HasAllDataSourceErrorsProperty)
+			                    && !this.GetValue(HasPartialDataSourceErrorsProperty);
+			if (clearLogsOnly)
 			{
 				foreach (var logReader in this.logReaders)
 					logReader.ClearLogs();
@@ -4001,7 +4002,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.UpdateDisplayableLogComparison();
 
 			// start reading logs
-			this.StartReadingLogs();
+			if (!clearLogsOnly)
+				this.StartReadingLogs();
 		}
 
 
