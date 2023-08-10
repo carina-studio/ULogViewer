@@ -750,6 +750,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra8">附加资料 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra9">附加资料 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">文件</sys:String>
+	<sys:String x:Key="String/LogProperty.HostName">主机名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Invalid">无效</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">键值</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">等级</sys:String>
@@ -759,6 +760,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">消息</sys:String>
 	<sys:String x:Key="String/LogProperty.Method">方法</sys:String>
 	<sys:String x:Key="String/LogProperty.Minimum">最小值</sys:String>
+	<sys:String x:Key="String/LogProperty.Module">模块</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">节点</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">编号</sys:String>
@@ -794,8 +796,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Speed">速度</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">开始</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">状态</sys:String>
+	<sys:String x:Key="String/LogProperty.SubModule">子模块</sys:String>
+	<sys:String x:Key="String/LogProperty.SubSystem">子系统</sys:String>
 	<sys:String x:Key="String/LogProperty.Sum">总和</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">摘要</sys:String>
+	<sys:String x:Key="String/LogProperty.System">系统</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">标签</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">标签组</sys:String>
 	<sys:String x:Key="String/LogProperty.ThreadName">线程名称</sys:String>

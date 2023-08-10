@@ -115,12 +115,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("End");
 					it.Add("EndingValue");
 					it.Add("EndPoint");
+					it.Add("HostName");
 					it.Add("ID");
 					it.Add("Invalid");
 					it.Add("Key");
 					it.Add("Maximum");
 					it.Add("Method");
 					it.Add("Minimum");
+					it.Add("Module");
 					it.Add("Name");
 					it.Add("Node");
 					it.Add("Number");
@@ -152,7 +154,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Speed");
 					it.Add("Start");
 					it.Add("Status");
+					it.Add("SubModule");
+					it.Add("SubSystem");
 					it.Add("Sum");
+					it.Add("System");
 					it.Add("Tag");
 					it.Add("Type");
 					it.Add("Total");

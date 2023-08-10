@@ -780,6 +780,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra8">Extra 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra9">Extra 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">File</sys:String>
+	<sys:String x:Key="String/LogProperty.HostName">Host Name</sys:String>
 	<sys:String x:Key="String/LogProperty.ID">ID</sys:String>
 	<sys:String x:Key="String/LogProperty.Invalid">Invalid</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">Key</sys:String>
@@ -790,6 +791,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">Message</sys:String>
 	<sys:String x:Key="String/LogProperty.Method">Method</sys:String>
 	<sys:String x:Key="String/LogProperty.Minimum">Minimum</sys:String>
+	<sys:String x:Key="String/LogProperty.Module">Module</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">Name</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">Node</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">Number</sys:String>
@@ -826,8 +828,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Speed">Speed</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">Start</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">Status</sys:String>
+	<sys:String x:Key="String/LogProperty.SubModule">Sub Module</sys:String>
+	<sys:String x:Key="String/LogProperty.SubSystem">Sub System</sys:String>
 	<sys:String x:Key="String/LogProperty.Sum">Sum</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">Summary</sys:String>
+	<sys:String x:Key="String/LogProperty.System">System</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">Tag</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">Tags</sys:String>
 	<sys:String x:Key="String/LogProperty.ThreadId">TID</sys:String>

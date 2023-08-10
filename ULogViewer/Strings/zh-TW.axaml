@@ -743,6 +743,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra8">附加資料 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra9">附加資料 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">檔案</sys:String>
+	<sys:String x:Key="String/LogProperty.HostName">主機名稱</sys:String>
 	<sys:String x:Key="String/LogProperty.Invalid">無效</sys:String>
 	<sys:String x:Key="String/LogProperty.Key">鍵值</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">等級</sys:String>
@@ -752,6 +753,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">訊息</sys:String>
 	<sys:String x:Key="String/LogProperty.Method">方法</sys:String>
 	<sys:String x:Key="String/LogProperty.Minimum">最小值</sys:String>
+	<sys:String x:Key="String/LogProperty.Module">模組</sys:String>
 	<sys:String x:Key="String/LogProperty.Name">名稱</sys:String>
 	<sys:String x:Key="String/LogProperty.Node">節點</sys:String>
 	<sys:String x:Key="String/LogProperty.Number">編號</sys:String>
@@ -787,8 +789,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Speed">速度</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">開始</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">狀態</sys:String>
+	<sys:String x:Key="String/LogProperty.SubModule">子模組</sys:String>
+	<sys:String x:Key="String/LogProperty.SubSystem">子系統</sys:String>
 	<sys:String x:Key="String/LogProperty.Sum">總和</sys:String>
 	<sys:String x:Key="String/LogProperty.Summary">摘要</sys:String>
+	<sys:String x:Key="String/LogProperty.System">系統</sys:String>
 	<sys:String x:Key="String/LogProperty.Tag">標籤</sys:String>
 	<sys:String x:Key="String/LogProperty.Tags">標籤組</sys:String>
 	<sys:String x:Key="String/LogProperty.ThreadName">執行緒</sys:String>
