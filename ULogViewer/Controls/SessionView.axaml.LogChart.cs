@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -146,6 +147,7 @@ partial class SessionView
     {
         CrosshairSnapEnabled = true,
     };
+    private double logChartXCoordinateScaling = 1.0;
     readonly Axis logChartYAxis = new()
     {
         CrosshairSnapEnabled = true,
@@ -219,7 +221,7 @@ partial class SessionView
         {
             var source = series.Source;
             var viewModel = (this.DataContext as Session)?.LogChart;
-            var buffer = new StringBuilder(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString());
+            var buffer = new StringBuilder(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString(this.Application.CultureInfo));
             switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
             {
                 case LogChartValueGranularity.Byte:
@@ -242,132 +244,140 @@ partial class SessionView
         
         // create series
         var chartType = viewModel.ChartType;
-        return chartType switch
+        switch (chartType)
         {
-            LogChartType.ValueStatisticBars 
-                or LogChartType.ValueBars => new ColumnSeries<DisplayableLogChartSeriesValue?>
-            {
-                AnimationsSpeed = chartType switch
+            case LogChartType.ValueStatisticBars:
+            case LogChartType.ValueBars:
+                this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
+                return new ColumnSeries<DisplayableLogChartSeriesValue?>
                 {
-                    LogChartType.ValueStatisticBars => TimeSpan.Zero,
-                    _ => animationSpeed,
-                },
-                Fill = new SolidColorPaint(seriesColor),
-                Mapping = (value, point) =>
-                {
-                    point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
-                },
-                Name = seriesNameBuffer.ToString(),
-                Padding = 0.5,
-                Rx = 0,
-                Ry = 0,
-                Values = series.Values,
-                YToolTipLabelFormatter = FormatYToolTipLabel,
-            },
-            LogChartType.ValueStackedAreas
-                or LogChartType.ValueStackedAreasWithDataPoints => new StackedAreaSeries<DisplayableLogChartSeriesValue?>
-            {
-                AnimationsSpeed = animationSpeed,
-                Fill = new SolidColorPaint(seriesColor),
-                GeometryFill = chartType switch
-                {
-                    LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(seriesColor),
-                    _ => null,
-                },
-                GeometrySize = geometrySize,
-                GeometryStroke = chartType switch
-                {
-                    LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
+                    AnimationsSpeed = chartType switch
                     {
-                        IsAntialias = true,
+                        LogChartType.ValueStatisticBars => TimeSpan.Zero,
+                        _ => animationSpeed,
                     },
-                    _ => null,
-                },
-                LineSmoothness = 0,
-                Mapping = (value, point) =>
+                    Fill = new SolidColorPaint(seriesColor),
+                    Mapping = (value, point) =>
+                    {
+                        point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
+                    },
+                    Name = seriesNameBuffer.ToString(),
+                    Padding = 0.5,
+                    Rx = 0,
+                    Ry = 0,
+                    Values = series.Values,
+                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                };
+            case LogChartType.ValueStackedAreas:
+            case LogChartType.ValueStackedAreasWithDataPoints:
+                this.logChartXCoordinateScaling = 1.0;
+                return new StackedAreaSeries<DisplayableLogChartSeriesValue?>
                 {
-                    point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
-                },
-                Name = seriesNameBuffer.ToString(),
-                Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
-                {
-                    IsAntialias = true,
-                },
-                Values = series.Values,
-                YToolTipLabelFormatter = FormatYToolTipLabel,
-            },
-            LogChartType.ValueStackedBars => new StackedColumnSeries<DisplayableLogChartSeriesValue?>
-            {
-                AnimationsSpeed = animationSpeed,
-                Fill = new SolidColorPaint(seriesColor),
-                Mapping = (value, point) =>
-                {
-                    point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
-                },
-                Name = seriesNameBuffer.ToString(),
-                Padding = 0,
-                Rx = 0,
-                Ry = 0,
-                Values = series.Values,
-                YToolTipLabelFormatter = FormatYToolTipLabel,
-            },
-            _ => new LineSeries<DisplayableLogChartSeriesValue?>
-            {
-                AnimationsSpeed = animationSpeed,
-                Fill = chartType switch
-                {
-                    LogChartType.ValueAreas
-                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaintEx(seriesColor.WithAlpha((byte)(seriesColor.Alpha * 0.8)))
-                        {
-                            BlendMode = colorBlendingMode,
-                        },
-                    _ => null,
-                },
-                GeometryFill = chartType switch
-                {
-                    LogChartType.ValueAreasWithDataPoints
-                        or LogChartType.ValueCurvesWithDataPoints
-                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(seriesColor),
-                    _ => null,
-                },
-                GeometrySize = geometrySize,
-                GeometryStroke = chartType switch
-                {
-                    LogChartType.ValueAreasWithDataPoints
-                        or LogChartType.ValueCurvesWithDataPoints
-                        or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
+                    AnimationsSpeed = animationSpeed,
+                    Fill = new SolidColorPaint(seriesColor),
+                    GeometryFill = chartType switch
+                    {
+                        LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(seriesColor),
+                        _ => null,
+                    },
+                    GeometrySize = geometrySize,
+                    GeometryStroke = chartType switch
+                    {
+                        LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
                         {
                             IsAntialias = true,
                         },
-                    _ => null,
-                },
-                LineSmoothness = chartType switch
-                {
-                    LogChartType.ValueCurves
-                        or LogChartType.ValueCurvesWithDataPoints => 1,
-                    _ => 0,
-                },
-                Mapping = (value, point) =>
-                {
-                    point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
-                },
-                Name = seriesNameBuffer.ToString(),
-                Stroke = chartType switch
-                {
-                    LogChartType.ValueAreas
-                        or LogChartType.ValueAreasWithDataPoints => new SolidColorPaint(overlappedSeriesColor, lineWidth)
-                        {
-                            IsAntialias = true,
-                        },
-                    _ => new SolidColorPaint(seriesColor, lineWidth)
+                        _ => null,
+                    },
+                    LineSmoothness = 0,
+                    Mapping = (value, point) =>
+                    {
+                        point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
+                    },
+                    Name = seriesNameBuffer.ToString(),
+                    Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                     {
                         IsAntialias = true,
                     },
-                },
-                Values = series.Values,
-                YToolTipLabelFormatter = FormatYToolTipLabel,
-            },
-        };
+                    Values = series.Values,
+                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                };
+            case LogChartType.ValueStackedBars:
+                this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
+                return new StackedColumnSeries<DisplayableLogChartSeriesValue?>
+                {
+                    AnimationsSpeed = animationSpeed,
+                    Fill = new SolidColorPaint(seriesColor),
+                    Mapping = (value, point) =>
+                    {
+                        point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
+                    },
+                    Name = seriesNameBuffer.ToString(),
+                    Padding = 0,
+                    Rx = 0,
+                    Ry = 0,
+                    Values = series.Values,
+                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                };
+            default:
+                this.logChartXCoordinateScaling = 1.0;
+                return new LineSeries<DisplayableLogChartSeriesValue?>
+                {
+                    AnimationsSpeed = animationSpeed,
+                    Fill = chartType switch
+                    {
+                        LogChartType.ValueAreas
+                            or LogChartType.ValueAreasWithDataPoints => new SolidColorPaintEx(seriesColor.WithAlpha((byte)(seriesColor.Alpha * 0.8)))
+                            {
+                                BlendMode = colorBlendingMode,
+                            },
+                        _ => null,
+                    },
+                    GeometryFill = chartType switch
+                    {
+                        LogChartType.ValueAreasWithDataPoints
+                            or LogChartType.ValueCurvesWithDataPoints
+                            or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(seriesColor),
+                        _ => null,
+                    },
+                    GeometrySize = geometrySize,
+                    GeometryStroke = chartType switch
+                    {
+                        LogChartType.ValueAreasWithDataPoints
+                            or LogChartType.ValueCurvesWithDataPoints
+                            or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
+                            {
+                                IsAntialias = true,
+                            },
+                        _ => null,
+                    },
+                    LineSmoothness = chartType switch
+                    {
+                        LogChartType.ValueCurves
+                            or LogChartType.ValueCurvesWithDataPoints => 1,
+                        _ => 0,
+                    },
+                    Mapping = (value, point) =>
+                    {
+                        point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
+                    },
+                    Name = seriesNameBuffer.ToString(),
+                    Stroke = chartType switch
+                    {
+                        LogChartType.ValueAreas
+                            or LogChartType.ValueAreasWithDataPoints => new SolidColorPaint(overlappedSeriesColor, lineWidth)
+                            {
+                                IsAntialias = true,
+                            },
+                        _ => new SolidColorPaint(seriesColor, lineWidth)
+                        {
+                            IsAntialias = true,
+                        },
+                    },
+                    Values = series.Values,
+                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                };
+        }
     }
     
     
@@ -486,12 +496,7 @@ partial class SessionView
         {
             if (point.Context.Series.Values is not IList<DisplayableLogChartSeriesValue> values)
                 continue;
-            var index = point.Context.Series switch
-            {
-                ColumnSeries<DisplayableLogChartSeriesValue>
-                    or StackedColumnSeries<DisplayableLogChartSeriesValue> => (int)(point.Coordinate.SecondaryValue / LogBarChartXCoordinateScaling + 0.5),
-                _ => (int)(point.Coordinate.SecondaryValue + 0.5),
-            };
+            var index = (int)(point.Coordinate.SecondaryValue / this.logChartXCoordinateScaling + 0.5);
             if (index < 0 || index >= values.Count)
                 continue;
             var candidateLog = values[index].Log;
@@ -979,7 +984,7 @@ partial class SessionView
             {
                 if (this.DataContext is Session session)
                     return session.LogChart.GetYAxisLabel(value);
-                return value.ToString();
+                return value.ToString(this.Application.CultureInfo);
             };
             axis.LabelsPaint = textPaint;
             axis.Name = viewModel.YAxisName ?? "";
@@ -1095,7 +1100,8 @@ partial class SessionView
             this.SetValue(IsLogChartHorizontallyZoomedProperty, false);
             return;
         }
-        var reserved = maxValueCount * LogChartXAxisMinMaxReservedRatio;
+        var maxXCoordinate = maxValueCount * this.logChartXCoordinateScaling;
+        var reserved = maxXCoordinate * LogChartXAxisMinMaxReservedRatio;
         var isSnappedToEdge = false;
         if (!this.isPointerPressedOnLogChart)
         {
@@ -1110,9 +1116,9 @@ partial class SessionView
                     axis.MaxLimit = maxLimit;
                 }
             }
-            if (maxLimit > maxValueCount - 0.5)
+            if (maxLimit > maxXCoordinate - 0.5)
             {
-                maxLimit = maxValueCount + reserved;
+                maxLimit = maxXCoordinate + reserved;
                 axis.MaxLimit = null;
                 isSnappedToEdge = true;
                 if (minLimit > maxLimit - LogChartXAxisMinValueCount)
