@@ -112,9 +112,9 @@ class LogProfileIconComboBox : ComboBox, IStyleable
                 return;
             this.DataTemplates.Remove(dataTemplate);
             this.DataTemplates.Add(dataTemplate);
-            var selectedIndex = this.SelectedIndex;
             Dispatcher.UIThread.Post(() =>
             {
+                var selectedIndex = this.SelectedIndex;
                 if (selectedIndex >= 0)
                 {
                     this.SelectedIndex = -1;
