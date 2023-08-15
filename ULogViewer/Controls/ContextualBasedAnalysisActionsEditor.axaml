@@ -99,7 +99,15 @@
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #actionListBox.IsVisible}"/>
-		<ToggleButton Name="addActionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddActionMenu}" Content="{DynamicResource String/Common.Add}" Grid.Row="2"/>
+		<ToggleButton Name="addActionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddActionMenu}" Grid.Row="2">
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Add}"/>
+				<Panel Grid.Column="1">
+					<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#addActionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+					<Image Classes="Button_DropDownIcon" IsVisible="{Binding #addActionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+				</Panel>
+			</Grid>
+		</ToggleButton>
 	</Grid>
 	
 </UserControl>

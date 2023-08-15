@@ -193,22 +193,26 @@
 						<!-- Initial log profile -->
 						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.InitialLogProfile}"/>
-							<Grid ColumnDefinitions="Auto,*" DataContext="{Binding InitialLogProfile}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-								<Panel Classes="ComboBoxItem_Icon">
-									<Image Classes="Icon" IsVisible="{Binding #window.HasInitialLogProfile}">
-										<Image.Source>
-											<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-												<Binding Path="Icon"/>
-												<Binding Path="IconColor"/>
-											</MultiBinding>
-										</Image.Source>
-									</Image>
-								</Panel>
-								<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
-							</Grid>
+							<ToggleButton Name="initLogProfileButton" Classes="Dialog_Item_ToggleButton" Grid.Column="1" HorizontalContentAlignment="Stretch" MinWidth="{StaticResource Double/Dialog.Control.MinWidth}">
+								<Grid ColumnDefinitions="Auto,*,Auto" DataContext="{Binding InitialLogProfile}">
+									<Panel Classes="Button_Icon">
+										<Image Classes="Icon">
+											<Image.Source>
+												<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+													<Binding Path="Icon"/>
+													<Binding Path="IconColor"/>
+												</MultiBinding>
+											</Image.Source>
+										</Image>
+									</Panel>
+									<TextBlock Classes="Button_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
+									<Panel Grid.Column="2">
+										<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#initLogProfileButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+										<Image Classes="Button_DropDownIcon" IsVisible="{Binding #initLogProfileButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+									</Panel>
+								</Grid>
+							</ToggleButton>
 						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<ToggleButton Name="initLogProfileButton" Classes="Dialog_Item_ToggleButton" Content="{DynamicResource String/AppOptionsDialog.SelectInitialLogProfile}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Select log profile for new session -->

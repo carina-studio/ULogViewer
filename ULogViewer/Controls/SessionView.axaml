@@ -523,8 +523,8 @@
 						</Button>
 						<ToggleButton Name="selectAndSetLogProfileDropDownButton" Classes="ToolBar_DropDownButton" Command="{Binding #root.ShowLogProfileSelectionMenu}" IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
 							<Panel>
-								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown}"/>
-								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.MoveDown.Light}"/>
+								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
 							</Panel>
 						</ToggleButton>
 
@@ -1308,7 +1308,7 @@
 								<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
 								<Image Classes="StatusBar_DropDownIcon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.DropDown.Up}"/>
 									</DrawingImage>
 								</Image>
 							</StackPanel>
@@ -2055,7 +2055,15 @@
 												<Separator Classes="Dialog_Separator_Small"/>
 												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ImportLogAnalysisRuleSet}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
 												<Separator Classes="Dialog_Separator_Small"/>
-												<ToggleButton Name="createLogAnalysisRuleSetButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #root.CreateLogAnalysisRuleSet}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
+												<ToggleButton Name="createLogAnalysisRuleSetButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #root.CreateLogAnalysisRuleSet}">
+													<Grid ColumnDefinitions="*,Auto">
+														<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Create}"/>
+														<Panel Grid.Column="1">
+															<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#createLogAnalysisRuleSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+															<Image Classes="Button_DropDownIcon" IsVisible="{Binding #createLogAnalysisRuleSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+														</Panel>
+													</Grid>
+												</ToggleButton>
 											</StackPanel>
 										</Grid>
 									</StackPanel>

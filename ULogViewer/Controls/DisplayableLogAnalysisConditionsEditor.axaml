@@ -54,7 +54,15 @@
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #conditionListBox.IsVisible}"/>
-		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Content="{DynamicResource String/Common.Add}" Grid.Row="2" HorizontalAlignment="Right"/>
+		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Grid.Row="2">
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Add}"/>
+				<Panel Grid.Column="1">
+					<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#addConditionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+					<Image Classes="Button_DropDownIcon" IsVisible="{Binding #addConditionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+				</Panel>
+			</Grid>
+		</ToggleButton>
 	</Grid>
 	
 </UserControl>
