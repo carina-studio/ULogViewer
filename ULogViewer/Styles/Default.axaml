@@ -114,6 +114,7 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Crosshair" Color="{DynamicResource Color/Accent}"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Separator" Color="#000000"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#0e0e0e</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Border">#0e0e0e</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Quantifier.Foreground" Color="{DynamicResource SystemBaseHighColor}" Opacity="0.5"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#0000ff</SolidColorBrush>

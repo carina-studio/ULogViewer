@@ -77,6 +77,7 @@
 			<!-- SessionView -->
 			<SolidColorBrush x:Key="Brush/SessionView.LogChart.Axis.Separator" Color="#a0a0a0"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Background">#d0d0d0</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Border">#d0d0d0</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogHeader.Separator">#4f000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Blue">#2f0094ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Background.Marked.Default">#1a000000</SolidColorBrush>
