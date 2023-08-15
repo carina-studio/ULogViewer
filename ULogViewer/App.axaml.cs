@@ -355,7 +355,7 @@ namespace CarinaStudio.ULogViewer
 
 
         // Called when main window closed.
-        protected override async Task OnMainWindowClosedAsync(CarinaStudio.Controls.Window mainWindow, ViewModel viewModel)
+        protected override async Task OnMainWindowClosedAsync(AppSuite.Controls.MainWindow mainWindow, ViewModel viewModel)
         {
 			// detach from main window
 			this.mainWindowInfoMap.Remove(mainWindow);
