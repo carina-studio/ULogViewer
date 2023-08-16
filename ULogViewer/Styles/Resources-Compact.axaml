@@ -63,7 +63,9 @@
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">5,3,18,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding">0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding.Dummy">0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin">3,4,0,4</Thickness>
+	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy">0,4,0,4</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Right.Margin">0,4,4,4</Thickness>
 	
 </ResourceDictionary>

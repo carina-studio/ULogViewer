@@ -989,7 +989,7 @@
 				</Border>
 				
 				<!-- Border -->
-				<Line Classes="Shadow" Margin="-50,0,0,0" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" VerticalAlignment="Bottom"/>
+				<Line Classes="Shadow" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" VerticalAlignment="Bottom"/>
 				
 			</Panel>
 
@@ -1027,7 +1027,7 @@
 			</Viewbox>
 			
 			<!-- Chart -->
-			<Line Classes="Shadow" Grid.Row="2" IsVisible="{Binding LogChart.IsPanelVisible}" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" VerticalAlignment="Top"/>
+			<Line Classes="Shadow" Grid.Row="2" IsVisible="{Binding LogChart.IsPanelVisible}" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" VerticalAlignment="Top"/>
 			<Border Grid.Row="2" Background="{DynamicResource Brush/ToolBar.Background}" HorizontalAlignment="Right" IsVisible="{Binding LogChart.IsPanelVisible}" Width="{Binding #logChartToolBar.Bounds.Width}"/> <!-- Dummy tool bar -->
 			<GridSplitter Classes="GridSplitter_Horizontal" Background="{x:Static Brushes.Transparent}" Grid.Row="2" IsVisible="False"/>
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
@@ -1520,7 +1520,7 @@
 
 				</StackPanel>
 			</Border>
-			<Line Classes="Shadow" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" HorizontalAlignment="Left" IsVisible="{Binding !#sidePanelContainer.IsVisible}"/>
+			<Line Classes="Shadow" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" HorizontalAlignment="Left"/>
 		</Panel>
 
 		<!-- Side panel -->
@@ -2443,10 +2443,10 @@
 
 		</Border>
 		<Panel Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" IsVisible="{Binding #sidePanelContainer.IsVisible}" VerticalAlignment="Stretch">
-			<Border Classes="SessionView_SidePanel_Header" Padding="0,3,0,3" VerticalAlignment="Top">
-				<TextBlock Classes="SessionView_SidePanel_Header_Left"/>
+			<Border Classes="SessionView_SidePanel_Header" Padding="{StaticResource Thickness/SessionView.SidePanel.Header.Padding.Dummy}" VerticalAlignment="Top">
+				<TextBlock Classes="SessionView_SidePanel_Header_Left" Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy}"/>
 			</Border>
-			<Line Classes="Shadow" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" HorizontalAlignment="Left"/>
+			<Line Classes="Shadow" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" HorizontalAlignment="Left"/>
 		</Panel>
 		<GridSplitter Background="{x:Static Brushes.Transparent}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding #sidePanelContainer.IsVisible}"/>
 

@@ -296,7 +296,9 @@
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Margin">1,0,1,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding">3</Thickness>
+	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding.Dummy">0,3,0,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin">5,5,0,5</Thickness>
+	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy">0,5,0,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Right.Margin">0,5,5,5</Thickness>
 	
 	<!-- StringLogPropertyMapEntryEditorDialog -->
