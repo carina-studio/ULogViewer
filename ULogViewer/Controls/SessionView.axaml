@@ -782,7 +782,7 @@
 																</Border>
 															</DataTemplate>
 															<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
-																<Expander HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
+																<Expander Background="{x:Null}" HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
 																	<Expander.Header>
 																		<Grid ColumnDefinitions="Auto,*">
 																			<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#textFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Icon.Folder.Outline}"/>
@@ -1734,7 +1734,7 @@
 														</StackPanel.Styles>
 
 														<!-- Key log analysis -->
-														<Expander Name="keyLogAnalysisRuleSetsExpander" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}">
+														<Expander Name="keyLogAnalysisRuleSetsExpander" Background="{x:Null}" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}">
 															<Expander.Header>
 																<Grid ColumnDefinitions="Auto,*">
 																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#keyLogAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Icon.Flag.Outline}"/>
@@ -1812,7 +1812,7 @@
 														</Expander>
 
 														<!-- Operation duration analysis -->
-														<Expander Name="operationDurationAnalysisRuleSetsExpander" IsVisible="{Binding RuleSets.Count, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}">
+														<Expander Name="operationDurationAnalysisRuleSetsExpander" Background="{x:Null}" IsVisible="{Binding RuleSets.Count, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}">
 															<Expander.Header>
 																<Grid ColumnDefinitions="Auto,*">
 																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#operationDurationAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Timer.Outline}"/>
@@ -1890,7 +1890,7 @@
 														</Expander>
 
 														<!-- Operation counting analysis -->
-														<Expander Name="operationCountingAnalysisRuleSetsExpander" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}">
+														<Expander Name="operationCountingAnalysisRuleSetsExpander" Background="{x:Null}" IsVisible="{Binding RuleSets.Count, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}">
 															<Expander.Header>
 																<Grid ColumnDefinitions="Auto,*">
 																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#operationCountingAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Layers.Outline}"/>
@@ -1968,7 +1968,7 @@
 														</Expander>
 
 														<!-- Log analysis script -->
-														<Expander Name="logAnalysisScriptSetsExpander" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
+														<Expander Name="logAnalysisScriptSetsExpander" Background="{x:Null}" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
 															<Expander.Header>
 																<Grid ColumnDefinitions="Auto,*">
 																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Code}"/>
