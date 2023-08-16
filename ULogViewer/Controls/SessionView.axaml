@@ -1026,6 +1026,11 @@
 				</Panel>
 			</Viewbox>
 			
+			<!-- Shadows -->
+			<Border Classes="Shadow_Bottom" Grid.Row="1" VerticalAlignment="Top"/>
+			<Border Classes="Shadow_Top" Grid.Row="1" VerticalAlignment="Bottom"/>
+			<Border Classes="Shadow_Left" Grid.Row="1" HorizontalAlignment="Right"/>
+			
 			<!-- Chart -->
 			<Line Classes="Shadow" Grid.Row="2" IsVisible="{Binding LogChart.IsPanelVisible}" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" VerticalAlignment="Top"/>
 			<Border Grid.Row="2" Background="{DynamicResource Brush/ToolBar.Background}" HorizontalAlignment="Right" IsVisible="{Binding LogChart.IsPanelVisible}" Width="{Binding #logChartToolBar.Bounds.Width}"/> <!-- Dummy tool bar -->
