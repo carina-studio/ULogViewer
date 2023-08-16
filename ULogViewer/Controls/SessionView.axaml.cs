@@ -163,7 +163,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static fields.
 		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
-		static readonly StyledProperty<bool> IsScriptRunningEnabledProperty = AvaloniaProperty.Register<SessionView, bool>("IsScriptRunningEnabled", false);
+		static readonly StyledProperty<bool> IsScriptRunningEnabledProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScriptRunningEnabled), false);
 		static readonly StyledProperty<bool> IsScrollingToLatestLogNeededProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToLatestLogNeeded), true);
 		static readonly StyledProperty<bool> IsScrollingToTargetLogRangeProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScrollingToTargetLogRange));
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
@@ -2616,6 +2616,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Check whether process info should be shown or not.
 		bool IsProcessInfoVisible => this.GetValue(IsProcessInfoVisibleProperty);
+
+
+		/// <summary>
+		/// Check whether script running is enabled or not.
+		/// </summary>
+		public bool IsScriptRunningEnabled => this.GetValue(IsScriptRunningEnabledProperty);
 
 
 		// Get or set whether scrolling to latest log is needed or not.
