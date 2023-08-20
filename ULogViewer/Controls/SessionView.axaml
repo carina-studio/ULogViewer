@@ -1176,9 +1176,9 @@
 			</Panel>
 			
 			<!-- Shadows -->
-			<Border Classes="Shadow_Bottom" VerticalAlignment="Top"/>
-			<Border Classes="Shadow_Top" Grid.Row="4" VerticalAlignment="Bottom"/>
-			<Border Classes="Shadow_Left" Grid.RowSpan="5" HorizontalAlignment="Right"/>
+			<Border Classes="Shadow_Bottom_Light" VerticalAlignment="Top"/>
+			<Border Classes="Shadow_Top_Light" Grid.Row="4" VerticalAlignment="Bottom"/>
+			<Border Classes="Shadow_Left_Light" Grid.RowSpan="5" HorizontalAlignment="Right"/>
 
 			<!-- Drag-and-drop receiver -->
 			<Border Name="dragDropReceiverBorder" Background="{x:Static Brushes.Transparent}" Grid.RowSpan="3" IsVisible="False"/>
