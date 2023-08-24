@@ -1693,7 +1693,13 @@
 												<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
 
 												<!-- Import existing -->
-												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ImportExistingCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting}"/>
+												<ToggleButton Name="importExistingCooperativeLogAnalysisScriptSetButton" Classes="Dialog_Item_Button" Command="{Binding #root.ImportExistingCooperativeLogAnalysisScript}">
+													<Grid ColumnDefinitions="*,Auto">
+														<TextBlock Classes="Button_Text" Text="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting}"/>
+														<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !#importExistingCooperativeLogAnalysisScriptSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+														<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding #importExistingCooperativeLogAnalysisScriptSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+													</Grid>
+												</ToggleButton>
 												<Separator Classes="Dialog_Separator_Small"/>
 
 												<!-- Import from file -->

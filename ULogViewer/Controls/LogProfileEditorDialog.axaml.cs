@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -27,8 +28,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ListBox = Avalonia.Controls.ListBox;
-using TextBlock = Avalonia.Controls.TextBlock;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -78,6 +77,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
+		LogAnalysisScriptSetSelectionContextMenu? logAnalysisScriptSetSelectionMenu;
 		readonly SortedObservableList<KeyValuePair<string, Logs.LogLevel>> logLevelMapEntriesForReading = new((x, y) => string.Compare(x.Key, y.Key, StringComparison.InvariantCulture));
 		readonly SortedObservableList<KeyValuePair<Logs.LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
@@ -749,7 +749,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							this.Get<Control>("logPatternsContainer").BringIntoView();
 							this.Get<Button>("addLogPatternButton").Focus();
-							this.AnimateTextBlock(this.Get<TextBlock>("logPatternsTextBlock"));
+							this.AnimateTextBlock(this.Get<Avalonia.Controls.TextBlock>("logPatternsTextBlock"));
 						}, 100);
 						return null;
 					}
@@ -771,7 +771,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.Get<Control>("visibleLogPropertiesContainer").BringIntoView();
 						this.Get<Button>("addVisibleLogPropertyButton").Focus();
-						this.AnimateTextBlock(this.Get<TextBlock>("visiblePropertiesTextBlock"));
+						this.AnimateTextBlock(this.Get<Avalonia.Controls.TextBlock>("visiblePropertiesTextBlock"));
 					}, 100);
 					return null;
 				}
@@ -926,8 +926,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void ImportExistingCooperativeLogAnalysisScript()
 		{
 			// select script set
-			var scriptSet = await new LogAnalysisScriptSetSelectionDialog().ShowDialog<LogAnalysisScriptSet?>(this);
-			if (scriptSet == null)
+			var button = this.Get<ToggleButton>("importExistingCooperativeLogAnalysisScriptSetButton");
+			button.IsChecked = true;
+			this.logAnalysisScriptSetSelectionMenu ??= new();
+			var scriptSet = await this.logAnalysisScriptSetSelectionMenu.OpenAsync(button);
+			button.IsChecked = false;
+			if (scriptSet is null)
 				return;
 
 			// edit script set and replace
@@ -1249,7 +1253,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when double-tapped on list box.
 		void OnListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
-			if (sender is not ListBox listBox)
+			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
 			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 				return;

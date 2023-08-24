@@ -59,10 +59,6 @@
 	<sys:Double x:Key="Double/LogAnalysisScriptSetEditorDialog.Width">650</sys:Double>
 	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Item.Padding">3</Thickness>
 	<Thickness x:Key="Thickness/LogAnalysisScriptSetEditorDialog.ScriptCompilationResults.Margin">-3,0,-3,0</Thickness>
-
-	<!-- LogAnalysisScriptSetSelectionDialog -->
-	<sys:Double x:Key="Double/LogAnalysisScriptSetSelectionDialog.MaxHeight">600</sys:Double>
-	<sys:Double x:Key="Double/LogAnalysisScriptSetSelectionDialog.Width">400</sys:Double>
 	
 	<!-- LogChartSeriesSourceEditorDialog -->
 	<sys:Double x:Key="Double/LogChartSeriesSourceEditorDialog.Width">500</sys:Double>

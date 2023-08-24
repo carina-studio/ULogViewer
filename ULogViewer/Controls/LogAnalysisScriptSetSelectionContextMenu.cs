@@ -7,10 +7,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.LogicalTree;
+using Avalonia.Threading;
 using CarinaStudio.Collections;
 using CarinaStudio.ComponentModel;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -60,7 +63,7 @@ class LogAnalysisScriptSetSelectionContextMenu : ContextMenu
             return -1;
         if (rhsScriptSet is null)
             return 1;
-        var result = string.Compare(lhsScriptSet.Name, rhs.Name, StringComparison.InvariantCulture);
+        var result = string.Compare(lhsScriptSet.Name, rhsScriptSet.Name, StringComparison.InvariantCulture);
         return result != 0 ? result : string.Compare(lhsScriptSet.Id, rhsScriptSet.Id, StringComparison.InvariantCulture);
     }
     
@@ -168,6 +171,22 @@ class LogAnalysisScriptSetSelectionContextMenu : ContextMenu
                     this.menuItems.Add(this.CreateMenuItem(scriptSet));
                 }
                 break;
+            case NotifyCollectionChangedAction.Move:
+                e.OldItems!.Cast<LogAnalysisScriptSet>().Let(movedScriptSets =>
+                {
+                    if (movedScriptSets.Count != 1)
+                        throw new NotSupportedException();
+                    var scriptSet = movedScriptSets[0];
+                    for (var i = this.menuItems.Count - 1; i >= 0; --i)
+                    {
+                        if (this.menuItems[i].DataContext == scriptSet)
+                        {
+                            this.menuItems.SortAt(i);
+                            break;
+                        }
+                    }
+                });
+                break;
             case NotifyCollectionChangedAction.Remove:
                 e.OldItems!.Cast<LogAnalysisScriptSet>().Let(removedScriptSets =>
                 {
@@ -216,6 +235,40 @@ class LogAnalysisScriptSetSelectionContextMenu : ContextMenu
                 break;
             default:
                 throw new NotSupportedException($"Unsupported action of change of collection: {e.Action}.");
+        }
+    }
+
+
+    /// <summary>
+    /// Open the menu to let user select a <see cref="LogAnalysisScriptSet"/>.
+    /// </summary>
+    /// <param name="control">Control.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Task of opening and waiting for user selection.</returns>
+    public async Task<LogAnalysisScriptSet?> OpenAsync(Control control, CancellationToken cancellationToken = default)
+    {
+        if (cancellationToken.IsCancellationRequested)
+            return null;
+        if (this.IsOpen)
+            this.Close();
+        var taskCompletionSource = new TaskCompletionSource<LogAnalysisScriptSet?>();
+        void OnClosed(object? sender, EventArgs e) => 
+            Dispatcher.UIThread.Post(() => taskCompletionSource.TrySetResult(null));
+        void OnLogAnalysisScriptSetSelected(LogAnalysisScriptSetSelectionContextMenu menu, LogAnalysisScriptSet scriptSet) =>
+            taskCompletionSource.TrySetResult(scriptSet);
+        var registration = cancellationToken.Register(this.Close);
+        this.Closed += OnClosed;
+        this.LogAnalysisScriptSetSelected += OnLogAnalysisScriptSetSelected;
+        this.Open(control);
+        try
+        {
+            return await taskCompletionSource.Task;
+        }
+        finally
+        {
+            registration.Dispose();
+            this.Closed -= OnClosed;
+            this.LogAnalysisScriptSetSelected -= OnLogAnalysisScriptSetSelected;
         }
     }
     

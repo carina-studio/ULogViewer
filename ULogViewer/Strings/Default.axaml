@@ -399,11 +399,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python"># Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
-
-	<!-- LogAnalysisScriptSetSelectionDialog -->
-	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Message">Select a log analysis script:</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">Log analysis script</sys:String>
-
+	
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
 	
@@ -614,7 +610,7 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">The log analysis script will be run automatically when using this profile.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">Import existing…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">Import existing</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">Import from file…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>

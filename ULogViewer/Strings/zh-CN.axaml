@@ -386,11 +386,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python"># 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">编辑日志分析脚本</sys:String>
-
-	<!-- LogAnalysisScriptSetSelectionDialog -->
-	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Message">选择一个日志分析脚本：</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetSelectionDialog.Title">日志分析脚本</sys:String>
-
+	
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">无法将选取的日志分析结果复制至剪贴簿。</sys:String>
 	
@@ -584,7 +580,7 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">当使用此日志类型时将自动运行此日志分析脚本。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有脚本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有脚本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">从文件导入…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">资料来源</sys:String>

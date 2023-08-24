@@ -52,6 +52,7 @@ partial class SessionView
     readonly ToggleButton logAnalysisRuleSetsButton;
     readonly Popup logAnalysisRuleSetsPopup;
     readonly Avalonia.Controls.ListBox logAnalysisScriptSetListBox;
+    LogAnalysisScriptSetSelectionContextMenu? logAnalysisScriptSetSelectionContextMenu;
     readonly Avalonia.Controls.ListBox operationCountingAnalysisRuleSetListBox;
 	readonly Avalonia.Controls.ListBox operationDurationAnalysisRuleSetListBox;
     readonly ScheduledAction scrollToLatestLogAnalysisResultAction;
@@ -479,7 +480,11 @@ partial class SessionView
         var profile = session.LogProfile;
         if (profile is null)
             return;
-        var scriptSet = await new LogAnalysisScriptSetSelectionDialog().ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
+        var button = this.Get<ToggleButton>("importExistingCooperativeLogAnalysisScriptSetButton");
+        button.IsChecked = true;
+        this.logAnalysisScriptSetSelectionContextMenu ??= new();
+        var scriptSet = await this.logAnalysisScriptSetSelectionContextMenu.OpenAsync(button);
+        button.IsChecked = false;
         if (scriptSet is null
             || this.attachedWindow == null
             || this.DataContext != session
