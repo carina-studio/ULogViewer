@@ -954,8 +954,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void ImportExistingEmbeddedScriptLogDataSourceProvider()
 		{
 			// select provider
-			var provider = await new ScriptLogDataSourceProviderSelectionDialog().ShowDialog<ScriptLogDataSourceProvider?>(this);
-			if (provider == null)
+			var button = this.Get<ToggleButton>("importExistingEmbeddedScriptLogDataSourceProviderButton");
+			button.IsChecked = true;
+			var provider = await new ScriptLogDataSourceProviderSelectionContextMenu().OpenAsync(button);
+			button.IsChecked = false;
+			if (provider is null)
 				return;
 			
 			// edit provider and replace

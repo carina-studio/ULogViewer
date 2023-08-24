@@ -197,9 +197,6 @@
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
 	<sys:Double x:Key="Double/ScriptLogDataSourceProvidersDialog.ProviderListBox.Height">300</sys:Double>
-
-	<!-- ScriptLogDataSourceProviderSelectionDialog -->
-	<sys:Double x:Key="Double/ScriptLogDataSourceProviderSelectionDialog.Width">400</sys:Double>
 	
 	<!-- SessionView -->
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">0</CornerRadius>

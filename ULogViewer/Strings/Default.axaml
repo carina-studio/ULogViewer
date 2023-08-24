@@ -622,7 +622,7 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">You can set embedded log data source script as 'Data source' of the profile.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">Import existing…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">Import existing</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">Import from file…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">Format description</sys:String>
@@ -1167,11 +1167,7 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">Data source script '{0}' has been exported to '{1}' successfully.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
-
-	<!-- ScriptLogDataSourceProviderSelectionDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Message">Select a log data source script:</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">Log data source scripts</sys:String>
-
+	
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple Developer</sys:String>
 	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple Developer Forums</sys:String>

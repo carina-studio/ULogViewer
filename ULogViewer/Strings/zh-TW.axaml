@@ -585,7 +585,7 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以將內嵌日誌資料來源腳本設定為此日誌類型的「資料來源」。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">匯入現有腳本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">匯入現有腳本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">從檔案匯入…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式說明</sys:String>
@@ -1124,11 +1124,7 @@ return None</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">日誌資料來源腳本「{0}」已成功匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在啟用專業版之前，您只能建立 1 個日誌資料來源腳本，且在關閉 ULogViewer 後不會被儲存。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日誌資料來源腳本</sys:String>
-
-	<!-- ScriptLogDataSourceProviderSelectionDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Message">選擇一個日誌資料來源腳本：</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderSelectionDialog.Title">日誌資料來源腳本</sys:String>
-
+	
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloperForums">Apple Developer 論壇</sys:String>
 	<sys:String x:Key="String/SearchProvider.Baidu">百度</sys:String>
