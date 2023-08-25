@@ -7,11 +7,16 @@
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationDurationAnalysisRuleSetEditorDialog"
+        CanResize="True"
         Classes="Dialog"
+        Height="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.Height}"
+        MinHeight="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.MinHeight}"
+        MinWidth="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.MinWidth}"
 		Icon="/ULogViewer.ico"
 		ShowInTaskbar="True"
+        SizeToContent="Manual"
         Title="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.Title}"
-        Width="{DynamicResource Double/OperationDurationAnalysisRuleSetEditorDialog.Width}">
+        Width="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.Width}">
 
 	<DockPanel>
 
@@ -26,7 +31,7 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer MaxHeight="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.Content.MaxHeight}">
+		<ScrollViewer>
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 				<Border Classes="Dialog_ItemsGroup_Container">

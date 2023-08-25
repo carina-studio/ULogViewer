@@ -7,9 +7,14 @@
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationCountingAnalysisRuleSetEditorDialog"
+        CanResize="True"
         Classes="Dialog"
+        Height="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.Height}"
 		Icon="/ULogViewer.ico"
+        MinHeight="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.MinHeight}"
+        MinWidth="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.MinWidth}"
 		ShowInTaskbar="True"
+        SizeToContent="Manual"
         Title="{DynamicResource String/OperationCountingAnalysisRuleSetEditorDialog.Title}"
         Width="{DynamicResource Double/OperationCountingAnalysisRuleSetEditorDialog.Width}">
 
@@ -26,7 +31,7 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer MaxHeight="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.Content.MaxHeight}">
+		<ScrollViewer>
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 				
 				<Border Classes="Dialog_ItemsGroup_Container">

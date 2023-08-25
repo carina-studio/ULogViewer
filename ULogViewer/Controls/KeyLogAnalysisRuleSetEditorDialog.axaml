@@ -7,9 +7,14 @@
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleSetEditorDialog"
+        CanResize="True"
         Classes="Dialog"
+        Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.Height}"
 		Icon="/ULogViewer.ico"
+        MinHeight="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.MinHeight}"
+        MinWidth="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.MinWidth}"
 		ShowInTaskbar="True"
+        SizeToContent="Manual"
         Title="{DynamicResource String/KeyLogAnalysisRuleSetEditorDialog.Title}"
         Width="{DynamicResource Double/KeyLogAnalysisRuleSetEditorDialog.Width}">
 
@@ -26,8 +31,8 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer MaxHeight="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.Content.MaxHeight}">
-			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
+		<ScrollViewer>
+			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups" VerticalAlignment="Stretch">
 
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>

@@ -32,19 +32,25 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">10,6,10,6</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin">5,0,5,3</Thickness>
 	
+	<!-- KeyLogAnalysisRuleEditorDialog -->
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Height">500</sys:Double>
+	
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Height">500</sys:Double>
 	<Thickness x:Key="Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin">0,1,0,0</Thickness>
 
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
-	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Height">500</sys:Double>
 	
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Height">500</sys:Double>
 	<Thickness x:Key="Thickness/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,1,0,0</Thickness>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">450</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Height">500</sys:Double>
 	
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Height">500</sys:Double>
 	<Thickness x:Key="Thickness/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,1,0,0</Thickness>
 
 	<!-- SessionView -->

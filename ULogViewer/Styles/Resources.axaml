@@ -38,13 +38,17 @@
 	<Thickness x:Key="Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin">20,0,0,0</Thickness>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
-	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Height">600</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height">100</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height">100</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleEditorDialog.Width">500</sys:Double>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
-	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Height">600</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/KeyLogAnalysisRuleSetEditorDialog.Width">500</sys:Double>
@@ -140,25 +144,33 @@
 	<Thickness x:Key="Thickness/MainWindow.TabItem.ToolTip.Padding">5</Thickness>
 
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
-	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Height">600</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.PatternTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleEditorDialog.Width">500</sys:Double>
 
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
-	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Height">600</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/OperationCountingAnalysisRuleSetEditorDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin">0,2,0,0</Thickness>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Height">600</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height">100</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleEditorDialog.Width">500</sys:Double>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
-	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Height">600</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity">0.7</sys:Double>
 	<sys:Double x:Key="Double/OperationDurationAnalysisRuleSetEditorDialog.Width">500</sys:Double>
