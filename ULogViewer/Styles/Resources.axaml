@@ -80,10 +80,12 @@
 	<sys:Double x:Key="Double/LogPatternEditorDialog.Width">600</sys:Double>
 	
 	<!-- LogProfileEditorDialog -->
-	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">600</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.Height">600</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogPattern.Description.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogPattern.Description.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.LogWritingFormatTextBox.Height">100</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.MinHeight">300</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.MinWidth">400</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity">0.5</sys:Double>
 	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">600</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileEditorDialog.LogPattern.Description.Margin">0,2,0,0</Thickness>

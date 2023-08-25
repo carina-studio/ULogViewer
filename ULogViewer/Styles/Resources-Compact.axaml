@@ -9,7 +9,8 @@
 	<sys:Double x:Key="Double/LogDataSourceOptionsDialog.Content.MaxHeight">450</sys:Double>
 
 	<!-- LogProfileEditorDialog -->
-	<sys:Double x:Key="Double/LogProfileEditorDialog.Content.MaxHeight">500</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.Height">500</sys:Double>
+	<sys:Double x:Key="Double/LogProfileEditorDialog.Width">500</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileEditorDialog.LogPattern.Description.Margin">0,1,0,0</Thickness>
 
 	<!-- LogProfileIconColorComboBox -->

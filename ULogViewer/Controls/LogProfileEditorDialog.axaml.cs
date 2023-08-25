@@ -1431,6 +1431,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			// update state
 			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet != null);
 			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, this.embeddedScriptLogDataSourceProvider != null);
+			
+			// setup initial size
+			this.Screens.Let(screens =>
+			{
+				(screens.ScreenFromWindow(this) ?? screens.Primary)?.Let(screen =>
+				{
+					this.Height = Math.Max(screen.WorkingArea.Height / screen.Scaling / 2, this.FindResourceOrDefault("Double/LogProfileEditorDialog.Height", 600.0));
+				});
+			});
 		}
 
 

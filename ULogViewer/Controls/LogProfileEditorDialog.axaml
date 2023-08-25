@@ -14,8 +14,12 @@
         xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogProfileEditorDialog"
+        CanResize="True"
         Classes="Dialog"
+        MinHeight="{StaticResource Double/LogProfileEditorDialog.MinHeight}"
+        MinWidth="{StaticResource Double/LogProfileEditorDialog.MinWidth}"
 		Name="window"
+        SizeToContent="Manual"
         Width="{DynamicResource Double/LogProfileEditorDialog.Width}">
 
 	<!-- Styles -->
@@ -43,7 +47,7 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="baseScrollViewer" Classes="Dialog_ContentPanel" HorizontalScrollBarVisibility="Disabled" MaxHeight="{DynamicResource Double/LogProfileEditorDialog.Content.MaxHeight}">
+		<ScrollViewer Name="baseScrollViewer" Classes="Dialog_ContentPanel" HorizontalScrollBarVisibility="Disabled">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 				<!-- Common -->
