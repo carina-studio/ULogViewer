@@ -1034,48 +1034,73 @@
 				<!-- Tool bar -->
 				<Panel DockPanel.Dock="Right">
 					<Border Name="logChartToolBar" Classes="ToolBar" IsEnabled="{Binding #logChart.IsVisible}">
-						<StackPanel>
-							<StackPanel.Styles>
-								<Style Selector="Button.ToolBar_Button">
-									<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-									<Setter Property="Margin" Value="0,1,0,0"/>
-									<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
-									<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-								</Style>
-								<Style Selector="ToggleButton.ToolBar_ToggleButton">
-									<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-									<Setter Property="Margin" Value="0,1,0,0"/>
-									<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
-									<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-								</Style>
-							</StackPanel.Styles>
-							
-							<!-- Reset zoom -->
-							<Button Classes="ToolBar_Button" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogChartZoom}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
-							</Button>
-							
-							<!-- Scroll to start -->
-							<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToStartOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToStartOfLogChart}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
-							</Button>
-							
-							<!-- Scroll to end -->
-							<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToEndOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToEndOfLogChart}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
-							</Button>
-							
-							<Separator Classes="ToolBar_Separator_Horizontal"/>
-							
-							<!-- Type of chart -->
-							<ToggleButton Name="logChartTypeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogChartTypeMenu}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogChartType}">
-								<Panel>
-									<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}}"/>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}, ConverterParameter=Light}"/>
-								</Panel>
-							</ToggleButton>
-							
-						</StackPanel>
+						<asControls:ToolBarScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+							<StackPanel>
+								<StackPanel.Styles>
+									<Style Selector="Button.ToolBar_Button">
+										<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+										<Setter Property="Margin" Value="0,1,0,0"/>
+										<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
+										<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+									</Style>
+									<Style Selector="ToggleButton.ToolBar_ToggleButton">
+										<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+										<Setter Property="Margin" Value="0,1,0,0"/>
+										<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
+										<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+									</Style>
+								</StackPanel.Styles>
+								
+								<!-- Reset zoom -->
+								<Button Classes="ToolBar_Button" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogChartZoom}">
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
+								</Button>
+								
+								<!-- Scroll to start -->
+								<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToStartOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToStartOfLogChart}">
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
+								</Button>
+								
+								<!-- Scroll to end -->
+								<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToEndOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToEndOfLogChart}">
+									<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
+								</Button>
+								
+								<Separator Classes="ToolBar_Separator_Horizontal"/>
+								
+								<!-- Visible series -->
+								<ToggleButton Name="visibleLogChartSeriesButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.SelectVisibleLogChartSeries}" ToolTip.Tip="{DynamicResource String/SessionView.VisibleLogChartSeries}">
+									<Panel>
+										<Image Classes="Icon" Source="{DynamicResource Image/Filter}">
+											<Image.IsVisible>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="!IsChecked" ElementName="visibleLogChartSeriesButton"/>
+													<Binding Path="LogChart.AreAllSeriesSourcesVisible"/>
+												</MultiBinding>
+											</Image.IsVisible>
+										</Image>
+										<Image Classes="Icon" Source="{DynamicResource Image/Filter.Active}">
+											<Image.IsVisible>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="!IsChecked" ElementName="visibleLogChartSeriesButton"/>
+													<Binding Path="!LogChart.AreAllSeriesSourcesVisible"/>
+												</MultiBinding>
+											</Image.IsVisible>
+										</Image>
+										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Filter.Light}"/>
+									</Panel>
+								</ToggleButton>
+								
+								<!-- Type of chart -->
+								<ToggleButton Name="logChartTypeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogChartTypeMenu}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogChartType}">
+									<Panel>
+										<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}}"/>
+										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}, ConverterParameter=Light}"/>
+									</Panel>
+								</ToggleButton>
+								
+							</StackPanel>
+						</asControls:ToolBarScrollViewer>
 					</Border>
 					<Line Classes="Shadow" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" HorizontalAlignment="Left"/>
 				</Panel>

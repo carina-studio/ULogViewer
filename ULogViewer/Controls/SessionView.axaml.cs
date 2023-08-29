@@ -1209,15 +1209,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnMarkedLogsChanged);
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
-			session.LogChart.Let(it =>
-			{
-				it.PropertyChanged += this.OnLogChartViewModelPropertyChanged;
-				this.AttachToRawLogChartSeries(it.Series);
-				if (it.IsMaxTotalSeriesValueCountReached)
-					this.PromptForMaxLogChartSeriesValueCountReached();
-				this.areLogChartAxesReady = false;
-				this.UpdateLogChartAxes();
-			});
 			session.LogFiltering.Let(it =>
 			{
 				it.FiltersApplied += this.OnLogFiltersApplied;
@@ -1225,6 +1216,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
 			});
 			this.AttachToLogAnalysis(session.LogAnalysis);
+			this.AttachToLogChart(session.LogChart);
 			
 			// attach to properties
 			var isAttaching = true;
@@ -1293,9 +1285,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			// sync log filters to UI
 			this.SyncLogTextFiltersBack();
 			this.commitLogFiltersAction.Cancel();
-			
-			// sync log chart to UI
-			this.UpdateLogChartPanelVisibility();
 
 			// sync log analysis rule sets to UI
 			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
@@ -2406,11 +2395,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnMarkedLogsChanged);
 			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
-			session.LogChart.Let(it =>
-			{
-				it.PropertyChanged -= this.OnLogChartViewModelPropertyChanged;
-				this.DetachFromRawLogChartSeries();
-			});
 			session.LogFiltering.Let(it =>
 			{
 				it.FiltersApplied -= this.OnLogFiltersApplied;
@@ -2418,6 +2402,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
 			});
 			this.DetachFromLogAnalysis(session.LogAnalysis);
+			this.DetachFromLogChart(session.LogChart);
 
 			// remove log analysis results
 			this.logAnalysisResultListBox.SelectedItems?.Clear();
@@ -2442,9 +2427,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canSetUri.Unbind();
 			this.canSetWorkingDirectory.Unbind();
 			this.canShowWorkingDirectoryInExplorer.Update(false);
-			
-			// invalidate colors of log chart series
-			this.InvalidateLogChartSeriesColors();
 
 			// update properties
 			this.canEditLogProfile.Update(false);
@@ -2871,6 +2853,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.UpdateLogChartSeries();
 			});
 			this.UpdateLogLevelFilterComboBoxStrings();
+			
+			// invalidate menu of visible series of log chart
+			if (this.visibleLogChartSeriesMenu is not null)
+			{
+				this.visibleLogChartSeriesMenu.Close();
+				this.visibleLogChartSeriesMenu = null;
+			}
 		}
 
 

@@ -620,40 +620,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var sources = new List<LogChartSeriesSource>();
 			foreach (var propertyElement in logChartPropertiesElement.EnumerateArray())
 			{
-				var propertyName = propertyElement.GetProperty(nameof(LogChartSeriesSource.PropertyName)).GetString().AsNonNull();
-				var propertyDisplayName = default(string);
-				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.PropertyDisplayName), out var jsonProperty)
-				    && jsonProperty.ValueKind == JsonValueKind.String)
-				{
-					propertyDisplayName = jsonProperty.GetString();
-				}
-				var defaultValue = default(double?);
-				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.DefaultValue), out jsonProperty)
-				    && jsonProperty.ValueKind == JsonValueKind.Number
-				    && jsonProperty.TryGetDouble(out var doubleValue))
-				{
-					defaultValue = doubleValue;
-				}
-				var quantifier = default(string);
-				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.Quantifier), out jsonProperty)
-				    && jsonProperty.ValueKind == JsonValueKind.String)
-				{
-					quantifier = jsonProperty.GetString();
-				}
-				var secondaryPropertyDisplayName = default(string);
-				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.SecondaryPropertyDisplayName), out jsonProperty)
-				    && jsonProperty.ValueKind == JsonValueKind.String)
-				{
-					secondaryPropertyDisplayName = jsonProperty.GetString();
-				}
-				var valueScaling = 1.0;
-				if (propertyElement.TryGetProperty(nameof(LogChartSeriesSource.ValueScaling), out jsonProperty)
-				    && jsonProperty.ValueKind == JsonValueKind.Number
-				    && jsonProperty.TryGetDouble(out doubleValue))
-				{
-					valueScaling = doubleValue;
-				}
-				sources.Add(new LogChartSeriesSource(propertyName, propertyDisplayName, secondaryPropertyDisplayName, quantifier, defaultValue, valueScaling));
+				if (LogChartSeriesSource.TryLoad(propertyElement, out var source))
+					sources.Add(source);
 			}
 			this.logChartSeriesSources = sources.AsReadOnly();
 		}
@@ -1382,18 +1350,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var sources = this.logChartSeriesSources;
 			writer.WriteStartArray();
 			foreach (var source in sources)
-			{
-				writer.WriteStartObject();
-				source.DefaultValue?.Let(it => writer.WriteNumber(nameof(LogChartSeriesSource.DefaultValue), it));
-				if (source.PropertyDisplayName != source.PropertyName)
-					writer.WriteString(nameof(LogChartSeriesSource.PropertyDisplayName), source.PropertyDisplayName);
-				writer.WriteString(nameof(LogChartSeriesSource.PropertyName), source.PropertyName);
-				source.Quantifier?.Let(it => writer.WriteString(nameof(LogChartSeriesSource.Quantifier), it));
-				source.SecondaryPropertyDisplayName?.Let(it => writer.WriteString(nameof(LogChartSeriesSource.SecondaryPropertyDisplayName), it));
-				if (Math.Abs(source.ValueScaling - 1) > double.Epsilon * 2)
-					writer.WriteNumber(nameof(LogChartSeriesSource.ValueScaling), source.ValueScaling);
-				writer.WriteEndObject();
-			}
+				source.Save(writer);
 			writer.WriteEndArray();
 		}
 

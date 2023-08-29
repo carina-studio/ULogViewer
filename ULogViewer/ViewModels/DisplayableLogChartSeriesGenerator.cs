@@ -5,6 +5,8 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -62,10 +64,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     bool isMaxTotalSeriesValueCountReached;
     IList<DisplayableLogChartSeriesSource> logChartSeriesSources = Array.Empty<DisplayableLogChartSeriesSource>();
     LogChartType logChartType = LogChartType.None;
-    DisplayableLogChartSeriesValue? knownMaxSeriesValue;
-    DisplayableLogChartSeriesValue? knownMinSeriesValue;
     int maxSeriesValueCount;
-    readonly ScheduledAction reportMinMaxValuesAction;
     readonly ObservableList<DisplayableLogChartSeries> series = new();
     ObservableList<DisplayableLogChartSeriesValue?>[] seriesValues = Array.Empty<ObservableList<DisplayableLogChartSeriesValue?>>();
     SeriesValueType seriesValueType = SeriesValueType.Undefined;
@@ -84,9 +83,6 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     {
         // setup collections
         this.Series = ListExtensions.AsReadOnly(this.series);
-        
-        // setup actions
-        this.reportMinMaxValuesAction = new(this.ReportMinMaxSeriesValues);
     }
 
 
@@ -101,16 +97,6 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     /// Check whether <see cref="TotalSeriesValueCount"/> reaches the limitation or not.
     /// </summary>
     public bool IsMaxTotalSeriesValueCountReached => this.isMaxTotalSeriesValueCountReached;
-
-
-    // Check whether type of log chart is stacked chart or not.
-    static bool IsStackedLogChartType(LogChartType type) => type switch
-    {
-        LogChartType.ValueStackedAreas
-            or LogChartType.ValueStackedAreasWithDataPoints
-            or LogChartType.ValueStackedBars => true,
-        _ => false,
-    };
 
 
     /// <summary>
@@ -151,26 +137,12 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
                 return;
             SeriesValueTypes.TryGetValue(this.logChartType, out var prevSeriesValueType);
             SeriesValueTypes.TryGetValue(value, out var seriesValueType);
-            var isPrevStackedLogChartType = IsStackedLogChartType(this.logChartType);
-            var isStackedLogChartType = IsStackedLogChartType(value);
             this.logChartType = value;
             if (prevSeriesValueType != seriesValueType)
                 this.InvalidateProcessing();
-            else if (isPrevStackedLogChartType != isStackedLogChartType)
-            {
-                this.knownMinSeriesValue = null;
-                this.knownMaxSeriesValue = null;
-                this.reportMinMaxValuesAction.Execute();
-            }
             this.OnPropertyChanged(nameof(LogChartType));
         }
     }
-
-
-    /// <summary>
-    /// Get known maximum value of all series.
-    /// </summary>
-    public DisplayableLogChartSeriesValue? MaxSeriesValue => null;
 
 
     /// <summary>
@@ -196,12 +168,6 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
                                            }
                                            return memorySize;
                                        });
-    
-    
-    /// <summary>
-    /// Get known minimum value of all series.
-    /// </summary>
-    public DisplayableLogChartSeriesValue? MinSeriesValue => null;
 
 
     /// <inheritdoc/>
@@ -232,20 +198,12 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
         this.OnPropertyChanged(nameof(MaxSeriesValueCount));
         this.totalSeriesValueCount = 0;
         this.OnPropertyChanged(nameof(TotalSeriesValueCount));
-        this.knownMinSeriesValue = null;
-        this.knownMaxSeriesValue = null;
-        this.reportMinMaxValuesAction.Execute();
         if (this.isMaxTotalSeriesValueCountReached)
         {
             this.isMaxTotalSeriesValueCountReached = false;
             this.OnPropertyChanged(nameof(IsMaxTotalSeriesValueCountReached));
         }
     }
-
-
-    // Report latest min/max values of series.
-    void ReportMinMaxSeriesValues()
-    { }
 
 
     /// <summary>
@@ -264,8 +222,13 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
 /// <summary>
 /// Single series of log chart.
 /// </summary>
-class DisplayableLogChartSeries
+class DisplayableLogChartSeries : INotifyPropertyChanged
 {
+    // Fields.
+    DisplayableLogChartSeriesValue? maxValue;
+    DisplayableLogChartSeriesValue? minValue;
+
+
     /// <summary>
     /// Initialize new <see cref="DisplayableLogChartSeries"/> instance.
     /// </summary>
@@ -275,13 +238,156 @@ class DisplayableLogChartSeries
     {
         this.Source = source;
         this.Values = ListExtensions.AsReadOnly(values);
+        if (values is INotifyCollectionChanged notifyCollectionChanged)
+            notifyCollectionChanged.CollectionChanged += this.OnValuesChanged;
+        this.UpdateMinMaxValues();
     }
+
+
+    // Get maximum value from values.
+    static DisplayableLogChartSeriesValue? GetMaxValue(IList<DisplayableLogChartSeriesValue?> values)
+    {
+        var maxValue = default(DisplayableLogChartSeriesValue);
+        for (var i = values.Count - 1; i >= 0; --i)
+        {
+            var value = values[i];
+            if (value is null)
+                continue;
+            if (double.IsFinite(value.Value))
+            {
+                if (maxValue is null || maxValue.Value < value.Value)
+                    maxValue = value;
+            }
+        }
+        return maxValue;
+    }
+    
+    
+    // Get minimum value from values.
+    static DisplayableLogChartSeriesValue? GetMinValue(IList<DisplayableLogChartSeriesValue?> values)
+    {
+        var minValue = default(DisplayableLogChartSeriesValue);
+        for (var i = values.Count - 1; i >= 0; --i)
+        {
+            var value = values[i];
+            if (value is null)
+                continue;
+            if (double.IsFinite(value.Value))
+            {
+                if (minValue is null || minValue.Value > value.Value)
+                    minValue = value;
+            }
+        }
+        return minValue;
+    }
+
+
+    /// <summary>
+    /// Maximum value in <see cref="Values"/>.
+    /// </summary>
+    public DisplayableLogChartSeriesValue? MaxValue => this.maxValue;
+    
+    
+    /// <summary>
+    /// Minimum value in <see cref="Values"/>.
+    /// </summary>
+    public DisplayableLogChartSeriesValue? MinValue => this.maxValue;
+
+
+    // Called when values changed.
+    void OnValuesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                this.UpdateMinMaxValues(e.NewItems!.Cast<DisplayableLogChartSeriesValue?>());
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                e.OldItems!.Cast<DisplayableLogChartSeriesValue?>().Let(removedValues =>
+                {
+                    if (this.minValue is not null && removedValues.Contains(this.minValue))
+                        this.minValue = null;
+                    if (this.maxValue is not null && removedValues.Contains(this.maxValue))
+                        this.maxValue = null;
+                    if (this.minValue is null || this.maxValue is null)
+                        this.UpdateMinMaxValues();
+                });
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                this.minValue = null;
+                this.maxValue = null;
+                this.UpdateMinMaxValues();
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                e.OldItems!.Cast<DisplayableLogChartSeriesValue?>().Let(replacedValues =>
+                {
+                    if (this.minValue is not null && replacedValues.Contains(this.minValue))
+                        this.minValue = null;
+                    if (this.maxValue is not null && replacedValues.Contains(this.maxValue))
+                        this.maxValue = null;
+                    if (this.minValue is null || this.maxValue is null)
+                        this.UpdateMinMaxValues();
+                    else
+                        this.UpdateMinMaxValues(e.NewItems!.Cast<DisplayableLogChartSeriesValue?>());
+                });
+                break;
+        }
+    }
+
+
+    /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>.
+    public event PropertyChangedEventHandler? PropertyChanged;
 
 
     /// <summary>
     /// Source of series.
     /// </summary>
     public DisplayableLogChartSeriesSource? Source { get; }
+    
+    
+    // Update min/max values.
+    void UpdateMinMaxValues() =>
+        this.UpdateMinMaxValues(Array.Empty<DisplayableLogChartSeriesValue?>());
+    void UpdateMinMaxValues(IList<DisplayableLogChartSeriesValue?> newValues)
+    {
+        // minimum
+        if (this.minValue is null)
+        {
+            this.minValue = GetMinValue(this.Values);
+            if (this.minValue is not null)
+                this.PropertyChanged?.Invoke(this, new(nameof(MinValue)));
+        }
+        else
+        {
+            var localMinValue = GetMinValue(newValues);
+            if (localMinValue is not null 
+                && double.IsFinite(localMinValue.Value) 
+                && this.minValue.Value > localMinValue.Value)
+            {
+                this.minValue = localMinValue;
+                this.PropertyChanged?.Invoke(this, new(nameof(MinValue)));
+            }
+        }
+        
+        // maximum
+        if (this.maxValue is null)
+        {
+            this.maxValue = GetMaxValue(this.Values);
+            if (this.maxValue is not null)
+                this.PropertyChanged?.Invoke(this, new(nameof(MaxValue)));
+        }
+        else
+        {
+            var localMaxValue = GetMaxValue(newValues);
+            if (localMaxValue is not null 
+                && double.IsFinite(localMaxValue.Value) 
+                && this.maxValue.Value < localMaxValue.Value)
+            {
+                this.maxValue = localMaxValue;
+                this.PropertyChanged?.Invoke(this, new(nameof(MaxValue)));
+            }
+        }
+    }
     
     
     /// <summary>

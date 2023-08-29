@@ -1334,6 +1334,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者介面回應時間</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">解除標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">檢視更多…</sys:String>
+	<sys:String x:Key="String/SessionView.VisibleLogChartSeries">可見的來源</sys:String>
 	<sys:String x:Key="String/SessionView.WaitingForDataSources">正在等待資料來源…</sys:String>
 	<sys:String x:Key="String/SessionView.WillExceedMaxLogFileCount">無法加入日誌檔案，因為將超過日誌檔案數量上限。</sys:String>
 

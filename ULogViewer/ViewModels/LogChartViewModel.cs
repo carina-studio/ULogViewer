@@ -8,9 +8,13 @@ using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using System.Windows.Input;
+using Microsoft.Extensions.Logging;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -25,6 +29,10 @@ class LogChartViewModel : SessionComponent
     public const double MinPanelSize = 130;
     
     
+    /// <summary>
+    /// Define <see cref="AreAllSeriesSourcesVisible"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<bool> AreAllSeriesSourcesVisibleProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(AreAllSeriesSourcesVisible), true);
     /// <summary>
     /// Define <see cref="ChartType"/> property.
     /// </summary>
@@ -50,6 +58,22 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<bool> IsYAxisInvertedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsYAxisInverted), false);
     /// <summary>
+    /// Define <see cref="MaxSeriesValue"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxSeriesValue), null);
+    /// <summary>
+    /// Define <see cref="MaxVisibleSeriesValue"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxVisibleSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxVisibleSeriesValue), null);
+    /// <summary>
+    /// Define <see cref="MinSeriesValue"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinSeriesValue), null);
+    /// <summary>
+    /// Define <see cref="MinVisibleSeriesValue"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinVisibleSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinVisibleSeriesValue), null);
+    /// <summary>
     /// Define <see cref="PanelSize"/> property.
     /// </summary>
     public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogChartViewModel, double>(nameof(PanelSize), 300,
@@ -66,7 +90,10 @@ class LogChartViewModel : SessionComponent
     
     
     // Constants.
+    const int ReportMinMaxSeriesValuesDelay = 500;
+    const int ReportMinMaxStackedSeriesValuesDelay = 800;
     const string TempChartTypeStateKey = "LogChartViewModel.TempChartType";
+    const string VisibleSeriesSourcesStateKey = $"LogChartViewModel.{nameof(VisibleSeriesSources)}";
 
 
     // Static fields.
@@ -77,11 +104,19 @@ class LogChartViewModel : SessionComponent
     // Fields.
     DisplayableLogChartSeriesGenerator activeSeriesGenerator;
     readonly DisplayableLogChartSeriesGenerator allLogsSeriesGenerator;
+    readonly Dictionary<DisplayableLogChartSeries, DisplayableLogChartSeriesGenerator> attachedSeries = new();
     readonly MutableObservableBoolean canSetChartType = new();
     DisplayableLogChartSeriesGenerator? filteredLogsSeriesGenerator;
     readonly List<IDisposable> observerTokens = new();
     readonly DisplayableLogChartSeriesGenerator markedLogsSeriesGenerator;
+    readonly ScheduledAction reportMaxSeriesValueAction;
+    readonly ScheduledAction reportMinSeriesValueAction;
     readonly ScheduledAction reportSeriesAction;
+    readonly Dictionary<DisplayableLogChartSeriesGenerator, PropertyChangedEventHandler> seriesPropertyChangedHandlers = new();
+    readonly ObservableList<DisplayableLogChartSeriesSource> seriesSources = new();
+    readonly Dictionary<DisplayableLogChartSeriesGenerator, NotifyCollectionChangedEventHandler> seriesValuesChangedHandlers = new();
+    readonly ObservableList<DisplayableLogChartSeries> visibleSeries = new();
+    readonly ObservableList<DisplayableLogChartSeriesSource> visibleSeriesSources = new();
     readonly ScheduledAction updateAxisNamesAction;
 
 
@@ -93,20 +128,23 @@ class LogChartViewModel : SessionComponent
     public LogChartViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // create commands
+        this.ResetVisibleSeriesSourcesCommand = new Command(this.ResetVisibleSeriesSources, this.GetValueAsObservable(IsChartDefinedProperty));
         this.SetChartTypeCommand = new Command<LogChartType>(this.SetChartType, this.canSetChartType);
+        this.ToggleVisibleSeriesSourceCommand = new Command<DisplayableLogChartSeriesSource>(this.ToggleVisibleSeriesSource, this.GetValueAsObservable(IsChartDefinedProperty));
+        
+        // setup collections
+        this.SeriesSources = ListExtensions.AsReadOnly(this.seriesSources);
+        this.VisibleSeries = ListExtensions.AsReadOnly(this.visibleSeries);
+        this.VisibleSeriesSources = ListExtensions.AsReadOnly(this.visibleSeriesSources);
         
         // create series generators
-        this.allLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
-        {
-            it.PropertyChanged += this.OnSeriesGeneratorPropertyChanged;
-        });
-        this.markedLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.MarkedLogs, this.CompareLogs).Also(it =>
-        {
-            it.PropertyChanged += this.OnSeriesGeneratorPropertyChanged;
-        });
+        this.allLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToSeriesGenerator);
+        this.markedLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.MarkedLogs, this.CompareLogs).Also(this.AttachToSeriesGenerator);
         this.activeSeriesGenerator = this.allLogsSeriesGenerator;
         
         // create actions
+        this.reportMaxSeriesValueAction = new(this.ReportMaxSeriesValues);
+        this.reportMinSeriesValueAction = new(this.ReportMinSeriesValues);
         this.reportSeriesAction = new(() =>
         {
             if (this.IsDisposed)
@@ -125,10 +163,11 @@ class LogChartViewModel : SessionComponent
                 this.OnPropertyChanged(nameof(HasChart));
                 this.OnPropertyChanged(nameof(IsGeneratingSeries));
                 this.OnPropertyChanged(nameof(IsMaxTotalSeriesValueCountReached));
-                this.OnPropertyChanged(nameof(MaxSeriesValue));
                 this.OnPropertyChanged(nameof(MaxSeriesValueCount));
-                this.OnPropertyChanged(nameof(MinSeriesValue));
                 this.OnPropertyChanged(nameof(Series));
+                this.RefreshVisibleSeries();
+                this.reportMinSeriesValueAction.Execute();
+                this.reportMaxSeriesValueAction.Execute();
             }
         });
         this.updateAxisNamesAction = new(() =>
@@ -224,6 +263,38 @@ class LogChartViewModel : SessionComponent
 
 
     /// <summary>
+    /// Check whether all source of series of log chart are visible or not.
+    /// </summary>
+    public bool AreAllSeriesSourcesVisible => this.GetValue(AreAllSeriesSourcesVisibleProperty);
+
+
+    // Attach to given generator.
+    void AttachToSeriesGenerator(DisplayableLogChartSeriesGenerator generator)
+    {
+        var seriesPropertyChangedHandler = new PropertyChangedEventHandler((_, e) =>
+            this.OnSeriesPropertyChanged(generator, e));
+        var seriesValuesChangedHandler = new NotifyCollectionChangedEventHandler((_, _) => 
+            this.OnSeriesValuesChanged(generator));
+        this.seriesPropertyChangedHandlers.Add(generator, seriesPropertyChangedHandler);
+        this.seriesValuesChangedHandlers.Add(generator, seriesValuesChangedHandler);
+        generator.PropertyChanged += this.OnSeriesGeneratorPropertyChanged;
+        generator.Series.Let(series =>
+        {
+            ((INotifyCollectionChanged)series).CollectionChanged += (_, e) =>
+                this.OnSeriesChanged(generator, e);
+            foreach (var s in series)
+            {
+                if (this.attachedSeries.TryAdd(s, generator))
+                {
+                    s.PropertyChanged += seriesPropertyChangedHandler;
+                    (s.Values as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += seriesValuesChangedHandler);
+                }
+            }
+        });
+    }
+
+
+    /// <summary>
     /// Get type of chart.
     /// </summary>
     public LogChartType ChartType => this.GetValue(ChartTypeProperty);
@@ -261,6 +332,21 @@ class LogChartViewModel : SessionComponent
             token.Dispose();
         this.observerTokens.Clear();
         
+        // detach from series
+        foreach (var (generator, handler) in this.seriesPropertyChangedHandlers)
+        {
+            foreach (var series in generator.Series)
+                series.PropertyChanged -= handler;
+        }
+        foreach (var (generator, handler) in this.seriesValuesChangedHandlers)
+        {
+            foreach (var series in generator.Series)
+                (series.Values as INotifyCollectionChanged)?.Let(it => it.CollectionChanged -= handler);
+        }
+        this.seriesPropertyChangedHandlers.Clear();
+        this.seriesValuesChangedHandlers.Clear();
+        this.attachedSeries.Clear();
+        
         // dispose generators
         this.allLogsSeriesGenerator.Dispose();
         this.filteredLogsSeriesGenerator?.Dispose();
@@ -281,7 +367,7 @@ class LogChartViewModel : SessionComponent
     /// <param name="value">Value.</param>
     /// <returns>Text of label on X axis.</returns>
     public string GetXAxisLabel(double value) =>
-        value.ToString();
+        value.ToString(CultureInfo.InvariantCulture);
 
 
     /// <summary>
@@ -313,7 +399,7 @@ class LogChartViewModel : SessionComponent
             case LogChartValueGranularity.Ten:
                 return (value * 10).ToString("F0");
             default:
-                return value.ToString();
+                return value.ToString(CultureInfo.InvariantCulture);
         }
     }
 
@@ -367,7 +453,13 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Get known maximum value of all series.
     /// </summary>
-    public DisplayableLogChartSeriesValue? MaxSeriesValue => this.activeSeriesGenerator.MaxSeriesValue;
+    public DisplayableLogChartSeriesValue? MaxSeriesValue => this.GetValue(MaxSeriesValueProperty);
+    
+    
+    /// <summary>
+    /// Get known maximum value of visible series.
+    /// </summary>
+    public DisplayableLogChartSeriesValue? MaxVisibleSeriesValue => this.GetValue(MaxVisibleSeriesValueProperty);
 
 
     /// <summary>
@@ -386,7 +478,13 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Get known minimum value of all series.
     /// </summary>
-    public DisplayableLogChartSeriesValue? MinSeriesValue => this.activeSeriesGenerator.MinSeriesValue;
+    public DisplayableLogChartSeriesValue? MinSeriesValue => this.GetValue(MinSeriesValueProperty);
+    
+    
+    /// <summary>
+    /// Get known minimum value of visible series.
+    /// </summary>
+    public DisplayableLogChartSeriesValue? MinVisibleSeriesValue => this.GetValue(MinVisibleSeriesValueProperty);
 
 
     /// <inheritdoc/>
@@ -397,10 +495,7 @@ class LogChartViewModel : SessionComponent
         
         // create series generators
         var session = this.Session;
-        this.filteredLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.LogFiltering.FilteredLogs, this.CompareLogs).Also(it =>
-        {
-            it.PropertyChanged += this.OnSeriesGeneratorPropertyChanged;
-        });
+        this.filteredLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.LogFiltering.FilteredLogs, this.CompareLogs).Also(this.AttachToSeriesGenerator);
         
         // attach to session
         this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
@@ -427,7 +522,7 @@ class LogChartViewModel : SessionComponent
     {
         // call base
         base.OnLogProfileChanged(prevLogProfile, newLogProfile);
-        
+
         // setup properties to generate series
         var logChartType = newLogProfile?.LogChartType ?? LogChartType.None;
         this.ApplyLogChartType(logChartType);
@@ -437,8 +532,23 @@ class LogChartViewModel : SessionComponent
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
         this.SetValue(IsXAxisInvertedProperty, newLogProfile?.SortDirection != SortDirection.Ascending);
+
+        // report sources
+        var seriesSources = newLogProfile?.LogChartSeriesSources.Let(it =>
+        {
+            var array = new DisplayableLogChartSeriesSource[it.Count];
+            for (var i = it.Count - 1; i >= 0; --i)
+                array[i] = new DisplayableLogChartSeriesSource(this.Application, it[i]);
+            return ListExtensions.AsReadOnly(array);
+        }) ?? Array.Empty<DisplayableLogChartSeriesSource>();
+        this.visibleSeriesSources.Clear();
+        this.seriesSources.Clear();
+        this.seriesSources.AddAll(seriesSources);
         this.updateAxisNamesAction.Execute();
         this.UpdateCanSetChartType();
+
+        // update visible series
+        this.ResetVisibleSeriesSources();
     }
 
 
@@ -453,6 +563,7 @@ class LogChartViewModel : SessionComponent
         {
             case nameof(LogProfile.LogChartSeriesSources):
             {
+                // show the panel
                 var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
                 this.ApplyLogChartSeriesSources();
                 if (!isPrevChartDefined 
@@ -461,6 +572,21 @@ class LogChartViewModel : SessionComponent
                 {
                     this.SetValue(IsPanelVisibleProperty, true);
                 }
+                
+                // report sources
+                var seriesSources = profile.LogChartSeriesSources.Let(it =>
+                {
+                    var array = new DisplayableLogChartSeriesSource[it.Count];
+                    for (var i = it.Count - 1; i >= 0; --i)
+                        array[i] = new DisplayableLogChartSeriesSource(this.Application, it[i]);
+                    return ListExtensions.AsReadOnly(array);
+                });
+                this.visibleSeriesSources.Clear();
+                this.seriesSources.Clear();
+                this.seriesSources.AddAll(seriesSources);
+                
+                // update visible series
+                this.ResetVisibleSeriesSources();
                 break;
             }
             case nameof(LogProfile.LogChartType):
@@ -500,6 +626,24 @@ class LogChartViewModel : SessionComponent
             this.ApplyLogChartType(chartType);
             this.SetValue(ChartTypeProperty, chartType);
         }
+        if (element.TryGetProperty(VisibleSeriesSourcesStateKey, out jsonProperty)
+            && jsonProperty.ValueKind == JsonValueKind.Array)
+        {
+            this.visibleSeriesSources.Clear();
+            foreach (var jsonSource in jsonProperty.EnumerateArray())
+            {
+                if (DisplayableLogChartSeriesSource.TryLoad(this.Application, jsonSource, out var source)
+                    && this.seriesSources.Contains(source))
+                {
+                    this.visibleSeriesSources.Add(source);
+                }
+            }
+            
+            this.Logger.LogDebug("{count} visible series source(s) restored", this.visibleSeriesSources.Count);
+            
+            this.SetValue(AreAllSeriesSourcesVisibleProperty, this.visibleSeriesSources.Count == this.seriesSources.Count);
+            this.RefreshVisibleSeries();
+        }
     }
 
 
@@ -511,7 +655,97 @@ class LogChartViewModel : SessionComponent
         {
             if (it.IsBuiltIn && it.LogChartType != this.GetValue(ChartTypeProperty))
                 writer.WriteString(TempChartTypeStateKey, this.GetValue(ChartTypeProperty).ToString());
+            if (this.visibleSeriesSources.IsNotEmpty())
+            {
+                writer.WritePropertyName(VisibleSeriesSourcesStateKey);
+                writer.WriteStartArray();
+                foreach (var source in this.visibleSeriesSources)
+                    source.Save(writer);
+                writer.WriteEndArray();
+            }
         });
+    }
+
+
+    // Called when list of series changed.
+    void OnSeriesChanged(DisplayableLogChartSeriesGenerator generator, NotifyCollectionChangedEventArgs e)
+    {
+        if (!this.seriesPropertyChangedHandlers.TryGetValue(generator, out var seriesPropertyChangedHandler)
+            || !this.seriesValuesChangedHandlers.TryGetValue(generator, out var seriesValuesChangedHandler))
+        {
+            return;
+        }
+        var fromActiveGenerator = generator == this.activeSeriesGenerator;
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                foreach (var series in e.NewItems!.Cast<DisplayableLogChartSeries>())
+                {
+                    if (this.attachedSeries.TryAdd(series, generator))
+                    {
+                        series.PropertyChanged += seriesPropertyChangedHandler;
+                        (series.Values as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += seriesValuesChangedHandler);
+                    }
+                    if (fromActiveGenerator)
+                    {
+                        var source = series.Source;
+                        if (source is not null && !this.visibleSeriesSources.Contains(source))
+                            continue;
+                        this.visibleSeries.Add(series);
+                    }
+                }
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                foreach (var series in e.OldItems!.Cast<DisplayableLogChartSeries>())
+                {
+                    if (this.attachedSeries.Remove(series))
+                    {
+                        series.PropertyChanged -= seriesPropertyChangedHandler;
+                        (series.Values as INotifyCollectionChanged)?.Let(it => it.CollectionChanged -= seriesValuesChangedHandler);
+                    }
+                    if (fromActiveGenerator)
+                        this.visibleSeries.Remove(series);
+                }
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                foreach (var (s, g) in this.attachedSeries.ToArray())
+                {
+                    if (g != generator)
+                        continue;
+                    if (!generator.Series.Contains(s))
+                    {
+                        this.attachedSeries.Remove(s);
+                        s.PropertyChanged -= seriesPropertyChangedHandler;
+                        (s.Values as INotifyCollectionChanged)?.Let(it => it.CollectionChanged -= seriesValuesChangedHandler);
+                    }
+                }
+                foreach (var s in generator.Series)
+                {
+                    if (this.attachedSeries.TryAdd(s, generator))
+                    {
+                        s.PropertyChanged += seriesPropertyChangedHandler;
+                        (s.Values as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += seriesValuesChangedHandler);
+                    }
+                }
+                if (fromActiveGenerator)
+                    this.RefreshVisibleSeries();
+                break;
+            default:
+                throw new NotSupportedException($"Unsupported action of change of collection: {e.Action}.");
+        }
+        if (fromActiveGenerator)
+        {
+            if (this.activeSeriesGenerator.LogChartType.IsStackedSeriesType())
+            {
+                this.reportMinSeriesValueAction.Schedule(ReportMinMaxStackedSeriesValuesDelay);
+                this.reportMaxSeriesValueAction.Schedule(ReportMinMaxStackedSeriesValuesDelay);
+            }
+            else
+            {
+                this.reportMinSeriesValueAction.Schedule(ReportMinMaxSeriesValuesDelay);
+                this.reportMaxSeriesValueAction.Schedule(ReportMinMaxSeriesValuesDelay);
+            }
+        }
     }
 
 
@@ -530,20 +764,87 @@ class LogChartViewModel : SessionComponent
                 if (this.activeSeriesGenerator == generator && !this.IsDisposed)
                     this.OnPropertyChanged(nameof(IsGeneratingSeries));
                 break;
-            case nameof(DisplayableLogChartSeriesGenerator.MaxSeriesValue):
+            case nameof(DisplayableLogChartSeriesGenerator.LogChartType):
                 if (this.activeSeriesGenerator == generator && !this.IsDisposed)
-                    this.OnPropertyChanged(nameof(MaxSeriesValue));
+                {
+                    this.reportMinSeriesValueAction.Execute();
+                    this.reportMaxSeriesValueAction.Execute();
+                }
                 break;
             case nameof(DisplayableLogChartSeriesGenerator.MaxSeriesValueCount):
                 if (this.activeSeriesGenerator == generator && !this.IsDisposed)
                     this.OnPropertyChanged(nameof(MaxSeriesValueCount));
                 break;
-            case nameof(DisplayableLogChartSeriesGenerator.MinSeriesValue):
-                if (this.activeSeriesGenerator == generator && !this.IsDisposed)
-                    this.OnPropertyChanged(nameof(MinSeriesValue));
+        }
+    }
+
+
+    // Called when property of one of series changed.
+    void OnSeriesPropertyChanged(DisplayableLogChartSeriesGenerator generator, PropertyChangedEventArgs e)
+    {
+        if (this.activeSeriesGenerator != generator)
+            return;
+        switch (e.PropertyName)
+        {
+            case nameof(DisplayableLogChartSeries.MaxValue):
+                if (!this.activeSeriesGenerator.LogChartType.IsStackedSeriesType())
+                    this.reportMaxSeriesValueAction.Schedule(ReportMinMaxSeriesValuesDelay);
+                break;
+            case nameof(DisplayableLogChartSeries.MinValue):
+                if (!this.activeSeriesGenerator.LogChartType.IsStackedSeriesType())
+                    this.reportMinSeriesValueAction.Schedule(ReportMinMaxSeriesValuesDelay);
                 break;
         }
     }
+
+
+    // Called when values of series changed.
+    void OnSeriesValuesChanged(DisplayableLogChartSeriesGenerator generator)
+    {
+        if (this.activeSeriesGenerator != generator && !generator.LogChartType.IsStackedSeriesType())
+            return;
+        this.reportMinSeriesValueAction.Schedule(ReportMinMaxStackedSeriesValuesDelay);
+        this.reportMaxSeriesValueAction.Schedule(ReportMinMaxStackedSeriesValuesDelay);
+    }
+
+
+    // Refresh list of visible series.
+    void RefreshVisibleSeries()
+    {
+        this.visibleSeries.Clear();
+        foreach (var series in this.activeSeriesGenerator.Series)
+        {
+            var source = series.Source;
+            if (source is not null && !this.visibleSeriesSources.Contains(source))
+                continue;
+            this.visibleSeries.Add(series);
+        }
+        this.reportMinSeriesValueAction.Execute();
+        this.reportMaxSeriesValueAction.Execute();
+    }
+
+
+    // Set all series sources as visible.
+    void ResetVisibleSeriesSources()
+    {
+        this.VerifyAccess();
+        this.Logger.LogDebug("Reset visible series source(s): {count}", this.seriesSources.Count);
+        if (this.visibleSeriesSources.Count == this.seriesSources.Count)
+        {
+            this.ResetValue(AreAllSeriesSourcesVisibleProperty);
+            return;
+        }
+        this.visibleSeriesSources.Clear();
+        this.visibleSeriesSources.AddAll(this.seriesSources);
+        this.ResetValue(AreAllSeriesSourcesVisibleProperty);
+        this.RefreshVisibleSeries();
+    }
+    
+    
+    /// <summary>
+    /// Command to set all series sources as visible.
+    /// </summary>
+    public ICommand ResetVisibleSeriesSourcesCommand { get; }
 
 
     /// <summary>
@@ -556,10 +857,180 @@ class LogChartViewModel : SessionComponent
     }
 
 
+    // Report maximum values of series.
+    void ReportMaxSeriesValues()
+    {
+        if (this.IsDisposed)
+            return;
+        var series = this.activeSeriesGenerator.Series;
+        var maxValue = default(DisplayableLogChartSeriesValue);
+        var maxVisibleValue = default(DisplayableLogChartSeriesValue);
+        var isVisibleSeries = new bool[series.Count].Also(it =>
+        {
+            for (var i = it.Length - 1; i >= 0; --i)
+                it[i] = this.visibleSeries.Contains(series[i]);
+        });
+        if (this.activeSeriesGenerator.LogChartType.IsStackedSeriesType() && series.Count > 1)
+        {
+            var maxSeriesValueCount = 0;
+            for (var i = series.Count - 1; i >= 0; --i)
+                maxSeriesValueCount = Math.Max(maxSeriesValueCount, series[i].Values.Count);
+            for (var i = maxSeriesValueCount - 1; i >= 0; --i)
+            {
+                var stackedDoubleValue = double.NaN;
+                var visibleStackedDoubleValue = double.NaN;
+                var areSameLog = true;
+                var log = default(DisplayableLog);
+                for (var j = series.Count - 1; j >= 0; --j)
+                {
+                    var values = series[j].Values;
+                    if (values.Count < maxSeriesValueCount)
+                        continue;
+                    var doubleValue = values[i]?.Value ?? Double.NaN;
+                    if (!double.IsFinite(doubleValue))
+                        continue;
+                    stackedDoubleValue = double.IsFinite(stackedDoubleValue)
+                        ? stackedDoubleValue + doubleValue
+                        : doubleValue;
+                    if (isVisibleSeries[j])
+                    {
+                        visibleStackedDoubleValue = double.IsFinite(visibleStackedDoubleValue)
+                            ? visibleStackedDoubleValue + doubleValue
+                            : doubleValue;
+                    }
+                    if (areSameLog)
+                    {
+                        if (log is null)
+                            log = values[i]!.Log;
+                        else if (log != values[i]!.Log)
+                        {
+                            areSameLog = false;
+                            log = null;
+                        }
+                    }
+                }
+                if (double.IsFinite(stackedDoubleValue))
+                {
+                    if (maxValue is null || maxValue.Value < stackedDoubleValue)
+                        maxValue = new DisplayableLogChartSeriesValue(log, stackedDoubleValue);
+                    if (maxVisibleValue is null || maxVisibleValue.Value < visibleStackedDoubleValue)
+                        maxVisibleValue = new DisplayableLogChartSeriesValue(log, visibleStackedDoubleValue);
+                }
+            }
+        }
+        else
+        {
+            for (var i = series.Count - 1; i >= 0; --i)
+            {
+                var localMaxValue = series[i].MaxValue;
+                if (localMaxValue is null)
+                    continue;
+                if (maxValue is null || maxValue.Value < localMaxValue.Value)
+                    maxValue = localMaxValue;
+                if (isVisibleSeries[i])
+                {
+                    if (maxVisibleValue is null || maxVisibleValue.Value < localMaxValue.Value)
+                        maxVisibleValue = localMaxValue;
+                }
+            }
+        }
+        this.SetValue(MaxSeriesValueProperty, maxValue);
+        this.SetValue(MaxVisibleSeriesValueProperty, maxVisibleValue);
+    }
+    
+    
+    // Report minimum values of series.
+    void ReportMinSeriesValues()
+    {
+        if (this.IsDisposed)
+            return;
+        var series = this.activeSeriesGenerator.Series;
+        var minValue = default(DisplayableLogChartSeriesValue);
+        var minVisibleValue = default(DisplayableLogChartSeriesValue);
+        var isVisibleSeries = new bool[series.Count].Also(it =>
+        {
+            for (var i = it.Length - 1; i >= 0; --i)
+                it[i] = this.visibleSeries.Contains(series[i]);
+        });
+        if (this.activeSeriesGenerator.LogChartType.IsStackedSeriesType())
+        {
+            var maxSeriesValueCount = 0;
+            for (var i = series.Count - 1; i >= 0; --i)
+                maxSeriesValueCount = Math.Max(maxSeriesValueCount, series[i].Values.Count);
+            for (var i = maxSeriesValueCount - 1; i >= 0; --i)
+            {
+                var stackedDoubleValue = double.NaN;
+                var visibleStackedDoubleValue = double.NaN;
+                var areSameLog = true;
+                var log = default(DisplayableLog);
+                for (var j = series.Count - 1; j >= 0; --j)
+                {
+                    var values = series[j].Values;
+                    if (values.Count < maxSeriesValueCount)
+                        continue;
+                    var doubleValue = values[i]?.Value ?? Double.NaN;
+                    if (!double.IsFinite(doubleValue))
+                        continue;
+                    stackedDoubleValue = double.IsFinite(stackedDoubleValue)
+                        ? stackedDoubleValue + doubleValue
+                        : doubleValue;
+                    if (isVisibleSeries[j])
+                    {
+                        visibleStackedDoubleValue = double.IsFinite(visibleStackedDoubleValue)
+                            ? visibleStackedDoubleValue + doubleValue
+                            : doubleValue;
+                    }
+                    if (areSameLog)
+                    {
+                        if (log is null)
+                            log = values[i]!.Log;
+                        else if (log != values[i]!.Log)
+                        {
+                            areSameLog = false;
+                            log = null;
+                        }
+                    }
+                }
+                if (double.IsFinite(stackedDoubleValue))
+                {
+                    if (minValue is null || minValue.Value > stackedDoubleValue)
+                        minValue = new DisplayableLogChartSeriesValue(log, stackedDoubleValue);
+                    if (minVisibleValue is null || minVisibleValue.Value > visibleStackedDoubleValue)
+                        minVisibleValue = new DisplayableLogChartSeriesValue(log, visibleStackedDoubleValue);
+                }
+            }
+        }
+        else
+        {
+            for (var i = series.Count - 1; i >= 0; --i)
+            {
+                var localMinValue = series[i].MinValue;
+                if (localMinValue is null)
+                    continue;
+                if (minValue is null || minValue.Value > localMinValue.Value)
+                    minValue = localMinValue;
+                if (isVisibleSeries[i])
+                {
+                    if (minVisibleValue is null || minVisibleValue.Value > localMinValue.Value)
+                        minVisibleValue = localMinValue;
+                }
+            }
+        }
+        this.SetValue(MinSeriesValueProperty, minValue);
+        this.SetValue(MinVisibleSeriesValueProperty, minVisibleValue);
+    }
+
+
     /// <summary>
     /// Series of log chart.
     /// </summary>
     public IList<DisplayableLogChartSeries> Series => this.activeSeriesGenerator.Series;
+
+
+    /// <summary>
+    /// List of sources of series of log chart.
+    /// </summary>
+    public IList<DisplayableLogChartSeriesSource> SeriesSources { get; }
 
 
     // Set type of log chart.
@@ -585,6 +1056,64 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     /// <remarks>Type of parameter is <see cref="LogChartType"/>.</remarks>
     public ICommand SetChartTypeCommand { get; }
+
+
+    // Toggle visibility of series.
+    void ToggleVisibleSeriesSource(DisplayableLogChartSeriesSource? source)
+    {
+        // check state
+        this.VerifyAccess();
+        if (source is null)
+            return;
+        if (!this.seriesSources.Contains(source))
+            return;
+        
+        // toggle visibility
+        var visibleSeries = this.visibleSeries;
+        if (this.visibleSeriesSources.Remove(source))
+        {
+            this.Logger.LogInformation("Remove 1 visible series source, total: {count}", this.visibleSeriesSources.Count);
+            for (var i = visibleSeries.Count - 1; i >= 0; --i)
+            {
+                if (source.Equals(visibleSeries[i].Source))
+                {
+                    this.Logger.LogInformation("Remove visible series from position {index}", i);
+                    visibleSeries.RemoveAt(i);
+                    break;
+                }
+            }
+            this.SetValue(AreAllSeriesSourcesVisibleProperty, false);
+        }
+        else if (!this.visibleSeriesSources.Contains(source))
+        {
+            this.visibleSeriesSources.Add(source);
+            this.Logger.LogInformation("Add 1 visible series source, total: {count}", this.visibleSeriesSources.Count);
+            foreach (var series in this.activeSeriesGenerator.Series)
+            {
+                if (source.Equals(series.Source))
+                {
+                    this.Logger.LogInformation("Add visible series to position {index}", this.visibleSeries.Count);
+                    this.visibleSeries.Add(series);
+                    break;
+                }
+            }
+            if (this.seriesSources.Count == this.visibleSeriesSources.Count)
+                this.ResetValue(AreAllSeriesSourcesVisibleProperty);
+        }
+        else
+            return;
+        
+        // report min/max values
+        this.reportMinSeriesValueAction.Execute();
+        this.reportMaxSeriesValueAction.Execute();
+    }
+    
+    
+    /// <summary>
+    /// Command to toggle visibility of series.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="DisplayableLogChartSeriesSource"/>.</remarks>
+    public ICommand ToggleVisibleSeriesSourceCommand { get; }
     
     
     // Update whether setting type of log chart is available or not.
@@ -592,6 +1121,18 @@ class LogChartViewModel : SessionComponent
     {
         this.canSetChartType.Update(this.IsChartDefined && this.Session.IsProVersionActivated);
     }
+    
+    
+    /// <summary>
+    /// Visible series of log chart.
+    /// </summary>
+    public IList<DisplayableLogChartSeries> VisibleSeries { get; }
+    
+    
+    /// <summary>
+    /// Visible source of series of log chart.
+    /// </summary>
+    public IList<DisplayableLogChartSeriesSource> VisibleSeriesSources { get; }
     
     
     /// <summary>

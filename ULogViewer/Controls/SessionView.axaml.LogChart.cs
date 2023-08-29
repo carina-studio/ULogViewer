@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
+using Avalonia.Layout;
 using Avalonia.Media;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
@@ -34,6 +35,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Avalonia.Interactivity;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -129,8 +131,9 @@ partial class SessionView
     // Fields.
     bool areLogChartAxesReady;
     INotifyCollectionChanged? attachedRawLogChartSeries;
+    INotifyCollectionChanged? attachedRawVisibleLogChartSeries;
     bool isLogChartDoubleTapped;
-    private bool isPointerPressedOnLogChart;
+    bool isPointerPressedOnLogChart;
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
@@ -146,7 +149,7 @@ partial class SessionView
     {
         CrosshairSnapEnabled = true,
     };
-    private double logChartXCoordinateScaling = 1.0;
+    double logChartXCoordinateScaling = 1.0;
     readonly Axis logChartYAxis = new()
     {
         CrosshairSnapEnabled = true,
@@ -154,16 +157,49 @@ partial class SessionView
     IPaint<SkiaSharpDrawingContext>? logChartYAxisCrosshairPaint;
     readonly ScheduledAction updateLogChartXAxisLimitAction;
     readonly ScheduledAction updateLogChartYAxisLimitAction;
+    ToggleButton? visibleLogChartSeriesButton;
+    ContextMenu? visibleLogChartSeriesMenu;
+    
+    
+    // Attach to view-model of log chart.
+    void AttachToLogChart(LogChartViewModel viewModel)
+    {
+        viewModel.PropertyChanged += this.OnLogChartViewModelPropertyChanged;
+        this.AttachToRawLogChartSeries(viewModel.Series, false);
+        this.AttachToRawVisibleLogChartSeries(viewModel.VisibleSeries, true);
+        (viewModel.SeriesSources as INotifyCollectionChanged)?.Let(it =>
+            it.CollectionChanged += this.OnLogChartSeriesSourcesChanged);
+        (viewModel.VisibleSeriesSources as INotifyCollectionChanged)?.Let(it =>
+            it.CollectionChanged += this.OnVisibleLogChartSeriesSourcesChanged);
+        if (viewModel.IsMaxTotalSeriesValueCountReached)
+            this.PromptForMaxLogChartSeriesValueCountReached();
+        this.areLogChartAxesReady = false;
+        this.UpdateLogChartAxes();
+        this.UpdateLogChartPanelVisibility();
+    }
     
     
     // Attach to given raw series of log chart.
-    void AttachToRawLogChartSeries(IList<DisplayableLogChartSeries> rawSeries)
+    void AttachToRawLogChartSeries(IList<DisplayableLogChartSeries> rawSeries, bool updateSeries)
     {
-        this.DetachFromRawLogChartSeries();
+        this.DetachFromRawLogChartSeries(updateSeries);
         this.attachedRawLogChartSeries = rawSeries as INotifyCollectionChanged;
         if (this.attachedRawLogChartSeries is not null)
             this.attachedRawLogChartSeries.CollectionChanged += this.OnRawLogChartSeriesChanged;
-        this.UpdateLogChartSeries();
+        if (updateSeries)
+            this.UpdateLogChartSeries();
+    }
+    
+    
+    // Attach to given visible raw series of log chart.
+    void AttachToRawVisibleLogChartSeries(IList<DisplayableLogChartSeries> rawSeries, bool updateSeries)
+    {
+        this.DetachFromRawVisibleLogChartSeries(updateSeries);
+        this.attachedRawVisibleLogChartSeries = rawSeries as INotifyCollectionChanged;
+        if (this.attachedRawVisibleLogChartSeries is not null)
+            this.attachedRawVisibleLogChartSeries.CollectionChanged += this.OnRawVisibleLogChartSeriesChanged;
+        if (updateSeries)
+            this.UpdateLogChartSeries();
     }
     
     
@@ -196,24 +232,6 @@ partial class SessionView
             ThemeMode.Dark => SKBlendMode.Screen,
             _ => SKBlendMode.Multiply,
         };
-        
-        // generate name of series
-        var seriesNameBuffer = new StringBuilder(series.Source?.PropertyDisplayName);
-        series.Source?.SecondaryPropertyDisplayName.Let(it =>
-        {
-            if (string.IsNullOrEmpty(it))
-                return;
-            seriesNameBuffer.Append(" - ");
-            seriesNameBuffer.Append(it);
-        });
-        series.Source?.Quantifier.Let(it =>
-        {
-            if (string.IsNullOrEmpty(it))
-                return;
-            seriesNameBuffer.Append(" (");
-            seriesNameBuffer.Append(it);
-            seriesNameBuffer.Append(')');
-        });
         
         // prepare tooltip generator
         string FormatYToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
@@ -260,7 +278,7 @@ partial class SessionView
                     {
                         point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
                     },
-                    Name = seriesNameBuffer.ToString(),
+                    Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Padding = 0.5,
                     Rx = 0,
                     Ry = 0,
@@ -293,7 +311,7 @@ partial class SessionView
                     {
                         point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
                     },
-                    Name = seriesNameBuffer.ToString(),
+                    Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                     {
                         IsAntialias = true,
@@ -311,7 +329,7 @@ partial class SessionView
                     {
                         point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
                     },
-                    Name = seriesNameBuffer.ToString(),
+                    Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Padding = 0,
                     Rx = 0,
                     Ry = 0,
@@ -360,7 +378,7 @@ partial class SessionView
                     {
                         point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
                     },
-                    Name = seriesNameBuffer.ToString(),
+                    Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Stroke = chartType switch
                     {
                         LogChartType.ValueAreas
@@ -378,15 +396,108 @@ partial class SessionView
                 };
         }
     }
+
+
+    // Create menu item for visible series of log chart.
+    MenuItem CreateVisibleLogChartSeriesMenuItem(DisplayableLogChartSeriesSource source) => new MenuItem().Also(it =>
+    {
+        it.Click += (_, e) =>
+        {
+            e.Handled = true;
+            (this.DataContext as Session)?.LogChart.ToggleVisibleSeriesSourceCommand.TryExecute(source);
+        };
+        it.DataContext = source;
+        it.Icon = new Avalonia.Controls.Image().Also(icon =>
+        {
+            icon.Classes.Add("MenuItem_Icon");
+            icon.IsVisible = (this.DataContext as Session)?.LogChart.VisibleSeriesSources.Contains(source) == true;
+            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, this, "Image/Icon.Checked");
+        });
+        it.Header = new Grid().Also(grid =>
+        {
+            grid.ColumnDefinitions.Add(new(1, GridUnitType.Star));
+            grid.ColumnDefinitions.Add(new(1, GridUnitType.Auto));
+            grid.Children.Add(new Avalonia.Controls.TextBlock().Also(it =>
+            {
+                it.Text = this.GetLogChartSeriesDisplayName(source);
+                it.TextTrimming = TextTrimming.CharacterEllipsis;
+            }));
+            grid.Children.Add(new Avalonia.Controls.TextBlock().Also(it =>
+            {
+                Grid.SetColumn(it, 1);
+                it.HorizontalAlignment = HorizontalAlignment.Right;
+                it.Margin = this.FindResourceOrDefault<Thickness>("Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin");
+                it.Opacity = this.FindResourceOrDefault("Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity", 0.5);
+                it.Text = $"({source.PropertyName})";
+                it.TextTrimming = TextTrimming.CharacterEllipsis;
+            }));
+            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+        });
+        it.StaysOpenOnClick = true;
+    });
+    
+    
+    // Detach from view-model of log chart.
+    void DetachFromLogChart(LogChartViewModel viewModel)
+    {
+        viewModel.PropertyChanged -= this.OnLogChartViewModelPropertyChanged;
+        this.DetachFromRawLogChartSeries(false);
+        this.DetachFromRawVisibleLogChartSeries(true);
+        (viewModel.SeriesSources as INotifyCollectionChanged)?.Let(it =>
+            it.CollectionChanged -= this.OnLogChartSeriesSourcesChanged);
+        (viewModel.VisibleSeriesSources as INotifyCollectionChanged)?.Let(it =>
+            it.CollectionChanged -= this.OnVisibleLogChartSeriesSourcesChanged);
+        this.InvalidateLogChartSeriesColors();
+        if (this.visibleLogChartSeriesMenu is not null)
+        {
+            this.visibleLogChartSeriesMenu.Close();
+            this.visibleLogChartSeriesMenu = null;
+        }
+    }
     
     
     // Detach from current raw series of log chart.
-    void DetachFromRawLogChartSeries()
+    void DetachFromRawLogChartSeries(bool updateSeries)
     {
         if (this.attachedRawLogChartSeries is not null)
             this.attachedRawLogChartSeries.CollectionChanged -= this.OnRawLogChartSeriesChanged;
         this.attachedRawLogChartSeries = null;
-        this.logChartSeries.Clear();
+        if (updateSeries)
+            this.logChartSeries.Clear();
+    }
+    
+    
+    // Detach from current visible raw series of log chart.
+    void DetachFromRawVisibleLogChartSeries(bool updateSeries)
+    {
+        if (this.attachedRawVisibleLogChartSeries is not null)
+            this.attachedRawVisibleLogChartSeries.CollectionChanged -= this.OnRawVisibleLogChartSeriesChanged;
+        this.attachedRawVisibleLogChartSeries = null;
+        if (updateSeries)
+            this.logChartSeries.Clear();
+    }
+    
+    
+    // Get proper name of series to be displayed.
+    string GetLogChartSeriesDisplayName(DisplayableLogChartSeriesSource source)
+    {
+        var seriesNameBuffer = new StringBuilder(source.PropertyDisplayName);
+        source.SecondaryPropertyDisplayName.Let(it =>
+        {
+            if (string.IsNullOrEmpty(it))
+                return;
+            seriesNameBuffer.Append(" - ");
+            seriesNameBuffer.Append(it);
+        });
+        source.Quantifier.Let(it =>
+        {
+            if (string.IsNullOrEmpty(it))
+                return;
+            seriesNameBuffer.Append(" (");
+            seriesNameBuffer.Append(it);
+            seriesNameBuffer.Append(')');
+        });
+        return seriesNameBuffer.ToString();
     }
 
 
@@ -590,6 +701,40 @@ partial class SessionView
             }
         }
     }
+    
+    
+    // Called when list of source of series of log chart changed.
+    void OnLogChartSeriesSourcesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (this.visibleLogChartSeriesMenu?.ItemsSource is not ObservableList<object> menuItems)
+            return;
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                e.NewItems!.Cast<DisplayableLogChartSeriesSource>().Let(newSources =>
+                {
+                    var startIndex = e.NewStartingIndex;
+                    for (int i = 0, count = newSources.Count; i < count; ++i)
+                        menuItems.Insert(startIndex + i, this.CreateVisibleLogChartSeriesMenuItem(newSources[i]));
+                });
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                e.OldItems!.Cast<DisplayableLogChartSeriesSource>().Let(oldSources =>
+                    menuItems.RemoveRange(e.OldStartingIndex, oldSources.Count));
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                if (menuItems.Count > 2)
+                    menuItems.RemoveRange(0, menuItems.Count - 2);
+                (this.DataContext as Session)?.LogChart.SeriesSources.Let(sources =>
+                {
+                    for (int i = 0, count = sources.Count; i < count; ++i)
+                        menuItems.Insert(i, this.CreateVisibleLogChartSeriesMenuItem(sources[i]));
+                });
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+    }
 
 
     // Called when size of log chart changed.
@@ -632,8 +777,8 @@ partial class SessionView
                 this.areLogChartAxesReady = false;
                 this.UpdateLogChartAxes();
                 break;
-            case nameof(LogChartViewModel.MaxSeriesValue):
-            case nameof(LogChartViewModel.MinSeriesValue):
+            case nameof(LogChartViewModel.MaxVisibleSeriesValue):
+            case nameof(LogChartViewModel.MinVisibleSeriesValue):
                 this.updateLogChartYAxisLimitAction.Schedule();
                 break;
             case nameof(LogChartViewModel.MaxSeriesValueCount):
@@ -651,7 +796,10 @@ partial class SessionView
                 }
                 break;
             case nameof(LogChartViewModel.Series):
-                this.AttachToRawLogChartSeries(viewModel.Series);
+                this.AttachToRawLogChartSeries(viewModel.Series, true);
+                break;
+            case nameof(LogChartViewModel.VisibleSeries):
+                this.AttachToRawLogChartSeries(viewModel.VisibleSeries, true);
                 break;
             case nameof(LogChartViewModel.YAxisName):
                 this.areLogChartAxesReady = false;
@@ -674,7 +822,11 @@ partial class SessionView
                 {
                     var startIndex = e.NewStartingIndex;
                     for (int i = 0, count = series.Count; i < count; ++i)
-                        this.logChartSeries.Insert(startIndex + i, this.CreateLogChartSeries(viewModel, series[i]));
+                    {
+                        var lvcSeries = this.CreateLogChartSeries(viewModel, series[i]);
+                        lvcSeries.IsVisible = viewModel.VisibleSeries.Contains(series[i]);
+                        this.logChartSeries.Insert(startIndex + i, lvcSeries);
+                    }
                 });
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -683,6 +835,105 @@ partial class SessionView
                 break;
             case NotifyCollectionChangedAction.Reset:
                 this.UpdateLogChartSeries();
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+    }
+    
+    
+    // Called when collection of visible series changed by view-model.
+    void OnRawVisibleLogChartSeriesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (this.DataContext is not Session session)
+            return;
+        var lvcSeriesCount = this.logChartSeries.Count;
+        if (lvcSeriesCount == 0)
+            return;
+        var viewModel = session.LogChart;
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                e.NewItems!.Cast<DisplayableLogChartSeries>().Let(newSeries =>
+                {
+                    var series = viewModel.Series;
+                    for (var i = Math.Min(series.Count, lvcSeriesCount) - 1; i >= 0; --i)
+                    {
+                        if (newSeries.Contains(series[i]))
+                            this.logChartSeries[i].IsVisible = true;
+                    }
+                });
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                e.OldItems!.Cast<DisplayableLogChartSeries>().Let(oldSeries =>
+                {
+                    var series = viewModel.Series;
+                    for (var i = Math.Min(series.Count, lvcSeriesCount) - 1; i >= 0; --i)
+                    {
+                        if (oldSeries.Contains(series[i]))
+                            this.logChartSeries[i].IsVisible = false;
+                    }
+                });
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                this.UpdateLogChartSeries();
+                break;
+            default:
+                throw new NotSupportedException();
+        }
+    }
+
+
+    // Called when list of visible source of series of log chart changed.
+    void OnVisibleLogChartSeriesSourcesChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (this.visibleLogChartSeriesMenu?.ItemsSource is not IList<object> menuItems)
+            return;
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                e.NewItems!.Cast<DisplayableLogChartSeriesSource>().Let(newSources =>
+                {
+                    foreach (var item in menuItems)
+                    {
+                        if (item is MenuItem menuItem 
+                            && menuItem.DataContext is DisplayableLogChartSeriesSource source
+                            && newSources.Contains(source)
+                            && menuItem.Icon is Control icon)
+                        {
+                            icon.IsVisible = true;
+                        }
+                    }
+                });
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                e.OldItems!.Cast<DisplayableLogChartSeriesSource>().Let(oldSources =>
+                {
+                    foreach (var item in menuItems)
+                    {
+                        if (item is MenuItem menuItem 
+                            && menuItem.DataContext is DisplayableLogChartSeriesSource source
+                            && oldSources.Contains(source)
+                            && menuItem.Icon is Control icon)
+                        {
+                            icon.IsVisible = false;
+                        }
+                    }
+                });
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                (this.DataContext as Session)?.LogChart.VisibleSeriesSources.Let(sources =>
+                {
+                    foreach (var item in menuItems)
+                    {
+                        if (item is MenuItem menuItem 
+                            && menuItem.DataContext is DisplayableLogChartSeriesSource source
+                            && menuItem.Icon is Control icon)
+                        {
+                            icon.IsVisible = sources.Contains(source);
+                        }
+                    }
+                });
                 break;
             default:
                 throw new NotSupportedException();
@@ -825,6 +1076,56 @@ partial class SessionView
         });
         return SKFontManager.Default.MatchCharacter(c);
     }
+
+
+    /// <summary>
+    /// Let user select visible series of log chart.
+    /// </summary>
+    public void SelectVisibleLogChartSeries()
+    {
+        // check state
+        if (this.DataContext is not Session session)
+            return;
+        
+        // setup button and menu
+        var viewModel = session.LogChart;
+        this.visibleLogChartSeriesButton ??= this.Get<ToggleButton>(nameof(visibleLogChartSeriesButton));
+        this.visibleLogChartSeriesMenu ??= new ContextMenu().Also(menu =>
+        {
+            // setup items
+            var menuItems = new ObservableList<object>();
+            foreach (var source in viewModel.SeriesSources)
+                menuItems.Add(this.CreateVisibleLogChartSeriesMenuItem(source));
+            menuItems.Add(new Separator());
+            menuItems.Add(new MenuItem().Also(it =>
+            {
+                it.Click += (_, e) =>
+                {
+                    e.Handled = true;
+                    (this.DataContext as Session)?.LogChart.ResetVisibleSeriesSourcesCommand.TryExecute();
+                };
+                it.BindToResource(MenuItem.HeaderProperty, this, "String/Common.Reset");
+                it.StaysOpenOnClick = true;
+            }));
+            menu.ItemsSource = menuItems;
+            
+            // setup menu
+            menu.Closed += (_, _) =>
+            {
+                if (this.visibleLogChartSeriesMenu == menu)
+                    this.visibleLogChartSeriesButton.IsChecked = false;
+            };
+            menu.Opened += (_, _) =>
+            {
+                if (this.visibleLogChartSeriesMenu == menu)
+                    this.visibleLogChartSeriesButton.IsChecked = true;
+            };
+            menu.Placement = PlacementMode.Top;
+        });
+        
+        // open menu
+        this.visibleLogChartSeriesMenu.Open(this.visibleLogChartSeriesButton);
+    }
     
     
     // Show tutorial of log chart if needed.
@@ -874,14 +1175,14 @@ partial class SessionView
                 {
                     it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Source = type, Converter = LogChartTypeNameConverter });
                     it.TextTrimming = TextTrimming.CharacterEllipsis;
-                    it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                    it.VerticalAlignment = VerticalAlignment.Center;
                 });
                 var currentTypeTextBlock = new Avalonia.Controls.TextBlock().Also(it =>
                 {
                     it.Opacity = app.FindResourceOrDefault<double>("Double/SessionView.LogChartTypeMenu.CurrentLogChartType.Opacity");
                     it.Bind(Avalonia.Controls.TextBlock.TextProperty, app.GetObservableString("SessionView.LogChartTypeMenu.CurrentLogChartType"));
                     it.TextTrimming = TextTrimming.CharacterEllipsis;
-                    it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                    it.VerticalAlignment = VerticalAlignment.Center;
                     Grid.SetColumn(it, 2);
                 });
                 menuItem.Header = new Grid().Also(grid =>
@@ -1052,7 +1353,11 @@ partial class SessionView
         
         // create series
         foreach (var series in viewModel.Series)
-            this.logChartSeries.Add(this.CreateLogChartSeries(viewModel, series));
+        {
+            var lvcSeries = this.CreateLogChartSeries(viewModel, series);
+            lvcSeries.IsVisible = viewModel.VisibleSeries.Contains(series);
+            this.logChartSeries.Add(lvcSeries);
+        }
         ((int)this.logChart.AnimationsSpeed.TotalMilliseconds).Let(it => // [Workaround] Prevent animation interrupted unexpectedly
         {
             if (it > 100)
@@ -1147,8 +1452,8 @@ partial class SessionView
         var viewModel = session.LogChart;
         if (!viewModel.IsChartDefined)
             return;
-        var minLimit = viewModel.MinSeriesValue?.Value ?? double.NaN;
-        var maxLimit = viewModel.MaxSeriesValue?.Value ?? double.NaN;
+        var minLimit = viewModel.MinVisibleSeriesValue?.Value ?? double.NaN;
+        var maxLimit = viewModel.MaxVisibleSeriesValue?.Value ?? double.NaN;
         if (double.IsFinite(minLimit) && double.IsFinite(maxLimit))
         {
             if (minLimit >= 0)
