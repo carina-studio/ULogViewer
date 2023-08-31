@@ -26,7 +26,7 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Minimum size of chart panel.
     /// </summary>
-    public const double MinPanelSize = 130;
+    public const double MinPanelSize = 140;
     
     
     /// <summary>

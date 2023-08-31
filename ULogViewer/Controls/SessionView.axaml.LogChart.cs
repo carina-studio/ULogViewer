@@ -411,7 +411,7 @@ partial class SessionView
         {
             icon.Classes.Add("MenuItem_Icon");
             icon.IsVisible = (this.DataContext as Session)?.LogChart.VisibleSeriesSources.Contains(source) == true;
-            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, this, "Image/Icon.Checked");
+            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, this, "Image/Icon.Checked.Thin");
         });
         it.Header = new Grid().Also(grid =>
         {
