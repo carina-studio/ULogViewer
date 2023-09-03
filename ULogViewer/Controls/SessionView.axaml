@@ -511,7 +511,7 @@
 		<Panel Grid.ColumnSpan="4">
 
 			<!-- Toolbar -->
-			<Border Name="toolBarContainer" Classes="ToolBar">
+			<Border Name="toolBarContainer" Classes="ToolBar" BorderBrush="{DynamicResource Brush/ToolBar.Border}" BorderThickness="0,0,0,1">
 				<WrapPanel>
 
 					<!-- Log actions -->
@@ -903,10 +903,7 @@
 			</Border>
 
 			<!-- Progress bar -->
-			<ProgressBar Background="{x:Null}" CornerRadius="0" IsIndeterminate="{Binding IsProcessingLogs}" IsVisible="{Binding IsProcessingLogs}" MaxHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" VerticalAlignment="Bottom"/>
-			
-			<!-- Border -->
-			<Line Classes="Shadow" Stroke="{DynamicResource Brush/ToolBar.Border}" VerticalAlignment="Bottom"/>
+			<ProgressBar Background="{x:Null}" CornerRadius="0" IsIndeterminate="{Binding IsProcessingLogs}" IsVisible="{Binding IsProcessingLogs}" Margin="0,0,0,1" MaxHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" VerticalAlignment="Bottom"/>
 			
 		</Panel>
 
@@ -989,7 +986,7 @@
 				</Border>
 				
 				<!-- Border -->
-				<Line Classes="Shadow" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" VerticalAlignment="Bottom"/>
+				<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 				
 			</Panel>
 
@@ -1027,81 +1024,78 @@
 			</Viewbox>
 			
 			<!-- Chart -->
-			<Line Classes="Shadow" Grid.Row="2" IsVisible="{Binding LogChart.IsPanelVisible}" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" VerticalAlignment="Bottom"/>
+			<Border Grid.Row="2" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False" IsVisible="{Binding LogChart.IsPanelVisible}"/>
 			<GridSplitter Classes="GridSplitter_Horizontal" Background="{x:Static Brushes.Transparent}" Grid.Row="2" IsVisible="False"/>
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
 				
 				<!-- Tool bar -->
-				<Panel DockPanel.Dock="Right">
-					<Border Name="logChartToolBar" Classes="ToolBar" IsEnabled="{Binding #logChart.IsVisible}">
-						<StackPanel>
-							<StackPanel.Styles>
-								<Style Selector="Button.ToolBar_Button">
-									<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-									<Setter Property="Margin" Value="0,1,0,0"/>
-									<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
-									<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-								</Style>
-								<Style Selector="ToggleButton.ToolBar_ToggleButton">
-									<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-									<Setter Property="Margin" Value="0,1,0,0"/>
-									<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
-									<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
-								</Style>
-							</StackPanel.Styles>
-							
-							<!-- Reset zoom -->
-							<Button Classes="ToolBar_Button" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogChartZoom}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
-							</Button>
-							
-							<!-- Scroll to start -->
-							<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToStartOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToStartOfLogChart}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
-							</Button>
-							
-							<!-- Scroll to end -->
-							<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToEndOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToEndOfLogChart}">
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
-							</Button>
-							
-							<Separator Classes="ToolBar_Separator_Horizontal"/>
-							
-							<!-- Visible series -->
-							<ToggleButton Name="visibleLogChartSeriesButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.SelectVisibleLogChartSeries}" ToolTip.Tip="{DynamicResource String/SessionView.VisibleLogChartSeries}">
-								<Panel>
-									<Image Classes="Icon" Source="{DynamicResource Image/Filter}">
-										<Image.IsVisible>
-											<MultiBinding Converter="{x:Static BoolConverters.And}">
-												<Binding Path="!IsChecked" ElementName="visibleLogChartSeriesButton"/>
-												<Binding Path="LogChart.AreAllSeriesSourcesVisible"/>
-											</MultiBinding>
-										</Image.IsVisible>
-									</Image>
-									<Image Classes="Icon" Source="{DynamicResource Image/Filter.Active}">
-										<Image.IsVisible>
-											<MultiBinding Converter="{x:Static BoolConverters.And}">
-												<Binding Path="!IsChecked" ElementName="visibleLogChartSeriesButton"/>
-												<Binding Path="!LogChart.AreAllSeriesSourcesVisible"/>
-											</MultiBinding>
-										</Image.IsVisible>
-									</Image>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Filter.Light}"/>
-								</Panel>
-							</ToggleButton>
-							
-							<!-- Type of chart -->
-							<ToggleButton Name="logChartTypeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogChartTypeMenu}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogChartType}">
-								<Panel>
-									<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}}"/>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}, ConverterParameter=Light}"/>
-								</Panel>
-							</ToggleButton>
-							
-						</StackPanel>
-					</Border>
-					<Line Classes="Shadow" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" HorizontalAlignment="Left"/>
-				</Panel>
+				<Border Name="logChartToolBar" Classes="ToolBar" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" DockPanel.Dock="Right" IsEnabled="{Binding #logChart.IsVisible}">
+					<StackPanel>
+						<StackPanel.Styles>
+							<Style Selector="Button.ToolBar_Button">
+								<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+								<Setter Property="Margin" Value="0,1,0,0"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
+								<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+							</Style>
+							<Style Selector="ToggleButton.ToolBar_ToggleButton">
+								<Setter Property="Height" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+								<Setter Property="Margin" Value="0,1,0,0"/>
+								<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.LogChart.Button.Padding}"/>
+								<Setter Property="Width" Value="{StaticResource Double/SessionView.LogChart.Button.Size}"/>
+							</Style>
+						</StackPanel.Styles>
+						
+						<!-- Reset zoom -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogChartZoom}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
+						</Button>
+						
+						<!-- Scroll to start -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToStartOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToStartOfLogChart}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
+						</Button>
+						
+						<!-- Scroll to end -->
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ScrollToEndOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToEndOfLogChart}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
+						</Button>
+						
+						<Separator Classes="ToolBar_Separator_Horizontal"/>
+						
+						<!-- Visible series -->
+						<ToggleButton Name="visibleLogChartSeriesButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.SelectVisibleLogChartSeries}" ToolTip.Tip="{DynamicResource String/SessionView.VisibleLogChartSeries}">
+							<Panel>
+								<Image Classes="Icon" Source="{DynamicResource Image/Filter}">
+									<Image.IsVisible>
+										<MultiBinding Converter="{x:Static BoolConverters.And}">
+											<Binding Path="!IsChecked" ElementName="visibleLogChartSeriesButton"/>
+											<Binding Path="LogChart.AreAllSeriesSourcesVisible"/>
+										</MultiBinding>
+									</Image.IsVisible>
+								</Image>
+								<Image Classes="Icon" Source="{DynamicResource Image/Filter.Active}">
+									<Image.IsVisible>
+										<MultiBinding Converter="{x:Static BoolConverters.And}">
+											<Binding Path="!IsChecked" ElementName="visibleLogChartSeriesButton"/>
+											<Binding Path="!LogChart.AreAllSeriesSourcesVisible"/>
+										</MultiBinding>
+									</Image.IsVisible>
+								</Image>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Filter.Light}"/>
+							</Panel>
+						</ToggleButton>
+						
+						<!-- Type of chart -->
+						<ToggleButton Name="logChartTypeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogChartTypeMenu}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogChartType}">
+							<Panel>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}}"/>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Default}, ConverterParameter=Light}"/>
+							</Panel>
+						</ToggleButton>
+						
+					</StackPanel>
+				</Border>
 				
 				<!-- Chart and hint -->
 				<Panel>
@@ -1155,53 +1149,48 @@
 			</DockPanel>
 
 			<!-- Logs time information -->
-			<Panel Grid.Row="4" IsVisible="{Binding HasLogsDuration}">
-				<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar">
-					<Grid ColumnDefinitions="*,Auto">
+			<Border Classes="StatusBar" Background="{DynamicResource Brush/SessionView.LogHeader.Background}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,1,0,0" Grid.Row="4" IsVisible="{Binding HasLogsDuration}">
+				<Grid ColumnDefinitions="*,Auto">
 
-						<Grid.Styles>
-							<Style Selector="Button.StatusBar_Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-								<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
-							</Style>
-							<Style Selector="Button.StatusBar_Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-								<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
-							</Style>
-						</Grid.Styles>
+					<Grid.Styles>
+						<Style Selector="Button.StatusBar_Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
+						</Style>
+						<Style Selector="Button.StatusBar_Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+							<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
+						</Style>
+					</Grid.Styles>
 
-						<!-- Logs -->
-						<StackPanel ClipToBounds="True" Orientation="Horizontal">
+					<!-- Logs -->
+					<StackPanel ClipToBounds="True" Orientation="Horizontal">
 
-							<!-- Icon -->
-							<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Calendar}"/>
+						<!-- Icon -->
+						<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Calendar}"/>
 
-							<!-- Starting point -->
-							<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationStartingLogCommand}" Content="{Binding LogsDurationStartingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
+						<!-- Starting point -->
+						<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationStartingLogCommand}" Content="{Binding LogsDurationStartingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Right" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationStartingPoint}"/>
 
-							<!-- Duration -->
-							<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
-							<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDuration}"/>
-							<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
+						<!-- Duration -->
+						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
+						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDuration}"/>
+						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
 
-							<!-- Ending point -->
-							<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationEndingLogCommand}" Content="{Binding LogsDurationEndingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>
+						<!-- Ending point -->
+						<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationEndingLogCommand}" Content="{Binding LogsDurationEndingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsDurationEndingPoint}"/>
 
-						</StackPanel>
+					</StackPanel>
 
-						<!-- Selected logs -->
-						<StackPanel Grid.Column="1" IsVisible="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static ObjectConverters.IsNotNull}}" Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Foreground="{DynamicResource TextControlForeground}" Format="{DynamicResource String/SessionView.SelectedLogsDuration}"/>
-						</StackPanel>
-						
-					</Grid>
-				</Border>
-				<Line Classes="Shadow" Stroke="{DynamicResource Brush/SessionView.LogHeader.Border}" VerticalAlignment="Top"/>
-			</Panel>
+					<!-- Selected logs -->
+					<StackPanel Grid.Column="1" IsVisible="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static ObjectConverters.IsNotNull}}" Orientation="Horizontal">
+						<Separator Classes="StatusBar_Separator"/>
+						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Foreground="{DynamicResource TextControlForeground}" Format="{DynamicResource String/SessionView.SelectedLogsDuration}"/>
+					</StackPanel>
+					
+				</Grid>
+			</Border>
 			
 			<!-- Shadows -->
-			<Border Classes="Shadow_Bottom_Light" VerticalAlignment="Top"/>
-			<Border Classes="Shadow_Top_Light" Grid.Row="4" VerticalAlignment="Bottom"/>
-			<Border Classes="Shadow_Left_Light" Grid.RowSpan="5" HorizontalAlignment="Right"/>
+			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Grid.RowSpan="5" IsHitTestVisible="False"/>
 
 			<!-- Drag-and-drop receiver -->
 			<Border Name="dragDropReceiverBorder" Background="{x:Static Brushes.Transparent}" Grid.RowSpan="3" IsVisible="False"/>
@@ -1481,77 +1470,74 @@
 					
 				</DockPanel>
 			</Border>
-			<Line Classes="Shadow" Stroke="{DynamicResource Brush/StatusBar.Border}" VerticalAlignment="Top"/>
+			<Border BorderBrush="{DynamicResource Brush/StatusBar.Border}" BorderThickness="0,1,0,0"/>
 		</Panel>
 
 		<!-- Side panel tool bar -->
-		<Panel Grid.Column="3" Grid.Row="1">
-			<Border Classes="ToolBar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}">
-				<StackPanel Name="sidePanelBoolBarItemsPanel" VerticalAlignment="Top">
+		<Border Classes="ToolBar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" Grid.Column="3" Grid.Row="1">
+			<StackPanel Name="sidePanelBoolBarItemsPanel" VerticalAlignment="Top">
 
-					<!-- Test -->
-					<ToggleButton Name="testButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowTestMenu}" ToolTip.Tip="Test">
-						<Panel>
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-							<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Lab}"/>
-								</DrawingImage>
-							</Image>
-						</Panel>
-					</ToggleButton>
+				<!-- Test -->
+				<ToggleButton Name="testButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowTestMenu}" ToolTip.Tip="Test">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Lab}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
 
-					<!-- Marked logs -->
-					<ToggleButton Name="markedLogsPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.MarkedLogsPanel}">
-						<Panel>
-							<Image Classes="Icon" Source="{StaticResource Image/Marks}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-							<Image Classes="Icon" Source="{StaticResource Image/Marks.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-						</Panel>
-					</ToggleButton>
+				<!-- Marked logs -->
+				<ToggleButton Name="markedLogsPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.MarkedLogsPanel}">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Marks}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" Source="{StaticResource Image/Marks.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+					</Panel>
+				</ToggleButton>
 
-					<!-- Timestamp categories -->
-					<ToggleButton Name="timestampCategoriesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogCategorizing.IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
-						<Panel>
-							<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-							<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Calendar}"/>
-								</DrawingImage>
-							</Image>
-						</Panel>
-					</ToggleButton>
+				<!-- Timestamp categories -->
+				<ToggleButton Name="timestampCategoriesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogCategorizing.IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.TimestampCategoriesPanel}">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Calendar}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
 
 				<!-- Log analysis -->
 				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogAnalysis.IsPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisPanel}">
-						<Panel>
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-							<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Analysis}"/>
-								</DrawingImage>
-							</Image>
-							<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}">
-								<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
-							</Border>
-						</Panel>
-					</ToggleButton>
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Analysis}"/>
+							</DrawingImage>
+						</Image>
+						<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}">
+							<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
+						</Border>
+					</Panel>
+				</ToggleButton>
 
-					<!-- Log files -->
-					<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
-						<Panel>
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-							<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text}"/>
-								</DrawingImage>
-							</Image>
-						</Panel>
-					</ToggleButton>
+				<!-- Log files -->
+				<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{DynamicResource String/SessionView.LogFilesPanel}">
+					<Panel>
+						<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+							<DrawingImage>
+								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text}"/>
+							</DrawingImage>
+						</Image>
+					</Panel>
+				</ToggleButton>
 
-				</StackPanel>
-			</Border>
-			<Line Classes="Shadow" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" HorizontalAlignment="Left"/>
-		</Panel>
+			</StackPanel>
+		</Border>
 
 		<!-- Side panel -->
 		<Border Name="sidePanelContainer" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasProfile}">
@@ -2478,15 +2464,14 @@
 			</Panel>
 
 		</Border>
-		<Panel Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" IsVisible="{Binding #sidePanelContainer.IsVisible}" VerticalAlignment="Stretch">
+		<Panel Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" IsHitTestVisible="False" IsVisible="{Binding #sidePanelContainer.IsVisible}" VerticalAlignment="Stretch">
 			<Border Classes="SessionView_SidePanel_Header" Padding="{StaticResource Thickness/SessionView.SidePanel.Header.Padding.Dummy}" VerticalAlignment="Top">
 				<TextBlock Classes="SessionView_SidePanel_Header_Left" Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy}"/>
 			</Border>
-			<Line Classes="Shadow" Stroke="{DynamicResource Brush/WorkingArea.Panel.Border}" HorizontalAlignment="Left"/>
+			<Border BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" IsHitTestVisible="False"/>
 		</Panel>
 		<GridSplitter Background="{x:Static Brushes.Transparent}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding #sidePanelContainer.IsVisible}"/>
 
 	</Grid>
-
-
+	
 </UserControl>
