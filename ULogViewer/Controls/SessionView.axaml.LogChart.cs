@@ -35,7 +35,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Avalonia.Interactivity;
+using CarinaStudio.AppSuite.Media;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -96,6 +96,7 @@ partial class SessionView
     
     
     // Static fields.
+    static SKTypeface? InterSKTypeFace;
     static readonly SettingKey<bool> IsLogChartTutorialShownKey = new("SessionView.IsLogChartTutorialShown", false);
     static readonly SKColor[] LogChartSeriesColorsDark =
     {
@@ -125,6 +126,8 @@ partial class SessionView
         SKColor.FromHsl(260, 100, 50), // Purple
         SKColor.FromHsl(315, 100, 40), // Magenta
     };
+    static SKTypeface? NotoSansSCSKTypeFace;
+    static SKTypeface? NotoSansTCSKTypeFace;
     static readonly SettingKey<bool> PromptWhenMaxTotalLogSeriesValueCountReachedKey = new("SessionView.PromptWhenMaxTotalLogSeriesValueCountReached", true);
 
 
@@ -1068,13 +1071,26 @@ partial class SessionView
     // Select proper SKTypeface for displaying.
     SKTypeface SelectSKTypeface()
     {
-        var c = this.Application.CultureInfo.Name.Let(it =>
+        var fontManager = SKFontManager.Default;
+        var cultureName = this.Application.CultureInfo.Name;
+        if (cultureName.StartsWith("zh"))
         {
-            if (it.StartsWith("zh"))
-                return it.EndsWith("TW") ? '繁' : '简';
-            return 'a';
-        });
-        return SKFontManager.Default.MatchCharacter(c);
+            if (this.Application.UseEmbeddedFontsForChinese)
+            {
+                if (cultureName.EndsWith("TW"))
+                {
+                    NotoSansTCSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.NotoSansTC)).Use(stream => fontManager.CreateTypeface(stream));
+                    return NotoSansTCSKTypeFace;
+                }
+                NotoSansSCSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.NotoSansSC)).Use(stream => fontManager.CreateTypeface(stream));
+                return NotoSansSCSKTypeFace;
+            }
+            if (cultureName.EndsWith("TW"))
+                return fontManager.MatchCharacter('繁');
+            return fontManager.MatchCharacter('简');
+        }
+        InterSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.Inter)).Use(stream => fontManager.CreateTypeface(stream));
+        return InterSKTypeFace;
     }
 
 

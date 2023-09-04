@@ -98,6 +98,21 @@
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type as:ApplicationCulture}" Grid.Column="1" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
+						
+						<!-- Use embedded fonts for Chinese -->
+						<StackPanel IsVisible="{Binding IsUseEmbeddedFontsForChineseSupported}">
+							<asControls:DialogItemGrid>
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseEmbeddedFontsForChinese}"/>
+									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsUseEmbeddedFontsForChineseChanged}">
+										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+										<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
+									</Grid>
+								</StackPanel>
+								<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding UseEmbeddedFontsForChinese, Mode=TwoWay}"/>
+							</asControls:DialogItemGrid>
+							<Separator Classes="Dialog_Item_Separator"/>
+						</StackPanel>
 
 						<!-- Custom screen scale factor -->
 						<StackPanel IsVisible="{Binding IsCustomScreenScaleFactorSupported}">
