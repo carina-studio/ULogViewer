@@ -991,7 +991,7 @@
 			</Panel>
 
 			<!-- ListBox -->
-			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasLogProfile}" ItemsSource="{Binding Logs}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple">
+			<asControls:ListBox Classes="Log" Name="logListBox" AutoScrollToSelectedItem="False" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logActionMenu}" CornerRadius="0" DoubleClickOnItem="OnLogListBoxDoubleClickOnItem" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasLogProfile}" ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItems="{Binding LogSelection.SelectedLogs}" SelectionChanged="OnLogListBoxSelectionChanged" SelectionMode="Multiple">
 				<asControls:ListBox.Resources>
 					<sys:Double x:Key="ToolTipContentMaxWidth">400</sys:Double>
 				</asControls:ListBox.Resources>

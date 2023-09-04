@@ -155,7 +155,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Constants.
-		const int ScrollingToLatestLogInterval = 80;
+		const int InitScrollingToLatestLogDelay = 800;
+		const int ScrollingToLatestLogInterval = 150;
 		const int ScrollingToTargetLogRangeInterval = 200;
 
 
@@ -249,6 +250,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly LogProfileSelectionContextMenu logProfileSelectionMenu;
+		IDisposable? logsBindingToken;
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
@@ -934,7 +936,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.autoSetCommandAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
+				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
 					return;
 				this.isCommandNeededAfterLogProfileSet = false;
 				this.isAutoSettingLogsReadingParameters = true;
@@ -944,7 +946,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.autoSetIPEndPointAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
+				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
 					return;
 				this.isIPEndPointNeededAfterLogProfileSet = false;
 				this.isAutoSettingLogsReadingParameters = true;
@@ -954,7 +956,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.autoSetProcessIdAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
+				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
 					return;
 				this.isProcessIdNeededAfterLogProfileSet = false;
 				this.isAutoSettingLogsReadingParameters = true;
@@ -964,7 +966,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.autoSetProcessNameAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
+				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
 					return;
 				this.isProcessNameNeededAfterLogProfileSet = false;
 				this.isAutoSettingLogsReadingParameters = true;
@@ -974,7 +976,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.autoSetUriAction = new(async () =>
 			{
-				if (this.DataContext is not Session session || this.isAutoSettingLogsReadingParameters)
+				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
 					return;
 				this.isUriNeededAfterLogProfileSet = false;
 				this.isAutoSettingLogsReadingParameters = true;
@@ -1197,6 +1199,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Attach to session.
 		void AttachToSession(Session session)
 		{
+			this.Logger.LogWarning($"Attaching to session {session.Id}");
+			
+			// bind to logs
+			this.logsBindingToken = this.logsBindingToken.DisposeAndReturnNull();
+			this.logsBindingToken = this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding { Path = nameof(Session.Logs)} ); 
+			
 			// add event handler
 			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound += this.OnExternalDependencyNotFound;
@@ -1271,9 +1279,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (!profile.IsContinuousReading)
 					this.IsScrollingToLatestLogNeeded = false;
 			});
-			if (session.HasLogs && this.IsScrollingToLatestLogNeeded)
+			if (this.IsScrollingToLatestLogNeeded)
 			{
-				this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+				this.scrollToLatestLogAction.Schedule(InitScrollingToLatestLogDelay);
 				this.smoothScrollToLatestLogAction.Cancel();
 			}
 			if (session.LogAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
@@ -2380,6 +2388,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// [Workaround] clear selection to prevent performance issue of de-select multiple items
 			this.logListBox.SelectedItems?.Clear();
+			
+			// unbind from logs
+			this.logsBindingToken = this.logsBindingToken.DisposeAndReturnNull();
 
 			// remove event handler
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
@@ -2919,9 +2930,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check settings
 			this.SetValue(ShowHelpButtonOnLogTextFilterProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter));
 
-			// check product state
-			if ((this.DataContext as Session)?.IsProVersionActivated == true)
-				this.RecreateLogHeadersAndItemTemplate();
+			// update menu items
 			this.UpdateToolsMenuItems();
 
 			// check script running
@@ -4084,7 +4093,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if ((bool)change.NewValue!)
 				{
-					this.ScrollToLatestLog(false);
+					this.scrollToLatestLogAction.Reschedule(ScrollingToLatestLogInterval);
+					this.smoothScrollToLatestLogAction.Cancel();
 					var logProfile = (this.DataContext as Session)?.LogProfile;
 					if (logProfile?.IsContinuousReading == false)
 						this.SynchronizationContext.Post(() => this.IsScrollingToLatestLogNeeded = false);
@@ -4154,9 +4164,15 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (this.HasLogProfile)
 						{
 							if (session.LogProfile?.IsContinuousReading == true && this.IsScrollingToLatestLogNeeded)
-								this.ScrollToLatestLog(false);
+							{
+								this.scrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+								this.smoothScrollToLatestLogAction.Cancel();
+							}
 							if (session.LogAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
-								this.ScrollToLatestLogAnalysisResult(false);
+							{
+								this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+								this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+							}
 						}
 					}
 					break;
@@ -4289,17 +4305,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void PerformGC() =>
 			this.Application.PerformGC(GCCollectionMode.Forced);
-
-
-		// Rebuild log header views and template of log item.
-		void RecreateLogHeadersAndItemTemplate()
-		{
-			if (this.DataContext is not Session)
-				return;
-			this.logListBox.ItemsSource = null;
-			this.OnDisplayLogPropertiesChanged();
-			this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding { Path = nameof(Session.Logs)} );
-		}
 
 
 		// Reload log file.
