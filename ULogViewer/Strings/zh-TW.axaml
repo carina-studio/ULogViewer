@@ -1271,6 +1271,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日誌讀取前置條件</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新載入日誌 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日誌檔案</sys:String>
+	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">新的群組名稱：</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogChartZoom">重設圖表縮放</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有篩選設定</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">正常顯示日誌</sys:String>

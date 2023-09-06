@@ -1,10 +1,12 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -232,5 +234,39 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
             group.Dispose();
         }
         return this.RemoveProfile(filter, true);
+    }
+
+
+    /// <summary>
+    /// Rename name of group.
+    /// </summary>
+    /// <param name="groupName">Name of group to rename.</param>
+    /// <param name="newGroupName">New name of group.</param>
+    public void RenameGroup(string groupName, string newGroupName)
+    {
+        // check state
+        this.VerifyAccess();
+        groupName = groupName.Trim();
+        newGroupName = newGroupName.Trim();
+        if (string.IsNullOrEmpty(newGroupName))
+        {
+            this.Logger.LogError("Cannot rename group to empty name");
+            return;
+        }
+        if (groupName == newGroupName)
+            return;
+        
+        // find group
+        var group = this.groups.FirstOrDefault(it => it.Name == groupName);
+        if (group is null)
+        {
+            this.Logger.LogWarning("Cannot find group '{name}'", groupName);
+            return;
+        }
+        
+        // move to new group
+        this.Logger.LogDebug("Rename group '{name}' to '{newName}' with {count} filter(s)", groupName, newGroupName, group.Filters.Count);
+        foreach (var filter in group.Filters.ToArray())
+            filter.GroupName = newGroupName;
     }
 }

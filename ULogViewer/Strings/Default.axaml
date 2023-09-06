@@ -211,7 +211,7 @@
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeu value from queue to variable</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeue value from queue to variable</sys:String>
 
 	<!-- DequeueToVariableAction -->
 	<sys:String x:Key="String/DequeueToVariableAction">Dequeue value from queue '{0}' to {{{1}}}</sys:String>
@@ -1318,6 +1318,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>
+	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">New name of group:</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogChartZoom">Reset zoom of chart</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear all filters</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">Show logs normally</sys:String>

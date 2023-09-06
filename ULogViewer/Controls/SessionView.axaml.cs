@@ -384,6 +384,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveOperationCountingAnalysisRuleSetCommand = new Command<OperationCountingAnalysisRuleSet>(this.RemoveOperationCountingAnalysisRuleSet);
 			this.RemoveOperationDurationAnalysisRuleSetCommand = new Command<OperationDurationAnalysisRuleSet>(this.RemoveOperationDurationAnalysisRuleSet);
 			this.RemovePredefinedLogTextFilterCommand = new Command<PredefinedLogTextFilter>(this.RemovePredefinedLogTextFilter);
+			this.RenamePredefinedLogTextFilterGroupCommand = new Command<PredefinedLogTextFilterGroup>(this.RenamePredefinedLogTextFilterGroup);
 			this.RestartAsAdministratorCommand = new Command(this.RestartAsAdministrator, this.canRestartAsAdmin);
 			this.SaveAllLogsCommand = new Command(() => this.SaveLogs(true), this.canSaveLogs);
 			this.SaveLogsCommand = new Command(() => this.SaveLogs(false), this.canSaveLogs);

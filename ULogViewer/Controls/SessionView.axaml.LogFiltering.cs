@@ -516,6 +516,40 @@ partial class SessionView
     public ICommand RemovePredefinedLogTextFilterCommand { get; }
 
 
+    // Rename given group of predefined text filter.
+    async void RenamePredefinedLogTextFilterGroup(PredefinedLogTextFilterGroup group)
+    {
+        // check state
+        this.VerifyAccess();
+        if (group == PredefinedLogTextFilterManager.Default.DefaultGroup)
+            return;
+        if (this.attachedWindow is null)
+            return;
+
+        // select new name
+        var newName = await new TextInputDialog
+        {
+            InitialText = group.Name,
+            MaxTextLength = 64,
+            Message = this.Application.GetObservableString("SessionView.RenamePredefinedLogTextFilterGroup.Message"),
+        }.ShowDialog(this.attachedWindow);
+        if (string.IsNullOrWhiteSpace(newName))
+            return;
+        newName = newName.Trim();
+        if (group.Name == newName)
+            return;
+        
+        // rename
+        PredefinedLogTextFilterManager.Default.RenameGroup(group.Name!, newName);
+    }
+    
+    
+    /// <summary>
+    /// Command to rename given group of predefined text filter.
+    /// </summary>
+    public ICommand RenamePredefinedLogTextFilterGroupCommand { get; }
+
+
     /// <summary>
     /// Show menu to select log filter combination mode.
     /// </summary>
