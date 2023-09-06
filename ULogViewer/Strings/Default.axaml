@@ -1260,6 +1260,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">Error occurred while running script of '{0}' to setup analysis:</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">Error occurred while running script of '{0}':</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count: {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LogChart.NoLogTimestamp">(No time information of log)</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel">Chart panel</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">The chart has been disabled temporarily because of too many data points in the chart</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">Need to upgrade to Pro version to enable the chart</sys:String>

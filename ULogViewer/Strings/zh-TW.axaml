@@ -1212,6 +1212,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">執行「{0}」之腳本以分析日誌時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">執行「{0}」之腳本以初始化分析時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">執行「{0}」之腳本時發生錯誤：</sys:String>
+	<sys:String x:Key="String/SessionView.LogChart.NoLogTimestamp">(沒有日誌的時間資訊)</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel">圖表面板</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">圖表因資料點過多而被暫時停用</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升級至專業版以啟用圖表</sys:String>

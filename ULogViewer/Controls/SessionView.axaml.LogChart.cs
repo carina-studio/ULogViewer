@@ -237,6 +237,17 @@ partial class SessionView
         };
         
         // prepare tooltip generator
+        string FormatXToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
+        {
+            return point.Model?.Log?.Let(log =>
+                log.TimestampString 
+                ?? log.TimeSpanString
+                ?? log.BeginningTimestampString
+                ?? log.BeginningTimeSpanString
+                ?? log.EndingTimestampString
+                ?? log.EndingTimeSpanString
+            )?.ToString() ?? this.Application.GetStringNonNull("SessionView.LogChart.NoLogTimestamp");
+        }
         string FormatYToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
         {
             var source = series.Source;
@@ -286,6 +297,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Values = series.Values,
+                    XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : FormatXToolTipLabel,
                     YToolTipLabelFormatter = FormatYToolTipLabel,
                 };
             case LogChartType.ValueStackedAreas:
@@ -320,6 +332,7 @@ partial class SessionView
                         IsAntialias = true,
                     },
                     Values = series.Values,
+                    XToolTipLabelFormatter = FormatXToolTipLabel,
                     YToolTipLabelFormatter = FormatYToolTipLabel,
                 };
             case LogChartType.ValueStackedBars:
@@ -337,6 +350,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Values = series.Values,
+                    XToolTipLabelFormatter = FormatXToolTipLabel,
                     YToolTipLabelFormatter = FormatYToolTipLabel,
                 };
             default:
@@ -395,6 +409,7 @@ partial class SessionView
                         },
                     },
                     Values = series.Values,
+                    XToolTipLabelFormatter = FormatXToolTipLabel,
                     YToolTipLabelFormatter = FormatYToolTipLabel,
                 };
         }
