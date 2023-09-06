@@ -38,7 +38,13 @@
 						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
 					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowGroupNameSelectionMenu}" Content="{DynamicResource String/PredefinedLogTextFilterEditorDialog.SelectGroupName}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}"/>
+					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowGroupNameSelectionMenu}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}">
+						<Grid ColumnDefinitions="*,Auto">
+							<TextBlock Classes="Button_Text" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.SelectGroupName}"/>
+							<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.DropDown.Down}"/>
+							<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.DropDown.Down.Light}"/>
+						</Grid>
+					</ToggleButton>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Pattern -->
