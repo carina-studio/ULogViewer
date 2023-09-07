@@ -1017,6 +1017,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAnalysisResultAction.Cancel();
 				this.ScrollToLatestLogAnalysisResult(true);
 			});
+			this.startLogChartAnimationsAction = new(this.StartLogChartAnimations);
 			this.updateLogAnalysisAction = new(() =>
 			{
 				if (this.DataContext is not Session session)

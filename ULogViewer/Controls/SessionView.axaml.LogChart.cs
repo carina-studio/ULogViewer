@@ -87,6 +87,7 @@ partial class SessionView
     
     
     // Constants.
+    const int InitLogChartAnimationDelay = 1000;
     const double LogBarChartXCoordinateScaling = 1.3;
     const long DurationToDropClickEvent = 500;
     const double PointerDistanceToDropClickEvent = 5;
@@ -158,6 +159,7 @@ partial class SessionView
         CrosshairSnapEnabled = true,
     };
     IPaint<SkiaSharpDrawingContext>? logChartYAxisCrosshairPaint;
+    readonly ScheduledAction startLogChartAnimationsAction;
     readonly ScheduledAction updateLogChartXAxisLimitAction;
     readonly ScheduledAction updateLogChartYAxisLimitAction;
     ToggleButton? visibleLogChartSeriesButton;
@@ -167,6 +169,7 @@ partial class SessionView
     // Attach to view-model of log chart.
     void AttachToLogChart(LogChartViewModel viewModel)
     {
+        // add handlers
         viewModel.PropertyChanged += this.OnLogChartViewModelPropertyChanged;
         this.AttachToRawLogChartSeries(viewModel.Series, false);
         this.AttachToRawVisibleLogChartSeries(viewModel.VisibleSeries, true);
@@ -174,11 +177,18 @@ partial class SessionView
             it.CollectionChanged += this.OnLogChartSeriesSourcesChanged);
         (viewModel.VisibleSeriesSources as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnVisibleLogChartSeriesSourcesChanged);
+        
+        // check data count
         if (viewModel.IsMaxTotalSeriesValueCountReached)
             this.PromptForMaxLogChartSeriesValueCountReached();
+        
+        // update log chart
         this.areLogChartAxesReady = false;
         this.UpdateLogChartAxes();
         this.UpdateLogChartPanelVisibility();
+        
+        // start animation later
+        this.startLogChartAnimationsAction.Reschedule(InitLogChartAnimationDelay);
     }
     
     
@@ -222,7 +232,6 @@ partial class SessionView
         });
         
         // load resources
-        var animationSpeed = this.Application.FindResourceOrDefault("TimeSpan/Animation.Slow", TimeSpan.FromMilliseconds(500));
         var backgroundColor = this.Application.FindResourceOrDefault<ISolidColorBrush>("Brush/WorkingArea.Background", Brushes.Black).Let(it =>
         {
             var color = it.Color;
@@ -282,11 +291,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
                 return new ColumnSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = chartType switch
-                    {
-                        LogChartType.ValueStatisticBars => TimeSpan.Zero,
-                        _ => animationSpeed,
-                    },
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
                     Fill = new SolidColorPaint(seriesColor),
                     Mapping = (value, point) =>
                     {
@@ -305,7 +310,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = 1.0;
                 return new StackedAreaSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = animationSpeed,
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
                     Fill = new SolidColorPaint(seriesColor),
                     GeometryFill = chartType switch
                     {
@@ -339,7 +344,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
                 return new StackedColumnSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = animationSpeed,
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
                     Fill = new SolidColorPaint(seriesColor),
                     Mapping = (value, point) =>
                     {
@@ -357,7 +362,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = 1.0;
                 return new LineSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = animationSpeed,
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
                     Fill = chartType switch
                     {
                         LogChartType.ValueAreas
@@ -458,6 +463,7 @@ partial class SessionView
     // Detach from view-model of log chart.
     void DetachFromLogChart(LogChartViewModel viewModel)
     {
+        // remove handlers
         viewModel.PropertyChanged -= this.OnLogChartViewModelPropertyChanged;
         this.DetachFromRawLogChartSeries(false);
         this.DetachFromRawVisibleLogChartSeries(true);
@@ -465,6 +471,8 @@ partial class SessionView
             it.CollectionChanged -= this.OnLogChartSeriesSourcesChanged);
         (viewModel.VisibleSeriesSources as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnVisibleLogChartSeriesSourcesChanged);
+        
+        // update log chart
         this.InvalidateLogChartSeriesColors();
         if (this.visibleLogChartSeriesMenu is not null)
         {
@@ -1048,6 +1056,25 @@ partial class SessionView
         this.logChartXAxis.MinLimit = -reserved;
         this.logChartXAxis.MaxLimit = length - reserved;
     }
+
+
+    // Select animation speed of log chart series.
+    TimeSpan SelectLogChartSeriesAnimationSpeed()
+    {
+        if (this.DataContext is not Session session)
+            return default;
+        return this.SelectLogChartSeriesAnimationSpeed(session.LogChart);
+    }
+    TimeSpan SelectLogChartSeriesAnimationSpeed(LogChartViewModel viewModel)
+    {
+        if (this.startLogChartAnimationsAction.IsScheduled)
+            return default;
+        return viewModel.ChartType switch
+        {
+            LogChartType.ValueStatisticBars => default,
+            _ => this.Application.FindResourceOrDefault("TimeSpan/Animation.Slow", TimeSpan.FromMilliseconds(500)),
+        };
+    }
     
     
     // Select color for series.
@@ -1269,6 +1296,15 @@ partial class SessionView
     {
         this.logChartTypeMenu.DataContext = (this.DataContext as Session)?.LogChart.ChartType;
         this.logChartTypeMenu.Open(this.logChartTypeButton);
+    }
+
+
+    // Start all animations og log chart.
+    void StartLogChartAnimations()
+    {
+        var animationSpeed = this.SelectLogChartSeriesAnimationSpeed();
+        foreach (var series in this.logChartSeries)
+            series.AnimationsSpeed = animationSpeed;
     }
     
     
