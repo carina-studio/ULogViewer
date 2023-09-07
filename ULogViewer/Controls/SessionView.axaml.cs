@@ -1933,7 +1933,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							it.Children.Add(new Border().Also(border =>
 							{
-								DockPanel.SetDock(border, Dock.Right);
+								DockPanel.SetDock(border, Dock.Left);
 								border.Background = Brushes.Transparent;
 								border.Child = new Avalonia.Controls.Image().Also(multiLineIcon =>
 								{
