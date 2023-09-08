@@ -1,7 +1,7 @@
 # User Agreement of ULogViewer
  ---
-+ Version: 2.1
-+ Update: 2023/7/1
++ Version: 2.2
++ Update: 2023/9/8
 
 This is the User Agreement of ULogViewer which you need to read before you using ULogViewer. The User Agreement may be updated in the future and you can check it on the website of ULogViewer. It means that you have agreed this User Agreement once you start using ULogViewer.
 
@@ -12,7 +12,7 @@ ULogViewer is a software based-on Open Source Project. The ULogViewer mentioned 
 + [Website of ULogViewer](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [Project and release pages of ULogViewer on GitHub](https://github.com/carina-studio/ULogViewer)
 
-This User Agreement will be applied when you use ULogViewer 3.0 and any future versions before the version specified in next version of User Agreement.
+This User Agreement will be applied when you use ULogViewer 3.1 and any future versions before the version specified in next version of User Agreement.
 
 
 ## Debug Mode
@@ -22,7 +22,7 @@ ULogViewer has built-in Debug Mode which is disabled by default. You can enable 
 ## External Dependencies
 
 ### Android SDK Platform Tools
-In order to use **'Android Device Log'**, **'Android Device Event Log'**, **'Android Device System Trace'**, **'Android System Memory Monitor'**, **'Android Process Memory Monitor'**, **'Specific Android Device Event Log'** and **'Specific Android Device Log'** log profiles, you need to install [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools) or [Android Studio](https://developer.android.com/studio) on your device first.
+In order to use **'Android Device Log'**, **'Android Device Event Log'**, **'Android Device System Trace'**, **'Android System Memory Monitor'**, **'Android Process Memory Monitor'**, **'Specific Android Device Event Log'**, **'Specific Android Device Log'** and **'Specific Android Device System Trace'** log profiles, you need to install [Android SDK Platform Tools](https://developer.android.com/tools/releases/platform-tools) or [Android Studio](https://developer.android.com/studio) on your device first.
 
 ### Azure Command-Line Interface (CLI)
 In order to use full features of **'Azure CLI'**, **'MySQL Database'** and **'SQL Server Database'** data sources, you need to install [Azure CLI](https://docs.microsoft.com/cli/azure/) on your device first.
@@ -38,7 +38,7 @@ In order to use **'Apple Devices Log'** and **'Specific Apple Device Log'** log 
 + [For Linux User](https://command-not-found.com/idevicesyslog)
 
 ### Trace Conversion Tool
-In order to use **'Android Device System Trace'** built-in log profile on **macOS/Linux**, you need to install [Trace Conversion Tool](https://perfetto.dev/docs/quickstart/traceconv) on your device first.
+In order to use **'Android Device System Trace'** and **'Specific Android Device System Trace'** built-in log profile on **macOS/Linux**, you need to install [Trace Conversion Tool](https://perfetto.dev/docs/quickstart/traceconv) on your device first.
 
 ### Command-Line Tools for Xcode
 In order to use **'Apple Device Simulators Log'** and **'Specific Apple Device Simulator Log'** built-in log profile on **macOS**, you need to install [Command-Line Tools for Xcode](https://developer.apple.com/xcode/). If you install Command-Line Tools for Xcode with Xcode, you need to enable it by setting **'Xcode > Settings > Locations > Command Line Tools'** to **'Xcode'**.
@@ -194,7 +194,7 @@ ULogViewer is an Open Source Project of Carina Studio under [MIT](https://github
 
 Application icon is modified from icons made by [Freepik](https://www.freepik.com/) from [Flaticon](https://www.flaticon.com/).
 
-Built-in fonts **'Roboto'** and **'Roboto Mono'** are distributed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), **'IBM Plex Mono'** and **'Source Code Pro'** are distributed under [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
+Built-in fonts **'Roboto'** and **'Roboto Mono'** are distributed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), **'IBM Plex Mono'**, **'Noto Sans SC'**, **'Noto Sans TC'** and **'Source Code Pro'** are distributed under [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
 
 License and copyright of logs loaded into ULogViewer or saved by ULogViewer is not dominated by this User Agreement. You should take care of the license and copyright of logs by yourself.
 

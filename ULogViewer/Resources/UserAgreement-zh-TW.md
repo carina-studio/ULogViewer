@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
-+ 版本：2.1
-+ 更新時間：2023/7/1
++ 版本：2.2
++ 更新時間：2023/9/8
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -12,7 +12,7 @@ ULogViewer 為基於開放原始碼專案之軟體，以下所指 ULogViewer **�
 + [ULogViewer 網站](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [GitHub 上之 ULogViewer 專案頁面及各版本釋出頁面](https://github.com/carina-studio/ULogViewer)
 
-本使用者協議適用於您使用 ULogViewer 3.0 及下一份使用者協議所指定之版本之間 (但不包括) 的所有版本。
+本使用者協議適用於您使用 ULogViewer 3.1 及下一份使用者協議所指定之版本之間 (但不包括) 的所有版本。
 
 
 ## 偵錯模式
@@ -22,7 +22,7 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 ## 外部相依性
 
 ### Android SDK 平台工具
-若要使用 **「Android 裝置日誌」** 、 **「Android 裝置事件日誌」** 、 **「Android 裝置系統追蹤」** 、 **「Android 系統記憶體監控」** 、 **「Android 處理程序記憶體監控」** 、 **「特定 Android 裝置事件日誌」** 及 **「特定 Android 裝置日誌」** 日誌類型，您必須先安裝 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
+若要使用 **「Android 裝置日誌」** 、 **「Android 裝置事件日誌」** 、 **「Android 裝置系統追蹤」** 、 **「Android 系統記憶體監控」** 、 **「Android 處理程序記憶體監控」** 、 **「特定 Android 裝置事件日誌」** 、 **「特定 Android 裝置日誌」** 及 **「特定 Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
 
 ### Azure 命令列介面 (CLI)
 若要使用 **「Azure 命令列介面 (CLI)」**、**「MySQL 資料庫」** 及 **「SQL Server 資料庫」** 資料來源之完整功能，您必須先安裝 [Azure 命令列介面 (CLI)](https://docs.microsoft.com/cli/azure/)。
@@ -38,7 +38,7 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 + [Linux 使用者](https://command-not-found.com/idevicesyslog)
 
 ### Trace 轉換工具
-若要在 **macOS/Linux** 上使用 **「Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Trace 轉換工具](https://perfetto.dev/docs/quickstart/traceconv)。
+若要在 **macOS/Linux** 上使用 **「Android 裝置系統追蹤」** 及 **「特定 Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Trace 轉換工具](https://perfetto.dev/docs/quickstart/traceconv)。
 
 ### Xcode 命令列工具
 若要在 **macOS** 上使用 **「Apple 裝置模擬器日誌」** 及 **「特定 Apple 裝置模擬器日誌」** 日誌類型，您必須先安裝 [Xcode 命令列工具](https://developer.apple.com/xcode/)。若您透過安裝 Xcode 以安裝 Xcode 命令列工具，您需要將 **「Xcode > Settings > Locations > Command Line Tools」** 設定為 **「Xcode」** 來啟用。
@@ -194,7 +194,7 @@ ULogViewer 是 Carina Studio 在 [MIT](https://github.com/carina-studio/ULogView
 
 應用程式圖示修改自 [Freepik](https://www.freepik.com/) 提供並發布於 [Flaticon](https://www.flaticon.com/) 之圖示。
 
-內建字型 **「Roboto」** 及 **「Roboto Mono」** 在 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 授權下使用及發佈，**「IBM Plex Mono」** 及 **「Source Code Pro」** 在 [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL) 授權下使用及發佈。
+內建字型 **「Roboto」** 及 **「Roboto Mono」** 在 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 授權下使用及發佈，**「IBM Plex Mono」** 、 **「Noto Sans SC」** 、 **「Noto Sans TC」** 及 **「Source Code Pro」** 在 [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL) 授權下使用及發佈。
 
 載入至 ULogViewer 或由 ULogViewer 儲存之日誌的授權與著作權不受本協議之約束。您必須自行注意及負責日誌的授權與著作權。
 
