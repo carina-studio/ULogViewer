@@ -71,6 +71,87 @@ partial class SessionView
     public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartToolTipForegroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartToolTipForegroundPaint), new SolidColorPaint());
     
     
+    // Legend of log chart.
+    class LogChartLegend : IChartLegend<SkiaSharpDrawingContext>
+    {
+        // Fields.
+        StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
+        readonly SessionView sessionView;
+        
+        // Constructor.
+        public LogChartLegend(SessionView sessionView)
+        {
+            this.sessionView = sessionView;
+        }
+        
+        // Draw.
+        public void Draw(Chart<SkiaSharpDrawingContext> chart)
+        {
+            var container = this.container;
+            if (container is null)
+                return;
+            var position = chart.GetLegendPosition();
+            container.X = position.X;
+            container.Y = position.Y;
+            chart.AddVisual(container);
+        }
+
+        // Measure.
+        public LvcSize Measure(Chart<SkiaSharpDrawingContext> chart)
+        {
+            // create container
+            var sessionView = this.sessionView;
+            var logChart = sessionView.logChart;
+            var container = this.container ?? new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(it =>
+            {
+                var padding = sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Legend.Padding");
+                it.HorizontalAlignment = Align.Start;
+                it.Orientation = ContainerOrientation.Vertical;
+                it.Padding = new(padding.Left, padding.Top, padding.Right, padding.Bottom);
+                it.VerticalAlignment = Align.Middle;
+                this.container = it;
+            });
+            
+            // remove old visuals
+            var containerChildViews = container.Children;
+            for (var i = containerChildViews.Count - 1; i >= 0; --i)
+            {
+                chart.RemoveVisual(containerChildViews[i]);
+                containerChildViews.RemoveAt(i);
+            }
+            
+            // add visuals
+            var itemMargin = sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Legend.Item.Margin").Let(it =>
+                new Padding(it.Left, it.Top, it.Right, it.Bottom));
+            foreach (var series in chart.Series.Where(it => it.IsVisible && it.IsVisibleAtLegend))
+            {
+                var sketch = series.GetMiniaturesSketch().AsDrawnControl(LogChartLegendZIndex + 1);
+                containerChildViews.Add(new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(it =>
+                {
+                    it.Children.Add(sketch);
+                    it.Children.Add(new LabelVisual().Also(it =>
+                    {
+                        it.HorizontalAlignment = Align.Start;
+                        it.Padding = itemMargin;
+                        it.Paint = logChart.LegendTextPaint;
+                        if (series.Tag is DisplayableLogChartSeries displayableLogChartSeries
+                            && displayableLogChartSeries.Source is not null)
+                        {
+                            it.Text = sessionView.GetLogChartSeriesDisplayName(displayableLogChartSeries.Source);
+                        }
+                        it.TextSize = logChart.LegendTextSize ?? 12.0;
+                        it.VerticalAlignment = Align.Start;
+                    }));
+                    it.Orientation = ContainerOrientation.Horizontal;
+                }));
+            }
+            
+            // measure
+            return container.Measure(chart);
+        }
+    }
+    
+    
     // Tool tip of log chart.
     class LogChartToolTip : IChartTooltip<SkiaSharpDrawingContext>
     {
