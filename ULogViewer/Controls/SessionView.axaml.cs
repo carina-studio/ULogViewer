@@ -531,6 +531,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerPressedEvent, this.OnLogChartPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerReleasedEvent, this.OnLogChartPointerReleased, RoutingStrategies.Tunnel);
 				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
+				it.Tooltip = new LogChartToolTip(this);
 				this.logChartXAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 				this.logChartYAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 			});

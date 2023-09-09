@@ -19,6 +19,7 @@ using CarinaStudio.Windows.Input;
 using LiveChartsCore;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
+using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Avalonia;
@@ -26,6 +27,8 @@ using LiveChartsCore.SkiaSharpView.Drawing;
 using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using LiveChartsCore.SkiaSharpView.VisualElements;
+using LiveChartsCore.VisualElements;
 using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using System;
@@ -36,6 +39,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CarinaStudio.AppSuite.Media;
+using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -65,6 +69,124 @@ partial class SessionView
     /// Define <see cref="LogChartToolTipForegroundPaint"/> property.
     /// </summary>
     public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartToolTipForegroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartToolTipForegroundPaint), new SolidColorPaint());
+    
+    
+    // Tool tip of log chart.
+    class LogChartToolTip : IChartTooltip<SkiaSharpDrawingContext>
+    {
+        // Fields.
+        StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
+        readonly SessionView sessionView;
+        
+        // Constructor.
+        public LogChartToolTip(SessionView sessionView)
+        {
+            this.sessionView = sessionView;
+        }
+        
+        // Hide.
+        public void Hide(Chart<SkiaSharpDrawingContext> chart)
+        {
+            if (this.container is not null)
+            {
+                chart.RemoveVisual(this.container);
+                var containerChildViews = this.container.Children;
+                for (var i = containerChildViews.Count - 1; i >= 0; --i)
+                {
+                    chart.RemoveVisual(containerChildViews[i]);
+                    containerChildViews.RemoveAt(i);
+                }
+            }
+        }
+        
+        // Show
+        public void Show(IEnumerable<ChartPoint> foundPoints, Chart<SkiaSharpDrawingContext> chart)
+        {
+            // creat container
+            var sessionView = this.sessionView;
+            var logChart = sessionView.logChart;
+            var container = this.container ?? new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(container =>
+            {
+                var cornerRadius = sessionView.FindResourceOrDefault<CornerRadius>("CornerRadius/ToolTip");
+                var padding = this.sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Padding");
+                container.BackgroundGeometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
+                container.BackgroundPaint = logChart.TooltipBackgroundPaint;
+                container.HorizontalAlignment = Align.Start;
+                container.Orientation = ContainerOrientation.Vertical;
+                container.Padding = new(padding.Left, padding.Top, padding.Right, padding.Bottom);
+                container.VerticalAlignment = Align.Middle;
+                this.container = container;
+            });
+            
+            // remove unneeded child views
+            var containerChildViews = container.Children;
+            for (var i = containerChildViews.Count - 1; i >= 0; --i)
+            {
+                chart.RemoveVisual(containerChildViews[i]);
+                containerChildViews.RemoveAt(i);
+            }
+            
+            // show information of data points
+            var isFirstPoint = true;
+            var itemMargin = sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Item.Margin");
+            foreach (var point in foundPoints)
+            {
+                var series = (ICartesianSeries<SkiaSharpDrawingContext>)point.Context.Series;
+                var sketch = series.GetMiniaturesSketch().AsDrawnControl(LogChartToolTipZIndex + 1);
+                if (isFirstPoint)
+                {
+                    isFirstPoint = false;
+                    if ((sessionView.DataContext as Session)?.LogChart.ChartType != LogChartType.ValueStatisticBars)
+                    {
+                        containerChildViews.Add(new LabelVisual().Also(it =>
+                        {
+                            it.HorizontalAlignment = Align.Start;
+                            it.Paint = logChart.TooltipTextPaint;
+                            it.Text = sessionView.GetLogChartXToolTipLabel(point);
+                            it.TextSize = logChart.TooltipTextSize ?? 12.0;
+                            it.VerticalAlignment = Align.Start;
+                        }));
+                    }
+                }
+                containerChildViews.Add(new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(pointContainer =>
+                {
+                    pointContainer.Children.Add(sketch);
+                    pointContainer.Children.Add(new LabelVisual().Also(it =>
+                    {
+                        it.HorizontalAlignment = Align.Start;
+                        it.Padding = new(itemMargin.Left, itemMargin.Top, itemMargin.Right, itemMargin.Bottom);
+                        it.Paint = logChart.TooltipTextPaint;
+                        it.Text = (series.Tag as DisplayableLogChartSeries)?.Let(it => 
+                            sessionView.GetLogChartYToolTipLabel(it, point, true)) 
+                                  ?? point.Coordinate.PrimaryValue.ToString(CultureInfo.InvariantCulture);
+                        it.TextSize = logChart.TooltipTextSize ?? 12.0;
+                        it.VerticalAlignment = Align.Start;
+                    }));
+                    pointContainer.HorizontalAlignment = Align.Middle;
+                    pointContainer.Orientation = ContainerOrientation.Horizontal;
+                    pointContainer.VerticalAlignment = Align.Middle;
+                }));
+            }
+            
+            // show container
+            var chartSize = chart.View.ControlSize;
+            var offset = (float)sessionView.FindResourceOrDefault<double>("Double/SessionView.LogChart.ToolTip.Offset");
+            var containerSize = container.Measure(chart);
+            var containerPosition = foundPoints.GetTooltipLocation(new(containerSize.Width, containerSize.Height + offset + offset), chart);
+            if (containerPosition.Y < -offset)
+            {
+                var shift = (-offset - containerPosition.Y);
+                var maxShift = Math.Max(0, chartSize.Height + offset - (containerPosition.Y + containerSize.Height));
+                containerPosition.Y += Math.Min(shift, maxShift);
+            }
+            else if (containerPosition.Y + containerSize.Height > chartSize.Height + offset)
+                containerPosition.Y = chartSize.Height + offset - containerSize.Height;
+            container.X = containerPosition.X;
+            container.Y = containerPosition.Y + offset;
+            chart.RemoveVisual(container);
+            chart.AddVisual(container);
+        }
+    }
 
 
     // Extended SolidColorPaint.
@@ -91,6 +213,8 @@ partial class SessionView
     const double LogBarChartXCoordinateScaling = 1.3;
     const long DurationToDropClickEvent = 500;
     const double PointerDistanceToDropClickEvent = 5;
+    const int LogChartLegendZIndex = 89999;
+    const int LogChartToolTipZIndex = 99999;
     const int LogChartXAxisMinValueCount = 10;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
@@ -127,8 +251,10 @@ partial class SessionView
         SKColor.FromHsl(260, 100, 50), // Purple
         SKColor.FromHsl(315, 100, 40), // Magenta
     };
+    // ReSharper disable IdentifierTypo
     static SKTypeface? NotoSansSCSKTypeFace;
     static SKTypeface? NotoSansTCSKTypeFace;
+    // ReSharper restore IdentifierTypo
     static readonly SettingKey<bool> PromptWhenMaxTotalLogSeriesValueCountReachedKey = new("SessionView.PromptWhenMaxTotalLogSeriesValueCountReached", true);
 
 
@@ -245,43 +371,6 @@ partial class SessionView
             _ => SKBlendMode.Multiply,
         };
         
-        // prepare tooltip generator
-        string FormatXToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
-        {
-            return point.Model?.Log?.Let(log =>
-                log.TimestampString 
-                ?? log.TimeSpanString
-                ?? log.BeginningTimestampString
-                ?? log.BeginningTimeSpanString
-                ?? log.EndingTimestampString
-                ?? log.EndingTimeSpanString
-            )?.ToString() ?? this.Application.GetStringNonNull("SessionView.LogChart.NoLogTimestamp");
-        }
-        string FormatYToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point)
-        {
-            var source = series.Source;
-            var viewModel = (this.DataContext as Session)?.LogChart;
-            var buffer = new StringBuilder(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString(this.Application.CultureInfo));
-            switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
-            {
-                case LogChartValueGranularity.Byte:
-                case LogChartValueGranularity.Kilobytes:
-                case LogChartValueGranularity.Megabytes:
-                case LogChartValueGranularity.Gigabytes:
-                    break;
-                default:
-                    source?.Quantifier.Let(it =>
-                    {
-                        if (string.IsNullOrEmpty(it))
-                            return;
-                        buffer.Append(' ');
-                        buffer.Append(it);
-                    });
-                    break;
-            }
-            return buffer.ToString();
-        }
-        
         // create series
         var chartType = viewModel.ChartType;
         switch (chartType)
@@ -301,9 +390,10 @@ partial class SessionView
                     Padding = 0.5,
                     Rx = 0,
                     Ry = 0,
+                    Tag = series,
                     Values = series.Values,
-                    XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : FormatXToolTipLabel,
-                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                    XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : this.GetLogChartXToolTipLabel,
+                    YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
             case LogChartType.ValueStackedAreas:
             case LogChartType.ValueStackedAreasWithDataPoints:
@@ -336,9 +426,10 @@ partial class SessionView
                     {
                         IsAntialias = true,
                     },
+                    Tag = series,
                     Values = series.Values,
-                    XToolTipLabelFormatter = FormatXToolTipLabel,
-                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                    XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
+                    YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
             case LogChartType.ValueStackedBars:
                 this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
@@ -354,9 +445,10 @@ partial class SessionView
                     Padding = 0,
                     Rx = 0,
                     Ry = 0,
+                    Tag = series,
                     Values = series.Values,
-                    XToolTipLabelFormatter = FormatXToolTipLabel,
-                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                    XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
+                    YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
             default:
                 this.logChartXCoordinateScaling = 1.0;
@@ -413,9 +505,10 @@ partial class SessionView
                             IsAntialias = true,
                         },
                     },
+                    Tag = series,
                     Values = series.Values,
-                    XToolTipLabelFormatter = FormatXToolTipLabel,
-                    YToolTipLabelFormatter = FormatYToolTipLabel,
+                    XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
+                    YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
         }
     }
@@ -524,6 +617,69 @@ partial class SessionView
             seriesNameBuffer.Append(')');
         });
         return seriesNameBuffer.ToString();
+    }
+    
+    
+    // Get X label of tool tip of log chart.
+    string GetLogChartXToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point) =>
+        this.GetLogChartXToolTipLabel(point.Model);
+    string GetLogChartXToolTipLabel(ChartPoint point)
+    {
+        if (point.Context.Series is not ICartesianSeries<SkiaSharpDrawingContext> cartesianSeries
+            || cartesianSeries.Tag is not DisplayableLogChartSeries series)
+        {
+            return "";
+        }
+        var index = (int)(point.Coordinate.SecondaryValue / this.logChartXCoordinateScaling + 0.5);
+        if (index < 0 || index >= series.Values.Count)
+            return "";
+        return this.GetLogChartXToolTipLabel(series.Values[index]);
+    }
+    string GetLogChartXToolTipLabel(DisplayableLogChartSeriesValue? value)
+    {
+        return value?.Log?.Let(log =>
+            log.TimestampString 
+            ?? log.TimeSpanString
+            ?? log.BeginningTimestampString
+            ?? log.BeginningTimeSpanString
+            ?? log.EndingTimestampString
+            ?? log.EndingTimeSpanString
+        )?.ToString() ?? this.Application.GetStringNonNull("SessionView.LogChart.NoLogTimestamp");
+    }
+    
+    
+    // Get Y label of tool tip of log chart.
+    string GetLogChartYToolTipLabel<TVisual>(DisplayableLogChartSeries series, ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point, bool includeSeriesName) =>
+        this.GetLogChartYToolTipLabel(series, (ChartPoint)point, includeSeriesName);
+    string GetLogChartYToolTipLabel(DisplayableLogChartSeries series, ChartPoint point, bool includeSeriesName)
+    {
+        var source = series.Source;
+        var viewModel = (this.DataContext as Session)?.LogChart;
+        var buffer = new StringBuilder();
+        if (includeSeriesName && source is not null)
+        {
+            buffer.Append(this.GetLogChartSeriesDisplayName(source));
+            buffer.Append(": ");
+        }
+        buffer.Append(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString(this.Application.CultureInfo));
+        switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
+        {
+            case LogChartValueGranularity.Byte:
+            case LogChartValueGranularity.Kilobytes:
+            case LogChartValueGranularity.Megabytes:
+            case LogChartValueGranularity.Gigabytes:
+                break;
+            default:
+                source?.Quantifier.Let(it =>
+                {
+                    if (string.IsNullOrEmpty(it))
+                        return;
+                    buffer.Append(' ');
+                    buffer.Append(it);
+                });
+                break;
+        }
+        return buffer.ToString();
     }
 
 
@@ -1387,16 +1543,16 @@ partial class SessionView
         {
             var color = brush.Color;
             var skColor = new SKColor(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5));
-            this.SetValue(LogChartLegendBackgroundPaintProperty, new SolidColorPaint(skColor));
-            this.SetValue(LogChartToolTipBackgroundPaintProperty, new SolidColorPaint(skColor));
+            this.SetValue(LogChartLegendBackgroundPaintProperty, new SolidColorPaint(skColor) { ZIndex = LogChartLegendZIndex });
+            this.SetValue(LogChartToolTipBackgroundPaintProperty, new SolidColorPaint(skColor) { ZIndex = LogChartToolTipZIndex});
         });
         this.Application.FindResourceOrDefault<ISolidColorBrush?>("ToolTipForeground")?.Let(brush =>
         {
             var typeface = this.SelectSKTypeface();
             var color = brush.Color;
             var skColor = new SKColor(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5));
-            this.SetValue(LogChartLegendForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface });
-            this.SetValue(LogChartToolTipForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface });
+            this.SetValue(LogChartLegendForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface, ZIndex = LogChartLegendZIndex + 1 });
+            this.SetValue(LogChartToolTipForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface, ZIndex = LogChartToolTipZIndex + 1 });
         });
     }
     
