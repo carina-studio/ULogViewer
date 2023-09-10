@@ -46,7 +46,7 @@ partial class SessionView
 	readonly ContextMenu createLogAnalysisRuleSetMenu;
     bool isPointerPressedOnLogAnalysisResultListBox;
     readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
-    IDisposable logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
+    IDisposable? logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
     readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
     ScrollViewer? logAnalysisResultScrollViewer;
     readonly ToggleButton logAnalysisRuleSetsButton;

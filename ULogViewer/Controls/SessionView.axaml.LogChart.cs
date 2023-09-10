@@ -1550,9 +1550,6 @@ partial class SessionView
     {
         if (this.areLogChartAxesReady)
             return;
-        if (this.DataContext is not Session session)
-            return;
-        var viewModel = session.LogChart;
         var app = this.Application;
         var axisFontSize = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.FontSize", 10.0);
         var axisWidth = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.Width", 2.0);
@@ -1571,19 +1568,20 @@ partial class SessionView
         });
         this.logChartXAxis.Let(axis =>
         {
-            axis.IsInverted = viewModel.IsXAxisInverted;
+            axis.IsInverted = (this.DataContext as Session)?.LogChart.IsXAxisInverted ?? false;
             axis.LabelsPaint = null;
             axis.TextSize = (float)axisFontSize;
             axis.ZeroPaint = null;
         });
         this.logChartYAxis.Let(axis =>
         {
+            var viewModel = (this.DataContext as Session)?.LogChart;
             var textPaint = textBrush.Let(brush =>
             {
                 var color = brush.Color;
                 return new SolidColorPaint(new(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5)));
             });
-            axis.IsInverted = viewModel.IsYAxisInverted;
+            axis.IsInverted = viewModel?.IsYAxisInverted ?? false;
             axis.Labeler = value =>
             {
                 if (this.DataContext is Session session)
@@ -1591,7 +1589,7 @@ partial class SessionView
                 return value.ToString(this.Application.CultureInfo);
             };
             axis.LabelsPaint = textPaint;
-            axis.Name = viewModel.YAxisName ?? "";
+            axis.Name = viewModel?.YAxisName ?? "";
             axis.NamePaint = string.IsNullOrWhiteSpace(axis.Name)
                 ? null
                 : new SolidColorPaint(textPaint.Color)

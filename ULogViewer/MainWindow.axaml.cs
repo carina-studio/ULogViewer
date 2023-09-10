@@ -385,8 +385,26 @@ namespace CarinaStudio.ULogViewer
 				this.Logger.LogTrace("[Performance] Took {duration} ms to detach session from tab item", time - startTime);
 				startTime = time;
             }
-			(tabItem.Content as Control)?.Let(it => it.DataContext = null);
-			(tabItem.Header as Control)?.Let(it => it.DataContext = null);
+			(tabItem.Content as Control)?.Let(it =>
+			{
+				if (it is SessionView sessionView)
+				{
+					if (this.sessionViewPropertyObserverTokens.TryGetValue(sessionView, out var tokens))
+					{
+						this.sessionViewPropertyObserverTokens.Remove(sessionView);
+						foreach (var token in tokens)
+							token.Dispose();
+					}
+					sessionView.DataContext = null;
+				}
+				it.DataContext = null;
+				tabItem.Content = null;
+			});
+			(tabItem.Header as Control)?.Let(it =>
+			{
+				it.DataContext = null;
+				tabItem.Header = null;
+			});
 			if (startTime > 0)
 				this.Logger.LogTrace("[Performance] Took {duration} ms to detach session from session view and header", this.stopwatch.ElapsedMilliseconds - startTime);
 		}
@@ -950,20 +968,6 @@ namespace CarinaStudio.ULogViewer
 						{
 							this.DisposeSessionTabItem(this.tabItems[startIndex + i].AsNonNull());
 							var startTime = this.stopwatch.IsRunning ? this.stopwatch.ElapsedMilliseconds : 0;
-							var tabItem = this.tabItems[startIndex + i];
-							if (tabItem.Content is SessionView sessionView)
-							{
-								if (this.sessionViewPropertyObserverTokens.TryGetValue(sessionView, out var tokens))
-								{
-									this.sessionViewPropertyObserverTokens.Remove(sessionView);
-									foreach (var token in tokens)
-										token.Dispose();
-								}
-								sessionView.DataContext = null;
-							}
-							if (tabItem.Header is Control header)
-								header.DataContext = null;
-							tabItem.DataContext = null;
 							this.tabItems.RemoveAt(startIndex + i);
 							if (startTime > 0)
 								this.Logger.LogTrace("[Performance] Took {duration} ms to remove tab from position {index}", this.stopwatch.ElapsedMilliseconds - startTime, startIndex + i);

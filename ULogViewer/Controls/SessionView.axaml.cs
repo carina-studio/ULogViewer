@@ -241,7 +241,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ContextMenu logActionMenu;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
-		IDisposable logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
+		IDisposable? logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly List<ColumnDefinition> logHeaderColumns = new();
 		readonly Control logHeaderContainer;
 		readonly Grid logHeaderGrid;
@@ -257,7 +257,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton logsShowingModeButton;
 		readonly ContextMenu logsShowingModeMenu;
 		readonly Avalonia.Controls.ListBox markedLogListBox;
-		IDisposable markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
+		IDisposable? markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
 		readonly double minLogTextFilterItemsPanelWidth;
 		readonly ToggleButton otherActionsButton;
@@ -279,7 +279,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton testButton;
 		readonly ContextMenu testMenu;
 		readonly AppSuite.Controls.ListBox timestampCategoryListBox;
-		IDisposable timestampCategoryPanelVisibilityObserverToken = EmptyDisposable.Default;
+		IDisposable? timestampCategoryPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly Border toolBarContainer;
 		readonly Panel toolBarLogActionItemsPanel;
 		readonly Panel toolBarLogTextFilterItemsPanel;
@@ -577,7 +577,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
-				it.GetObservable(TextBox.TextProperty).Subscribe(text =>
+				it.GetObservable(TextBox.TextProperty).Subscribe(_ =>
 				{
 					if (!this.isInitializing)
 						this.OnLogTextFilterTextBoxTextChanged();
@@ -2429,10 +2429,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logAnalysisResultListBox.ItemsSource = null;
 			
 			// detach from properties
-			this.logAnalysisPanelVisibilityObserverToken.Dispose();
-			this.logFilesPanelVisibilityObserverToken.Dispose();
-			this.markedLogsPanelVisibilityObserverToken.Dispose();
-			this.timestampCategoryPanelVisibilityObserverToken.Dispose();
+			this.logAnalysisPanelVisibilityObserverToken = this.logAnalysisPanelVisibilityObserverToken.DisposeAndReturnNull();
+			this.logFilesPanelVisibilityObserverToken = this.logFilesPanelVisibilityObserverToken.DisposeAndReturnNull();
+			this.markedLogsPanelVisibilityObserverToken = this.markedLogsPanelVisibilityObserverToken.DisposeAndReturnNull();
+			this.timestampCategoryPanelVisibilityObserverToken = this.timestampCategoryPanelVisibilityObserverToken.DisposeAndReturnNull();
 
 			// detach from commands
 			this.canAddLogFilesToSession.Unbind();
