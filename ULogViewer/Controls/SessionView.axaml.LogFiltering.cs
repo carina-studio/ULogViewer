@@ -276,6 +276,24 @@ partial class SessionView
         if ((sender as LogFilteringViewModel)?.IsFilteringNeeded == true)
             this.StartKeepingCurrentDisplayedLogRange();
     }
+
+
+    // Called when text of log text filter input changed.
+    void OnLogTextFilterTextBoxTextChanged()
+    {
+        // [Workaround] Prevent raising IndexOutOfRangeException by TextBox
+        if (!this.logTextFilterTextBox.IsFocused)
+        {
+            var focusedElement = this.attachedWindow?.FocusManager?.GetFocusedElement();
+            this.SynchronizationContext.Post(() =>
+            {
+                this.logTextFilterTextBox.Focus();
+                this.logTextFilterTextBox.SelectAll();
+                if (focusedElement is not TextBox)
+                    this.SynchronizationContext.Post(() => this.logListBox.Focus());
+            });
+        }
+    }
     
     
     // Called when list of predefined log text filters changed.

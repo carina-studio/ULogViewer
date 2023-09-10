@@ -577,6 +577,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
+				it.GetObservable(TextBox.TextProperty).Subscribe(text =>
+				{
+					if (!this.isInitializing)
+						this.OnLogTextFilterTextBoxTextChanged();
+				});
 				it.ValidationDelay = this.CommitLogFilterParamsDelay;
 				if (Platform.IsMacOS)
 					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
@@ -3366,6 +3371,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			(this.DataContext as Session)?.LogSelection.Let(it => it.SelectedLogProperty = null);
 			this.canCopyLogProperty.Update(false);
 			this.canShowLogProperty.Update(false);
+			
+			// focus to list box
+			this.logListBox.Focus();
 		}
 
 
