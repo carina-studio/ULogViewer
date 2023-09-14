@@ -154,6 +154,8 @@ namespace CarinaStudio.ULogViewer
 		// Constructor.
 		public App()
 		{
+			LogToConsole("Initialize App instance");
+			
 			// setup name
 			this.Name = "ULogViewer";
 
@@ -443,6 +445,8 @@ namespace CarinaStudio.ULogViewer
 		// Prepare starting.
 		protected override async Task OnPrepareStartingAsync()
 		{
+			LogToConsole("Prepare starting (App)");
+			
 			// setup log output rules
 			NLog.LogManager.Configuration.AddTarget(new NLog.Targets.MethodCallTarget("methodCall").Also(it =>
 			{
