@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<AssemblyVersion>3.1.0.000</AssemblyVersion>
-		<Version>3.1.0.000</Version>
+		<AssemblyVersion>3.1.0.912</AssemblyVersion>
+		<Version>3.1.0.912 </Version>
 		<OutputType>WinExe</OutputType>
 		<DebugType>embedded</DebugType>
 		<RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
@@ -67,9 +67,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.3.34.905-dev" />
-		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.3.34.905-dev" />
-		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.3.34.905-dev" />
+		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="2.3.36.913-dev" />
+		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="2.3.36.913-dev" />
+		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="2.3.36.913-dev" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.0.1.1" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-beta.950" />
