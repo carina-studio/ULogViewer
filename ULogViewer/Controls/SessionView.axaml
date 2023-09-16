@@ -992,6 +992,7 @@
 				</asControls:ListBox.Resources>
 				<asControls:ListBox.Styles>
 					<Style Selector="ListBoxItem">
+						<Setter Property="ClipToBounds" Value="False"/>
 						<Setter Property="Margin" Value="0,0,20,0"/>
 					</Style>
 				</asControls:ListBox.Styles>

@@ -1828,6 +1828,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 				var itemGrid = new Grid().Also(it =>
 				{
+					it.ClipToBounds = false;
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
 				});
@@ -1938,23 +1939,20 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						propertyView = new DockPanel().Also(it =>
 						{
-							it.Children.Add(new Border().Also(border =>
+							it.Background = Brushes.Transparent;
+							it.Children.Add(new Avalonia.Controls.Image().Also(multiLineIcon =>
 							{
-								DockPanel.SetDock(border, Dock.Left);
-								border.Background = Brushes.Transparent;
-								border.Child = new Avalonia.Controls.Image().Also(multiLineIcon =>
-								{
-									multiLineIcon.Classes.Add("Icon");
-									multiLineIcon.IsHitTestVisible = true;
-									multiLineIcon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/MultiLine");
-								});
-								border.Height = markIndicatorSize;
-								border.Margin = multiLineIndicatorMargin;
-								border.Bind(IsVisibleProperty, new Binding { Path = $"HasExtraLinesOf{logProperty.Name}" });
-								border.Opacity = multiLineIndicatorOpacity;
-								border.Width = markIndicatorSize;
-								border.BindToResource(ToolTip.TipProperty, "String/SessionView.MultiLineLogProperty");
-								border.VerticalAlignment = VerticalAlignment.Center;
+								DockPanel.SetDock(multiLineIcon, Dock.Left);
+								multiLineIcon.Classes.Add("Icon");
+								multiLineIcon.Height = markIndicatorSize;
+								multiLineIcon.IsHitTestVisible = true;
+								multiLineIcon.Margin = multiLineIndicatorMargin;
+								multiLineIcon.Bind(IsVisibleProperty, new Binding { Path = $"HasExtraLinesOf{logProperty.Name}" });
+								multiLineIcon.Opacity = multiLineIndicatorOpacity;
+								multiLineIcon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/MultiLine");
+								multiLineIcon.Width = markIndicatorSize;
+								multiLineIcon.BindToResource(ToolTip.TipProperty, "String/SessionView.MultiLineLogProperty");
+								multiLineIcon.VerticalAlignment = VerticalAlignment.Center;
 							}));
 							it.Children.Add(propertyView);
 							it.HorizontalAlignment = HorizontalAlignment.Left;
@@ -1966,6 +1964,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.BorderThickness = itemBorderThickness;
 						it.Child = propertyView;
 						it.CornerRadius = itemCornerRadius;
+						it.Margin = new(-itemBorderThickness.Left / 2, -itemBorderThickness.Top / 2, -itemBorderThickness.Right / 2, -itemBorderThickness.Bottom / 2);
 						it.Tag = logProperty;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
 						it.GetObservable(IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
@@ -2005,32 +2004,30 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						case nameof(DisplayableLog.ProcessId):
 						case nameof(DisplayableLog.ThreadId):
-							propertyView = new Border().Also(it =>
+						{
+							var isSelectedValuePropertyName = logProperty.Name switch
 							{
-								var isSelectedValuePropertyName = logProperty.Name switch
-								{
-									nameof(DisplayableLog.ProcessId) => nameof(DisplayableLog.IsProcessIdSelected),
-									nameof(DisplayableLog.ThreadId) => nameof(DisplayableLog.IsThreadIdSelected),
-									_ => "",
-								};
-								it.Bind(Border.BackgroundProperty, new MultiBinding().Also(binding =>
-								{
-									binding.Converter = this.selectableValueLogItemBackgroundConverter;
-									binding.Bindings.Add(new Binding { Path = isSelectedValuePropertyName });
-									binding.Bindings.Add(new Binding
-									{ 
-										Path = nameof(ListBoxItem.IsSelected), 
-										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
-									});
-									binding.Bindings.Add(new Binding
-									{ 
-										Path = nameof(IsPointerOver), 
-										RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
-									});
-								}));
-								it.Child = propertyView;
-							});
+								nameof(DisplayableLog.ProcessId) => nameof(DisplayableLog.IsProcessIdSelected),
+								nameof(DisplayableLog.ThreadId) => nameof(DisplayableLog.IsThreadIdSelected),
+								_ => "",
+							};
+							propertyView.Bind(Border.BackgroundProperty, new MultiBinding().Also(binding =>
+							{
+								binding.Converter = this.selectableValueLogItemBackgroundConverter;
+								binding.Bindings.Add(new Binding { Path = isSelectedValuePropertyName });
+								binding.Bindings.Add(new Binding
+								{ 
+									Path = nameof(ListBoxItem.IsSelected), 
+									RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
+								});
+								binding.Bindings.Add(new Binding
+								{ 
+									Path = nameof(IsPointerOver), 
+									RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
+								});
+							}));
 							break;
+						}
 					}
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
@@ -2935,6 +2932,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
 			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
+			
+			// invalidate resources
+			this.selectableValueLogItemBackgroundBrush = null;
 
 			// check settings
 			this.SetValue(ShowHelpButtonOnLogTextFilterProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter));
