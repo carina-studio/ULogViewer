@@ -649,15 +649,7 @@
 					<StackPanel Name="toolBarOtherLogFilterItemsPanel" Orientation="Horizontal">
 
 						<!-- Level filter -->
-						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="false" ItemsSource="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
-							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding #root.ValidLogLevels.Count}" ComparisonCondition="GreaterThan" Value="1">
-									<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="True"/>
-								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding #root.ValidLogLevels.Count}" ComparisonCondition="LessThanOrEqual" Value="1">
-									<iaCore:ChangePropertyAction PropertyName="IsVisible" Value="False"/>
-								</iaCore:DataTriggerBehavior>
-							</ia:Interaction.Behaviors>
+						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">

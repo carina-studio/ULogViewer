@@ -4114,11 +4114,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ResetValue(LastLogReadingPreconditionProperty);
 			this.ResetValue(MaxLogFileCountProperty);
 			this.UpdateIsLogsWritingAvailable(null);
-			this.UpdateValidLogLevels();
 
 			// clear profile
 			this.Logger.LogWarning("Reset log profile '{profileName}'", profile.Name);
 			this.SetValue(LogProfileProperty, null);
+			
+			// clear valid log levels
+			this.UpdateValidLogLevels();
 
 			// dispose log readers
 			this.DisposeLogReaders();
