@@ -1814,6 +1814,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var levelForegroundBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Level.Foreground");
 			var selectionIndicatorBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background");
 			var iconBrush = app.FindResourceOrDefault<IBrush>("Brush/Icon");
+			var propertyViewsShowingDelay = Math.Max(0, app.Configuration.GetValueOrDefault(ConfigurationKeys.LogPropertyViewsShowingDelay));
 			
 			// create template
 			return new FuncDataTemplate(typeof(DisplayableLog), (_, _) =>
@@ -1826,24 +1827,45 @@ namespace CarinaStudio.ULogViewer.Controls
 						Path = nameof(DisplayableLog.MarkedColor)
 					});
 				});
+				var propertyViews = new Control[logPropertyCount];
 				var itemGrid = new Grid().Also(it =>
 				{
+					if (propertyViewsShowingDelay > 0)
+					{
+						var addPropertyViewsAction = new ScheduledAction(() =>
+						{
+							for (var i = propertyViews.Length - 1; i >= 0; --i)
+								it.Children.Add(propertyViews[i]);
+						});
+						it.AttachedToLogicalTree += (_, _) => { addPropertyViewsAction.Schedule(propertyViewsShowingDelay); };
+						it.DetachedFromLogicalTree += (_, _) =>
+						{
+							addPropertyViewsAction.Cancel();
+							it.Children.RemoveRange(1, it.Children.Count - 1); // no need to remove placeholder view at position 0
+						};
+					}
 					it.ClipToBounds = false;
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
 				});
+				
+				// placeholder view at position 0
+				itemPanel.Children.Add(new Border().Also(border =>
+				{
+					border.BorderThickness = itemBorderThickness;
+					border.Child = new Avalonia.Controls.TextBlock().Also(it =>
+					{
+						it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+						it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
+						it.Padding = propertyPadding;
+						it.Text = "A";
+					});
+					border.Margin = new(-itemBorderThickness.Left / 2, -itemBorderThickness.Top / 2, -itemBorderThickness.Right / 2, -itemBorderThickness.Bottom / 2);
+					border.Opacity = 0;
+					border.VerticalAlignment = VerticalAlignment.Center;
+				}));
 
 				// property views
-				new Avalonia.Controls.TextBlock().Let(it =>
-				{
-					// empty view to reserve height of item
-					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
-					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
-					it.Opacity = 0;
-					it.Padding = propertyPadding;
-					it.Text = " ";
-					itemGrid.Children.Add(it);
-				});
 				var propertyColumns = new ColumnDefinition[logPropertyCount];
 				var propertyColumnWidthBindingTokens = new IDisposable?[logPropertyCount];
 				for (var i = 0; i < logPropertyCount; ++i)
@@ -2030,7 +2052,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 					}
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
-					itemGrid.Children.Add(propertyView);
+					if (propertyViewsShowingDelay > 0)
+						propertyViews[logPropertyIndex] = propertyView;
+					else
+						itemGrid.Children.Add(propertyView);
 				}
 
 				// color indicator

@@ -60,6 +60,10 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<double> LogAnalysisScriptSetEditorDialogInitWidthRatio = new(nameof(LogAnalysisScriptSetEditorDialogInitWidthRatio), 0.6);
     /// <summary>
+    /// Delay time in milliseconds to show view of log properties.
+    /// </summary>
+    public static readonly SettingKey<int> LogPropertyViewsShowingDelay = new(nameof(LogPropertyViewsShowingDelay), 33);
+    /// <summary>
     /// Size of string cache for log reading in MB.
     /// </summary>
     public static readonly SettingKey<int> LogReadingStringCacheSizeInMB = new(nameof(LogReadingStringCacheSizeInMB), 8);
