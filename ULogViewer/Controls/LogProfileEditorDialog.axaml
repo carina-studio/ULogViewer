@@ -37,7 +37,7 @@
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+		<Border Classes="Dialog_ControlButtonsPanel" BoxShadow="{StaticResource BoxShadows/None}" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
@@ -45,135 +45,180 @@
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
+		
+		<!-- Navigation bar -->
+		<Border Classes="ToolBar" BorderBrush="{DynamicResource Brush/ToolBar.Border}" BorderThickness="0,0,1,0" DockPanel.Dock="Left">
+			<asControls:ToolBarScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+				<StackPanel>
+					
+					<!-- Common -->
+					<ToggleButton Name="commonPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.Common}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+					<!-- Log reading -->
+					<ToggleButton Name="logReadingPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.LogReading}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Read}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Read.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+					<!-- Log displaying -->
+					<ToggleButton Name="logDisplayingPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.LogDisplaying}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+					<!-- Log writing -->
+					<ToggleButton Name="logWritingPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.LogWriting}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Write}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Write.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+				</StackPanel>
+			</asControls:ToolBarScrollViewer>
+		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="baseScrollViewer" Classes="Dialog_ContentPanel" HorizontalScrollBarVisibility="Disabled">
-			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
+		<Panel>
+			<ScrollViewer Name="baseScrollViewer" Classes="Dialog_ContentPanel" HorizontalScrollBarVisibility="Disabled">
+				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
-				<!-- Common -->
-				<Border Classes=" Dialog_ItemsGroup_Header">
-					<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.Common}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-				
-						<!-- Name -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>
-							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Description -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Description}"/>
-							<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="1024" Watermark="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Icon -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Icon}"/>
-							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Icon color -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IconColor}"/>
-							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Is template -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate.Description}"/>
-							</StackPanel>
-							<ToggleSwitch Name="isTemplateSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
+					<!-- Common -->
+					<StackPanel Name="commonPanel">
+						<Border Classes=" Dialog_ItemsGroup_Header">
+							<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.Common}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
 						
-					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
+								<!-- Name -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>
+									<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-				<!-- Log reading -->
-				<Border Classes=" Dialog_ItemsGroup_Header">
-					<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogReading}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+								<!-- Description -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Description}"/>
+									<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="1024" Watermark="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- DataSource -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
-								<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-									<Grid.IsVisible>
-										<MultiBinding Converter="{x:Static BoolConverters.And}">
-											<Binding Path="!IsProVersionActivated" ElementName="window"/>
-											<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
-										</MultiBinding>
-									</Grid.IsVisible>
-									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
-								</Grid>
-								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-									<Grid.IsVisible>
-										<MultiBinding Converter="{x:Static BoolConverters.And}">
-											<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
-											<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
-										</MultiBinding>
-									</Grid.IsVisible>
-									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
-								</Grid>
+								<!-- Icon -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Icon}"/>
+									<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Icon color -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IconColor}"/>
+									<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Is template -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate.Description}"/>
+									</StackPanel>
+									<ToggleSwitch Name="isTemplateSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								
 							</StackPanel>
-							<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="Auto,Auto,Auto,*">
-											<Panel Classes="ComboBoxItem_Icon">
-												<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
-												<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
-											</Panel>
-											<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding DisplayName}" Grid.Column="1"/>
-											<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
-											<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
-												<TextBlock.IsVisible>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="!IsProVersionActivated" ElementName="window"/>
-														<Binding Path="IsProVersionOnly"/>
-													</MultiBinding>
-												</TextBlock.IsVisible>
-											</TextBlock>
-										</Grid>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
-							<Separator Classes="Dialog_Separator_Small"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
-								<Button.IsEnabled>
-									<MultiBinding Converter="{x:Static BoolConverters.And}">
-										<Binding Path="HasDataSourceOptions" ElementName="window"/>
-										<MultiBinding Converter="{x:Static BoolConverters.Or}">
-											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
-										</MultiBinding>
-									</MultiBinding>
-								</Button.IsEnabled>
-							</Button>
-						</StackPanel>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources"/>
-						<Separator Classes="Dialog_Item_Separator"/>
+						</Border>
+						<Separator Classes="Dialog_Separator_Large"/>
+					</StackPanel>
 
-						<!-- Allow multiple files -->
+					<!-- Log reading -->
+					<StackPanel Name="logReadingPanel">
+						<Border Classes=" Dialog_ItemsGroup_Header">
+							<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogReading}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
+
+								<!-- DataSource -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
+										<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+											<Grid.IsVisible>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="!IsProVersionActivated" ElementName="window"/>
+													<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
+												</MultiBinding>
+											</Grid.IsVisible>
+											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
+										</Grid>
+										<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+											<Grid.IsVisible>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
+													<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
+												</MultiBinding>
+											</Grid.IsVisible>
+											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
+										</Grid>
+									</StackPanel>
+									<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
+										<ComboBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="Auto,Auto,Auto,*">
+													<Panel Classes="ComboBoxItem_Icon">
+														<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
+														<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
+													</Panel>
+													<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding DisplayName}" Grid.Column="1"/>
+													<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
+													<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
+														<TextBlock.IsVisible>
+															<MultiBinding Converter="{x:Static BoolConverters.And}">
+																<Binding Path="!IsProVersionActivated" ElementName="window"/>
+																<Binding Path="IsProVersionOnly"/>
+															</MultiBinding>
+														</TextBlock.IsVisible>
+													</TextBlock>
+												</Grid>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Separator_Small"/>
+								<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
+									<Separator Classes="Dialog_Separator_Small"/>
+									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
+										<Button.IsEnabled>
+											<MultiBinding Converter="{x:Static BoolConverters.And}">
+												<Binding Path="HasDataSourceOptions" ElementName="window"/>
+												<MultiBinding Converter="{x:Static BoolConverters.Or}">
+													<Binding Path="IsProVersionActivated" ElementName="window"/>
+													<Binding Path="!SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
+												</MultiBinding>
+											</MultiBinding>
+										</Button.IsEnabled>
+									</Button>
+								</StackPanel>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Allow multiple files -->
 						<StackPanel Name="allowMultipleFilesPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
 							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.AllowMultipleFiles}"/>
@@ -182,37 +227,37 @@
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
-						<!-- Working directory requirement -->
-						<StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
-							<asControls:DialogItemGrid>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.WorkingDirectoryRequirement}"/>
-								<asControls:EnumComboBox Name="workingDirPriorityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogProfilePropertyRequirement}" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
-							<Separator Classes="Dialog_Item_Separator"/>
-						</StackPanel>
+								<!-- Working directory requirement -->
+								<StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
+									<asControls:DialogItemGrid>
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.WorkingDirectoryRequirement}"/>
+										<asControls:EnumComboBox Name="workingDirPriorityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogProfilePropertyRequirement}" Grid.Column="1"/>
+									</asControls:DialogItemGrid>
+									<Separator Classes="Dialog_Item_Separator"/>
+								</StackPanel>
 
-						<!-- Is administrator needed -->
-						<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
-							<asControls:DialogItemGrid>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsAdministratorNeeded}"/>
-								<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
-							<Separator Classes="Dialog_Item_Separator"/>
-						</StackPanel>
+								<!-- Is administrator needed -->
+								<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
+									<asControls:DialogItemGrid>
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsAdministratorNeeded}"/>
+										<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
+									</asControls:DialogItemGrid>
+									<Separator Classes="Dialog_Item_Separator"/>
+								</StackPanel>
 
-						<!-- Is continuous reading -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading.Description}"/>
-							</StackPanel>
-							<ToggleSwitch Name="continuousReadingSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1">
-								<ia:Interaction.Behaviors>
-									<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name}" ComparisonCondition="Equal" Value="File">
-										<iaCore:ChangePropertyAction PropertyName="IsChecked" Value="False"/>
-										<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-									</iaCore:DataTriggerBehavior>
-									<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name}" ComparisonCondition="NotEqual" Value="File">
+								<!-- Is continuous reading -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading.Description}"/>
+									</StackPanel>
+									<ToggleSwitch Name="continuousReadingSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1">
+										<ia:Interaction.Behaviors>
+											<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name}" ComparisonCondition="Equal" Value="File">
+												<iaCore:ChangePropertyAction PropertyName="IsChecked" Value="False"/>
+												<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+											</iaCore:DataTriggerBehavior>
+											<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name}" ComparisonCondition="NotEqual" Value="File">
 										<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
@@ -220,548 +265,555 @@
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Restart reading delay -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
-							<abControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Restart reading delay -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
+									<abControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Raw log level property -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName.Description}"/>
-							</StackPanel>
-							<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="*,Auto">
-											<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											<TextBlock Grid.Column="1" Opacity="0.3" Text="{Binding StringFormat={} ({0})}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										</Grid>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Raw log level property -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName.Description}"/>
+									</StackPanel>
+									<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
+										<ComboBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="*,Auto">
+													<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+													<TextBlock Grid.Column="1" Opacity="0.3" Text="{Binding StringFormat={} ({0})}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+												</Grid>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Log level map -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}"/>
-							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-							<asControls:ListBox.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="*,*">
-										<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Key}"/>
-										<Border Classes="InPlaceAction_Reserved"/>
-										<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-											<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-											</StackPanel>
-											<Grid ColumnDefinitions="Auto,*">
-												<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-												<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+								<!-- Log level map -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}"/>
+									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+									<asControls:ListBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="*,*">
+												<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Key}"/>
+												<Border Classes="InPlaceAction_Reserved"/>
+												<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+													<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+													</StackPanel>
+													<Grid ColumnDefinitions="Auto,*">
+														<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+														<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+													</Grid>
+												</DockPanel>
 											</Grid>
-										</DockPanel>
-									</Grid>
-								</DataTemplate>
-							</asControls:ListBox.ItemTemplate>
-						</asControls:ListBox>
-						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logLevelMapForReadingListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-						<Separator Classes="Dialog_Item_Separator"/>
+										</DataTemplate>
+									</asControls:ListBox.ItemTemplate>
+								</asControls:ListBox>
+								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logLevelMapForReadingListBox.IsVisible}"/>
+								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Log patterns -->
-						<StackPanel Name="logPatternsContainer">
-							<asControls:DialogItemGrid>
-								<StackPanel Classes="Dialog_Item_Text_Container">
-									<TextBlock Name="logPatternsTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns}"/>
-									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns.Description}"/>
-								</StackPanel>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
-							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" ItemsSource="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-                            	<asControls:ListBox.ItemTemplate>
-                            		<DataTemplate DataType="{x:Type appLogs:LogPattern}">
-                            			<Grid RowDefinitions="Auto,*">
-	                                        <Grid.ColumnDefinitions>
-		                                        <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
-		                                        <ColumnDefinition Width="*"/>
-		                                        <ColumnDefinition Width="Auto"/>
-	                                        </Grid.ColumnDefinitions>
-	                                        <StackPanel Orientation="Horizontal">
-		                                        <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsRepeatable}">
-			                                        <DrawingImage>
-				                                        <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Repeatable}"/>
-			                                        </DrawingImage>
-		                                        </Image>
-		                                        <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsSkippable}">
-			                                        <DrawingImage>
-				                                        <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Skippable}"/>
-			                                        </DrawingImage>
-		                                        </Image>
-	                                        </StackPanel>
-	                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Regex}" TextTrimming="None" VerticalAlignment="Center"/>
-	                                        <abControls:TextBlock FontSize="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.LogPattern.Description.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
-                            				<Border Classes="InPlaceAction_Reserved"/>
-                                            <StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-                            					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-                            						<asControls:Image Classes="InPlaceAction_Icon">
-                            							<DrawingImage>
-                            								<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-                            							</DrawingImage>
-                            						</asControls:Image>
-                            					</Button>
-                            					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogPattern}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
-                            						<asControls:Image Classes="InPlaceAction_Icon">
-                            							<DrawingImage>
-                            								<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
-                            							</DrawingImage>
-                            						</asControls:Image>
-                            					</Button>
-                            					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-                            						<asControls:Image Classes="InPlaceAction_Icon">
-                            							<DrawingImage>
-                            								<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-                            							</DrawingImage>
-                            						</asControls:Image>
-                            					</Button>
-                            					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-                            						<asControls:Image Classes="InPlaceAction_Icon">
-                            							<DrawingImage>
-                            								<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
-                            							</DrawingImage>
-                            						</asControls:Image>
-                            					</Button>
-                            					<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-                            						<asControls:Image Classes="InPlaceAction_Icon">
-                            							<DrawingImage>
-                            								<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
-                            							</DrawingImage>
-                            						</asControls:Image>
-                            					</Button>
-                            				</StackPanel>
-                            			</Grid>
-                            		</DataTemplate>
-                            	</asControls:ListBox.ItemTemplate>
-                            </asControls:ListBox>
-							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logPatternListBox.IsVisible}"/>
-							<Button Name="addLogPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns"/>
-						</StackPanel>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Log pattern matching mode -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
-							<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatternMatchingMode"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Log string encoding for reading -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForReading}"/>
-							<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Timestamp encoding for reading -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampEncodingForReading}"/>
-							<asControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Timestamp format for reading -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatsForReading}"/>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<StackPanel>
-							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" Value="Custom">
-									<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" ComparisonCondition="NotEqual" Value="Custom">
-									<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-								</iaCore:DataTriggerBehavior>
-							</ia:Interaction.Behaviors>
-							<asControls:ListBox Name="timestampFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimestampFormatsForReading.Count}" ItemsSource="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-								<asControls:ListBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="*,Auto">
-											<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None"/>
-											<Border Classes="InPlaceAction_Reserved"/>
-											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-											</StackPanel>
-										</Grid>
-									</DataTemplate>
-								</asControls:ListBox.ItemTemplate>
-							</asControls:ListBox>
-							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #timestampFormatsForReadingListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-						</StackPanel>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Time span encoding for reading -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description}"/>
-							</StackPanel>
-							<asControls:EnumComboBox Name="timeSpanEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" EnumType="{x:Type appLogs:LogTimeSpanEncoding}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Time span format for reading -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatsForReading}"/>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<StackPanel>
-							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding #timeSpanEncodingForReadingComboBox.SelectedItem}" Value="Custom">
-									<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
-								</iaCore:DataTriggerBehavior>
-								<iaCore:DataTriggerBehavior Binding="{Binding #timeSpanEncodingForReadingComboBox.SelectedItem}" ComparisonCondition="NotEqual" Value="Custom">
-									<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
-								</iaCore:DataTriggerBehavior>
-							</ia:Interaction.Behaviors>
-							<asControls:ListBox Name="timeSpanFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimeSpanFormatsForReading.Count}" ItemsSource="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-								<asControls:ListBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="*,Auto">
-											<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None"/>
-											<Border Classes="InPlaceAction_Reserved"/>
-											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-											</StackPanel>
-										</Grid>
-									</DataTemplate>
-								</asControls:ListBox.ItemTemplate>
-							</asControls:ListBox>
-							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #timeSpanFormatsForReadingListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTimeSpanFormatForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-						</StackPanel>
-
-					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
-
-				<!-- Log displaying -->
-				<Border Classes=" Dialog_ItemsGroup_Header">
-					<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogDisplaying}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-				
-						<!-- Visible log properties -->
-						<StackPanel Name="visibleLogPropertiesContainer">
-							<asControls:DialogItemGrid>
-								<StackPanel Classes="Dialog_Item_Text_Container">
-									<TextBlock Name="visiblePropertiesTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties}"/>
-									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties.Description}"/>
-								</StackPanel>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
-							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-								<asControls:ListBox.ItemTemplate>
-									<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
-										<Grid>
-											<Grid.ColumnDefinitions>
-												<ColumnDefinition Width="Auto" SharedSizeGroup="DisplayName"/>
-												<ColumnDefinition Width="Auto" SharedSizeGroup="Name"/>
-												<ColumnDefinition Width="*"/>
-												<ColumnDefinition Width="Auto"/>
-											</Grid.ColumnDefinitions>
-											<StackPanel Orientation="Horizontal" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-												<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-												<abControls:FormattedTextBlock Arg1="{Binding SecondaryDisplayName}" Format=" - {0}" IsVisible="{Binding SecondaryDisplayName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-												<abControls:FormattedTextBlock Arg1="{Binding Quantifier}" Format=" ({0})" IsVisible="{Binding Quantifier, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											</StackPanel>
-											<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.Empty}" Format="({0})" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											<Border Classes="InPlaceAction_Reserved"/>
-											<abControls:FormattedTextBlock Arg1="{Binding Name}" Format="({0})" Grid.Column="1" Opacity="{StaticResource Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity}" Margin="{StaticResource Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											<abControls:FormattedTextBlock Arg1="{Binding Width}" Format="[{0}]" Grid.Column="2" IsVisible="{Binding Width, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											<StackPanel Grid.Column="3" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveVisibleLogPropertyCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditVisibleLogPropertyCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-											</StackPanel>
-										</Grid>
-									</DataTemplate>
-								</asControls:ListBox.ItemTemplate>
-							</asControls:ListBox>
-							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #visibleLogPropertyListBox.IsVisible}"/>
-							<Button Name="addVisibleLogPropertyButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddVisibleLogProperty}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-						</StackPanel>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Timestamp format for displaying -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
-							<asControls:SyntaxHighlightingTextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Time span format for displaying -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
-							<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Color indicator -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator.Description}"/>
-							</StackPanel>
-							<asControls:EnumComboBox Name="colorIndicatorComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Sort key -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.SortKey}"/>
-							<asControls:EnumComboBox Name="sortKeyComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogSortKey}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Sort direction -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.SortDirection}"/>
-							<asControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:SortDirection}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Timestamp category granularity -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCategoryGranularity}"/>
-							<asControls:EnumComboBox Name="timestampCategoryGranularityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appCategorizing:TimestampDisplayableLogCategoryGranularity}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-
-					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
-
-				<!-- Log writing -->
-				<Border Classes=" Dialog_ItemsGroup_Header">
-					<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogWriting}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-				
-						<!-- Log writing formats -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats.Description}"/>
-							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="logWritingFormatListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogWritingFormats.Count}" ItemsSource="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-							<asControls:ListBox.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="*,Auto">
-										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].LogWritingFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextWrapping="NoWrap" TextTrimming="None"/>
-										<Border Classes="InPlaceAction_Reserved"/>
-										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
+								<!-- Log patterns -->
+								<StackPanel Name="logPatternsContainer">
+									<asControls:DialogItemGrid>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<TextBlock Name="logPatternsTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns.Description}"/>
 										</StackPanel>
-									</Grid>
-								</DataTemplate>
-							</asControls:ListBox.ItemTemplate>
-						</asControls:ListBox>
-						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logWritingFormatListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogWritingFormat}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Log level map -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting.Description}"/>
+										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									</asControls:DialogItemGrid>
+									<Line Classes="Dialog_Item_Separator_Inner"/>
+									<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" ItemsSource="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+                            			<asControls:ListBox.ItemTemplate>
+                            				<DataTemplate DataType="{x:Type appLogs:LogPattern}">
+                            					<Grid RowDefinitions="Auto,*">
+			                                        <Grid.ColumnDefinitions>
+				                                        <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
+				                                        <ColumnDefinition Width="*"/>
+				                                        <ColumnDefinition Width="Auto"/>
+			                                        </Grid.ColumnDefinitions>
+			                                        <StackPanel Orientation="Horizontal">
+				                                        <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsRepeatable}">
+					                                        <DrawingImage>
+						                                        <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Repeatable}"/>
+					                                        </DrawingImage>
+				                                        </Image>
+				                                        <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsSkippable}">
+					                                        <DrawingImage>
+						                                        <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Skippable}"/>
+					                                        </DrawingImage>
+				                                        </Image>
+			                                        </StackPanel>
+			                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Regex}" TextTrimming="None" VerticalAlignment="Center"/>
+			                                        <abControls:TextBlock FontSize="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.LogPattern.Description.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                            						<Border Classes="InPlaceAction_Reserved"/>
+		                                            <StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+                            								<asControls:Image Classes="InPlaceAction_Icon">
+                            									<DrawingImage>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+                            									</DrawingImage>
+                            								</asControls:Image>
+                            							</Button>
+                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogPattern}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+                            								<asControls:Image Classes="InPlaceAction_Icon">
+                            									<DrawingImage>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+                            									</DrawingImage>
+                            								</asControls:Image>
+                            							</Button>
+                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+                            								<asControls:Image Classes="InPlaceAction_Icon">
+                            									<DrawingImage>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+                            									</DrawingImage>
+                            								</asControls:Image>
+                            							</Button>
+                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
+                            								<asControls:Image Classes="InPlaceAction_Icon">
+                            									<DrawingImage>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+                            									</DrawingImage>
+                            								</asControls:Image>
+                            							</Button>
+                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
+                            								<asControls:Image Classes="InPlaceAction_Icon">
+                            									<DrawingImage>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+                            									</DrawingImage>
+                            								</asControls:Image>
+                            							</Button>
+                            						</StackPanel>
+                            					</Grid>
+                            				</DataTemplate>
+                            			</asControls:ListBox.ItemTemplate>
+		                            </asControls:ListBox>
+									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logPatternListBox.IsVisible}"/>
+									<Button Name="addLogPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+									<Line Classes="Dialog_Item_Separator_Inner"/>
+									<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns"/>
+								</StackPanel>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Log pattern matching mode -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
+									<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatternMatchingMode"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Log string encoding for reading -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForReading}"/>
+									<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Timestamp encoding for reading -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampEncodingForReading}"/>
+									<asControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Timestamp format for reading -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatsForReading}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<StackPanel>
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" Value="Custom">
+											<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding #timestampEncodingForReadingComboBox.SelectedItem}" ComparisonCondition="NotEqual" Value="Custom">
+											<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+									<asControls:ListBox Name="timestampFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimestampFormatsForReading.Count}" ItemsSource="{Binding $parent[Window].TimestampFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+										<asControls:ListBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="*,Auto">
+													<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None"/>
+													<Border Classes="InPlaceAction_Reserved"/>
+													<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+													</StackPanel>
+												</Grid>
+											</DataTemplate>
+										</asControls:ListBox.ItemTemplate>
+									</asControls:ListBox>
+									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #timestampFormatsForReadingListBox.IsVisible}"/>
+									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTimestampFormatForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								</StackPanel>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Time span encoding for reading -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description}"/>
+									</StackPanel>
+									<asControls:EnumComboBox Name="timeSpanEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" EnumType="{x:Type appLogs:LogTimeSpanEncoding}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Time span format for reading -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatsForReading}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<StackPanel>
+									<ia:Interaction.Behaviors>
+										<iaCore:DataTriggerBehavior Binding="{Binding #timeSpanEncodingForReadingComboBox.SelectedItem}" Value="Custom">
+											<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="True"/>
+										</iaCore:DataTriggerBehavior>
+										<iaCore:DataTriggerBehavior Binding="{Binding #timeSpanEncodingForReadingComboBox.SelectedItem}" ComparisonCondition="NotEqual" Value="Custom">
+											<iaCore:ChangePropertyAction PropertyName="IsEnabled" Value="False"/>
+										</iaCore:DataTriggerBehavior>
+									</ia:Interaction.Behaviors>
+									<asControls:ListBox Name="timeSpanFormatsForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TimeSpanFormatsForReading.Count}" ItemsSource="{Binding $parent[Window].TimeSpanFormatsForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+										<asControls:ListBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="*,Auto">
+													<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None"/>
+													<Border Classes="InPlaceAction_Reserved"/>
+													<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+													</StackPanel>
+												</Grid>
+											</DataTemplate>
+										</asControls:ListBox.ItemTemplate>
+									</asControls:ListBox>
+									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #timeSpanFormatsForReadingListBox.IsVisible}"/>
+									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTimeSpanFormatForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								</StackPanel>
+
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="logLevelMapForWritingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForWriting.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-							<asControls:ListBox.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="*,*">
-										<Grid ColumnDefinitions="Auto,*">
-											<Border Classes="ListBoxItem_Icon" Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-											<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Key, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
-										</Grid>
-										<Border Classes="InPlaceAction_Reserved"/>
-										<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-											<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForWritingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-													<asControls:Image Classes="InPlaceAction_Icon">
-														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
-														</DrawingImage>
-													</asControls:Image>
-												</Button>
-											</StackPanel>
-											<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Value}"/>
-										</DockPanel>
-									</Grid>
-								</DataTemplate>
-							</asControls:ListBox.ItemTemplate>
-						</asControls:ListBox>
-						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logLevelMapForWritingListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Log string format for writing -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForWriting}"/>
-							<asControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Timestamp format for writing -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
-							<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Time span format for writing -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
-							<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
-						</asControls:DialogItemGrid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
-
+						</Border>
+						<Separator Classes="Dialog_Separator_Large"/>
 					</StackPanel>
-				</Border>
 
-			</StackPanel>
-		</ScrollViewer>
+					<!-- Log displaying -->
+					<StackPanel Name="logDisplayingPanel">
+						<Border Classes=" Dialog_ItemsGroup_Header">
+							<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogDisplaying}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
+						
+								<!-- Visible log properties -->
+								<StackPanel Name="visibleLogPropertiesContainer">
+									<asControls:DialogItemGrid>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<TextBlock Name="visiblePropertiesTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties.Description}"/>
+										</StackPanel>
+										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									</asControls:DialogItemGrid>
+									<Line Classes="Dialog_Item_Separator_Inner"/>
+									<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+										<asControls:ListBox.ItemTemplate>
+											<DataTemplate DataType="{x:Type appLogProfiles:LogProperty}">
+												<Grid>
+													<Grid.ColumnDefinitions>
+														<ColumnDefinition Width="Auto" SharedSizeGroup="DisplayName"/>
+														<ColumnDefinition Width="Auto" SharedSizeGroup="Name"/>
+														<ColumnDefinition Width="*"/>
+														<ColumnDefinition Width="Auto"/>
+													</Grid.ColumnDefinitions>
+													<StackPanel Orientation="Horizontal" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+														<TextBlock Name="displayNameTextBlock" Text="{Binding DisplayName, Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+														<abControls:FormattedTextBlock Arg1="{Binding SecondaryDisplayName}" Format=" - {0}" IsVisible="{Binding SecondaryDisplayName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+														<abControls:FormattedTextBlock Arg1="{Binding Quantifier}" Format=" ({0})" IsVisible="{Binding Quantifier, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+													</StackPanel>
+													<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.Empty}" Format="({0})" IsVisible="{Binding #displayNameTextBlock.Text, Converter={x:Static StringConverters.IsNullOrEmpty}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+													<Border Classes="InPlaceAction_Reserved"/>
+													<abControls:FormattedTextBlock Arg1="{Binding Name}" Format="({0})" Grid.Column="1" Opacity="{StaticResource Double/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Opacity}" Margin="{StaticResource Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+													<abControls:FormattedTextBlock Arg1="{Binding Width}" Format="[{0}]" Grid.Column="2" IsVisible="{Binding Width, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.VisibleLogPropertyListBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+													<StackPanel Grid.Column="3" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveVisibleLogPropertyCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditVisibleLogPropertyCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+													</StackPanel>
+												</Grid>
+											</DataTemplate>
+										</asControls:ListBox.ItemTemplate>
+									</asControls:ListBox>
+									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #visibleLogPropertyListBox.IsVisible}"/>
+									<Button Name="addVisibleLogPropertyButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddVisibleLogProperty}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								</StackPanel>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Timestamp format for displaying -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
+									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Time span format for displaying -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
+									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Color indicator -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator.Description}"/>
+									</StackPanel>
+									<asControls:EnumComboBox Name="colorIndicatorComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Sort key -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.SortKey}"/>
+									<asControls:EnumComboBox Name="sortKeyComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogSortKey}" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Sort direction -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.SortDirection}"/>
+									<asControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:SortDirection}" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Timestamp category granularity -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCategoryGranularity}"/>
+									<asControls:EnumComboBox Name="timestampCategoryGranularityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appCategorizing:TimestampDisplayableLogCategoryGranularity}" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+
+							</StackPanel>
+						</Border>
+						<Separator Classes="Dialog_Separator_Large"/>
+					</StackPanel>
+
+					<!-- Log writing -->
+					<StackPanel Name="logWritingPanel">
+						<Border Classes=" Dialog_ItemsGroup_Header">
+							<TextBlock Classes=" Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileEditorDialog.LogWriting}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
+						
+								<!-- Log writing formats -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats.Description}"/>
+									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<asControls:ListBox Name="logWritingFormatListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogWritingFormats.Count}" ItemsSource="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+									<asControls:ListBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="*,Auto">
+												<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].LogWritingFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextWrapping="NoWrap" TextTrimming="None"/>
+												<Border Classes="InPlaceAction_Reserved"/>
+												<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+														<asControls:Image Classes="InPlaceAction_Icon">
+															<DrawingImage>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+															</DrawingImage>
+														</asControls:Image>
+													</Button>
+													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+														<asControls:Image Classes="InPlaceAction_Icon">
+															<DrawingImage>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+															</DrawingImage>
+														</asControls:Image>
+													</Button>
+													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
+														<asControls:Image Classes="InPlaceAction_Icon">
+															<DrawingImage>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+															</DrawingImage>
+														</asControls:Image>
+													</Button>
+													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
+														<asControls:Image Classes="InPlaceAction_Icon">
+															<DrawingImage>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+															</DrawingImage>
+														</asControls:Image>
+													</Button>
+												</StackPanel>
+											</Grid>
+										</DataTemplate>
+									</asControls:ListBox.ItemTemplate>
+								</asControls:ListBox>
+								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logWritingFormatListBox.IsVisible}"/>
+								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogWritingFormat}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Log level map -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting.Description}"/>
+									</StackPanel>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<asControls:ListBox Name="logLevelMapForWritingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForWriting.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+									<asControls:ListBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="*,*">
+												<Grid ColumnDefinitions="Auto,*">
+													<Border Classes="ListBoxItem_Icon" Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+													<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Key, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+												</Grid>
+												<Border Classes="InPlaceAction_Reserved"/>
+												<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+													<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForWritingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+															<asControls:Image Classes="InPlaceAction_Icon">
+																<DrawingImage>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																</DrawingImage>
+															</asControls:Image>
+														</Button>
+													</StackPanel>
+													<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Value}"/>
+												</DockPanel>
+											</Grid>
+										</DataTemplate>
+									</asControls:ListBox.ItemTemplate>
+								</asControls:ListBox>
+								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logLevelMapForWritingListBox.IsVisible}"/>
+								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogLevelMapEntryForWriting}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Log string format for writing -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForWriting}"/>
+									<asControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Timestamp format for writing -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
+									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Time span format for writing -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
+									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
+								</asControls:DialogItemGrid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
+
+							</StackPanel>
+						</Border>
+					</StackPanel>
+
+				</StackPanel>
+			</ScrollViewer>
+			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Margin="0,-100,-100,0"/>
+		</Panel>
 		
 	</DockPanel>
   

@@ -91,6 +91,7 @@
 	<Geometry x:Key="Geometry/Power">M10.22,8.03 L6.453,5.845 L8.354,1.284 C8.413,1.165 8.445,1.03 8.445,0.8896 C8.445,0.3989 8.051,0 7.56,0 C7.338,0.004267 7.153,0.07467 7.007,0.1899 L6.943,0.2432 L0.2768,6.554 C0.07413,6.748 -0.02614,7.025 0.00586,7.302 C0.03786,7.582 0.2,7.829 0.4411,7.97 L4.213,10.16 L2.291,14.77 C2.126,15.16 2.261,15.61 2.604,15.84 C2.758,15.95 2.935,16 3.11,16 C3.332,16 3.551,15.92 3.722,15.76 L10.39,9.444 C10.59,9.25 10.69,8.973 10.66,8.695 C10.63,8.416 10.47,8.171 10.22,8.03 z</Geometry>
 	<Geometry x:Key="Geometry/Process">M0.8609,7.391 L6.026,7.391 C6.501,7.391 6.887,7.006 6.887,6.531 L6.887,6.531 L6.887,1.365 C6.887,0.8901 6.501,0.5046 6.026,0.5046 L6.026,0.5046 L0.8609,0.5046 C0.3854,0.5046 5.734E-016,0.8901 5.734E-016,1.365 L5.734E-016,1.365 L5.734E-016,6.531 C5.734E-016,7.006 0.3854,7.391 0.8609,7.391 L0.8609,7.391 z M0.8609,16 L6.026,16 C6.501,16 6.887,15.61 6.887,15.14 L6.887,15.14 L6.887,9.974 C6.887,9.499 6.501,9.113 6.026,9.113 L6.026,9.113 L0.8609,9.113 C0.3854,9.113 5.734E-016,9.499 5.734E-016,9.974 L5.734E-016,9.974 L5.734E-016,15.14 C5.734E-016,15.61 0.3854,16 0.8609,16 L0.8609,16 z M9.469,16 L14.63,16 C15.11,16 15.5,15.61 15.5,15.14 L15.5,15.14 L15.5,9.974 C15.5,9.499 15.11,9.113 14.63,9.113 L14.63,9.113 L9.469,9.113 C8.994,9.113 8.609,9.499 8.609,9.974 L8.609,9.974 L8.609,15.14 C8.609,15.61 8.994,16 9.469,16 L9.469,16 z M15.75,3.339 L12.66,0.2524 C12.5,0.09646 12.29,4.827E-007 12.05,4.827E-007 C11.81,4.827E-007 11.6,0.09646 11.44,0.2524 L8.356,3.339 C8.2,3.495 8.104,3.71 8.104,3.948 C8.104,4.186 8.2,4.401 8.356,4.557 L11.44,7.644 C11.6,7.8 11.81,7.896 12.05,7.896 C12.29,7.896 12.5,7.8 12.66,7.644 L15.75,4.557 C15.9,4.401 16,4.186 16,3.948 C16,3.71 15.9,3.495 15.75,3.339 L15.75,3.339 z</Geometry>
 	<Geometry x:Key="Geometry/Process.Outline">M11.36,2.321 L13.68,4.642 L11.36,6.964 L9.036,4.642 L11.36,2.321  M4.974,2.736 L4.974,6.052 L1.658,6.052 L1.658,2.736 L4.974,2.736  M13.26,11.03 L13.26,14.34 L9.948,14.34 L9.948,11.03 L13.26,11.03  M11.36,-3.953E-008 L6.632,4.642 L11.36,9.368 L8.29,9.368 L8.29,16 L14.92,16 L14.92,9.368 L11.36,9.368 L16,4.642 L11.36,-3.953E-008  M6.632,1.078 L0,1.078 L0,7.71 L6.632,7.71 L6.632,1.078  M4.974,11.03 L4.974,14.34 L1.658,14.34 L1.658,11.03 L4.974,11.03  M6.632,9.368 L0,9.368 L0,16 L6.632,16 L6.632,9.368 z</Geometry>
+	<Geometry x:Key="Geometry/Read">M15.06,0.001509 C13.54,0.0879 10.51,0.4023 8.646,1.546 C8.517,1.625 8.444,1.765 8.444,1.912 L8.444,12.02 C8.444,12.34 8.795,12.54 9.091,12.39 C11.01,11.43 13.79,11.16 15.17,11.09 C15.64,11.07 16,10.69 16,10.24 L16,0.8543 C16,0.3623 15.57,-0.02738 15.06,0.001509 z M7.354,1.546 C5.486,0.4023 2.461,0.08818 0.9383,0.001509 C0.4267,-0.02738 0,0.3623 0,0.8543 L0,10.24 C0,10.69 0.3647,11.07 0.8339,11.09 C2.209,11.16 4.989,11.43 6.911,12.4 C7.206,12.54 7.556,12.34 7.556,12.02 L7.556,1.907 C7.556,1.76 7.483,1.625 7.354,1.546 z</Geometry>
 	<Geometry x:Key="Geometry/Repeatable">M3.317,0 L6.634,3.317 L4.098,3.317 L4.098,8 L9.171,8 L10.73,9.561 L4.098,9.561 A1.561,1.561 0 0 1 2.537,8 L2.537,3.317 L0,3.317 L3.317,0  M12.68,9.756 L9.366,6.439 L11.9,6.439 L11.9,1.756 L6.829,1.756 L5.268,0.1951 L11.9,0.1951 A1.561,1.561 0 0 1 13.46,1.756 L13.46,6.439 L16,6.439 L12.68,9.756 z</Geometry>
 	<Geometry x:Key="Geometry/Resource">M6.827,0 L0.32,3.84 L6.827,7.68 L13.33,3.84 L6.827,0 z M0,4.693 L0,12.37 L6.4,16 L6.4,8.533 L0,4.693 z M13.65,4.693 L7.253,8.533 L7.253,16 L13.65,12.37 L13.65,4.693 z</Geometry>
 	<Geometry x:Key="Geometry/ResourceGroup">M3.369,0 L0,1.96 L0,11.64 L3.369,13.6 L3.425,13.6 L4.203,13.15 L1.2,11.4 L1.2,2.2 L4.203,0.4531 L3.425,0 L3.369,0 z M8,0 L2.5,3.2 L8,6.4 L13.5,3.2 L8,0 z M12.58,0 L11.8,0.4531 L14.8,2.2 L14.8,11.4 L11.8,13.15 L12.58,13.6 L12.63,13.6 L16,11.64 L16,1.96 L12.63,0 L12.58,0 z M2.4,4.2 L2.4,10.39 L7.6,13.37 L7.6,7.171 L2.4,4.2 z M13.6,4.2 L8.4,7.171 L8.4,13.37 L13.6,10.39 L13.6,4.2 z</Geometry>
@@ -119,6 +120,7 @@
 	<Geometry x:Key="Geometry/Video">M14.4,0 L1.6,0 C0.7176,0 -3.433E-009,0.7176 -3.433E-009,1.6 L-3.433E-009,12.8 C-3.433E-009,13.68 0.7176,14.4 1.6,14.4 L14.4,14.4 C15.28,14.4 16,13.68 16,12.8 L16,1.6 C16,0.7176 15.28,0 14.4,0 z M14.4,4.8 C14.4,4.8 14.4,4.8 14.4,4.8 L14.03,4.8 L11.9,1.6 L14.4,1.6 L14.4,4.8 z M10.8,9.6 L6.4,12 L6.4,7.2 L10.8,9.6 z M10.03,4.8 L7.895,1.6 L9.972,1.6 L12.11,4.8 L10.03,4.8 z M8.106,4.8 L6.029,4.8 L3.895,1.6 L5.972,1.6 L8.106,4.8 z M1.6,1.6 L1.972,1.6 L4.106,4.8 L1.6,4.8 L1.6,1.6 z</Geometry>
 	<Geometry x:Key="Geometry/Visibility">F1M256,-320C291,-320 320,-291 320,-256 320,-221 291,-192 256,-192 221,-192 192,-221 192,-256 192,-291 221,-320 256,-320z M256,-363C197,-363 149,-315 149,-256 149,-197 197,-149 256,-149 315,-149 363,-197 363,-256 363,-315 315,-363 256,-363z M256,-416C363,-416 454,-350 491,-256 454,-162 363,-96 256,-96 149,-96 58,-162 21.0000038146973,-256 58,-350 149,-416 256,-416z</Geometry>
 	<Geometry x:Key="Geometry/Watch">M2,0 L1.447,3.333 L1.333,3.333 A1.333,1.333 0 0 0 0,4.667 L0,11.33 C0,12.07 0.6,12.67 1.333,12.67 L1.447,12.67 L2,16 L7.333,16 L7.887,12.67 L8,12.67 A1.333,1.333 0 0 0 9.333,11.33 L9.333,4.667 C9.333,3.927 8.733,3.333 8,3.333 L7.887,3.333 L7.333,0 L2,0  M1.333,4.667 L8,4.667 L8,11.33 L1.333,11.33 L1.333,4.667 z</Geometry>
+	<Geometry x:Key="Geometry/Write">M15,0.395 L15.43,0.8291 C16.03,1.428 15.94,2.49 15.23,3.2 L6.277,12.15 L3.376,13.21 C3.012,13.35 2.657,13.17 2.585,12.83 A0.6828,-0.6828 0 0 1 2.618,12.45 L3.7,9.526 L12.63,0.5988 C13.34,-0.1119 14.4,-0.2031 15,0.3958 z M5.886,1.285 A0.7357,-0.7357 0 1 1 5.886,2.757 L2.943,2.757 A1.471,-1.471 0 0 0 1.471,4.228 L1.471,13.06 A1.471,-1.471 0 0 0 2.943,14.53 L11.77,14.53 A1.471,-1.471 0 0 0 13.24,13.06 L13.24,10.11 A0.7357,-0.7357 0 0 1 14.71,10.11 L14.71,13.06 A2.943,-2.943 0 0 1 11.77,16 L2.943,16 A2.943,-2.943 0 0 1 4.491E-008,13.06 L4.491E-008,4.228 A2.943,-2.943 0 0 1 2.943,1.285 L5.886,1.285 z</Geometry>
 	
 	<!-- Icons -->
 	<GeometryDrawing x:Key="Drawing/Calendar" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Calendar}"/>
@@ -943,6 +945,12 @@
 	<DrawingImage x:Key="Image/Process.Outline">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Process.Outline}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/Read">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Read}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Read.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Read}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/Repeatable">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Repeatable}"/>
 	</DrawingImage>
@@ -960,6 +968,12 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/ResourceGroup.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/ResourceGroup}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Screen">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Screen}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Screen.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Screen}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Scrolling" Drawing="{StaticResource Drawing/Scrolling}"/>
 	<DrawingImage x:Key="Image/Scrolling.Light" Drawing="{StaticResource Drawing/Scrolling.Light}"/>
@@ -1091,6 +1105,12 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/Website.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Website}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Write">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Write}"/>
+	</DrawingImage>
+	<DrawingImage x:Key="Image/Write.Light">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Write}"/>
 	</DrawingImage>
 	
 </ResourceDictionary>

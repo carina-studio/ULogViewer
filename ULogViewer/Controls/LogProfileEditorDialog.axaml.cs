@@ -48,6 +48,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// URI of 'How ULogViewer read and parse logs' page.
 		/// </summary>
 		public static readonly Uri LogsReadingAndParsingPageUri = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
+		
+		
+		// Constants.
+		const int UpdateNavigationBarButtonsDelay = 100;
 
 
 		// Static fields.
@@ -65,8 +69,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleSwitch adminNeededSwitch;
 		readonly Panel allowMultipleFilesPanel;
 		readonly ToggleSwitch allowMultipleFilesSwitch;
+		readonly ScrollViewer baseScrollViewer;
 		readonly MutableObservableBoolean canAddLogChartSeriesSource = new();
 		readonly ComboBox colorIndicatorComboBox;
+		readonly Panel commonPanel;
+		readonly ToggleButton commonPanelButton;
 		readonly ToggleSwitch continuousReadingSwitch;
 		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
 		LogDataSourceOptions dataSourceOptions;
@@ -77,7 +84,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly LogProfileIconColorComboBox iconColorComboBox;
 		readonly LogProfileIconComboBox iconComboBox;
 		readonly ToggleSwitch isTemplateSwitch;
-		LogAnalysisScriptSetSelectionContextMenu? logAnalysisScriptSetSelectionMenu;
+		readonly Panel logDisplayingPanel;
+		readonly ToggleButton logDisplayingPanelButton;
 		readonly SortedObservableList<KeyValuePair<string, Logs.LogLevel>> logLevelMapEntriesForReading = new((x, y) => string.Compare(x.Key, y.Key, StringComparison.InvariantCulture));
 		readonly SortedObservableList<KeyValuePair<Logs.LogLevel, string>> logLevelMapEntriesForWriting = new((x, y) => x.Key.CompareTo(y.Key));
 		readonly AppSuite.Controls.ListBox logLevelMapForReadingListBox;
@@ -85,10 +93,14 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly AppSuite.Controls.ListBox logPatternListBox;
 		readonly ComboBox logPatternMatchingModeComboBox;
 		readonly ObservableList<LogPattern> logPatterns = new();
+		readonly Panel logReadingPanel;
+		readonly ToggleButton logReadingPanelButton;
 		readonly ComboBox logStringEncodingForReadingComboBox;
 		readonly ComboBox logStringEncodingForWritingComboBox;
 		readonly Avalonia.Controls.ListBox logWritingFormatListBox;
 		readonly ObservableList<string> logWritingFormats = new();
+		readonly Panel logWritingPanel;
+		readonly ToggleButton logWritingPanelButton;
 		readonly TextBox nameTextBox;
 		readonly ComboBox rawLogLevelPropertyComboBox;
 		readonly IntegerTextBox restartReadingDelayTextBox;
@@ -105,6 +117,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox timestampFormatForWritingTextBox;
 		readonly ObservableList<string> timestampFormatsForReading = new();
 		readonly AppSuite.Controls.ListBox timestampFormatsForReadingListBox;
+		readonly ScheduledAction updateNavigationBarButtonsAction;
 		readonly AppSuite.Controls.ListBox visibleLogPropertyListBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new();
 		readonly ComboBox workingDirPriorityComboBox;
@@ -170,7 +183,25 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.adminNeededSwitch = this.Get<ToggleSwitch>("adminNeededSwitch");
 			this.allowMultipleFilesPanel = this.Get<Panel>(nameof(allowMultipleFilesPanel));
 			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch)).AsNonNull();
+			this.baseScrollViewer = this.Get<ScrollViewer>(nameof(baseScrollViewer)).Also(it =>
+			{
+				it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(_ =>
+				{
+					if (this.IsOpened)
+						this.updateNavigationBarButtonsAction!.Schedule(UpdateNavigationBarButtonsDelay);
+				});
+				it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(_ =>
+				{
+					if (this.IsOpened)
+						this.updateNavigationBarButtonsAction!.Schedule(UpdateNavigationBarButtonsDelay);
+				});
+			});
 			this.colorIndicatorComboBox = this.Get<ComboBox>("colorIndicatorComboBox");
+			this.commonPanel = this.Get<Panel>(nameof(commonPanel));
+			this.commonPanelButton = this.Get<ToggleButton>(nameof(commonPanelButton)).Also(it =>
+			{
+				it.Click += (_, _) => this.ScrollToPanel(it);
+			});
 			this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
 			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
 			{
@@ -185,13 +216,28 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
 			});
+			this.logDisplayingPanel = this.Get<Panel>(nameof(logDisplayingPanel));
+			this.logDisplayingPanelButton = this.Get<ToggleButton>(nameof(logDisplayingPanelButton)).Also(it =>
+			{
+				it.Click += (_, _) => this.ScrollToPanel(it);
+			});
 			this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
 			this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
 			this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>("logPatternListBox");
 			this.logPatternMatchingModeComboBox = this.Get<ComboBox>(nameof(logPatternMatchingModeComboBox));
+			this.logReadingPanel = this.Get<Panel>(nameof(logReadingPanel));
+			this.logReadingPanelButton = this.Get<ToggleButton>(nameof(logReadingPanelButton)).Also(it =>
+			{
+				it.Click += (_, _) => this.ScrollToPanel(it);
+			});
 			this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
 			this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
 			this.logWritingFormatListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox));
+			this.logWritingPanel = this.Get<Panel>(nameof(logWritingPanel));
+			this.logWritingPanelButton = this.Get<ToggleButton>(nameof(logWritingPanelButton)).Also(it =>
+			{
+				it.Click += (_, _) => this.ScrollToPanel(it);
+			});
 			this.nameTextBox = this.Get<TextBox>("nameTextBox");
 			this.rawLogLevelPropertyComboBox = this.Get<ComboBox>(nameof(rawLogLevelPropertyComboBox));
 			this.restartReadingDelayTextBox = this.Get<IntegerTextBox>(nameof(restartReadingDelayTextBox));
@@ -208,6 +254,38 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
 			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>("visibleLogPropertyListBox");
 			this.workingDirPriorityComboBox = this.Get<ComboBox>(nameof(workingDirPriorityComboBox));
+			
+			// create actions
+			this.updateNavigationBarButtonsAction = new(() =>
+			{
+				// check state
+				var offset = this.baseScrollViewer.Offset;
+				var viewport = this.baseScrollViewer.Viewport;
+				if (viewport.Height <= 0)
+					return;
+				
+				// find button to select
+				var viewportCenter = offset.Y + (viewport.Height / 2);
+				ToggleButton selectedButton;
+				if (offset.Y <= 1)
+					selectedButton = this.commonPanelButton;
+				else if (offset.Y + viewport.Height >= this.baseScrollViewer.Extent.Height - 1)
+					selectedButton = this.logWritingPanelButton;
+				else if (this.logWritingPanel.Bounds.Y <= viewportCenter)
+					selectedButton = this.logWritingPanelButton;
+				else if (this.logDisplayingPanel.Bounds.Y <= viewportCenter)
+					selectedButton = this.logDisplayingPanelButton;
+				else if (this.logReadingPanel.Bounds.Y <= viewportCenter)
+					selectedButton = this.logReadingPanelButton;
+				else
+					selectedButton = this.commonPanelButton;
+				
+				// select button
+				this.commonPanelButton.IsChecked = (this.commonPanelButton == selectedButton);
+				this.logReadingPanelButton.IsChecked = (this.logReadingPanelButton == selectedButton);
+				this.logDisplayingPanelButton.IsChecked = (this.logDisplayingPanelButton == selectedButton);
+				this.logWritingPanelButton.IsChecked = (this.logWritingPanelButton == selectedButton);
+			});
 
 			// attach to log data source providers
 			LogDataSourceProviders.All.Let(allProviders =>
@@ -920,88 +998,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		/// <summary>
-		/// Import existing cooperative log analysis script.
-		/// </summary>
-		public async void ImportExistingCooperativeLogAnalysisScript()
-		{
-			// select script set
-			var button = this.Get<ToggleButton>("importExistingCooperativeLogAnalysisScriptSetButton");
-			button.IsChecked = true;
-			this.logAnalysisScriptSetSelectionMenu ??= new();
-			var scriptSet = await this.logAnalysisScriptSetSelectionMenu.OpenAsync(button);
-			button.IsChecked = false;
-			if (scriptSet is null)
-				return;
-
-			// edit script set and replace
-			scriptSet = await new LogAnalysisScriptSetEditorDialog
-			{
-				IsEmbeddedScriptSet = true,
-				ScriptSetToEdit = new(scriptSet, ""),
-			}.ShowDialog<LogAnalysisScriptSet?>(this);
-			if (scriptSet != null)
-			{
-				this.cooperativeLogAnalysisScriptSet = scriptSet;
-				this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
-			}
-		}
-
-
-		/// <summary>
-		/// Import existing embedded log data source script.
-		/// </summary>
-		public async void ImportExistingEmbeddedScriptLogDataSourceProvider()
-		{
-			// select provider
-			var button = this.Get<ToggleButton>("importExistingEmbeddedScriptLogDataSourceProviderButton");
-			button.IsChecked = true;
-			var provider = await new ScriptLogDataSourceProviderSelectionContextMenu().OpenAsync(button);
-			button.IsChecked = false;
-			if (provider is null)
-				return;
-			
-			// edit provider and replace
-			var providerToEdit = new EmbeddedScriptLogDataSourceProvider(provider);
-			provider = await new ScriptLogDataSourceProviderEditorDialog
-			{
-				IsEmbeddedProvider = true,
-				Provider = providerToEdit,
-			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
-			if (provider != null)
-			{
-				if (provider is not EmbeddedScriptLogDataSourceProvider)
-					provider = new EmbeddedScriptLogDataSourceProvider(provider);
-				if (!ReferenceEquals(provider, providerToEdit))
-					providerToEdit.Dispose();
-				var prevProvider = this.embeddedScriptLogDataSourceProvider;
-				this.embeddedScriptLogDataSourceProvider = (EmbeddedScriptLogDataSourceProvider)provider;
-				if (ReferenceEquals(this.dataSourceProviderComboBox.SelectedItem, prevProvider))
-				{
-					var index = this.dataSourceProviderComboBox.SelectedIndex;
-					this.dataSourceProviders[index] = provider;
-					this.dataSourceProviderComboBox.SelectedIndex = index;
-					prevProvider?.Dispose();
-					this.InvalidateInput();
-				}
-				else
-				{
-					var index = this.dataSourceProviders.Count - 1;
-					if (index >= 0 && ReferenceEquals(this.dataSourceProviders[index], prevProvider))
-					{
-						this.dataSourceProviders[index] = provider;
-						prevProvider.Dispose();
-					}
-					else
-						this.dataSourceProviders.Add(provider);
-					this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, true);
-				}
-			}
-			else
-				providerToEdit.Dispose();
-		}
-
-
 		// Check whether log data source options is valid or not.
 		bool IsValidDataSourceOptions => this.GetValue(IsValidDataSourceOptionsProperty);
 
@@ -1440,6 +1436,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.Height = Math.Max(screen.WorkingArea.Height / screen.Scaling / 2, this.FindResourceOrDefault("Double/LogProfileEditorDialog.Height", 600.0));
 				});
 			});
+			
+			// update navigation bar
+			this.updateNavigationBarButtonsAction.Schedule();
 		}
 
 
@@ -1702,6 +1701,40 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to remove visible log property.
 		/// </summary>
 		public ICommand RemoveVisibleLogPropertyCommand { get; }
+		
+		
+		// Scroll to given panel
+		void ScrollToPanel(ToggleButton button)
+		{
+			// select panel to scroll to
+			Panel panel;
+			if (button == this.commonPanelButton)
+				panel = this.commonPanel;
+			else if (button == this.logReadingPanelButton)
+				panel = this.logReadingPanel;
+			else if (button == this.logDisplayingPanelButton)
+				panel = this.logDisplayingPanel;
+			else if (button == this.logWritingPanelButton)
+				panel = this.logWritingPanel;
+			else
+				return;
+			
+			// scroll to panel
+			var offset = this.baseScrollViewer.Offset;
+			var viewport = this.baseScrollViewer.Viewport;
+			var viewportCenter = offset.Y + (viewport.Height / 2);
+			var panelBounds = panel.Bounds;
+			if (panelBounds.Height > viewport.Height)
+			{
+				if (panelBounds.Y < offset.Y || panelBounds.Y > viewportCenter)
+					panel.BringIntoView();
+			}
+			else if (panelBounds.Y < offset.Y || panelBounds.Bottom > offset.Y + viewport.Height)
+				panel.BringIntoView();
+			
+			// update navigation bar
+			this.updateNavigationBarButtonsAction.Schedule();
+		}
 
 
 		// Select default log data source provider.
