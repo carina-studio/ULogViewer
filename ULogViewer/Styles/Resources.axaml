@@ -113,7 +113,7 @@
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.MinHeight">300</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.MinWidth">300</sys:Double>
-	<sys:Double x:Key="Double/LogProfileSelectionDialog.Width">500</sys:Double>
+	<sys:Double x:Key="Double/LogProfileSelectionDialog.Width">550</sys:Double>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin">0,0,5,3</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Label.Margin">0,3,3,0</Thickness>
