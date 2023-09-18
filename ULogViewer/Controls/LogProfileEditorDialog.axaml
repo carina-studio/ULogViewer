@@ -62,8 +62,8 @@
 					<!-- Log reading -->
 					<ToggleButton Name="logReadingPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.LogReading}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Read}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Read.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Import}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Import.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
@@ -78,8 +78,8 @@
 					<!-- Log writing -->
 					<ToggleButton Name="logWritingPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.LogWriting}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Write}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Write.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Export}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Export.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
