@@ -257,7 +257,7 @@
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">140</sys:Double>
-	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">85</sys:Double>
+	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">95</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth">250</sys:Double>
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>

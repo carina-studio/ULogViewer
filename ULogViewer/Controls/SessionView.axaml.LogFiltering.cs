@@ -73,7 +73,6 @@ partial class SessionView
     readonly ToggleButton predefinedLogTextFiltersButton;
     readonly Popup predefinedLogTextFiltersPopup;
     readonly HashSet<PredefinedLogTextFilter> selectedPredefinedLogTextFilters = new();
-    readonly ScheduledAction updateLogTextFilterTextBoxClassesAction;
 
 
     // Attach to predefined log text filter
@@ -275,24 +274,6 @@ partial class SessionView
         // start scrolling to log around current position
         if ((sender as LogFilteringViewModel)?.IsFilteringNeeded == true)
             this.StartKeepingCurrentDisplayedLogRange();
-    }
-
-
-    // Called when text of log text filter input changed.
-    void OnLogTextFilterTextBoxTextChanged()
-    {
-        // [Workaround] Prevent raising IndexOutOfRangeException by TextBox
-        if (!this.logTextFilterTextBox.IsFocused)
-        {
-            var focusedElement = this.attachedWindow?.FocusManager?.GetFocusedElement();
-            this.SynchronizationContext.Post(() =>
-            {
-                this.logTextFilterTextBox.Focus();
-                this.logTextFilterTextBox.SelectAll();
-                if (focusedElement is not TextBox)
-                    this.SynchronizationContext.Post(() => this.logListBox.Focus());
-            });
-        }
     }
     
     
@@ -630,31 +611,5 @@ partial class SessionView
         this.logLevelFilterComboBox.SelectedIndex = selectedIndex;
         if (!isScheduled)
             this.commitLogFiltersAction.Cancel();
-    }
-    
-
-    // Update classes of log text filter text box.
-    void UpdateLogTextFilterTextBoxClasses()
-    {
-        var visibleActions = 0;
-        if (this.clearLogTextFilterButton.IsEffectivelyVisible)
-            ++visibleActions;
-        if (this.ignoreLogTextFilterCaseButton.IsEffectivelyVisible)
-            ++visibleActions;
-        if (this.logFilteringHelpButton.IsEffectivelyVisible)
-            ++visibleActions;
-        var className = visibleActions switch
-        {
-            0 => null,
-            1 => "WithInPlaceAction",
-            _ => $"With{visibleActions}InPlaceActions",
-        };
-        if (className == null)
-            this.logTextFilterTextBox.Classes.Clear();
-        else if (!this.logTextFilterTextBox.Classes.Contains(className))
-        {
-            this.logTextFilterTextBox.Classes.Clear();
-            this.logTextFilterTextBox.Classes.Add(className);
-        }
     }
 }

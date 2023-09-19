@@ -450,11 +450,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 
 			// setup controls
-			this.clearLogTextFilterButton = this.toolBarContainer.FindControl<Button>(nameof(clearLogTextFilterButton)).AsNonNull().Also(it =>
-			{
-				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
-					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
-			});
+			this.clearLogTextFilterButton = this.toolBarContainer.FindControl<Button>(nameof(clearLogTextFilterButton)).AsNonNull();
 			this.createLogAnalysisRuleSetButton = this.Get<ToggleButton>(nameof(createLogAnalysisRuleSetButton));
 			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
 			{
@@ -466,11 +462,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				});
 			});
 			this.dragDropReceiverBorder = this.Get<Border>(nameof(dragDropReceiverBorder));
-			this.ignoreLogTextFilterCaseButton = this.toolBarContainer.FindControl<Button>(nameof(ignoreLogTextFilterCaseButton)).AsNonNull().Also(it =>
-			{
-				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
-					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
-			});
+			this.ignoreLogTextFilterCaseButton = this.toolBarContainer.FindControl<Button>(nameof(ignoreLogTextFilterCaseButton)).AsNonNull();
 			this.keyLogAnalysisRuleSetListBox = this.Get<Avalonia.Controls.ListBox>(nameof(keyLogAnalysisRuleSetListBox)).Also(this.SetupLogAnalysisRuleSetListBox);
 			this.Get<Expander>("keyLogAnalysisRuleSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.logAnalysisResultListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logAnalysisResultListBox)).Also(it =>
@@ -539,11 +531,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logChartGridRow = this.Get<Panel>("logChartPanel").Let(it => it.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(it)]);
 			this.logChartTypeButton = this.toolBarContainer.FindControl<ToggleButton>(nameof(logChartTypeButton)).AsNonNull();
 			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
-			this.logFilteringHelpButton = this.toolBarContainer.FindControl<Button>(nameof(logFilteringHelpButton)).AsNonNull().Also(it =>
-			{
-				it.GetObservable(IsVisibleProperty).Subscribe(_ =>
-					this.updateLogTextFilterTextBoxClassesAction?.Schedule());
-			});
+			this.logFilteringHelpButton = this.toolBarContainer.FindControl<Button>(nameof(logFilteringHelpButton)).AsNonNull();
 			this.logHeaderContainer = this.Get<Control>(nameof(logHeaderContainer));
 			this.logHeaderGrid = this.Get<Grid>(nameof(logHeaderGrid)).Also(it =>
 			{
@@ -575,17 +563,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
-			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
-			{
-				it.GetObservable(TextBox.TextProperty).Subscribe(_ =>
-				{
-					if (!this.isInitializing)
-						this.OnLogTextFilterTextBoxTextChanged();
-				});
-				it.ValidationDelay = this.CommitLogFilterParamsDelay;
-				if (Platform.IsMacOS)
-					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
-			});
+			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox));
 			this.logThreadIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				if (Platform.IsMacOS)
@@ -1044,7 +1022,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.updateLogChartXAxisLimitAction = new(this.UpdateLogChartXAxisLimit);
 			this.updateLogChartYAxisLimitAction = new(this.UpdateLogChartYAxisLimit);
-			this.updateLogTextFilterTextBoxClassesAction = new(this.UpdateLogTextFilterTextBoxClasses);
 			this.updateLatestDisplayedLogRangeAction = new(this.UpdateLatestDisplayedLogRange);
 			this.updateLogHeaderContainerMarginAction = new(() =>
 			{
@@ -1074,9 +1051,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// setup axes of log chart
 			this.UpdateLogChartAxes();
-
-			// perform initial actions
-			this.updateLogTextFilterTextBoxClassesAction.Schedule();
 			
 			// complete
 			this.isInitializing = false;
