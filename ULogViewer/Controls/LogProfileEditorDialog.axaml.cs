@@ -48,10 +48,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// URI of 'How ULogViewer read and parse logs' page.
 		/// </summary>
 		public static readonly Uri LogsReadingAndParsingPageUri = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
-		
-		
-		// Constants.
-		const int UpdateNavigationBarButtonsDelay = 100;
 
 
 		// Static fields.
@@ -117,7 +113,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly TextBox timestampFormatForWritingTextBox;
 		readonly ObservableList<string> timestampFormatsForReading = new();
 		readonly AppSuite.Controls.ListBox timestampFormatsForReadingListBox;
-		readonly ScheduledAction updateNavigationBarButtonsAction;
 		readonly AppSuite.Controls.ListBox visibleLogPropertyListBox;
 		readonly ObservableList<LogProperty> visibleLogProperties = new();
 		readonly ComboBox workingDirPriorityComboBox;
@@ -130,6 +125,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// setup properties
 			this.DataSourceProviders = ListExtensions.AsReadOnly(this.dataSourceProviders);
+			this.HasNavigationBar = true;
 			this.LogLevelMapEntriesForReading = ListExtensions.AsReadOnly(this.logLevelMapEntriesForReading);
 			this.LogLevelMapEntriesForWriting = ListExtensions.AsReadOnly(this.logLevelMapEntriesForWriting);
 			this.LogPatterns = ListExtensions.AsReadOnly(this.logPatterns.Also(it =>
@@ -185,16 +181,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.allowMultipleFilesSwitch = this.allowMultipleFilesPanel.FindControl<ToggleSwitch>(nameof(allowMultipleFilesSwitch)).AsNonNull();
 			this.baseScrollViewer = this.Get<ScrollViewer>(nameof(baseScrollViewer)).Also(it =>
 			{
-				it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(_ =>
-				{
-					if (this.IsOpened)
-						this.updateNavigationBarButtonsAction!.Schedule(UpdateNavigationBarButtonsDelay);
-				});
-				it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(_ =>
-				{
-					if (this.IsOpened)
-						this.updateNavigationBarButtonsAction!.Schedule(UpdateNavigationBarButtonsDelay);
-				});
+				it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateNavigationBar);
+				it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(this.InvalidateNavigationBar);
 			});
 			this.colorIndicatorComboBox = this.Get<ComboBox>("colorIndicatorComboBox");
 			this.commonPanel = this.Get<Panel>(nameof(commonPanel));
@@ -254,38 +242,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
 			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>("visibleLogPropertyListBox");
 			this.workingDirPriorityComboBox = this.Get<ComboBox>(nameof(workingDirPriorityComboBox));
-			
-			// create actions
-			this.updateNavigationBarButtonsAction = new(() =>
-			{
-				// check state
-				var offset = this.baseScrollViewer.Offset;
-				var viewport = this.baseScrollViewer.Viewport;
-				if (viewport.Height <= 0)
-					return;
-				
-				// find button to select
-				var viewportCenter = offset.Y + (viewport.Height / 2);
-				ToggleButton selectedButton;
-				if (offset.Y <= 1)
-					selectedButton = this.commonPanelButton;
-				else if (offset.Y + viewport.Height >= this.baseScrollViewer.Extent.Height - 1)
-					selectedButton = this.logWritingPanelButton;
-				else if (this.logWritingPanel.Bounds.Y <= viewportCenter)
-					selectedButton = this.logWritingPanelButton;
-				else if (this.logDisplayingPanel.Bounds.Y <= viewportCenter)
-					selectedButton = this.logDisplayingPanelButton;
-				else if (this.logReadingPanel.Bounds.Y <= viewportCenter)
-					selectedButton = this.logReadingPanelButton;
-				else
-					selectedButton = this.commonPanelButton;
-				
-				// select button
-				this.commonPanelButton.IsChecked = (this.commonPanelButton == selectedButton);
-				this.logReadingPanelButton.IsChecked = (this.logReadingPanelButton == selectedButton);
-				this.logDisplayingPanelButton.IsChecked = (this.logDisplayingPanelButton == selectedButton);
-				this.logWritingPanelButton.IsChecked = (this.logWritingPanelButton == selectedButton);
-			});
 
 			// attach to log data source providers
 			LogDataSourceProviders.All.Let(allProviders =>
@@ -1436,9 +1392,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.Height = Math.Max(screen.WorkingArea.Height / screen.Scaling / 2, this.FindResourceOrDefault("Double/LogProfileEditorDialog.Height", 600.0));
 				});
 			});
-			
-			// update navigation bar
-			this.updateNavigationBarButtonsAction.Schedule();
 		}
 
 
@@ -1464,6 +1417,42 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(IsWorkingDirectorySupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
 				&& !provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)));
 			this.InvalidateInput();
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnUpdateNavigationBar()
+		{
+			// call base
+			base.OnUpdateNavigationBar();
+			
+			// check state
+			var offset = this.baseScrollViewer.Offset;
+			var viewport = this.baseScrollViewer.Viewport;
+			if (viewport.Height <= 0)
+				return;
+				
+			// find button to select
+			var viewportCenter = offset.Y + (viewport.Height / 2);
+			ToggleButton selectedButton;
+			if (offset.Y <= 1)
+				selectedButton = this.commonPanelButton;
+			else if (offset.Y + viewport.Height >= this.baseScrollViewer.Extent.Height - 1)
+				selectedButton = this.logWritingPanelButton;
+			else if (this.logWritingPanel.Bounds.Y <= viewportCenter)
+				selectedButton = this.logWritingPanelButton;
+			else if (this.logDisplayingPanel.Bounds.Y <= viewportCenter)
+				selectedButton = this.logDisplayingPanelButton;
+			else if (this.logReadingPanel.Bounds.Y <= viewportCenter)
+				selectedButton = this.logReadingPanelButton;
+			else
+				selectedButton = this.commonPanelButton;
+				
+			// select button
+			this.commonPanelButton.IsChecked = (this.commonPanelButton == selectedButton);
+			this.logReadingPanelButton.IsChecked = (this.logReadingPanelButton == selectedButton);
+			this.logDisplayingPanelButton.IsChecked = (this.logDisplayingPanelButton == selectedButton);
+			this.logWritingPanelButton.IsChecked = (this.logWritingPanelButton == selectedButton);
 		}
 
 
@@ -1733,7 +1722,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				panel.BringIntoView();
 			
 			// update navigation bar
-			this.updateNavigationBarButtonsAction.Schedule();
+			this.InvalidateNavigationBar();
 		}
 
 

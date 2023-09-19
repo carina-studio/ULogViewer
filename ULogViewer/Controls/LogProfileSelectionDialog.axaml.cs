@@ -37,10 +37,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			provider is not null && (provider.IsProVersionOnly || provider is ScriptLogDataSourceProvider));
 		
 		
-		// Constants.
-		const int UpdateNavigationBarButtonsDelay = 100;
-		
-		
 		// Static fields.
 		static readonly StyledProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
 		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(IsProVersionActivated));
@@ -67,7 +63,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly SortedObservableList<LogProfile> templateLogProfiles = new(CompareLogProfiles);
 		readonly ToggleButton templateLogProfilesButton;
 		readonly Panel templateLogProfilesPanel;
-		readonly ScheduledAction updateNavigationBarButtonsAction;
 		readonly ScheduledAction updateOtherLogProfilesPanelTitleAction;
 
 
@@ -77,6 +72,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public LogProfileSelectionDialog()
 		{
 			// setup properties
+			this.HasNavigationBar = true;
 			this.OtherLogProfiles = ListExtensions.AsReadOnly(this.otherLogProfiles);
 			this.PinnedLogProfiles = ListExtensions.AsReadOnly(this.pinnedLogProfiles);
 			this.recentlyUsedLogProfiles = new((lhs, rhs) =>
@@ -119,16 +115,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.recentlyUsedLogProfilesPanel = this.Get<Panel>(nameof(recentlyUsedLogProfilesPanel));
 			this.scrollViewer = this.Get<ScrollViewer>(nameof(scrollViewer)).Also(it =>
 			{
-				it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(_ =>
-				{
-					if (this.IsOpened)
-						this.updateNavigationBarButtonsAction!.Schedule(UpdateNavigationBarButtonsDelay);
-				});
-				it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(_ =>
-				{
-					if (this.IsOpened)
-						this.updateNavigationBarButtonsAction!.Schedule(UpdateNavigationBarButtonsDelay);
-				});
+				it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateNavigationBar);
+				it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(this.InvalidateNavigationBar);
 			});
 			this.templateLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(templateLogProfileListBox));
 			this.templateLogProfilesButton = this.Get<ToggleButton>(nameof(templateLogProfilesButton)).Also(it =>
@@ -138,54 +126,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.templateLogProfilesPanel = this.Get<Panel>(nameof(templateLogProfilesPanel));
 			
 			// create actions
-			this.updateNavigationBarButtonsAction = new(() =>
-			{
-				// get state
-				var offset = this.scrollViewer.Offset;
-				var viewport = this.scrollViewer.Viewport;
-				if (viewport.Height <= 0)
-					return;
-				var viewportCenter = offset.Y + (viewport.Height / 2);
-				
-				// find button to select
-				var selectedButton = default(ToggleButton);
-				if (offset.Y <= 1)
-				{
-					if (this.pinnedLogProfilesPanel.IsVisible)
-						selectedButton = this.pinnedLogProfilesButton;
-					else if (this.recentlyUsedLogProfilesPanel.IsVisible)
-						selectedButton = this.recentlyUsedLogProfilesButton;
-					else if (this.otherLogProfilesPanel.IsVisible)
-						selectedButton = this.otherLogProfilesButton;
-					else if (this.templateLogProfilesPanel.IsVisible)
-						selectedButton = this.templateLogProfilesButton;
-				}
-				else if (offset.Y + viewport.Height >= this.scrollViewer.Extent.Height - 1)
-				{
-					if (this.templateLogProfilesPanel.IsVisible)
-						selectedButton = this.templateLogProfilesButton;
-					else if (this.otherLogProfilesPanel.IsVisible)
-						selectedButton = this.otherLogProfilesButton;
-					else if (this.recentlyUsedLogProfilesPanel.IsVisible)
-						selectedButton = this.recentlyUsedLogProfilesButton;
-					else if (this.pinnedLogProfilesPanel.IsVisible)
-						selectedButton = this.pinnedLogProfilesButton;
-				}
-				else if (this.pinnedLogProfilesPanel.IsVisible && this.pinnedLogProfilesPanel.Bounds.Bottom >= viewportCenter)
-					selectedButton = this.pinnedLogProfilesButton;
-				else if (this.recentlyUsedLogProfilesPanel.IsVisible && this.recentlyUsedLogProfilesPanel.Bounds.Bottom >= viewportCenter)
-					selectedButton = this.recentlyUsedLogProfilesButton;
-				else if (this.otherLogProfilesPanel.IsVisible && this.otherLogProfilesPanel.Bounds.Bottom >= viewportCenter)
-					selectedButton = this.otherLogProfilesButton;
-				else if (this.templateLogProfilesPanel.IsVisible && this.templateLogProfilesPanel.Bounds.Bottom >= viewportCenter)
-					selectedButton = this.templateLogProfilesButton;
-				
-				// select button
-				this.pinnedLogProfilesButton.IsChecked = (this.pinnedLogProfilesButton == selectedButton);
-				this.recentlyUsedLogProfilesButton.IsChecked = (this.recentlyUsedLogProfilesButton == selectedButton);
-				this.otherLogProfilesButton.IsChecked = (this.otherLogProfilesButton == selectedButton);
-				this.templateLogProfilesButton.IsChecked = (this.templateLogProfilesButton == selectedButton);
-			});
 			this.updateOtherLogProfilesPanelTitleAction = new(() =>
 			{
 				this.SetValue(OtherLogProfilesPanelTitleProperty, this.pinnedLogProfiles.IsEmpty() && this.recentlyUsedLogProfiles.IsEmpty()
@@ -600,7 +540,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			base.OnOpening(e);
 			this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
-			this.updateNavigationBarButtonsAction.Schedule();
 			this.updateOtherLogProfilesPanelTitleAction.Schedule();
 		}
 
@@ -757,6 +696,60 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <inheritdoc/>
+		protected override void OnUpdateNavigationBar()
+		{
+			// call base
+			base.OnUpdateNavigationBar();
+
+			// get state
+			var offset = this.scrollViewer.Offset;
+			var viewport = this.scrollViewer.Viewport;
+			if (viewport.Height <= 0)
+				return;
+			var viewportCenter = offset.Y + (viewport.Height / 2);
+
+			// find button to select
+			var selectedButton = default(ToggleButton);
+			if (offset.Y <= 1)
+			{
+				if (this.pinnedLogProfilesPanel.IsVisible)
+					selectedButton = this.pinnedLogProfilesButton;
+				else if (this.recentlyUsedLogProfilesPanel.IsVisible)
+					selectedButton = this.recentlyUsedLogProfilesButton;
+				else if (this.otherLogProfilesPanel.IsVisible)
+					selectedButton = this.otherLogProfilesButton;
+				else if (this.templateLogProfilesPanel.IsVisible)
+					selectedButton = this.templateLogProfilesButton;
+			}
+			else if (offset.Y + viewport.Height >= this.scrollViewer.Extent.Height - 1)
+			{
+				if (this.templateLogProfilesPanel.IsVisible)
+					selectedButton = this.templateLogProfilesButton;
+				else if (this.otherLogProfilesPanel.IsVisible)
+					selectedButton = this.otherLogProfilesButton;
+				else if (this.recentlyUsedLogProfilesPanel.IsVisible)
+					selectedButton = this.recentlyUsedLogProfilesButton;
+				else if (this.pinnedLogProfilesPanel.IsVisible)
+					selectedButton = this.pinnedLogProfilesButton;
+			}
+			else if (this.pinnedLogProfilesPanel.IsVisible && this.pinnedLogProfilesPanel.Bounds.Bottom >= viewportCenter)
+				selectedButton = this.pinnedLogProfilesButton;
+			else if (this.recentlyUsedLogProfilesPanel.IsVisible && this.recentlyUsedLogProfilesPanel.Bounds.Bottom >= viewportCenter)
+				selectedButton = this.recentlyUsedLogProfilesButton;
+			else if (this.otherLogProfilesPanel.IsVisible && this.otherLogProfilesPanel.Bounds.Bottom >= viewportCenter)
+				selectedButton = this.otherLogProfilesButton;
+			else if (this.templateLogProfilesPanel.IsVisible && this.templateLogProfilesPanel.Bounds.Bottom >= viewportCenter)
+				selectedButton = this.templateLogProfilesButton;
+
+			// select button
+			this.pinnedLogProfilesButton.IsChecked = (this.pinnedLogProfilesButton == selectedButton);
+			this.recentlyUsedLogProfilesButton.IsChecked = (this.recentlyUsedLogProfilesButton == selectedButton);
+			this.otherLogProfilesButton.IsChecked = (this.otherLogProfilesButton == selectedButton);
+			this.templateLogProfilesButton.IsChecked = (this.templateLogProfilesButton == selectedButton);
+		}
+
+
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
@@ -907,7 +900,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				panel.BringIntoView();
 			
 			// update navigation bar
-			this.updateNavigationBarButtonsAction.Schedule();
+			this.InvalidateNavigationBar();
 		}
 
 
