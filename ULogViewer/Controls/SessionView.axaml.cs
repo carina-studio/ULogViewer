@@ -1985,15 +1985,26 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.canShowLogProperty.Update(selectionCount == 1 && isStringProperty);
 						};
 						if (actualPropertyView is CarinaStudio.Controls.TextBlock textBlock 
-							&& width != null
-							&& Platform.IsMacOS 
-							&& this.attachedWindow != null)
+							&& width.HasValue
+							&& Platform.IsMacOS)
 						{
-							this.attachedWindow.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isActive => 
+							var isActiveObserverToken = default(IDisposable);
+							void OnWindowIsActiveChanged(bool isActive)
 							{
 								if (!isActive)
 									ToolTip.SetIsOpen(textBlock, false);
-							});
+							}
+							textBlock.AttachedToLogicalTree += (_, _) =>
+							{
+								if (isActiveObserverToken is null && TopLevel.GetTopLevel(textBlock) is Avalonia.Controls.Window window)
+									this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
+							};
+							textBlock.DetachedFromLogicalTree += (_, _) =>
+							{
+								isActiveObserverToken = isActiveObserverToken.DisposeAndReturnNull();
+							};
+							if (TopLevel.GetTopLevel(textBlock) is Avalonia.Controls.Window window)
+								this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
 						}
 					});
 					switch (logProperty.Name)
