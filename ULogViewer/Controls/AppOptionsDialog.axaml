@@ -21,152 +21,199 @@
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
+		<Border Classes="Dialog_ControlButtonsPanel" BoxShadow="{StaticResource BoxShadows/None}" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
 				<Button Classes="Dialog_ControlButton" Command="{ReflectionBinding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
 			</StackPanel>
 		</Border>
+		
+		<!-- Navigation bar -->
+		<Border Classes="ToolBar" BorderBrush="{DynamicResource Brush/ToolBar.Border}" BorderThickness="0,0,1,0" DockPanel.Dock="Left">
+			<asControls:ToolBarScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
+				<StackPanel>
+					
+					<!-- User interface -->
+					<ToggleButton Name="userInterfacePanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/ApplicationOptions.UserInterface}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+					<!-- Log operations -->
+					<ToggleButton Name="logOperationsPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/AppOptionsDialog.LogOperations}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfiles}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfiles.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+					<!-- Log filtering -->
+					<ToggleButton Name="logFilteringPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/AppOptionsDialog.LogFiltering}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Light}"/>
+						</Panel>
+					</ToggleButton>
+					
+					<!-- Others -->
+					<ToggleButton Name="othersPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/ApplicationOptions.Others}">
+						<Panel>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+								<DrawingImage>
+									<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Tool}"/>
+								</DrawingImage>
+							</Image>
+						</Panel>
+					</ToggleButton>
+					
+				</StackPanel>
+			</asControls:ToolBarScrollViewer>
+		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="rootScrollViewer" MaxHeight="{DynamicResource Double/ApplicationOptionsDialog.Content.MaxHeight}">
-			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
+		<Panel>
+			<ScrollViewer Name="rootScrollViewer" MaxHeight="{DynamicResource Double/ApplicationOptionsDialog.Content.MaxHeight}">
+				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
-				<!-- User interface -->
-				<Border Classes="Dialog_ItemsGroup_Header">
-					<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/ApplicationOptions.UserInterface}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-				
-						<!-- Theme mode -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.ThemeMode}"/>
-								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-									<Grid.IsVisible>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-											<Binding Path="IsRestartingRootWindowsNeeded"/>
-											<Binding Path="IsThemeModeChanged"/>
-										</MultiBinding>
-									</Grid.IsVisible>
-									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
-									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
-								</Grid>
-							</StackPanel>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding Converter={x:Static asViewModels:ApplicationOptions.ThemeModeConverter}}"/>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Compact UI -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseCompactUserInterface}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#compactUIWarningDescriptionGrid.IsVisible}" Text="{DynamicResource String/ApplicationOptions.UseCompactUserInterface.Description}"/>
-								<Grid Name="compactUIWarningDescriptionGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-									<Grid.IsVisible>
-										<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-											<Binding Path="IsRestartingRootWindowsNeeded"/>
-											<Binding Path="IsUseCompactUserInterfaceChanged"/>
-										</MultiBinding>
-									</Grid.IsVisible>
-									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
-									<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
-								</Grid>
-							</StackPanel>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding UseCompactUserInterface, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Enable blurry background -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.EnableBlurryBackground}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding EnableBlurryBackground, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Culture -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.Culture}"/>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type as:ApplicationCulture}" Grid.Column="1" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Use embedded fonts for Chinese -->
-						<StackPanel IsVisible="{Binding IsUseEmbeddedFontsForChineseSupported}">
-							<asControls:DialogItemGrid>
-								<StackPanel Classes="Dialog_Item_Text_Container">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseEmbeddedFontsForChinese}"/>
-									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsUseEmbeddedFontsForChineseChanged}">
-										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-										<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
-									</Grid>
-								</StackPanel>
-								<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding UseEmbeddedFontsForChinese, Mode=TwoWay}"/>
-							</asControls:DialogItemGrid>
-							<Separator Classes="Dialog_Item_Separator"/>
-						</StackPanel>
-
-						<!-- Custom screen scale factor -->
-						<StackPanel IsVisible="{Binding IsCustomScreenScaleFactorSupported}">
-							<asControls:DialogItemGrid>
-								<StackPanel Classes="Dialog_Item_Text_Container">
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.CustomScreenScaleFactor}" VerticalAlignment="Center"/>
-										<Separator Classes="Dialog_Separator_Small"/>
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{Binding CustomScreenScaleFactor, Converter={x:Static asConverters:RatioToPercentageConverter.Default}, StringFormat={}({0})}" VerticalAlignment="Center"/>
-									</StackPanel>
-									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Margin="{StaticResource Thickness/Dialog.TextBlock.Margin.Description}">
-										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-										<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
-									</Grid>
-								</StackPanel>
-								<Slider Classes="Dialog_Item_Slider" Grid.Column="1" HorizontalAlignment="Stretch" Maximum="{Binding MaxCustomScreenScaleFactor, Mode=OneTime}" Minimum="1" TickPlacement="None" TickFrequency="{Binding CustomScreenScaleFactorGranularity, Mode=OneTime}" Value="{Binding CustomScreenScaleFactor, Mode=TwoWay}">
-									<Slider.IsEnabled>
-										<MultiBinding Converter="{x:Static BoolConverters.And}">
-											<Binding Path="!IsCheckingXRandR"/>
-											<Binding Path="IsXRandRInstalled"/>
-										</MultiBinding>
-									</Slider.IsEnabled>
-								</Slider>
-							</asControls:DialogItemGrid>
-							<Separator Classes="Dialog_Item_Separator"/>
-						</StackPanel>
-
-						<!-- Log font -->
-						<asControls:DialogItemBorder>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.LogFont}"/>
-						</asControls:DialogItemBorder>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<Grid ColumnDefinitions="*,Auto,*">
-							<ComboBox Classes="Dialog_ComboBox" ItemsSource="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="*,Auto">
-											<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-											<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="1" IsVisible="{Binding IsBuiltIn}" Margin="{StaticResource Thickness/AppOptionsDialog.FontFamily.ExtraInfo.Margin}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										</Grid>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-							<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
-							<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}" Grid.Column="2" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}"/>
-						</Grid>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<Border HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
-							<Grid>
-								<TextBlock FontSize="20" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
-								<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
-							</Grid>
+					<!-- User interface -->
+					<StackPanel Name="userInterfacePanel">
+						<Border Classes="Dialog_ItemsGroup_Header">
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/ApplicationOptions.UserInterface}"/>
 						</Border>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
+						
+								<!-- Theme mode -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.ThemeMode}"/>
+										<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+											<Grid.IsVisible>
+												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+													<Binding Path="IsRestartingRootWindowsNeeded"/>
+													<Binding Path="IsThemeModeChanged"/>
+												</MultiBinding>
+											</Grid.IsVisible>
+											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
+											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
+										</Grid>
+									</StackPanel>
+									<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
+										<ComboBox.ItemTemplate>
+											<DataTemplate>
+												<TextBlock Text="{Binding Converter={x:Static asViewModels:ApplicationOptions.ThemeModeConverter}}"/>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Compact UI -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseCompactUserInterface}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#compactUIWarningDescriptionGrid.IsVisible}" Text="{DynamicResource String/ApplicationOptions.UseCompactUserInterface.Description}"/>
+										<Grid Name="compactUIWarningDescriptionGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+											<Grid.IsVisible>
+												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
+													<Binding Path="IsRestartingRootWindowsNeeded"/>
+													<Binding Path="IsUseCompactUserInterfaceChanged"/>
+												</MultiBinding>
+											</Grid.IsVisible>
+											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
+											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{DynamicResource String/ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
+										</Grid>
+									</StackPanel>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding UseCompactUserInterface, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Enable blurry background -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.EnableBlurryBackground}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding EnableBlurryBackground, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Culture -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.Culture}"/>
+									<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type as:ApplicationCulture}" Grid.Column="1" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Use embedded fonts for Chinese -->
+								<StackPanel IsVisible="{Binding IsUseEmbeddedFontsForChineseSupported}">
+									<asControls:DialogItemGrid>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseEmbeddedFontsForChinese}"/>
+											<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsUseEmbeddedFontsForChineseChanged}">
+												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
+											</Grid>
+										</StackPanel>
+										<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding UseEmbeddedFontsForChinese, Mode=TwoWay}"/>
+									</asControls:DialogItemGrid>
+									<Separator Classes="Dialog_Item_Separator"/>
+								</StackPanel>
+
+								<!-- Custom screen scale factor -->
+								<StackPanel IsVisible="{Binding IsCustomScreenScaleFactorSupported}">
+									<asControls:DialogItemGrid>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<StackPanel Orientation="Horizontal">
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.CustomScreenScaleFactor}" VerticalAlignment="Center"/>
+												<Separator Classes="Dialog_Separator_Small"/>
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{Binding CustomScreenScaleFactor, Converter={x:Static asConverters:RatioToPercentageConverter.Default}, StringFormat={}({0})}" VerticalAlignment="Center"/>
+											</StackPanel>
+											<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Margin="{StaticResource Thickness/Dialog.TextBlock.Margin.Description}">
+												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
+											</Grid>
+										</StackPanel>
+										<Slider Classes="Dialog_Item_Slider" Grid.Column="1" HorizontalAlignment="Stretch" Maximum="{Binding MaxCustomScreenScaleFactor, Mode=OneTime}" Minimum="1" TickPlacement="None" TickFrequency="{Binding CustomScreenScaleFactorGranularity, Mode=OneTime}" Value="{Binding CustomScreenScaleFactor, Mode=TwoWay}">
+											<Slider.IsEnabled>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="!IsCheckingXRandR"/>
+													<Binding Path="IsXRandRInstalled"/>
+												</MultiBinding>
+											</Slider.IsEnabled>
+										</Slider>
+									</asControls:DialogItemGrid>
+									<Separator Classes="Dialog_Item_Separator"/>
+								</StackPanel>
+
+								<!-- Log font -->
+								<asControls:DialogItemBorder>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.LogFont}"/>
+								</asControls:DialogItemBorder>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<Grid ColumnDefinitions="*,Auto,*">
+									<ComboBox Classes="Dialog_ComboBox" ItemsSource="{Binding InstalledFontFamilies}" SelectedItem="{Binding LogFontFamily, Mode=TwoWay}">
+										<ComboBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="*,Auto">
+													<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+													<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="1" IsVisible="{Binding IsBuiltIn}" Margin="{StaticResource Thickness/AppOptionsDialog.FontFamily.ExtraInfo.Margin}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+												</Grid>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+									<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+									<NumericUpDown Classes="Dialog_NumericUpDown" FormatString="{}{0:F0}" Grid.Column="2" Maximum="30" Minimum="10" Value="{Binding LogFontSize, Mode=TwoWay}"/>
+								</Grid>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<Border HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
+									<Grid>
+										<TextBlock FontSize="20" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
+										<TextBlock FontFamily="{Binding SampleLogFontFamily}" FontSize="{Binding LogFontSize}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.LogFont.Sample}" VerticalAlignment="Center"/>
+									</Grid>
+								</Border>
+								<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Pattern font -->
 						<asControls:DialogItemBorder>
@@ -194,97 +241,99 @@
 							</Grid>
 						</Border>
 
+							</StackPanel>
+						</Border>
+						<Separator Classes="Dialog_Separator_Large"/>
 					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
 
-				<!-- Log operations -->
-				<Border Classes="Dialog_ItemsGroup_Header">
-					<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/AppOptionsDialog.LogOperations}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+					<!-- Log operations -->
+					<StackPanel Name="logOperationsPanel">
+						<Border Classes="Dialog_ItemsGroup_Header">
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/AppOptionsDialog.LogOperations}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
 
-						<!-- Initial log profile -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.InitialLogProfile}"/>
-							<ToggleButton Name="initLogProfileButton" Classes="Dialog_Item_ToggleButton" Grid.Column="1" HorizontalContentAlignment="Stretch" MinWidth="{StaticResource Double/Dialog.Control.MinWidth}">
-								<Grid ColumnDefinitions="Auto,*,Auto" DataContext="{Binding InitialLogProfile}">
-									<Panel Classes="Button_Icon">
-										<Image Classes="Icon">
-											<Image.Source>
-												<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-													<Binding Path="Icon"/>
-													<Binding Path="IconColor"/>
-												</MultiBinding>
-											</Image.Source>
-										</Image>
-									</Panel>
-									<TextBlock Classes="Button_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
-									<Panel Grid.Column="2">
-										<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#initLogProfileButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
-										<Image Classes="Button_DropDownIcon" IsVisible="{Binding #initLogProfileButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
-									</Panel>
-								</Grid>
-							</ToggleButton>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Initial log profile -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.InitialLogProfile}"/>
+									<ToggleButton Name="initLogProfileButton" Classes="Dialog_Item_ToggleButton" Grid.Column="1" HorizontalContentAlignment="Stretch" MinWidth="{StaticResource Double/Dialog.Control.MinWidth}">
+										<Grid ColumnDefinitions="Auto,*,Auto" DataContext="{Binding InitialLogProfile}">
+											<Panel Classes="Button_Icon">
+												<Image Classes="Icon">
+													<Image.Source>
+														<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
+															<Binding Path="Icon"/>
+															<Binding Path="IconColor"/>
+														</MultiBinding>
+													</Image.Source>
+												</Image>
+											</Panel>
+											<TextBlock Classes="Button_TextBlock" Grid.Column="1" Text="{Binding Name}"/>
+											<Panel Grid.Column="2">
+												<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#initLogProfileButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+												<Image Classes="Button_DropDownIcon" IsVisible="{Binding #initLogProfileButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+											</Panel>
+										</Grid>
+									</ToggleButton>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Select log profile for new session -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogProfileForNewSession}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Select log profile for new session -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogProfileForNewSession}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Select files when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Select command when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectCommandWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectCommandWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Select files when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Select command when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectCommandWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectCommandWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Select IP endpoint when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectIPEndPointWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectIPEndPointWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Select IP endpoint when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectIPEndPointWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectIPEndPointWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Set URI when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectUriWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectUriWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Set URI when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectUriWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectUriWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Select working directory when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Select PID when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectProcessIdWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectProcessIdWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Select process name when needed -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectProcessNameWhenNeeded}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectProcessNameWhenNeeded, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Select working directory when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Select PID when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectProcessIdWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectProcessIdWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Select process name when needed -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectProcessNameWhenNeeded}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding SelectProcessNameWhenNeeded, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Select reading precondition for files -->
 						<asControls:DialogItemGrid>
@@ -300,143 +349,133 @@
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Enable scrolling to latest logs automatically -->
-						<asControls:DialogItemGrid>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description}"/>
+								<!-- Enable scrolling to latest logs automatically -->
+								<asControls:DialogItemGrid>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description}"/>
+									</StackPanel>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding EnableScrollingToLatestLogAfterReloadingLogs, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Max log count -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.MaxContinuousLogCount}"/>
+									<abControls:IntegerTextBox Name="maxContinuousLogCountTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Update interval -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
+									<abControls:IntegerTextBox Name="continuousReadingUpdateIntervalTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+
 							</StackPanel>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding EnableScrollingToLatestLogAfterReloadingLogs, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Max log count -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.MaxContinuousLogCount}"/>
-							<abControls:IntegerTextBox Name="maxContinuousLogCountTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Update interval -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
-							<abControls:IntegerTextBox Name="continuousReadingUpdateIntervalTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-
+						</Border>
+						<Separator Classes="Dialog_Separator_Large"/>
 					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
 
-				<!-- Log filtering -->
-				<Border Classes="Dialog_ItemsGroup_Header">
-					<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/AppOptionsDialog.LogFiltering}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+					<!-- Log filtering -->
+					<StackPanel Name="logFilteringPanel">
+						<Border Classes="Dialog_ItemsGroup_Header">
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/AppOptionsDialog.LogFiltering}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
 
-						<!-- Ignore case -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Ignore case -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Show help button -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding ShowHelpButtonOnLogTextFilter, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
+								<!-- Show help button -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding ShowHelpButtonOnLogTextFilter, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Log filter update delay -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.UpdateLogFilterDelay}"/>
-							<abControls:IntegerTextBox Name="updateLogFilterDelayTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
+								<!-- Log filter update delay -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.UpdateLogFilterDelay}"/>
+									<abControls:IntegerTextBox Name="updateLogFilterDelayTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
 
-					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
-
-				<!-- Log analysis -->
-				<Border Classes="Dialog_ItemsGroup_Header">
-					<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/AppOptionsDialog.LogAnalysis}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-
-						<!-- Reset rule sets after setting log profile -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding ResetLogAnalysisRuleSetsAfterSettingLogProfile, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-
-					</StackPanel>
-				</Border>
-				<Separator Classes="Dialog_Separator_Large"/>
-
-				<!-- Others -->
-				<Border Classes="Dialog_ItemsGroup_Header">
-					<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/ApplicationOptions.Others}"/>
-				</Border>
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
-
-						<!-- Default text shell -->
-						<asControls:DialogItemGrid>
-							<TextBlock Name="defaultTextShellLabel" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.DefaultTextShell}"/>
-							<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate x:CompileBindings="True" x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
-										<TextBlock Text="{ReflectionBinding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Show process info -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ShowProcessInfo}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Memory usage policy -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.MemoryUsagePolicy}"/>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:MemoryUsagePolicy}" Grid.Column="1" SelectedItem="{Binding MemoryUsagePolicy, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-						
-						<!-- Physical memory usage percentage to stop reading logs -->
-						<asControls:DialogItemGrid IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}">
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Label" Arg1="{Binding PrivateMemoryUsageToStopReadingLogs, Converter={x:Static asConverters:FileSizeConverter.Default}}" Arg2="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs}" Format="{DynamicResource String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description}"/>
 							</StackPanel>
-							<Slider Classes="Dialog_Item_Slider" Grid.Column="1" IsSnapToTickEnabled="True" Maximum="{Binding MaxPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" Minimum="{Binding MinPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" TickFrequency="5" Value="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}"/>
-
-						<!-- Notify application update -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.NotifyApplicationUpdate}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding NotifyApplicationUpdate, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-						<Separator Classes="Dialog_Item_Separator"/>
-
-						<!-- Accept non-stable update -->
-						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.AcceptNonStableApplicationUpdate}"/>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
-
+						</Border>
+						<Separator Classes="Dialog_Separator_Large"/>
 					</StackPanel>
-				</Border>
-				
-			</StackPanel>
-		</ScrollViewer>
+
+					<!-- Others -->
+					<StackPanel Name="othersPanel">
+						<Border Classes="Dialog_ItemsGroup_Header">
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/ApplicationOptions.Others}"/>
+						</Border>
+						<Border Classes="Dialog_ItemsGroup_Container">
+							<StackPanel>
+
+								<!-- Default text shell -->
+								<asControls:DialogItemGrid>
+									<TextBlock Name="defaultTextShellLabel" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.DefaultTextShell}"/>
+									<ComboBox Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
+										<ComboBox.ItemTemplate>
+											<DataTemplate x:CompileBindings="True" x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
+												<TextBlock Text="{ReflectionBinding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Show process info -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ShowProcessInfo}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Memory usage policy -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.MemoryUsagePolicy}"/>
+									<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:MemoryUsagePolicy}" Grid.Column="1" SelectedItem="{Binding MemoryUsagePolicy, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Physical memory usage percentage to stop reading logs -->
+								<asControls:DialogItemGrid IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}">
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Label" Arg1="{Binding PrivateMemoryUsageToStopReadingLogs, Converter={x:Static asConverters:FileSizeConverter.Default}}" Arg2="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs}" Format="{DynamicResource String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description}"/>
+									</StackPanel>
+									<Slider Classes="Dialog_Item_Slider" Grid.Column="1" IsSnapToTickEnabled="True" Maximum="{Binding MaxPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" Minimum="{Binding MinPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" TickFrequency="5" Value="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}"/>
+
+								<!-- Notify application update -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.NotifyApplicationUpdate}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding NotifyApplicationUpdate, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+								<Separator Classes="Dialog_Item_Separator"/>
+
+								<!-- Accept non-stable update -->
+								<asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.AcceptNonStableApplicationUpdate}"/>
+									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}"/>
+								</asControls:DialogItemGrid>
+
+							</StackPanel>
+						</Border>
+					</StackPanel>
+					
+				</StackPanel>
+			</ScrollViewer>
+			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Margin="0,-100,-100,0"/>
+		</Panel>
 
 	</DockPanel>
 	

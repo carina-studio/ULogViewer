@@ -38,8 +38,17 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	
 
 	// Fields.
-	private LogProfileSelectionContextMenu? logProfileSelectionMenu;
+	readonly Panel logFilteringPanel;
+	readonly ToggleButton logFilteringPanelButton;
+	readonly Panel logOperationsPanel;
+	readonly ToggleButton logOperationsPanelButton;
+	LogProfileSelectionContextMenu? logProfileSelectionMenu;
+	readonly Panel othersPanel;
+	readonly ToggleButton othersPanelButton;
 	readonly ScheduledAction refreshDataContextAction;
+	readonly ScrollViewer rootScrollViewer;
+	readonly Panel userInterfacePanel;
+	readonly ToggleButton userInterfacePanelButton;
 
 
 	/// <summary>
@@ -47,6 +56,10 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	/// </summary>
 	public AppOptionsDialog()
 	{
+		// setup properties
+		this.HasNavigationBar = true;
+		
+		// load views
 		AvaloniaXamlLoader.Load(this);
 		static void CoerceIntegerValue(IntegerTextBox textBox)
 		{
@@ -67,18 +80,39 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 					appOptions.InitialLogProfile = logProfile;
 			});
 		});
+		this.logFilteringPanel = this.Get<Panel>(nameof(logFilteringPanel));
+		this.logFilteringPanelButton = this.Get<ToggleButton>(nameof(logFilteringPanelButton)).Also(it => 
+			it.Click += (_, _) => this.ScrollToPanel(it));
+		this.logOperationsPanel = this.Get<Panel>(nameof(logOperationsPanel));
+		this.logOperationsPanelButton = this.Get<ToggleButton>(nameof(logOperationsPanelButton)).Also(it => 
+			it.Click += (_, _) => this.ScrollToPanel(it));
 		this.Get<IntegerTextBox>("maxContinuousLogCountTextBox").Also(it =>
 			it.LostFocus += (_, _) => CoerceIntegerValue(it));
+		this.othersPanel = this.Get<Panel>(nameof(othersPanel));
+		this.othersPanelButton = this.Get<ToggleButton>(nameof(othersPanelButton)).Also(it => 
+			it.Click += (_, _) => this.ScrollToPanel(it));
+		this.rootScrollViewer = this.Get<ScrollViewer>(nameof(rootScrollViewer)).Also(it =>
+		{
+			it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateNavigationBar);
+			it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(this.InvalidateNavigationBar);
+		});
 		this.Get<IntegerTextBox>("updateLogFilterDelayTextBox").Also(it =>
 			it.LostFocus += (_, _) => CoerceIntegerValue(it));
-		this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
-		this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
+		this.userInterfacePanel = this.Get<Panel>(nameof(userInterfacePanel));
+		this.userInterfacePanelButton = this.Get<ToggleButton>(nameof(userInterfacePanelButton)).Also(it => 
+			it.Click += (_, _) => this.ScrollToPanel(it));
+		
+		// create actions
 		this.refreshDataContextAction = new ScheduledAction(() =>
 		{
 			var dataContext = this.DataContext;
 			this.DataContext = null;
 			this.DataContext = dataContext;
 		});
+		
+		// attach to application
+		this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
+		this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 	}
 
 
@@ -122,9 +156,14 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	// Called when closed.
 	protected override void OnClosed(EventArgs e)
 	{
+		// detach from application
 		this.Application.PropertyChanged -= this.OnApplicationPropertyChanged;
 		this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
+		
+		// cancel actions
 		this.refreshDataContextAction.Cancel();
+		
+		// call base
 		base.OnClosed(e);
 	}
 
@@ -169,6 +208,76 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 				this.SetValue(HasInitialLogProfileProperty, it.InitialLogProfile != LogProfileManager.Default.EmptyProfile);
 			});
 		}
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnUpdateNavigationBar()
+    {
+	    // call base
+	    base.OnUpdateNavigationBar();
+	    
+	    // check state
+	    var offset = this.rootScrollViewer.Offset;
+	    var viewport = this.rootScrollViewer.Viewport;
+	    if (viewport.Height <= 0)
+		    return;
+				
+	    // find button to select
+	    var viewportCenter = offset.Y + (viewport.Height / 2);
+	    ToggleButton selectedButton;
+	    if (offset.Y <= 1)
+		    selectedButton = this.userInterfacePanelButton;
+	    else if (offset.Y + viewport.Height >= this.rootScrollViewer.Extent.Height - 1)
+		    selectedButton = this.othersPanelButton;
+	    else if (this.othersPanel.Bounds.Y <= viewportCenter)
+		    selectedButton = this.othersPanelButton;
+	    else if (this.logFilteringPanel.Bounds.Y <= viewportCenter)
+		    selectedButton = this.logFilteringPanelButton;
+	    else if (this.logOperationsPanel.Bounds.Y <= viewportCenter)
+		    selectedButton = this.logOperationsPanelButton;
+	    else
+		    selectedButton = this.userInterfacePanelButton;
+	    
+	    // select button
+	    this.userInterfacePanelButton.IsChecked = (this.userInterfacePanelButton == selectedButton);
+	    this.logOperationsPanelButton.IsChecked = (this.logOperationsPanelButton == selectedButton);
+	    this.logFilteringPanelButton.IsChecked = (this.logFilteringPanelButton == selectedButton);
+	    this.othersPanelButton.IsChecked = (this.othersPanelButton == selectedButton);
+    }
+
+
+    // Scroll to given panel
+    void ScrollToPanel(ToggleButton button)
+    {
+	    // select panel to scroll to
+	    Panel panel;
+	    if (button == this.userInterfacePanelButton)
+		    panel = this.userInterfacePanel;
+	    else if (button == this.logOperationsPanelButton)
+		    panel = this.logOperationsPanel;
+	    else if (button == this.logFilteringPanelButton)
+		    panel = this.logFilteringPanel;
+	    else if (button == this.othersPanelButton)
+		    panel = this.othersPanel;
+	    else
+		    return;
+			
+	    // scroll to panel
+	    var offset = this.rootScrollViewer.Offset;
+	    var viewport = this.rootScrollViewer.Viewport;
+	    var viewportCenter = offset.Y + (viewport.Height / 2);
+	    var panelBounds = panel.Bounds;
+	    if (panelBounds.Height > viewport.Height)
+	    {
+		    if (panelBounds.Y < offset.Y || panelBounds.Y > viewportCenter)
+			    panel.BringIntoView();
+	    }
+	    else if (panelBounds.Y < offset.Y || panelBounds.Bottom > offset.Y + viewport.Height)
+		    panel.BringIntoView();
+			
+	    // update navigation bar
+	    this.InvalidateNavigationBar();
     }
     
     
