@@ -60,11 +60,7 @@
 					<ToggleButton Name="othersPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/ApplicationOptions.Others}">
 						<Panel>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Tool}"/>
-								</DrawingImage>
-							</Image>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Light}"/>
 						</Panel>
 					</ToggleButton>
 					

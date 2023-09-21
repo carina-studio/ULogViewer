@@ -186,7 +186,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		};
 		if (initControl != null)
 		{
-			this.ScrollToControl(initControl);
+			this.rootScrollViewer.ScrollToContent(initControl);
 			if (initControl is Avalonia.Controls.TextBlock textBlock)
 				this.AnimateTextBlock(textBlock);
 			else if (initControl is Border headerBorder)
@@ -264,17 +264,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		    return;
 			
 	    // scroll to panel
-	    var offset = this.rootScrollViewer.Offset;
-	    var viewport = this.rootScrollViewer.Viewport;
-	    var viewportCenter = offset.Y + (viewport.Height / 2);
-	    var panelBounds = panel.Bounds;
-	    if (panelBounds.Height > viewport.Height)
-	    {
-		    if (panelBounds.Y < offset.Y || panelBounds.Y > viewportCenter)
-			    panel.BringIntoView();
-	    }
-	    else if (panelBounds.Y < offset.Y || panelBounds.Bottom > offset.Y + viewport.Height)
-		    panel.BringIntoView();
+	    this.rootScrollViewer.ScrollToContent(panel);
 			
 	    // update navigation bar
 	    this.InvalidateNavigationBar();

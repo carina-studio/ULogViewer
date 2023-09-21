@@ -1709,17 +1709,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// scroll to panel
-			var offset = this.baseScrollViewer.Offset;
-			var viewport = this.baseScrollViewer.Viewport;
-			var viewportCenter = offset.Y + (viewport.Height / 2);
-			var panelBounds = panel.Bounds;
-			if (panelBounds.Height > viewport.Height)
-			{
-				if (panelBounds.Y < offset.Y || panelBounds.Y > viewportCenter)
-					panel.BringIntoView();
-			}
-			else if (panelBounds.Y < offset.Y || panelBounds.Bottom > offset.Y + viewport.Height)
-				panel.BringIntoView();
+			this.baseScrollViewer.ScrollToContent(panel);
 			
 			// update navigation bar
 			this.InvalidateNavigationBar();
