@@ -4121,7 +4121,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.smoothScrollToLatestLogAction.Cancel();
 					var logProfile = (this.DataContext as Session)?.LogProfile;
 					if (logProfile?.IsContinuousReading == false)
+					{
+						this.scrollToLatestLogAction.Execute();
 						this.SynchronizationContext.Post(() => this.IsScrollingToLatestLogNeeded = false);
+					}
 					this.ClearTargetLogRangeToScrollTo();
 				}
 				else
