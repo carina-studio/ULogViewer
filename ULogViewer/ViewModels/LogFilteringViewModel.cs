@@ -545,7 +545,6 @@ class LogFilteringViewModel : SessionComponent
         }
         var prevTextFilter = this.GetValue(TextFilterProperty);
         var textFilter = new Regex(patternBuffer.ToString(), RegexOptions.IgnoreCase);
-        this.SetValue(FiltersCombinationModeProperty, FilterCombinationMode.Intersection);
         this.SetValue(IgnoreTextFilterCaseProperty, true);
         this.ResetFilters(false);
         if (string.IsNullOrEmpty(prevTextFilter?.ToString()))
