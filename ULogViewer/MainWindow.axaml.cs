@@ -338,6 +338,8 @@ namespace CarinaStudio.ULogViewer
 					var (sessionViewRef, mainWindowRef) = it[i];
 					if (!sessionViewRef.TryGetTarget(out var candidate))
 					{
+						if (sessionViewIndex > i)
+							--sessionViewIndex;
 						it.RemoveAt(i);
 						continue;
 					}
