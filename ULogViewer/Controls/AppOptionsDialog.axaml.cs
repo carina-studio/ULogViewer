@@ -218,7 +218,8 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	    base.OnUpdateNavigationBar();
 	    
 	    // check state
-	    var offset = this.rootScrollViewer.Offset;
+	    if (!this.rootScrollViewer.TryGetSmoothScrollingTargetOffset(out var offset))
+		    offset = this.rootScrollViewer.Offset;
 	    var viewport = this.rootScrollViewer.Viewport;
 	    if (viewport.Height <= 0)
 		    return;
@@ -264,7 +265,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		    return;
 			
 	    // scroll to panel
-	    this.rootScrollViewer.ScrollToContent(panel);
+	    this.rootScrollViewer.SmoothScrollToContent(panel);
 			
 	    // update navigation bar
 	    this.InvalidateNavigationBar();

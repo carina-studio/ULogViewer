@@ -1427,7 +1427,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnUpdateNavigationBar();
 			
 			// check state
-			var offset = this.baseScrollViewer.Offset;
+			if (!this.baseScrollViewer.TryGetSmoothScrollingTargetOffset(out var offset))
+				offset = this.baseScrollViewer.Offset;
 			var viewport = this.baseScrollViewer.Viewport;
 			if (viewport.Height <= 0)
 				return;
@@ -1709,7 +1710,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// scroll to panel
-			this.baseScrollViewer.ScrollToContent(panel);
+			this.baseScrollViewer.SmoothScrollToContent(panel);
 			
 			// update navigation bar
 			this.InvalidateNavigationBar();
