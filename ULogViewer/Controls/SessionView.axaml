@@ -637,16 +637,16 @@
 						<!-- Filters combination mode -->
 						<ToggleButton Name="logFilterCombinationModeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogFiltersCombinationModeMenu}" IsVisible="{Binding #root.CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
 							<Panel>
-								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
+								<asControls:Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{Binding LogFiltering.FiltersCombinationMode, Converter={x:Static appControls:SessionView.LogFilterCombinationModeIconConverter}}"/>
 									</DrawingImage>
-								</Image>
-								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+								</asControls:Image>
+								<asControls:Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{Binding LogFiltering.FiltersCombinationMode, Converter={x:Static appControls:SessionView.LogFilterCombinationModeIconConverter}}"/>
 									</DrawingImage>
-								</Image>
+								</asControls:Image>
 							</Panel>
 						</ToggleButton>
 						
