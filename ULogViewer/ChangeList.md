@@ -16,11 +16,13 @@
 
 ## Improvement
 + Show indicators for required options to start reading logs.
++ Add side navigation bar to dialogs with more content.
 + Show more information of log analysis rules in editor.
 + Show improved notifications after performing operations such as exporting log profile or saving logs to file.
 + Improve input of CJK text on **macOS**.
 + Improve animations of user interface.
 + Allow resizing dialogs with complex content.
++ Add more details of UI element.
 
 ## Behavior Changes
 + Showing multiple lines of log in viewer has been removed.
