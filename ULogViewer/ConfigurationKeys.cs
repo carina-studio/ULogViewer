@@ -118,7 +118,7 @@ abstract class ConfigurationKeys
     /// <summary>
     /// Smooth scrolling of logs.
     /// </summary>
-    public static readonly SettingKey<bool> UseSmoothLogScrolling = new(nameof(UseSmoothLogScrolling), false);
+    public static readonly SettingKey<bool> UseSmoothLogScrolling = new(nameof(UseSmoothLogScrolling), true);
 
 
     // Constructor.
