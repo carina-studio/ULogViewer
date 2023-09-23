@@ -226,7 +226,7 @@ namespace CarinaStudio.ULogViewer
 		// Create view-model for main window.
 		protected override ViewModel OnCreateMainWindowViewModel(JsonElement? savedState) => new Workspace(savedState).Also(it =>
 		{
-			if (!savedState.HasValue)
+			if (!savedState.HasValue && this.MainWindows.IsEmpty())
 			{
 				var initialProfile = Global.Run(() =>
 				{

@@ -21,7 +21,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">仅适用于连续读取日志。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.FileSizeInMBToConfirmMaxLogReadingCount">视为大型文件的大小 (兆字节)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">默认忽略文字筛选大小写</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">启动时的初始化日志类型</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">启动时的初始日志类型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">日志分析</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">日志筛选</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont">日志字体及大小</sys:String>

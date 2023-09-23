@@ -26,6 +26,7 @@
 
 ## Behavior Changes
 + Showing multiple lines of log in viewer has been removed.
++ Initial log profile won't be set to new opened window.
 
 ## Bug Fixing
 + Minor bug fixing.
