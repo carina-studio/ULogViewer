@@ -1710,7 +1710,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// scroll to panel
-			this.baseScrollViewer.SmoothScrollToContent(panel);
+			this.baseScrollViewer.SmoothScrollIntoView(panel);
 			
 			// update navigation bar
 			this.InvalidateNavigationBar();

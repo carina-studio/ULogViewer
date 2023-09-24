@@ -186,7 +186,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		};
 		if (initControl != null)
 		{
-			this.rootScrollViewer.ScrollToContent(initControl);
+			this.rootScrollViewer.ScrollIntoView(initControl);
 			if (initControl is Avalonia.Controls.TextBlock textBlock)
 				this.AnimateTextBlock(textBlock);
 			else if (initControl is Border headerBorder)
@@ -265,7 +265,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		    return;
 			
 	    // scroll to panel
-	    this.rootScrollViewer.SmoothScrollToContent(panel);
+	    this.rootScrollViewer.SmoothScrollIntoView(panel);
 			
 	    // update navigation bar
 	    this.InvalidateNavigationBar();
