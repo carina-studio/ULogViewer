@@ -45,6 +45,7 @@ partial class SessionView
     readonly ToggleButton createLogAnalysisRuleSetButton;
 	readonly ContextMenu createLogAnalysisRuleSetMenu;
     bool isPointerPressedOnLogAnalysisResultListBox;
+    bool isSmoothScrollingToLatestLogAnalysisResult;
     readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
     IDisposable? logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
     readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
@@ -861,12 +862,21 @@ partial class SessionView
                 if (this.IsScrollingToLatestLogAnalysisResultNeeded)
                 {
                     if (!this.scrollToLatestLogAnalysisResultAction.IsScheduled)
-                        this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                    {
+                        if (this.isSmoothScrollingToLatestLogAnalysisResult)
+                        {
+                            this.isSmoothScrollingToLatestLogAnalysisResult = false;
+                            this.smoothScrollToLatestLogAnalysisResultAction.Reschedule(ScrollingToLatestLogInterval);
+                        }
+                        else
+                            this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                    }
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (session.LogAnalysis.AnalysisResults.IsEmpty())
                 {
+                    this.isSmoothScrollingToLatestLogAnalysisResult = false;
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                     this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 }
@@ -876,6 +886,7 @@ partial class SessionView
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                 else
                     this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                this.isSmoothScrollingToLatestLogAnalysisResult = false;
                 this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 break;
         }
@@ -1223,6 +1234,7 @@ partial class SessionView
         // cancel scrolling
         if (this.logAnalysisResultListBox.ContextMenu?.IsOpen == true || this.logMarkingMenu.IsOpen)
         {
+            this.isSmoothScrollingToLatestLogAnalysisResult = false;
             this.IsScrollingToLatestLogAnalysisResultNeeded = false;
             return;
         }
@@ -1238,6 +1250,7 @@ partial class SessionView
                 var distanceY = (extent.Height - viewport.Height) - currentOffset.Y;
                 if (Math.Abs(distanceY) <= 1)
                 {
+                    this.isSmoothScrollingToLatestLogAnalysisResult = false;
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                     this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 }
@@ -1246,12 +1259,14 @@ partial class SessionView
                     || !this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseSmoothLogScrolling))
                 {
                     scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
+                    this.isSmoothScrollingToLatestLogAnalysisResult = false;
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                     this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 }
                 else
                 {
-                    scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 1.5);
+                    scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 2);
+                    this.isSmoothScrollingToLatestLogAnalysisResult = true;
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                     this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
                 }
