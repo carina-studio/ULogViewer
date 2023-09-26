@@ -47,11 +47,13 @@ partial class SessionView
     bool isPointerPressedOnLogAnalysisResultListBox;
     bool isSmoothScrollingToLatestLogAnalysisResult;
     readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
+    long lastLogAnalysisResultUpdateTime;
     IDisposable? logAnalysisPanelVisibilityObserverToken = EmptyDisposable.Default;
     readonly Avalonia.Controls.ListBox logAnalysisResultListBox;
     ScrollViewer? logAnalysisResultScrollViewer;
     readonly ToggleButton logAnalysisRuleSetsButton;
     readonly Popup logAnalysisRuleSetsPopup;
+    readonly Queue<long> logAnalysisResultUpdateTimeQueue = new(LogUpdateIntervalStatisticCount);
     readonly Avalonia.Controls.ListBox logAnalysisScriptSetListBox;
     LogAnalysisScriptSetSelectionContextMenu? logAnalysisScriptSetSelectionContextMenu;
     readonly Avalonia.Controls.ListBox operationCountingAnalysisRuleSetListBox;
@@ -859,18 +861,39 @@ partial class SessionView
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                if (this.IsScrollingToLatestLogAnalysisResultNeeded)
+                // statistic update time
+                var currentTime = this.stopwatch.ElapsedMilliseconds;
+                if (this.lastLogAnalysisResultUpdateTime > 0)
                 {
-                    if (!this.scrollToLatestLogAnalysisResultAction.IsScheduled)
+                    var interval = (currentTime - this.lastLogAnalysisResultUpdateTime);
+                    if (interval >= LogUpdateIntervalToResetStatistic)
+                        this.logAnalysisResultUpdateTimeQueue.Clear();
+                    else
                     {
-                        if (this.isSmoothScrollingToLatestLogAnalysisResult)
-                        {
-                            this.isSmoothScrollingToLatestLogAnalysisResult = false;
-                            this.smoothScrollToLatestLogAnalysisResultAction.Reschedule(ScrollingToLatestLogInterval);
-                        }
-                        else
-                            this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                        while (this.logAnalysisResultUpdateTimeQueue.Count >= LogUpdateIntervalStatisticCount)
+                            this.logAnalysisResultUpdateTimeQueue.Dequeue();
+                        this.logAnalysisResultUpdateTimeQueue.Enqueue(interval);
                     }
+                }
+                this.lastLogAnalysisResultUpdateTime = currentTime;
+                
+                // trigger scrolling to latest result
+                if (this.IsScrollingToLatestLogAnalysisResultNeeded && !this.scrollToLatestLogAnalysisResultAction.IsScheduled)
+                {
+                    // select scrolling interval
+                    var averageInternal = this.logAnalysisResultUpdateTimeQueue.Sum() / (double)this.logAnalysisResultUpdateTimeQueue.Count;
+                    var scrollingInterval = averageInternal >= ScrollingToLatestLogInterval
+                        ? ScrollingToLatestLogInterval
+                        : SlowScrollingToLatestLogInterval;
+                    
+                    // scroll
+                    if (this.isSmoothScrollingToLatestLogAnalysisResult)
+                    {
+                        this.isSmoothScrollingToLatestLogAnalysisResult = false;
+                        this.smoothScrollToLatestLogAnalysisResultAction.Reschedule(scrollingInterval);
+                    }
+                    else
+                        this.smoothScrollToLatestLogAnalysisResultAction.Schedule(scrollingInterval);
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:

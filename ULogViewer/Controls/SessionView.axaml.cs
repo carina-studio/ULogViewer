@@ -39,6 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -157,8 +158,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Constants.
 		const int InitScrollingToLatestLogDelay = 800;
+		const int LogUpdateIntervalStatisticCount = 4;
+		const int LogUpdateIntervalToResetStatistic = 1000;
 		const int ScrollingToLatestLogInterval = 200;
 		const int ScrollingToTargetLogRangeInterval = 200;
+		const int SlowScrollingToLatestLogInterval = 400;
 		const int SmoothScrollingToLatestLogInterval = 66;
 
 
@@ -235,6 +239,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isWorkingDirNeededAfterLogProfileSet;
 		bool keepSidePanelVisible;
 		Control? lastClickedLogPropertyView;
+		long lastLogUpdateTime;
 		double lastToolBarWidthWhenLayoutItems;
 		int latestDisplayedLogCount;
 		DisplayableLog[]? latestDisplayedLogRange;
@@ -259,6 +264,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		ScrollViewer? logScrollViewer;
 		readonly ToggleButton logsShowingModeButton;
 		readonly ContextMenu logsShowingModeMenu;
+		readonly Queue<long> logUpdateTimeQueue = new(LogUpdateIntervalStatisticCount);
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable? markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly double minLogListBoxSizeToCloseSidePanel;
@@ -276,6 +282,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
 		readonly ScheduledAction smoothScrollToLatestLogAction;
+		readonly Stopwatch stopwatch = new Stopwatch().Also(it => it.Start());
 		int targetLogRangeScrollingDirectionChangeCount;
 		DisplayableLog[]? targetLogRangeToScrollTo;
 		readonly List<DisplayableLog> targetMarkedLogsToScrollTo = new();
@@ -2474,6 +2481,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.updateLatestDisplayedLogRangeAction.Execute();
 
 			// stop auto scrolling
+			this.lastLogUpdateTime = 0;
+			this.logUpdateTimeQueue.Clear();
 			this.isSmoothScrollingToLatestLog = false;
 			this.isSmoothScrollingToLatestLogAnalysisResult = false;
 			this.scrollToLatestLogAction.Cancel();
@@ -3523,20 +3532,41 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
+				// statistic update time
+				var currentTime = this.stopwatch.ElapsedMilliseconds;
+				if (this.lastLogUpdateTime > 0)
+				{
+					var interval = (currentTime - this.lastLogUpdateTime);
+					if (interval >= LogUpdateIntervalToResetStatistic)
+						this.logUpdateTimeQueue.Clear();
+					else
+					{
+						while (this.logUpdateTimeQueue.Count >= LogUpdateIntervalStatisticCount)
+							this.logUpdateTimeQueue.Dequeue();
+						this.logUpdateTimeQueue.Enqueue(interval);
+					}
+				}
+				this.lastLogUpdateTime = currentTime;
+				
+				// trigger scrolling to target/latest log
 				if (this.targetLogRangeToScrollTo != null)
 					this.scrollToTargetLogRangeAction.Schedule(ScrollingToTargetLogRangeInterval);
-				else if (this.IsScrollingToLatestLogNeeded)
+				else if (this.IsScrollingToLatestLogNeeded && !this.scrollToLatestLogAction.IsScheduled)
 				{
-					if (!this.scrollToLatestLogAction.IsScheduled)
+					// select scrolling interval
+					var averageInternal = this.logUpdateTimeQueue.Sum() / (double)this.logUpdateTimeQueue.Count;
+					var scrollingInterval = averageInternal >= ScrollingToLatestLogInterval
+						? ScrollingToLatestLogInterval
+						: SlowScrollingToLatestLogInterval;
+					
+					// scroll
+					if (this.isSmoothScrollingToLatestLog)
 					{
-						if (this.isSmoothScrollingToLatestLog)
-						{
-							this.isSmoothScrollingToLatestLog = false;
-							this.smoothScrollToLatestLogAction.Reschedule(ScrollingToLatestLogInterval);
-						}
-						else
-							this.smoothScrollToLatestLogAction.Schedule(ScrollingToLatestLogInterval);
+						this.isSmoothScrollingToLatestLog = false;
+						this.smoothScrollToLatestLogAction.Reschedule(scrollingInterval);
 					}
+					else
+						this.smoothScrollToLatestLogAction.Schedule(scrollingInterval);
 				}
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -4197,6 +4227,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.HasLogs):
 					if (!session.HasLogs)
 					{
+						this.lastLogUpdateTime = 0;
+						this.logUpdateTimeQueue.Clear();
 						this.isSmoothScrollingToLatestLog = false;
 						this.scrollToLatestLogAction.Cancel();
 						this.smoothScrollToLatestLogAction.Cancel();
