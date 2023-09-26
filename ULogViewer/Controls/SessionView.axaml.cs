@@ -3554,8 +3554,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				else if (this.IsScrollingToLatestLogNeeded && !this.scrollToLatestLogAction.IsScheduled)
 				{
 					// select scrolling interval
-					var averageInternal = this.logUpdateTimeQueue.Sum() / (double)this.logUpdateTimeQueue.Count;
-					var scrollingInterval = averageInternal >= ScrollingToLatestLogInterval
+					var averageInternal = this.logUpdateTimeQueue.Count > 0 
+						? this.logUpdateTimeQueue.Sum() / (double)this.logUpdateTimeQueue.Count 
+						: -1;
+					var scrollingInterval = averageInternal < 0 || averageInternal >= ScrollingToLatestLogInterval
 						? ScrollingToLatestLogInterval
 						: SlowScrollingToLatestLogInterval;
 					

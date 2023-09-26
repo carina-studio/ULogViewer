@@ -881,8 +881,10 @@ partial class SessionView
                 if (this.IsScrollingToLatestLogAnalysisResultNeeded && !this.scrollToLatestLogAnalysisResultAction.IsScheduled)
                 {
                     // select scrolling interval
-                    var averageInternal = this.logAnalysisResultUpdateTimeQueue.Sum() / (double)this.logAnalysisResultUpdateTimeQueue.Count;
-                    var scrollingInterval = averageInternal >= ScrollingToLatestLogInterval
+                    var averageInternal = this.logAnalysisResultUpdateTimeQueue.Count > 0
+                        ? this.logAnalysisResultUpdateTimeQueue.Sum() / (double)this.logAnalysisResultUpdateTimeQueue.Count
+                        : -1;
+                    var scrollingInterval = averageInternal < 0 || averageInternal >= ScrollingToLatestLogInterval
                         ? ScrollingToLatestLogInterval
                         : SlowScrollingToLatestLogInterval;
                     
