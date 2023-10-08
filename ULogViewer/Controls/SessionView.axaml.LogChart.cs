@@ -192,6 +192,7 @@ partial class SessionView
                 var padding = this.sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Padding");
                 container.BackgroundGeometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
                 container.BackgroundPaint = logChart.TooltipBackgroundPaint;
+                container.ClippingMode = ClipMode.None;
                 container.HorizontalAlignment = Align.Start;
                 container.Orientation = ContainerOrientation.Vertical;
                 container.Padding = new(padding.Left, padding.Top, padding.Right, padding.Bottom);
@@ -221,6 +222,7 @@ partial class SessionView
                     {
                         containerChildViews.Add(new LabelVisual().Also(it =>
                         {
+                            it.ClippingMode = ClipMode.None;
                             it.HorizontalAlignment = Align.Start;
                             it.Paint = logChart.TooltipTextPaint;
                             it.Text = sessionView.GetLogChartXToolTipLabel(point);
@@ -234,6 +236,7 @@ partial class SessionView
                     pointContainer.Children.Add(sketch);
                     pointContainer.Children.Add(new LabelVisual().Also(it =>
                     {
+                        it.ClippingMode = ClipMode.None;
                         it.HorizontalAlignment = Align.Start;
                         it.Padding = new(itemMargin.Left, itemMargin.Top, itemMargin.Right, itemMargin.Bottom);
                         it.Paint = logChart.TooltipTextPaint;
