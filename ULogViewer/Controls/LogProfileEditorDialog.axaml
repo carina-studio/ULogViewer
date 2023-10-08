@@ -218,45 +218,6 @@
 								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 
-								<!-- Embedded script log data source -->
-								<asControls:DialogItemBorder>
-									<StackPanel Classes="Dialog_Item_Text_Container">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider}"/>
-										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description}"/>
-										<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#window.IsProVersionActivated}">
-											<Image Classes="Dialog_Icon" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
-										</Grid>
-									</StackPanel>
-								</asControls:DialogItemBorder>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<StackPanel IsEnabled="{Binding #window.IsProVersionActivated}" HorizontalAlignment="Right" Orientation="Horizontal">
-
-									<!-- Delete -->
-									<Button Classes="Dialog_Item_Button" Command="{Binding #window.RemoveEmbeddedScriptLogDataSourceProvider}" Content="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove}" IsVisible="{Binding #window.HasEmbeddedScriptLogDataSourceProvider}"/>
-									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #window.HasEmbeddedScriptLogDataSourceProvider}"/>
-
-									<!-- Import existing -->
-									<ToggleButton Name="importExistingEmbeddedScriptLogDataSourceProviderButton" Classes="Dialog_Item_Button" Command="{Binding #window.ImportExistingEmbeddedScriptLogDataSourceProvider}">
-										<Grid ColumnDefinitions="*,Auto">
-											<TextBlock Classes="Button_Text" Text="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting}"/>
-											<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !#importExistingEmbeddedScriptLogDataSourceProviderButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
-											<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding #importExistingEmbeddedScriptLogDataSourceProviderButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
-										</Grid>
-									</ToggleButton>
-									<Separator Classes="Dialog_Separator_Small"/>
-
-									<!-- Import from file -->
-									<Button Classes="Dialog_Item_Button" Command="{Binding #window.ImportEmbeddedScriptLogDataSourceProviderFromFile}" Content="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile}"/>
-									<Separator Classes="Dialog_Separator_Small"/>
-
-									<!-- Create/Edit -->
-									<Button Classes="Dialog_Item_Button" Command="{Binding #window.CreateEmbeddedScriptLogDataSourceProvider}" Content="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create}" IsVisible="{Binding !#window.HasEmbeddedScriptLogDataSourceProvider}"/>
-									<Button Classes="Dialog_Item_Button" Command="{Binding #window.EditEmbeddedScriptLogDataSourceProvider}" Content="{DynamicResource String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit}" IsVisible="{Binding #window.HasEmbeddedScriptLogDataSourceProvider}"/>
-
-								</StackPanel>
-								<Separator Classes="Dialog_Item_Separator"/>
-
 								<!-- Allow multiple files -->
 								<StackPanel Name="allowMultipleFilesPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
 									<asControls:DialogItemGrid>
