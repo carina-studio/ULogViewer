@@ -56,7 +56,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> HasEmbeddedScriptLogDataSourceProviderProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasEmbeddedScriptLogDataSourceProvider");
 		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
-		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsProVersionActivated");
+		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsProVersionActivated));
 		static readonly StyledProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
 		static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
 		
@@ -952,6 +952,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 			}
 		}
+
+
+		// Whether Pro-version is activated or not.
+		bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
 
 
 		// Check whether log data source options is valid or not.

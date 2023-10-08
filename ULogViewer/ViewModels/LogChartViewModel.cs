@@ -84,6 +84,10 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<string?> XAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(XAxisName), null);
     /// <summary>
+    /// Define <see cref="XAxisType"/> property.
+    /// </summary>
+    public static readonly ObservableProperty<LogChartXAxisType> XAxisTypeProperty = ObservableProperty.Register<LogChartViewModel, LogChartXAxisType>(nameof(XAxisType), LogChartXAxisType.None);
+    /// <summary>
     /// Define <see cref="YAxisName"/> property.
     /// </summary>
     public static readonly ObservableProperty<string?> YAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(YAxisName), null);
@@ -532,6 +536,9 @@ class LogChartViewModel : SessionComponent
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
         this.SetValue(IsXAxisInvertedProperty, newLogProfile?.SortDirection != SortDirection.Ascending);
+        
+        // setup properties of axes
+        this.SetValue(XAxisTypeProperty, newLogProfile?.LogChartXAxisType ?? LogChartXAxisType.None);
 
         // report sources
         var seriesSources = newLogProfile?.LogChartSeriesSources.Let(it =>
@@ -607,6 +614,9 @@ class LogChartViewModel : SessionComponent
             case nameof(LogProfile.LogChartValueGranularity):
                 this.SetValue(ChartValueGranularityProperty, profile.LogChartValueGranularity);
                 this.updateAxisNamesAction.Schedule();
+                break;
+            case nameof(LogProfile.LogChartXAxisType):
+                this.SetValue(XAxisTypeProperty, profile.LogChartXAxisType);
                 break;
             case nameof(LogProfile.SortDirection):
                 this.SetValue(IsXAxisInvertedProperty, profile.SortDirection != SortDirection.Ascending);
@@ -1139,6 +1149,12 @@ class LogChartViewModel : SessionComponent
     /// Get name of X-axis.
     /// </summary>
     public string? XAxisName => this.GetValue(XAxisNameProperty);
+
+
+    /// <summary>
+    /// Get type of X axis of log chart.
+    /// </summary>
+    public LogChartXAxisType XAxisType => this.GetValue(XAxisTypeProperty);
 
 
     /// <summary>

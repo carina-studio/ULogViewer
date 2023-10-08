@@ -54,6 +54,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IList<LogChartSeriesSource> logChartSeriesSources = Array.Empty<LogChartSeriesSource>();
 		LogChartType logChartType = LogChartType.None;
 		LogChartValueGranularity logChartValueGranularity = LogChartValueGranularity.Default;
+		LogChartXAxisType logChartXAxisType = LogChartXAxisType.None;
 		readonly Dictionary<string, LogLevel> logLevelMapForReading = new();
 		readonly Dictionary<LogLevel, string> logLevelMapForWriting = new();
 		LogPatternMatchingMode logPatternMatchingMode = LogPatternMatchingMode.Sequential;
@@ -83,7 +84,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		string? timestampFormatForWriting;
 		IList<string> timestampFormatsForReading = Array.Empty<string>();
 		IList<LogProperty> visibleLogProperties = Array.Empty<LogProperty>();
-		private LogProfilePropertyRequirement workingDirectoryRequirement = LogProfilePropertyRequirement.Optional;
+		LogProfilePropertyRequirement workingDirectoryRequirement = LogProfilePropertyRequirement.Optional;
 
 
 		// Constructor.
@@ -132,6 +133,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			this.logChartSeriesSources = template.logChartSeriesSources;
 			this.logChartType = template.logChartType;
 			this.logChartValueGranularity = template.logChartValueGranularity;
+			this.logChartXAxisType = template.logChartXAxisType;
 			this.logLevelMapForReading.AddAll(template.logLevelMapForReading);
 			this.logLevelMapForWriting.AddAll(template.logLevelMapForWriting);
 			this.logReadingWindow = template.logReadingWindow;
@@ -776,6 +778,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.OnPropertyChanged(nameof(LogChartValueGranularity));
 			}
 		}
+		
+		
+		/// <summary>
+		/// Get or set type of X axis of log chart.
+		/// </summary>
+		public LogChartXAxisType LogChartXAxisType
+		{
+			get => this.logChartXAxisType;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.logChartXAxisType == value)
+					return;
+				this.logChartXAxisType = value;
+				this.OnPropertyChanged(nameof(LogChartXAxisType));
+			}
+		}
 
 
 		/// <summary>
@@ -1043,6 +1063,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						if (Enum.TryParse<LogChartValueGranularity>(jsonProperty.Value.GetString(), out var valueGranularity))
 							this.logChartValueGranularity = valueGranularity;
 						break;
+					case nameof(LogChartXAxisType):
+						if (Enum.TryParse<LogChartXAxisType>(jsonProperty.Value.GetString(), out var xAxisType))
+							this.logChartXAxisType = xAxisType;
+						break;
 					case nameof(LogLevelMapForReading):
 						this.LoadLogLevelMapForReadingFromJson(jsonProperty.Value);
 						break;
@@ -1219,6 +1243,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WriteString(nameof(LogChartType), this.logChartType.ToString());
 			if (this.logChartValueGranularity != LogChartValueGranularity.Default)
 				writer.WriteString(nameof(LogChartValueGranularity), this.logChartValueGranularity.ToString());
+			if (this.logChartXAxisType != LogChartXAxisType.None)
+				writer.WriteString(nameof(LogChartXAxisType), this.logChartXAxisType.ToString());
 			writer.WritePropertyName(nameof(LogLevelMapForReading));
 			this.SaveLogLevelMapForReadingToJson(writer);
 			writer.WritePropertyName(nameof(LogLevelMapForWriting));

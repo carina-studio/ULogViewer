@@ -270,6 +270,7 @@
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Margin">0,5,0,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Group.Padding">0,3,0,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisRuleSetsPopup.Padding">10</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogChart.Axis.Padding.X">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Axis.Padding.Y">10,5,10,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.Legend.Item.Margin">5,0,0,0</Thickness>

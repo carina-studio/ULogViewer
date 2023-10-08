@@ -435,6 +435,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Ten">十</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Thousand">千 (10³)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Trillion">兆 (10¹²)</sys:String>
+	
+	<!-- LogChartXAxisType -->
+	<sys:String x:Key="String/LogChartXAxisType.None">无</sys:String>
+	<sys:String x:Key="String/LogChartXAxisType.SimpleTimestamp">简易格式之时间或时距</sys:String>
+	<sys:String x:Key="String/LogChartXAxisType.Timestamp">时间或时距</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">文件</sys:String>
@@ -612,6 +617,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">图表类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartValueGranularity">数值颗粒度</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">您定义了「图表类型」但没有定义「来源日志属性」。您是否要定义「来源日志属性」？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartXAxisType">图表 X 轴</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将「原始日志等级属性」所指定之属性值对应至日志等级。</sys:String>

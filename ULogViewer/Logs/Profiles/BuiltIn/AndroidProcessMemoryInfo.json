@@ -45,6 +45,7 @@
   ],
   "LogChartType": "ValueLinesWithDataPoints",
   "LogChartValueGranularity": "Kilobytes",
+  "LogChartXAxisType": "SimpleTimestamp",
   "LogPatternMatchingMode": "ArbitraryAfterFirstMatch",
   "LogPatterns": [
     {

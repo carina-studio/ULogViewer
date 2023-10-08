@@ -720,15 +720,32 @@ partial class SessionView
         return this.GetLogChartXToolTipLabel(series.Values[index]);
     }
     string GetLogChartXToolTipLabel(DisplayableLogChartSeriesValue? value)
+        => this.GetLogChartXToolTipLabel(value?.Log, false, false);
+    string GetLogChartXToolTipLabel(DisplayableLog? log, bool useSimpleFormat, bool allowEmpty)
     {
-        return value?.Log?.Let(log =>
-            log.TimestampString 
-            ?? log.TimeSpanString
-            ?? log.BeginningTimestampString
-            ?? log.BeginningTimeSpanString
-            ?? log.EndingTimestampString
-            ?? log.EndingTimeSpanString
-        )?.ToString() ?? this.Application.GetStringNonNull("SessionView.LogChart.NoLogTimestamp");
+        var label = log?.Let(log =>
+        {
+            if (!useSimpleFormat)
+            {
+                return (log.TimestampString
+                        ?? log.TimeSpanString
+                        ?? log.BeginningTimestampString
+                        ?? log.BeginningTimeSpanString
+                        ?? log.EndingTimestampString
+                        ?? log.EndingTimeSpanString
+                        ?? log.ReadTimeString)?.ToString();
+            }
+            return log.Timestamp?.Let(it => it.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture))
+                   ?? log.TimeSpan?.Let(it => it.ToString("HH:mm:ss.fffffff", CultureInfo.InvariantCulture))
+                   ?? log.BeginningTimestamp?.Let(it => it.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture))
+                   ?? log.BeginningTimeSpan?.Let(it => it.ToString("HH:mm:ss.fffffff", CultureInfo.InvariantCulture))
+                   ?? log.EndingTimestamp?.Let(it => it.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture))
+                   ?? log.EndingTimeSpan?.Let(it => it.ToString("HH:mm:ss.fffffff", CultureInfo.InvariantCulture))
+                   ?? log.ReadTime.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
+        });
+        if (!string.IsNullOrEmpty(label))
+            return label;
+        return allowEmpty ? "" : this.Application.GetStringNonNull("SessionView.LogChart.NoLogTimestamp");
     }
     
     
@@ -1026,6 +1043,9 @@ partial class SessionView
         switch (e.PropertyName)
         {
             case nameof(LogChartViewModel.ChartType):
+                this.areLogChartAxesReady = false;
+                this.UpdateLogChartSeries();
+                break;
             case nameof(LogChartViewModel.ChartValueGranularity):
             case nameof(LogChartViewModel.IsChartDefined):
                 this.UpdateLogChartSeries();
@@ -1067,6 +1087,10 @@ partial class SessionView
             case nameof(LogChartViewModel.VisibleSeries):
                 this.AttachToRawLogChartSeries(viewModel.VisibleSeries, true);
                 break;
+            case nameof(LogChartViewModel.XAxisType):
+                this.areLogChartAxesReady = false;
+                this.UpdateLogChartAxes();
+                break;
             case nameof(LogChartViewModel.YAxisName):
                 this.areLogChartAxesReady = false;
                 this.UpdateLogChartAxes();
@@ -1084,6 +1108,7 @@ partial class SessionView
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
+                // add series
                 e.NewItems!.Cast<DisplayableLogChartSeries>().Let(series =>
                 {
                     var startIndex = e.NewStartingIndex;
@@ -1094,6 +1119,9 @@ partial class SessionView
                         this.logChartSeries.Insert(startIndex + i, lvcSeries);
                     }
                 });
+                
+                // update axes
+                this.logChartXAxis.UnitWidth = this.logChartXCoordinateScaling;
                 break;
             case NotifyCollectionChangedAction.Remove:
                 e.OldItems!.Cast<DisplayableLogChartSeries>().Let(series =>
@@ -1556,6 +1584,7 @@ partial class SessionView
         var app = this.Application;
         var axisFontSize = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.FontSize", 10.0);
         var axisWidth = app.FindResourceOrDefault("Double/SessionView.LogChart.Axis.Width", 2.0);
+        var xAxisPadding = app.FindResourceOrDefault("Thickness/SessionView.LogChart.Axis.Padding.X", default(Thickness)).Let(t => new Padding(t.Left, t.Top, t.Right, t.Bottom));
         var yAxisPadding = app.FindResourceOrDefault("Thickness/SessionView.LogChart.Axis.Padding.Y", default(Thickness)).Let(t => new Padding(t.Left, t.Top, t.Right, t.Bottom));
         var textBrush = app.FindResourceOrDefault<ISolidColorBrush>("TextControlForeground", Brushes.Black);
         var crosshairBrush = app.FindResourceOrDefault<ISolidColorBrush>("Brush/SessionView.LogChart.Axis.Crosshair", Brushes.Black);
@@ -1571,8 +1600,36 @@ partial class SessionView
         });
         this.logChartXAxis.Let(axis =>
         {
+            var viewModel = (this.DataContext as Session)?.LogChart;
+            var chartType = viewModel?.ChartType ?? LogChartType.None;
+            var axisType = viewModel?.XAxisType ?? LogChartXAxisType.None;
             axis.IsInverted = (this.DataContext as Session)?.LogChart.IsXAxisInverted ?? false;
-            axis.LabelsPaint = null;
+            if (axisType != LogChartXAxisType.None && chartType.IsDirectNumberValueSeriesType())
+            {
+                var textPaint = textBrush.Let(brush =>
+                {
+                    var color = brush.Color;
+                    return new SolidColorPaint(new(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5)));
+                });
+                axis.Labeler = value =>
+                {
+                    if (this.DataContext is Session session)
+                    {
+                        var doubleIndex = (value / this.logChartXCoordinateScaling);
+                        var intIndex = (int)(doubleIndex + 0.5);
+                        var logs = session.Logs;
+                        if (Math.Abs(intIndex - doubleIndex) < 0.001 && intIndex >= 0 && intIndex < logs.Count)
+                            return this.GetLogChartXToolTipLabel(logs[intIndex], axisType == LogChartXAxisType.SimpleTimestamp, true);
+                        return "";
+                    }
+                    return value.ToString(this.Application.CultureInfo);
+                };
+                axis.LabelsPaint = textPaint;
+                axis.Padding = xAxisPadding;
+                axis.UnitWidth = this.logChartXCoordinateScaling;
+            }
+            else
+                axis.LabelsPaint = null;
             axis.TextSize = (float)axisFontSize;
             axis.ZeroPaint = null;
         });
@@ -1669,6 +1726,9 @@ partial class SessionView
                 this.SynchronizationContext.PostDelayed(() => this.logChart.CoreChart.Update(), 100);
             this.SynchronizationContext.PostDelayed(() => this.logChart.CoreChart.Update(), it);
         });
+        
+        // update axes
+        this.logChartXAxis.UnitWidth = this.logChartXCoordinateScaling;
         
         // update zoom mode
         this.logChart.ZoomMode = viewModel.MaxSeriesValueCount > LogChartXAxisMinValueCount 
