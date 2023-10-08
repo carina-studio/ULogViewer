@@ -3,6 +3,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
@@ -194,6 +195,8 @@ namespace CarinaStudio.ULogViewer
 				if (isActive && this.FocusManager?.GetFocusedElement() is not TextBox)
 					((this.tabControl.SelectedItem as TabItem)?.Content as Control)?.Focus();
 			});
+			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
+			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
 
 			// start stopwatch
 			if (this.Application.IsDebugMode)
@@ -868,63 +871,6 @@ namespace CarinaStudio.ULogViewer
         }
 
 
-        // Called when key down.
-        protected override void OnKeyDown(KeyEventArgs e)
-		{
-			// handle key event for combo keys
-			if (!e.Handled && (e.KeyModifiers & KeyModifiers.Control) != 0)
-			{
-				switch (e.Key)
-				{
-					case Key.N:
-						if (!Platform.IsMacOS)
-						{
-							this.CreateMainWindow();
-							e.Handled = true;
-						}
-						break;
-					case Key.T:
-						if (!Platform.IsMacOS)
-						{
-							this.CreateSessionTabItem();
-							e.Handled = true;
-						}
-						break;
-					case Key.Tab:
-						if (this.tabItems.Count > 2)
-						{
-							var index = this.tabControl.SelectedIndex;
-							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
-							{
-								++index;
-								if (index >= this.tabItems.Count - 1)
-									index = 0;
-							}
-							else
-							{
-								--index;
-								if (index < 0)
-									index = this.tabItems.Count - 2;
-							}
-							this.tabControl.SelectedIndex = index;
-						}
-						e.Handled = true;
-						break;
-					case Key.W:
-						if (!Platform.IsMacOS)
-						{
-							this.CloseCurrentSessionTabItem();
-							e.Handled = true;
-						}
-						break;
-				}
-			}
-
-			// call base
-			base.OnKeyDown(e);
-		}
-
-
 		// Called when user selected a log profile.
 #pragma warning disable IDE0051
 		void OnLogProfileSelected(LogProfileSelectionContextMenu _, Logs.Profiles.LogProfile logProfile)
@@ -986,6 +932,74 @@ namespace CarinaStudio.ULogViewer
 				});
 			});
 #endif
+		}
+		
+		
+		// Called to preview key down.
+		void OnPreviewKeyDown(object? sender, KeyEventArgs e)
+		{
+			// handle key event for combo keys
+			var isCtrlPressed = Platform.IsMacOS
+				? (e.KeyModifiers & KeyModifiers.Meta) != 0
+				: (e.KeyModifiers & KeyModifiers.Control) != 0;
+			if (isCtrlPressed)
+			{
+				switch (e.Key)
+				{
+					case Key.N:
+						if (Platform.IsNotMacOS) // Will be handled by native menu
+						{
+							this.CreateMainWindow();
+							e.Handled = true;
+						}
+						break;
+					case Key.T:
+						if (Platform.IsNotMacOS) // Will be handled by native menu
+						{
+							this.CreateSessionTabItem();
+							e.Handled = true;
+						}
+						break;
+					case Key.Tab:
+						if (this.tabItems.Count > 2)
+						{
+							var index = this.tabControl.SelectedIndex;
+							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+							{
+								++index;
+								if (index >= this.tabItems.Count - 1)
+									index = 0;
+							}
+							else
+							{
+								--index;
+								if (index < 0)
+									index = this.tabItems.Count - 2;
+							}
+							this.tabControl.SelectedIndex = index;
+						}
+						e.Handled = true;
+						break;
+					case Key.W:
+						if (Platform.IsNotMacOS) // Will be handled by native menu
+						{
+							this.CloseCurrentSessionTabItem();
+							e.Handled = true;
+						}
+						break;
+				}
+			}
+			
+			// dispatch to SessionView
+			((this.tabControl.SelectedItem as TabItem)?.Content as SessionView)?.OnPreviewKeyDown(e);
+		}
+        
+        
+		// Called to preview key up.
+		void OnPreviewKeyUp(object? sender, KeyEventArgs e)
+		{
+			// dispatch to SessionView
+			((this.tabControl.SelectedItem as TabItem)?.Content as SessionView)?.OnPreviewKeyUp(e);
 		}
 
 

@@ -207,6 +207,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState<LogsSavingOptions> canSaveLogs = new();
 		readonly ObservableCommandState<Session.CommandParams> canSetCommand = new();
 		readonly ObservableCommandState<IPEndPoint> canSetIPEndPoint = new();
+		// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
 		readonly ForwardedObservableBoolean canSetLogProfile;
 		readonly ObservableCommandState<LogProfile> canSetLogProfileToSession = new();
 		readonly ObservableCommandState<int?> canSetProcessId = new();
@@ -224,7 +225,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
 		bool isAutoSettingLogsReadingParameters;
-		bool isInitializing = true;
+		readonly bool isInitializing = true;
 		bool isCommandNeededAfterLogProfileSet;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -2751,6 +2752,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		public bool HasLogProfile => this.GetValue(HasLogProfileProperty);
 
 
+		// Check whether one of popup is opened or not.
+		bool HasOpenedPopup => this.logActionMenu.IsOpen
+		                       || this.logAnalysisRuleSetsPopup.IsOpen
+		                       || this.logChartTypeMenu.IsOpen
+		                       || this.logFileActionMenu.IsOpen
+		                       || this.logFilterCombinationModeMenu.IsOpen
+		                       || this.logMarkingMenu.IsOpen
+		                       || this.logsSavingMenu.IsOpen
+		                       || this.otherActionsMenu.IsOpen
+		                       || this.predefinedLogTextFiltersPopup.IsOpen
+		                       || this.visibleLogChartSeriesMenu?.IsOpen == true;
+
+
 		/// <summary>
 		/// Check whether the view is handling drag-and-drop data or not.
 		/// </summary>
@@ -2957,8 +2971,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
 			this.AddHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
-			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
-			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
 			
 			// invalidate resources
 			this.selectableValueLogItemBackgroundBrush = null;
@@ -2999,9 +3011,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RemoveHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
 			this.RemoveHandler(DragDrop.DragOverEvent, this.OnDragOver);
 			this.RemoveHandler(DragDrop.DropEvent, this.OnDrop);
-			this.RemoveHandler(KeyDownEvent, this.OnPreviewKeyDown);
-			this.RemoveHandler(KeyUpEvent, this.OnPreviewKeyUp);
-
+			
 			// release predefined log text filter list
 			this.DetachFromPredefinedLogTextFilters();
 			this.selectedPredefinedLogTextFilters.Clear();
@@ -3683,295 +3693,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Called when key down.
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			this.pressedKeys.Add(e.Key);
-			if (!e.Handled && !logAnalysisRuleSetsPopup.IsOpen)
-			{
-				var primaryKeyModifiers = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
-				if (this.Application.IsDebugMode && e.Source is not TextBox)
-					this.Logger.LogTrace("[KeyDown] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
-				if ((e.KeyModifiers & primaryKeyModifiers) != 0)
-				{
-					var isAltPressed = ((e.KeyModifiers & KeyModifiers.Alt) != 0);
-					switch (e.Key)
-					{
-						case Key.A:
-							e.Handled = true;
-							break;
-						case Key.C:
-							if (e.Source is not TextBox)
-							{
-								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
-									(this.DataContext as Session)?.LogSelection.CopySelectedLogsWithFileNames();
-								else
-									(this.DataContext as Session)?.LogSelection.CopySelectedLogs();
-							}
-							break;
-						case Key.D0:
-							if (isAltPressed)
-							{
-								this.UnmarkSelectedLogs();
-								e.Handled = true;
-							}
-							break;
-						case Key.D1:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Red);
-								e.Handled = true;
-							}
-							break;
-						case Key.D2:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Orange);
-								e.Handled = true;
-							}
-							break;
-						case Key.D3:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Yellow);
-								e.Handled = true;
-							}
-							break;
-						case Key.D4:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Green);
-								e.Handled = true;
-							}
-							break;
-						case Key.D5:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Blue);
-								e.Handled = true;
-							}
-							break;
-						case Key.D6:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Indigo);
-								e.Handled = true;
-							}
-							break;
-						case Key.D7:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Purple);
-								e.Handled = true;
-							}
-							break;
-						case Key.D8:
-							if (isAltPressed)
-							{
-								this.MarkSelectedLogs(MarkColor.Magenta);
-								e.Handled = true;
-							}
-							break;
-						case Key.F:
-							if (this.logTextFilterTextBox.IsEnabled)
-							{
-								this.logTextFilterTextBox.Focus();
-								this.logTextFilterTextBox.SelectAll();
-								e.Handled = true;
-							}
-							break;
-						case Key.M:
-							this.MarkSelectedLogs(MarkColor.Default);
-							e.Handled = true;
-							break;
-						case Key.N:
-							if (!Platform.IsMacOS)
-							{
-								this.FindAncestorOfType<MainWindow>()?.CreateMainWindow();
-								e.Handled = true;
-							}
-							break;
-						case Key.O:
-							_ = this.AddLogFilesAsync();
-							break;
-						case Key.P:
-							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
-							break;
-						case Key.S:
-							if (e.Source == this.logTextFilterTextBox)
-							{
-								this.logTextFilterTextBox.Validate();
-								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Object != null)
-									this.CreatePredefinedLogTextFilter();
-							}
-							else
-								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
-							break;
-					}
-				}
-				if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
-				{
-					if (!ReferenceEquals(e.Source, this.logTextFilterTextBox))
-					{
-						switch (e.Key)
-						{
-							case Key.A:
-								(this.DataContext as Session)?.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
-								this.SynchronizationContext.Post(() => this.Focus()); // [Workaround] Get focus back to prevent unexpected focus lost.
-								break;
-							case Key.M:
-								(this.DataContext as Session)?.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
-								this.SynchronizationContext.Post(() => this.Focus()); // [Workaround] Get focus back to prevent unexpected focus lost.
-								break;
-							case Key.R:
-								(this.DataContext as Session)?.ResetTemporarilyShownLogsCommand.TryExecute();
-								this.SynchronizationContext.Post(() => this.Focus()); // [Workaround] Get focus back to prevent unexpected focus lost.
-								break;
-						}
-					}
-				}
-				else
-				{
-					switch (e.Key)
-					{
-						case Key.Down:
-							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
-								(this.DataContext as Session)?.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute();
-							else if (e.Source is not TextBox)
-							{
-								if (this.predefinedLogTextFiltersPopup.IsOpen)
-									this.predefinedLogTextFilterListBox.SelectNextItem();
-								else
-								{
-									var selectedItems = this.logListBox.SelectedItems;
-									if (selectedItems!.Count > 1)
-									{
-										var latestSelectedItem = selectedItems[^1];
-										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
-										if (latestSelectedItem is DisplayableLog log)
-										{
-											selectedItems.Add(log);
-											this.ScrollToLog(log);
-										}
-									}
-									this.logListBox.SelectNextItem();
-								}
-								e.Handled = true;
-							}
-							break;
-						case Key.Up:
-							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
-								(this.DataContext as Session)?.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute();
-							else if (e.Source is not TextBox)
-							{
-								if (this.predefinedLogTextFiltersPopup.IsOpen)
-									this.predefinedLogTextFilterListBox.SelectPreviousItem();
-								else
-								{
-									var selectedItems = this.logListBox.SelectedItems;
-									if (selectedItems!.Count > 1)
-									{
-										var latestSelectedItem = selectedItems[^1];
-										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
-										if (latestSelectedItem is DisplayableLog log)
-										{
-											selectedItems.Add(log);
-											this.ScrollToLog(log);
-										}
-									}
-									this.logListBox.SelectPreviousItem();
-								}
-								e.Handled = true;
-							}
-							break;
-					}
-				}
-			}
-			else if (this.Application.IsDebugMode && e.Source is not TextBox)
-				this.Logger.LogTrace("[KeyDown] {key} was handled by another component", e.Key);
-			base.OnKeyDown(e);
-		}
-
-
-		// Called when key up.
-		protected override void OnKeyUp(KeyEventArgs e)
-		{
-			// [Workaround] skip handling key event if it was handled by context menu
-			// check whether key down was received or not
-			if (!this.pressedKeys.Contains(e.Key))
-			{
-				this.Logger.LogTrace("[KeyUp] Key down of {key} was not received", e.Key);
-				return;
-			}
-
-			// handle key event for single key
-			if (!e.Handled)
-			{
-				if (!logAnalysisRuleSetsPopup.IsOpen)
-				{
-					if (this.Application.IsDebugMode && e.Source is not TextBox)
-						this.Logger.LogTrace("[KeyUp] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
-					if (!this.IsMultiSelectionKeyPressed(e.KeyModifiers))
-					{
-						switch (e.Key)
-						{
-							case Key.End:
-								if (e.Source is not TextBox)
-								{
-									if (this.predefinedLogTextFiltersPopup.IsOpen)
-										this.predefinedLogTextFilterListBox.SelectLastItem();
-									else
-										this.logListBox.SelectLastItem();
-								}
-								break;
-							case Key.Escape:
-								if (e.Source is TextBox)
-								{
-									if (this.Application.IsDebugMode)
-										this.Logger.LogTrace("[KeyUp] {key} on text box", e.Key);
-									this.logListBox.Focus();
-								}
-								else if (this.predefinedLogTextFiltersPopup.IsOpen)
-									this.predefinedLogTextFiltersPopup.IsOpen = false;
-								break;
-							case Key.F5:
-								this.ReloadLogs();
-								break;
-							case Key.Home:
-								if (e.Source is not TextBox)
-								{
-									if (this.predefinedLogTextFiltersPopup.IsOpen)
-										this.predefinedLogTextFilterListBox.SelectFirstItem();
-									else
-										this.logListBox.SelectFirstItem();
-								}
-								break;
-							case Key.M:
-								if (e.Source is not TextBox)
-									this.MarkUnmarkSelectedLogs();
-								break;
-							case Key.P:
-								if (e.Source is not TextBox)
-									(this.DataContext as Session)?.PauseResumeLogsReadingCommand.TryExecute();
-								break;
-							case Key.S:
-								if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
-									(this.DataContext as Session)?.LogSelection.SelectMarkedLogs();
-								break;
-						}
-					}
-				}
-				else if (e.Key == Key.Escape)
-					this.logAnalysisRuleSetsPopup.Close();
-			}
-			else if (this.Application.IsDebugMode && e.Source is not TextBox)
-				this.Logger.LogTrace("[KeyUp] {key} was handled by another component", e.Key);
-
-			// stop tracking key
-			this.pressedKeys.Remove(e.Key);
-		}
-
-
 		// Called when lost focus.
         protected override void OnLostFocus(RoutedEventArgs e)
         {
@@ -4042,8 +3763,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called to handle key-down before all children.
-		async void OnPreviewKeyDown(object? sender, KeyEventArgs e)
+		internal async void OnPreviewKeyDown(KeyEventArgs e)
 		{
+			// save key
+			this.pressedKeys.Add(e.Key);
+			
 			// check modifier keys
 			if ((e.KeyModifiers & KeyModifiers.Alt) != 0)
 				this.isAltKeyPressed = true;
@@ -4052,87 +3776,385 @@ namespace CarinaStudio.ULogViewer.Controls
 #if DEBUG
 			this.Logger.LogTrace("[PreviewKeyDown] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 #endif
-
+			
 			// handle key event
-			var primaryKeyModifiers = Platform.IsMacOS ? KeyModifiers.Meta : KeyModifiers.Control;
-			if (this.DataContext is Session session && !e.Handled && (e.KeyModifiers & primaryKeyModifiers) != 0)
+			var hasOpenedPopup = this.HasOpenedPopup;
+			var isCtrlPressed = Platform.IsMacOS 
+				? (e.KeyModifiers & KeyModifiers.Meta) != 0
+				: (e.KeyModifiers & KeyModifiers.Control) != 0;
+			var isAltPressed = (e.KeyModifiers & KeyModifiers.Alt) != 0;
+			if (this.DataContext is Session session && !e.Handled)
 			{
-				switch (e.Key)
+				if (isCtrlPressed)
 				{
-					case Key.A:
-						// [Workaround] It will take long time to select all items by list box itself
-						if (e.Source is not TextBox)
-						{
-							// intercept
-							if (Platform.IsMacOS)
-								this.Logger.LogTrace("Intercept Cmd+A");
-							else
-								this.Logger.LogTrace("Intercept Ctrl+A");
-							e.Handled = true;
-
-							// confirm selection
-							if (session.Logs.Count >= 500000)
+					switch (e.Key)
+					{
+						case Key.A:
+							// [Workaround] It will take long time to select all items by list box itself
+							if (e.Source is not TextBox && !hasOpenedPopup)
 							{
-								if (this.attachedWindow != null)
+								// intercept
+								if (Platform.IsMacOS)
+									this.Logger.LogTrace("Intercept Cmd+A");
+								else
+									this.Logger.LogTrace("Intercept Ctrl+A");
+								e.Handled = true;
+
+								// confirm selection
+								if (session.Logs.Count >= 500000)
 								{
-									var result = await new MessageDialog()
+									if (this.attachedWindow != null)
 									{
-										Buttons = MessageDialogButtons.YesNo,
-										Icon = MessageDialogIcon.Question,
-										Message = this.Application.GetObservableString("SessionView.ConfirmSelectingAllLogs"),
-									}.ShowDialog(this.attachedWindow);
-									if (result == MessageDialogResult.No)
-										return;
+										var result = await new MessageDialog()
+										{
+											Buttons = MessageDialogButtons.YesNo,
+											Icon = MessageDialogIcon.Question,
+											Message = this.Application.GetObservableString("SessionView.ConfirmSelectingAllLogs"),
+										}.ShowDialog(this.attachedWindow);
+										if (result == MessageDialogResult.No)
+											return;
+									}
 								}
-							}
 
-							// select all logs
-							session.LogSelection.SelectAllLogs();
-						}
-						break;
-					case Key.Y:
-						if (ReferenceEquals(e.Source, this.logTextFilterTextBox) && Platform.IsNotMacOS)
-						{
-							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
-							{
-								if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
-									this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+								// select all logs
+								session.LogSelection.SelectAllLogs();
 							}
+							break;
+						case Key.C:
+							if (e.Source is not TextBox && !hasOpenedPopup)
+							{
+								if ((e.KeyModifiers & KeyModifiers.Shift) != 0)
+									(this.DataContext as Session)?.LogSelection.CopySelectedLogsWithFileNames();
+								else
+									(this.DataContext as Session)?.LogSelection.CopySelectedLogs();
+							}
+							break;
+						case Key.D0:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.UnmarkSelectedLogs();
+								e.Handled = true;
+							}
+							break;
+						case Key.D1:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Red);
+								e.Handled = true;
+							}
+							break;
+						case Key.D2:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Orange);
+								e.Handled = true;
+							}
+							break;
+						case Key.D3:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Yellow);
+								e.Handled = true;
+							}
+							break;
+						case Key.D4:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Green);
+								e.Handled = true;
+							}
+							break;
+						case Key.D5:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Blue);
+								e.Handled = true;
+							}
+							break;
+						case Key.D6:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Indigo);
+								e.Handled = true;
+							}
+							break;
+						case Key.D7:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Purple);
+								e.Handled = true;
+							}
+							break;
+						case Key.D8:
+							if (isAltPressed && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Magenta);
+								e.Handled = true;
+							}
+							break;
+						case Key.F:
+							if (this.logTextFilterTextBox.IsEnabled && !hasOpenedPopup)
+							{
+								this.logTextFilterTextBox.Focus();
+								this.logTextFilterTextBox.SelectAll();
+								e.Handled = true;
+							}
+							break;
+						case Key.M:
+							if (e.Source is not TextBox && !hasOpenedPopup)
+							{
+								this.MarkSelectedLogs(MarkColor.Default);
+								e.Handled = true;
+							}
+							break;
+						case Key.O:
+							if (!hasOpenedPopup)
+							{
+								_ = this.AddLogFilesAsync();
+								e.Handled = true;
+							}
+							break;
+						case Key.P:
+							predefinedLogTextFiltersPopup.IsOpen = !predefinedLogTextFiltersPopup.IsOpen;
 							e.Handled = true;
-						}
-						break;
-					case Key.Z:
-						if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
+							break;
+						case Key.S:
+							if (e.Source == this.logTextFilterTextBox)
+							{
+								this.logTextFilterTextBox.Validate();
+								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Object != null)
+									this.CreatePredefinedLogTextFilter();
+								e.Handled = true;
+							}
+							else if (!hasOpenedPopup)
+							{
+								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
+								e.Handled = true;
+							}
+							break;
+						case Key.Y:
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox) && Platform.IsNotMacOS)
+							{
+								if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+								{
+									if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
+										this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+								}
+								e.Handled = true;
+							}
+							break;
+						case Key.Z:
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
+							{
+								if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
+								{
+									if (session.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute())
+										this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+								}
+								else if (Platform.IsMacOS)
+								{
+									if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
+										this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
+								}
+								e.Handled = true;
+							}
+							break;
+					}
+				}
+				else if (isAltPressed)
+				{
+					if (!ReferenceEquals(e.Source, this.logTextFilterTextBox) && !hasOpenedPopup)
+					{
+						switch (e.Key)
 						{
-							if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
-							{
-								if (session.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute())
-									this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
-							}
-							else if (Platform.IsMacOS)
-							{
-								if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
-									this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
-							}
-							e.Handled = true;
+							case Key.A:
+								session.ToggleShowingAllLogsTemporarilyCommand.TryExecute();
+								this.SynchronizationContext.Post(() => this.Focus()); // [Workaround] Get focus back to prevent unexpected focus lost.
+								e.Handled = true;
+								break;
+							case Key.M:
+								session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute();
+								this.SynchronizationContext.Post(() => this.Focus()); // [Workaround] Get focus back to prevent unexpected focus lost.
+								e.Handled = true;
+								break;
+							case Key.R:
+								session.ResetTemporarilyShownLogsCommand.TryExecute();
+								this.SynchronizationContext.Post(() => this.Focus()); // [Workaround] Get focus back to prevent unexpected focus lost.
+								e.Handled = true;
+								break;
 						}
-						break;
+					}
+				}
+				else
+				{
+					switch (e.Key)
+					{
+						case Key.Down:
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
+							{
+								session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute();
+								e.Handled = true;
+							}
+							else if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectNextItem();
+								else if (!hasOpenedPopup)
+								{
+									var selectedItems = this.logListBox.SelectedItems;
+									if (selectedItems!.Count > 1)
+									{
+										var latestSelectedItem = selectedItems[^1];
+										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
+										if (latestSelectedItem is DisplayableLog log)
+										{
+											selectedItems.Add(log);
+											this.ScrollToLog(log);
+										}
+									}
+									this.logListBox.SelectNextItem();
+								}
+								e.Handled = true;
+							}
+							break;
+						case Key.Up:
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
+							{
+								session.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute();
+								e.Handled = true;
+							}
+							else if (e.Source is not TextBox)
+							{
+								if (this.predefinedLogTextFiltersPopup.IsOpen)
+									this.predefinedLogTextFilterListBox.SelectPreviousItem();
+								else
+								{
+									var selectedItems = this.logListBox.SelectedItems;
+									if (selectedItems!.Count > 1)
+									{
+										var latestSelectedItem = selectedItems[^1];
+										selectedItems.Clear(); // [Workaround] clear selection first to prevent performance issue of de-selecting multiple items
+										if (latestSelectedItem is DisplayableLog log)
+										{
+											selectedItems.Add(log);
+											this.ScrollToLog(log);
+										}
+									}
+									this.logListBox.SelectPreviousItem();
+								}
+								e.Handled = true;
+							}
+							break;
+					}
 				}
 			}
 		}
 
 
 		// Called to handle key-up before all children.
-		void OnPreviewKeyUp(object? sender, KeyEventArgs e)
+		internal void OnPreviewKeyUp(KeyEventArgs e)
 		{
 			// log event
 #if DEBUG
 			this.Logger.LogTrace("[PreviewKeyUp] {key}, Modifiers: {keyModifiers}", e.Key, e.KeyModifiers);
 #endif
 			
+			// [Workaround] skip handling key event if it was handled by context menu
+			// check whether key down was received or not
+			if (!this.pressedKeys.Contains(e.Key))
+			{
+				this.Logger.LogTrace("[PreviewKeyUp] Key down of {key} was not received", e.Key);
+				return;
+			}
+			
 			// check modifier keys
 			if ((e.KeyModifiers & KeyModifiers.Alt) == 0)
 				this.isAltKeyPressed = false;
+			
+			// handle key event for single key
+			var hasOpenedPopup = this.HasOpenedPopup;
+			if (!e.Handled)
+			{
+				if (!hasOpenedPopup)
+				{
+					if (!this.IsMultiSelectionKeyPressed(e.KeyModifiers))
+					{
+						switch (e.Key)
+						{
+							case Key.End:
+								if (e.Source is not TextBox)
+								{
+									if (this.predefinedLogTextFiltersPopup.IsOpen)
+										this.predefinedLogTextFilterListBox.SelectLastItem();
+									else
+										this.logListBox.SelectLastItem();
+									e.Handled = true;
+								}
+								break;
+							case Key.Escape:
+								if (e.Source is TextBox)
+								{
+									if (this.Application.IsDebugMode)
+										this.Logger.LogTrace("[KeyUp] {key} on text box", e.Key);
+									this.logListBox.Focus();
+									e.Handled = true;
+								}
+								break;
+							case Key.F5:
+								this.ReloadLogs();
+								e.Handled = true;
+								break;
+							case Key.Home:
+								if (e.Source is not TextBox)
+								{
+									if (this.predefinedLogTextFiltersPopup.IsOpen)
+										this.predefinedLogTextFilterListBox.SelectFirstItem();
+									else
+										this.logListBox.SelectFirstItem();
+									e.Handled = true;
+								}
+								break;
+							case Key.M:
+								if (e.Source is not TextBox)
+								{
+									this.MarkUnmarkSelectedLogs();
+									e.Handled = true;
+								}
+								break;
+							case Key.P:
+								if (e.Source is not TextBox)
+								{
+									(this.DataContext as Session)?.PauseResumeLogsReadingCommand.TryExecute();
+									e.Handled = true;
+								}
+								break;
+							case Key.S:
+								if (e.Source is not TextBox && !this.isSelectingFileToSaveLogs)
+								{
+									(this.DataContext as Session)?.LogSelection.SelectMarkedLogs();
+									e.Handled = true;
+								}
+								break;
+						}
+					}
+				}
+				else if (e.Key == Key.Escape)
+				{
+					if (this.predefinedLogTextFiltersPopup.IsOpen)
+					{
+						this.predefinedLogTextFiltersPopup.Close();
+						e.Handled = true;
+					}
+					else if (this.logAnalysisRuleSetsPopup.IsOpen)
+					{
+						this.logAnalysisRuleSetsPopup.Close();
+						e.Handled = true;
+					}
+				}
+			}
+
+			// stop tracking key
+			this.pressedKeys.Remove(e.Key);
 		}
 
 
