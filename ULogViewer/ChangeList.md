@@ -10,6 +10,7 @@
 + Place holder (##_##) is also supported in **Setup Commands** and **Teardown Commands** of log data source options.
 + Support adding description to each pattern of log line in log profile.
 + Add **ProcessId** and **ProcessName** fields in log data source options.
++ Support showing labels on X axis of log chart.
 + Support using built-in font (Noto Sans) for Chinese.
 + Support renaming group of log text filters.
 + Show timestamp of log in tool tip of chart.
