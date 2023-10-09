@@ -86,4 +86,16 @@ static class LogChartTypeExtensions
             or LogChartType.ValueStackedAreasWithDataPoints => true,
         _ => false,
     };
+    
+    
+    /// <summary>
+    /// Check whether the type of chart is consist of statistical value from log property or not.
+    /// </summary>
+    /// <param name="type">Type of log chart.</param>
+    /// <returns>True if type of chart is consist of statistical value from log property.</returns>
+    public static bool IsStatisticalSeriesType(this LogChartType type) => type switch
+    {
+        LogChartType.ValueStatisticBars => true,
+        _ => false,
+    };
 }

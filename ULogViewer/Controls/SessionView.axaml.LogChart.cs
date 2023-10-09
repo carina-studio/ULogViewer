@@ -754,15 +754,28 @@ partial class SessionView
         this.GetLogChartYToolTipLabel(series, (ChartPoint)point, includeSeriesName);
     string GetLogChartYToolTipLabel(DisplayableLogChartSeries series, ChartPoint point, bool includeSeriesName)
     {
+        // get state
         var source = series.Source;
         var viewModel = (this.DataContext as Session)?.LogChart;
+        var chartType = viewModel?.ChartType ?? LogChartType.None;
         var buffer = new StringBuilder();
+        
+        // source name
         if (includeSeriesName && source is not null)
         {
             buffer.Append(this.GetLogChartSeriesDisplayName(source));
             buffer.Append(": ");
         }
-        buffer.Append(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString(this.Application.CultureInfo));
+        
+        // value
+        if (chartType.IsDirectNumberValueSeriesType())
+            buffer.Append(viewModel?.GetYAxisLabel(point.Coordinate.PrimaryValue) ?? point.Coordinate.PrimaryValue.ToString(this.Application.CultureInfo));
+        else if (chartType.IsStatisticalSeriesType())
+        {
+            var index = (int)(point.Coordinate.SecondaryValue / this.logChartXCoordinateScaling + 0.5);
+            if (index >= 0 && index < series.Values.Count)
+                buffer.Append(series.Values[index]?.Label);
+        }
         switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
         {
             case LogChartValueGranularity.Byte:
@@ -780,6 +793,16 @@ partial class SessionView
                 });
                 break;
         }
+        
+        // statistical value
+        if (chartType.IsStatisticalSeriesType())
+        {
+            buffer.Append(" (");
+            buffer.Append(point.Coordinate.PrimaryValue.ToString(this.Application.CultureInfo));
+            buffer.Append(')');
+        }
+        
+        // complete
         return buffer.ToString();
     }
 
