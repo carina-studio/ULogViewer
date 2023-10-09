@@ -634,6 +634,9 @@ partial class SessionView
         switch (e.PropertyName)
         {
             case nameof(LogChartViewModel.ChartType):
+                this.areLogChartAxesReady = false;
+                this.UpdateLogChartSeries();
+                break;
             case nameof(LogChartViewModel.ChartValueGranularity):
             case nameof(LogChartViewModel.IsChartDefined):
                 this.UpdateLogChartSeries();

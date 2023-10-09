@@ -9,6 +9,7 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.Json;
 using System.Windows.Input;
 
@@ -291,6 +292,8 @@ class LogChartViewModel : SessionComponent
     /// <returns>Text of label on Y axis.</returns>
     public string GetYAxisLabel(double value)
     {
+        if (!this.GetValue(ChartTypeProperty).IsDirectNumberValueSeriesType())
+            return value.ToString(CultureInfo.InvariantCulture);
         switch (this.LogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default)
         {
             case LogChartValueGranularity.Byte:
