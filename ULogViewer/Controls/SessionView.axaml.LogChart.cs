@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -235,7 +234,15 @@ partial class SessionView
             
             // value
             var viewModel = (this.DataContext as Session)?.LogChart;
-            buffer.Append(viewModel?.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString(this.Application.CultureInfo));
+            var chartType = viewModel?.ChartType ?? LogChartType.None;
+            if (chartType.IsDirectNumberValueSeriesType())
+                buffer.Append(viewModel?.GetYAxisLabel(point.PrimaryValue) ?? point.PrimaryValue.ToString(this.Application.CultureInfo));
+            else if (chartType.IsStatisticalSeriesType())
+            {
+                var index = (int)(point.SecondaryValue / this.logChartXCoordinateScaling + 0.5);
+                if (index >= 0 && index < series.Values.Count)
+                    buffer.Append(series.Values[index]?.Label);
+            }
             switch (viewModel?.ChartValueGranularity ?? LogChartValueGranularity.Default)
             {
                 case LogChartValueGranularity.Byte:
@@ -253,6 +260,16 @@ partial class SessionView
                     });
                     break;
             }
+            
+            // statistical value
+            if (chartType.IsStatisticalSeriesType())
+            {
+                buffer.Append(" (");
+                buffer.Append(point.PrimaryValue.ToString(this.Application.CultureInfo));
+                buffer.Append(')');
+            }
+            
+            // complete
             return buffer.ToString();
         }
         
