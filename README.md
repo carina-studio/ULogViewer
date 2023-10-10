@@ -1,5 +1,5 @@
 # ULogViewer 
-[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/releases/tag/3.0.7.924) ![](https://img.shields.io/github/downloads/carina-studio/ULogViewer/total) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
+[![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/releases/tag/3.0.8.1010) ![](https://img.shields.io/github/downloads/carina-studio/ULogViewer/total) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
 ULogViewer is a [.NET](https://dotnet.microsoft.com/) based cross-platform universal log viewer written by C# which supports reading, parsing and analysing various type of logs. Please visit the [Website](https://carinastudio.azurewebsites.net/ULogViewer/) for more details.
 
@@ -9,16 +9,16 @@ ULogViewer 是一個由 C# 撰寫並基於 [.NET](https://dotnet.microsoft.com/)
 
 ## 📥 Download
 
-### 3.0.7.924
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-win-x64.zip)
-[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-win-arm64.zip)
-[![](https://img.shields.io/badge/Windows-x86-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-win-x86.zip)
+### 3.0.8.1010
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x86-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-win-x86.zip)
 
-[![](https://img.shields.io/badge/macOS-arm64%20(M1/M2)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-osx-arm64.zip)
-[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-osx-x64.zip)
+[![](https://img.shields.io/badge/macOS-arm64%20(M1/M2)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-osx-arm64.zip)
+[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-osx-x64.zip)
 
-[![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-linux-x64.zip)
-[![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.7.924/ULogViewer-3.0.7.924-linux-arm64.zip)
+[![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-linux-x64.zip)
+[![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/3.0.8.1010/ULogViewer-3.0.8.1010-linux-arm64.zip)
 
 ## 📣 What's Change in 3.0
 - Support embedding log analysis script and log data source script into log profile.
