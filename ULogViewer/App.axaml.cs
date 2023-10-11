@@ -262,6 +262,18 @@ namespace CarinaStudio.ULogViewer
 		});
 
 
+		/// <inheritdoc/>
+		protected override bool OnExceptionOccurredInGuardedMainLoop(Exception ex)
+		{
+			if (ex is IndexOutOfRangeException && ex.StackTrace?.Contains(" Avalonia.Media.GlyphRun.FindNearestCharacterHit(") == true)
+			{
+				this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.FindNearestCharacterHit() caused by unknown reason");
+				return true;
+			}
+			return base.OnExceptionOccurredInGuardedMainLoop(ex);
+		}
+
+
 		// Load default string resource.
         protected override IResourceProvider OnLoadDefaultStringResource()
         {
