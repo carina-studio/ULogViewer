@@ -89,7 +89,13 @@
 							</ListBox.ItemTemplate>
 						</ListBox>
 						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding $parent[Window].SupportedSourceOptions.Count}"/>
-						<ToggleButton Name="addSupportedSourceOptionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" Content="{DynamicResource String/Common.Add}" HorizontalAlignment="Right" IsEnabled="{Binding $parent[Window].UnsupportedSourceOptions.Count}"/>
+						<ToggleButton Name="addSupportedSourceOptionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" HorizontalAlignment="Right" IsEnabled="{Binding $parent[Window].UnsupportedSourceOptions.Count}">
+							<Grid ColumnDefinitions="*,Auto">
+								<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Add}"/>
+								<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !#addSupportedSourceOptionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+								<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding #addSupportedSourceOptionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+							</Grid>
+						</ToggleButton>
 					</StackPanel>
 				</Border>
 				<Separator Classes="Dialog_Separator"/>
