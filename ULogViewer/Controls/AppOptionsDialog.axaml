@@ -211,31 +211,47 @@
 								</Border>
 								<Separator Classes="Dialog_Item_Separator"/>
 
-						<!-- Pattern font -->
-						<asControls:DialogItemBorder>
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.PatternFont}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Description}"/>
-							</StackPanel>
-						</asControls:DialogItemBorder>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<ComboBox Classes="Dialog_ComboBox" ItemsSource="{Binding InstalledFontFamilies}" SelectedItem="{Binding PatternFontFamily, Mode=TwoWay}">
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="*,Auto">
-										<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="1" IsVisible="{Binding IsBuiltIn}" Margin="{StaticResource Thickness/AppOptionsDialog.FontFamily.ExtraInfo.Margin}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+								<!-- Pattern font -->
+								<asControls:DialogItemBorder>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.PatternFont}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Description}"/>
+									</StackPanel>
+								</asControls:DialogItemBorder>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<ComboBox Classes="Dialog_ComboBox" ItemsSource="{Binding InstalledFontFamilies}" SelectedItem="{Binding PatternFontFamily, Mode=TwoWay}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="*,Auto">
+												<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+												<abControls:FormattedTextBlock Arg1="{DynamicResource String/Common.BuiltIn}" Format="({0})" Grid.Column="1" IsVisible="{Binding IsBuiltIn}" Margin="{StaticResource Thickness/AppOptionsDialog.FontFamily.ExtraInfo.Margin}" Opacity="{StaticResource Double/AppOptionsDialog.FontFamily.ExtraInfo.Opacity}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											</Grid>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+								<Line Classes="Dialog_Item_Separator_Inner"/>
+								<Border HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
+									<Grid>
+										<TextBlock FontSize="16" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Sample}" VerticalAlignment="Center"/>
+										<TextBlock FontFamily="{Binding SamplePatternFontFamily}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Sample}" VerticalAlignment="Center"/>
 									</Grid>
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<Border HorizontalAlignment="Stretch" Padding="{StaticResource TextControlThemePadding}">
-							<Grid>
-								<TextBlock FontSize="16" HorizontalAlignment="Center" Opacity="0" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Sample}" VerticalAlignment="Center"/>
-								<TextBlock FontFamily="{Binding SamplePatternFontFamily}" HorizontalAlignment="Center" Text="{DynamicResource String/AppOptionsDialog.PatternFont.Sample}" VerticalAlignment="Center"/>
-							</Grid>
-						</Border>
+								</Border>
+								
+								<!-- Disable ANGLE -->
+								<StackPanel IsVisible="{Binding IsDisableAngleSupported}">
+									<Separator Classes="Dialog_Item_Separator"/>
+									<asControls:DialogItemGrid>
+										<StackPanel Classes="DIalog_Item_Text_Container">
+											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.DisableAngle}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#restartNeededByDisablingAngle.IsVisible}" Text="{DynamicResource String/ApplicationOptions.DisableAngle.Description}"/>
+											<Grid Name="restartNeededByDisablingAngle" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsDisableAngleChanged}">
+												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
+											</Grid>
+										</StackPanel>
+										<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding DisableAngle, Mode=TwoWay}"/>
+									</asControls:DialogItemGrid>
+								</StackPanel>
 
 							</StackPanel>
 						</Border>
