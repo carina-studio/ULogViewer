@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:app="using:CarinaStudio.ULogViewer"
-		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
@@ -108,7 +107,7 @@
 						<asControls:DialogItemGrid>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].OpeningReaderScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
@@ -122,7 +121,7 @@
 						<asControls:DialogItemGrid>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].ReadingLineScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
@@ -136,7 +135,7 @@
 						<asControls:DialogItemGrid>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].ClosingReaderScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
