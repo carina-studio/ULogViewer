@@ -1,15 +1,14 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
-using Avalonia.Rendering;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Controls;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer;
 
@@ -18,6 +17,10 @@ namespace CarinaStudio.ULogViewer;
 /// </summary>
 static partial class Utility
 {
+    // Fields.
+    static ICommand? openLinkCommand;
+    
+    
     // Create pattern to check whether the given regex can match all text or not.
     [GeneratedRegex(@"^\.[\*\+]{0,1}$")]
     private static partial Regex CreateAllMatchingPatternRegex();
@@ -237,5 +240,30 @@ static partial class Utility
             return (subPatternBuffer.Length == 0 || allMatchingPatternRegex.IsMatch(subPatternBuffer.ToString()));
         }
         return false;
+    }
+
+
+    /// <summary>
+    /// Command to open link.
+    /// </summary>
+    /// <remarks>The type of parameter is <see cref="String"/> or <see cref="Uri"/>.</remarks>
+    public static ICommand OpenLinkCommand
+    {
+        get
+        {
+            if (openLinkCommand is not null)
+                return openLinkCommand;
+            lock (typeof(Utility))
+            {
+                openLinkCommand ??= new Command<object?>(param =>
+                {
+                    if (param is Uri uri)
+                        Platform.OpenLink(uri);
+                    else if (param is string uriString)
+                        Platform.OpenLink(uriString);
+                });
+            }
+            return openLinkCommand;
+        }
     }
 }

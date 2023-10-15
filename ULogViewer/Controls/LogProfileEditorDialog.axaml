@@ -153,7 +153,12 @@
 								<!-- DataSource -->
 								<asControls:DialogItemGrid>
 									<StackPanel Classes="Dialog_Item_Text_Container">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
+										<WrapPanel>
+											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
+											<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.LogDataSourcesDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+											</Button>
+										</WrapPanel>
 										<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
 											<Grid.IsVisible>
 												<MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -214,8 +219,6 @@
 										</Button.IsEnabled>
 									</Button>
 								</StackPanel>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Allow multiple files -->
@@ -340,7 +343,12 @@
 								<StackPanel Name="logPatternsContainer">
 									<asControls:DialogItemGrid>
 										<StackPanel Classes="Dialog_Item_Text_Container">
-											<TextBlock Name="logPatternsTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns}"/>
+											<WrapPanel>
+												<TextBlock Name="logPatternsTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns}"/>
+												<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.LogPatternsDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+												</Button>
+											</WrapPanel>
 											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns.Description}"/>
 										</StackPanel>
 										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
@@ -413,18 +421,19 @@
 		                            </asControls:ListBox>
 									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logPatternListBox.IsVisible}"/>
 									<Button Name="addLogPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogPattern}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
-									<Line Classes="Dialog_Item_Separator_Inner"/>
-									<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns"/>
 								</StackPanel>
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Log pattern matching mode -->
 								<asControls:DialogItemGrid>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
+									<WrapPanel VerticalAlignment="Center">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
+										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.LogPatternMatchingModeDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
 									<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}" Grid.Column="1"/>
 								</asControls:DialogItemGrid>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.Help}" Uri="https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatternMatchingMode"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log string encoding for reading -->
@@ -625,20 +634,26 @@
 
 								<!-- Timestamp format for displaying -->
 								<asControls:DialogItemGrid>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
+									<WrapPanel VerticalAlignment="Center">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
+										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.DateTimeFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
 									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for displaying -->
 								<asControls:DialogItemGrid>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
+									<WrapPanel VerticalAlignment="Center">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
+										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.TimeSpanFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
 									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Color indicator -->
@@ -791,21 +806,27 @@
 
 								<!-- Timestamp format for writing -->
 								<asControls:DialogItemGrid>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
+									<WrapPanel VerticalAlignment="Center">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
+										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.DateTimeFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
 									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
 								</asControls:DialogItemGrid>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for writing -->
 								<asControls:DialogItemGrid>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
+									<WrapPanel VerticalAlignment="Center">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
+										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.TimeSpanFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
 									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
 								</asControls:DialogItemGrid>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
-
+								
 							</StackPanel>
 						</Border>
 					</StackPanel>

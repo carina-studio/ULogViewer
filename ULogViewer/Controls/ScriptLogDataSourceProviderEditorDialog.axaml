@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:abControls="using:CarinaStudio.Controls"
+		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
@@ -106,7 +106,12 @@
 
 						<!-- Opening reader script -->
 						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
+							<WrapPanel VerticalAlignment="Center">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].OpeningReaderScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -115,7 +120,12 @@
 
 						<!-- Reading line script -->
 						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
+							<WrapPanel VerticalAlignment="Center">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].ReadingLineScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -124,7 +134,12 @@
 
 						<!-- Closing reader script -->
 						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
+							<WrapPanel VerticalAlignment="Center">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].ClosingReaderScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>

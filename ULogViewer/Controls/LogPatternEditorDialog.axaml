@@ -3,10 +3,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
-        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
+        xmlns:app="using:CarinaStudio.ULogViewer"
+        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogPatternEditorDialog"
         Classes="Dialog"
+        Name="window"
         Title="{DynamicResource String/LogPatternEditorDialog.Title}"
         Width="{DynamicResource Double/LogPatternEditorDialog.Width}">
 	
@@ -29,7 +31,12 @@
 					<!-- Pattern -->
 					<asControls:DialogItemBorder>
 						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
+							<WrapPanel>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{DynamicResource String/Common.RegularExpression.Reference}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/LogPatternEditorDialog.Regex.Description}"/>
 							<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#patternEditor.IsPatternTextValid}">
 								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>

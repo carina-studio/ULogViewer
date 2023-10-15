@@ -69,7 +69,12 @@
 						<!-- Beginning pattern -->
 						<asControls:DialogItemGrid>
 							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern}"/>
+								<WrapPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern}"/>
+									<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{DynamicResource String/Common.RegularExpression.Reference}">
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+									</Button>
+								</WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #beginningPatternEditor.IsPatternTextValid}" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description}"/>
 								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#beginningPatternEditor.IsPatternTextValid}">
 									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
@@ -127,7 +132,12 @@
 						<!-- Ending pattern -->
 						<asControls:DialogItemGrid>
 							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern}"/>
+								<WrapPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern}"/>
+									<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{DynamicResource String/Common.RegularExpression.Reference}">
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+									</Button>
+								</WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #endingPatternEditor.IsPatternTextValid}" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description}"/>
 								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#endingPatternEditor.IsPatternTextValid}">
 									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
@@ -290,14 +300,17 @@
 
 						<!-- Custom message -->
 						<asControls:DialogItemBorder>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message}"/>
+							<WrapPanel VerticalAlignment="Center">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.StringInterpolationReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<asControls:StringInterpolationFormatTextBox Name="customMessageTextBox" Classes="Dialog_Item_TextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.None}"/>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Byte size variable -->

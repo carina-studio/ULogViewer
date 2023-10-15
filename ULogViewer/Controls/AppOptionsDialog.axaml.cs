@@ -248,6 +248,22 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
     }
 
 
+    /// <summary>
+    /// Open document of Noto Sans font.
+    /// </summary>
+    public void OpenNotoSansDocument() =>
+	    Platform.OpenLink(this.Application.CultureInfo.Name.Let(name =>
+	    {
+		    if (name.StartsWith("zh"))
+		    {
+			    if (name.EndsWith("TW"))
+				    return Uris.NotoSansTC;
+			    return Uris.NotoSansSC;
+		    }
+		    return Uris.NotoSans;
+	    }));
+
+
     // Scroll to given panel
     void ScrollToPanel(ToggleButton button)
     {

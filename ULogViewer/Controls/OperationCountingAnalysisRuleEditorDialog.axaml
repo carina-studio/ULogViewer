@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:abConverters="using:CarinaStudio.Data.Converters"
+        xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
@@ -53,7 +54,12 @@
 							<!-- Pattern -->
 							<asControls:DialogItemBorder>
 								<StackPanel Classes="Dialog_Item_Text_Container">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
+									<WrapPanel>
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
+										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{DynamicResource String/Common.RegularExpression.Reference}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
 									<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}"/>
 									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#patternEditor.IsPatternTextValid}">
 										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>

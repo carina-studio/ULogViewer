@@ -2,7 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
@@ -35,7 +34,12 @@
 						<!-- Regex -->
 						<asControls:DialogItemBorder>
 							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/RegexEditorDialog.Regex}"/>
+								<WrapPanel>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/RegexEditorDialog.Regex}"/>
+									<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{DynamicResource String/Common.RegularExpression.Reference}">
+										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+									</Button>
+								</WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #regexTextBox.IsTextValid}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description}"/>
 								<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#regexTextBox.IsTextValid}">
 									<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
@@ -45,12 +49,11 @@
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_Item_TextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
+						<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].IsCapturingGroupsEnabled}"/>
 						<Panel IsVisible="{Binding $parent[Window].IsCapturingGroupsEnabled}">
 							<SelectableTextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !$parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingGroups}"/>
 							<SelectableTextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding $parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
 						</Panel>
-						<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/Common.RegularExpression.Reference}" Uri="{x:Static app:Uris.RegexReference}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Ignore case -->

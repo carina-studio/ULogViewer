@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
@@ -84,7 +85,12 @@
 
 						<!-- Setup script -->
 						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
+							<WrapPanel VerticalAlignment="Center">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].SetupScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -93,7 +99,12 @@
 
 						<!-- Analysis script -->
 						<asControls:DialogItemGrid>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
+							<WrapPanel VerticalAlignment="Center">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].AnalysisScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+								</Button>
+							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>

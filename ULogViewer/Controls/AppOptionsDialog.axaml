@@ -146,7 +146,12 @@
 								<StackPanel IsVisible="{Binding IsUseEmbeddedFontsForChineseSupported}">
 									<asControls:DialogItemGrid>
 										<StackPanel Classes="Dialog_Item_Text_Container">
-											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseEmbeddedFontsForChinese}"/>
+											<WrapPanel>
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.UseEmbeddedFontsForChinese}"/>
+												<Button Classes="Dialog_Info_Button" Command="{Binding #window.OpenNotoSansDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+												</Button>
+											</WrapPanel>
 											<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsUseEmbeddedFontsForChineseChanged}">
 												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
 												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
@@ -242,7 +247,12 @@
 									<Separator Classes="Dialog_Item_Separator"/>
 									<asControls:DialogItemGrid>
 										<StackPanel Classes="DIalog_Item_Text_Container">
-											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.DisableAngle}"/>
+											<WrapPanel>
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.DisableAngle}"/>
+												<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.Angle}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+												</Button>
+											</WrapPanel>
 											<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#restartNeededByDisablingAngle.IsVisible}" Text="{DynamicResource String/ApplicationOptions.DisableAngle.Description}"/>
 											<Grid Name="restartNeededByDisablingAngle" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsDisableAngleChanged}">
 												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>

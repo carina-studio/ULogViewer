@@ -44,11 +44,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <see cref="IValueConverter"/> to convert <see cref="Logs.LogLevel"/> to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = Converters.EnumConverters.LogLevel;
-		/// <summary>
-		/// URI of 'How ULogViewer read and parse logs' page.
-		/// </summary>
-		public static readonly Uri LogsReadingAndParsingPageUri = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
-
+		
 
 		// Static fields.
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
@@ -1284,7 +1280,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
 					if (result == MessageDialogResult.Yes)
-						Platform.OpenLink(LogsReadingAndParsingPageUri);
+						Platform.OpenLink(Uris.LogsReadingAndParsingDocument);
 					else
 						this.nameTextBox.Focus();
 				}
