@@ -1963,14 +1963,14 @@ namespace CarinaStudio.ULogViewer.Controls
 						textBlock.AttachedToLogicalTree += (_, _) =>
 						{
 							if (isActiveObserverToken is null && TopLevel.GetTopLevel(textBlock) is Avalonia.Controls.Window window)
-								this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
+								isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
 						};
 						textBlock.DetachedFromLogicalTree += (_, _) =>
 						{
 							isActiveObserverToken = isActiveObserverToken.DisposeAndReturnNull();
 						};
 						if (TopLevel.GetTopLevel(textBlock) is Avalonia.Controls.Window window)
-							this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
+							isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
 					}
 					if (isMultiLineProperty)
 					{
@@ -2138,7 +2138,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								{
 									if (this.sidePanelContainer.IsVisible && this.Settings.GetValueOrDefault(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs))
 										session.IsMarkedLogsPanelVisible = true;
-									session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams()
+									session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams
 									{
 										Color = MarkColor.Default,
 										Logs = new[] { log },
