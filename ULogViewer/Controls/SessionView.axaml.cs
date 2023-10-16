@@ -1815,30 +1815,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						Path = nameof(DisplayableLog.MarkedColor)
 					});
 				});
-				var propertyViews = new Control[logPropertyCount];
 				var itemGrid = new Grid().Also(it =>
 				{
-					if (propertyViewsShowingDelay > 0)
-					{
-						var addPropertyViewsAction = new ScheduledAction(() =>
-						{
-							for (var i = propertyViews.Length - 1; i >= 0; --i)
-								it.Children.Add(propertyViews[i]);
-						});
-						it.AttachedToLogicalTree += (_, _) =>
-						{
-							if (this.IsScrollingToLatestLogNeeded)
-								addPropertyViewsAction.Execute();
-							else
-								addPropertyViewsAction.Schedule(propertyViewsShowingDelay);
-						};
-						it.DetachedFromLogicalTree += (_, _) =>
-						{
-							addPropertyViewsAction.Cancel();
-							it.Children.RemoveRange(1, it.Children.Count - 1); // no need to remove placeholder view at position 0
-						};
-					}
 					it.ClipToBounds = false;
+					it.IsVisible = (propertyViewsShowingDelay <= 0);
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
 				});
@@ -2056,10 +2036,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 					}
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
-					if (propertyViewsShowingDelay > 0)
-						propertyViews[logPropertyIndex] = propertyView;
-					else
-						itemGrid.Children.Add(propertyView);
+					itemGrid.Children.Add(propertyView);
 				}
 
 				// color indicator
@@ -2211,6 +2188,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				// update according to selection of list box item
 				var isSelectedObserverToken = EmptyDisposable.Default;
 				var prevDataContextRef = default(WeakReference<object>);
+				var addPropertyViewsAction = propertyViewsShowingDelay > 0
+					? new ScheduledAction(() => itemGrid.IsVisible = true)
+					: null;
 				itemPanel.AttachedToLogicalTree += (_, _) =>
 				{
 					// [Workaround] Restore DataContext cleared by us
@@ -2232,9 +2212,25 @@ namespace CarinaStudio.ULogViewer.Controls
 						if (logProperties[i].Width.HasValue || i != logPropertyCount - 1)
 							propertyColumnWidthBindingTokens[i] = propertyColumns[i].Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[i]);
 					}
+					
+					// add property views
+					if (addPropertyViewsAction is not null)
+					{
+						if (this.IsScrollingToLatestLogNeeded)
+							addPropertyViewsAction.Execute();
+						else
+							addPropertyViewsAction.Schedule(propertyViewsShowingDelay);
+					}
 				};
 				itemPanel.DetachedFromLogicalTree += (_, _) =>
 				{
+					// remove property views
+					if (addPropertyViewsAction is not null)
+					{
+						addPropertyViewsAction.Cancel();
+						itemGrid.IsVisible = false;
+					}
+					
 					// clear binding from ListBoxItem
 					isSelectedObserverToken.Dispose();
 
@@ -2966,6 +2962,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
+			this.Application.Configuration.SettingChanged += this.OnConfigurationChanged;
 			this.Settings.SettingChanged += this.OnSettingChanged;
 			this.AddHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.AddHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
@@ -2998,6 +2995,19 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Called when configuration changed.
+		void OnConfigurationChanged(object? sender, SettingChangedEventArgs e)
+		{
+			if (e.Key == ConfigurationKeys.LogPropertyViewsShowingDelay)
+			{
+				var session = this.DataContext as Session;
+				var logProfile = session?.LogProfile;
+				if (logProfile is not null)
+					this.logListBox.ItemTemplate = this.CreateLogItemTemplate(logProfile, session!.DisplayLogProperties);
+			}
+		}
+
+
 		// Called when detach from view tree.
 		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
@@ -3006,6 +3016,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
+			this.Application.Configuration.SettingChanged -= this.OnConfigurationChanged;
 			this.Settings.SettingChanged -= this.OnSettingChanged;
 			this.RemoveHandler(DragDrop.DragEnterEvent, this.OnDragEnter);
 			this.RemoveHandler(DragDrop.DragLeaveEvent, this.OnDragLeave);
