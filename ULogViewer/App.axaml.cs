@@ -265,10 +265,19 @@ namespace CarinaStudio.ULogViewer
 		/// <inheritdoc/>
 		protected override bool OnExceptionOccurredInGuardedMainLoop(Exception ex)
 		{
-			if (ex is IndexOutOfRangeException && ex.StackTrace?.Contains(" Avalonia.Media.GlyphRun.FindNearestCharacterHit(") == true)
+			if (ex is IndexOutOfRangeException) // [Workaround] Prevent unexpected error occurred in TextBox
 			{
-				this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.FindNearestCharacterHit() caused by unknown reason");
-				return true;
+				var stackTrace = ex.StackTrace ?? "";
+				if (stackTrace.Contains("at Avalonia.Media.GlyphRun.FindNearestCharacterHit("))
+				{
+					this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.FindNearestCharacterHit() caused by unknown reason");
+					return true;
+				}
+				if (stackTrace.Contains(" at Avalonia.Media.GlyphRun.GetDistanceFromCharacterHit("))
+				{
+					this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.GetDistanceFromCharacterHit() caused by unknown reason");
+					return true;
+				}
 			}
 			return base.OnExceptionOccurredInGuardedMainLoop(ex);
 		}

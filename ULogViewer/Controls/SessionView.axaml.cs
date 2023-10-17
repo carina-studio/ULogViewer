@@ -2972,6 +2972,22 @@ namespace CarinaStudio.ULogViewer.Controls
 			// invalidate resources
 			this.selectableValueLogItemBackgroundBrush = null;
 
+			// [Workaround] Prevent text not showing in TextBox
+			if (!string.IsNullOrEmpty(this.logTextFilterTextBox.Text))
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					this.logTextFilterTextBox.Focus();
+					this.logTextFilterTextBox.SelectAll();
+				});
+				this.SynchronizationContext.Post(() =>
+				{
+					this.logTextFilterTextBox.SelectionStart = 0;
+					this.logTextFilterTextBox.SelectionEnd = 0;
+					this.logListBox.Focus();
+				});
+			}
+
 			// check settings
 			this.SetValue(ShowHelpButtonOnLogTextFilterProperty, this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter));
 
