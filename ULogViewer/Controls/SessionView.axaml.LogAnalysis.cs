@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -11,6 +12,7 @@ using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
@@ -29,6 +31,24 @@ namespace CarinaStudio.ULogViewer.Controls;
 
 partial class SessionView
 {
+    /// <summary>
+    /// <see cref="IMultiValueConverter"/> to convert from <see cref="DisplayableLogAnalysisResultType"/> and related states to <see cref="IImage"/>.
+    /// </summary>
+    public static readonly IMultiValueConverter LogAnalysisResultIconConverter = new FuncMultiValueConverter<object?, IImage?>(values =>
+    {
+        if (values is not IList valueList 
+            || valueList.Count < 3
+            || valueList[0] is not DisplayableLogAnalysisResultType type
+            || valueList[1] is not bool isPointerOver
+            || valueList[2] is not bool isSelected)
+        {
+            return null;
+        }
+        var parameter = (isPointerOver && isSelected) ? "Light" : null;
+        return DisplayableLogAnalysisResultIconConverter.Default.Convert(type, typeof(IImage), parameter, App.Current.CultureInfo) as IImage;
+    });
+    
+    
     // Constants.
     const int UpdateLogAnalysisParamsDelay = 500;
 

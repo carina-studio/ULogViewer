@@ -2154,35 +2154,24 @@
 							<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:DisplayableLogAnalysisResult">
 								<Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,*">
 									<Border x:CompileBindings="False" Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" Grid.RowSpan="2" IsVisible="{Binding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
-									<Image x:CompileBindings="False" Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Source="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
+									<abControls:TextBlock Name="messageTextBlock" FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="2" Padding="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+									<Image x:CompileBindings="False" Classes="Icon" Grid.Column="1" Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}">
 										<ia:Interaction.Behaviors>
-											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="True">
+											<iaCore:DataTriggerBehavior Binding="{ReflectionBinding #messageTextBlock.IsMultiLineText, FallbackValue=False}" Value="True">
 												<iaCore:ChangePropertyAction PropertyName="VerticalAlignment" Value="Top"/>
 											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Binding="{Binding #messageTextBlock.IsMultiLineText}" Value="False">
+											<iaCore:DataTriggerBehavior Binding="{ReflectionBinding #messageTextBlock.IsMultiLineText, FallbackValue=False}" Value="False">
 												<iaCore:ChangePropertyAction PropertyName="VerticalAlignment" Value="Center"/>
 											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Value="False">
-												<iaCore:DataTriggerBehavior.Binding>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-														<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-													</MultiBinding>
-												</iaCore:DataTriggerBehavior.Binding>
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
-											</iaCore:DataTriggerBehavior>
-											<iaCore:DataTriggerBehavior Value="True">
-												<iaCore:DataTriggerBehavior.Binding>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-														<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-													</MultiBinding>
-												</iaCore:DataTriggerBehavior.Binding>
-												<iaCore:ChangePropertyAction PropertyName="Source" Value="{Binding Type, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
-											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
+										<Image.Source>
+											<MultiBinding Converter="{x:Static appControls:SessionView.LogAnalysisResultIconConverter}">
+												<Binding Path="Type" FallbackValue="{x:Static appAnalysis:DisplayableLogAnalysisResultType.Debug}"/>
+												<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" FallbackValue="False"/>
+												<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" FallbackValue="False"/>
+											</MultiBinding>
+										</Image.Source>
 									</Image>
-									<abControls:TextBlock Name="messageTextBlock" FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="2" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Message}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 									<Grid ColumnDefinitions="Auto,*" Grid.Column="2" Grid.Row="1" Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding}" RowDefinitions="Auto,Auto,Auto" VerticalAlignment="Center">
 										<Grid.IsVisible>
 											<MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -2193,88 +2182,85 @@
 										</Grid.IsVisible>
 										
 										<!-- Duration -->
-										<asControls:Image 
-											Classes="Icon" 
-											Grid.Row="0" 
-											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
-											IsVisible="{Binding HasDuration}" 
-											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
-											VerticalAlignment="Center" 
-											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
+										<asControls:Image Name="durationIcon"
+										                  Classes="Icon" 
+										                  Grid.Row="0" 
+										                  Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
+										                  IsVisible="{Binding HasDuration}" 
+										                  Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
+										                  VerticalAlignment="Center" 
+										                  Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Timer.Outline}"/>
+												<GeometryDrawing Brush="{ReflectionBinding #durationIcon.(TextElement.Foreground)}" 
+												                 Geometry="{StaticResource Geometry/Timer.Outline}"/>
 											</DrawingImage>
 										</asControls:Image>
-										<TextBlock 
-											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
-											Grid.Column="1" 
-											Grid.Row="0" 
-											IsVisible="{Binding HasDuration}" 
-											Text="{Binding Duration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
-											TextTrimming="CharacterEllipsis" 
-											ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Duration}"
-											VerticalAlignment="Center"/>
+										<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+										           Grid.Column="1" 
+										           Grid.Row="0" 
+										           IsVisible="{Binding HasDuration}" 
+										           Text="{Binding Duration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+										           TextTrimming="CharacterEllipsis" 
+										           ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Duration}"
+										           VerticalAlignment="Center"/>
 										
 										<!-- ByteSize -->
-										<asControls:Image 
-											Classes="Icon" 
-											Grid.Row="1" 
-											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
-											IsVisible="{Binding HasByteSize}" 
-											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
-											VerticalAlignment="Center" 
-											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
+										<asControls:Image Name="byteSizeIcon"
+										                  Classes="Icon" 
+										                  Grid.Row="1" 
+										                  Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
+										                  IsVisible="{Binding HasByteSize}" 
+										                  Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
+										                  VerticalAlignment="Center" 
+										                  Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{DynamicResource Geometry/Icon.Memory.Outline}"/>
+												<GeometryDrawing Brush="{ReflectionBinding #byteSizeIcon.(TextElement.Foreground)}" 
+												                 Geometry="{DynamicResource Geometry/Icon.Memory.Outline}"/>
 											</DrawingImage>
 										</asControls:Image>
-										<Grid 
-											ColumnDefinitions="Auto,Auto,*"
-											Grid.Column="1" 
-											Grid.Row="1"
-											IsVisible="{Binding HasByteSize}"
-											VerticalAlignment="Center">
+										<Grid ColumnDefinitions="Auto,Auto,*"
+										      Grid.Column="1" 
+										      Grid.Row="1"
+										      IsVisible="{Binding HasByteSize}"
+										      VerticalAlignment="Center">
 
-												<TextBlock 
-													FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
-													Text="{Binding ByteSize, StringFormat={}{0:n0}}" 
-													TextTrimming="CharacterEllipsis" 
-													ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.ByteSize}"
-													VerticalAlignment="Center"/>
-												<Separator 
-													Classes="Dialog_Separator_Small" 
-													Grid.Column="1"/>
-												<TextBlock 
-													FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
-													Grid.Column="2"
-													Text="{Binding ByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}, StringFormat={}({0})}" 
-													TextTrimming="CharacterEllipsis" 
-													VerticalAlignment="Center"/>
+												<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+												           Text="{Binding ByteSize, StringFormat={}{0:n0}}" 
+												           TextTrimming="CharacterEllipsis" 
+												           ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.ByteSize}"
+												           VerticalAlignment="Center"/>
+												<Separator Classes="Dialog_Separator_Small" 
+												           Grid.Column="1"/>
+												<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+												           Grid.Column="2"
+												           Text="{Binding ByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}, StringFormat={}({0})}" 
+												           TextTrimming="CharacterEllipsis" 
+												           VerticalAlignment="Center"/>
 													
 										</Grid>
 										
 										<!-- Quantity -->
-										<asControls:Image 
-											Classes="Icon" 
-											Grid.Row="2" 
-											Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
-											IsVisible="{Binding HasQuantity}" 
-											Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
-											VerticalAlignment="Center" 
-											Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
+										<asControls:Image Name="quantityIcon"
+										                  Classes="Icon" 
+										                  Grid.Row="2" 
+										                  Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
+										                  IsVisible="{Binding HasQuantity}" 
+										                  Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
+										                  VerticalAlignment="Center" 
+										                  Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Layers.Outline}"/>
+												<GeometryDrawing Brush="{ReflectionBinding #quantityIcon.(TextElement.Foreground)}" 
+												                 Geometry="{StaticResource Geometry/Layers.Outline}"/>
 											</DrawingImage>
 										</asControls:Image>
-										<TextBlock 
-											FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
-											Grid.Column="1" 
-											Grid.Row="2" 
-											IsVisible="{Binding HasQuantity}" 
-											Text="{Binding Quantity}" 
-											TextTrimming="CharacterEllipsis" 
-											ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Quantity}"
-											VerticalAlignment="Center"/>
+										<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+										           Grid.Column="1" 
+										           Grid.Row="2" 
+										           IsVisible="{Binding HasQuantity}" 
+										           Text="{Binding Quantity}" 
+										           TextTrimming="CharacterEllipsis" 
+										           ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisResult.Quantity}"
+										           VerticalAlignment="Center"/>
 										
 									</Grid>
 								</Grid>

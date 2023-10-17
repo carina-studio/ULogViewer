@@ -2369,8 +2369,8 @@ namespace CarinaStudio.ULogViewer.Controls
                         	Path = propertyInMarkedItem.Name,
                         });
 					}
-					it.Margin = itemPadding;
 					it.MaxLines = 1;
+					it.Padding = itemPadding;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
 					it.TextWrapping = TextWrapping.NoWrap;
 					it.VerticalAlignment = VerticalAlignment.Top;
