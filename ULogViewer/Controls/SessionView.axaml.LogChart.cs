@@ -1356,16 +1356,8 @@ partial class SessionView
             return default;
         return this.SelectLogChartSeriesAnimationSpeed(session.LogChart);
     }
-    TimeSpan SelectLogChartSeriesAnimationSpeed(LogChartViewModel viewModel)
-    {
-        if (this.startLogChartAnimationsAction.IsScheduled)
-            return default;
-        return viewModel.ChartType switch
-        {
-            LogChartType.ValueStatisticBars => default,
-            _ => this.Application.FindResourceOrDefault("TimeSpan/Animation.Slow", TimeSpan.FromMilliseconds(500)),
-        };
-    }
+    TimeSpan SelectLogChartSeriesAnimationSpeed(LogChartViewModel viewModel) =>
+        default;
     
     
     // Select color for series.
