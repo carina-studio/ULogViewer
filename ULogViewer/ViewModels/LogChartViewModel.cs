@@ -537,7 +537,6 @@ class LogChartViewModel : SessionComponent
         this.ApplyLogChartSeriesSources();
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
-        this.SetValue(IsXAxisInvertedProperty, newLogProfile?.SortDirection != SortDirection.Ascending);
         
         // setup properties of axes
         this.SetValue(XAxisTypeProperty, newLogProfile?.LogChartXAxisType ?? LogChartXAxisType.None);
@@ -619,9 +618,6 @@ class LogChartViewModel : SessionComponent
                 break;
             case nameof(LogProfile.LogChartXAxisType):
                 this.SetValue(XAxisTypeProperty, profile.LogChartXAxisType);
-                break;
-            case nameof(LogProfile.SortDirection):
-                this.SetValue(IsXAxisInvertedProperty, profile.SortDirection != SortDirection.Ascending);
                 break;
         }
     }
