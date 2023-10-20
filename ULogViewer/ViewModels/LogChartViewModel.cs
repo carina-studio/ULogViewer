@@ -439,7 +439,6 @@ class LogChartViewModel : SessionComponent
         this.ApplyLogChartSeriesSources();
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
-        this.SetValue(IsXAxisInvertedProperty, newLogProfile?.SortDirection != SortDirection.Ascending);
         this.updateAxisNamesAction.Execute();
         this.UpdateCanSetChartType();
     }
@@ -484,9 +483,6 @@ class LogChartViewModel : SessionComponent
             case nameof(LogProfile.LogChartValueGranularity):
                 this.SetValue(ChartValueGranularityProperty, profile.LogChartValueGranularity);
                 this.updateAxisNamesAction.Schedule();
-                break;
-            case nameof(LogProfile.SortDirection):
-                this.SetValue(IsXAxisInvertedProperty, profile.SortDirection != SortDirection.Ascending);
                 break;
         }
     }
