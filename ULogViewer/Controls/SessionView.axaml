@@ -1608,7 +1608,23 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="markedLogListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" DoubleClickOnItem="OnMarkedLogListBoxDoubleClickOnItem" IsVisible="{Binding HasMarkedLogs}" ItemsSource="{Binding MarkedLogs}" SelectionChanged="OnMarkedLogListBoxSelectionChanged" SelectionMode="Single"/>
+					<asControls:ListBox Classes="Log" 
+					                    Name="markedLogListBox" 
+					                    Background="{x:Static Brushes.Transparent}" 
+					                    BorderThickness="0" 
+					                    Focusable="False" 
+					                    Grid.Row="1" 
+					                    DoubleClickOnItem="OnMarkedLogListBoxDoubleClickOnItem" 
+					                    IsVisible="{Binding HasMarkedLogs}" 
+					                    ItemsSource="{Binding MarkedLogs}" 
+					                    SelectionChanged="OnMarkedLogListBoxSelectionChanged" 
+					                    SelectionMode="Single">
+						<asControls:ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<appControls:SimpleVirtualizingStackPanel ItemHeight="{DynamicResource Double/SessionView.MarkedLogListBox.Item.Height}"/>
+							</ItemsPanelTemplate>
+						</asControls:ListBox.ItemsPanel>
+					</asControls:ListBox>
 				</Grid>
 
 				<!-- Timestamp categories -->
@@ -1619,7 +1635,18 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="timestampCategoryListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" ItemsSource="{Binding LogCategorizing.TimestampCategories}">
+					<asControls:ListBox Classes="Log" 
+					                    Name="timestampCategoryListBox" 
+					                    Background="{x:Static Brushes.Transparent}" 
+					                    BorderThickness="0" 
+					                    Focusable="False" 
+					                    Grid.Row="1" 
+					                    ItemsSource="{Binding LogCategorizing.TimestampCategories}">
+						<asControls:ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<appControls:SimpleVirtualizingStackPanel ItemHeight="{DynamicResource Double/SessionView.MarkedLogListBox.Item.Height}"/>
+							</ItemsPanelTemplate>
+						</asControls:ListBox.ItemsPanel>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate x:CompileBindings="True" x:DataType="appCategorizing:DisplayableLogCategory">
 								<Grid ColumnDefinitions="Auto,*">

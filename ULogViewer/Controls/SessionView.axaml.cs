@@ -2370,7 +2370,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Padding = itemPadding;
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
 					it.TextWrapping = TextWrapping.NoWrap;
-					it.VerticalAlignment = VerticalAlignment.Top;
+					it.VerticalAlignment = VerticalAlignment.Center;
 					if (timestampStringProperty != null)
 						it.Bind(ToolTip.TipProperty, new Binding { Path = timestampStringProperty.Name });
 				});
