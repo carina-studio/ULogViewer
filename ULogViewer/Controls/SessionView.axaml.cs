@@ -1193,7 +1193,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Attach to session.
 		void AttachToSession(Session session)
 		{
-			this.Logger.LogWarning($"Attaching to session {session.Id}");
+			this.Logger.LogWarning("Attaching to session {sessionId}", session.Id);
 			
 			// bind to logs
 			this.logsBindingToken = this.logsBindingToken.DisposeAndReturnNull();
@@ -1880,7 +1880,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
-							it.VerticalAlignment = VerticalAlignment.Top;
+							it.VerticalAlignment = VerticalAlignment.Center;
 						}),
 						_ => new SyntaxHighlightingTextBlock().Also(it =>
 						{
@@ -1927,30 +1927,14 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
-							it.VerticalAlignment = VerticalAlignment.Top;
+							it.VerticalAlignment = VerticalAlignment.Center;
 						}),
 					};
-					if (propertyView is CarinaStudio.Controls.TextBlock textBlock 
+					if (propertyView is CarinaStudio.Controls.TextBlock 
 					    && width.HasValue
 					    && Platform.IsMacOS)
 					{
-						var isActiveObserverToken = default(IDisposable);
-						void OnWindowIsActiveChanged(bool isActive)
-						{
-							if (!isActive)
-								ToolTip.SetIsOpen(textBlock, false);
-						}
-						textBlock.AttachedToLogicalTree += (_, _) =>
-						{
-							if (isActiveObserverToken is null && TopLevel.GetTopLevel(textBlock) is Avalonia.Controls.Window window)
-								isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
-						};
-						textBlock.DetachedFromLogicalTree += (_, _) =>
-						{
-							isActiveObserverToken = isActiveObserverToken.DisposeAndReturnNull();
-						};
-						if (TopLevel.GetTopLevel(textBlock) is Avalonia.Controls.Window window)
-							isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(OnWindowIsActiveChanged);
+						app.EnsureClosingToolTipIfWindowIsInactive(propertyView);
 					}
 					if (isMultiLineProperty)
 					{
@@ -1970,6 +1954,8 @@ namespace CarinaStudio.ULogViewer.Controls
 								multiLineIcon.Width = markIndicatorSize;
 								multiLineIcon.BindToResource(ToolTip.TipProperty, "String/SessionView.MultiLineLogProperty");
 								multiLineIcon.VerticalAlignment = VerticalAlignment.Center;
+								if (Platform.IsMacOS)
+									app.EnsureClosingToolTipIfWindowIsInactive(multiLineIcon);
 							}));
 							it.Children.Add(propertyView);
 							it.HorizontalAlignment = HorizontalAlignment.Left;
@@ -2050,6 +2036,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.HorizontalAlignment = HorizontalAlignment.Left;
 						it.Bind(ToolTip.TipProperty, new Binding { Path = nameof(DisplayableLog.ColorIndicatorTip) });
 						it.Width = colorIndicatorWidth;
+						if (Platform.IsMacOS)
+							app.EnsureClosingToolTipIfWindowIsInactive(it);
 						itemPanel.Children.Add(it);
 					});
 				}
@@ -2145,6 +2133,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					panel.BindToResource(ToolTip.TipProperty, "String/SessionView.MarkUnmarkLog");
 					panel.VerticalAlignment = VerticalAlignment.Stretch;
 					panel.Width = markIndicatorWidth;
+					if (Platform.IsMacOS)
+						app.EnsureClosingToolTipIfWindowIsInactive(panel);
 				}));
 				
 				// analysis result indicator
@@ -2187,32 +2177,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// update according to selection of list box item
 				var isSelectedObserverToken = EmptyDisposable.Default;
-				var prevDataContextRef = default(WeakReference<object>);
 				var addPropertyViewsAction = propertyViewsShowingDelay > 0
 					? new ScheduledAction(() => itemGrid.IsVisible = true)
 					: null;
-				itemPanel.AttachedToLogicalTree += (_, _) =>
+				void OnAttachedToDataContext()
 				{
-					// [Workaround] Restore DataContext cleared by us
-					if (prevDataContextRef?.TryGetTarget(out var dataContext) == true)
-						itemPanel.DataContext ??= dataContext;
-					
-					// bind to ListBoxItem
-					if (itemPanel.Parent is ListBoxItem listBoxItem)
-					{
-						isSelectedObserverToken = listBoxItem.GetObservable(ListBoxItem.IsSelectedProperty).Subscribe(isSelected =>
-						{
-							markIndicatorSelectionBackground!.IsVisible = isSelected;
-						});
-					}
-
-					// bind to column widths
-					for (var i = logPropertyCount - 1; i >= 0; --i)
-					{
-						if (logProperties[i].Width.HasValue || i != logPropertyCount - 1)
-							propertyColumnWidthBindingTokens[i] = propertyColumns[i].Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[i]);
-					}
-					
 					// add property views
 					if (addPropertyViewsAction is not null)
 					{
@@ -2221,8 +2190,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						else
 							addPropertyViewsAction.Schedule(propertyViewsShowingDelay);
 					}
-				};
-				itemPanel.DetachedFromLogicalTree += (_, _) =>
+				}
+				void OnDetachedFromDataContext()
 				{
 					// remove property views
 					if (addPropertyViewsAction is not null)
@@ -2230,20 +2199,48 @@ namespace CarinaStudio.ULogViewer.Controls
 						addPropertyViewsAction.Cancel();
 						itemGrid.IsVisible = false;
 					}
+				}
+				itemPanel.AttachedToLogicalTree += (_, _) =>
+				{
+					// bind to ListBoxItem
+					if (itemPanel.Parent is ListBoxItem listBoxItem)
+					{
+						isSelectedObserverToken = listBoxItem.GetObservable(ListBoxItem.IsSelectedProperty).Subscribe(isSelected =>
+						{
+							markIndicatorSelectionBackground!.IsVisible = isSelected;
+						});
+					}
 					
+					// bind to column widths
+					for (var i = logPropertyCount - 1; i >= 0; --i)
+					{
+						if (logProperties[i].Width.HasValue || i != logPropertyCount - 1)
+							propertyColumnWidthBindingTokens[i] = propertyColumns[i].Bind(ColumnDefinition.WidthProperty, this.logHeaderWidths[i]);
+					}
+				};
+				itemPanel.DetachedFromLogicalTree += (_, _) =>
+				{
 					// clear binding from ListBoxItem
 					isSelectedObserverToken.Dispose();
 
 					// clear bindings to column widths
 					for (var i = propertyColumnWidthBindingTokens.Length - 1; i >= 0; --i)
 						propertyColumnWidthBindingTokens[i] = propertyColumnWidthBindingTokens[i].DisposeAndReturnNull();
-					
-					// [Workaround] Clear reference to DataContext in case of view is dropped by ListBox
-					itemPanel.DataContext?.Let(it => 
+				};
+				itemPanel.PropertyChanged += (_, e) =>
+				{
+					if (e.Property == DataContextProperty)
 					{
-						prevDataContextRef = new(it);
-						itemPanel.DataContext = null;
-					});
+						if (e.NewValue is null)
+							OnDetachedFromDataContext();
+						else if (e.OldValue is null)
+							OnAttachedToDataContext();
+						else
+						{
+							OnDetachedFromDataContext();
+							OnAttachedToDataContext();
+						}
+					}
 				};
 
 				// complete
@@ -3436,6 +3433,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canCopyLogProperty.Update(false);
 			this.canShowLogProperty.Update(false);
 			
+			// stop auto scrolling
+			this.IsScrollingToLatestLogNeeded = false;
+			
 			// focus to list box
 			this.logListBox.Focus();
 		}
@@ -3610,40 +3610,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Remove)
 			{
-				// [Workaround] Force updating item containers
-				var logScrollViewer = this.logScrollViewer;
-				if (logScrollViewer != null)
-				{
-					var offset = logScrollViewer.Offset;
-					if (Math.Abs(offset.Y) > 0.1 && !this.IsScrollingToLatestLogNeeded)
-					{
-						var logListBox = this.logListBox;
-						var oldStartIndex = e.OldStartingIndex;
-						var oldItems = e.OldItems.AsNonNull();
-						var lastVisibleItemIndex = -1;
-						var firstVisibleItemIndex = -1;
-						foreach (var container in logListBox.GetRealizedContainers())
-						{
-							var index = logListBox.IndexFromContainer(container);
-							if (firstVisibleItemIndex < 0 || index < firstVisibleItemIndex)
-								firstVisibleItemIndex = index;
-							if (lastVisibleItemIndex < 0 || index > lastVisibleItemIndex)
-								lastVisibleItemIndex = index;
-						}
-						logScrollViewer.PageUp();
-						logScrollViewer.LineUp();
-						logScrollViewer.LineDown();
-						logScrollViewer.PageDown();
-						if (firstVisibleItemIndex >= 0 
-							&& lastVisibleItemIndex >= 0
-							&& oldStartIndex + oldItems.Count <= firstVisibleItemIndex)
-						{
-							firstVisibleItemIndex -= oldItems.Count;
-							this.ScrollToLog(firstVisibleItemIndex);
-						}
-					}
-				}
-
 				// cancel scrolling to target log range
 				if (this.targetLogRangeToScrollTo != null)
 				{
@@ -4749,25 +4715,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				return false;
 			});
-			if (isLogVisible)
-			{
-				if (!moveToCenter)
-					return;
-			}
-			else
-			{
-				this.logScrollViewer?.Let(scrollViewer => // [Workaround] Move closer to log first to make sure the scroll bar position will be correct
-				{
-					var extentHeight = scrollViewer.Extent.Height;
-					var viewportHeight = scrollViewer.Viewport.Height;
-					var offset = extentHeight * (index + 0.5) / session.Logs.Count + (viewportHeight / 2);
-					if (offset < 0)
-						offset = 0;
-					else if (offset + viewportHeight > extentHeight)
-						offset = extentHeight - viewportHeight;
-					scrollViewer.Offset = new(scrollViewer.Offset.X, offset);
-				});
-			}
+			if (isLogVisible && !moveToCenter)
+				return;
 			this.targetLogRangeToScrollTo = new[] { log, log };
 			this.Logger.LogTrace("Start scrolling to log at position {index}", index);
 			this.SetValue(IsScrollingToTargetLogRangeProperty, true);
@@ -5745,7 +5694,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (logProfile.SortDirection == SortDirection.Ascending)
 				{
-					if (userScrollingDelta > 0 && ((logScrollViewer.Offset.Y + logScrollViewer.Viewport.Height) / logScrollViewer.Extent.Height) >= 0.999)
+					if (userScrollingDelta > 0 && Math.Abs(logScrollViewer.Offset.Y + logScrollViewer.Viewport.Height - logScrollViewer.Extent.Height) <= 5)
 					{
 						this.Logger.LogDebug("Start auto scrolling because of user scrolling down");
 						this.IsScrollingToLatestLogNeeded = true;
@@ -5753,7 +5702,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 				{
-					if (userScrollingDelta < 0 && (logScrollViewer.Offset.Y / logScrollViewer.Extent.Height) <= 0.001)
+					if (userScrollingDelta < 0 && logScrollViewer.Offset.Y <= 5)
 					{
 						this.Logger.LogDebug("Start auto scrolling because of user scrolling up");
 						this.IsScrollingToLatestLogNeeded = true;

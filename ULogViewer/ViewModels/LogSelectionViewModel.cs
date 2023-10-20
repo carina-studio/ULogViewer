@@ -73,6 +73,7 @@ class LogSelectionViewModel : SessionComponent
     INotifyCollectionChanged? attachedLogs;
     readonly MutableObservableBoolean canSelectLogsDurationEndingLog = new();
     readonly MutableObservableBoolean canSelectLogsDurationStartingLog = new();
+    readonly ScheduledAction commitPendingSelectedLogsAction;
     readonly IDisposable displayableLogPropertiesObserverToken;
     readonly IDisposable earliestLogTimestampObserverToken;
     readonly IDisposable latestLogTimestampObserverToken;
@@ -80,6 +81,7 @@ class LogSelectionViewModel : SessionComponent
     readonly IDisposable maxLogTimeSpanObserverToken;
     readonly IDisposable minLogTimeSpanObserverToken;
     readonly ScheduledAction notifySelectedLogsChangedAction;
+    readonly HashSet<DisplayableLog> pendingSelectedLogs = new();
     readonly ScheduledAction reportSelectedLogsTimeInfoAction;
     readonly SortedObservableList<DisplayableLog> selectedLogs;
     readonly ScheduledAction updateCanSelectLogsDurationStartingEndingLogsAction;
@@ -112,6 +114,16 @@ class LogSelectionViewModel : SessionComponent
         });
 
         // create actions
+        this.commitPendingSelectedLogsAction = new(() =>
+        {
+            if (this.IsDisposed)
+                return;
+            if (this.pendingSelectedLogs.IsEmpty())
+                return;
+            var logs = this.pendingSelectedLogs.ToArray();
+            this.pendingSelectedLogs.Clear();
+            this.selectedLogs.AddAll(logs);
+        });
         this.notifySelectedLogsChangedAction = new(() =>
         {
             if (!this.IsDisposed)
@@ -180,6 +192,14 @@ class LogSelectionViewModel : SessionComponent
             this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
         
         // attach to self
+        this.GetValueAsObservable(IsAllLogsSelectionRequestedProperty).Subscribe(requested =>
+        {
+            if (!requested)
+            {
+                this.pendingSelectedLogs.Clear();
+                this.commitPendingSelectedLogsAction.Cancel();
+            }
+        });
         this.GetValueAsObservable(SelectedLogPropertyProperty).Subscribe(this.ReportSelectedLogPropertyValue);
     }
 
@@ -192,6 +212,8 @@ class LogSelectionViewModel : SessionComponent
         this.VerifyAccess();
         this.VerifyDisposed();
         this.SetValue(IsAllLogsSelectionRequestedProperty, false);
+        this.pendingSelectedLogs.Clear();
+        this.commitPendingSelectedLogsAction.Cancel();
         this.selectedLogs.Clear();
     }
 
@@ -297,10 +319,18 @@ class LogSelectionViewModel : SessionComponent
         {
             case NotifyCollectionChangedAction.Add:
                 if (this.GetValue(IsAllLogsSelectionRequestedProperty))
-                    this.selectedLogs.AddAll(e.NewItems!.Cast<DisplayableLog>(), true);
+                {
+                    this.pendingSelectedLogs.AddAll(e.NewItems!.Cast<DisplayableLog>());
+                    this.commitPendingSelectedLogsAction.Schedule();
+                }
                 break;
             case NotifyCollectionChangedAction.Remove:
-                this.selectedLogs.RemoveAll(e.OldItems!.Cast<DisplayableLog>(), true);
+                e.OldItems!.Cast<DisplayableLog>().Let(logs =>
+                {
+                    for (var i = logs.Count - 1; i >= 0; --i)
+                        this.pendingSelectedLogs.Remove(logs[i]);
+                    this.selectedLogs.RemoveAll(logs, true);
+                });
                 break;
             case NotifyCollectionChangedAction.Reset:
                 this.ClearSelectedLogs();
