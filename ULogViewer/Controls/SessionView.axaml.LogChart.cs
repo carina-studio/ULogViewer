@@ -183,7 +183,7 @@ partial class SessionView
         });
         
         // load resources
-        var animationSpeed = this.Application.FindResourceOrDefault("TimeSpan/Animation.Slow", TimeSpan.FromMilliseconds(500));
+        var animationSpeed = TimeSpan.Zero;
         var backgroundColor = this.Application.FindResourceOrDefault("Brush/WorkingArea.Background", Brushes.Black).Let(it =>
         {
             var color = it.Color;
