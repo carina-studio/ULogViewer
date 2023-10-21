@@ -1273,7 +1273,8 @@ partial class SessionView
             return;
         if (this.DataContext is not Session session)
             return;
-        if (session.LogAnalysis.AnalysisResults.IsEmpty() || session.LogProfile == null || !session.IsActivated)
+        var logProfile = session.LogProfile;
+        if (session.LogAnalysis.AnalysisResults.IsEmpty() || logProfile is null || !session.IsActivated)
             return;
 				
         // cancel scrolling
@@ -1292,7 +1293,10 @@ partial class SessionView
             if (extent.Height > viewport.Height)
             {
                 var currentOffset = scrollViewer.Offset;
-                var distanceY = (extent.Height - viewport.Height) - currentOffset.Y;
+                var targetOffset = logProfile.SortDirection == SortDirection.Ascending
+                    ? extent.Height - viewport.Height
+                    : 0;
+                var distanceY = targetOffset - currentOffset.Y;
                 if (Math.Abs(distanceY) <= 1)
                 {
                     this.isSmoothScrollingToLatestLogAnalysisResult = false;
@@ -1379,25 +1383,47 @@ partial class SessionView
         if (scrollViewer == null)
             return;
         var logProfile = (this.HasLogProfile ? (this.DataContext as Session)?.LogProfile : null);
-        if (logProfile == null)
+        if (logProfile is null)
             return;
         var offset = scrollViewer.Offset;
         if (Math.Abs(offset.Y) < 0.5 && offset.Y + scrollViewer.Viewport.Height >= scrollViewer.Extent.Height)
             return;
         if (this.IsScrollingToLatestLogAnalysisResultNeeded)
         {
-            if (userScrollingDelta < 0)
+            if (logProfile.SortDirection == SortDirection.Ascending)
             {
-                this.Logger.LogDebug("Cancel auto scrolling of log analysis result because of user scrolling up");
-                this.IsScrollingToLatestLogAnalysisResultNeeded = false;
+                if (userScrollingDelta < 0)
+                {
+                    this.Logger.LogDebug("Cancel auto scrolling of log analysis result because of user scrolling up");
+                    this.IsScrollingToLatestLogAnalysisResultNeeded = false;
+                }
+            }
+            else
+            {
+                if (userScrollingDelta > 0)
+                {
+                    this.Logger.LogDebug("Cancel auto scrolling of log analysis result because of user scrolling down");
+                    this.IsScrollingToLatestLogAnalysisResultNeeded = false;
+                }
             }
         }
         else
         {
-            if (userScrollingDelta > 0 && ((scrollViewer.Offset.Y + scrollViewer.Viewport.Height) / scrollViewer.Extent.Height) >= 0.999)
+            if (logProfile.SortDirection == SortDirection.Ascending)
             {
-                this.Logger.LogDebug("Start auto scrolling of log analysis result because of user scrolling down");
-                this.IsScrollingToLatestLogAnalysisResultNeeded = true;
+                if (userScrollingDelta > 0 && Math.Abs(offset.Y + scrollViewer.Viewport.Height - scrollViewer.Extent.Height) <= 5)
+                {
+                    this.Logger.LogDebug("Start auto scrolling of log analysis result because of user scrolling down");
+                    this.IsScrollingToLatestLogAnalysisResultNeeded = true;
+                }
+            }
+            else
+            {
+                if (userScrollingDelta < 0 && offset.Y <= 5)
+                {
+                    this.Logger.LogDebug("Start auto scrolling of log analysis result because of user scrolling up");
+                    this.IsScrollingToLatestLogAnalysisResultNeeded = true;
+                }
             }
         }
     }

@@ -120,6 +120,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
 	readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
+    SortDirection logSortingDirection;
     readonly ObservableList<OperationCountingAnalysisRuleSet> operationCountingAnalysisRuleSets = new();
     readonly OperationCountingAnalyzer operationCountingAnalyzer;
     readonly ObservableList<OperationDurationAnalysisRuleSet> operationDurationAnalysisRuleSets = new();
@@ -499,13 +500,25 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     {
         // get logs
         var lhsLogs = this.analysisResultComparisonTempLogs1;
-        lhsLogs[0] = lhs!.BeginningLog;
-        lhsLogs[1] = lhs.Log;
-        lhsLogs[2] = lhs.EndingLog;
         var rhsLogs = this.analysisResultComparisonTempLogs2;
-        rhsLogs[0] = rhs!.BeginningLog;
-        rhsLogs[1] = rhs.Log;
-        rhsLogs[2] = rhs.EndingLog;
+        if (this.logSortingDirection == SortDirection.Ascending)
+        {
+            lhsLogs[0] = lhs!.BeginningLog;
+            lhsLogs[1] = lhs.Log;
+            lhsLogs[2] = lhs.EndingLog;
+            rhsLogs[0] = rhs!.BeginningLog;
+            rhsLogs[1] = rhs.Log;
+            rhsLogs[2] = rhs.EndingLog;
+        }
+        else
+        {
+            lhsLogs[2] = lhs!.BeginningLog;
+            lhsLogs[1] = lhs.Log;
+            lhsLogs[0] = lhs.EndingLog;
+            rhsLogs[2] = rhs!.BeginningLog;
+            rhsLogs[1] = rhs.Log;
+            rhsLogs[0] = rhs.EndingLog;
+        }
 
         // compare logs
         var logCount = lhsLogs.Length;
@@ -857,6 +870,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.operationCountingAnalysisRuleSets.Clear();
             this.operationDurationAnalysisRuleSets.Clear();
         }
+        
+        // update sorting direction
+        this.logSortingDirection = newLogProfile?.SortDirection ?? default;
     }
 
 
@@ -864,27 +880,43 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     protected override void OnLogProfilePropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnLogProfilePropertyChanged(e);
-        if (e.PropertyName == nameof(LogProfile.CooperativeLogAnalysisScriptSet))
+        switch (e.PropertyName)
         {
-            var logProfile = this.LogProfile;
-            if (logProfile?.CooperativeLogAnalysisScriptSet == null)
+            case nameof(LogProfile.CooperativeLogAnalysisScriptSet):
             {
-                this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been cleared", logProfile?.Name, logProfile?.Id);
-                this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
-                if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
-                    this.updateCoopScriptLogAnalysisAction.Execute();
-            }
-            else
-            {
-                if (this.GetValue(HasCooperativeLogAnalysisScriptSetProperty))
-                    this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been changed", logProfile.Name, logProfile.Id);
+                var logProfile = this.LogProfile;
+                if (logProfile?.CooperativeLogAnalysisScriptSet == null)
+                {
+                    this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been cleared", logProfile?.Name, logProfile?.Id);
+                    this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
+                    if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                        this.updateCoopScriptLogAnalysisAction.Execute();
+                }
                 else
                 {
-                    this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been set", logProfile.Name, logProfile.Id);
-                    this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+                    if (this.GetValue(HasCooperativeLogAnalysisScriptSetProperty))
+                        this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been changed", logProfile.Name, logProfile.Id);
+                    else
+                    {
+                        this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been set", logProfile.Name, logProfile.Id);
+                        this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+                    }
+                    if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                        this.updateCoopScriptLogAnalysisAction.Schedule();
                 }
-                if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
-                    this.updateCoopScriptLogAnalysisAction.Schedule();
+                break;
+            }
+
+            case nameof(LogProfile.SortDirection):
+            {
+                this.logSortingDirection = this.LogProfile?.SortDirection ?? default;
+                if (this.analysisResults.IsNotEmpty())
+                {
+                    var results = this.analysisResults.ToArray();
+                    this.analysisResults.Clear();
+                    this.analysisResults.AddAll(results);
+                }
+                break;
             }
         }
     }

@@ -1674,8 +1674,14 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysis.AnalysisResults.Count, StringFormat={} ({0})}"/>
 							<ToggleButton Classes="ToolBar_ToggleButton" Grid.Column="2" IsChecked="{Binding #root.IsScrollingToLatestLogAnalysisResultNeeded, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.ScrollToLatestLogAnalysisResult}">
 								<Panel>
-									<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									<Panel Name="scrollToBottomLogAnalysisResultIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
+										<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+										<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									</Panel>
+									<Panel IsVisible="{Binding !#scrollToBottomLogAnalysisResultIconPanel.IsVisible}">
+										<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+										<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									</Panel>
 								</Panel>
 							</ToggleButton>
 							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton" Grid.Column="3" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" IsEnabled="{Binding !IsRemovingLogFiles}" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisRuleSets}">
