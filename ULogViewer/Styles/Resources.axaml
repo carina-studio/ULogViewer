@@ -223,6 +223,7 @@
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.Item.Height">50</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size">10</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.SubInfo.FontSize">12</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth">650</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight">500</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.Width">400</sys:Double>
@@ -264,8 +265,8 @@
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth">250</sys:Double>
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,3,5,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Message.Margin">0,1,0,1</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,4,5,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Message.Margin">0,1,20,1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding">3,0,0,0</Thickness>

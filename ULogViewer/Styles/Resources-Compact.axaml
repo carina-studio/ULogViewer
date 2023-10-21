@@ -57,6 +57,7 @@
 	<CornerRadius x:Key="CornerRadius/SessionView.LogListBox.Item.Column.Border">0</CornerRadius>
 	<CornerRadius x:Key="CornerRadius/SessionView.MarkedLogListBox.Item.Border">0</CornerRadius>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.Item.Height">42</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth">600</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Summary.FontSize">12</sys:Double>

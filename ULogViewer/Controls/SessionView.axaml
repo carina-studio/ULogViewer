@@ -2217,7 +2217,7 @@
 						</asControls:ListBox.ItemsPanel>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:DisplayableLogAnalysisResult">
-								<StackPanel Orientation="Horizontal" VerticalAlignment="Stretch">
+								<Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" VerticalAlignment="Stretch">
 									
 									<!-- Color indicator -->
 									<Border x:CompileBindings="False" 
@@ -2231,11 +2231,13 @@
 									
 									<!-- Content -->
 									<Grid ColumnDefinitions="Auto,*" 
+									      Grid.Column="1"
 									      RowDefinitions="Auto,*" 
 									      VerticalAlignment="Center">
 										
 										<!-- Message -->
 										<abControls:TextBlock Name="messageTextBlock"
+										                      Background="{x:Static Brushes.Transparent}"
 										                      FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" 
 										                      FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}"
 										                      Grid.Column="1" 
@@ -2253,6 +2255,17 @@
 													<iaCore:ChangePropertyAction PropertyName="MaxLines" Value="2"/>
 												</iaCore:DataTriggerBehavior>
 											</ia:Interaction.Behaviors>
+											<abControls:TextBlock.Resources>
+												<StaticResourceExtension x:Key="ToolTipContentMaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
+											</abControls:TextBlock.Resources>
+											<abControls:TextBlock.ToolTipTemplate>
+												<DataTemplate x:CompileBindings="False">
+													<TextBlock FontFamily="{Binding $parent[TextBlock].FontFamily}" 
+													           Text="{Binding}" 
+													           TextTrimming="CharacterEllipsis"
+													           TextWrapping="Wrap" />
+												</DataTemplate>
+											</abControls:TextBlock.ToolTipTemplate>
 										</abControls:TextBlock>
 										
 										<!-- Icon -->
@@ -2300,7 +2313,8 @@
 													                 Geometry="{StaticResource Geometry/Timer.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
-											<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+											<TextBlock Background="{x:Static Brushes.Transparent}" 
+											           FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											           Grid.Column="1"
 											           IsVisible="{Binding HasDuration}" 
 											           Padding="{DynamicResource Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin}"
@@ -2323,7 +2337,8 @@
 													                 Geometry="{DynamicResource Geometry/Icon.Memory.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
-											<abControls:FormattedTextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+											<abControls:FormattedTextBlock Background="{x:Static Brushes.Transparent}"
+											                               FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											                               Arg1="{Binding ByteSize, StringFormat={}{0:n0}}"
 											                               Arg2="{Binding ByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}"
 											                               Grid.Column="3" 
@@ -2348,7 +2363,8 @@
 													                 Geometry="{StaticResource Geometry/Layers.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
-											<TextBlock FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
+											<TextBlock Background="{x:Static Brushes.Transparent}"
+											           FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											           Grid.Column="5" 
 											           IsVisible="{Binding HasQuantity}" 
 											           Padding="{DynamicResource Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin}"
@@ -2359,7 +2375,7 @@
 											
 										</Grid>
 									</Grid>
-								</StackPanel>
+								</Grid>
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>

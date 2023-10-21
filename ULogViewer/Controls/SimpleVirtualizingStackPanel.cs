@@ -265,6 +265,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         
         // measure containers
         var maxContainerWidth = 0.0;
+        var isScrollBarEnabled = this.scrollViewer?.HorizontalScrollBarVisibility != ScrollBarVisibility.Disabled;
         for (var i = this.realizedContainers.Count - 1; i >= 0; --i)
         {
             var container = this.realizedContainers[i];
@@ -273,11 +274,16 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
                 container = this.GetOrCreateContainer(items, this.firstRealizedIndex + i);
                 this.realizedContainers[i] = container;
             }
-            container.Measure(new(double.PositiveInfinity, itemHeight));
+            if (isScrollBarEnabled)
+                container.Measure(new(double.PositiveInfinity, itemHeight));
+            else
+                container.Measure(new(availableSize.Width, itemHeight));
             maxContainerWidth = Math.Max(maxContainerWidth, container.DesiredSize.Width);
         }
         
         // complete
+        if (!isScrollBarEnabled && double.IsFinite(availableSize.Width))
+            return new(availableSize.Width, roundedItemHeight * itemCount);
         return new(maxContainerWidth, roundedItemHeight * itemCount);
     }
 
