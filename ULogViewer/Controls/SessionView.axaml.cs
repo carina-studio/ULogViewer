@@ -4331,7 +4331,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (this.DataContext is not Session session)
 				return;
-			if (session.LogAnalysis.AnalysisResults.IsEmpty() || session.LogProfile == null || !session.IsActivated)
+			var logProfile = session.LogProfile;
+			if (session.LogAnalysis.AnalysisResults.IsEmpty() || logProfile is null || !session.IsActivated)
 				return;
 				
 			// cancel scrolling
@@ -4349,7 +4350,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (extent.Height > viewport.Height)
 				{
 					var currentOffset = scrollViewer.Offset;
-					var distanceY = (extent.Height - viewport.Height) - currentOffset.Y;
+					var targetOffset = logProfile.SortDirection == SortDirection.Ascending
+						? extent.Height - viewport.Height
+						: 0;
+					var distanceY = targetOffset - currentOffset.Y;
 					scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
 					this.scrollToLatestLogAnalysisResultAction.Cancel();
 				}
