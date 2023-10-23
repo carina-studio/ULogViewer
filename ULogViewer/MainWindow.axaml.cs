@@ -1255,23 +1255,26 @@ namespace CarinaStudio.ULogViewer
 
 			// hint for refreshing application icon on macOS
 			var appVersion = this.Application.Assembly.GetName().Version;
+			var prevVersion = this.Application.PreviousVersion;
 			if (Platform.IsMacOS 
 			    && appVersion?.Major == 3
-				&& (this.Application.PreviousVersion?.Major).GetValueOrDefault() < 3
 				&& !this.Application.IsFirstLaunch
 				&& !IsRefreshingAppIconOnMacOSHintDialogShown)
 			{
-				IsRefreshingAppIconOnMacOSHintDialogShown = true;
-				var result = await new MessageDialog()
+				if ((prevVersion?.Major).GetValueOrDefault() < 3 || (prevVersion?.Major == 3 && prevVersion.Minor == 0))
 				{
-					Buttons = MessageDialogButtons.YesNo,
-					Icon = MessageDialogIcon.Information,
-					Message = this.Application.GetObservableString("MainWindow.RefreshingAppIconOnMacOSHint"),
-				}.ShowDialog(this);
-				if (result == MessageDialogResult.Yes)
-					Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade#Upgrade");
-				this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
+					IsRefreshingAppIconOnMacOSHintDialogShown = true;
+					var result = await new MessageDialog
+					{
+						Buttons = MessageDialogButtons.YesNo,
+						Icon = MessageDialogIcon.Information,
+						Message = this.Application.GetObservableString("MainWindow.RefreshingAppIconOnMacOSHint"),
+					}.ShowDialog(this);
+					if (result == MessageDialogResult.Yes)
+						Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade#Upgrade");
+					this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
 					return;
+				}
 			}
 
 			// suggestion of using built-in font
