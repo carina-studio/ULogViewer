@@ -1,7 +1,7 @@
 @echo off
 
 set APP_NAME=ULogViewer
-set RID_LIST=win-x64 win-x86 win-arm64
+set RID_LIST=win-x64
 set CONFIG=Release-Windows
 set FRAMEWORK=net7.0
 set SELF_CONTAINED=true

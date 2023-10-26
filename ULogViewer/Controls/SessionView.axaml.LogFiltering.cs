@@ -36,7 +36,7 @@ partial class SessionView
         {
             FilterCombinationMode.Intersection => app?.FindResourceOrDefault<Geometry>("Geometry/Intersection"),
             FilterCombinationMode.Union => app?.FindResourceOrDefault<Geometry>("Geometry/Union"),
-            _ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto"),
+            _ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto.Outline"),
         };
     });
     

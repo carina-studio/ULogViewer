@@ -88,7 +88,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public static readonly IValueConverter PauseResumeReadingLogsIconConverter = new FuncValueConverter<bool, IImage?>(isPaused =>
 		{
 			var icon = default(IImage);
-			App.CurrentOrNull?.TryGetResource(isPaused ? "Image/Icon.PlayMedia" : "Image/Icon.PauseMedia", out icon);
+			App.CurrentOrNull?.TryGetResource(isPaused ? "Image/Icon.PlayMedia.Outline" : "Image/Icon.PauseMedia.Outline", out icon);
 			return icon;
 		});
 		/// <summary>
@@ -3107,7 +3107,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
-						image.Source = app.FindResourceOrDefault<IImage>("Image/Mark");
+						image.Source = app.FindResourceOrDefault<IImage>("Image/Mark.Outline");
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;
@@ -3128,7 +3128,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
-						image.Source = app.FindResourceOrDefault<IImage>("Image/Icon.Analysis");
+						image.Source = app.FindResourceOrDefault<IImage>("Image/Icon.Analysis.Outline");
 					});
 					border.Height = analysisResultIndicatorSize;
 					border.Margin = analysisResultIndicatorMargin;
