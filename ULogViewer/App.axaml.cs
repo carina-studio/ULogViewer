@@ -1,5 +1,4 @@
 using System.Runtime;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
@@ -211,8 +210,8 @@ namespace CarinaStudio.ULogViewer
 
 		// Program entry.
 		[STAThread]
-		static void Main(string[] args) => BuildApplication<App>()
-			.StartWithClassicDesktopLifetime(args);
+		static void Main(string[] args) => 
+			BuildApplicationAndStart<App>(args);
 
 
 		// Create main window.
@@ -263,7 +262,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		protected override bool OnExceptionOccurredInGuardedMainLoop(Exception ex)
+		protected override bool OnExceptionOccurredInApplicationLifetime(Exception ex)
 		{
 			if (ex is IndexOutOfRangeException) // [Workaround] Prevent unexpected error occurred in TextBox
 			{
@@ -279,7 +278,7 @@ namespace CarinaStudio.ULogViewer
 					return true;
 				}
 			}
-			return base.OnExceptionOccurredInGuardedMainLoop(ex);
+			return base.OnExceptionOccurredInApplicationLifetime(ex);
 		}
 
 
