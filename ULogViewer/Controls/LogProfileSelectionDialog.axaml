@@ -228,32 +228,32 @@
 					<!-- Pinned profiles -->
 					<ToggleButton Name="pinnedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Recently used profiles -->
 					<ToggleButton Name="recentlyUsedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Clock}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Clock.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Clock.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Clock.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Other profiles -->
 					<ToggleButton Name="otherLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.OtherLogProfiles.Count}" ToolTip.Tip="{Binding #window.OtherLogProfilesPanelTitle}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfiles}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfiles.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Template profiles -->
 					<ToggleButton Name="templateLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					

@@ -35,32 +35,32 @@
 					<!-- User interface -->
 					<ToggleButton Name="userInterfacePanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/ApplicationOptions.UserInterface}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log operations -->
 					<ToggleButton Name="logOperationsPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/AppOptionsDialog.LogOperations}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfiles}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfiles.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log filtering -->
 					<ToggleButton Name="logFilteringPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/AppOptionsDialog.LogFiltering}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Others -->
 					<ToggleButton Name="othersPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/ApplicationOptions.Others}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					

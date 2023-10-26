@@ -54,8 +54,8 @@
 					<!-- Common -->
 					<ToggleButton Name="commonPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.Common}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
@@ -70,8 +70,8 @@
 					<!-- Log displaying -->
 					<ToggleButton Name="logDisplayingPanelButton" Classes="ToolBar_ToggleButton" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.LogDisplaying}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Outline}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
