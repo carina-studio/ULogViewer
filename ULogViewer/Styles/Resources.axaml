@@ -257,9 +257,7 @@
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MinHeight">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>
-	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">14</sys:Double>
-	<sys:Double x:Key="Double/SessionView.SidePanel.Header.Icon.Size">16</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogLevelFilter.Width">140</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogProcessIdFilter.Width">95</sys:Double>
 	<sys:Double x:Key="Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth">250</sys:Double>
@@ -312,8 +310,6 @@
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.FullPanelHint.Text.Margin">10</Thickness>
-	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Margin">1,0,1,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Button.Padding">5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding">3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Padding.Dummy">0,3,0,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.SidePanel.Header.Text.Left.Margin">5,5,0,5</Thickness>
