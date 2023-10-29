@@ -70,15 +70,10 @@
 							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].Rules.Count}" ItemsSource="{Binding $parent[Window].Rules}">
-							<asControls:ListBox.ItemsPanel>
-								<ItemsPanelTemplate>
-									<StackPanel/>
-								</ItemsPanelTemplate>
-							</asControls:ListBox.ItemsPanel>
+						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].Rules}">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
-									<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+									<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
 										<Panel Classes="ListBoxItem_Icon">
 											<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
 											<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
@@ -90,21 +85,21 @@
 											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
 											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
 											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>

@@ -5,14 +5,15 @@
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.DisplayableLogAnalysisConditionsEditor"
+        Name="root"
 		HorizontalContentAlignment="Stretch"
 		VerticalContentAlignment="Stretch">
 	
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="addConditionMenu" Placement="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].AddVarAndConstComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
-			<MenuItem Command="{Binding $parent[UserControl].AddVarsComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}">
+			<MenuItem Command="{Binding #root.AddVarAndConstComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog}"/>
+			<MenuItem Command="{Binding #root.AddVarsComparisonCondition}" Header="{DynamicResource String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Variable}"/>
 				</MenuItem.Icon>
@@ -22,29 +23,24 @@
 	</UserControl.Resources>
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:ListBox Name="conditionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[UserControl].Conditions.Count}" ItemsSource="{Binding $parent[UserControl].Conditions}" VerticalAlignment="Stretch">
-			<asControls:ListBox.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel/>
-				</ItemsPanelTemplate>
-			</asControls:ListBox.ItemsPanel>
+		<asControls:ListBox Name="conditionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #root.Conditions}" VerticalAlignment="Stretch">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid ColumnDefinitions="*,Auto">
+					<Grid Name="itemRoot" ColumnDefinitions="*,Auto">
 						<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 						<Border Classes="InPlaceAction_Reserved"/>
 						<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+							<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+							<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
@@ -54,7 +50,7 @@
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #conditionListBox.IsVisible}"/>
-		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddConditionMenu}" Grid.Row="2">
+		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #root.ShowAddConditionMenu}" Grid.Row="2">
 			<Grid ColumnDefinitions="*,Auto">
 				<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Add}"/>
 				<Panel Grid.Column="1">

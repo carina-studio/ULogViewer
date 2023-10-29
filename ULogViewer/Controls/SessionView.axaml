@@ -1786,15 +1786,10 @@
 																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet}" Arg2="{Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #keyLogAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="keyLogAnalysisRuleSetListBox" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
-																<ListBox.ItemsPanel>
-																	<ItemsPanelTemplate>
-																		<StackPanel/>
-																	</ItemsPanelTemplate>
-																</ListBox.ItemsPanel>
+															<ListBox Name="keyLogAnalysisRuleSetListBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
-																		<Grid ColumnDefinitions="Auto,*,Auto">
+																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
 																					<Image.Source>
@@ -1819,28 +1814,28 @@
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditKeyLogAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
@@ -1864,15 +1859,10 @@
 																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet}" Arg2="{Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #operationDurationAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="operationDurationAnalysisRuleSetListBox" ItemsSource="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
-																<ListBox.ItemsPanel>
-																	<ItemsPanelTemplate>
-																		<StackPanel/>
-																	</ItemsPanelTemplate>
-																</ListBox.ItemsPanel>
+															<ListBox Name="operationDurationAnalysisRuleSetListBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
-																		<Grid ColumnDefinitions="Auto,*,Auto">
+																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
 																					<Image.Source>
@@ -1897,28 +1887,28 @@
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditOperationDurationAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
@@ -1942,15 +1932,10 @@
 																	<abControls:FormattedTextBlock Arg1="{DynamicResource String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet}" Arg2="{Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #operationCountingAnalysisRuleSetListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="operationCountingAnalysisRuleSetListBox" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
-																<ListBox.ItemsPanel>
-																	<ItemsPanelTemplate>
-																		<StackPanel/>
-																	</ItemsPanelTemplate>
-																</ListBox.ItemsPanel>
+															<ListBox Name="operationCountingAnalysisRuleSetListBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
-																		<Grid ColumnDefinitions="Auto,*,Auto">
+																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
 																					<Image.Source>
@@ -1975,28 +1960,28 @@
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditOperationCountingAnalysisRuleSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
@@ -2023,15 +2008,10 @@
 																	</Panel>
 																</Grid>
 															</Expander.Header>
-															<ListBox Name="logAnalysisScriptSetListBox" IsEnabled="{Binding #root.IsScriptRunningEnabled}" ItemsSource="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple">
-																<ListBox.ItemsPanel>
-																	<ItemsPanelTemplate>
-																		<StackPanel/>
-																	</ItemsPanelTemplate>
-																</ListBox.ItemsPanel>
+															<ListBox Name="logAnalysisScriptSetListBox" IsEnabled="{Binding #root.IsScriptRunningEnabled}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
-																		<Grid ColumnDefinitions="Auto,*,Auto">
+																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
 																					<Image.Source>
@@ -2056,28 +2036,28 @@
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.ExportLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>
 																				<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditLogAnalysisScriptSetCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 																					<asControls:Image Classes="InPlaceAction_Icon">
 																						<DrawingImage>
-																							<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																							<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 																						</DrawingImage>
 																					</asControls:Image>
 																				</Button>

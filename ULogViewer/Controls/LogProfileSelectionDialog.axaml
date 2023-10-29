@@ -29,7 +29,7 @@
 			<Setter Property="ItemTemplate">
 				<Setter.Value>
 					<DataTemplate DataType="{x:Type appProfiles:LogProfile}">
-						<Border Background="{x:Static Brushes.Transparent}" DoubleTapped="OnLogProfileItemDoubleTapped" Padding="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Padding}">
+						<Border Name="itemRoot" Background="{x:Static Brushes.Transparent}" DoubleTapped="OnLogProfileItemDoubleTapped" Padding="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Padding}">
 							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
 
 								<Grid.Styles>
@@ -152,14 +152,14 @@
 									<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+												<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
 									<Button Classes="InPlaceAction_Button" Command="{Binding #window.ExportLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
+												<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
@@ -167,14 +167,14 @@
 										<Button Classes="InPlaceAction_Button" Command="{Binding #window.CopyLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
-													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+													<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
 												</DrawingImage>
 											</asControls:Image>
 										</Button>
 										<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
-													<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+													<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
 												</DrawingImage>
 											</asControls:Image>
 										</Button>
@@ -182,7 +182,7 @@
 									<Button Classes="InPlaceAction_Button" Command="{Binding #window.PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsTemplate}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
-												<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Pin}"/>
+												<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Pin}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
@@ -195,6 +195,11 @@
 			</Setter>
 			<Setter Property="Padding" Value="0"/>
 			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled"/>
+		</Style>
+		<Style Selector="ListBoxItem">
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
+			<Setter Property="Padding" Value="0"/>
 		</Style>
 	</Window.Styles>
 	
@@ -272,20 +277,7 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.PinnedLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding #window.PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged">
-								<ListBox.ItemsPanel>
-									<ItemsPanelTemplate>
-										<StackPanel/>
-									</ItemsPanelTemplate>
-								</ListBox.ItemsPanel>
-								<ListBox.Styles>
-									<Style Selector="ListBoxItem">
-										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-										<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
-										<Setter Property="Padding" Value="0"/>
-									</Style>
-								</ListBox.Styles>
-							</ListBox>
+							<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged"/>
 						</Border>
 					</StackPanel>
 					
@@ -305,20 +297,7 @@
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<StackPanel>
-								<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding #window.RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged">
-									<ListBox.ItemsPanel>
-										<ItemsPanelTemplate>
-											<StackPanel/>
-										</ItemsPanelTemplate>
-									</ListBox.ItemsPanel>
-									<ListBox.Styles>
-										<Style Selector="ListBoxItem">
-											<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-											<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
-											<Setter Property="Padding" Value="0"/>
-										</Style>
-									</ListBox.Styles>
-								</ListBox>
+								<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged"/>
 								<Separator Classes="Dialog_Separator_Small"/>
 								<Button Classes="Dialog_Item_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{DynamicResource String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right"/>
 							</StackPanel>
@@ -340,20 +319,7 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{Binding #window.OtherLogProfilesPanelTitle}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding #window.OtherLogProfiles}" SelectionChanged="OnOtherLogProfilesSelectionChanged">
-								<ListBox.ItemsPanel>
-									<ItemsPanelTemplate>
-										<StackPanel/>
-									</ItemsPanelTemplate>
-								</ListBox.ItemsPanel>
-								<ListBox.Styles>
-									<Style Selector="ListBoxItem">
-										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-										<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
-										<Setter Property="Padding" Value="0"/>
-									</Style>
-								</ListBox.Styles>
-							</ListBox>
+							<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.OtherLogProfiles}" SelectionChanged="OnOtherLogProfilesSelectionChanged"/>
 						</Border>
 					</StackPanel>
 					
@@ -372,20 +338,7 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsSource="{Binding #window.TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged">
-								<ListBox.ItemsPanel>
-									<ItemsPanelTemplate>
-										<StackPanel/>
-									</ItemsPanelTemplate>
-								</ListBox.ItemsPanel>
-								<ListBox.Styles>
-									<Style Selector="ListBoxItem">
-										<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-										<Setter Property="Margin" Value="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Margin}"/>
-										<Setter Property="Padding" Value="0"/>
-									</Style>
-								</ListBox.Styles>
-							</ListBox>
+							<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged"/>
 						</Border>
 					</StackPanel>
 
