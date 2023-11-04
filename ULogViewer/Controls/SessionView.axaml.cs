@@ -83,15 +83,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			return $" - {name}";
 		});
 		/// <summary>
-		/// <see cref="IValueConverter"/> to convert from <see cref="Session.IsLogsReadingPaused"/> to icon of pause/resume reading logs.
-		/// </summary>
-		public static readonly IValueConverter PauseResumeReadingLogsIconConverter = new FuncValueConverter<bool, IImage?>(isPaused =>
-		{
-			var icon = default(IImage);
-			App.CurrentOrNull?.TryGetResource(isPaused ? "Image/Icon.PlayMedia.Outline" : "Image/Icon.PauseMedia.Outline", out icon);
-			return icon;
-		});
-		/// <summary>
 		/// <see cref="IValueConverter"/> to convert from state of status bar to background brush of status bar.
 		/// </summary>
 		public static readonly IValueConverter StatusBarBackgroundConverter = new FuncValueConverter<SessionViewStatusBarState, IBrush?>(state =>

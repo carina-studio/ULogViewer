@@ -628,7 +628,14 @@
 
 						<!-- Pause/Resume -->
 						<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
-							<Image Classes="Icon" Source="{Binding IsLogsReadingPaused, Converter={x:Static appControls:SessionView.PauseResumeReadingLogsIconConverter}, FallbackValue=False}"/>
+							<Panel>
+								<Image Classes="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
+								<Image Classes="Icon" IsVisible="{Binding IsLogsReadingPaused}">
+									<DrawingImage>
+										<GeometryDrawing Brush="{DynamicResource Brush/Icon.OK}" Geometry="{DynamicResource Geometry/Icon.PlayMedia.Outline}"/>
+									</DrawingImage>
+								</Image>
+							</Panel>
 						</Button>
 
 					</StackPanel>
