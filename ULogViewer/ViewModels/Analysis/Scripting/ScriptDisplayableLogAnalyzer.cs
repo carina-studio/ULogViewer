@@ -35,9 +35,9 @@ class ScriptDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<ScriptDisplayabl
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="source">Source logs.</param>
-    /// <param name="comparison">Comparison of source logs.</param>
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    public ScriptDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> source, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, source, comparison, priority)
+    public ScriptDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> source, IDisplayableLogComparer comparer, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, source, comparer, priority)
     { 
         this.logProperties.CollectionChanged += this.OnLogPropertiesChanged;
         this.scriptSets.CollectionChanged += this.OnScriptSetsChanged;

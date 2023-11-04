@@ -19,14 +19,16 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         // Fields.
         public readonly TimestampDisplayableLogCategoryGranularity Granularity;
         public readonly Dictionary<DateTime, TimestampDisplayableLogCategory> PartialCategories = new();
+        public readonly SortDirection SortDirection;
         public readonly Func<DisplayableLog, DateTime?> TimestampGetter;
 
         // Constructor.
-        public ProcessingToken() : this(_ => null, default)
+        public ProcessingToken() : this(_ => null, default, default)
         { }
-        public ProcessingToken(Func<DisplayableLog, DateTime?> timestampGetter, TimestampDisplayableLogCategoryGranularity granularity)
+        public ProcessingToken(Func<DisplayableLog, DateTime?> timestampGetter, TimestampDisplayableLogCategoryGranularity granularity, SortDirection sortDirection)
         {
             this.Granularity = granularity;
+            this.SortDirection = sortDirection;
             this.TimestampGetter = timestampGetter;
         }
     }
@@ -44,8 +46,8 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    public TimestampDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
+    public TimestampDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer) : base(app, sourceLogs, comparer)
     { 
         this.emptyCategory = new(this, null, DateTime.MinValue, default);
         this.Application.StringsUpdated += this.OnAppStringsUpdated;
@@ -96,7 +98,7 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         
         // create token
         isProcessingNeeded = true;
-        return new(getter, granularity);
+        return new(getter, granularity, this.SourceLogComparer.SortDirection);
     }
 
 
@@ -136,14 +138,31 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
     /// <inheritdoc/>
     protected override void OnChunkProcessed(ProcessingToken token, List<DisplayableLog> logs, List<TimestampDisplayableLogCategory> results)
     {
+        var sortDirection = this.SourceLogComparer.SortDirection;
         for (var i = logs.Count - 1; i >= 0; --i)
         {
             var timestamp = results[i].Timestamp;
             if (this.categoriesByTimestamp.TryGetValue(timestamp, out var existingResult))
             {
-                if (this.CompareSourceLogs(existingResult.Log, logs[i]) > 0)
-                    this.RemoveCategory(existingResult);
+                var comparisonResult = this.CompareSourceLogs(existingResult.Log, logs[i]);
+                var keepExistingResult = true;
+                if (sortDirection == SortDirection.Ascending)
+                {
+                    if (comparisonResult > 0)
+                    {
+                        this.RemoveCategory(existingResult);
+                        keepExistingResult = false;
+                    }
+                }
                 else
+                {
+                    if (comparisonResult < 0)
+                    {
+                        this.RemoveCategory(existingResult);
+                        keepExistingResult = false;
+                    }
+                }
+                if (keepExistingResult)
                 {
                     logs.RemoveAt(i);
                     results.RemoveAt(i);
@@ -187,10 +206,19 @@ class TimestampDisplayableLogCategorizer : BaseDisplayableLogCategorizer<Timesta
         // categorize
         lock (token.PartialCategories)
         {
-            if (token.PartialCategories.TryGetValue(timestamp.Value, out var existingResult)
-                && this.CompareSourceLogs(existingResult.Log, log) <= 0)
+            if (token.PartialCategories.TryGetValue(timestamp.Value, out var existingResult))
             {
-                return false;
+                var comparisonResult = this.CompareSourceLogs(existingResult.Log, log);
+                if (token.SortDirection == SortDirection.Ascending)
+                {
+                    if (comparisonResult <= 0)
+                        return false;
+                }
+                else
+                {
+                    if (comparisonResult >= 0)
+                        return false;
+                }
             }
             result = new(this, log, timestamp.Value, token.Granularity);
             token.PartialCategories[timestamp.Value] = result;

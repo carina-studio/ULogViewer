@@ -17,12 +17,12 @@ abstract class RuleBasedDisplayableLogAnalyzer<TAnalysisToken, TRule> : BaseDisp
 
 
     /// <summary>
-    /// Initialize new <see cref="RuleBasedDisplayableLogAnalyzer"/> instance.
+    /// Initialize new <see cref="RuleBasedDisplayableLogAnalyzer{TAnalysisToken, TRule}"/> instance.
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source logs.</param>
-    /// <param name="comparison">Comparison for source logs.</param>
-    protected RuleBasedDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
+    protected RuleBasedDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer) : base(app, sourceLogs, comparer)
     { 
         this.ruleSets.CollectionChanged += (_, e) => this.OnRuleSetsChanged(e);
     }

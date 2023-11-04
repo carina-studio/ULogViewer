@@ -56,20 +56,10 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparer"><see cref="IComparer{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    public DisplayableLogFilter(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IComparer<DisplayableLog> comparer) : this(app, sourceLogs, comparer.Compare)
-    { }
-
-
-    /// <summary>
-    /// Initialize new <see cref="DisplayableLogFilter"/> instance.
-    /// </summary>
-    /// <param name="app">Application.</param>
-    /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    public DisplayableLogFilter(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison, DisplayableLogProcessingPriority.Realtime)
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
+    public DisplayableLogFilter(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer) : base(app, sourceLogs, comparer, DisplayableLogProcessingPriority.Realtime)
     {
-        this.filteredLogs = new SortedObservableList<DisplayableLog>(comparison);
+        this.filteredLogs = new SortedObservableList<DisplayableLog>(comparer);
         this.FilteredLogs = new Collections.SafeReadOnlyList<DisplayableLog>(this.filteredLogs);
     }
 

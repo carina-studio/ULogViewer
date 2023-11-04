@@ -66,9 +66,9 @@ interface IDisplayableLogProcessor : IApplicationObject<IULogViewerApplication>,
 
 
     /// <summary>
-    /// Get or set <see cref="Comparison{DisplayableLog}"/> used by <see cref="SourceLogs"/> to sort logs.
+    /// Get or set <see cref="IDisplayableLogComparer"/> used by <see cref="SourceLogs"/> to sort logs.
     /// </summary>
-    Comparison<DisplayableLog> SourceLogComparison { get; set; }
+    IDisplayableLogComparer SourceLogComparer { get; set; }
 
 
     /// <summary>

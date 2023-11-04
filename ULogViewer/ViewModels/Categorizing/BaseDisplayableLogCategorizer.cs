@@ -21,9 +21,9 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected BaseDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Realtime) : base(app, sourceLogs, comparison, priority)
+    protected BaseDisplayableLogCategorizer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Realtime) : base(app, sourceLogs, comparer, priority)
     { 
         this.categories = new((lhs, rhs) => this.CompareSourceLogs(lhs.Log, rhs.Log));
         this.Categories = (IReadOnlyList<TCategory>)ListExtensions.AsReadOnly(this.categories);
@@ -60,7 +60,7 @@ abstract class BaseDisplayableLogCategorizer<TProcessingToken, TCategory> : Base
             return;
         for (var i = results.Count - 1; i >= 0; --i)
             this.categoryMemorySize += results[i].MemorySize;
-        this.categories.AddAll(results, true);
+        this.categories.AddAll(results);
         this.OnPropertyChanged(nameof(MemorySize));
     }
 

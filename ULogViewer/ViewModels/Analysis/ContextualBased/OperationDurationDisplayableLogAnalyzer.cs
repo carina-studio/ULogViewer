@@ -82,8 +82,8 @@ class OperationDurationDisplayableLogAnalyzer : RuleBasedDisplayableLogAnalyzer<
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    public OperationDurationDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
+    public OperationDurationDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer) : base(app, sourceLogs, comparer)
     { 
         this.logProperties.CollectionChanged += (_, _) => this.InvalidateProcessing();
     }

@@ -42,16 +42,15 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     LogProfile? attachedLogProfile; // currently only supports attaching to single profile
     readonly long baseMemorySize;
     ProcessingParams? currentProcessingParams;
-    readonly Comparison<DisplayableLog> logComparison;
     volatile ILogger? logger;
     MemoryUsagePolicy memoryUsagePolicy;
     DisplayableLogProcessingPriority processingPriority;
     readonly ScheduledAction processNextChunkAction;
-    Comparison<DisplayableLog> sourceLogComparison;
+    IDisplayableLogComparer sourceLogComparer;
     IList<DisplayableLog> sourceLogs;
     readonly List<byte> sourceLogVersions; // Same order as source list
     readonly ScheduledAction startProcessingLogsAction;
-    readonly SortedObservableList<DisplayableLog> unprocessedLogs; // Reverse order of source list
+    SortedObservableList<DisplayableLog> unprocessedLogs; // ASC: Reverse order of source list, DESC: Same order as source list
 
 
     /// <summary>
@@ -59,23 +58,24 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected BaseDisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
+    protected BaseDisplayableLogProcessor(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app)
     {
         // get ID
         this.Id = BaseDisplayableLogProcessors.GetNextId();
 
         // create lists
         this.sourceLogVersions = new(sourceLogs.Count);
-        this.unprocessedLogs = new SortedObservableList<DisplayableLog>(comparison.Invert());
+        this.unprocessedLogs = comparer.SortDirection == SortDirection.Ascending
+            ? new(new Comparison<DisplayableLog>(comparer.Compare).Invert())
+            : new(comparer.Compare);
 
         // setup properties
         this.baseMemorySize = Memory.EstimateInstanceSize(this.GetType());
-        this.logComparison = comparison;
         this.processingPriority = priority;
         this.ProcessingTaskFactory = BaseDisplayableLogProcessors.GetProcessingTaskFactory(priority);
-        this.sourceLogComparison = comparison;
+        this.sourceLogComparer = comparer;
         this.sourceLogs = sourceLogs;
 
         // create schedule actions
@@ -151,23 +151,13 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
-    /// Compare nullable <see cref="DisplayableLog"/>s by <see cref="SourceLogComparison"/>.
+    /// Compare nullable <see cref="DisplayableLog"/>s by <see cref="SourceLogComparer"/>.
     /// </summary>
     /// <param name="lhs">Left hand side log.</param>
     /// <param name="rhs">Right hand side log.</param>
     /// <returns>Comparison result.</returns>
-    protected int CompareSourceLogs(DisplayableLog? lhs, DisplayableLog? rhs)
-    {
-        if (lhs != null)
-        {
-            if (rhs != null)
-                return this.SourceLogComparison(lhs, rhs);
-            return -1;
-        }
-        if (rhs != null)
-            return 1;
-        return 0;
-    }
+    protected int CompareSourceLogs(DisplayableLog? lhs, DisplayableLog? rhs) =>
+        this.sourceLogComparer.Compare(lhs, rhs);
 
 
     /// <summary>
@@ -472,7 +462,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         var sourceLogs = this.sourceLogs;
         var sourceLogVersions = this.sourceLogVersions;
         var processedIndex = logs.Count - 1;
-        var logComparison = this.logComparison;
+        var logComparison = new Comparison<DisplayableLog>(this.sourceLogComparer.Compare);
         while (processedIndex >= 0)
         {
             sourceIndex = sourceLogs.IndexOf(logs[processedIndex]);
@@ -643,7 +633,10 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 this.sourceLogVersions.InsertRange(e.NewStartingIndex, new byte[e.NewItems?.Count ?? 0]);
                 if (this.currentProcessingParams != null)
                 {
-                    this.unprocessedLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>().Reverse(), true);
+                    if (this.sourceLogComparer.SortDirection == SortDirection.Ascending)
+                        this.unprocessedLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>().Reverse(), true);
+                    else
+                        this.unprocessedLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>(), true);
                     this.processNextChunkAction.Cancel();
                     for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
                         this.ProcessNextChunk(this.currentProcessingParams);
@@ -653,7 +646,10 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 {
                     var removedLogs = e.OldItems.AsNonNull().Cast<DisplayableLog>();
                     this.sourceLogVersions.RemoveRange(e.OldStartingIndex, e.OldItems?.Count ?? 0);
-                    this.unprocessedLogs.RemoveAll(removedLogs.Reverse(), true);
+                    if (this.sourceLogComparer.SortDirection == SortDirection.Ascending)
+                        this.unprocessedLogs.RemoveAll(removedLogs.Reverse(), true);
+                    else
+                        this.unprocessedLogs.RemoveAll(removedLogs, true);
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
@@ -690,7 +686,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     
 
     // Process chunk of logs.
-    async void ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions)
+    async void ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions, SortDirection sortDirection)
     {
         // check state
         if (this.currentProcessingParams != processingParams)
@@ -701,7 +697,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         var processedLogs = new List<DisplayableLog>();
         var processingResults = new List<TProcessingResult>(logCount);
         var token = processingParams.Token;
-        for (var i = logs.Count - 1; i >= 0 && this.currentProcessingParams == processingParams; --i) // Need to process in reverse order to make sure the processing order is same as source list
+        for (var i = logCount - 1; i >= 0 && this.currentProcessingParams == processingParams; --i) // Need to process in reverse order to make sure the processing order is same as source list
         {
             var log = logs[i];
             if (this.OnProcessLog(token, log, out var result))
@@ -712,7 +708,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             else
                 logVersions.RemoveAt(i);
         }
-        logVersions.Reverse(); // Reverse back to same order as source list
+        
+        // Reverse back to same order as source list
+        if (sortDirection == SortDirection.Ascending)
+            logVersions.Reverse(); 
+        else
+            processedLogs.Reverse();
 
         // recycle list
         this.RecycleInternalDisplayableLogList(logs);
@@ -841,6 +842,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 return list;
             }
         });
+        var sortDirection = this.sourceLogComparer.SortDirection;
         var logVersions = this.ObtainInternalDisplayableLogVersionList().Also(it => // The order will be reverse order of source list
         {
             var sourceLogs = this.sourceLogs;
@@ -851,36 +853,70 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             var sourceIndex = sourceLogs.IndexOf(logs[0]);
             while (sourceIndex < 0 && unprocessedIndex < logCount - 1)
                 sourceIndex = sourceLogs.IndexOf(logs[++unprocessedIndex]);
-            if (unprocessedIndex < logCount && sourceIndex >= 0)
+            if (sortDirection == SortDirection.Ascending)
             {
-                it.EnsureCapacity(logCount);
-                while (true)
+                if (unprocessedIndex < logCount && sourceIndex >= 0)
                 {
-                    var comparisonResult = comparer.Compare(logs[unprocessedIndex], sourceLogs[sourceIndex]);
-                    if (comparisonResult == 0)
+                    it.EnsureCapacity(logCount);
+                    while (true)
                     {
-                        ++unprocessedIndex;
-                        it.Add(sourceLogVersions[sourceIndex--]);
-                        if (unprocessedIndex >= logCount || sourceIndex < 0)
-                            break;
+                        var comparisonResult = comparer.Compare(logs[unprocessedIndex], sourceLogs[sourceIndex]);
+                        if (comparisonResult == 0)
+                        {
+                            ++unprocessedIndex;
+                            it.Add(sourceLogVersions[sourceIndex--]);
+                            if (unprocessedIndex >= logCount || sourceIndex < 0)
+                                break;
+                        }
+                        else if (comparisonResult < 0)
+                        {
+                            ++unprocessedIndex;
+                            if (unprocessedIndex >= logCount)
+                                break;
+                        }
+                        else
+                        {
+                            --sourceIndex;
+                            if (sourceIndex < 0)
+                                break;
+                        }
                     }
-                    else if (comparisonResult < 0)
+                }
+            }
+            else
+            {
+                var sourceLogCount = sourceLogs.Count;
+                if (unprocessedIndex < logCount && sourceIndex < sourceLogCount)
+                {
+                    it.EnsureCapacity(logCount);
+                    while (true)
                     {
-                        ++unprocessedIndex;
-                        if (unprocessedIndex >= logCount)
-                            break;
-                    }
-                    else
-                    {
-                        --sourceIndex;
-                        if (sourceIndex < 0)
-                            break;
+                        var comparisonResult = comparer.Compare(logs[unprocessedIndex], sourceLogs[sourceIndex]);
+                        if (comparisonResult == 0)
+                        {
+                            ++unprocessedIndex;
+                            it.Add(sourceLogVersions[sourceIndex++]);
+                            if (unprocessedIndex >= logCount || sourceIndex >= sourceLogCount)
+                                break;
+                        }
+                        else if (comparisonResult < 0)
+                        {
+                            ++unprocessedIndex;
+                            if (unprocessedIndex >= logCount)
+                                break;
+                        }
+                        else
+                        {
+                            ++sourceIndex;
+                            if (sourceIndex >= sourceLogCount)
+                                break;
+                        }
                     }
                 }
             }
         });
         ++processingParams.ConcurrencyLevel;
-        this.ProcessingTaskFactory.StartNew(() => this.ProcessChunk(processingParams, chunkId, logs, logVersions));
+        this.ProcessingTaskFactory.StartNew(() => this.ProcessChunk(processingParams, chunkId, logs, logVersions, sortDirection));
     }
 
 
@@ -895,19 +931,22 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <inheritdoc/>
-    public Comparison<DisplayableLog> SourceLogComparison 
-    { 
-        get => this.sourceLogComparison;
+    public IDisplayableLogComparer SourceLogComparer
+    {
+        get => this.sourceLogComparer;
         set
         {
             this.VerifyAccess();
             this.VerifyDisposed();
-            if (this.sourceLogComparison == value)
+            if (this.sourceLogComparer.Equals(value))
                 return;
-            this.sourceLogComparison = value;
+            this.sourceLogComparer = value;
             this.sourceLogVersions.Clear();
             this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
             this.CancelProcessing(true);
+            this.unprocessedLogs = value.SortDirection == SortDirection.Ascending
+                ? new(new Comparison<DisplayableLog>(value.Compare).Invert())
+                : new(value.Compare);
             this.startProcessingLogsAction.Reschedule();
         }
     }
@@ -981,7 +1020,10 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             it.MaxConcurrencyLevel = Math.Min(BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.processingPriority), Math.Max(1, this.MaxConcurrencyLevel));
         });
-        this.unprocessedLogs.AddAll(this.sourceLogs.Reverse(), true);
+        if (this.sourceLogComparer.SortDirection == SortDirection.Ascending)
+            this.unprocessedLogs.AddAll(this.sourceLogs.Reverse(), true);
+        else
+            this.unprocessedLogs.AddAll(this.sourceLogs, true);
         for (var i = this.currentProcessingParams.MaxConcurrencyLevel; i > 0; --i)
             this.ProcessNextChunk(this.currentProcessingParams);
     }

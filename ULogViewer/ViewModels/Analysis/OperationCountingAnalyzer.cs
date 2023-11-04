@@ -66,8 +66,8 @@ class OperationCountingAnalyzer : RuleBasedDisplayableLogAnalyzer<OperationCount
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source logs.</param>
-    /// <param name="comparison">Comparison for source logs.</param>
-    public OperationCountingAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison)
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
+    public OperationCountingAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer) : base(app, sourceLogs, comparer)
     { 
         this.logProperties.CollectionChanged += this.OnLogPropertiesChanged;
     }

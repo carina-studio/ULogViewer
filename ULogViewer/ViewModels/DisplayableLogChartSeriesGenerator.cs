@@ -78,8 +78,8 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
-    public DisplayableLogChartSeriesGenerator(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison) : base(app, sourceLogs, comparison, DisplayableLogProcessingPriority.Default)
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
+    public DisplayableLogChartSeriesGenerator(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer) : base(app, sourceLogs, comparer, DisplayableLogProcessingPriority.Default)
     {
         // setup collections
         this.Series = ListExtensions.AsReadOnly(this.series);

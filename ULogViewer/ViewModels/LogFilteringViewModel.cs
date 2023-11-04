@@ -166,7 +166,7 @@ class LogFilteringViewModel : SessionComponent
         this.SetValue(IgnoreTextFilterCaseProperty, this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter));
 
         // create log filter
-        this.logFilter = new DisplayableLogFilter(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
+        this.logFilter = new DisplayableLogFilter(this.Application, this.AllLogs, new DisplayableLogComparer(this.CompareLogs, default)).Also(it =>
         {
             it.PropertyChanged += this.OnLogFilterPropertyChanged;
         });
@@ -779,7 +779,10 @@ class LogFilteringViewModel : SessionComponent
             this.ResetValue(IsThreadIdFilterEnabledProperty);
         }
         else
+        {
+            this.logFilter.SourceLogComparer = new DisplayableLogComparer(this.CompareLogs, newLogProfile.SortDirection);
             this.commitFiltersAction.Reschedule();
+        }
         this.CheckVisibleLogProperties();
         this.ResetFilters(true);
     }
@@ -789,7 +792,9 @@ class LogFilteringViewModel : SessionComponent
     protected override void OnLogProfilePropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnLogProfilePropertyChanged(e);
-        if (e.PropertyName == nameof(LogProfile.VisibleLogProperties))
+        if (e.PropertyName == nameof(LogProfile.SortDirection))
+            this.logFilter.SourceLogComparer = new DisplayableLogComparer(this.CompareLogs, this.LogProfile?.SortDirection ?? default);
+        else if (e.PropertyName == nameof(LogProfile.VisibleLogProperties))
             this.CheckVisibleLogProperties();
     }
 

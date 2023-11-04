@@ -24,9 +24,9 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
+    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparer, priority)
     { 
         this.analysisResults = new((lhs, rhs) => lhs.Id - rhs.Id);
         this.AnalysisResults = new Collections.SafeReadOnlyList<TResult>(this.analysisResults);
@@ -187,9 +187,18 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken, TResult> : BaseDispl
                 if (this.IsContextualBased)
                 {
                     var sourceLogs = this.SourceLogs;
-                    var endIndex = e.NewStartingIndex + e.NewItems!.Count;
-                    if (endIndex < sourceLogs.Count && this.IsLogProcessed(sourceLogs[endIndex]))
-                        this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
+                    if (this.SourceLogComparer.SortDirection == SortDirection.Ascending)
+                    {
+                        var endIndex = e.NewStartingIndex + e.NewItems!.Count;
+                        if (endIndex < sourceLogs.Count && this.IsLogProcessed(sourceLogs[endIndex]))
+                            this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
+                    }
+                    else
+                    {
+                        var startIndex = e.NewStartingIndex;
+                        if (startIndex > 0 && this.IsLogProcessed(sourceLogs[startIndex - 1]))
+                            this.InvalidateProcessing(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToRestartContextualBasedLogAnalysis));
+                    }
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -252,9 +261,9 @@ abstract class BaseDisplayableLogAnalyzer<TProcessingToken> : BaseDisplayableLog
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
+    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparer, priority)
     { 
         this.EmptyResults = Array.Empty<DisplayableLogAnalysisResult>();
     }
@@ -277,9 +286,9 @@ abstract class BaseDisplayableLogAnalyzer : BaseDisplayableLogAnalyzer<object>
     /// </summary>
     /// <param name="app">Application.</param>
     /// <param name="sourceLogs">Source list of logs.</param>
-    /// <param name="comparison"><see cref="Comparison{T}"/> which used on <paramref name="sourceLogs"/>.</param>
+    /// <param name="comparer"><see cref="IDisplayableLogComparer"/> which used on <paramref name="sourceLogs"/>.</param>
     /// <param name="priority">Priority of logs processing.</param>
-    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, Comparison<DisplayableLog> comparison, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparison, priority)
+    protected BaseDisplayableLogAnalyzer(IULogViewerApplication app, IList<DisplayableLog> sourceLogs, IDisplayableLogComparer comparer, DisplayableLogProcessingPriority priority = DisplayableLogProcessingPriority.Default) : base(app, sourceLogs, comparer, priority)
     { }
 
 

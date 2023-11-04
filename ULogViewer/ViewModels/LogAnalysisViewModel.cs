@@ -157,7 +157,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             it.CollectionChanged += this.OnSelectedAnalysisResultsChanged);
 
         // create analyzers
-        this.coopScriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
+        var logComparer = new DisplayableLogComparer(this.CompareLogs, default);
+        this.coopScriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, logComparer).Also(it =>
         {
             it.IsCooperativeLogAnalysis = true;
             this.AttachToAnalyzer(it);
@@ -170,7 +171,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change key log analysis rule sets: {ruleSetsCount}", this.keyLogAnalysisRuleSets.Count);
             this.updateKeyLogAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
+        this.keyLogAnalyzer = new KeyLogDisplayableLogAnalyzer(this.Application, this.AllLogs, logComparer).Also(this.AttachToAnalyzer);
         this.logAnalysisScriptSets.CollectionChanged += (_, _) =>
         {
             if (this.logAnalysisScriptSets.IsEmpty())
@@ -187,7 +188,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change operation counting analysis rule sets: {ruleSetsCount}", this.operationCountingAnalysisRuleSets.Count);
             this.updateOperationCountingAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.operationCountingAnalyzer = new OperationCountingAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
+        this.operationCountingAnalyzer = new OperationCountingAnalyzer(this.Application, this.AllLogs, logComparer).Also(this.AttachToAnalyzer);
         this.operationDurationAnalysisRuleSets.CollectionChanged += (_, _) => 
         {
             if (this.operationCountingAnalysisRuleSets.IsEmpty())
@@ -196,8 +197,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.Logger.LogTrace("Change operation duration analysis rule sets: {ruleSetsCount}", this.operationCountingAnalysisRuleSets.Count);
             this.updateOperationDurationAnalysisAction?.Schedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisParamsUpdateDelay));
         };
-        this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToAnalyzer);
-        this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, this.CompareLogs).Also(it =>
+        this.operationDurationAnalyzer = new OperationDurationDisplayableLogAnalyzer(this.Application, this.AllLogs, logComparer).Also(this.AttachToAnalyzer);
+        this.scriptLogAnalyzer = new ScriptDisplayableLogAnalyzer(this.Application, this.AllLogs, logComparer).Also(it =>
         {
             this.AttachToAnalyzer(it);
             this.baseScriptLogAnalysisPriority = it.ProcessingPriority;
@@ -871,8 +872,15 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.operationDurationAnalysisRuleSets.Clear();
         }
         
-        // update sorting direction
-        this.logSortingDirection = newLogProfile?.SortDirection ?? default;
+        // update sorting info
+        var sortDirection = newLogProfile?.SortDirection ?? default;
+        var comparer = new DisplayableLogComparer(this.CompareLogs, sortDirection);
+        this.logSortingDirection = sortDirection;
+        this.coopScriptLogAnalyzer.SourceLogComparer = comparer;
+        this.keyLogAnalyzer.SourceLogComparer = comparer;
+        this.operationCountingAnalyzer.SourceLogComparer = comparer;
+        this.operationDurationAnalyzer.SourceLogComparer = comparer;
+        this.scriptLogAnalyzer.SourceLogComparer = comparer;
     }
 
 
@@ -909,7 +917,16 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
             case nameof(LogProfile.SortDirection):
             {
-                this.logSortingDirection = this.LogProfile?.SortDirection ?? default;
+                (this.LogProfile?.SortDirection)?.Let(sortDirection =>
+                {
+                    this.logSortingDirection = sortDirection;
+                    var comparer = new DisplayableLogComparer(this.CompareLogs, sortDirection);
+                    this.coopScriptLogAnalyzer.SourceLogComparer = comparer;
+                    this.keyLogAnalyzer.SourceLogComparer = comparer;
+                    this.operationCountingAnalyzer.SourceLogComparer = comparer;
+                    this.operationDurationAnalyzer.SourceLogComparer = comparer;
+                    this.scriptLogAnalyzer.SourceLogComparer = comparer;
+                });
                 if (this.analysisResults.IsNotEmpty())
                 {
                     var results = this.analysisResults.ToArray();

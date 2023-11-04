@@ -67,8 +67,9 @@ class LogCategorizingViewModel : SessionComponent
         var isInit = true;
 
         // create categorizers
-        this.allLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.AllLogs, this.CompareLogs);
-        this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, session.MarkedLogs, this.CompareLogs);
+        var logComparer = new DisplayableLogComparer(this.CompareLogs, default);
+        this.allLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.AllLogs, logComparer);
+        this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, session.MarkedLogs, logComparer);
         this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
 
         // setup scheduled actions
@@ -165,7 +166,7 @@ class LogCategorizingViewModel : SessionComponent
     protected override void OnAllComponentsCreated()
     {
         base.OnAllComponentsCreated();
-        this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.Session.LogFiltering.FilteredLogs, this.CompareLogs);
+        this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.Session.LogFiltering.FilteredLogs, new DisplayableLogComparer(this.CompareLogs, default));
         this.isFilteringNeededObserverToken = this.Session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
             this.reportTimestampCategoriesAction.Schedule());
     }
@@ -178,11 +179,22 @@ class LogCategorizingViewModel : SessionComponent
         base.OnLogProfileChanged(prevLogProfile, newLogProfile);
 
         // setup log categorizers
-        (newLogProfile?.TimestampCategoryGranularity)?.Let(it =>
+        newLogProfile?.Let(profile =>
         {
-            this.allLogsTimestampCategorizer.Granularity = it;
-            this.filteredLogsTimestampCategorizer?.Let(c => c.Granularity = it);
-            this.markedLogsTimestampCategorizer.Granularity = it;
+            profile.SortDirection.Let(it =>
+            {
+                var comparer = new DisplayableLogComparer(this.CompareLogs, it);
+                this.allLogsTimestampCategorizer.SourceLogComparer = comparer;
+                if (this.filteredLogsTimestampCategorizer is not null)
+                    this.filteredLogsTimestampCategorizer.SourceLogComparer = comparer;
+                this.markedLogsTimestampCategorizer.SourceLogComparer = comparer;
+            });
+            profile.TimestampCategoryGranularity.Let(it =>
+            {
+                this.allLogsTimestampCategorizer.Granularity = it;
+                this.filteredLogsTimestampCategorizer?.Let(c => c.Granularity = it);
+                this.markedLogsTimestampCategorizer.Granularity = it;
+            });
         });
         this.UpdateTimestampLogPropertyName();
     }
@@ -194,6 +206,16 @@ class LogCategorizingViewModel : SessionComponent
         base.OnLogProfilePropertyChanged(e);
         switch (e.PropertyName)
         {
+            case nameof(LogProfile.SortDirection):
+                (this.LogProfile?.SortDirection)?.Let(it =>
+                {
+                    var comparer = new DisplayableLogComparer(this.CompareLogs, it);
+                    this.allLogsTimestampCategorizer.SourceLogComparer = comparer;
+                    if (this.filteredLogsTimestampCategorizer is not null)
+                        this.filteredLogsTimestampCategorizer.SourceLogComparer = comparer;
+                    this.markedLogsTimestampCategorizer.SourceLogComparer = comparer;
+                });
+                break;
             case nameof(LogProfile.SortKey):
                 this.UpdateTimestampLogPropertyName();
                 break;

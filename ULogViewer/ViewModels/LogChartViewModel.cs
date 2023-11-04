@@ -142,8 +142,9 @@ class LogChartViewModel : SessionComponent
         this.VisibleSeriesSources = ListExtensions.AsReadOnly(this.visibleSeriesSources);
         
         // create series generators
-        this.allLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, this.AllLogs, this.CompareLogs).Also(this.AttachToSeriesGenerator);
-        this.markedLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.MarkedLogs, this.CompareLogs).Also(this.AttachToSeriesGenerator);
+        var logComparer = new DisplayableLogComparer(this.CompareLogs, default);
+        this.allLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, this.AllLogs, logComparer).Also(this.AttachToSeriesGenerator);
+        this.markedLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.MarkedLogs, logComparer).Also(this.AttachToSeriesGenerator);
         this.activeSeriesGenerator = this.allLogsSeriesGenerator;
         
         // create actions
@@ -501,7 +502,7 @@ class LogChartViewModel : SessionComponent
         
         // create series generators
         var session = this.Session;
-        this.filteredLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.LogFiltering.FilteredLogs, this.CompareLogs).Also(this.AttachToSeriesGenerator);
+        this.filteredLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.LogFiltering.FilteredLogs, new DisplayableLogComparer(this.CompareLogs, default)).Also(this.AttachToSeriesGenerator);
         
         // attach to session
         this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
@@ -537,6 +538,14 @@ class LogChartViewModel : SessionComponent
         this.ApplyLogChartSeriesSources();
         if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
             this.SetValue(IsPanelVisibleProperty, true);
+        (newLogProfile?.SortDirection)?.Let(it =>
+        {
+            var logComparer = new DisplayableLogComparer(this.CompareLogs, it);
+            this.allLogsSeriesGenerator.SourceLogComparer = logComparer;
+            if (this.filteredLogsSeriesGenerator is not null)
+                this.filteredLogsSeriesGenerator.SourceLogComparer = logComparer;
+            this.markedLogsSeriesGenerator.SourceLogComparer = logComparer;
+        });
         
         // setup properties of axes
         this.SetValue(XAxisTypeProperty, newLogProfile?.LogChartXAxisType ?? LogChartXAxisType.None);
@@ -618,6 +627,16 @@ class LogChartViewModel : SessionComponent
                 break;
             case nameof(LogProfile.LogChartXAxisType):
                 this.SetValue(XAxisTypeProperty, profile.LogChartXAxisType);
+                break;
+            case nameof(LogProfile.SortDirection):
+                (this.LogProfile?.SortDirection)?.Let(it =>
+                {
+                    var logComparer = new DisplayableLogComparer(this.CompareLogs, it);
+                    this.allLogsSeriesGenerator.SourceLogComparer = logComparer;
+                    if (this.filteredLogsSeriesGenerator is not null)
+                        this.filteredLogsSeriesGenerator.SourceLogComparer = logComparer;
+                    this.markedLogsSeriesGenerator.SourceLogComparer = logComparer;
+                });
                 break;
         }
     }
