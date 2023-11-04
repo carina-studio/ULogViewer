@@ -1843,9 +1843,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					// define property column
 					var logProperty = logProperties[logPropertyIndex];
 					var width = logProperty.Width;
+					var isAutoWidth = width is null;
 					var propertyColumn = new ColumnDefinition(new GridLength()).Also(it =>
 					{
-						if (width == null && logPropertyIndex == logPropertyCount - 1)
+						if (isAutoWidth && logPropertyIndex == logPropertyCount - 1)
 							it.Width = new GridLength(1, GridUnitType.Star);
 					});
 					propertyColumns[logPropertyIndex] = propertyColumn;
@@ -1868,7 +1869,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Padding = propertyPadding;
 							it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = logProperty.Name });
 							it.TextAlignment = TextAlignment.Center;
-							it.TextTrimming = TextTrimming.CharacterEllipsis;
+							it.TextTrimming = isAutoWidth ? TextTrimming.None : TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
 							it.VerticalAlignment = VerticalAlignment.Center;
@@ -1915,7 +1916,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									Path = logProperty.Name,
 								});
 							}
-							it.TextTrimming = TextTrimming.CharacterEllipsis;
+							it.TextTrimming = isAutoWidth ? TextTrimming.None : TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
 							it.VerticalAlignment = VerticalAlignment.Center;
@@ -1949,7 +1950,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									app.EnsureClosingToolTipIfWindowIsInactive(multiLineIcon);
 							}));
 							it.Children.Add(propertyView);
-							it.HorizontalAlignment = HorizontalAlignment.Left;
+							it.HorizontalAlignment = HorizontalAlignment.Stretch;
 						});
 					}
 					propertyView = new Border().Also(it =>
