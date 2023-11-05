@@ -73,7 +73,7 @@
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.2.0" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc1.2" />
-		<PackageReference Include="MySqlConnector" Version="2.3.0-beta.3" />
+		<PackageReference Include="MySqlConnector" Version="2.3.0-beta.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SkiaSharp" Version="2.88.6" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.117" />
