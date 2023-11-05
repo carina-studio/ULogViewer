@@ -16,6 +16,7 @@
 + Show timestamp of log in tool tip of chart.
 
 ## Improvement
++ Improve logs filtering/analysis with descending sort direction.
 + Show indicators for required options to start reading logs.
 + Add side navigation bar to dialogs with more content.
 + Show more information of log analysis rules in editor.
