@@ -4,7 +4,7 @@ PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
-ICON_VERSION="2"
+ICON_VERSION="3"
 CERT_NAME="" # Name of certification to sign the application
 
 echo "********** Start building $APP_NAME **********"
