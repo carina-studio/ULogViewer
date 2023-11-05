@@ -44,6 +44,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
     
     # build
+    dotnet publish $APP_NAME -c $CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID -p:TestingModeBuild=$TESTING_MODE_BUILD
     dotnet msbuild $APP_NAME -t:BundleApp -property:Configuration=$CONFIG -p:SelfContained=true -p:PublishSingleFile=false -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:RuntimeIdentifier=$RID -p:TestingModeBuild=$TESTING_MODE_BUILD
     if [ "$?" != "0" ]; then
         exit
