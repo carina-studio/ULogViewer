@@ -730,7 +730,7 @@ namespace CarinaStudio.ULogViewer
 
 
         // Releasing type.
-        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.Development;
+        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.Preview;
 
 
 		// Version of settings.
