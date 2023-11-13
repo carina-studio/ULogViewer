@@ -466,10 +466,7 @@ partial class SessionView
                 {
                     AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
                     Fill = new SolidColorPaint(seriesColor),
-                    Mapping = (value, point) =>
-                    {
-                        point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
-                    },
+                    Mapping = (value, index) => new(index * LogBarChartXCoordinateScaling, value!.Value),
                     Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Padding = 0.5,
                     Rx = 0,
@@ -501,10 +498,7 @@ partial class SessionView
                         _ => null,
                     },
                     LineSmoothness = 0,
-                    Mapping = (value, point) =>
-                    {
-                        point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
-                    },
+                    Mapping = (value, index) => new(index, value!.Value),
                     Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Stroke = new SolidColorPaint(overlappedSeriesColor, lineWidth)
                     {
@@ -521,10 +515,7 @@ partial class SessionView
                 {
                     AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
                     Fill = new SolidColorPaint(seriesColor),
-                    Mapping = (value, point) =>
-                    {
-                        point.Coordinate = new((point.Context.Entity.MetaData?.EntityIndex ?? 0) * LogBarChartXCoordinateScaling, value!.Value);
-                    },
+                    Mapping = (value, index) => new(index * LogBarChartXCoordinateScaling, value!.Value),
                     Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Padding = 0,
                     Rx = 0,
@@ -572,10 +563,7 @@ partial class SessionView
                             or LogChartType.ValueCurvesWithDataPoints => 1,
                         _ => 0,
                     },
-                    Mapping = (value, point) =>
-                    {
-                        point.Coordinate = new(point.Context.Entity.MetaData?.EntityIndex ?? 0, value!.Value);
-                    },
+                    Mapping = (value, index) => new(index, value!.Value),
                     Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
                     Stroke = chartType switch
                     {
