@@ -1236,16 +1236,16 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">High memory usage</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">Logs reading has been disabled temporarily because of high memory usage</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show.</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start.</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore case of text filter</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">Log analysis is disabled temporarily when removing log file(s)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">Has new results</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply.</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Progress of log analyzing</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">Size in bytes</sys:String>
@@ -1275,7 +1275,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">Error occurred while running script of '{0}' to open raw log reader:</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">Error occurred while running script of '{0}' to read raw log line:</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.UnknownScript">Error occurred while running script of '{0}':</sys:String>
-	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile</sys:String>
+	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">Login to Azure</sys:String>
@@ -1298,6 +1298,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">Select logs and press M, or use the context menu by right-clicking the mouse, to mark/unmark logs.</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLog">Mark log</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">Mark logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">Mark/Unmark</sys:String>
@@ -1318,7 +1319,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">Text filters (multi-selectable)</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessId">Process identifier (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessName">Process name</sys:String>
-	<sys:String x:Key="String/SessionView.ProVersionNeeded">Need to upgrade to Pro version to enable the feature</sys:String>
+	<sys:String x:Key="String/SessionView.ProVersionNeeded">Need to upgrade to Pro version to enable the feature.</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">Reload logs</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">Change precondition of log reading…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">Change options of log reading count…</sys:String>

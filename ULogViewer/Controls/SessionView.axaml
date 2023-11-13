@@ -1583,6 +1583,11 @@
 							</ItemsPanelTemplate>
 						</asControls:ListBox.ItemsPanel>
 					</asControls:ListBox>
+					<Border Background="{x:Static Brushes.Transparent}" 
+					        Grid.Row="1"
+					        IsVisible="{Binding !#markedLogListBox.ItemCount}">
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.MarkedLogsPanel.Hint}"/>
+					</Border>
 				</Grid>
 
 				<!-- Timestamp categories -->

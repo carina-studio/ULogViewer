@@ -1187,9 +1187,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">已指定日誌讀取前置條件</sys:String>
 	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">已指定日誌讀取數量上限</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示。</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用。</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">高度記憶體使用</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">因為高度記憶體使用而暫時停用日誌讀取</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">忽略文字篩選的大小寫</sys:String>
@@ -1198,7 +1198,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">移除日誌檔案時暫時無法使用日誌分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">有新的結果</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">點一下面板右上角的按鈕以選擇要套用的的分析規則集</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">點一下面板右上角的按鈕以選擇要套用的的分析規則集。</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">日誌分析進度</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析結果</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">位元組大小</sys:String>
@@ -1228,7 +1228,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">執行「{0}」之腳本以開啟原始日誌行讀取器時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">執行「{0}」之腳本以讀取原始日誌行時發生錯誤：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.UnknownScript">執行「{0}」之腳本時發生錯誤：</sys:String>
-	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">目前的日誌類型不支援使用檔案</sys:String>
+	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">目前的日誌類型不支援使用檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.LogFilesPanel">已加入的日誌檔案</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">篩選條件組合方式</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">登入 Azure</sys:String>
@@ -1251,6 +1251,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已標記日誌</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">選擇日誌然後按下 M，或是透過點一下滑鼠右鍵的選單來標記/解除標記日誌。</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLog">標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">標記日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">標記/解除標記</sys:String>
@@ -1271,7 +1272,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">文字篩選 (可多選)</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessId">處理程序識別碼 (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessName">處理程序名稱</sys:String>
-	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升級至專業版以啟用此功能</sys:String>
+	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升級至專業版以啟用此功能。</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">重新載入日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">變更日誌讀取前置條件…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">變更日誌讀取數量選項…</sys:String>
