@@ -1048,7 +1048,7 @@
 					<StackPanel HorizontalAlignment="Center" IsVisible="{Binding !#root.HasLogProfile}" Orientation="Horizontal">
 						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section1}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 						<Border Height="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Margin="{StaticResource Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}">
-							<Image Classes="Icon" Source="{StaticResource Image/LogProfile}"/>
+							<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
 						</Border>
 						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" Text="{DynamicResource String/SessionView.Hint.SelectLogProfile.Section2}" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 					</StackPanel>
