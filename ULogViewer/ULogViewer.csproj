@@ -97,7 +97,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(RuntimeIdentifier.Contains('linux'))">
-		<TrimmerRootAssembly Include="Tmds.DBus" />
+		<TrimmerRootAssembly Include="Tmds.DBus.Protocol" />
 	</ItemGroup>
 
 	<!-- ReadyToRun options -->
