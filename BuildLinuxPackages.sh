@@ -1,4 +1,5 @@
 APP_NAME="ULogViewer"
+FRAMEWORK="net8.0"
 RID_LIST=("linux-x64" "linux-arm64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
@@ -35,7 +36,7 @@ for i in "${!RID_LIST[@]}"; do
     echo " "
 
     # clean
-    rm -r ./$APP_NAME/bin/$CONFIG/net7.0/$RID
+    rm -r ./$APP_NAME/bin/$CONFIG/$FRAMEWORK/$RID
     dotnet restore $APP_NAME -r $RID
     if [ "$?" != "0" ]; then
         exit
@@ -52,7 +53,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
 
     # zip package
-    ditto -c -k --sequesterRsrc "./$APP_NAME/bin/$CONFIG/net7.0/$RID/publish/" "./Packages/$VERSION/$APP_NAME-$VERSION-$RID.zip"
+    ditto -c -k --sequesterRsrc "./$APP_NAME/bin/$CONFIG/$FRAMEWORK/$RID/publish/" "./Packages/$VERSION/$APP_NAME-$VERSION-$RID.zip"
     if [ "$?" != "0" ]; then
         exit
     fi
@@ -65,4 +66,4 @@ if [ ! -z "$PREV_VERSION" ]; then
 fi
 
 # Generate package manifest
-dotnet run --project PackagingTool create-package-manifest linux $APP_NAME $VERSION
+# dotnet run --project PackagingTool create-package-manifest linux $APP_NAME $VERSION

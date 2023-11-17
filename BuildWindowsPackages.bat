@@ -3,7 +3,7 @@
 set APP_NAME=ULogViewer
 set RID_LIST=win-x64
 set CONFIG=Release-Windows
-set FRAMEWORK=net7.0
+set FRAMEWORK=net8.0
 set SELF_CONTAINED=true
 set TRIM_ASSEMBLIES=true
 set TESTING_MODE_BUILD=false

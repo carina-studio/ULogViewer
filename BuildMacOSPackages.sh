@@ -1,5 +1,6 @@
 APP_NAME="ULogViewer"
-RID_LIST=("osx.11.0-arm64" "osx-x64")
+FRAMEWORK="net8.0"
+RID_LIST=("osx-arm64" "osx-x64")
 PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
@@ -36,7 +37,7 @@ for i in "${!RID_LIST[@]}"; do
     echo " "
 
     # clean
-    rm -r ./$APP_NAME/bin/$CONFIG/net7.0/$RID
+    rm -r ./$APP_NAME/bin/$CONFIG/$FRAMEWORK/$RID
     dotnet clean $APP_NAME
     dotnet restore $APP_NAME
     if [ "$?" != "0" ]; then
@@ -61,7 +62,7 @@ for i in "${!RID_LIST[@]}"; do
     fi
 
     # copy .app directory to output directory
-    mv ./$APP_NAME/bin/$CONFIG/net7.0/$RID/publish/$APP_NAME.app ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app
+    mv ./$APP_NAME/bin/$CONFIG/$FRAMEWORK/$RID/publish/$APP_NAME.app ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app
     if [ "$?" != "0" ]; then
         exit
     fi
@@ -98,4 +99,4 @@ for i in "${!RID_LIST[@]}"; do
 done
 
 # Generate package manifest
-dotnet run --project PackagingTool create-package-manifest osx $APP_NAME $VERSION
+# dotnet run --project PackagingTool create-package-manifest osx $APP_NAME $VERSION
