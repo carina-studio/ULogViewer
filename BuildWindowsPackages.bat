@@ -85,7 +85,7 @@ if [%PREVIOUS_VERSION%] neq [] (
 )
 
 REM Generate package manifest
-dotnet run --project PackagingTool create-package-manifest win %APP_NAME% %CURRENT_VERSION%
+REM dotnet run --project PackagingTool create-package-manifest win %APP_NAME% %CURRENT_VERSION%
 
 REM Complete
 del /Q Packages\Packaging.txt
