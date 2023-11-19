@@ -616,18 +616,36 @@
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 						</Button>
 						
-						<!-- Stop reading logs -->
-						<Button Classes="ToolBar_Button" Command="{Binding StopReadingLogsCommand}" IsVisible="{Binding CanStopReadingLogs}" ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+						<!-- Stop reading logs (non-continuous reading) -->
+						<Button Classes="ToolBar_Button" Command="{Binding StopReadingLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+							<Button.IsVisible>
+								<MultiBinding Converter="{x:Static BoolConverters.And}">
+									<Binding Path="CanStopReadingLogs"/>
+									<Binding Path="!IsReadingLogsContinuously"/>
+								</MultiBinding>
+							</Button.IsVisible>
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 						</Button>
 
 						<!-- Reload logs -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.ReloadLogsCommand}" IsVisible="{Binding !CanStopReadingLogs}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
+						<Button Classes="ToolBar_Button" Command="{Binding #root.ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
+							<Button.IsVisible>
+								<MultiBinding Converter="{x:Static BoolConverters.Or}">
+									<Binding Path="!CanStopReadingLogs"/>
+									<Binding Path="IsReadingLogsContinuously"/>
+								</MultiBinding>
+							</Button.IsVisible>
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
 						<!-- Pause/Resume -->
 						<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
+							<Button.IsEnabled>
+								<MultiBinding Converter="{x:Static BoolConverters.Or}">
+									<Binding Path="IsLogsReadingPaused"/>
+									<Binding Path="IsReadingLogs"/>
+								</MultiBinding>
+							</Button.IsEnabled>
 							<Panel>
 								<Image Classes="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
 								<Image Classes="Icon" IsVisible="{Binding IsLogsReadingPaused}">
@@ -636,6 +654,11 @@
 									</DrawingImage>
 								</Image>
 							</Panel>
+						</Button>
+						
+						<!-- Stop reading logs (continuous reading) -->
+						<Button Classes="ToolBar_Button" Command="{Binding StopReadingLogsCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+							<Image Classes="Icon" Source="{StaticResource Image/Icon.StopMedia.Outline}"/>
 						</Button>
 
 					</StackPanel>

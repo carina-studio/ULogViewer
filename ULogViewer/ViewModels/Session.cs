@@ -1233,8 +1233,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				foreach (var reader in this.logReaders)
 				{
-					if (reader.IsContinuousReading)
-						continue;
 					switch (reader.State)
 					{
 						case LogReaderState.Starting: 
@@ -3963,6 +3961,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear logs
 			var isContinuousReading = profile.IsContinuousReading;
 			var clearLogsOnly = isContinuousReading
+			                    && this.logReaders.Let(readers =>
+			                    {
+				                    foreach (var reader in readers)
+				                    {
+					                    switch (reader.State)
+					                    {
+						                    case LogReaderState.Stopping:
+						                    case LogReaderState.Stopped:
+							                    return false;
+					                    }
+				                    }
+				                    return true;
+			                    })
 			                    && !recreateLogReaders
 			                    && !this.GetValue(HasAllDataSourceErrorsProperty)
 			                    && !this.GetValue(HasPartialDataSourceErrorsProperty);
@@ -5410,11 +5421,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// stop reading
 			this.Logger.LogWarning("Stop reading logs");
-			foreach (var reader in this.logReaders)
-			{
-				if (!reader.IsContinuousReading)
-					reader.Stop();
-			}
+			foreach (var reader in this.logReaders) 
+				reader.Stop();
+			
+			// update state
+			this.SetValue(IsLogsReadingPausedProperty, false);
 		}
 		
 		
