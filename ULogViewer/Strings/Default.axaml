@@ -51,6 +51,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">Show 'Help' button on input field of text filter</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">Show chart panel automatically</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">Show the panel if chart has been defined in log profile.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowLogPropertySeparators">Show separator between log properties</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs">Switch to 'Marked logs' panel after marking log(s)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>

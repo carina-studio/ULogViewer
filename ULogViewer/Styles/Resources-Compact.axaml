@@ -76,6 +76,7 @@
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Summary.Margin">0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileListBox.Item.Padding">5,3,5,3</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Margin">3,4,3,4</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogHeader.Separator.Margin">0,4,0,4</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.MultiLineIndicator.Margin">2,0,4,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.MarkedLogListBox.Item.Padding">3,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">5,3,18,3</Thickness>

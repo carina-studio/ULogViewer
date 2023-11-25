@@ -266,7 +266,7 @@
 
 		<!-- Log header template-->
 		<DataTemplate x:Key="logHeaderTemplate" x:CompileBindings="True" x:DataType="appViewModels:DisplayableLogProperty">
-			<Border Name="border" Background="{x:Static Brushes.Transparent}" BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Separator}" BorderThickness="1,0,0,0" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
+			<Border Name="border" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}" Padding="{StaticResource Thickness/SessionView.LogHeader.Padding}">
 				<ToolTip.Tip>
 					<StackPanel>
 						<TextBlock IsVisible="{ReflectionBinding #textBlock.IsTextTrimmed}" TextTrimming="CharacterEllipsis">

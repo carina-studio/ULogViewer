@@ -134,6 +134,10 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<bool> ShowLogChartPanelIfDefined = new(nameof(ShowLogChartPanelIfDefined), true);
 	/// <summary>
+	/// Show separator between log properties or not.
+	/// </summary>
+	public static readonly SettingKey<bool> ShowLogPropertySeparators = new(nameof(ShowLogPropertySeparators), false);
+	/// <summary>
 	/// Switch to panel of marked logs automatically after marking logs.
 	/// </summary>
 	public static readonly SettingKey<bool> SwitchToMarkedLogsPanelAfterMarkingLogs = new(nameof(SwitchToMarkedLogsPanelAfterMarkingLogs), false);

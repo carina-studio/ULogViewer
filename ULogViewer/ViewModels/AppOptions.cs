@@ -408,6 +408,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(ShowHelpButtonOnLogTextFilter));
 		else if (key == SettingKeys.ShowLogChartPanelIfDefined)
 			this.OnPropertyChanged(nameof(ShowLogChartPanelIfDefined));
+		else if (key == SettingKeys.ShowLogPropertySeparators)
+			this.OnPropertyChanged(nameof(ShowLogPropertySeparators));
 		else if (key == AppSuite.SettingKeys.ShowProcessInfo)
 			this.OnPropertyChanged(nameof(ShowProcessInfo));
 		else if (key == SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs)
@@ -632,6 +634,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined);
 		set => this.Settings.SetValue<bool>(SettingKeys.ShowLogChartPanelIfDefined, value);
+	}
+	
+	
+	/// <summary>
+	/// Show separator between log properties or not.
+	/// </summary>
+	public bool ShowLogPropertySeparators
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.ShowLogPropertySeparators);
+		set => this.Settings.SetValue<bool>(SettingKeys.ShowLogPropertySeparators, value);
 	}
 
 

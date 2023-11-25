@@ -60,10 +60,6 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<double> LogAnalysisScriptSetEditorDialogInitWidthRatio = new(nameof(LogAnalysisScriptSetEditorDialogInitWidthRatio), 0.6);
     /// <summary>
-    /// Delay time in milliseconds to show view of log properties.
-    /// </summary>
-    public static readonly SettingKey<int> LogPropertyViewsShowingDelay = new(nameof(LogPropertyViewsShowingDelay), 33);
-    /// <summary>
     /// Size of string cache for log reading in MB.
     /// </summary>
     public static readonly SettingKey<int> LogReadingStringCacheSizeInMB = new(nameof(LogReadingStringCacheSizeInMB), 8);
@@ -111,6 +107,10 @@ abstract class ConfigurationKeys
     /// Timeout before calculating size of one or more files.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToCancelFileSizeCalculation = new(nameof(TimeoutToCancelFileSizeCalculation), 5 * 1000);
+    /// <summary>
+    /// Whether trimming of text of log property is enabled or not.
+    /// </summary>
+    public static readonly SettingKey<bool> TrimLogPropertyViewText = new(nameof(TrimLogPropertyViewText), true);
     /// <summary>
     /// Whether regular expression should be compiled before using or not.
     /// </summary>

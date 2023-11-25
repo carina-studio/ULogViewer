@@ -1764,6 +1764,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// load resources
 			var app = (App)this.Application;
+			var isDebugMode = app.IsDebugMode;
 			var logPropertyCount = logProperties.Count;
 			var toolTipTemplate = (DataTemplate)this.Resources["logPropertyToolTipTemplate"].AsNonNull();
 			var colorIndicatorBorderBrush = app.FindResourceOrDefault<IBrush?>("Brush/WorkingArea.Background");
@@ -1793,7 +1794,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			var levelForegroundBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Level.Foreground");
 			var selectionIndicatorBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background");
 			var iconBrush = app.FindResourceOrDefault<IBrush>("Brush/Icon");
-			var propertyViewsShowingDelay = Math.Max(0, app.Configuration.GetValueOrDefault(ConfigurationKeys.LogPropertyViewsShowingDelay));
+			var itemBorderBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver");
+			var showSeparators = app.Settings.GetValueOrDefault(SettingKeys.ShowLogPropertySeparators);
+			var separatorBrush = showSeparators ? app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Separator") : null;
+			var trimLogPropertyText = app.Configuration.GetValueOrDefault(ConfigurationKeys.TrimLogPropertyViewText);
 			
 			// create template
 			return new FuncDataTemplate(typeof(DisplayableLog), (_, _) =>
@@ -1809,7 +1813,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				var itemGrid = new Grid().Also(it =>
 				{
 					it.ClipToBounds = false;
-					it.IsVisible = (propertyViewsShowingDelay <= 0);
 					it.Margin = itemPadding;
 					itemPanel.Children.Add(it);
 				});
@@ -1886,6 +1889,18 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
+							if (isDebugMode)
+							{
+								it.LayoutUpdated += (_, _) =>
+								{
+									if (isAutoWidth || it.DataContext is null)
+										return;
+									var textLength = it.Text?.Length ?? 0;
+									var textWidth = it.TextLayout.Width;
+									if (textLength > 0 && textWidth <= 3)
+										this.Logger.LogWarning("[LogPropertyView] Property: {property}, view width: {viewWidth}, text length: {valueLength}, text width: {textLayoutWidth}, text trimmed: {trimmed}", logProperty.Name, it.Bounds.Width, textLength, textWidth, it.IsTextTrimmed);
+								};
+							}
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
 							if (logProperty.Name == nameof(DisplayableLog.Level))
@@ -1916,7 +1931,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									Path = logProperty.Name,
 								});
 							}
-							it.TextTrimming = isAutoWidth ? TextTrimming.None : TextTrimming.CharacterEllipsis;
+							it.TextTrimming = isAutoWidth || !trimLogPropertyText ? TextTrimming.None : TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
 							it.VerticalAlignment = VerticalAlignment.Center;
@@ -1966,7 +1981,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							if (isPointerOver)
 							{
-								it.BorderBrush = this.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver");
+								it.BorderBrush = itemBorderBrush;
 								//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
 							}
 							else
@@ -2015,6 +2030,20 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
+
+					// create separator
+					if (showSeparators && logPropertyIndex > 0)
+					{
+						new Border().Let(separator =>
+						{
+							separator.Background = separatorBrush;
+							separator.HorizontalAlignment = HorizontalAlignment.Center;
+							separator.VerticalAlignment = VerticalAlignment.Stretch;
+							separator.Width = 1;
+							Grid.SetColumn(separator, logPropertyIndex * 2 - 1);
+							itemGrid.Children.Add(separator);
+						});
+					}
 				}
 
 				// color indicator
@@ -2169,29 +2198,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// update according to selection of list box item
 				var isSelectedObserverToken = EmptyDisposable.Default;
-				var addPropertyViewsAction = propertyViewsShowingDelay > 0
-					? new ScheduledAction(() => itemGrid.IsVisible = true)
-					: null;
-				void OnAttachedToDataContext()
-				{
-					// add property views
-					if (addPropertyViewsAction is not null)
-					{
-						if (this.IsScrollingToLatestLogNeeded)
-							addPropertyViewsAction.Execute();
-						else
-							addPropertyViewsAction.Schedule(propertyViewsShowingDelay);
-					}
-				}
-				void OnDetachedFromDataContext()
-				{
-					// remove property views
-					if (addPropertyViewsAction is not null)
-					{
-						addPropertyViewsAction.Cancel();
-						itemGrid.IsVisible = false;
-					}
-				}
 				itemPanel.AttachedToLogicalTree += (_, _) =>
 				{
 					// bind to ListBoxItem
@@ -2218,21 +2224,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					// clear bindings to column widths
 					for (var i = propertyColumnWidthBindingTokens.Length - 1; i >= 0; --i)
 						propertyColumnWidthBindingTokens[i] = propertyColumnWidthBindingTokens[i].DisposeAndReturnNull();
-				};
-				itemPanel.PropertyChanged += (_, e) =>
-				{
-					if (e.Property == DataContextProperty)
-					{
-						if (e.NewValue is null)
-							OnDetachedFromDataContext();
-						else if (e.OldValue is null)
-							OnAttachedToDataContext();
-						else
-						{
-							OnDetachedFromDataContext();
-							OnAttachedToDataContext();
-						}
-					}
 				};
 
 				// complete
@@ -3003,13 +2994,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when configuration changed.
 		void OnConfigurationChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == ConfigurationKeys.LogPropertyViewsShowingDelay)
-			{
-				var session = this.DataContext as Session;
-				var logProfile = session?.LogProfile;
-				if (logProfile is not null)
-					this.logListBox.ItemTemplate = this.CreateLogItemTemplate(logProfile, session!.DisplayLogProperties);
-			}
+			if (e.Key == ConfigurationKeys.TrimLogPropertyViewText)
+				this.RecreateLogItemTemplate();
 		}
 
 
@@ -3078,14 +3064,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			var markIndicatorSize = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.MarkIndicator.Size");
 			var markIndicatorMargin = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.MarkIndicator.Margin");
 			var splitterWidth = app.FindResourceOrDefault<double>("Double/GridSplitter.Thickness");
+			var separatorBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogHeader.Separator");
+			var separatorMargin = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogHeader.Separator.Margin");
 			var minHeaderWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogHeader.MinWidth");
 			var itemPadding = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.Item.Padding");
+			var colorIndicatorBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.ColorIndicator.Border");
 			var colorIndicatorWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.ColorIndicator.Width");
 			var headerTemplate = (DataTemplate)this.Resources["logHeaderTemplate"].AsNonNull();
 			var columIndexOffset = 0;
 			if (profile.ColorIndicator != LogColorIndicator.None)
 			{
-				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth, GridUnitType.Pixel));
+				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(colorIndicatorWidth + colorIndicatorBorderThickness.Left + colorIndicatorBorderThickness.Right, GridUnitType.Pixel));
 				++columIndexOffset;
 			}
 			if (markIndicatorSize > 0)
@@ -3130,11 +3119,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				}));
 				++columIndexOffset;
 			}
-			if (itemPadding.Left > 0)
-			{
-				this.logHeaderGrid.ColumnDefinitions.Add(new ColumnDefinition(itemPadding.Left, GridUnitType.Pixel));
-				++columIndexOffset;
-			}
 			this.logHeaderGrid.Children.Add(new Border().Also(it => // Empty control in order to get first layout event of log header grid
 			{
 				it.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -3168,6 +3152,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				// create splitter view
 				if (logPropertyIndex > 0)
 				{
+					var border = new Border().Also(border =>
+					{
+						border.Background = separatorBrush;
+						border.HorizontalAlignment = HorizontalAlignment.Center;
+						border.IsHitTestVisible = false;
+						border.VerticalAlignment = VerticalAlignment.Stretch;
+						border.Margin = separatorMargin;
+						border.Width = 1;
+					});
 					var splitter = new GridSplitter().Also(it =>
 					{
 						it.DragDelta += (_, _) => this.ReportLogHeaderColumnWidths();
@@ -3175,6 +3168,8 @@ namespace CarinaStudio.ULogViewer.Controls
 							|| headerColumn.Width.GridUnitType == GridUnitType.Pixel;
 					});
 					Grid.SetColumn(splitter, logPropertyIndex * 2 - 1 + columIndexOffset);
+					Grid.SetColumn(border, logPropertyIndex * 2 - 1 + columIndexOffset);
+					this.logHeaderGrid.Children.Add(border);
 					this.logHeaderGrid.Children.Add(splitter);
 				}
 
@@ -4399,6 +4394,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue(IsScriptRunningEnabledProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 				this.OnShowHelpButtonOnLogTextFilterSettingChanged((bool)e.Value);
+			else if (e.Key == SettingKeys.ShowLogPropertySeparators)
+				this.RecreateLogItemTemplate();
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)
 				this.SetValue(IsProcessInfoVisibleProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.UpdateLogFilterDelay)
@@ -4419,6 +4416,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void PerformGC() =>
 			this.Application.PerformGC(GCCollectionMode.Forced);
+		
+		
+		// Recreate item template for log item.
+		void RecreateLogItemTemplate()
+		{
+			var session = this.DataContext as Session;
+			var logProfile = session?.LogProfile;
+			if (logProfile is not null)
+				this.logListBox.ItemTemplate = this.CreateLogItemTemplate(logProfile, session!.DisplayLogProperties);
+		}
 
 
 		// Reload log file.

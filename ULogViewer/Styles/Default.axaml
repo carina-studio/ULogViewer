@@ -135,6 +135,7 @@
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.HighlightedText.Foreground">#ccc666</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Level.Foreground">#333333</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.SelectionIndicator.Background">#000000</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.Item.Separator">#000000</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Default" Color="{DynamicResource Color/Icon}"/>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Blue">#0094ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/SessionView.LogListBox.MarkIndicator.Green">#00b214</SolidColorBrush>
