@@ -4,6 +4,7 @@
 ## New Features
 + Allow toggling visibilities of data sources of chart.
 + Allow changing command to read logs directly in log viewer.
++ Allow stopping reading logs continuously from data source.
 + Allow specifying **Requirement of Working Directory** for each log profile.
 + Add **Raw Text From Standard Output (stdout)** and **Specific Android Device System Trace** built-in log profile and template.
 + Add **Host Name**, **Module**, **Sub Module**, **System** and **Sub System** log property names.
@@ -13,6 +14,7 @@
 + Support showing labels on X axis of log chart.
 + Support using built-in font (Noto Sans) for Chinese.
 + Support renaming group of log text filters.
++ Support showing separators between log properties.
 + Show timestamp of log in tool tip of chart.
 
 ## Improvement
@@ -29,6 +31,7 @@
 ## Behavior Changes
 + Showing multiple lines of log in viewer has been removed.
 + Initial log profile won't be set to new opened window.
++ Open log file action menu by right-clicking on log file instead of clicking button on log file.
 
 ## Bug Fixing
 + Minor bug fixing.
