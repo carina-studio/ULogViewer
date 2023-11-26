@@ -1047,7 +1047,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (session.HasAllDataSourceErrors)
 						return SessionViewStatusBarState.Error;
 					if (session.HasLogReaders)
-						return SessionViewStatusBarState.Active;
+					{
+						if (session.IsReadingLogs || !session.IsReadingLogsContinuously)
+							return SessionViewStatusBarState.Active;
+					}
 					return SessionViewStatusBarState.None;
 				}));
 			});
@@ -4315,6 +4318,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				case nameof(Session.IsReadingLogs):
 					if (session.IsReadingLogs)
 						this.ClearTargetLogRangeToScrollTo();
+					this.updateStatusBarStateAction.Schedule();
+					break;
+				case nameof(Session.IsReadingLogsContinuously):
+					this.updateStatusBarStateAction.Schedule();
 					break;
 				case nameof(Session.IsRemovingLogFiles):
 					if (session.IsRemovingLogFiles)

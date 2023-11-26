@@ -170,7 +170,12 @@ namespace CarinaStudio.ULogViewer
 				else if (session.IsProcessingLogs)
 				{
 					if (session.IsReadingLogs)
-						this.TaskbarIconProgressState = TaskbarIconProgressState.Indeterminate;
+					{
+						if (session.IsReadingLogsContinuously)
+							this.TaskbarIconProgressState = TaskbarIconProgressState.None;
+						else
+							this.TaskbarIconProgressState = TaskbarIconProgressState.Indeterminate;
+					}
 					else if (double.IsFinite(session.LogFiltering.FilteringProgress))
 					{
 						this.TaskbarIconProgressState = TaskbarIconProgressState.Normal;
