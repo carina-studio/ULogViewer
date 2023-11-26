@@ -398,7 +398,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUriAsync, this.canSetUri);
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectoryAsync, this.canSetWorkingDirectory);
 			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
-			this.ShowLogFileActionMenuCommand = new Command<Control>(this.ShowLogFileActionMenu);
 			this.ShowLogFileInExplorerCommand = new Command<string>(this.ShowLogFileInExplorer);
 			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
@@ -532,7 +531,16 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logChartGridRow = this.Get<Panel>("logChartPanel").Let(it => it.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(it)]);
 			this.logChartTypeButton = this.toolBarContainer.FindControl<ToggleButton>(nameof(logChartTypeButton)).AsNonNull();
-			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox));
+			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox)).Also(it =>
+			{
+				it.AddHandler(PointerPressedEvent, (_, e) =>
+				{
+					var position = e.GetPosition(it);
+					var item = (it.InputHitTest(position) as Visual)?.FindAncestorOfType<ListBoxItem>();
+					if (item is null)
+						this.SynchronizationContext.Post(() => it.SelectedItem = null);
+				}, RoutingStrategies.Tunnel);
+			});
 			this.logFilteringHelpButton = this.toolBarContainer.FindControl<Button>(nameof(logFilteringHelpButton)).AsNonNull();
 			this.logHeaderContainer = this.Get<Control>(nameof(logHeaderContainer));
 			this.logHeaderGrid = this.Get<Grid>(nameof(logHeaderGrid)).Also(it =>
@@ -729,18 +737,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.Closed += (_, _) =>
 				{
-					if (it.PlacementTarget is ToggleButton button)
-						SynchronizationContext.Post(() => button.IsChecked = false);
 					it.DataContext = null;
-					it.PlacementTarget = null;
 				};
 				it.Opened += (_, _) =>
 				{
-					if (it.PlacementTarget is ToggleButton button)
-					{
-						it.DataContext = button.DataContext;
-						SynchronizationContext.Post(() => button.IsChecked = true);
-					}
+					it.DataContext = this.logFileListBox.SelectedItem;
 				};
 			});
 			this.logFilterCombinationModeMenu = ((ContextMenu)this.Resources[nameof(logFilterCombinationModeMenu)].AsNonNull()).Also(it =>
@@ -5273,26 +5274,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to show file in system file explorer.
 		/// </summary>
 		public ICommand ShowFileInExplorerCommand { get; }
-
-
-		// Show log file action menu.
-		void ShowLogFileActionMenu(Control anchor)
-		{
-			// select log file
-			anchor.DataContext?.Let(it =>
-				this.logFileListBox.SelectedItem = it);
-
-			// show menu
-			this.logFileActionMenu.Close();
-			this.logFileActionMenu.PlacementTarget = anchor;
-			this.logFileActionMenu.Open(anchor);
-		}
-
-
-		/// <summary>
-		/// Command to show log file action menu.
-		/// </summary>
-		public ICommand ShowLogFileActionMenuCommand { get; }
 
 
 		// Show single log file in system file manager.

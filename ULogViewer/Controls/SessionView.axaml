@@ -203,7 +203,7 @@
 		<ContextMenu x:Key="logChartTypeMenu" Placement="Top"/>
 
 		<!-- Log file action menu -->
-		<ContextMenu x:Key="logFileActionMenu" Placement="Bottom">
+		<ContextMenu x:Key="logFileActionMenu" IsEnabled="{Binding $self.DataContext, Converter={x:Static ObjectConverters.IsNotNull}}">
 			<MenuItem Command="{Binding #root.CopyLogFileNameCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFileName}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
@@ -215,23 +215,35 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}" IsEnabled="{Binding #root.DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}">
+			<MenuItem Command="{Binding #root.ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}">
+				<MenuItem.IsEnabled>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="!IsPredefined" FallbackValue="False"/>
+						<Binding Path="DataContext.HasTimestampDisplayableLogProperty" ElementName="root" FallbackValue="False"/>
+					</MultiBinding>
+				</MenuItem.IsEnabled>
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/CheckFilter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithoutLogReadingPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition}" IsEnabled="{Binding !LogReadingPrecondition.IsEmpty}">
+			<MenuItem Command="{Binding #root.ReloadLogFileWithoutLogReadingPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition}">
+				<MenuItem.IsEnabled>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="!IsPredefined" FallbackValue="False"/>
+						<Binding Path="!LogReadingPrecondition.IsEmpty" FallbackValue="False"/>
+					</MultiBinding>
+				</MenuItem.IsEnabled>
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithNewMaxLogReadingCountCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}">
+			<MenuItem Command="{Binding #root.ReloadLogFileWithNewMaxLogReadingCountCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}" IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Layers.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.DataContext.RemoveLogFileCommand, FallbackValue={x:Null}}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}">
+			<MenuItem Command="{Binding #root.DataContext.RemoveLogFileCommand, FallbackValue={x:Null}}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}" IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 				</MenuItem.Icon>
@@ -2464,12 +2476,12 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
-					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding LogFiles}">
+					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logFileActionMenu}" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding LogFiles}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
 								<DockPanel>
 									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding #root.DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
-									<Grid ColumnDefinitions="Auto,*,Auto,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
+									<Grid ColumnDefinitions="Auto,*,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
 											<Panel IsVisible="{Binding !#lightLogFileIconsContainer.IsVisible}">
 												<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}" Source="{StaticResource Image/Icon.File.Text.Outline}"/>
@@ -2518,21 +2530,6 @@
 												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Layers}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
 											</Border>
 										</StackPanel>
-										<ToggleButton Name="logFileActionButton" Classes="InPlaceAction_ToggleButton_Medium" Command="{Binding #root.ShowLogFileActionMenuCommand}" CommandParameter="{Binding $self}" Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
-											<ToggleButton.IsVisible>
-												<MultiBinding Converter="{x:Static BoolConverters.Or}">
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="!IsPredefined"/>
-														<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-													</MultiBinding>
-													<Binding Path="IsChecked" RelativeSource="{RelativeSource Self}"/>
-												</MultiBinding>
-											</ToggleButton.IsVisible>
-											<Panel>
-												<Image Classes="InPlaceAction_Icon_Medium" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More}"/>
-												<Image Classes="InPlaceAction_Icon_Medium" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.More.Light}"/>
-											</Panel>
-										</ToggleButton>
 									</Grid>
 								</DockPanel>
 							</DataTemplate>
