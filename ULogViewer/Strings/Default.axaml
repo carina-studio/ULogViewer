@@ -387,7 +387,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Color of icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">Contextual-based analysis</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">Whether the logs should be analysis one-by-one sequentially and the order of analysis should be same as the source list of logs.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">Whether the logs should be analysis one-by-one sequentially in time ascending order.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log analysis script and script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to setup analysis</sys:String>

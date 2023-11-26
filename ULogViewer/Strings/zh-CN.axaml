@@ -374,7 +374,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">图标色彩</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">分析基于上下文</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">日志是否需要逐一循序分析，且分析顺序必需与来源日志列表相同。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">日志是否需要根据时间递增顺序逐一分析。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名称</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志分析脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化脚本</sys:String>
