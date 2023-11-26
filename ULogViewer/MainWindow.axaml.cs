@@ -946,12 +946,32 @@ namespace CarinaStudio.ULogViewer
 			{
 				switch (e.Key)
 				{
+					case Key.Left:
+						if (this.tabItems.Count > 2)
+						{
+							if (this.tabControl.SelectedIndex > 0)
+								--this.tabControl.SelectedIndex;
+							else
+								this.tabControl.SelectedIndex = this.tabItems.Count - 2;
+						}
+						e.Handled = true;
+						break;
 					case Key.N:
 						if (Platform.IsNotMacOS) // Will be handled by native menu
 						{
 							this.CreateMainWindow();
 							e.Handled = true;
 						}
+						break;
+					case Key.Right:
+						if (this.tabItems.Count > 2)
+						{
+							if (this.tabControl.SelectedIndex < this.tabItems.Count - 2)
+								++this.tabControl.SelectedIndex;
+							else
+								this.tabControl.SelectedIndex = 0;
+						}
+						e.Handled = true;
 						break;
 					case Key.T:
 						if (Platform.IsNotMacOS) // Will be handled by native menu
