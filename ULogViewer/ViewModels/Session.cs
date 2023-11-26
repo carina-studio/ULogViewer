@@ -1315,7 +1315,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				}
 				var logProfile = this.LogProfile;
-				if (logProfile == null || logProfile.IsContinuousReading)
+				if (logProfile is null)
 					this.SetValue(IsProcessingLogsProperty, false);
 				else if (this.LogFiltering.IsFiltering || this.IsReadingLogs || this.IsRemovingLogFiles)
 					this.SetValue(IsProcessingLogsProperty, true);

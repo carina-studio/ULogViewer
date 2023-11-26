@@ -1247,7 +1247,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">Log analysis is disabled temporarily when removing log file(s)</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">Has new results</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply.</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Progress of log analyzing</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">Size in bytes</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">Duration</sys:String>

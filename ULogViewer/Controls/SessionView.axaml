@@ -954,7 +954,34 @@
 			</Border>
 
 			<!-- Progress bar -->
-			<ProgressBar Background="{x:Null}" CornerRadius="0" IsIndeterminate="{Binding IsProcessingLogs}" IsVisible="{Binding IsProcessingLogs}" Margin="0,0,0,1" MaxHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" MinHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" VerticalAlignment="Bottom"/>
+			<ProgressBar Background="{x:Null}" 
+			             CornerRadius="0" 
+			             Margin="0,0,0,1" 
+			             MaxHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" 
+			             MinHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" 
+			             Maximum="1"
+			             Minimum="0"
+			             Value="{Binding LogFiltering.FilteringProgress}"
+			             VerticalAlignment="Bottom">
+				<ProgressBar.IsIndeterminate>
+					<MultiBinding Converter="{x:Static BoolConverters.Or}">
+						<Binding Path="IsReadingLogs"/>
+						<Binding Path="IsRemovingLogFiles"/>
+					</MultiBinding>
+				</ProgressBar.IsIndeterminate>
+				<ProgressBar.IsVisible>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="IsProcessingLogs"/>
+						<MultiBinding Converter="{x:Static BoolConverters.Or}">
+							<Binding Path="!IsReadingLogsContinuously"/>
+							<MultiBinding Converter="{x:Static BoolConverters.And}">
+								<Binding Path="!IsReadingLogs"/>
+								<Binding Path="LogFiltering.IsFiltering"/>
+							</MultiBinding>
+						</MultiBinding>
+					</MultiBinding>
+				</ProgressBar.IsVisible>
+			</ProgressBar>
 			
 		</Panel>
 
@@ -1239,7 +1266,7 @@
 					<!-- Right part -->
 					<Grid DockPanel.Dock="Right">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/> <!-- [0] Filtering/Analyzing progress -->
+							<ColumnDefinition Width="Auto"/> <!-- [0] Analyzing progress -->
 							<ColumnDefinition Width="Auto"/> <!-- [1] Saving logs -->
 							<ColumnDefinition Width="Auto"/> <!-- [2] Waiting for data sources -->
 							<ColumnDefinition Width="Auto"/> <!-- [3] URI -->
@@ -1252,49 +1279,29 @@
 							<ColumnDefinition Width="Auto"/> <!-- [10] Process info -->
 						</Grid.ColumnDefinitions>
 
-						<!-- Filtering progress -->
-						<StackPanel Name="filterProgressStatusBarItem" Grid.Column="0" IsVisible="{Binding LogFiltering.IsFiltering}" Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsFilteringProgress}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Filter.Outline}"/>
-								</DrawingImage>
-							</Image>
-							<Panel ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogsFilteringProgress}" VerticalAlignment="Center">
-								<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
-								<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogFiltering.FilteringProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
-							</Panel>
-						</StackPanel>
-
 						<!-- Analyzing progress -->
-						<StackPanel Grid.Column="0" Orientation="Horizontal">
-							<StackPanel.IsVisible>
-								<MultiBinding Converter="{x:Static BoolConverters.And}">
-									<Binding Path="LogAnalysis.IsAnalyzing"/>
-									<Binding Path="!IsVisible" ElementName="filterProgressStatusBarItem"/>
-								</MultiBinding>
-							</StackPanel.IsVisible>
+						<StackPanel Grid.Column="0" IsVisible="{Binding LogAnalysis.IsAnalyzing}" Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisProgress}">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Analysis.Outline}"/>
-								</DrawingImage>
-							</Image>
-							<Panel ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.LogAnalysisProgress}" VerticalAlignment="Center">
-								<TextBlock Classes="StatusBar_TextBlock" Text="00.0%" Opacity="0"/>
-								<TextBlock Classes="StatusBar_TextBlock" HorizontalAlignment="Left" Text="{Binding LogAnalysis.AnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}"/>
+							<abControls:ProgressRing Classes="StatusBar_ProgressRingWithText"
+							                         IsIndeterminate="True"/>
+							<Panel VerticalAlignment="Center">
+								<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+								                               Arg1="100.0%" 
+								                               Format="{DynamicResource String/SessionView.LogAnalysisProgress}" 
+								                               Opacity="0"/>
+								<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+								                               Arg1="{Binding LogAnalysis.AnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}" 
+								                               Format="{DynamicResource String/SessionView.LogAnalysisProgress}"/>
 							</Panel>
 						</StackPanel>
 
 						<!-- Saving logs -->
 						<StackPanel Grid.Column="1" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
-								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Save.Outline}"/>
-								</DrawingImage>
-							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.SavingLogs}"/>
+							<abControls:ProgressRing Classes="StatusBar_ProgressRingWithText"
+							                         IsIndeterminate="True"/>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{DynamicResource String/SessionView.SavingLogs}"/>
 						</StackPanel>
 
 						<!-- Waiting for data sources -->
