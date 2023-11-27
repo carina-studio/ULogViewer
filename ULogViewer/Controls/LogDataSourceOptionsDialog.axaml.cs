@@ -14,6 +14,7 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -27,22 +28,6 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
-	/// <summary>
-	/// Type of database source.
-	/// </summary>
-	public enum DatabaseSourceType
-	{
-		/// <summary>
-		/// File.
-		/// </summary>
-		File,
-		/// <summary>
-		/// Network.
-		/// </summary>
-		Network,
-	}
-
-
 	/// <summary>
 	/// Property of <see cref="DataSourceProvider"/>.
 	/// </summary>
@@ -60,6 +45,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	static readonly StyledProperty<bool> IsConnectionStringRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringRequired");
 	static readonly StyledProperty<bool> IsConnectionStringSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsConnectionStringSupported");
 	static readonly StyledProperty<bool> IsEncodingSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsEncodingSupported));
+	static readonly StyledProperty<bool> IsEnvironmentVariablesSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsEnvironmentVariablesSupported));
 	static readonly StyledProperty<bool> IsFileNameSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsFileNameSupported));
 	static readonly StyledProperty<bool> IsFormatJsonDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsFormatJsonDataSupported");
 	static readonly StyledProperty<bool> IsFormatXmlDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsFormatXmlDataSupported");
@@ -93,6 +79,9 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	Range<int> commandTextBoxSelection;
 	readonly TextBox connectionStringStringTextBox;
 	readonly ComboBox encodingComboBox;
+	readonly SortedObservableList<Tuple<string, string>> environmentVariables = new((lhs, rhs) => 
+		string.Compare(lhs.Item1, rhs.Item1, StringComparison.Ordinal));
+	readonly AppSuite.Controls.ListBox environmentVariablesListBox;
 	readonly TextBox fileNameTextBox;
 	readonly ToggleSwitch formatJsonDataSwitch;
 	readonly ToggleSwitch formatXmlDataSwitch;
@@ -121,9 +110,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// </summary>
 	public LogDataSourceOptionsDialog()
 	{
+		this.EditEnvironmentVariableCommand = new Command<Tuple<string, string>>(this.EditEnvironmentVariable);
 		this.EditSetupTeardownCommandCommand = new Command<ListBoxItem>(this.EditSetupTeardownCommand);
 		this.MoveSetupTeardownCommandDownCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandDown);
 		this.MoveSetupTeardownCommandUpCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandUp);
+		this.RemoveEnvironmentVariableCommand = new Command<Tuple<string, string>>(this.RemoveEnvironmentVariable);
 		this.RemoveSetupTeardownCommandCommand = new Command<ListBoxItem>(this.RemoveSetupTeardownCommand);
 		this.CommandSyntaxHighlightingDefinitionSet = Highlighting.TextShellCommandSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		this.SqlSyntaxHighlightingDefinitionSet = Highlighting.SqlSyntaxHighlighting.CreateDefinitionSet(this.Application);
@@ -146,6 +137,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		});
 		this.connectionStringStringTextBox = this.Get<TextBox>(nameof(connectionStringStringTextBox));
 		this.encodingComboBox = this.Get<ComboBox>(nameof(encodingComboBox));
+		this.environmentVariablesListBox = this.Get<AppSuite.Controls.ListBox>(nameof(environmentVariablesListBox));
 		this.fileNameTextBox = this.Get<TextBox>(nameof(fileNameTextBox));
 		this.formatJsonDataSwitch = this.Get<ToggleSwitch>(nameof(formatJsonDataSwitch));
 		this.formatXmlDataSwitch = this.Get<ToggleSwitch>(nameof(formatXmlDataSwitch));
@@ -170,6 +162,40 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		this.userNameTextBox = this.Get<TextBox>(nameof(userNameTextBox));
 		this.useTextShellSwitch = this.Get<ToggleSwitch>(nameof(useTextShellSwitch));
 		this.workingDirectoryTextBox = this.Get<TextBox>(nameof(workingDirectoryTextBox));
+	}
+	
+	
+	/// <summary>
+	/// Add environment variable.
+	/// </summary>
+	public async void AddEnvironmentVariable()
+	{
+		// create environment variable
+		var envVar = default(Tuple<string, string>);
+		while (true)
+		{
+			envVar = await new EnvVarEditorDialog
+			{
+				EnvironmentVariable = envVar
+			}.ShowDialog<Tuple<string, string>?>(this);
+			if (envVar is null)
+				return;
+			if (this.environmentVariables.FirstOrDefault(it => it.Item1 == envVar.Item1) is null)
+				break;
+			await new MessageDialog
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = new FormattedString().Also(it =>
+				{
+					it.Arg1 = envVar.Item1;
+					it.BindToResource(FormattedString.FormatProperty, this, "String/LogDataSourceOptions.EnvironmentVariables.Duplicated");
+				})
+			}.ShowDialog(this);
+		}
+		
+		// add environment variable
+		var index = this.environmentVariables.Add(envVar);
+		this.SelectListBoxItem(this.environmentVariablesListBox, index);
 	}
 
 
@@ -229,6 +255,51 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	});
 
 
+	/// <summary>
+	/// Environment variables.
+	/// </summary>
+	public IList<Tuple<string, string>> EnvironmentVariables => this.environmentVariables;
+	
+	
+	// Edit environment variable.
+	async void EditEnvironmentVariable(Tuple<string, string> envVar)
+	{
+		// edit environment variable
+		Tuple<string, string>? newEnvVar = envVar;
+		while (true)
+		{
+			newEnvVar = await new EnvVarEditorDialog
+			{
+				EnvironmentVariable = newEnvVar
+			}.ShowDialog<Tuple<string, string>?>(this);
+			if (newEnvVar is null || (newEnvVar.Item1 == envVar.Item1 && newEnvVar.Item2 == envVar.Item2))
+				return;
+			if (newEnvVar.Item1 == envVar.Item1 || this.environmentVariables.FirstOrDefault(it => it.Item1 == newEnvVar.Item1) is null)
+				break;
+			await new MessageDialog
+			{
+				Icon = MessageDialogIcon.Warning,
+				Message = new FormattedString().Also(it =>
+				{
+					it.Arg1 = newEnvVar.Item1;
+					it.BindToResource(FormattedString.FormatProperty, this, "String/LogDataSourceOptions.EnvironmentVariables.Duplicated");
+				})
+			}.ShowDialog(this);
+		}
+		
+		// update environment variable
+		this.environmentVariables.RemoveAll(it => it.Item1 == envVar.Item1);
+		var index = this.environmentVariables.Add(newEnvVar);
+		this.SelectListBoxItem(this.environmentVariablesListBox, index);
+	}
+	
+	
+	/// <summary>
+	/// Command to edit environment variable.
+	/// </summary>
+	public ICommand EditEnvironmentVariableCommand { get; }
+
+
 	// Edit given setup or teardown command.
 	async void EditSetupTeardownCommand(ListBoxItem item)
 	{
@@ -274,6 +345,14 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			options.ConnectionString = this.connectionStringStringTextBox.Text?.Trim();
 		if (this.IsEncodingSupported)
 			options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
+		if (this.IsEnvironmentVariablesSupported)
+		{
+			options.EnvironmentVariables = new Dictionary<string, string>().Also(it =>
+			{
+				foreach (var envVar in this.environmentVariables)
+					it[envVar.Item1] = envVar.Item2;
+			});
+		}
 		if (this.IsFileNameSupported)
 			options.FileName = this.fileNameTextBox.Text?.Trim();
 		if (this.GetValue(IsFormatJsonDataSupportedProperty))
@@ -321,6 +400,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
 	bool IsFileNameSupported => this.GetValue(IsFileNameSupportedProperty);
 	bool IsEncodingSupported => this.GetValue(IsEncodingSupportedProperty);
+	bool IsEnvironmentVariablesSupported => this.GetValue(IsEnvironmentVariablesSupportedProperty);
 	bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
 	bool IsPasswordRequired => this.GetValue(IsPasswordRequiredProperty);
 	bool IsPasswordSupported => this.GetValue(IsPasswordSupportedProperty);
@@ -436,6 +516,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			return;
 		if (listBox == this.setupCommandsListBox || listBox == this.teardownCommandsListBox)
 			this.EditSetupTeardownCommand(listBoxItem);
+		else if (listBox == this.environmentVariablesListBox)
+			this.EditEnvironmentVariable((Tuple<string, string>)listBoxItem.DataContext!);
 	}
 
 
@@ -514,6 +596,12 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		{
 			this.connectionStringStringTextBox.Text = options.ConnectionString;
 			this.initFocusedControl ??= this.connectionStringStringTextBox;
+		}
+		if (this.IsEnvironmentVariablesSupported)
+		{
+			foreach (var (k, v) in options.EnvironmentVariables)
+				this.environmentVariables.Add(new(k, v));
+			this.initFocusedControl ??= this.environmentVariablesListBox;
 		}
 		if (this.IsFileNameSupported)
 		{
@@ -655,6 +743,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsConnectionStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ConnectionString)));
 			this.SetValue(IsConnectionStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ConnectionString)));
 			this.SetValue(IsEncodingSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Encoding)));
+			this.SetValue(IsEnvironmentVariablesSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.EnvironmentVariables)));
 			this.SetValue(IsFileNameSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)));
 			this.SetValue(IsFormatJsonDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatJsonData)));
 			this.SetValue(IsFormatXmlDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatXmlData)));
@@ -690,6 +779,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsConnectionStringRequiredProperty, false);
 			this.SetValue(IsConnectionStringSupportedProperty, false);
 			this.SetValue(IsEncodingSupportedProperty, false);
+			this.SetValue(IsEnvironmentVariablesSupportedProperty, false);
 			this.SetValue(IsFileNameSupportedProperty, false);
 			this.SetValue(IsFormatJsonDataSupportedProperty, false);
 			this.SetValue(IsFormatXmlDataSupportedProperty, false);
@@ -714,6 +804,27 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(QueryStringReferenceUriProperty, null);
 		}
 	}
+	
+	
+	// Remove environment variable.
+	void RemoveEnvironmentVariable(Tuple<string, string> envVar)
+	{
+		for (var i = this.environmentVariables.Count - 1; i >= 0; --i)
+		{
+			if (this.environmentVariables[i].Item1 == envVar.Item1)
+			{
+				this.environmentVariables.RemoveAt(i);
+				this.SelectListBoxItem(this.environmentVariablesListBox, -1);
+				break;
+			}
+		}
+	}
+	
+	
+	/// <summary>
+	/// Command to remove environment variable.
+	/// </summary>
+	public ICommand RemoveEnvironmentVariableCommand { get; }
 
 
 	// Remove given setup or teardown command.

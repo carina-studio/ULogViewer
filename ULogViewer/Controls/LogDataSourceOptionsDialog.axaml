@@ -325,9 +325,9 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].SetupCommands.Count}" ItemsSource="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #setupCommandsListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddSetupCommand}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
@@ -338,9 +338,47 @@
 								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].TeardownCommands.Count}" ItemsSource="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
+							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #teardownCommandsListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddTeardownCommand}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+							<Separator Classes="Dialog_Item_Separator"/>
+						</StackPanel>
+						
+						<!-- Environment variables -->
+						<StackPanel IsVisible="{Binding $parent[Window].IsEnvironmentVariablesSupported}">
+							<asControls:DialogItemGrid>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.EnvironmentVariables}"/>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItemGrid>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
+							<asControls:ListBox Name="environmentVariablesListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding $parent[Window].EnvironmentVariables}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+								<asControls:ListBox.ItemTemplate>
+									<DataTemplate>
+										<Grid ColumnDefinitions="*,Auto">
+											<abControls:FormattedTextBlock Arg1="{Binding Item1}" Arg2="{Binding Item2}" Format="{}{0} = {1}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+											<Border Classes="InPlaceAction_Reserved"/>
+											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveEnvironmentVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditEnvironmentVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</asControls:ListBox.ItemTemplate>
+							</asControls:ListBox>
+							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #environmentVariablesListBox.IsVisible}"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddEnvironmentVariable}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 

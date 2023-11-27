@@ -259,6 +259,11 @@
 
 	<!-- EnqueueVarEditorDialog -->
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
+	
+	<!-- EnvVarEditorDialog -->
+	<sys:String x:Key="String/EnvVarEditorDialog.Name">变量名称</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Title">环境变量</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Value">变量值</sys:String>
 
 	<!-- EnqueueVariableAction -->
 	<sys:String x:Key="String/EnqueueVariableAction">将 {{{0}}} 加入至队列「{1}」</sys:String>
@@ -454,6 +459,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Command">指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">连线字符串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Encoding">文字编码</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">环境变量</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">环境变量 '{0}' 先前已加入。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">文件路径</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">读取时格式化 JSON 资料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">读取时格式化 XML 资料</sys:String>

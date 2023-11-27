@@ -276,6 +276,11 @@
 
 	<!-- EnqueueVariableAction -->
 	<sys:String x:Key="String/EnqueueVariableAction">Enqueue {{{0}}} to queue '{1}'</sys:String>
+	
+	<!-- EnvVarEditorDialog -->
+	<sys:String x:Key="String/EnvVarEditorDialog.Name">Variable name</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Title">Environment variable</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Value">Variable value</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools">Android SDK Platform Tools</sys:String>
@@ -470,6 +475,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Command">Command</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">Connection string</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Encoding">Text encoding</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">Environment variables</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">The environment variables '{0}' is already added before.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">File path</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">Format JSON data when reading</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">Format XML data when reading</sys:String>

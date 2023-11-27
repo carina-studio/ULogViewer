@@ -99,12 +99,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Static fields.
 		static Regex? commandArgPattern;
 		static readonly IList<string> emptyCommands = Array.Empty<string>();
+		static readonly IDictionary<string, string> emptyEnvVars = DictionaryExtensions.AsReadOnly(new Dictionary<string, string>());
 		static volatile bool isOptionPropertyInfoMapReady;
 		static volatile IList<string> optionNames = Array.Empty<string>();
 		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new();
 
 
 		// Fields.
+		IDictionary<string, string>? environmentVars;
 		IList<string>? setupCommands;
 		IList<string>? teardownCommands;
 
@@ -180,6 +182,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public Encoding? Encoding { get; set; }
 
 
+		/// <summary>
+		/// Get or set environment variables.
+		/// </summary>
+		public IDictionary<string, string> EnvironmentVariables
+		{
+			get => this.environmentVars ?? emptyEnvVars;
+			set => this.environmentVars = value.IsNotEmpty() ? DictionaryExtensions.AsReadOnly(new Dictionary<string, string>(value)) : null;
+		}
+
+
 		// Check equality.
 		public override bool Equals(object? obj)
 		{
@@ -189,6 +201,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Command == options.Command
 					&& this.ConnectionString == options.ConnectionString
 					&& this.Encoding == options.Encoding
+					&& this.EnvironmentVariables.Equals(options.EnvironmentVariables)
 					&& this.FileName == options.FileName
 					&& this.FormatJsonData == options.FormatJsonData
 					&& this.FormatXmlData == options.FormatXmlData
@@ -288,6 +301,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				return !string.IsNullOrWhiteSpace(propertyInfo.GetValue(this) as string);
 			if (type == typeof(IList<string>))
 				return (propertyInfo.GetValue(this) as IList<string>)?.Count > 0;
+			if (type == typeof(IDictionary<string, string>))
+				return (propertyInfo.GetValue(this) as IDictionary<string, string>)?.Count > 0;
 			return propertyInfo.GetValue(this) != null;
 		}
 
@@ -351,6 +366,19 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							break;
 						case nameof(Encoding):
 							options.Encoding = Encoding.GetEncoding(jsonProperty.Value.GetString().AsNonNull());
+							break;
+						case nameof(EnvironmentVariables):
+							if (jsonProperty.Value.ValueKind == JsonValueKind.Object)
+							{
+								var envVars = new Dictionary<string, string>();
+								foreach (var jsonInnerProperty in jsonProperty.Value.EnumerateObject())
+								{
+									if (jsonInnerProperty.Value.ValueKind == JsonValueKind.String)
+										envVars[jsonInnerProperty.Name] = jsonInnerProperty.Value.GetString() ?? "";
+								}
+								if (envVars.IsNotEmpty())
+									options.environmentVars = DictionaryExtensions.AsReadOnly(envVars);
+							}
 							break;
 						case nameof(FileName):
 							options.FileName = jsonProperty.Value.GetString();
@@ -494,6 +522,17 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					jsonWriter.WriteString(nameof(ConnectionString), it));
 				this.Encoding?.Let(it => 
 					jsonWriter.WriteString(nameof(Encoding), it.WebName));
+				this.environmentVars?.Let(it =>
+				{
+					if (it.IsNotEmpty())
+					{
+						jsonWriter.WritePropertyName(nameof(EnvironmentVariables));
+						jsonWriter.WriteStartObject();
+						foreach (var (k, v) in it)
+							jsonWriter.WriteString(k, v);
+						jsonWriter.WriteEndObject();
+					}
+				});
 				this.FileName?.Let(it => 
 					jsonWriter.WriteString(nameof(FileName), it));
 				if (this.FormatJsonData)

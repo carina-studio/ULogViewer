@@ -262,6 +262,11 @@
 
 	<!-- EnqueueVariableAction -->
 	<sys:String x:Key="String/EnqueueVariableAction">將 {{{0}}} 加入至佇列「{1}」</sys:String>
+	
+	<!-- EnvVarEditorDialog -->
+	<sys:String x:Key="String/EnvVarEditorDialog.Name">變數名稱</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Title">環境變數</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Value">變數值</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools">Android SDK 平台工具</sys:String>
@@ -447,6 +452,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Command">指令</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">連線字串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Encoding">文字編碼</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">環境變數</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">環境變數 '{0}' 先前已加入。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">檔案路徑</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">讀取時格式化 JSON 資料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">讀取時格式化 XML 資料</sys:String>

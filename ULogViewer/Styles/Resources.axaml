@@ -25,6 +25,10 @@
 
 	<!-- EnqueueVarEditorDialog -->
 	<sys:Double x:Key="Double/EnqueueVarEditorDialog.Width">300</sys:Double>
+	
+	<!-- EnvVarEditorDialog -->
+	<sys:Double x:Key="Double/EnvVarEditorDialog.Value.Height">200</sys:Double>
+	<sys:Double x:Key="Double/EnvVarEditorDialog.Width">400</sys:Double>
 
 	<!-- FilesMaxLogReadingCountDialog -->
 	<sys:Double x:Key="Double/FilesMaxLogReadingCountDialog.Width">550</sys:Double>
