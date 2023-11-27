@@ -1,6 +1,9 @@
 ﻿{
 	"DataSource": {
-		"Name": "StandardOutput"
+		"Name": "StandardOutput",
+		"Options": {
+			"IncludeStandardError": true
+		}
 	},
 	"Icon": "Terminal",
 	"SortKey": "Id"
