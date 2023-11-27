@@ -1,5 +1,4 @@
 ﻿using CarinaStudio.Collections;
-using System;
 using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources
@@ -28,6 +27,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
 		{
 			nameof(LogDataSourceOptions.Command),
+			nameof(LogDataSourceOptions.EnvironmentVariables),
 			nameof(LogDataSourceOptions.FormatJsonData),
 			//nameof(LogDataSourceOptions.FormatXmlData),
 			nameof(LogDataSourceOptions.IncludeStandardError),

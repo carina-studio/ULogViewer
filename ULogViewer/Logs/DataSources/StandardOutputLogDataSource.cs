@@ -35,7 +35,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// <summary>
 		/// Initialize new <see cref="StandardOutputLogDataSource"/> instance.
 		/// </summary>
-		/// <param name="provider"><see cref="StandardOutputLogDataSourceProvider"/> which creates this instane.</param>
+		/// <param name="provider"><see cref="StandardOutputLogDataSourceProvider"/> which creates this instance.</param>
 		/// <param name="options"><see cref="LogDataSourceOptions"/> to create source.</param>
 		public StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
 		{ }
@@ -67,7 +67,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Execute command and wait for exit.
-		bool ExecuteCommandAndWaitForExit(string command, string? workingDirectory, int timeoutMillis = 10000)
+		bool ExecuteCommandAndWaitForExit(string command, string? workingDirectory, IDictionary<string, string> environmentVars, int timeoutMillis = 10000)
 		{
 			var useTextShell = this.CreationOptions.UseTextShell;
 			var executablePath = (string?)null;
@@ -95,6 +95,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							it.Arguments = args ?? "";
 							it.FileName = executablePath.AsNonNull();
 						}
+						foreach (var (k, v) in environmentVars)
+							it.EnvironmentVariables[k] = v;
 						it.CreateNoWindow = true;
 						it.UseShellExecute = false;
 						it.WorkingDirectory = workingDirectory ?? "";
@@ -140,7 +142,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					foreach (var command in options.TeardownCommands)
 					{
 						await this.TaskFactory.StartNew(() =>
-							this.ExecuteCommandAndWaitForExit(command, workingDirectory));
+							this.ExecuteCommandAndWaitForExit(command, workingDirectory, options.EnvironmentVariables));
 					}
 					this.Logger.LogWarning("Complete executing teardown commands");
 					if (tempWorkingDirectory != null)
@@ -188,7 +190,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						this.Logger.LogTrace("Create temp working directory '{path}'", path);
 						Directory.CreateDirectory(path);
 						return path;
-					});
+					}, cancellationToken);
 					if (cancellationToken.IsCancellationRequested)
 					{
 						var path = this.tempWorkingDirectory;
@@ -208,7 +210,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				{
 					foreach (var command in options.SetupCommands)
 					{
-						if (!this.ExecuteCommandAndWaitForExit(command, workingDirectory))
+						if (!this.ExecuteCommandAndWaitForExit(command, workingDirectory, options.EnvironmentVariables))
 						{
 							this.Logger.LogError("Unable to execute setup command: {command}", command);
 							this.tempWorkingDirectory?.Let(it =>
@@ -231,7 +233,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						}
 					}
 					return true;
-				});
+				}, cancellationToken);
 				if (!success)
 					return (LogDataSourceState.UnclassifiedError, null);
 				this.Logger.LogWarning("Complete executing setup commands");
@@ -245,12 +247,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				startInfo.WorkingDirectory = workingDirectory;
 				if (this.arguments != null)
 					startInfo.Arguments = this.arguments;
+				foreach (var (k, v) in options.EnvironmentVariables)
+					startInfo.EnvironmentVariables[k] = v;
 				startInfo.UseShellExecute = false;
 				startInfo.RedirectStandardError = true;
 				startInfo.RedirectStandardOutput = true;
 				if (Platform.IsWindows)
 				{
-					var commandToCheck = Path.GetFileName(commandFileOnReady)?.ToLower();
+					var commandToCheck = Path.GetFileName(commandFileOnReady).ToLower();
 					if (commandToCheck == "cmd"
 						|| commandToCheck == "cmd.exe"
 						|| commandToCheck == "powershell"
@@ -365,8 +369,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					{
 						return new HashSet<string>(CarinaStudio.IO.PathEqualityComparer.Default).Also(pathSet =>
 						{
-							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User)?.Split(Path.PathSeparator)?.Let(it => pathSet.AddAll(it));
-							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine)?.Split(Path.PathSeparator)?.Let(it => pathSet.AddAll(it));
+							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User)?.Split(Path.PathSeparator).Let(pathSet.AddAll);
+							Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine)?.Split(Path.PathSeparator).Let(pathSet.AddAll);
 						}).ToArray();
 					}
 					return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator);
@@ -429,7 +433,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			this.commandFileOnReady = executablePath;
 			this.arguments = arguments;
 			return LogDataSourceState.ReadyToOpenReader;
-		});
+		}, cancellationToken);
 
 
 		// Try getting executable name from command.
