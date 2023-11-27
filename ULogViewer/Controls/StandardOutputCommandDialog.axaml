@@ -50,7 +50,6 @@
 						</asControls:DialogItemGrid>
 						<Separator Classes="Dialog_Separator_Small"/>
 						<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{DynamicResource String/Common.Options.WithDialog}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
 					</StackPanel>
 					
 				</StackPanel>
