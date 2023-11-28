@@ -60,9 +60,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	static readonly StyledProperty<bool> IsResourceOnAzureSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>("IsResourceOnAzureSupported");
 	static readonly StyledProperty<bool> IsSelectingFileNameProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingFileName));
 	static readonly StyledProperty<bool> IsSelectingWorkingDirectoryProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSelectingWorkingDirectory));
-	static readonly StyledProperty<bool> IsSetupCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsRequired));
 	static readonly StyledProperty<bool> IsSetupCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsSetupCommandsSupported));
-	static readonly StyledProperty<bool> IsTeardownCommandsRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsRequired));
 	static readonly StyledProperty<bool> IsTeardownCommandsSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTeardownCommandsSupported));
 	static readonly StyledProperty<bool> IsTemplateProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsTemplate));
 	static readonly StyledProperty<bool> IsUriSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsUriSupported));
@@ -408,9 +406,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProperty);
 	bool IsQueryStringRequired => this.GetValue(IsQueryStringRequiredProperty);
 	bool IsQueryStringSupported => this.GetValue(IsQueryStringSupportedProperty);
-	bool IsSetupCommandsRequired => this.GetValue(IsSetupCommandsRequiredProperty);
 	bool IsSetupCommandsSupported => this.GetValue(IsSetupCommandsSupportedProperty);
-	bool IsTeardownCommandsRequired => this.GetValue(IsTeardownCommandsRequiredProperty);
 	bool IsTeardownCommandsSupported => this.GetValue(IsTeardownCommandsSupportedProperty);
 	bool IsUserNameRequired => this.GetValue(IsUserNameRequiredProperty);
 	bool IsUserNameSupported => this.GetValue(IsUserNameSupportedProperty);
@@ -710,10 +706,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			return false;
 		if (this.IsPasswordRequired && string.IsNullOrWhiteSpace(this.passwordTextBox.Text))
 			return false;
-		if (this.IsSetupCommandsRequired && this.setupCommands.IsEmpty())
-			return false;
-		if (this.IsTeardownCommandsRequired && this.teardownCommands.IsEmpty())
-			return false;
 		if (this.IsUserNameRequired && string.IsNullOrWhiteSpace(this.userNameTextBox.Text))
 			return false;
 		return true;
@@ -756,9 +748,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsQueryStringRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.QueryString)));
 			this.SetValue(IsQueryStringSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.QueryString)));
 			this.SetValue(IsResourceOnAzureSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IsResourceOnAzure)));
-			this.SetValue(IsSetupCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.SetupCommands)));
 			this.SetValue(IsSetupCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.SetupCommands)));
-			this.SetValue(IsTeardownCommandsRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.TeardownCommands)));
 			this.SetValue(IsTeardownCommandsSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.TeardownCommands)));
 			this.SetValue(IsUriSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)));
 			this.SetValue(IsUserNameRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.UserName)));
@@ -792,9 +782,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsQueryStringRequiredProperty, false);
 			this.SetValue(IsQueryStringSupportedProperty, false);
 			this.SetValue(IsResourceOnAzureSupportedProperty, false);
-			this.SetValue(IsSetupCommandsRequiredProperty, false);
 			this.SetValue(IsSetupCommandsSupportedProperty, false);
-			this.SetValue(IsTeardownCommandsRequiredProperty, false);
 			this.SetValue(IsTeardownCommandsSupportedProperty, false);
 			this.SetValue(IsUriSupportedProperty, false);
 			this.SetValue(IsUserNameRequiredProperty, false);

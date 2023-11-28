@@ -42,6 +42,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 				: name switch
 				{
 					nameof(LogDataSourceOptions.Encoding)
+						or nameof(LogDataSourceOptions.EnvironmentVariables)
 						or nameof(LogDataSourceOptions.SetupCommands)
 						or nameof(LogDataSourceOptions.TeardownCommands) => false,
 					_ => true,
