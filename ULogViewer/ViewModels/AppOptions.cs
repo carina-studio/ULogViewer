@@ -3,6 +3,7 @@ using Avalonia.Media;
 using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -251,6 +252,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	/// Get all <see cref="LogProfile"/>s including <see cref="Logs.Profiles.LogProfileManager.EmptyProfile"/>.
 	/// </summary>
 	public IList<LogProfile> LogProfiles { get; }
+	
+	
+	/// <summary>
+	/// Type of log separators.
+	/// </summary>
+	public LogSeparatorType LogSeparators
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.LogSeparators);
+		set => this.Settings.SetValue<LogSeparatorType>(SettingKeys.LogSeparators, value);
+	}
 
 
 	/// <summary>
@@ -351,6 +362,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 		}
 		else if (key == SettingKeys.LogFontSize)
 			this.OnPropertyChanged(nameof(LogFontSize));
+		else if (key == SettingKeys.LogSeparators)
+			this.OnPropertyChanged(nameof(LogSeparators));
 		else if (key == SettingKeys.MaxContinuousLogCount)
 			this.OnPropertyChanged(nameof(MaxContinuousLogCount));
 #pragma warning disable CS0612
@@ -408,8 +421,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(ShowHelpButtonOnLogTextFilter));
 		else if (key == SettingKeys.ShowLogChartPanelIfDefined)
 			this.OnPropertyChanged(nameof(ShowLogChartPanelIfDefined));
-		else if (key == SettingKeys.ShowLogPropertySeparators)
-			this.OnPropertyChanged(nameof(ShowLogPropertySeparators));
 		else if (key == AppSuite.SettingKeys.ShowProcessInfo)
 			this.OnPropertyChanged(nameof(ShowProcessInfo));
 		else if (key == SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs)
@@ -634,16 +645,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined);
 		set => this.Settings.SetValue<bool>(SettingKeys.ShowLogChartPanelIfDefined, value);
-	}
-	
-	
-	/// <summary>
-	/// Show separator between log properties or not.
-	/// </summary>
-	public bool ShowLogPropertySeparators
-	{
-		get => this.Settings.GetValueOrDefault(SettingKeys.ShowLogPropertySeparators);
-		set => this.Settings.SetValue<bool>(SettingKeys.ShowLogPropertySeparators, value);
 	}
 
 

@@ -243,10 +243,10 @@
 								</Border>
 								<Separator Classes="Dialog_Item_Separator"/>
 								
-								<!-- Show log property separators -->
+								<!-- Log separators -->
 								<asControls:DialogItemGrid>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.ShowLogPropertySeparators}"/>
-									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="{Binding ShowLogPropertySeparators, Mode=TwoWay}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.LogSeparators}"/>
+									<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type appControls:LogSeparatorType}" Grid.Column="1" SelectedItem="{Binding LogSeparators, Mode=TwoWay}"/>
 								</asControls:DialogItemGrid>
 								
 								<!-- Disable ANGLE -->

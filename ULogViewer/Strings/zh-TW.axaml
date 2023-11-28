@@ -27,6 +27,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogFont">日誌字型及大小</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont.Sample">日誌文字 ABC abc 123</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">日誌操作</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.LogSeparators">日誌分隔線</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">連續讀取時的最大日誌個數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">每筆日誌最大顯示行數</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">記憶體使用策略</sys:String>
@@ -51,7 +52,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字篩選欄位中顯示「說明」按鈕</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">自動開啟圖表面板</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">當日誌類型中有定義圖表時開啟面板。</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ShowLogPropertySeparators">在日誌屬性間顯示分隔線</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在狀態列上顯示 CPU 及記憶體使用量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs">標記日誌後切換至「已標記日誌」面板</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">條件改變至開始篩選的延遲時間 (毫秒)</sys:String>
@@ -848,6 +848,12 @@ return False</sys:String>
 	<!-- LogReadingWindow -->
 	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">資料來源末端</sys:String>
 	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">資料來源前端</sys:String>
+	
+	<!-- LogSeparatorType -->
+	<sys:String x:Key="String/LogSeparatorType.Horizontal">水平</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.HorizontalAndVertical">水平及垂直</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.None">無</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.Vertical">垂直</sys:String>
 
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">日誌起始時距</sys:String>

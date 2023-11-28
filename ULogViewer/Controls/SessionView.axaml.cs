@@ -250,6 +250,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel logListBoxContainer;
 		readonly ContextMenu logMarkingMenu;
 		readonly LogProfileSelectionContextMenu logProfileSelectionMenu;
+		IBrush? logPropertyViewBorderPointerOverBrush;
 		IDisposable? logsBindingToken;
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
@@ -1794,14 +1795,31 @@ namespace CarinaStudio.ULogViewer.Controls
 			var hasColorIndicator = (profile.ColorIndicator != LogColorIndicator.None);
 			if (hasColorIndicator)
 				itemStartingContentWidth += colorIndicatorWidth + colorIndicatorBorderThickness.Left + colorIndicatorBorderThickness.Right;
-			itemPadding = new Thickness(itemPadding.Left + itemStartingContentWidth, itemPadding.Top, itemPadding.Right, itemPadding.Bottom);
 			var levelForegroundBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Level.Foreground");
 			var selectionIndicatorBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.SelectionIndicator.Background");
 			var iconBrush = app.FindResourceOrDefault<IBrush>("Brush/Icon");
-			var itemBorderBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver");
-			var showSeparators = app.Settings.GetValueOrDefault(SettingKeys.ShowLogPropertySeparators);
-			var separatorBrush = showSeparators ? app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Separator") : null;
+			var logSeparators = app.Settings.GetValueOrDefault(SettingKeys.LogSeparators);
+			var hasHorizontalSeparator = logSeparators switch
+			{
+				LogSeparatorType.Horizontal
+					or LogSeparatorType.HorizontalAndVertical => true,
+				_ => false,
+			};
+			var hasVerticalSeparator = logSeparators switch
+			{
+				LogSeparatorType.HorizontalAndVertical
+					or LogSeparatorType.Vertical => true,
+				_ => false,
+			};
+			var separatorBrush = logSeparators != LogSeparatorType.None ? app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Separator") : null;
 			var trimLogPropertyText = app.Configuration.GetValueOrDefault(ConfigurationKeys.TrimLogPropertyViewText);
+			
+			// adjust margins and paddings
+			itemPadding = new(
+				itemPadding.Left + itemStartingContentWidth, 
+				itemPadding.Top, 
+				itemPadding.Right, 
+				hasHorizontalSeparator ? itemPadding.Bottom + 1 : itemPadding.Bottom);
 			
 			// create template
 			return new FuncDataTemplate(typeof(DisplayableLog), (_, _) =>
@@ -1978,22 +1996,25 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.BorderThickness = itemBorderThickness;
 						it.Child = propertyView;
 						it.CornerRadius = itemCornerRadius;
-						it.Margin = new(-itemBorderThickness.Left / 2, -itemBorderThickness.Top / 2, -itemBorderThickness.Right / 2, -itemBorderThickness.Bottom / 2);
 						it.Tag = logProperty;
 						it.VerticalAlignment = VerticalAlignment.Stretch;
-						it.GetObservable(IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
+						if (logSeparators != LogSeparatorType.HorizontalAndVertical)
 						{
-							if (isPointerOver)
+							it.GetObservable(IsPointerOverProperty).Subscribe(new Observer<bool>(isPointerOver =>
 							{
-								it.BorderBrush = itemBorderBrush;
-								//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
-							}
-							else
-							{
-								it.BorderBrush = null;
-								//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
-							}
-						}));
+								if (isPointerOver)
+								{
+									this.logPropertyViewBorderPointerOverBrush ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver");
+									it.BorderBrush = this.logPropertyViewBorderPointerOverBrush;
+									//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
+								}
+								else
+								{
+									it.BorderBrush = null;
+									//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+								}
+							}));
+						}
 						it.PointerPressed += (_, _) =>
 						{
 							var selectionCount = this.logListBox.SelectedItems?.Count ?? 0;
@@ -2023,11 +2044,6 @@ namespace CarinaStudio.ULogViewer.Controls
 									Path = nameof(ListBoxItem.IsSelected), 
 									RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
 								});
-								binding.Bindings.Add(new Binding
-								{ 
-									Path = nameof(IsPointerOver), 
-									RelativeSource = new(RelativeSourceMode.FindAncestor) { AncestorType = typeof(ListBoxItem) } 
-								});
 							}));
 							break;
 						}
@@ -2035,8 +2051,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					Grid.SetColumn(propertyView, logPropertyIndex * 2);
 					itemGrid.Children.Add(propertyView);
 
-					// create separator
-					if (showSeparators && logPropertyIndex > 0)
+					// create vertical separator
+					if (hasVerticalSeparator && logPropertyIndex > 0)
 					{
 						new Border().Let(separator =>
 						{
@@ -2053,7 +2069,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				// color indicator
 				if (hasColorIndicator)
 				{
-					new Border().Also(it =>
+					itemPanel.Children.Add(new Border().Also(it =>
 					{
 						it.Bind(Border.BackgroundProperty, new Binding { Path = nameof(DisplayableLog.ColorIndicatorBrush) });
 						it.BorderBrush = colorIndicatorBorderBrush;
@@ -2063,8 +2079,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Width = colorIndicatorWidth;
 						if (Platform.IsMacOS)
 							app.EnsureClosingToolTipIfWindowIsInactive(it);
-						itemPanel.Children.Add(it);
-					});
+					}));
 				}
 				
 				// mark indicator
@@ -2107,7 +2122,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					}));
 					panel.Cursor = new Cursor(StandardCursorType.Hand);
 					panel.HorizontalAlignment = HorizontalAlignment.Left;
-					panel.Margin = new(hasColorIndicator ? colorIndicatorWidth : 0, 0, 0, 0);
+					panel.Margin = new(
+                        hasColorIndicator ? colorIndicatorWidth : 0, 
+                        0, 
+                        0, 
+                        hasHorizontalSeparator ? 1 : 0);
 					panel.PointerEntered += (_, _) => emptyMarker.IsVisible = true;
 					panel.PointerExited += (_, _) => emptyMarker.IsVisible = isMenuOpen;
 					panel.PointerPressed += (_, e) =>
@@ -2172,7 +2191,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					background.HorizontalAlignment = HorizontalAlignment.Left;
 					background.Bind(IsVisibleProperty, new Binding { Path = nameof(DisplayableLog.HasAnalysisResult) });
 					background.Margin = analysisResultIndicatorMargin.Let(it =>
-						new Thickness(it.Left + (hasColorIndicator ? colorIndicatorWidth : 0) + markIndicatorWidth, it.Top, it.Right, it.Bottom));
+						new Thickness(
+							it.Left + (hasColorIndicator ? colorIndicatorWidth : 0) + markIndicatorWidth, 
+							it.Top, 
+							it.Right, 
+							(hasHorizontalSeparator ? 1 : 0) + it.Bottom));
 					background.PointerPressed += (_, e) =>
 						isLeftPointerDown = e.GetCurrentPoint(background).Properties.IsLeftButtonPressed;
 					background.AddHandler(PointerReleasedEvent, (_, _) =>
@@ -2199,6 +2222,22 @@ namespace CarinaStudio.ULogViewer.Controls
 					image.VerticalAlignment = VerticalAlignment.Center;
 					image.Width = analysisResultIndicatorSize;
 				}));
+				
+				// horizontal separator
+				switch (logSeparators)
+				{
+					case LogSeparatorType.Horizontal:
+					case LogSeparatorType.HorizontalAndVertical:
+						itemPanel.Children.Add(new Border().Also(separator =>
+						{
+							separator.BorderBrush = separatorBrush;
+							separator.BorderThickness = new(0, 0, 0, 1);
+							separator.HorizontalAlignment = HorizontalAlignment.Stretch;
+							separator.IsHitTestVisible = false;
+							separator.VerticalAlignment = VerticalAlignment.Bottom;
+						}));
+						break;
+				}
 
 				// update according to selection of list box item
 				var isSelectedObserverToken = EmptyDisposable.Default;
@@ -2954,6 +2993,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.AddHandler(DragDrop.DropEvent, this.OnDrop);
 			
 			// invalidate resources
+			this.logPropertyViewBorderPointerOverBrush = null;
 			this.selectableValueLogItemBackgroundBrush = null;
 
 			// [Workaround] Prevent text not showing in TextBox
@@ -4400,10 +4440,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
 				this.SetValue(IsScriptRunningEnabledProperty, (bool)e.Value);
+			else if (e.Key == SettingKeys.LogSeparators)
+				this.RecreateLogItemTemplate();
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 				this.OnShowHelpButtonOnLogTextFilterSettingChanged((bool)e.Value);
-			else if (e.Key == SettingKeys.ShowLogPropertySeparators)
-				this.RecreateLogItemTemplate();
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)
 				this.SetValue(IsProcessInfoVisibleProperty, (bool)e.Value);
 			else if (e.Key == SettingKeys.UpdateLogFilterDelay)

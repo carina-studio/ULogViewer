@@ -1,5 +1,6 @@
 ﻿using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Configuration;
+using CarinaStudio.ULogViewer.Controls;
 using System;
 
 namespace CarinaStudio.ULogViewer;
@@ -56,6 +57,10 @@ static class SettingKeys
 	/// Font size of log.
 	/// </summary>
 	public static readonly SettingKey<int> LogFontSize = new(nameof(LogFontSize), Platform.IsMacOS ? 13 : 14);
+	/// <summary>
+	/// Type of log separators.
+	/// </summary>
+	public static readonly SettingKey<LogSeparatorType> LogSeparators = new(nameof(LogSeparators), LogSeparatorType.None);
 	/// <summary>
 	/// Maximum number of logs for continuous logs reading.
 	/// </summary>
@@ -133,10 +138,6 @@ static class SettingKeys
 	/// Show panel of log chart if log chart is defined.
 	/// </summary>
 	public static readonly SettingKey<bool> ShowLogChartPanelIfDefined = new(nameof(ShowLogChartPanelIfDefined), true);
-	/// <summary>
-	/// Show separator between log properties or not.
-	/// </summary>
-	public static readonly SettingKey<bool> ShowLogPropertySeparators = new(nameof(ShowLogPropertySeparators), false);
 	/// <summary>
 	/// Switch to panel of marked logs automatically after marking logs.
 	/// </summary>

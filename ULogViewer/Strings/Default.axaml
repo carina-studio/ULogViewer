@@ -24,6 +24,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.LogFont">Log font and size</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont.Sample">Sample Log Text 123</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">Log Operations</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.LogSeparators">Separators of logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum number of lines to display for each log</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">Policy of memory usage</sys:String>
@@ -51,7 +52,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">Show 'Help' button on input field of text filter</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">Show chart panel automatically</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">Show the panel if chart has been defined in log profile.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ShowLogPropertySeparators">Show separator between log properties</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs">Switch to 'Marked logs' panel after marking log(s)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
@@ -889,6 +889,12 @@ return False</sys:String>
 	<!-- LogReadingWindow -->
 	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">End of data source</sys:String>
 	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">Start of data source</sys:String>
+	
+	<!-- LogSeparatorType -->
+	<sys:String x:Key="String/LogSeparatorType.Horizontal">Horizontal</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.HorizontalAndVertical">Horizontal and vertical</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.None">None</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.Vertical">Vertical</sys:String>
 
 	<!-- LogSortKey -->
 	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">Beginning time span of log</sys:String>

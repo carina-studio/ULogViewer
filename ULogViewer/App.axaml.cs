@@ -139,6 +139,7 @@ namespace CarinaStudio.ULogViewer
 		static readonly SettingKey<string> LegacyCultureSettingKey = new("Culture", "");
 		static readonly SettingKey<string> LegacyThemeModeSettingKey = new("ThemeMode", "");
 		static readonly SettingKey<bool> LegacySaveMemoryAggressivelySettingKey = new("SaveMemoryAggressively", false);
+		static readonly SettingKey<bool> LegacyShowLogPropertySeparators = new("ShowLogPropertySeparators", false);
 
 
 		// Fields.
@@ -694,6 +695,13 @@ namespace CarinaStudio.ULogViewer
 			// determine whether tutorials are needed to be shown or not
 			if (oldVersion == 4)
 				this.PersistentState.SetValue<bool>(PredefinedLogTextFilterEditorDialog.IsGroupNameTutorialShownKey, false);
+			
+			// log property separators
+			if (oldVersion == 5)
+			{
+				if (settings.GetValueOrDefault(LegacyShowLogPropertySeparators))
+					settings.SetValue<LogSeparatorType>(SettingKeys.LogSeparators, LogSeparatorType.Vertical);
+			}
         }
         
         
@@ -734,7 +742,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Version of settings.
-		protected override int SettingsVersion => 5;
+		protected override int SettingsVersion => 6;
 
 
 		// Setup internal test cases.
