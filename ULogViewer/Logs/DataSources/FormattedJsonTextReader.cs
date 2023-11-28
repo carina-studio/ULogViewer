@@ -23,12 +23,15 @@ class FormattedJsonTextReader : TextReader
 
 
     /// <summary>
-    /// Initialize new <see cref=""/> instance.
+    /// Initialize new <see cref="FormattedJsonTextReader"/> instance.
     /// </summary>
     /// <param name="reader">Underlying text reader.</param>
     public FormattedJsonTextReader(TextReader reader)
     {
-        this.jsonReader = new JsonTextReader(reader);
+        this.jsonReader = new JsonTextReader(reader)
+        {
+            SupportMultipleContent = true
+        };
     }
 
 
@@ -69,7 +72,7 @@ class FormattedJsonTextReader : TextReader
     }
 
 
-    /// <inheritdoc/>
+    // Read next token.
     void ReadToken(StringBuilder buffer, bool indentation = true)
     {
         var tokenType = this.nextToken == JsonToken.None
@@ -101,7 +104,7 @@ class FormattedJsonTextReader : TextReader
                 break;
             case JsonToken.EndArray:
                 buffer.Append(']');
-                if (jsonReader.Read())
+                if (Global.RunOrDefault(jsonReader.Read))
                 {
                     this.nextToken = this.jsonReader.TokenType;
                     this.nextValue = this.jsonReader.Value;
@@ -110,17 +113,18 @@ class FormattedJsonTextReader : TextReader
                     {
                         case JsonToken.StartArray:
                         case JsonToken.StartObject:
+                            if (depth > 0)
+                                buffer.Append(',');
+                            break;
                         case JsonToken.PropertyName:
                             buffer.Append(',');
-                            break;
-                        default:
                             break;
                     }
                 }
                 break;
             case JsonToken.EndObject:
                 buffer.Append('}');
-                if (jsonReader.Read())
+                if (Global.RunOrDefault(jsonReader.Read))
                 {
                     this.nextToken = this.jsonReader.TokenType;
                     this.nextValue = this.jsonReader.Value;
@@ -129,10 +133,11 @@ class FormattedJsonTextReader : TextReader
                     {
                         case JsonToken.StartArray:
                         case JsonToken.StartObject:
+                            if (depth > 0)
+                                buffer.Append(',');
+                            break;
                         case JsonToken.PropertyName:
                             buffer.Append(',');
-                            break;
-                        default:
                             break;
                     }
                 }
@@ -141,11 +146,11 @@ class FormattedJsonTextReader : TextReader
                 buffer.Append('\"');
                 buffer.Append(value);
                 buffer.Append("\": ");
-                if (this.jsonReader.Read())
+                if (Global.RunOrDefault(jsonReader.Read))
                 {
                     tokenType = this.jsonReader.TokenType;
                     this.ReadToken(buffer, false);
-                    if (jsonReader.Read())
+                    if (Global.RunOrDefault(jsonReader.Read))
                     {
                         this.nextToken = this.jsonReader.TokenType;
                         this.nextValue = this.jsonReader.Value;
