@@ -44,14 +44,16 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
         var key = value switch
         {
             LogChartType.ValueAreas
-                or LogChartType.ValueAreasWithDataPoints
-                or LogChartType.ValueStackedAreas
-                or LogChartType.ValueStackedAreasWithDataPoints => (this.outline ? "Image/Chart.Areas.Outline" : "Image/Chart.Areas")
+                or LogChartType.ValueAreasWithDataPoints => "Image/Chart.Areas"
+                                                            + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
+            LogChartType.ValueStackedAreas
+                or LogChartType.ValueStackedAreasWithDataPoints => "Image/Chart.StackedAreas"
                                                                    + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
+            LogChartType.ValueStackedBars => "Image/Chart.StackedBars"
+                                              + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueStatisticBars
-                or LogChartType.ValueBars
-                or LogChartType.ValueStackedBars => (this.outline ? "Image/Chart.Bars.Outline" : "Image/Chart.Bars")
-                                                    + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
+                or LogChartType.ValueBars => "Image/Chart.Bars"
+                                             + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
             LogChartType.ValueCurves
                 or LogChartType.ValueCurvesWithDataPoints => "Image/Chart.Curves"
                                                             + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
@@ -61,8 +63,8 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
             LogChartType.None => "Image/LogProfile.Empty",
             _ => null,
         };
-        if (key is not null)
-            return this.app.FindResourceOrDefault<IImage?>(key);
-        return null;
+        return key is not null 
+            ? this.app.FindResourceOrDefault<IImage?>(key) 
+            : null;
     }
 }
