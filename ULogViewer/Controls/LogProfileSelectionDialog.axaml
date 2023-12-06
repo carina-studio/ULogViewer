@@ -241,8 +241,8 @@
 					<!-- Recently used profiles -->
 					<ToggleButton Name="recentlyUsedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Clock.Outline}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Clock.Outline.Light}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History}"/>
+							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History.Light}"/>
 						</Panel>
 					</ToggleButton>
 					

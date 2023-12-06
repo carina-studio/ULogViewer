@@ -1445,7 +1445,7 @@
 							</StackPanel>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu.Outline}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu}"/>
 								</DrawingImage>
 							</Image>
 							<Panel VerticalAlignment="Center">
