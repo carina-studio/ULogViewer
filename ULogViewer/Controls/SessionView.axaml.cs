@@ -169,6 +169,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
+		static readonly StyledProperty<double> LogItemHeightProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogItemHeight));
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
@@ -290,6 +291,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel toolBarOtherLogFilterItemsPanel;
 		readonly ScheduledAction updateLatestDisplayedLogRangeAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
+		readonly ScheduledAction updateLogItemHeightAction;
 		readonly ScheduledAction updateStatusBarStateAction;
 		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
@@ -1033,7 +1035,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (logScrollViewer != null)
 					this.logHeaderContainer.Margin = new Thickness(-logScrollViewer.Offset.X, 0, Math.Min(0, logScrollViewer.Offset.X + logScrollViewer.Viewport.Width - logScrollViewer.Extent.Width), 0);
 			});
-			this.updateStatusBarStateAction = new ScheduledAction(() =>
+			this.updateLogItemHeightAction = new(() =>
+			{
+				var fontSizeDiff = this.Settings.GetValueOrDefault(SettingKeys.LogFontSize) - SettingKeys.LogFontSize.DefaultValue;
+				this.SetValue(LogItemHeightProperty, this.FindResourceOrDefault<double>("Double/SessionView.LogListBox.Item.Height") + fontSizeDiff);
+			});
+			this.updateStatusBarStateAction = new(() =>
 			{
 				this.SetValue(StatusBarStateProperty, Global.Run(() =>
 				{
@@ -2859,6 +2866,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Get height of item of log list box.
+		/// </summary>
+		public double LogItemHeight => this.GetValue(LogItemHeightProperty);
+
+
+		/// <summary>
 		/// Log out from Azure.
 		/// </summary>
 		public void LogoutFromAzure()
@@ -2995,6 +3008,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// invalidate resources
 			this.logPropertyViewBorderPointerOverBrush = null;
 			this.selectableValueLogItemBackgroundBrush = null;
+			
+			// setup height og log item
+			this.updateLogItemHeightAction.Execute();
 
 			// [Workaround] Prevent text not showing in TextBox
 			if (!string.IsNullOrEmpty(this.logTextFilterTextBox.Text))
@@ -4440,6 +4456,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.Key == AppSuite.SettingKeys.EnableRunningScript)
 				this.SetValue(IsScriptRunningEnabledProperty, (bool)e.Value);
+			else if (e.Key == SettingKeys.LogFontSize)
+				this.updateLogItemHeightAction.Schedule();
 			else if (e.Key == SettingKeys.LogSeparators)
 				this.RecreateLogItemTemplate();
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)

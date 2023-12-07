@@ -5,7 +5,6 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 #endif
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;

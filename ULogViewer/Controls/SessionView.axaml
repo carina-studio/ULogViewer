@@ -1085,7 +1085,7 @@
 			                    SelectionMode="Multiple">
 				<asControls:ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
-						<appControls:SimpleVirtualizingStackPanel ItemHeight="{DynamicResource Double/SessionView.LogListBox.Item.Height}"/>
+						<appControls:SimpleVirtualizingStackPanel ItemHeight="{Binding #root.LogItemHeight}"/>
 					</ItemsPanelTemplate>
 				</asControls:ListBox.ItemsPanel>
 				<asControls:ListBox.Resources>
