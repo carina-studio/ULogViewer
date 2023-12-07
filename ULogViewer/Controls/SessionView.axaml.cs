@@ -5652,6 +5652,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			switch (command)
 			{
+				case "ExportImageResource":
+					if (this.attachedWindow is not null)
+						_ = Utility.ExportImage(this.attachedWindow);
+					break;
 				case "RestartApp":
 					(IAppSuiteApplication.CurrentOrNull as App)?.Restart();
 					break;

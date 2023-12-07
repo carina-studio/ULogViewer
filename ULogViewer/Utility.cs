@@ -112,7 +112,7 @@ static partial class Utility
         {
             options.FileTypeChoices = new[]
             {
-                new FilePickerFileType(App.Current.GetStringNonNull("FileFormat.Png")).Also(it =>
+                new FilePickerFileType(App.Current.GetStringNonNull("FileFormat.Png", "PNG")).Also(it =>
                 {
                     it.Patterns = new[] { "*.png" };
                 })
@@ -140,17 +140,12 @@ static partial class Utility
         try
         {
             // convert to bitmap
-            var bitmap = new RenderTargetBitmap(outputSize, new(96, 96)).Also(bitmap =>
+            using var bitmap = new RenderTargetBitmap(outputSize, new(96, 96)).Also(bitmap =>
             {
-                /*
-                bitmap.CreateDrawingContext(new ImmediateRenderer(new Panel())).Use(idc =>
-                {
-                    using var dc = new DrawingContext(idc, false);
-                    var srcSize = image.Size;
-                    var srcSideLength = Math.Max(srcSize.Width, srcSize.Height);
-                    image.Draw(dc, new((srcSize.Width - srcSideLength) / 2, (srcSize.Height - srcSideLength) / 2, srcSideLength, srcSideLength), new(0, 0, outputSize.Width, outputSize.Height), BitmapInterpolationMode.HighQuality);
-                });
-                */
+                using var dc = bitmap.CreateDrawingContext();
+                var srcSize = image.Size;
+                var srcSideLength = Math.Max(srcSize.Width, srcSize.Height);
+                image.Draw(dc, new((srcSize.Width - srcSideLength) / 2, (srcSize.Height - srcSideLength) / 2, srcSideLength, srcSideLength), new(0, 0, outputSize.Width, outputSize.Height));
             });
 
             // save to file
