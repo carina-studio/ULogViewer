@@ -3977,7 +3977,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
 								{
-									if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
+									if (session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute())
 										this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
 								}
 								e.Handled = true;
@@ -3988,12 +3988,12 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								if ((e.KeyModifiers & KeyModifiers.Shift) == 0)
 								{
-									if (session.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute())
+									if (session.LogFiltering.UsePreviousTextFilterInHistoryCommand.TryExecute())
 										this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
 								}
 								else if (Platform.IsMacOS)
 								{
-									if (session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute())
+									if (session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute())
 										this.SynchronizationContext.Post(this.logTextFilterTextBox.SelectAll);
 								}
 								e.Handled = true;
@@ -4032,7 +4032,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						case Key.Down:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
-								session.LogFiltering.UseNextTextFilterOhHistoryCommand.TryExecute();
+								session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute();
 								e.Handled = true;
 							}
 							else if (e.Source is not TextBox)
@@ -4060,7 +4060,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						case Key.Up:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
-								session.LogFiltering.UsePreviousTextFilterOhHistoryCommand.TryExecute();
+								session.LogFiltering.UsePreviousTextFilterInHistoryCommand.TryExecute();
 								e.Handled = true;
 							}
 							else if (e.Source is not TextBox)

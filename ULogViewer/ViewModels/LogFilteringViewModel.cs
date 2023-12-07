@@ -108,7 +108,7 @@ class LogFilteringViewModel : SessionComponent
     readonly MutableObservableBoolean canUsePreviousTextFilterOfHistory = new();
     readonly ScheduledAction commitFiltersAction;
     readonly IDisposable displayLogPropertiesObserverToken;
-    int indexOfTextFilterOnHistory = -1;
+    int indexOfTextFilterInHistory = -1;
     bool isMaxTextFilterHistoryHit;
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new();
@@ -136,8 +136,8 @@ class LogFilteringViewModel : SessionComponent
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
         this.SetFilterCombinationModeCommand = new Command<FilterCombinationMode>(mode => this.FiltersCombinationMode = mode);
-        this.UseNextTextFilterOhHistoryCommand = new Command(this.UseNextTextFilterOhHistory, this.canUseNextTextFilterOfHistory);
-        this.UsePreviousTextFilterOhHistoryCommand = new Command(this.UsePreviousTextFilterOhHistory, this.canUsePreviousTextFilterOfHistory);
+        this.UseNextTextFilterInHistoryCommand = new Command(this.UseNextTextFilterInHistory, this.canUseNextTextFilterOfHistory);
+        this.UsePreviousTextFilterInHistoryCommand = new Command(this.UsePreviousTextFilterInHistory, this.canUsePreviousTextFilterOfHistory);
 
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
@@ -881,7 +881,7 @@ class LogFilteringViewModel : SessionComponent
             && jsonValue.ValueKind == JsonValueKind.Number
             && jsonValue.TryGetInt32(out var index))
         {
-            this.indexOfTextFilterOnHistory = index;
+            this.indexOfTextFilterInHistory = index;
         }
         this.UpdateCanUseTextFilterOnHistory();
     }
@@ -926,8 +926,8 @@ class LogFilteringViewModel : SessionComponent
         }
         if (this.isMaxTextFilterHistoryHit)
             writer.WriteBoolean("LogFiltering.IsMaxTextFilterHistoryHit", true);
-        if (this.indexOfTextFilterOnHistory >= 0)
-            writer.WriteNumber("LogFiltering.IndexOfTextFilterOnHistory", this.indexOfTextFilterOnHistory);
+        if (this.indexOfTextFilterInHistory >= 0)
+            writer.WriteNumber("LogFiltering.IndexOfTextFilterOnHistory", this.indexOfTextFilterInHistory);
     }
 
 
@@ -993,8 +993,8 @@ class LogFilteringViewModel : SessionComponent
             var pattern = value?.ToString();
             if (prevPattern != pattern)
             {
-                if (this.indexOfTextFilterOnHistory > 0)
-                    this.textFilterHistory.RemoveRange(0, this.indexOfTextFilterOnHistory);
+                if (this.indexOfTextFilterInHistory > 0)
+                    this.textFilterHistory.RemoveRange(0, this.indexOfTextFilterInHistory);
                 if (this.textFilterHistory.IsEmpty() || this.textFilterHistory[0] != pattern)
                 {
                     var historySize = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterHistoryCount));
@@ -1005,7 +1005,7 @@ class LogFilteringViewModel : SessionComponent
                     }
                     this.textFilterHistory.Insert(0, pattern ?? "");
                 }
-                this.indexOfTextFilterOnHistory = 0;
+                this.indexOfTextFilterInHistory = 0;
                 this.UpdateCanUseTextFilterOnHistory();
             }
         }
@@ -1047,29 +1047,29 @@ class LogFilteringViewModel : SessionComponent
         {
             this.canUseNextTextFilterOfHistory.Update(false);
             this.canUsePreviousTextFilterOfHistory.Update(false);
-            this.indexOfTextFilterOnHistory = -1;
+            this.indexOfTextFilterInHistory = -1;
             return;
         }
-        this.canUseNextTextFilterOfHistory.Update(this.indexOfTextFilterOnHistory > 0);
+        this.canUseNextTextFilterOfHistory.Update(this.indexOfTextFilterInHistory > 0);
         if (this.isMaxTextFilterHistoryHit)
-            this.canUsePreviousTextFilterOfHistory.Update(this.indexOfTextFilterOnHistory < this.textFilterHistory.Count - 1);
+            this.canUsePreviousTextFilterOfHistory.Update(this.indexOfTextFilterInHistory < this.textFilterHistory.Count - 1);
         else
-            this.canUsePreviousTextFilterOfHistory.Update(this.indexOfTextFilterOnHistory < this.textFilterHistory.Count);
+            this.canUsePreviousTextFilterOfHistory.Update(this.indexOfTextFilterInHistory < this.textFilterHistory.Count);
     }
 
 
-    // Use next text filter of history.
-    void UseNextTextFilterOhHistory()
+    // Use next text filter in history.
+    void UseNextTextFilterInHistory()
     {
-        --this.indexOfTextFilterOnHistory;
-        if (this.indexOfTextFilterOnHistory < 0)
+        --this.indexOfTextFilterInHistory;
+        if (this.indexOfTextFilterInHistory < 0)
         {
-            this.indexOfTextFilterOnHistory = 0;
+            this.indexOfTextFilterInHistory = 0;
             this.UpdateCanUseTextFilterOnHistory();
             return;
         }
         this.UpdateCanUseTextFilterOnHistory();
-        var pattern = this.textFilterHistory[this.indexOfTextFilterOnHistory];
+        var pattern = this.textFilterHistory[this.indexOfTextFilterInHistory];
         if (!string.IsNullOrEmpty(pattern))
         {
             var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
@@ -1081,29 +1081,29 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
-    /// Command to use next text filter of history.
+    /// Command to use next text filter in history.
     /// </summary>
-    public ICommand UseNextTextFilterOhHistoryCommand { get; }
+    public ICommand UseNextTextFilterInHistoryCommand { get; }
 
 
-    // Use previous text filter of history.
-    void UsePreviousTextFilterOhHistory()
+    // Use previous text filter in history.
+    void UsePreviousTextFilterInHistory()
     {
-        ++this.indexOfTextFilterOnHistory;
-        if (this.indexOfTextFilterOnHistory >= this.textFilterHistory.Count)
+        ++this.indexOfTextFilterInHistory;
+        if (this.indexOfTextFilterInHistory >= this.textFilterHistory.Count)
         {
             if (this.isMaxTextFilterHistoryHit)
-                --this.indexOfTextFilterOnHistory;
+                --this.indexOfTextFilterInHistory;
             else
             {
-                this.indexOfTextFilterOnHistory = this.textFilterHistory.Count;
+                this.indexOfTextFilterInHistory = this.textFilterHistory.Count;
                 this.SetValue(TextFilterProperty, null);
             }
             this.UpdateCanUseTextFilterOnHistory();
             return;
         }
         this.UpdateCanUseTextFilterOnHistory();
-        var pattern = this.textFilterHistory[this.indexOfTextFilterOnHistory];
+        var pattern = this.textFilterHistory[this.indexOfTextFilterInHistory];
         if (!string.IsNullOrEmpty(pattern))
         {
             var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
@@ -1115,7 +1115,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
-    /// Command to use previous text filter of history.
+    /// Command to use previous text filter in history.
     /// </summary>
-    public ICommand UsePreviousTextFilterOhHistoryCommand { get; }
+    public ICommand UsePreviousTextFilterInHistoryCommand { get; }
 }
