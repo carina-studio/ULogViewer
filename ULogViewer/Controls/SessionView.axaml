@@ -260,7 +260,7 @@
 		<ContextMenu x:Key="logFilterCombinationModeMenu" Placement="Bottom">
 			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Auto}" Header="{DynamicResource String/FilterCombinationMode.Auto}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/FilterCombinationMode.Auto.Outline}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/FilterCombinationMode.Auto}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
