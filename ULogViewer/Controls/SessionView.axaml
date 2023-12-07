@@ -1620,13 +1620,7 @@
 					                    IsVisible="{Binding HasMarkedLogs}" 
 					                    ItemsSource="{Binding MarkedLogs}" 
 					                    SelectionChanged="OnMarkedLogListBoxSelectionChanged" 
-					                    SelectionMode="Single">
-						<asControls:ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<appControls:SimpleVirtualizingStackPanel ItemHeight="{DynamicResource Double/SessionView.MarkedLogListBox.Item.Height}"/>
-							</ItemsPanelTemplate>
-						</asControls:ListBox.ItemsPanel>
-					</asControls:ListBox>
+					                    SelectionMode="Single"/>
 					<Border Background="{x:Static Brushes.Transparent}" 
 					        Grid.Row="1"
 					        IsVisible="{Binding !#markedLogListBox.ItemCount}">
@@ -1649,11 +1643,6 @@
 					                    Focusable="False" 
 					                    Grid.Row="1" 
 					                    ItemsSource="{Binding LogCategorizing.TimestampCategories}">
-						<asControls:ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<appControls:SimpleVirtualizingStackPanel ItemHeight="{DynamicResource Double/SessionView.MarkedLogListBox.Item.Height}"/>
-							</ItemsPanelTemplate>
-						</asControls:ListBox.ItemsPanel>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate x:CompileBindings="True" x:DataType="appCategorizing:DisplayableLogCategory">
 								<Grid ColumnDefinitions="Auto,*">
@@ -2188,14 +2177,9 @@
 								</MenuItem>
 							</ContextMenu>
 						</asControls:ListBox.ContextMenu>
-						<asControls:ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<appControls:SimpleVirtualizingStackPanel ItemHeight="{DynamicResource Double/SessionView.LogAnalysisResult.Item.Height}"/>
-							</ItemsPanelTemplate>
-						</asControls:ListBox.ItemsPanel>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:DisplayableLogAnalysisResult">
-								<Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+								<Grid ColumnDefinitions="Auto,*,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									
 									<!-- Color indicator -->
 									<Border x:CompileBindings="False" 
@@ -2203,12 +2187,12 @@
 									        BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" 
 									        BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" 
 									        IsVisible="{Binding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" 
-									        ToolTip.Tip="{Binding Log.ColorIndicatorTip}" 
+									        ToolTip.Tip="{Binding Log.ColorIndicatorTip, FallbackValue={x:Null}}" 
 									        VerticalAlignment="Stretch"
 									        Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									
 									<!-- Content -->
-									<Grid ColumnDefinitions="Auto,*" 
+									<Grid ColumnDefinitions="Auto,*"
 									      Grid.Column="1"
 									      RowDefinitions="Auto,*" 
 									      VerticalAlignment="Center">
@@ -2219,20 +2203,12 @@
 										                      FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" 
 										                      FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}"
 										                      Grid.Column="1" 
-										                      MaxLines="1"
+										                      MaxLines="5"
 										                      Padding="{StaticResource Thickness/SessionView.LogAnalysisResult.Message.Margin}" 
 										                      Text="{Binding Message}" 
 										                      TextTrimming="CharacterEllipsis" 
 										                      TextWrapping="NoWrap"
 										                      VerticalAlignment="Center">
-											<ia:Interaction.Behaviors>
-												<iaCore:DataTriggerBehavior Binding="{Binding #logAnalysisResultSubInformationPanel.IsVisible}" Value="True">
-													<iaCore:ChangePropertyAction PropertyName="MaxLines" Value="1"/>
-												</iaCore:DataTriggerBehavior>
-												<iaCore:DataTriggerBehavior Binding="{Binding #logAnalysisResultSubInformationPanel.IsVisible}" Value="False">
-													<iaCore:ChangePropertyAction PropertyName="MaxLines" Value="2"/>
-												</iaCore:DataTriggerBehavior>
-											</ia:Interaction.Behaviors>
 											<abControls:TextBlock.Resources>
 												<StaticResourceExtension x:Key="ToolTipContentMaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
 											</abControls:TextBlock.Resources>
@@ -2264,11 +2240,12 @@
 										</Image>
 										
 										<!-- Sub information -->
-										<Grid Name="logAnalysisResultSubInformationPanel" 
-										      ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" 
+										<Grid ColumnDefinitions="Auto,*"
 										      Grid.Column="1" 
 										      Grid.Row="1" 
-										      Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding}" 
+										      HorizontalAlignment="Stretch"
+										      Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding}"
+										      RowDefinitions="Auto,Auto,Auto"
 										      VerticalAlignment="Top">
 											<Grid.IsVisible>
 												<MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -2304,7 +2281,7 @@
 											<!-- ByteSize -->
 											<asControls:Image Name="byteSizeIcon"
 											                  Classes="Icon" 
-											                  Grid.Column="2" 
+											                  Grid.Row="1" 
 											                  Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
 											                  IsVisible="{Binding HasByteSize}" 
 											                  Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
@@ -2319,7 +2296,8 @@
 											                               FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
 											                               Arg1="{Binding ByteSize, StringFormat={}{0:n0}}"
 											                               Arg2="{Binding ByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}"
-											                               Grid.Column="3" 
+											                               Grid.Column="1"
+											                               Grid.Row="1"
 											                               Format="{}{0} ({1})"
 											                               IsVisible="{Binding HasByteSize}" 
 											                               Padding="{DynamicResource Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin}"
@@ -2330,7 +2308,7 @@
 											<!-- Quantity -->
 											<asControls:Image Name="quantityIcon"
 											                  Classes="Icon" 
-											                  Grid.Column="4" 
+											                  Grid.Row="2" 
 											                  Height="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}" 
 											                  IsVisible="{Binding HasQuantity}" 
 											                  Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin}"
@@ -2343,7 +2321,8 @@
 											</asControls:Image>
 											<TextBlock Background="{x:Static Brushes.Transparent}"
 											           FontSize="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.FontSize}" 
-											           Grid.Column="5" 
+											           Grid.Column="1"
+											           Grid.Row="2"
 											           IsVisible="{Binding HasQuantity}" 
 											           Padding="{DynamicResource Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin}"
 											           Text="{Binding Quantity}" 
