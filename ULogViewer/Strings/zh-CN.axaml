@@ -1174,9 +1174,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.AppInfo">关于 ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">应用程序选项…</sys:String>
 	<sys:String x:Key="String/SessionView.CheckForAppUpdate">检查更新…</sys:String>
+	<sys:String x:Key="String/SessionView.ClearGlobalLogTextFilterHistory">清除历史纪录</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">清除选择</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">清除所有已加入的日志文件</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">清除选择</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmClearingGlobalLogTextFilterHistory">您是否确定要清除历史纪录中的 {0} 个文字筛选？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmMaxLogReadingCountForLargeFiles">即将加入一个或多个大型文件 (共 {0})。您可以限制最大的日志读取数量以降低内存的使用。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">规则集删除后将无法复原，您是否确定要移除规则集「{0}」？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">脚本删除后将无法复原，您是否确定要移除脚本「{0}」？</sys:String>
@@ -1208,6 +1210,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">只使用选择的 PID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">使用选择的 TID 筛选</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">只使用选择的 TID 筛选</sys:String>
+	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory">历史纪录</sys:String>
+	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory.ProVersionOnly">升级至 ULogViewer 专业版后您可以查看文字筛选的历史纪录。</sys:String>
 	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">数据来源发生错误</sys:String>
 	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">已设置日志读取前置条件</sys:String>
 	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">已设置日志读取数量上限</sys:String>
@@ -1274,8 +1278,6 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">日志显示模式</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字筛选 (正则表达式)</sys:String>
-	<sys:String x:Key="String/SessionView.LogTextFilterHistory">历史纪录</sys:String>
-	<sys:String x:Key="String/SessionView.LogTextFilterHistory.ProVersionOnly">升级至 ULogViewer 专业版后您可以查看文字筛选的历史纪录。</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">选择日志然后点击 M，或是透过点击鼠标右键的选单来标记/解除标记日志。</sys:String>

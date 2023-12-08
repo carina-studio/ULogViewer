@@ -1210,9 +1210,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">Options…</sys:String>
 	<sys:String x:Key="String/SessionView.CheckForAppUpdate">Check for update…</sys:String>
+	<sys:String x:Key="String/SessionView.ClearGlobalLogTextFilterHistory">Clear the history</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear selection</sys:String>
 	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
 	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmClearingGlobalLogTextFilterHistory">Are you sure to clear {0} text filter(s) from history?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmMaxLogReadingCountForLargeFiles">One or more large files will be added ({0} total). You can limit the maximum number of logs to be read in order to reduce memory usage.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">It cannot be recovered once you delete the rule set. Are you sure to remove the rule set '{0}'?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">It cannot be recovered once you delete the script. Are you sure to remove the script '{0}'?</sys:String>
@@ -1244,6 +1246,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">Filter by selected TID</sys:String>
 	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
+	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory">History</sys:String>
+	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory.ProVersionOnly">You can view the history of text filters after upgrading to ULogViewer Pro.</sys:String>
 	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
 	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">Log reading precondition set</sys:String>
 	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">Maximum log reading count set</sys:String>
@@ -1310,8 +1314,6 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">Mode of showing logs</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
-	<sys:String x:Key="String/SessionView.LogTextFilterHistory">History</sys:String>
-	<sys:String x:Key="String/SessionView.LogTextFilterHistory.ProVersionOnly">You can view the history of text filters after upgrading to ULogViewer Pro.</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">Select logs and press M, or use the context menu by right-clicking the mouse, to mark/unmark logs.</sys:String>

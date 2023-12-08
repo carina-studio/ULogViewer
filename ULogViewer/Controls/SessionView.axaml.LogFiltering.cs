@@ -96,6 +96,11 @@ partial class SessionView
     // Check whether at least one non-text log filter is supported or not.
     public bool CanFilterLogsByNonTextFilters => 
         this.GetValue(CanFilterLogsByNonTextFiltersProperty);
+
+
+    // Clear global log text filter history.
+    void ClearGlobalLogTextFilterHistory()
+    { }
     
 
     /// <summary>
@@ -557,9 +562,9 @@ partial class SessionView
 
 
     /// <summary>
-    /// Show menu of log text filter history.
+    /// Show menu of global log text filter history.
     /// </summary>
-    public void ShowLogTextFilterHistoryMenu()
+    public void ShowGlobalLogTextFilterHistoryMenu()
     { }
     
 

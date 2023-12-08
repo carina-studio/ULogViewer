@@ -48,6 +48,10 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> DisplayableLogProcessingDelayDefault = new(nameof(DisplayableLogProcessingDelayDefault), 500);
     /// <summary>
+    /// Maximum number of log text filter to be kept in global history queue.
+    /// </summary>
+    public static readonly SettingKey<int> GlobalLogTextFilterHistoryCount = new(nameof(GlobalLogTextFilterHistoryCount), 128);
+    /// <summary>
     /// Delay before applying log analysis parameters in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> LogAnalysisParamsUpdateDelay = new(nameof(LogAnalysisParamsUpdateDelay), 500);

@@ -8,6 +8,7 @@ using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -76,6 +78,10 @@ class LogFilteringViewModel : SessionComponent
     /// Property of <see cref="ThreadIdFilter"/>.
     /// </summary>
     public static readonly ObservableProperty<int?> ThreadIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
+    
+    
+    // Constants.
+    const int SaveGlobalTextFilterHistoryDelay = 5000;
 
 
     // Static fields.
@@ -100,9 +106,11 @@ class LogFilteringViewModel : SessionComponent
         "to",
         "via",
     };
+    static ILogger? StaticLogger;
 
 
     // Fields.
+    readonly MutableObservableBoolean canClearGlobalTextFilterHistory = new();
     readonly MutableObservableBoolean canClearPredefinedTextFilters = new();
     readonly MutableObservableBoolean canFilterBySelectedPid = new();
     readonly MutableObservableBoolean canFilterBySelectedProperty = new();
@@ -116,6 +124,7 @@ class LogFilteringViewModel : SessionComponent
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
+    readonly ScheduledAction saveGlobalTextFilterHistoryAction;
     IDisposable? selectedLogStringPropertyValueObserverToken;
     IDisposable? selectedPidObserverToken;
     IDisposable? selectedTidObserverToken;
@@ -130,9 +139,10 @@ class LogFilteringViewModel : SessionComponent
     public LogFilteringViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // start initialization
-        var isInit = true; 
+        var isInit = true;
 
         // create command
+        this.ClearGlobalTextFilterHistoryCommand = new Command(this.ClearGlobalTextFilterHistory, this.canClearGlobalTextFilterHistory);
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
         this.FilterBySelectedProcessIdCommand = new Command<bool>(this.FilterBySelectedProcessId, this.canFilterBySelectedPid);
         this.FilterBySelectedPropertyCommand = new Command<Accuracy>(this.FilterBySelectedProperty, this.canFilterBySelectedProperty);
@@ -180,7 +190,9 @@ class LogFilteringViewModel : SessionComponent
         this.Logger.LogDebug("Create log filter {logFilter}", this.logFilter);
 
         // create scheduled action
-        this.commitFiltersAction = new ScheduledAction(this.CommitFilters);
+        this.commitFiltersAction = new(this.CommitFilters);
+        this.saveGlobalTextFilterHistoryAction = new(() =>
+        { });
 
         // attach to configuration
         this.Application.Configuration.SettingChanged += this.OnConfigurationChanged;
@@ -278,6 +290,11 @@ class LogFilteringViewModel : SessionComponent
         // complete initialization
         isInit = false; 
     }
+    
+    
+    // Add text filter to global history.
+    void AddToGlobalTextFilterHistory(string? pattern)
+    { }
 
 
     // Update state by checking visible log properties.
@@ -310,6 +327,17 @@ class LogFilteringViewModel : SessionComponent
             this.ResetValue(ThreadIdFilterProperty);
         }
     }
+
+
+    // Clear global text filter history.
+    void ClearGlobalTextFilterHistory()
+    { }
+
+
+    /// <summary>
+    /// Command to clear <see cref="GlobalTextFilterHistory"/>.
+    /// </summary>
+    public ICommand ClearGlobalTextFilterHistoryCommand;
 
 
     /// <summary>
@@ -625,6 +653,12 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
+    /// Global history of applied <see cref="TextFilter"/>.
+    /// </summary>
+    public IList<string> GlobalTextFilterHistory { get; } = Array.Empty<string>();
+
+
+    /// <summary>
     /// Get or set whether case of <see cref="TextFilter"/> should be ignored or not.
     /// </summary>
     public bool IgnoreTextFilterCase
@@ -746,6 +780,11 @@ class LogFilteringViewModel : SessionComponent
             it.ActiveTextFilters = this.logFilter.TextRegexList;
         });
     }
+
+
+    // Called when global text filter history changed.
+    void OnGlobalTextFilterHistoryChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    { }
 
 
     // Called when property of log filter changed.
@@ -982,6 +1021,11 @@ class LogFilteringViewModel : SessionComponent
     /// Command to reset all filters.
     /// </summary>
     public ICommand ResetFiltersCommand { get; }
+    
+    
+    // Save global text filter history to persistent state.
+    static Task SaveGlobalTextFilterHistoryAsync() =>
+        Task.CompletedTask;
 
 
     /// <summary>
@@ -1011,14 +1055,18 @@ class LogFilteringViewModel : SessionComponent
             {
                 if (!string.IsNullOrEmpty(pattern))
                 {
-                    if (this.textFilterHistory.IsEmpty() || this.textFilterHistory[0] != pattern)
+                    // add to local history
+                    if (this.textFilterHistory.IsEmpty() || this.textFilterHistory[^1] != pattern)
                     {
-                        var historySize = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterHistoryCount));
-                        if (this.textFilterHistory.Count >= historySize)
-                            this.textFilterHistory.RemoveRange(historySize - 1, this.textFilterHistory.Count - historySize + 1);
-                        this.textFilterHistory.Insert(0, pattern);
+                        var maxCount = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterHistoryCount));
+                        if (this.textFilterHistory.Count >= maxCount)
+                            this.textFilterHistory.RemoveRange(0, this.textFilterHistory.Count - maxCount + 1);
+                        this.textFilterHistory.Add(pattern);
                     }
-                    this.SetValue(IndexOfTextFilterInHistoryProperty, 0);
+                    this.SetValue(IndexOfTextFilterInHistoryProperty, this.textFilterHistory.Count - 1);
+                    
+                    // add to global history
+                    this.AddToGlobalTextFilterHistory(pattern);
                 }
                 else
                     this.ResetValue(IndexOfTextFilterInHistoryProperty);
@@ -1069,8 +1117,8 @@ class LogFilteringViewModel : SessionComponent
         {
             this.GetValue(IndexOfTextFilterInHistoryProperty).Let(it =>
             {
-                this.canUseNextTextFilterInHistory.Update(it > 0);
-                this.canUsePreviousTextFilterInHistory.Update(it < this.textFilterHistory.Count - 1);
+                this.canUseNextTextFilterInHistory.Update(it < this.textFilterHistory.Count - 1);
+                this.canUsePreviousTextFilterInHistory.Update(it > 0);
             });
             this.canUseTextFilterInHistory.Update(true);
         }
@@ -1080,16 +1128,20 @@ class LogFilteringViewModel : SessionComponent
     // Use next text filter in history.
     void UseNextTextFilterInHistory()
     {
+        this.VerifyAccess();
+        this.VerifyDisposed();
         var index = this.GetValue(IndexOfTextFilterInHistoryProperty);
-        --index;
-        if (index < 0)
+        ++index;
+        if (index >= this.textFilterHistory.Count)
         {
-            this.SetValue(IndexOfTextFilterInHistoryProperty, 0);
+            this.SetValue(IndexOfTextFilterInHistoryProperty, this.textFilterHistory.Count - 1);
             return;
         }
         this.SetValue(IndexOfTextFilterInHistoryProperty, index);
         var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
-        this.SetValue(TextFilterProperty, new(this.textFilterHistory[index], options));
+        var pattern = this.textFilterHistory[index];
+        this.SetValue(TextFilterProperty, new(pattern, options));
+        this.AddToGlobalTextFilterHistory(pattern);
     }
 
 
@@ -1102,16 +1154,20 @@ class LogFilteringViewModel : SessionComponent
     // Use previous text filter in history.
     void UsePreviousTextFilterInHistory()
     {
+        this.VerifyAccess();
+        this.VerifyDisposed();
         var index = this.GetValue(IndexOfTextFilterInHistoryProperty);
-        ++index;
-        if (index >= this.textFilterHistory.Count)
+        --index;
+        if (index < 0)
         {
-            this.SetValue(IndexOfTextFilterInHistoryProperty, this.textFilterHistory.Count - 1);
+            this.SetValue(IndexOfTextFilterInHistoryProperty, 0);
             return;
         }
         this.SetValue(IndexOfTextFilterInHistoryProperty, index);
         var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
-        this.SetValue(TextFilterProperty, new(this.textFilterHistory[index], options));
+        var pattern = this.textFilterHistory[index];
+        this.SetValue(TextFilterProperty, new(pattern, options));
+        this.AddToGlobalTextFilterHistory(pattern);
     }
 
 
@@ -1131,4 +1187,12 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     /// <remarks>The parameter is index of text filter in history.</remarks>
     public ICommand UseTextFilterInHistoryCommand { get; }
+
+
+    /// <inheritdoc/>
+    public override Task WaitForNecessaryTasksAsync()
+    {
+        this.saveGlobalTextFilterHistoryAction.ExecuteIfScheduled();
+        return base.WaitForNecessaryTasksAsync();
+    }
 }
