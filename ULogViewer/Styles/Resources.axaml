@@ -255,6 +255,7 @@
 	<sys:Double x:Key="Double/SessionView.LogListBox.MinSizeToCloseSidePanel">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.MultiLineIndicator.Opacity">0.3</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogsProgressBar.Height">2</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogTextFilterHistory.Item.MaxWidth">300</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MinHeight">100</sys:Double>

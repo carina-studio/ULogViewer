@@ -4032,7 +4032,15 @@ namespace CarinaStudio.ULogViewer.Controls
 						case Key.Down:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
-								session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute();
+								if (session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute())
+								{
+									this.SynchronizationContext.Post(() =>
+									{
+										this.logTextFilterTextBox.SelectionStart = 0; // [Workaround] make SelectAll() works expectedly
+										this.logTextFilterTextBox.SelectionEnd = 0; // [Workaround] make SelectAll() works expectedly
+										this.logTextFilterTextBox.SelectAll();
+									});
+								}
 								e.Handled = true;
 							}
 							else if (e.Source is not TextBox)
@@ -4060,7 +4068,15 @@ namespace CarinaStudio.ULogViewer.Controls
 						case Key.Up:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
-								session.LogFiltering.UsePreviousTextFilterInHistoryCommand.TryExecute();
+								if (session.LogFiltering.UsePreviousTextFilterInHistoryCommand.TryExecute())
+								{
+									this.SynchronizationContext.Post(() =>
+									{
+										this.logTextFilterTextBox.SelectionStart = 0; // [Workaround] make SelectAll() works expectedly
+										this.logTextFilterTextBox.SelectionEnd = 0; // [Workaround] make SelectAll() works expectedly
+										this.logTextFilterTextBox.SelectAll();
+									});
+								}
 								e.Handled = true;
 							}
 							else if (e.Source is not TextBox)

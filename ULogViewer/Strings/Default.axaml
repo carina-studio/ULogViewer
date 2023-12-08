@@ -1310,6 +1310,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">Mode of showing logs</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilterHistory">History</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilterHistory.ProVersionOnly">You can view the history of text filters after upgrading to ULogViewer Pro.</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">Select logs and press M, or use the context menu by right-clicking the mouse, to mark/unmark logs.</sys:String>

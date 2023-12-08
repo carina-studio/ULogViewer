@@ -554,6 +554,13 @@ partial class SessionView
     /// </summary>
     public void ShowLogFiltersCombinationModeMenu() =>
         this.logFilterCombinationModeMenu.Open(this.logFilterCombinationModeButton);
+
+
+    /// <summary>
+    /// Show menu of log text filter history.
+    /// </summary>
+    public void ShowLogTextFilterHistoryMenu()
+    { }
     
 
     // Sync log text filters back to control.

@@ -1274,6 +1274,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsShowingMode">日志显示模式</sys:String>
 	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字筛选 (正则表达式)</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilterHistory">历史纪录</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilterHistory.ProVersionOnly">升级至 ULogViewer 专业版后您可以查看文字筛选的历史纪录。</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">选择日志然后点击 M，或是透过点击鼠标右键的选单来标记/解除标记日志。</sys:String>

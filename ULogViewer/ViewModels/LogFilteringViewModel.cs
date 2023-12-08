@@ -1088,14 +1088,8 @@ class LogFilteringViewModel : SessionComponent
             return;
         }
         this.SetValue(IndexOfTextFilterInHistoryProperty, index);
-        var pattern = this.textFilterHistory[index];
-        if (!string.IsNullOrEmpty(pattern))
-        {
-            var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
-            this.SetValue(TextFilterProperty, new(pattern, options));
-        }
-        else
-            this.ResetValue(TextFilterProperty);
+        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+        this.SetValue(TextFilterProperty, new(this.textFilterHistory[index], options));
     }
 
 
@@ -1116,14 +1110,8 @@ class LogFilteringViewModel : SessionComponent
             return;
         }
         this.SetValue(IndexOfTextFilterInHistoryProperty, index);
-        var pattern = this.textFilterHistory[index];
-        if (!string.IsNullOrEmpty(pattern))
-        {
-            var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
-            this.SetValue(TextFilterProperty, new(pattern, options));
-        }
-        else
-            this.ResetValue(TextFilterProperty);
+        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+        this.SetValue(TextFilterProperty, new(this.textFilterHistory[index], options));
     }
 
 
@@ -1135,8 +1123,7 @@ class LogFilteringViewModel : SessionComponent
     
     // Use specific text filter in history.
     void UseTextFilterInHistory(int index)
-    {
-    }
+    { }
 
 
     /// <summary>
