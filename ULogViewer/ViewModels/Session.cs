@@ -5866,7 +5866,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public override Task WaitForNecessaryTasksAsync()
 		{
 			this.saveMarkedLogsAction.ExecuteIfScheduled();
-			return base.WaitForNecessaryTasksAsync();
+			var allTasks = new List<Task>();
+			foreach (var component in this.attachedComponents)
+				allTasks.Add(component.WaitForNecessaryTasksAsync());
+			allTasks.Add(base.WaitForNecessaryTasksAsync());
+			return Task.WhenAll(allTasks.ToArray());
 		}
 
 
