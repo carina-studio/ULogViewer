@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
-+ 版本：2.2
-+ 更新時間：2023/9/8
++ 版本：2.3
++ 更新時間：2023/12/9
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -12,7 +12,7 @@ ULogViewer 為基於開放原始碼專案之軟體，以下所指 ULogViewer **�
 + [ULogViewer 網站](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [GitHub 上之 ULogViewer 專案頁面及各版本釋出頁面](https://github.com/carina-studio/ULogViewer)
 
-本使用者協議適用於您使用 ULogViewer 3.1 及下一份使用者協議所指定之版本之間 (但不包括) 的所有版本。
+本使用者協議適用於您使用 ULogViewer 4.0 及下一份使用者協議所指定之版本之間 (但不包括) 的所有版本。
 
 
 ## 偵錯模式
