@@ -451,9 +451,8 @@ namespace CarinaStudio.ULogViewer
 			{
 				if (it is SessionView sessionView)
 				{
-					if (this.sessionViewPropertyObserverTokens.TryGetValue(sessionView, out var tokens))
+					if (this.sessionViewPropertyObserverTokens.Remove(sessionView, out var tokens))
 					{
-						this.sessionViewPropertyObserverTokens.Remove(sessionView);
 						foreach (var token in tokens)
 							token.Dispose();
 					}
@@ -1282,11 +1281,11 @@ namespace CarinaStudio.ULogViewer
 			var appVersion = this.Application.Assembly.GetName().Version;
 			var prevVersion = this.Application.PreviousVersion;
 			if (Platform.IsMacOS 
-			    && appVersion?.Major == 3
+			    && appVersion?.Major == 4
 				&& !this.Application.IsFirstLaunch
 				&& !IsRefreshingAppIconOnMacOSHintDialogShown)
 			{
-				if ((prevVersion?.Major).GetValueOrDefault() < 3 || (prevVersion?.Major == 3 && prevVersion.Minor == 0))
+				if ((prevVersion?.Major).GetValueOrDefault() < 4)
 				{
 					IsRefreshingAppIconOnMacOSHintDialogShown = true;
 					var result = await new MessageDialog
@@ -1311,7 +1310,7 @@ namespace CarinaStudio.ULogViewer
 					&& logFontFamily != SettingKeys.LogFontFamily.DefaultValue
 					&& logFontFamily != SettingKeys.DefaultLogFontFamily)
 				{
-					var result = await new MessageDialog()
+					var result = await new MessageDialog
 					{
 						Buttons = MessageDialogButtons.YesNo,
 						CustomIcon = this.FindResource("Image/Icon.Fonts") as IImage,
