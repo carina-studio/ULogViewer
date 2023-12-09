@@ -366,7 +366,7 @@
 
 		<!-- Log property tool tip template -->
 		<DataTemplate x:Key="logPropertyToolTipTemplate">
-			<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLines="8" Text="{Binding}" TextWrapping="Wrap"/>
+			<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLines="8" Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
 		</DataTemplate>
 
 		<!-- Logs saving menu -->

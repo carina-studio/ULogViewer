@@ -55,6 +55,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
 		/// <summary>
+		/// Property of <see cref="AreDisplayLogPropertiesDefinedByLogProfile"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> AreDisplayLogPropertiesDefinedByLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(AreDisplayLogPropertiesDefinedByLogProfile));
+		/// <summary>
 		/// Property of <see cref="AreLogsSortedByTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
@@ -1527,13 +1531,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get all logs without filtering.
 		/// </summary>
 		public IList<DisplayableLog> AllLogs { get; }
+		
+		
+		/// <summary>
+		/// Check whether <see cref="DisplayLogProperties"/> are defined by log profile or not.
+		/// </summary>
+		public bool AreDisplayLogPropertiesDefinedByLogProfile => this.GetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
 
 
 		/// <summary>
 		/// Check whether logs are sorted by one of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/>, <see cref="Log.Timestamp"/> or not.
 		/// </summary>
-		public bool AreLogsSortedByTimestamp => 
-			this.GetValue(AreLogsSortedByTimestampProperty);
+		public bool AreLogsSortedByTimestamp => this.GetValue(AreLogsSortedByTimestampProperty);
 
 
 		// Attach to given component.
@@ -4101,6 +4110,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ClearLogsReadingParameters();
 
 			// update state
+			this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
 			this.ResetValue(AreLogsSortedByTimestampProperty);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
@@ -4436,8 +4446,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					{
 						foreach (var pair in rawLogWriter.LineNumbers)
 						{
-							if (!markedColorMap.TryGetValue(pair.Key, out var color))
-								color = MarkColor.None;
+							var color = markedColorMap.GetValueOrDefault(pair.Key, MarkColor.None);
 							markedLogInfos.Add(new MarkedLogInfo(fileName, pair.Value, pair.Key.Timestamp, color));
 						}
 					});
@@ -5762,8 +5771,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateDisplayLogProperties()
 		{
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 			{
+				this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
 				this.ResetValue(HasTimestampDisplayableLogPropertyProperty);
 				this.SetValue(DisplayLogPropertiesProperty, DisplayLogPropertiesProperty.DefaultValue);
 			}
@@ -5781,7 +5791,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
 				}
 				if (displayLogProperties.IsEmpty())
+				{
+					this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
 					displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), "RawData", null));
+				}
+				else
+					this.SetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty, true);
 				this.SetValue(DisplayLogPropertiesProperty, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
 				this.SetValue(HasTimestampDisplayableLogPropertyProperty, hasTimestamp);
 			}

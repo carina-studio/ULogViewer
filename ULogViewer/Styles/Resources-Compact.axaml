@@ -60,6 +60,7 @@
 	<sys:Double x:Key="Double/SessionView.LogFileInfo.Summary.FontSize">12</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.ColorIndicator.Width">6</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogListBox.Item.Height">24</sys:Double>
+	<StaticResourceExtension x:Key="Double/SessionView.MarkedLogListBox.ToolTip.MaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,3,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin">0,0,3,0</Thickness>

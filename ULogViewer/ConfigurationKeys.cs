@@ -72,6 +72,10 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> LogTextFilterHistoryCount = new(nameof(LogTextFilterHistoryCount), 16);
     /// <summary>
+    /// Maximum lines shown for marked logs when there is no user defined display log properties.
+    /// </summary>
+    public static readonly SettingKey<int> MaxLinesOfMarkedLogWithoutDisplayLogProperties = new(nameof(MaxLinesOfMarkedLogWithoutDisplayLogProperties), 3);
+    /// <summary>
     /// Maximum number of series in log chart.
     /// </summary>
     public static readonly SettingKey<int> MaxSeriesCountInLogChart = new(nameof(MaxValueCountInLogChart), 10);

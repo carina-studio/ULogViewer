@@ -21,6 +21,7 @@ using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Input;
 using CarinaStudio.IO;
 using CarinaStudio.Threading;
@@ -45,6 +46,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Path = System.IO.Path;
@@ -158,6 +160,20 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly IValueConverter EliminateLeadingTimestampConverter = new FuncValueConverter<object?, string?>(value =>
+		{
+			var s = value?.ToString();
+			if (string.IsNullOrEmpty(s))
+				return s;
+			LeadingTimestampPattern ??= CreateLeadingTimestampPattern();
+			var match = LeadingTimestampPattern.Match(s);
+			if (!match.Success)
+				return s.TrimStart();
+			var endIndex = match.Index + match.Length;
+			if (endIndex < s.Length)
+				return s[endIndex..];
+			return s.TrimStart();
+		});
 		static readonly StyledProperty<bool> HasLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasLogProfile), false);
 		static readonly StyledProperty<bool> IsProcessInfoVisibleProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsProcessInfoVisible), false);
 		static readonly StyledProperty<bool> IsScriptRunningEnabledProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(IsScriptRunningEnabled), false);
@@ -169,10 +185,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
+		static Regex? LeadingTimestampPattern;
 		static readonly StyledProperty<double> LogItemHeightProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogItemHeight));
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
+		
 		// Fields.
 		bool areAllTutorialsShown;
 		IDisposable? areInitDialogsClosedObserverToken;
@@ -212,6 +230,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MutableObservableBoolean canUnmarkSelectedLogs = new();
 		readonly MenuItem copyLogPropertyMenuItem;
 		readonly Border dragDropReceiverBorder;
+		readonly ScheduledAction handleDisplayLogPropertiesChangedAction;
 		IDisposable? hasDialogsObserverToken;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
@@ -987,6 +1006,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.AutoSelectAndSetLogsReadingParameters();
 			});
 			this.commitLogFiltersAction = new(this.CommitLogFilters);
+			this.handleDisplayLogPropertiesChangedAction = new(this.OnDisplayLogPropertiesChanged);
 			this.scrollToLatestLogAction = new(() =>
 			{
 				this.smoothScrollToLatestLogAction!.Cancel();
@@ -1370,7 +1390,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logProfileSelectionMenu.CurrentLogProfile = session.LogProfile;
 
 			// update UI
-			this.OnDisplayLogPropertiesChanged();
+			this.handleDisplayLogPropertiesChangedAction.Execute();
 			this.updateStatusBarStateAction.Schedule();
 		}
 		
@@ -1769,6 +1789,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to copy selected log analysis rule set.
 		/// </summary>
 		public ICommand CopyOperationDurationAnalysisRuleSetCommand { get; }
+
+
+		// Generate pattern to find leading timestamp.
+		[GeneratedRegex(@"^\s*([0-9\-/]+\s+)?([0-9:\-]+(\.[0-9]+)?(\s+[\+\-][0-9:]+)?)?(\s+|$)")]
+		private static partial Regex CreateLeadingTimestampPattern();
 
 
 		// Create item template for item of log list box.
@@ -2283,7 +2308,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Create item template for item of marked log list box.
-		IDataTemplate CreateMarkedLogItemTemplate(LogProfile profile, IList<DisplayableLogProperty> logProperties)
+		IDataTemplate CreateMarkedLogItemTemplate(Session session, LogProfile profile, IList<DisplayableLogProperty> logProperties)
 		{
 			// check visible properties
 			var messageProperty = default(DisplayableLogProperty);
@@ -2354,6 +2379,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			return new FuncDataTemplate(typeof(DisplayableLog), (_, _) =>
 			{
 				var itemPanel = new Panel();
+				var areDisplayLogPropertiesDefinedByLogProfile = session.AreDisplayLogPropertiesDefinedByLogProfile;
 				new Border().Let(it =>
 				{
 					it.Bind(Border.BackgroundProperty, new Binding
@@ -2373,8 +2399,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Text = " ";
 					itemPanel.Children.Add(it);
 				});
-				var propertyView = new Avalonia.Controls.TextBlock().Also(it =>
+				var propertyView = timestampStringProperty is not null || !areDisplayLogPropertiesDefinedByLogProfile
+					? new Avalonia.Controls.TextBlock()
+					: new CarinaStudio.Controls.TextBlock();
+				itemPanel.Children.Add(propertyView.Also(it =>
 				{
+					it.Background = Brushes.Transparent;
 					it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
 					it.Bind(Avalonia.Controls.TextBlock.FontSizeProperty, new Binding { Path = nameof(ControlFonts.LogFontSize), Source = ControlFonts.Default });
 					if (propertyInMarkedItem.ForegroundColor == LogPropertyForegroundColor.Level)
@@ -2386,7 +2416,9 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (it.DataContext is DisplayableLog log
 							    && log.TryGetProperty<object?>(propertyInMarkedItem.Name, out var value))
 							{
-								it.Text = value?.ToString();
+								it.Text = areDisplayLogPropertiesDefinedByLogProfile
+									? value?.ToString()
+									: EliminateLeadingTimestampConverter.Convert<string>(value);
 							}
 							else
 								it.Text = null;
@@ -2395,19 +2427,52 @@ namespace CarinaStudio.ULogViewer.Controls
 					else
 					{
 						it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding
-                        {
-                        	Path = propertyInMarkedItem.Name,
-                        });
+						{
+							Converter = areDisplayLogPropertiesDefinedByLogProfile
+								? null
+								: EliminateLeadingTimestampConverter,
+							Path = propertyInMarkedItem.Name,
+						});
 					}
-					it.MaxLines = 1;
+					it.MaxLines = areDisplayLogPropertiesDefinedByLogProfile
+						? 1
+						: Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.MaxLinesOfMarkedLogWithoutDisplayLogProperties));
 					it.Padding = itemPadding;
+					it.Resources.Add("ToolTipContentMaxWidth", app.FindResourceOrDefault<double>("Double/SessionView.MarkedLogListBox.ToolTip.MaxWidth"));
 					it.TextTrimming = TextTrimming.CharacterEllipsis;
-					it.TextWrapping = TextWrapping.NoWrap;
+					it.TextWrapping = areDisplayLogPropertiesDefinedByLogProfile
+						? TextWrapping.NoWrap
+						: TextWrapping.Wrap;
 					it.VerticalAlignment = VerticalAlignment.Center;
-					if (timestampStringProperty != null)
-						it.Bind(ToolTip.TipProperty, new Binding { Path = timestampStringProperty.Name });
-				});
-				itemPanel.Children.Add(propertyView);
+					if (it is CarinaStudio.Controls.TextBlock csTextBlock)
+					{
+						csTextBlock.ToolTipTemplate = new FuncDataTemplate(typeof(object), (_, _) =>
+						{
+							return new Avalonia.Controls.TextBlock().Also(it =>
+							{
+								it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+								it.MaxLines = 8;
+								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding());
+								it.TextTrimming = TextTrimming.CharacterEllipsis;
+								it.TextWrapping = TextWrapping.Wrap;
+							});
+						});
+					}
+					else
+					{
+						ToolTip.SetTip(it, new Avalonia.Controls.TextBlock().Also(it =>
+						{
+							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
+							it.MaxLines = 8;
+							if (timestampStringProperty is not null)
+								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = timestampStringProperty.Name });
+							else
+								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = propertyInMarkedItem.Name });
+							it.TextTrimming = TextTrimming.CharacterEllipsis;
+							it.TextWrapping = TextWrapping.Wrap;
+						}));
+					}
+				}));
 				itemPanel.Children.Add(new Border().Also(border =>
 				{
 					border.BorderBrush = itemBorderBrush;
@@ -2518,7 +2583,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
 
 			// update UI
-			this.OnDisplayLogPropertiesChanged();
+			this.handleDisplayLogPropertiesChangedAction.Execute();
 			this.updateStatusBarStateAction.Schedule();
 		}
 
@@ -3054,7 +3119,9 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when configuration changed.
 		void OnConfigurationChanged(object? sender, SettingChangedEventArgs e)
 		{
-			if (e.Key == ConfigurationKeys.TrimLogPropertyViewText)
+			if (e.Key == ConfigurationKeys.MaxLinesOfMarkedLogWithoutDisplayLogProperties)
+				this.handleDisplayLogPropertiesChangedAction.Schedule();
+			else if (e.Key == ConfigurationKeys.TrimLogPropertyViewText)
 				this.RecreateLogItemTemplate();
 		}
 
@@ -3127,7 +3194,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			var separatorBrush = app.FindResourceOrDefault<IBrush>("Brush/SessionView.LogHeader.Separator");
 			var separatorMargin = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogHeader.Separator.Margin");
 			var minHeaderWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogHeader.MinWidth");
-			var itemPadding = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.Item.Padding");
 			var colorIndicatorBorderThickness = app.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogListBox.ColorIndicator.Border");
 			var colorIndicatorWidth = app.FindResourceOrDefault<double>("Double/SessionView.LogListBox.ColorIndicator.Width");
 			var headerTemplate = (DataTemplate)this.Resources["logHeaderTemplate"].AsNonNull();
@@ -3248,7 +3314,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logListBox.ItemTemplate = this.CreateLogItemTemplate(profile, logProperties);
 
 			// build item template for marked log list box
-			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(profile, logProperties);
+			this.markedLogListBox.ItemTemplate = this.CreateMarkedLogItemTemplate(session, profile, logProperties);
 
 			// update filter availability
 			this.UpdateCanFilterLogsByNonTextFilters();
@@ -4296,8 +4362,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			switch (e.PropertyName)
 			{
+				case nameof(Session.AreDisplayLogPropertiesDefinedByLogProfile):
 				case nameof(Session.DisplayLogProperties):
-					this.OnDisplayLogPropertiesChanged();
+					this.handleDisplayLogPropertiesChangedAction.Schedule();
 					break;
 				case nameof(Session.HasAllDataSourceErrors):
 				case nameof(Session.HasLogReaders):
