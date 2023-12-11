@@ -263,6 +263,17 @@ partial class SessionView
     public ICommand EditPredefinedLogTextFilterCommand { get; }
 
 
+    // Find the ListBox which contains the given text filter.
+    Avalonia.Controls.ListBox? FindPredefinedLogTextFilterListBox(PredefinedLogTextFilter textFilter)
+    {
+        var groupName = textFilter.GroupName;
+        if (groupName is null)
+            return predefinedLogTextFilterListBox;
+        return this.predefinedLogTextFiltersAndGroupsPanel.Children.FirstOrDefault(it =>
+            it.DataContext is PredefinedLogTextFilterGroup group && group.Name == groupName)?.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>();
+    }
+
+
     /// <summary>
     /// Whether one or more predefined log text filters are selected or not.
     /// </summary>
@@ -411,33 +422,24 @@ partial class SessionView
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
-                {
-                    foreach (var filter in e.NewItems!.Cast<PredefinedLogTextFilter>())
-                        selectedItems.Add(filter);
-                });
+                foreach (var filter in e.NewItems!.Cast<PredefinedLogTextFilter>())
+                    this.FindPredefinedLogTextFilterListBox(filter)?.SelectedItems?.Add(filter);
                 if (!isUpdateFilterScheduled)
                     this.commitLogFiltersAction.Cancel();
                 break;
             case NotifyCollectionChangedAction.Remove:
-                this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
-                {
-                    foreach (var filter in e.OldItems!.Cast<PredefinedLogTextFilter>())
-                        selectedItems.Remove(filter);
-                });
+                foreach (var filter in e.OldItems!.Cast<PredefinedLogTextFilter>())
+                    this.FindPredefinedLogTextFilterListBox(filter)?.SelectedItems?.Remove(filter);
                 if (!isUpdateFilterScheduled)
                     this.commitLogFiltersAction.Cancel();
                 break;
             case NotifyCollectionChangedAction.Reset:
-                this.predefinedLogTextFilterListBox.SelectedItems?.Let(selectedItems =>
+                this.ClearPredefinedLogTextFilterSelection();
+                if (this.DataContext is Session session)
                 {
-                    selectedItems.Clear();
-                    if (sender is IEnumerable<PredefinedLogTextFilter> filters)
-                    {
-                        foreach (var filter in filters)
-                            selectedItems.Add(filter);
-                    }
-                });
+                    foreach (var filter in session.LogFiltering.PredefinedTextFilters)
+                        this.FindPredefinedLogTextFilterListBox(filter)?.SelectedItems?.Add(filter);
+                }
                 if (!isUpdateFilterScheduled)
                     this.commitLogFiltersAction.Cancel();
                 break;
@@ -534,16 +536,7 @@ partial class SessionView
             {
                 foreach (var textFilter in session.LogFiltering.PredefinedTextFilters)
                 {
-                    var groupName = textFilter.GroupName;
-                    if (groupName is null)
-                        this.predefinedLogTextFilterListBox.SelectedItems?.Add(textFilter);
-                    else
-                    {
-                        var listBox = this.predefinedLogTextFiltersAndGroupsPanel.Children.FirstOrDefault(it => 
-                            it.DataContext is PredefinedLogTextFilterGroup group
-                            && group.Name == groupName)?.FindLogicalDescendantOfType<Avalonia.Controls.ListBox>();
-                        listBox?.SelectedItems?.Add(textFilter);
-                    }
+                    this.FindPredefinedLogTextFilterListBox(textFilter)?.SelectedItems?.Add(textFilter);
                     this.selectedPredefinedLogTextFilters.Add(textFilter);
                 }
                 this.commitLogFiltersAction.Cancel();
