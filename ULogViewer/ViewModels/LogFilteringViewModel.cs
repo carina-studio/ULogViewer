@@ -174,10 +174,10 @@ class LogFilteringViewModel : SessionComponent
                 }
             };
         });
-        this.TextFilterHistory = ListExtensions.AsReadOnly(this.textFilterHistory.Also(it =>
+        this.TextFilterHistory = this.textFilterHistory.Also(it =>
         {
             it.CollectionChanged += (_, _) => this.UpdateCanUseTextFilterInHistory();
-        }));
+        }).ReverseAsReadOnly();
 
         // setup properties
         this.SetValue(IgnoreTextFilterCaseProperty, this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter));
@@ -337,7 +337,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Command to clear <see cref="GlobalTextFilterHistory"/>.
     /// </summary>
-    public ICommand ClearGlobalTextFilterHistoryCommand;
+    public ICommand ClearGlobalTextFilterHistoryCommand { get; }
 
 
     /// <summary>
@@ -650,8 +650,8 @@ class LogFilteringViewModel : SessionComponent
         get => this.GetValue(FiltersCombinationModeProperty);
         set => this.SetValue(FiltersCombinationModeProperty, value);
     }
-
-
+    
+    
     /// <summary>
     /// Global history of applied <see cref="TextFilter"/>.
     /// </summary>
