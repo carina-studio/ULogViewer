@@ -275,8 +275,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ToggleButton logsSavingButton;
 		readonly ContextMenu logsSavingMenu;
 		ScrollViewer? logScrollViewer;
-		readonly ToggleButton logsShowingModeButton;
-		readonly ContextMenu logsShowingModeMenu;
+		Vector? logScrollViewerOffsetWhenSelectingItems;
 		readonly Queue<long> logUpdateTimeQueue = new(LogUpdateIntervalStatisticCount);
 		readonly Avalonia.Controls.ListBox markedLogListBox;
 		IDisposable? markedLogsPanelVisibilityObserverToken = EmptyDisposable.Default;
@@ -2926,8 +2925,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Log in to Azure.
 		/// </summary>
 		public void LoginToAzure()
-		{
-		}
+		{ }
 
 
 		/// <summary>
@@ -2940,8 +2938,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Log out from Azure.
 		/// </summary>
 		public void LogoutFromAzure()
-		{
-		}
+		{ }
 
 
 		// Mark logs with color.
@@ -3532,10 +3529,15 @@ namespace CarinaStudio.ULogViewer.Controls
 					return listBoxItem;
 				return visual.FindAncestorOfType<ScrollBar>(true);
 			});
-			if (hitControl == null)
+			if (hitControl is null)
+			{
+				this.logScrollViewerOffsetWhenSelectingItems = this.logScrollViewer?.Offset;
 				this.SynchronizationContext.Post(() => this.logListBox.SelectedItems!.Clear());
+			}
 			else if (hitControl is ListBoxItem && !this.IsMultiSelectionKeyPressed(e.KeyModifiers) && point.Properties.IsLeftButtonPressed)
 			{
+				this.logScrollViewerOffsetWhenSelectingItems = this.logScrollViewer?.Offset;
+				
 				// [Workaround] Clear selection first to prevent performance issue of changing selection from multiple items
 				this.logListBox.SelectedItems!.Clear();
 			}
@@ -3559,6 +3561,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (e.InitialPressMouseButton == MouseButton.Left)
 				this.isPointerPressedOnLogListBox = false;
+			this.logScrollViewerOffsetWhenSelectingItems = null;
 		}
 
 
@@ -3612,6 +3615,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		// ReSharper restore UnusedParameter.Local
 		void OnLogListBoxSelectionChanged()
 		{
+			// [Workaround] Keep horizontal scroll position after selection
+			var scrollViewerOffset = this.logScrollViewerOffsetWhenSelectingItems 
+			                         ?? this.logScrollViewer?.Offset 
+			                         ?? default;
+			
 			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
 			this.SynchronizationContext.Post(() =>
 			{
@@ -3622,6 +3630,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				var hasSelectedItems = (selectionCount > 0);
 				var hasSingleSelectedItem = (selectionCount == 1);
 				var logProperty = this.lastClickedLogPropertyView?.Tag as DisplayableLogProperty;
+				
+				// [Workaround] Keep horizontal scroll position after selection
+				this.SynchronizationContext.Post(() =>
+				{
+					if (scrollViewerOffset.X > 0.5 && this.logScrollViewer is not null)
+						this.logScrollViewer.Offset = scrollViewerOffset;
+				});
 
 				// update command states
 				this.canCopyLogProperty.Update(hasSelectedItems && logProperty is not null);
@@ -4586,8 +4601,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Reload log file.
 		void ReloadLogFileWithNewMaxLogReadingCount(string? fileName)
-		{
-		}
+		{ }
 
 
 		/// <summary>
@@ -4598,8 +4612,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Reload log file.
 		void ReloadLogFileWithNewPrecondition(string? fileName)
-		{
-		}
+		{ }
 
 
 		/// <summary>
@@ -4610,8 +4623,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Reload log file without reading precondition.
 		void ReloadLogFileWithoutLogReadingPrecondition(string? fileName)
-		{
-		}
+		{ }
 
 
 		/// <summary>
@@ -6024,8 +6036,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		// Update menu items of tools.
 		void UpdateToolsMenuItems()
-		{
-		}
+		{ }
 
 
 		/// <summary>
