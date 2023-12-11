@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -90,6 +91,8 @@ partial class SessionView
     // Attach to view-model of log analysis.
     void AttachToLogAnalysis(LogAnalysisViewModel logAnalysis)
     {
+        // attach to events
+        logAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
         (logAnalysis.AnalysisResults as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnLogAnalysisResultsChanged);
         (logAnalysis.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
@@ -100,6 +103,50 @@ partial class SessionView
             it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
         (logAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnSessionLogAnalysisRuleSetsChanged);
+        
+        // sync log analysis rule sets to UI
+        this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
+        {
+            it!.Clear();
+            foreach (var ruleSet in logAnalysis.KeyLogAnalysisRuleSets)
+                it.Add(ruleSet);
+        });
+        this.logAnalysisScriptSetListBox.SelectedItems.Let(it =>
+        {
+            it!.Clear();
+            foreach (var scriptSet in logAnalysis.LogAnalysisScriptSets)
+                it.Add(scriptSet);
+        });
+        this.operationCountingAnalysisRuleSetListBox.SelectedItems.Let(it =>
+        {
+            it!.Clear();
+            foreach (var ruleSet in logAnalysis.OperationCountingAnalysisRuleSets)
+                it.Add(ruleSet);
+        });
+        this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
+        {
+            it!.Clear();
+            foreach (var ruleSet in logAnalysis.OperationDurationAnalysisRuleSets)
+                it.Add(ruleSet);
+        });
+        this.updateLogAnalysisAction.Cancel();
+
+        // show log analysis results
+        if (this.DataContext is Session session && !session.IsRemovingLogFiles)
+        {
+            this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding
+            {
+                Path = $"{nameof(Session.LogAnalysis)}.{nameof(LogAnalysisViewModel.AnalysisResults)}"
+            });
+        }
+        
+        // start auto scrolling
+        if (logAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
+        {
+            this.isSmoothScrollingToLatestLogAnalysisResult = false;
+            this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+            this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
+        }
     }
 
 
@@ -194,6 +241,8 @@ partial class SessionView
     // Detach from view-model of log analysis.
     void DetachFromLogAnalysis(LogAnalysisViewModel logAnalysis)
     {
+        // detach from events
+        logAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
         (logAnalysis.AnalysisResults as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnLogAnalysisResultsChanged);
         (logAnalysis.KeyLogAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
@@ -204,6 +253,15 @@ partial class SessionView
             it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
         (logAnalysis.OperationDurationAnalysisRuleSets as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnSessionLogAnalysisRuleSetsChanged);
+        
+        // remove log analysis results
+        this.logAnalysisResultListBox.SelectedItems?.Clear();
+        this.logAnalysisResultListBox.ItemsSource = null;
+        
+        // stop auto scrolling
+        this.isSmoothScrollingToLatestLogAnalysisResult = false;
+        this.scrollToLatestLogAnalysisResultAction.Cancel();
+        this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
     }
 
 

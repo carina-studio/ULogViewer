@@ -1232,14 +1232,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnMarkedLogsChanged);
-			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred += this.OnLogAnalysisScriptRuntimeErrorOccurred;
-			session.LogFiltering.Let(it =>
-			{
-				it.FiltersApplied += this.OnLogFiltersApplied;
-				(it.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
-					it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
-			});
 			this.AttachToLogAnalysis(session.LogAnalysis);
+			this.AttachToLogFiltering(session.LogFiltering);
 			this.AttachToLogChart(session.LogChart);
 			
 			// attach to properties
@@ -1300,52 +1294,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isSmoothScrollingToLatestLog = false;
 				this.scrollToLatestLogAction.Schedule(InitScrollingToLatestLogDelay);
 				this.smoothScrollToLatestLogAction.Cancel();
-			}
-			if (session.LogAnalysis.AnalysisResults.IsNotEmpty() && this.IsScrollingToLatestLogAnalysisResultNeeded)
-			{
-				this.isSmoothScrollingToLatestLogAnalysisResult = false;
-				this.scrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
-				this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
-			}
-
-			// sync log filters to UI
-			this.SyncLogTextFiltersBack();
-			this.commitLogFiltersAction.Cancel();
-
-			// sync log analysis rule sets to UI
-			this.keyLogAnalysisRuleSetListBox.SelectedItems.Let(it =>
-			{
-				it!.Clear();
-				foreach (var ruleSet in session.LogAnalysis.KeyLogAnalysisRuleSets)
-					it.Add(ruleSet);
-			});
-			this.logAnalysisScriptSetListBox.SelectedItems.Let(it =>
-			{
-				it!.Clear();
-				foreach (var scriptSet in session.LogAnalysis.LogAnalysisScriptSets)
-					it.Add(scriptSet);
-			});
-			this.operationCountingAnalysisRuleSetListBox.SelectedItems.Let(it =>
-			{
-				it!.Clear();
-				foreach (var ruleSet in session.LogAnalysis.OperationCountingAnalysisRuleSets)
-					it.Add(ruleSet);
-			});
-			this.operationDurationAnalysisRuleSetListBox.SelectedItems.Let(it =>
-			{
-				it!.Clear();
-				foreach (var ruleSet in session.LogAnalysis.OperationDurationAnalysisRuleSets)
-					it.Add(ruleSet);
-			});
-			this.updateLogAnalysisAction.Cancel();
-
-			// show log analysis results
-			if (!session.IsRemovingLogFiles)
-			{
-				this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding()
-				{
-					Path = $"{nameof(Session.LogAnalysis)}.{nameof(LogAnalysisViewModel.AnalysisResults)}"
-				});
 			}
 
 			// sync side panel state
@@ -2530,19 +2478,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			(session.MarkedLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged -= this.OnMarkedLogsChanged);
-			session.LogAnalysis.LogAnalysisScriptRuntimeErrorOccurred -= this.OnLogAnalysisScriptRuntimeErrorOccurred;
-			session.LogFiltering.Let(it =>
-			{
-				it.FiltersApplied -= this.OnLogFiltersApplied;
-				(it.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
-					it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
-			});
 			this.DetachFromLogAnalysis(session.LogAnalysis);
+			this.DetachFromLogFiltering(session.LogFiltering);
 			this.DetachFromLogChart(session.LogChart);
-
-			// remove log analysis results
-			this.logAnalysisResultListBox.SelectedItems?.Clear();
-			this.logAnalysisResultListBox.ItemsSource = null;
 			
 			// detach from properties
 			this.logAnalysisPanelVisibilityObserverToken = this.logAnalysisPanelVisibilityObserverToken.DisposeAndReturnNull();
@@ -2580,11 +2518,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.lastLogUpdateTime = 0;
 			this.logUpdateTimeQueue.Clear();
 			this.isSmoothScrollingToLatestLog = false;
-			this.isSmoothScrollingToLatestLogAnalysisResult = false;
 			this.scrollToLatestLogAction.Cancel();
 			this.smoothScrollToLatestLogAction.Cancel();
-			this.scrollToLatestLogAnalysisResultAction.Cancel();
-			this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
 
 			// update UI
 			this.handleDisplayLogPropertiesChangedAction.Execute();
@@ -3062,6 +2997,10 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// attach to predefined log text filter list
 			this.AttachToPredefinedLogTextFilters();
+			
+			// sync log filters to UI
+			this.SyncLogTextFiltersBack();
+			this.commitLogFiltersAction.Cancel();
 
 			// add event handlers
 			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
