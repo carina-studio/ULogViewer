@@ -1942,18 +1942,23 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
-							if (isDebugMode)
+							/*
+							if (!isAutoWidth)
 							{
 								it.LayoutUpdated += (_, _) =>
 								{
-									if (isAutoWidth || it.DataContext is null)
+									if (it.DataContext is null)
 										return;
-									var textLength = it.Text?.Length ?? 0;
-									var textWidth = it.TextLayout.Width;
-									if (textLength > 0 && textWidth <= 3)
-										this.Logger.LogWarning("[LogPropertyView] Property: {property}, view width: {viewWidth}, text length: {valueLength}, text width: {textLayoutWidth}, text trimmed: {trimmed}", logProperty.Name, it.Bounds.Width, textLength, textWidth, it.IsTextTrimmed);
+									if (it.Margin != default)
+										this.SynchronizationContext.PostDelayed(() => it.Margin = default, 100);
+								};
+								it.DataContextChanged += (_, _) =>
+								{
+									if (it.DataContext is not null)
+										it.Margin = new(-1);
 								};
 							}
+							*/
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
 							if (logProperty.Name == nameof(DisplayableLog.Level))
@@ -3110,6 +3115,44 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// show tutorial
 			this.SynchronizationContext.Post(() => this.ShowNextTutorial());
+		}
+
+
+		/// <inheritdoc/>
+		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			// call base
+			base.OnAttachedToVisualTree(e);
+
+			// [Workaround] Force relayout to prevent incorrect layout on extended screen
+			var itemContainers = new HashSet<Control>();
+			void OnLogListBoxContainerLayoutUpdated(object? sender, EventArgs e)
+			{
+				if (sender is not Control itemContainer)
+					return;
+				if (itemContainer.Margin != default)
+				{
+					itemContainers.Remove(itemContainer);
+					itemContainer.LayoutUpdated -= OnLogListBoxContainerLayoutUpdated;
+					itemContainer.Margin = default;
+				}
+			}
+			foreach (var itemContainer in this.logListBox.GetRealizedContainers())
+			{
+				itemContainers.Add(itemContainer);
+				itemContainer.LayoutUpdated += OnLogListBoxContainerLayoutUpdated;
+				itemContainer.Margin = new(-1);
+			}
+			this.Logger.LogTrace("Force relayout {count} log item containers", itemContainers.Count);
+			this.SynchronizationContext.PostDelayed(() =>
+			{
+				if (itemContainers.IsEmpty())
+					return;
+				this.Logger.LogWarning("Layout of {count} log item containers were not updated", itemContainers.Count);
+				foreach (var itemContainer in itemContainers)
+					itemContainer.LayoutUpdated -= OnLogListBoxContainerLayoutUpdated;
+				itemContainers.Clear();
+			}, 1000);
 		}
 
 

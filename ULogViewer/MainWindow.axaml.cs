@@ -271,6 +271,8 @@ namespace CarinaStudio.ULogViewer
 			var index = this.tabItems.IndexOf(tabItem);
 			if (index < 0)
 				return;
+			
+			this.Logger.LogTrace("Close session at position {index}", index);
 
 			// select neighbor tab item
 			if (this.tabControl.SelectedIndex == index)
@@ -841,14 +843,21 @@ namespace CarinaStudio.ULogViewer
 					if (srcIndex != targetIndex && srcIndex + 1 != targetIndex)
 					{
 						if (srcIndex < targetIndex)
+						{
+							this.Logger.LogTrace("Move session from position {src} to {dest} in same workspace", srcIndex, targetIndex - 1);
 							srcWorkspace.MoveSession(srcIndex, targetIndex - 1);
+						}
 						else
+						{
+							this.Logger.LogTrace("Move session from position {src} to {dest} in same workspace", srcIndex, targetIndex);
 							srcWorkspace.MoveSession(srcIndex, targetIndex);
+						}
 					}
 				}
 				else if (this.DataContext is Workspace targetWorkspace)
 				{
 					// attach to target workspace
+					this.Logger.LogTrace("Move session from position {src} to {dest} between workspaces", srcIndex, targetIndex - 1);
 					targetWorkspace.AttachSession(targetIndex, session);
 					targetWorkspace.ActiveSession = session;
 				}
@@ -1091,7 +1100,10 @@ namespace CarinaStudio.ULogViewer
 			if (index == this.tabItems.Count - 1)
 				this.CreateSessionTabItem();
 			else
+			{
+				this.Logger.LogTrace("Switch to session at position {index}", index);
 				workspace.ActiveSession = (Session)(this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
+			}
 			this.focusOnTabItemContentAction.Schedule();
 		}
 
@@ -1106,6 +1118,8 @@ namespace CarinaStudio.ULogViewer
 			// get session
 			if ((e.Item as TabItem)?.DataContext is not Session session)
 				return;
+			
+			this.Logger.LogTrace("Start dragging session");
 			
 			// prepare dragging data
 			var data = new DataObject();
