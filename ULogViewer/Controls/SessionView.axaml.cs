@@ -1222,6 +1222,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsBindingToken = this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding { Path = nameof(Session.Logs)} ); 
 			
 			// add event handler
+			session.DebugMessageGenerated += this.OnDebugMessageGeneratedBySession;
 			session.ErrorMessageGenerated += this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound += this.OnExternalDependencyNotFound;
 			session.LogDataSourceScriptRuntimeErrorOccurred += this.OnLogDataSourceScriptRuntimeErrorOccurred;
@@ -2466,6 +2467,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsBindingToken = this.logsBindingToken.DisposeAndReturnNull();
 
 			// remove event handler
+			session.DebugMessageGenerated -= this.OnDebugMessageGeneratedBySession;
 			session.ErrorMessageGenerated -= this.OnErrorMessageGeneratedBySession;
 			session.ExternalDependencyNotFound -= this.OnExternalDependencyNotFound;
 			session.LogDataSourceScriptRuntimeErrorOccurred -= this.OnLogDataSourceScriptRuntimeErrorOccurred;
@@ -3103,6 +3105,31 @@ namespace CarinaStudio.ULogViewer.Controls
 			else if (e.Key == ConfigurationKeys.TrimLogPropertyViewText)
 				this.RecreateLogItemTemplate();
 		}
+		
+		
+		// Called when debug message generated.
+		void OnDebugMessageGeneratedBySession(object? sender, MessageEventArgs e)
+		{
+			if (this.attachedWindow is INotificationPresenter notificationPresenter)
+			{
+				notificationPresenter.AddNotification(new Notification
+				{
+					Icon = this.Application.FindResourceOrDefault<IImage>("Image/Icon.Debug.Colored"),
+					Message = e.Message,
+					Timeout = null,
+				});
+			}
+			else if (this.attachedWindow is not null)
+			{
+				_ = new MessageDialog
+				{
+					Buttons = MessageDialogButtons.OK,
+					CustomIcon = this.Application.FindResourceOrDefault<IImage>("Image/Icon.Debug.Colored"),
+					Icon = MessageDialogIcon.Custom,
+					Message = e.Message,
+				}.ShowDialog(this.attachedWindow);
+			}
+		}
 
 
 		// Called when detach from view tree.
@@ -3353,7 +3380,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return;
-			_ = new MessageDialog()
+			_ = new MessageDialog
 			{
 				Buttons = MessageDialogButtons.OK,
 				Icon = MessageDialogIcon.Error,

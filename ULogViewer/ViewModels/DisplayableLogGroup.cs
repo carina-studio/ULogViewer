@@ -77,6 +77,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly int maxDisplayLineCount = 1;
 		long memorySize = BaseMemorySize 
 		                  + (Memory.EstimateCollectionInstanceSize(LogReaderInfoKeyValuePairMemorySize, 0) << 1);
+		readonly object memorySizeLock = new();
 		readonly Random random = new();
 		readonly Queue<Color> recentlyUsedColorIndicatorColors = new(RecentlyUsedColorIndicatorColorCount);
 		int? selectedProcessId;
@@ -329,6 +330,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Create regex to find bracket and separator in text filter.
 		[GeneratedRegex(@"(?<=(^|[^\\])(\\\\)*)(?<StartBracket>\()|(?<=(^|[^\\])(\\\\)*)(?<Separator>(\\\$){1,2})|(?<=(^|[^\\])(\\\\)*)(?<EndBracket>\))")]
 		private static partial Regex CreateTextFilterBracketAndSeparatorRegex();
+		
+		
+		/// <summary>
+		/// Raised when debug message has been generated.
+		/// </summary>
+		public event EventHandler<MessageEventArgs>? DebugMessageGenerated; 
 
 
 		// Dispose.
@@ -663,12 +670,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				readerLocalId = candidateReaderLocalId;
 				this.logReaderInfosByLocalId.Add(candidateReaderLocalId, readerInfo);
 				this.logReaderInfosByLogReader.Add(reader, readerInfo);
-				Interlocked.Add(ref this.memorySize, (LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize);
+				this.UpdateMemorySize((LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize);
 			}
 			++readerInfo.DisplayableLogCount;
 			
 			// update memory size
-			Interlocked.Add(ref this.memorySize, log.MemorySize);
+			this.UpdateMemorySize(log.MemorySize);
 		}
 
 
@@ -697,12 +704,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.logger.LogTrace("Remove log reader '{readerId}' with local ID '{localId}'", readerInfo.LogReader.Id, readerInfo.LocalId);
 					this.logReaderInfosByLocalId.Remove(readerInfo.LocalId);
 					this.logReaderInfosByLogReader.Remove(readerInfo.LogReader);
-					Interlocked.Add(ref this.memorySize, -((LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize));
+					this.UpdateMemorySize(-((LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize));
 				}
 			}
 			
 			// update memory size
-			Interlocked.Add(ref this.memorySize, -log.MemorySize);
+			this.UpdateMemorySize(-log.MemorySize);
 		}
 
 
@@ -711,7 +718,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		/// <param name="diff">Difference of memory size.</param>
 		internal void OnDisplayableLogMemorySizeChanged(long diff) =>
-			Interlocked.Add(ref this.memorySize, diff);
+			this.UpdateMemorySize(diff);
 
 
 		// Called when property of log profile has been changed.
@@ -945,6 +952,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				log.OnLevelMapForDisplayingChanged();
 				log = log.Next;
+			}
+		}
+		
+		
+		// Update memory size
+		void UpdateMemorySize(long diff)
+		{
+			lock (this.memorySizeLock)
+			{
+				this.memorySize += diff;
+				if (this.memorySize < 0)
+				{
+#if DEBUG
+					throw new InternalStateCorruptedException($"Memory size becomes negative: {this.memorySize}, diff: {diff}.");
+#endif
+					this.logger.LogError("Memory size becomes negative: {size}, diff: {diff}, stack trace: {st}", this.memorySize, diff, Environment.StackTrace);
+					this.memorySize = 0;
+					this.DebugMessageGenerated?.Invoke(this, new("Memory size becomes negative."));
+				}
 			}
 		}
 

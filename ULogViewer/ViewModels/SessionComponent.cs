@@ -23,7 +23,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// <summary>
     /// Initialize new <see cref="SessionComponent"/> instance.
     /// </summary>
-    /// <param name="app">Application.</param>
+    /// <param name="session">Session.</param>
     /// <param name="internalAccessor">Accessor to internal state of session.</param>
     protected SessionComponent(Session session, ISessionInternalAccessor internalAccessor) : base(session.Application)
     { 
@@ -53,7 +53,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// <summary>
     /// Get all logs.
     /// </summary>
-    protected IList<DisplayableLog> AllLogs { get => this.Session.AllLogs; }
+    protected IList<DisplayableLog> AllLogs => this.Session.AllLogs;
 
 
     /// <summary>
@@ -65,11 +65,17 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     protected int CompareLogs(DisplayableLog? lhs, DisplayableLog? rhs) =>
         this.Session.CompareDisplayableLogs(lhs, rhs);
     
+    
+    /// <summary>
+    /// Raised when debug message generated.
+    /// </summary>
+    public event EventHandler<MessageEventArgs>? DebugMessageGenerated;
+    
 
     /// <summary>
     /// Get group of displayable logs.
     /// </summary>
-    protected DisplayableLogGroup? DisplayableLogGroup { get => this.internalAccessor.DisplayableLogGroup; }
+    protected DisplayableLogGroup? DisplayableLogGroup => this.internalAccessor.DisplayableLogGroup;
 
 
     /// <inheritdoc/>
@@ -103,6 +109,18 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
 
 
     /// <summary>
+    /// Generate debug message.
+    /// </summary>
+    /// <param name="message">Message.</param>
+    protected void GenerateDebugMessage(string message)
+    {
+        this.VerifyAccess();
+        if (!this.IsDisposed)
+            this.DebugMessageGenerated?.Invoke(this, new(message));
+    }
+    
+    
+    /// <summary>
     /// Generate error message.
     /// </summary>
     /// <param name="message">Message.</param>
@@ -117,19 +135,19 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// <summary>
     /// Get current log profile.
     /// </summary>
-    protected LogProfile? LogProfile { get => this.attachedLogProfile; }
+    protected LogProfile? LogProfile => this.attachedLogProfile;
 
 
     /// <summary>
     /// Get current memory usage in bytes.
     /// </summary>
-    public virtual long MemorySize { get => 0L; }
+    public virtual long MemorySize => 0L;
 
 
     /// <summary>
     /// Get memory usage policy.
     /// </summary>
-    protected MemoryUsagePolicy MemoryUsagePolicy { get => this.internalAccessor.MemoryUsagePolicy; }
+    protected MemoryUsagePolicy MemoryUsagePolicy => this.internalAccessor.MemoryUsagePolicy;
 
 
     /// <summary>
