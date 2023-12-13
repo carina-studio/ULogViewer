@@ -63,6 +63,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly DirectProperty<SessionView, bool> AreAllTutorialsShownProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(AreAllTutorialsShown), v => v.areAllTutorialsShown);
 		/// <summary>
+		/// Property of <see cref="CanEditCurrentScriptLogDataSourceProvider"/>.
+		/// </summary>
+		public static readonly DirectProperty<SessionView, bool> CanEditCurrentScriptLogDataSourceProviderProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(CanEditCurrentScriptLogDataSourceProvider), sv => sv.canEditCurrentScriptLogDataSourceProvider);
+		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
@@ -208,6 +212,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState<Session.LogFileParams> canAddLogFilesToSession = new();
 		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
+		bool canEditCurrentScriptLogDataSourceProvider;
 		readonly MutableObservableBoolean canEditLogProfile = new();
 		readonly MutableObservableBoolean canMarkSelectedLogs = new();
 		readonly MutableObservableBoolean canMarkUnmarkSelectedLogs = new();
@@ -307,6 +312,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel toolBarLogTextFilterItemsPanel;
 		readonly Panel toolBarOtherItemsPanel;
 		readonly Panel toolBarOtherLogFilterItemsPanel;
+		readonly ScheduledAction updateCanEditCurrentScriptLogDataSourceProviderAction;
 		readonly ScheduledAction updateLatestDisplayedLogRangeAction;
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
 		readonly ScheduledAction updateLogItemHeightAction;
@@ -1028,6 +1034,20 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.ScrollToLatestLogAnalysisResult(true);
 			});
 			this.startLogChartAnimationsAction = new(this.StartLogChartAnimations);
+			this.updateCanEditCurrentScriptLogDataSourceProviderAction = new(() =>
+			{
+				var session = this.DataContext as Session;
+				var logProfile = session?.LogProfile;
+				if (logProfile?.IsBuiltIn != false || !session!.IsScriptLogDataSourceProvider)
+				{
+					this.SetAndRaise(CanEditCurrentScriptLogDataSourceProviderProperty, ref this.canEditCurrentScriptLogDataSourceProvider, false);
+					return;
+				}
+				this.SetAndRaise(CanEditCurrentScriptLogDataSourceProviderProperty,
+					ref this.canEditCurrentScriptLogDataSourceProvider,
+					!session.IsEmbeddedScriptLogDataSourceProvider
+					|| session.IsProVersionActivated);
+			});
 			this.updateLogAnalysisAction = new(() =>
 			{
 				if (this.DataContext is not Session session)
@@ -1334,6 +1354,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// update properties
+			this.updateCanEditCurrentScriptLogDataSourceProviderAction.Schedule();
 			this.validLogLevels.AddAll(session.ValidLogLevels);
 			this.logProfileSelectionMenu.CurrentLogProfile = session.LogProfile;
 
@@ -1399,6 +1420,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.scrollToTargetLogRangeAction.Cancel();
 			this.SetValue(IsScrollingToTargetLogRangeProperty, false);
 		}
+
+
+		/// <summary>
+		/// Check whether editing current script log data source provider is allowed or not.
+		/// </summary>
+		public bool CanEditCurrentScriptLogDataSourceProvider => this.canEditCurrentScriptLogDataSourceProvider;
 
 
 		// Enable script running if needed.
@@ -1675,7 +1702,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// load resources
 			var app = (App)this.Application;
-			var isDebugMode = app.IsDebugMode;
 			var logPropertyCount = logProperties.Count;
 			var toolTipTemplate = (DataTemplate)this.Resources["logPropertyToolTipTemplate"].AsNonNull();
 			var colorIndicatorBorderBrush = app.FindResourceOrDefault<IBrush?>("Brush/WorkingArea.Background");
@@ -2433,6 +2459,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// update properties
 			this.canEditLogProfile.Update(false);
 			this.SetValue(HasLogProfileProperty, false);
+			this.updateCanEditCurrentScriptLogDataSourceProviderAction.Execute();
 			this.validLogLevels.Clear();
 			this.logProfileSelectionMenu.CurrentLogProfile = null;
 
@@ -2680,6 +2707,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.IsHandlingDragAndDrop = false;
 			}
 		}
+
+
+		/// <summary>
+		/// Edit script log data source provider which is currently used.
+		/// </summary>
+		public void EditCurrentScriptLogDataSourceProvider()
+		{ }
 
 
 		/// <summary>
@@ -4378,6 +4412,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 					}
 					break;
+				case nameof(Session.IsEmbeddedScriptLogDataSourceProvider):
+				case nameof(Session.IsScriptLogDataSourceProvider):
+					this.updateCanEditCurrentScriptLogDataSourceProviderAction.Schedule();
+					break;
 				case nameof(Session.IsHighMemoryUsageToStopReadingLogs):
 					if (session.IsHighMemoryUsageToStopReadingLogs 
 					    && session.IsActivated 
@@ -4403,6 +4441,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.UpdateToolsMenuItems();
 					if (session.LogChart.IsMaxTotalSeriesValueCountReached)
 						this.PromptForMaxLogChartSeriesValueCountReached();
+					this.updateCanEditCurrentScriptLogDataSourceProviderAction.Execute();
 					break;
 				case nameof(Session.IsReadingLogs):
 					if (session.IsReadingLogs)

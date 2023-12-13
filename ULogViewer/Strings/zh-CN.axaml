@@ -375,6 +375,7 @@ from CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting import ResultType
 # 返回 True 以保留透过 context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
 return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在启用专业版之前，您无法建立更多的日志分析脚本。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors">您的脚本中有一个或多个错误，是否仍要套用？</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">您的脚本中有一个或多个错误，是否仍要关闭编辑器？</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">图标</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">图标色彩</sys:String>
@@ -1068,6 +1069,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。</sys:String>
+	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors"/>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmClosingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors"/>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器开启脚本</sys:String>
@@ -1194,6 +1196,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含文件名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">编辑内嵌日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">编辑「{0}」日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider.Placeholder">编辑当前的日志资料来源脚本</sys:String>
 	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">编辑日志分析脚本文件…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">编辑 PATH 环境变量…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>

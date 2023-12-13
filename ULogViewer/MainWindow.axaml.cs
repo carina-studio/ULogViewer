@@ -54,6 +54,7 @@ namespace CarinaStudio.ULogViewer
 		bool areULogViewerInitialDialogsShown;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
+		readonly Dictionary<NativeMenuItem, IDisposable> nativeMenuItemHeaderBindingTokens = new();
 		readonly NotificationPresenter notificationPresenter;
 		readonly ScheduledAction selectAndSetLogProfileAction;
 		readonly DataTemplate sessionTabItemHeaderTemplate;
@@ -202,6 +203,9 @@ namespace CarinaStudio.ULogViewer
 			});
 			this.AddHandler(KeyDownEvent, this.OnPreviewKeyDown, RoutingStrategies.Tunnel);
 			this.AddHandler(KeyUpEvent, this.OnPreviewKeyUp, RoutingStrategies.Tunnel);
+			
+			// attach to application
+			this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 
 			// start stopwatch
 			if (this.Application.IsDebugMode)
@@ -386,12 +390,17 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// setup session view
-			var propertyObserverTokens = new List<IDisposable>()
+			var propertyObserverTokens = new List<IDisposable>
 			{
 				sessionView.GetObservable(SessionView.AreAllTutorialsShownProperty).Subscribe(shown =>
 				{
 					if (shown)
 						this.selectAndSetLogProfileAction.Schedule();
+				}),
+				sessionView.GetObservable(SessionView.CanEditCurrentScriptLogDataSourceProviderProperty).Subscribe(shown =>
+				{
+					if (sessionView == (this.tabControl.SelectedItem as TabItem)?.Content)
+						this.UpdateToolMenuItems();
 				}),
 			};
 			sessionView.DataContext = session;
@@ -488,8 +497,15 @@ namespace CarinaStudio.ULogViewer
 				Settings = this.Application.Configuration,
 			}.ShowDialog(this);
 		}
-		
-		
+
+
+		/// <summary>
+		/// Edit script log data source provider which is currently used.
+		/// </summary>
+		public void EditCurrentScriptLogDataSourceProvider()
+		{ }
+
+
 #if DEBUG
 		/// <summary>
 		/// Edit given log analysis script set file.
@@ -518,7 +534,7 @@ namespace CarinaStudio.ULogViewer
 				return it.Name == "AgreedPrivacyPolicyVersion" || it.Name == "AgreedUserAgreementVersion";
 			});
 #endif
-			_ = new SettingsEditorDialog()
+			_ = new SettingsEditorDialog
 			{
 				SettingKeys = keys,
 				Settings = this.Application.PersistentState,
@@ -541,6 +557,20 @@ namespace CarinaStudio.ULogViewer
 		// Find SessionView for specific session.
 		public SessionView? FindSessionView(Session session) => 
 			this.FindSessionTabItem(session)?.Content as SessionView;
+
+
+		/// <summary>
+		/// Login to Azure.
+		/// </summary>
+		public void LoginToAzure()
+		{ }
+		
+
+		/// <summary>
+		/// Logout from Azure,
+		/// </summary>
+		public void LogoutFromAzure()
+		{ }
 
 
 		/// <summary>
@@ -605,7 +635,17 @@ namespace CarinaStudio.ULogViewer
 				case nameof(Session.IsWaitingForDataSources):
 					this.updateSysTaskBarAction.Schedule();
 					break;
+				case nameof(Session.IsEmbeddedScriptLogDataSourceProvider):
+					this.UpdateToolMenuItems();
+					break;
 			}
+		}
+
+
+		// Called when application strings updated.
+		void OnApplicationStringsUpdated(object? sender, EventArgs e)
+		{
+			this.UpdateToolMenuItems();
 		}
 
 
@@ -665,6 +705,9 @@ namespace CarinaStudio.ULogViewer
 					token.Dispose();
 			}
 			this.sessionViewPropertyObserverTokens.Clear();
+			
+			// detach from application
+			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			
 			// [Workaround] Remove bindings to window to prevent window leakage
 			if (Platform.IsMacOS) 
@@ -1105,6 +1148,7 @@ namespace CarinaStudio.ULogViewer
 				workspace.ActiveSession = (Session)(this.tabItems[index].AsNonNull()).DataContext.AsNonNull();
 			}
 			this.focusOnTabItemContentAction.Schedule();
+			this.UpdateToolMenuItems();
 		}
 
 
@@ -1366,7 +1410,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Update menu items of tools.
 		void UpdateToolMenuItems()
-		{
-		}
+		{ }
 	}
 }

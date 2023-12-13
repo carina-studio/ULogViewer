@@ -388,6 +388,7 @@ return false;</sys:String>
 # Return True to take results added by context.AddResult(), or False to ignore current log and results.
 return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">Cannot create more log analysis script before activating Pro version.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors">There is one or more errors in your script. Do you still want to apply?</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">There is one or more errors in your script. Do you still want to close the editor?</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Color of icon</sys:String>
@@ -1104,6 +1105,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.</sys:String>
+	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors"/>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmClosingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors"/>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to open raw log reader</sys:String>
@@ -1230,6 +1232,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">Edit embedded log data source script</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">Edit log data source script '{0}'</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider.Placeholder">Edit current log data source script</sys:String>
 	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">Edit log analysis script file…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit PATH environment variable…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>

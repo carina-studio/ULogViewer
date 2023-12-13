@@ -53,7 +53,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 	public LogAnalysisScriptSetEditorDialog()
 	{
 		var isInit = true;
-		this.ApplyCommand = new Command(this.ApplyAsync, this.GetObservable(AreValidParametersProperty));
+		this.ApplyCommand = new Command(async() => await this.ApplyAsync(false), this.GetObservable(AreValidParametersProperty));
 		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
@@ -84,7 +84,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 	
 	
 	// Apply current script set.
-	async Task<LogAnalysisScriptSet?> ApplyAsync()
+	async Task<LogAnalysisScriptSet?> ApplyAsync(bool willClose)
 	{
 		// check compilation error
 		//
@@ -161,7 +161,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 	// Complete editing.
 	async Task CompleteEditing()
 	{
-		var scriptSet = await this.ApplyAsync();
+		var scriptSet = await this.ApplyAsync(true);
 		if (scriptSet is not null)
 			this.Close(scriptSet);
 	}

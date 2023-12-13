@@ -211,6 +211,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsCopyingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsCopyingLogs));
 		/// <summary>
+		/// Property of <see cref="IsEmbeddedScriptLogDataSourceProvider"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsEmbeddedScriptLogDataSourceProviderProperty = ObservableProperty.Register<Session, bool>(nameof(IsEmbeddedScriptLogDataSourceProvider));
+		/// <summary>
 		/// Property of <see cref="IsHibernated"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsHibernatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsHibernated));
@@ -290,6 +294,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="IsSavingLogs"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
+		/// <summary>
+		/// Property of <see cref="IsScriptLogDataSourceProvider"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> IsScriptLogDataSourceProviderProperty = ObservableProperty.Register<Session, bool>(nameof(IsScriptLogDataSourceProvider));
 		/// <summary>
 		/// Property of <see cref="IsShowingAllLogsTemporarily"/>.
 		/// </summary>
@@ -2795,6 +2803,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs copying is on-going or not.
 		/// </summary>
 		public bool IsCopyingLogs => this.GetValue(IsCopyingLogsProperty);
+		
+		
+		/// <summary>
+		/// Check whether current log data source provider is embedded <see cref="ScriptLogDataSourceProvider"/> or not.
+		/// </summary>
+		public bool IsEmbeddedScriptLogDataSourceProvider => this.GetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
 
 
 		/// <summary>
@@ -2932,6 +2946,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether logs saving is on-going or not.
 		/// </summary>
 		public bool IsSavingLogs => this.GetValue(IsSavingLogsProperty);
+		
+		
+		/// <summary>
+		/// Check whether current log data source provider is <see cref="ScriptLogDataSourceProvider"/> or not.
+		/// </summary>
+		public bool IsScriptLogDataSourceProvider => this.GetValue(IsScriptLogDataSourceProviderProperty);
 
 
 		/// <summary>
@@ -4171,11 +4191,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.UpdateCanSetWorkingDirectory(null);
 			this.ResetValue(HasLogColorIndicatorProperty);
 			this.ResetValue(HasLogColorIndicatorByFileNameProperty);
+			this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
 			this.ResetValue(IsIPEndPointNeededProperty);
 			this.ResetValue(IsIPEndPointSupportedProperty);
 			this.ResetValue(IsLogFileNeededProperty);
 			this.ResetValue(IsLogFileSupportedProperty);
 			this.ResetValue(IsReadingLogsContinuouslyProperty);
+			this.ResetValue(IsScriptLogDataSourceProviderProperty);
 			this.ResetValue(IsUriNeededProperty);
 			this.ResetValue(IsUriSupportedProperty);
 			this.ResetValue(IsWorkingDirectoryNeededProperty);
@@ -5197,6 +5219,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// get default data source options
 			var defaultDataSourceOptions = profile.DataSourceOptions;
 			var dataSourceProvider = profile.DataSourceProvider;
+			
+			// update state
+			if (dataSourceProvider is ScriptLogDataSourceProvider)
+			{
+				this.SetValue(IsEmbeddedScriptLogDataSourceProviderProperty, dataSourceProvider == profile.EmbeddedScriptLogDataSourceProvider);
+				this.SetValue(IsScriptLogDataSourceProviderProperty, true);
+			}
+			else
+			{
+				this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
+				this.ResetValue(IsScriptLogDataSourceProviderProperty);
+			}
 
 			// check log file
 			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)))

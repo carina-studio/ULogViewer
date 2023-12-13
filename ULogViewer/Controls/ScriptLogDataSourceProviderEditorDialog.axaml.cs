@@ -102,7 +102,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IUL
 	public ScriptLogDataSourceProviderEditorDialog()
 	{
 		var isInit = true;
-		this.ApplyCommand = new Command(this.ApplyAsync, this.GetObservable(AreValidParametersProperty));
+		this.ApplyCommand = new Command(async () => await this.ApplyAsync(false), this.GetObservable(AreValidParametersProperty));
 		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
 		this.RemoveSupportedSourceOptionCommand = new Command<SupportedSourceOption>(this.RemoveSupportedSourceOption);
 		this.SupportedSourceOptions = ListExtensions.AsReadOnly(this.supportedSourceOptions);
@@ -150,7 +150,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IUL
 	
 	
 	// Apply current script set.
-	async Task<ScriptLogDataSourceProvider?> ApplyAsync()
+	async Task<ScriptLogDataSourceProvider?> ApplyAsync(bool willClose)
 	{
 		// check compilation error
 		//
@@ -185,7 +185,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IUL
 	// Complete editing.
 	async void CompleteEditing()
 	{
-		var provider = await this.ApplyAsync();
+		var provider = await this.ApplyAsync(true);
 		if (provider is not null)
 			this.Close(provider);
 	}
@@ -230,6 +230,19 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IUL
 	{
 		get => this.GetValue(IsEmbeddedProviderProperty);
 		set => this.SetValue(IsEmbeddedProviderProperty, value);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnClosed(EventArgs e)
+	{
+		if (this.Provider is not null 
+		    && Dialogs.TryGetValue(this.Provider, out var dialog)
+		    && dialog == this)
+		{
+			Dialogs.Remove(this.Provider);
+		}
+		base.OnClosed(e);
 	}
 
 
@@ -367,7 +380,8 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IUL
 	/// </summary>
 	/// <param name="parent">Parent window.</param>
 	/// <param name="provider">Provider to edit.</param>
-	public static void Show(Avalonia.Controls.Window parent, ScriptLogDataSourceProvider? provider)
+	/// <param name="isEmbedded">Whether the provider is embedded in log profile or not.</param>
+	public static void Show(Avalonia.Controls.Window parent, ScriptLogDataSourceProvider? provider, bool isEmbedded)
 	{
 		if (provider is not null && Dialogs.TryGetValue(provider, out var dialog))
 		{
@@ -376,6 +390,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IUL
 		}
 		dialog = new ScriptLogDataSourceProviderEditorDialog
 		{
+			IsEmbeddedProvider = isEmbedded,
 			Provider = provider,
 		};
 		if (provider is not null)
