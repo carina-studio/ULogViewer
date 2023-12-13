@@ -1,5 +1,6 @@
 ﻿using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
+using CarinaStudio.ComponentModel;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Cryptography;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -38,11 +40,15 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		bool allowMultipleFiles = true;
 		string builtInName = "";
 		LogColorIndicator colorIndicator = LogColorIndicator.None;
-		LogAnalysisScriptSet? cooperativeLogAnalysisScriptSet;
+		LogAnalysisScriptSet? coopLogAnalysisScriptSet;
+		readonly PropertyChangedEventHandler coopLogAnalysisScriptSetPropChangedHandler;
+		IDisposable? coopLogAnalysisScriptSetPropChangedHandlerToken;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
 		string? description;
-		EmbeddedScriptLogDataSourceProvider? embeddedScriptLogDataSourceProvider;
+		EmbeddedScriptLogDataSourceProvider? embScriptLogDataSourceProvider;
+		readonly PropertyChangedEventHandler embScriptLogDataSourceProviderPropChangedHandler;
+		IDisposable? embScriptLogDataSourceProviderPropChangedHandlerToken;
 		bool hasDescription;
 		LogProfileIcon icon = LogProfileIcon.File;
 		LogProfileIconColor iconColor = LogProfileIconColor.Default;
@@ -90,6 +96,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		// Constructor.
 		LogProfile(IULogViewerApplication app, string id, bool isBuiltIn) : base(app, id, isBuiltIn)
 		{
+			this.coopLogAnalysisScriptSetPropChangedHandler = this.OnCooperativeLogAnalysisScriptSetPropertyChanged;
+			this.embScriptLogDataSourceProviderPropChangedHandler = this.OnEmbeddedScriptSourceProviderPropertyChanged;
 			this.isPinnedSettingKey = isBuiltIn ? new($"BuiltInProfile.{id}.IsPinned") : null;
 			this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 			this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
@@ -114,15 +122,19 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		{
 			this.allowMultipleFiles = template.allowMultipleFiles;
 			this.colorIndicator = template.colorIndicator;
-			this.cooperativeLogAnalysisScriptSet = template.cooperativeLogAnalysisScriptSet;
+			this.coopLogAnalysisScriptSet = template.coopLogAnalysisScriptSet?.Also(it =>
+			{
+				this.coopLogAnalysisScriptSetPropChangedHandlerToken = it.AddWeakPropertyChangedEventHandler(this.coopLogAnalysisScriptSetPropChangedHandler);
+			});
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
 			this.description = template.description;
-			if (template.embeddedScriptLogDataSourceProvider != null)
+			if (template.embScriptLogDataSourceProvider is not null)
 			{
-				this.embeddedScriptLogDataSourceProvider = new(template.embeddedScriptLogDataSourceProvider);
-				if (template.dataSourceProvider == template.embeddedScriptLogDataSourceProvider)
-					this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider;
+				this.embScriptLogDataSourceProvider = new(template.embScriptLogDataSourceProvider);
+				this.embScriptLogDataSourceProviderPropChangedHandlerToken = this.embScriptLogDataSourceProvider.AddWeakPropertyChangedEventHandler(this.embScriptLogDataSourceProviderPropChangedHandler);
+				if (template.dataSourceProvider == template.embScriptLogDataSourceProvider)
+					this.dataSourceProvider = this.embScriptLogDataSourceProvider;
 			}
 			this.hasDescription = template.hasDescription;
 			this.icon = template.icon;
@@ -220,14 +232,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		public LogAnalysisScriptSet? CooperativeLogAnalysisScriptSet
 		{
-			get => this.cooperativeLogAnalysisScriptSet;
+			get => this.coopLogAnalysisScriptSet;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.cooperativeLogAnalysisScriptSet?.Equals(value) == true)
+				if (this.coopLogAnalysisScriptSet?.Equals(value) == true)
 					return;
-				this.cooperativeLogAnalysisScriptSet = value;
+				this.coopLogAnalysisScriptSetPropChangedHandlerToken = this.coopLogAnalysisScriptSetPropChangedHandlerToken.DisposeAndReturnNull();
+				this.coopLogAnalysisScriptSet = value;
+				this.coopLogAnalysisScriptSetPropChangedHandlerToken = value?.AddWeakPropertyChangedEventHandler(this.coopLogAnalysisScriptSetPropChangedHandler);
 				this.OnPropertyChanged(nameof(CooperativeLogAnalysisScriptSet));
 			}
 		}
@@ -306,14 +320,16 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// </summary>
 		public EmbeddedScriptLogDataSourceProvider? EmbeddedScriptLogDataSourceProvider
 		{
-			get => this.embeddedScriptLogDataSourceProvider;
+			get => this.embScriptLogDataSourceProvider;
 			set
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.embeddedScriptLogDataSourceProvider == value)
+				if (this.embScriptLogDataSourceProvider == value)
 					return;
-				this.embeddedScriptLogDataSourceProvider = value;
+				this.embScriptLogDataSourceProviderPropChangedHandlerToken = this.embScriptLogDataSourceProviderPropChangedHandlerToken.DisposeAndReturnNull();
+				this.embScriptLogDataSourceProvider = value;
+				this.embScriptLogDataSourceProviderPropChangedHandlerToken = value?.AddWeakPropertyChangedEventHandler(this.embScriptLogDataSourceProviderPropChangedHandler);
 				this.OnPropertyChanged(nameof(EmbeddedScriptLogDataSourceProvider));
 			}
 		}
@@ -978,6 +994,26 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		/// Called when application string resources updated.
 		/// </summary>
 		public void OnApplicationStringsUpdated() => this.UpdateBuiltInNameAndDescription();
+		
+		
+		// Called when property of cooperative log analysis script set changed.
+		void OnCooperativeLogAnalysisScriptSetPropertyChanged(object? sender, PropertyChangedEventArgs e) =>
+			this.OnPropertyChanged(nameof(CooperativeLogAnalysisScriptSet));
+
+
+		// Called when property of embedded script data source provider changed.
+		void OnEmbeddedScriptSourceProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(EmbeddedScriptLogDataSourceProvider.ActiveSourceCount):
+				case nameof(EmbeddedScriptLogDataSourceProvider.DisplayName):
+					break;
+				default:
+					this.OnPropertyChanged(nameof(EmbeddedScriptLogDataSourceProvider));
+					break;
+			}
+		}
 
 
 		/// <inheritdoc/>
@@ -1001,7 +1037,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(CooperativeLogAnalysisScriptSet):
 						try
 						{
-							this.cooperativeLogAnalysisScriptSet = LogAnalysisScriptSet.Load(this.Application, jsonProperty.Value);
+							this.coopLogAnalysisScriptSet = LogAnalysisScriptSet.Load(this.Application, jsonProperty.Value);
+							this.coopLogAnalysisScriptSetPropChangedHandlerToken = this.coopLogAnalysisScriptSet.AddWeakPropertyChangedEventHandler(this.coopLogAnalysisScriptSetPropChangedHandler);
 						}
 						catch (Exception ex)
 						{
@@ -1017,8 +1054,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 					case nameof(EmbeddedScriptLogDataSourceProvider):
 						try
 						{
-							this.embeddedScriptLogDataSourceProvider = ScriptLogDataSourceProvider.Load(this.Application, jsonProperty.Value).Exchange(it =>
+							this.embScriptLogDataSourceProvider = ScriptLogDataSourceProvider.Load(this.Application, jsonProperty.Value).Exchange(it =>
 								new EmbeddedScriptLogDataSourceProvider(it));
+							this.embScriptLogDataSourceProviderPropChangedHandlerToken = this.embScriptLogDataSourceProvider?.AddWeakPropertyChangedEventHandler(this.embScriptLogDataSourceProviderPropChangedHandler);
 						}
 						catch (Exception ex)
 						{
@@ -1198,7 +1236,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			}
 			this.workingDirectoryRequirement = workingDirPriority.GetValueOrDefault();
 			if (useEmbeddedDataSourceProvider)
-				this.dataSourceProvider = this.embeddedScriptLogDataSourceProvider ?? throw new ArgumentException("Embedded script log data source not found.");
+				this.dataSourceProvider = this.embScriptLogDataSourceProvider ?? throw new ArgumentException("Embedded script log data source not found.");
 		}
 
 
@@ -1210,13 +1248,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			writer.WritePropertyName("DataSource");
 			this.SaveDataSourceToJson(writer);
 			writer.WriteString(nameof(ColorIndicator), this.colorIndicator.ToString());
-			this.cooperativeLogAnalysisScriptSet?.Let(scriptSet =>
+			this.coopLogAnalysisScriptSet?.Let(scriptSet =>
 			{
 				writer.WritePropertyName(nameof(CooperativeLogAnalysisScriptSet));
 				scriptSet.Save(writer);
 			});
 			writer.WriteString(nameof(Description), this.description);
-			this.embeddedScriptLogDataSourceProvider?.Let(it =>
+			this.embScriptLogDataSourceProvider?.Let(it =>
 			{
 				writer.WritePropertyName(nameof(EmbeddedScriptLogDataSourceProvider));
 				it.Save(writer);
@@ -1360,7 +1398,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
 			writer.WriteStartObject();
-			if (provider != this.embeddedScriptLogDataSourceProvider)
+			if (provider != this.embScriptLogDataSourceProvider)
 				writer.WriteString(nameof(ILogDataSourceProvider.Name), provider.Name);
 			else
 				writer.WriteString(nameof(ILogDataSourceProvider.Name), "Embedded");
