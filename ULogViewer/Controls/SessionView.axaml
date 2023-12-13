@@ -2179,7 +2179,7 @@
 						</asControls:ListBox.ContextMenu>
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:DisplayableLogAnalysisResult">
-								<Grid ColumnDefinitions="Auto,*,10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+								<Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									
 									<!-- Color indicator -->
 									<Border x:CompileBindings="False" 
@@ -2194,6 +2194,7 @@
 									<!-- Content -->
 									<Grid ColumnDefinitions="Auto,*"
 									      Grid.Column="1"
+									      Margin="{DynamicResource Thickness/SessionView.LogAnalysisResult.Padding}"
 									      RowDefinitions="Auto,*" 
 									      VerticalAlignment="Center">
 										
@@ -2225,7 +2226,6 @@
 										<!-- Icon -->
 										<Image x:CompileBindings="False" 
 										       Classes="Icon"
-										       Grid.RowSpan="2"
 										       Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" 
 										       Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" 
 										       Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}"

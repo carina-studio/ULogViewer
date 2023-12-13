@@ -269,6 +269,7 @@
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin">8,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,4,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Message.Margin">0,1,20,1</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Padding">0,2,0,2</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin">0,0,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding">3,0,0,0</Thickness>

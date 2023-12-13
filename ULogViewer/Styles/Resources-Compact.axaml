@@ -62,6 +62,7 @@
 	<sys:Double x:Key="Double/SessionView.LogListBox.Item.Height">24</sys:Double>
 	<StaticResourceExtension x:Key="Double/SessionView.MarkedLogListBox.ToolTip.MaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,3,3,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Padding">0,1,0,1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Icon.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfo.Text.Margin">0,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding">2,0,0,0</Thickness>
