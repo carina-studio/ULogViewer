@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -22,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="ScriptLogDataSourceProvider"/>s.
 /// </summary>
-class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialog<IULogViewerApplication>
+class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IULogViewerApplication>
 {
 	// Supported source option.
 	public class SupportedSourceOption
@@ -71,14 +70,22 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 
 
 	// Static fields.
+	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(AreValidParameters), d => d.areValidParameters);
+	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, Uri?> ClosingReaderScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, Uri?>(nameof(ClosingReaderScriptDocumentUri), d => d.closingReaderScriptDocumentUri);
+	static readonly Dictionary<ScriptLogDataSourceProvider, ScriptLogDataSourceProviderEditorDialog> Dialogs = new();
+	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, bool> IsNewProviderProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(IsNewProvider), d => d.isNewProvider);
 	static readonly StyledProperty<bool> IsEmbeddedProviderProperty = AvaloniaProperty.Register<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(IsEmbeddedProvider));
+	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, Uri?> OpeningReaderScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, Uri?>(nameof(OpeningReaderScriptDocumentUri), d => d.openingReaderScriptDocumentUri);
+	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, Uri?> ReadingLineScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, Uri?>(nameof(ReadingLineScriptDocumentUri), d => d.readingLineScriptDocumentUri);
 
 
 	// Fields.
 	readonly ToggleButton addSupportedSourceOptionButton;
 	readonly ContextMenu addSupportedSourceOptionMenu;
+	bool areValidParameters;
 	Uri? closingReaderScriptDocumentUri;
 	readonly TextBox displayNameTextBox;
+	bool isNewProvider;
 	bool isProviderShown;
 	Uri? openingReaderScriptDocumentUri;
 	Uri? readingLineScriptDocumentUri;
@@ -86,6 +93,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<MenuItem> unsupportedSourceOptionMenuItems = new((lhs, rhs) => string.Compare(lhs.DataContext as string, rhs.DataContext as string, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<string> unsupportedSourceOptions = new((lhs, rhs) => string.Compare(lhs, rhs, true, CultureInfo.InvariantCulture), LogDataSourceOptions.OptionNames);
+	readonly ScheduledAction validateParametersAction;
 
 
 	/// <summary>
@@ -93,6 +101,9 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	/// </summary>
 	public ScriptLogDataSourceProviderEditorDialog()
 	{
+		var isInit = true;
+		this.ApplyCommand = new Command(this.ApplyAsync, this.GetObservable(AreValidParametersProperty));
+		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
 		this.RemoveSupportedSourceOptionCommand = new Command<SupportedSourceOption>(this.RemoveSupportedSourceOption);
 		this.SupportedSourceOptions = ListExtensions.AsReadOnly(this.supportedSourceOptions);
 		this.UnsupportedSourceOptions = ListExtensions.AsReadOnly(this.unsupportedSourceOptions);
@@ -112,9 +123,15 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 		});
 		this.displayNameTextBox = this.Get<TextBox>(nameof(displayNameTextBox)).Also(it =>
 		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
+			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
 		});
 		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox));
+		this.validateParametersAction = new(() =>
+		{
+			this.SetAndRaise(AreValidParametersProperty, ref this.areValidParameters, this.IsEmbeddedProvider || !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text));
+		});
+		isInit = false;
+		this.UpdateDocumentUris();
 	}
 
 
@@ -126,6 +143,58 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 		this.unsupportedSourceOptionMenuItems.Remove(menuItem);
 		this.supportedSourceOptions.Add(new(option, false));
 	}
+	
+	
+	// Command to apply current script set.
+	public ICommand ApplyCommand { get; }
+	
+	
+	// Apply current script set.
+	async Task<ScriptLogDataSourceProvider?> ApplyAsync()
+	{
+		// check compilation error
+		//
+		
+		// create or update provider
+		var provider = this.Provider;
+		if (provider is null)
+		{
+			if (!this.isNewProvider)
+				return null;
+			provider = new ScriptLogDataSourceProvider(this.Application);
+		}
+		provider.DisplayName = this.displayNameTextBox.Text;
+		provider.SetSupportedSourceOptions(
+			this.supportedSourceOptions.Select(it => it.Name),
+			this.supportedSourceOptions.Where(it => it.IsRequired == true).Select(it => it.Name)
+		);
+		
+		// complete
+		return provider;
+	}
+	
+	
+	// Whether all parameters are valid or not.
+	public bool AreValidParameters => this.GetValue(AreValidParametersProperty);
+
+
+	// URI of document of closing reader script.
+	public Uri? ClosingReaderScriptDocumentUri => this.GetValue(ClosingReaderScriptDocumentUriProperty);
+	
+	
+	// Complete editing.
+	async void CompleteEditing()
+	{
+		var provider = await this.ApplyAsync();
+		if (provider is not null)
+			this.Close(provider);
+	}
+	
+	
+	/// <summary>
+	/// Command to complete editing.
+	/// </summary>
+	public ICommand CompleteEditingCommand { get; }
 
 
 	// Create menu item for unsupported log data source option.
@@ -148,23 +217,10 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	});
 
 
-	/// <inheritdoc/>
-	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
-	{
-		// check compilation error
-		//
-		
-		// create or update provider
-		var provider = this.Provider ?? new ScriptLogDataSourceProvider(this.Application);
-		provider.DisplayName = this.displayNameTextBox.Text;
-		provider.SetSupportedSourceOptions(
-			this.supportedSourceOptions.Select(it => it.Name),
-			this.supportedSourceOptions.Where(it => it.IsRequired == true).Select(it => it.Name)
-		);
-		
-		// complete
-		return Task.FromResult<object?>(provider);
-	}
+	/// <summary>
+	/// Get or set whether the provider is newly created or not.
+	/// </summary>
+	public bool IsNewProvider => this.isNewProvider;
 
 
 	/// <summary>
@@ -228,7 +284,7 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 		
 		// show provider
 		var provider = this.Provider;
-		if (provider != null)
+		if (provider is not null)
 		{
 			if (!this.IsEmbeddedProvider)
 				this.displayNameTextBox.Text = provider.DisplayName;
@@ -238,15 +294,17 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 				this.supportedSourceOptions.Add(new(option, provider.RequiredSourceOptions.Contains(option)));
 			}
 		}
+		else
+		{
+			this.SetAndRaise(IsNewProviderProperty, ref this.isNewProvider, true);
+		}
 		foreach (var option in this.unsupportedSourceOptions)
 			this.unsupportedSourceOptionMenuItems.Add(this.CreateUnsupportedSourceOptionMenuItem(option));
 		this.isProviderShown = true;
+		
+		// validate
+		this.validateParametersAction.Schedule();
 	}
-
-
-	/// <inheritdoc/>
-	protected override bool OnValidateInput() =>
-		base.OnValidateInput() && (this.IsEmbeddedProvider || !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text));
 
 
 	/// <summary>
@@ -256,6 +314,14 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	public void OpenDocumentation() =>
 		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource");
 #pragma warning restore CA1822
+	
+	
+	// URI of document of opening reader script.
+	public Uri? OpeningReaderScriptDocumentUri => this.GetValue(OpeningReaderScriptDocumentUriProperty);
+	
+	
+	// URI of document of reading line script.
+	public Uri? ReadingLineScriptDocumentUri => this.GetValue(ReadingLineScriptDocumentUriProperty);
 
 
 	// Remove supported source option.
@@ -294,6 +360,28 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	/// Get or set script log data source provider to edit.
 	/// </summary>
 	public ScriptLogDataSourceProvider? Provider { get; set; }
+	
+	
+	/// <summary>
+	/// Show dialog to edit provider.
+	/// </summary>
+	/// <param name="parent">Parent window.</param>
+	/// <param name="provider">Provider to edit.</param>
+	public static void Show(Avalonia.Controls.Window parent, ScriptLogDataSourceProvider? provider)
+	{
+		if (provider is not null && Dialogs.TryGetValue(provider, out var dialog))
+		{
+			dialog.ActivateAndBringToFront();
+			return;
+		}
+		dialog = new ScriptLogDataSourceProviderEditorDialog
+		{
+			Provider = provider,
+		};
+		if (provider is not null)
+			Dialogs[provider] = dialog;
+		dialog.Show(parent);
+	}
 
 
 	/// <summary>
@@ -313,4 +401,9 @@ class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.InputDialo
 	/// Get unsupported log data source options.
 	/// </summary>
 	public IList<string> UnsupportedSourceOptions { get; }
+
+
+	// Update URIs of document of script.
+	void UpdateDocumentUris()
+	{ }
 }

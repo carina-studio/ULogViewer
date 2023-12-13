@@ -1508,42 +1508,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Copy selected log analysis rule set.
-		void CopyKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet ruleSet)
-		{
-			if (this.attachedWindow == null)
-				return;
-			var newName = Utility.GenerateName(ruleSet.Name, name => 
-				KeyLogAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == name) != null);
-			var newRuleSet = new KeyLogAnalysisRuleSet(ruleSet, newName);
-			KeyLogAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
-		}
-
-
-		/// <summary>
-		/// Command to copy selected log analysis rule set.
-		/// </summary>
-		public ICommand CopyKeyLogAnalysisRuleSetCommand { get; }
-
-
-		// Copy selected log analysis script set.
-		void CopyLogAnalysisScriptSet(LogAnalysisScriptSet scriptSet)
-		{
-			if (this.attachedWindow == null)
-				return;
-			var newName = Utility.GenerateName(scriptSet.Name, name => 
-				LogAnalysisScriptSetManager.Default.ScriptSets.FirstOrDefault(it => it.Name == name) != null);
-			var newScriptSet = new LogAnalysisScriptSet(scriptSet, newName);
-			LogAnalysisScriptSetEditorDialog.Show(this.attachedWindow, newScriptSet);
-		}
-
-
-		/// <summary>
-		/// Command to copy selected log analysis script set.
-		/// </summary>
-		public ICommand CopyLogAnalysisScriptSetCommand { get; }
-
-
 		// Copy file name of log file.
 		void CopyLogFileName(string filePath)
 		{
@@ -1699,44 +1663,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to copy log text.
 		/// </summary>
 		public ICommand CopyLogTextCommand { get; }
-
-
-		// Copy selected log analysis rule set.
-		void CopyOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet ruleSet)
-		{
-			if (this.attachedWindow == null)
-				return;
-			var newName = Utility.GenerateName(ruleSet.Name, name => 
-				OperationCountingAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == name) != null);
-			var newRuleSet = new OperationCountingAnalysisRuleSet(ruleSet, newName);
-			OperationCountingAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
-		}
-
-
-		/// <summary>
-		/// Command to copy selected log analysis rule set.
-		/// </summary>
-		public ICommand CopyOperationCountingAnalysisRuleSetCommand { get; }
-
-
-		/// <summary>
-		/// Copy selected log analysis rule set.
-		/// </summary>
-		public void CopyOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet ruleSet)
-		{
-			if (this.attachedWindow == null)
-				return;
-			var newName = Utility.GenerateName(ruleSet.Name, name => 
-				OperationDurationAnalysisRuleSetManager.Default.RuleSets.FirstOrDefault(it => it.Name == name) != null);
-			var newRuleSet = new OperationDurationAnalysisRuleSet(ruleSet, newName);
-			OperationDurationAnalysisRuleSetEditorDialog.Show(this.attachedWindow, newRuleSet);
-		}
-
-
-		/// <summary>
-		/// Command to copy selected log analysis rule set.
-		/// </summary>
-		public ICommand CopyOperationDurationAnalysisRuleSetCommand { get; }
 
 
 		// Generate pattern to find leading timestamp.

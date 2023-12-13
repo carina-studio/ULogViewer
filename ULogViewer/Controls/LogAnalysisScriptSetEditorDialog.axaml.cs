@@ -23,21 +23,27 @@ namespace CarinaStudio.ULogViewer.Controls;
 class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
 {
 	// Static fields.
+	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, Uri?> AnalysisScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, Uri?>(nameof(AnalysisScriptDocumentUri), d => d.analysisScriptDocumentUri);
 	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>(nameof(AreValidParameters), d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("LogAnalysisScriptSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 	static readonly StyledProperty<bool> IsEmbeddedScriptSetProperty = AvaloniaProperty.Register<LogAnalysisScriptSetEditorDialog, bool>(nameof(IsEmbeddedScriptSet));
+	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> IsNewScriptSetProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>(nameof(IsNewScriptSet), d => d.isNewScriptSet);
+	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, Uri?> SetupScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, Uri?>(nameof(SetupScriptDocumentUri), d => d.setupScriptDocumentUri);
 
 
 	// Fields.
+	Uri? analysisScriptDocumentUri;
 	bool areValidParameters;
 	readonly ToggleSwitch contextBasedToggleSwitch;
 	string? fileNameToSave;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
 	readonly LogProfileIconComboBox iconComboBox;
+	bool isNewScriptSet;
 	bool isScriptSetShown;
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
+	Uri? setupScriptDocumentUri;
 	readonly ScheduledAction validateParametersAction;
 
 
@@ -47,6 +53,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 	public LogAnalysisScriptSetEditorDialog()
 	{
 		var isInit = true;
+		this.ApplyCommand = new Command(this.ApplyAsync, this.GetObservable(AreValidParametersProperty));
 		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
@@ -63,9 +70,78 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 			this.SetAndRaise(AreValidParametersProperty, ref this.areValidParameters, this.IsEmbeddedScriptSet || !string.IsNullOrWhiteSpace(this.nameTextBox.Text));
 		});
 		this.GetObservable(IsEmbeddedScriptSetProperty).Subscribe(_ => this.validateParametersAction.Schedule());
+		this.UpdateDocumentUris();
 		isInit = false;
 	}
+
+
+	// URI of document of analysis script.
+	public Uri? AnalysisScriptDocumentUri => this.GetValue(AnalysisScriptDocumentUriProperty);
 	
+	
+	// Command to apply current script set.
+	public ICommand ApplyCommand { get; }
+	
+	
+	// Apply current script set.
+	async Task<LogAnalysisScriptSet?> ApplyAsync()
+	{
+		// check compilation error
+		//
+		
+		// create or update script set
+		var scriptSet = this.scriptSetToEdit;
+		if (scriptSet is null)
+		{
+			if (!this.isNewScriptSet)
+				return null;
+			scriptSet = new(this.Application);
+		}
+		scriptSet.Name = this.nameTextBox.Text?.Trim();
+		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
+		scriptSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
+		scriptSet.IsContextualBased = this.contextBasedToggleSwitch.IsChecked.GetValueOrDefault();
+		
+		// add script set or save to file
+		if (string.IsNullOrEmpty(this.fileNameToSave))
+		{
+			if (!this.IsEmbeddedScriptSet && !LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
+			{
+				if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+				    && !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
+				{
+					await new MessageDialog
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
+					}.ShowDialog(this);
+					return null;
+				}
+				LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
+			}
+		}
+		else
+		{
+			try
+			{
+				await scriptSet.SaveAsync(this.fileNameToSave, true);
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Unable to save script set to '{fileName}'", this.fileNameToSave);
+				_ = new MessageDialog
+				{
+					Icon = MessageDialogIcon.Error,
+					Message = $"Unable to save script set to '{this.fileNameToSave}'",
+				}.ShowDialog(this);
+				return null;
+			}
+		}
+		
+		// complete
+		return scriptSet;
+	}
+
 
 	// Whether all parameters are valid or not.
 	public bool AreValidParameters => this.GetValue(AreValidParametersProperty);
@@ -85,54 +161,9 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 	// Complete editing.
 	async Task CompleteEditing()
 	{
-		// check compilation error
-		//
-		
-		// create or update script set
-		var scriptSet = this.scriptSetToEdit ?? new(this.Application);
-		scriptSet.Name = this.nameTextBox.Text?.Trim();
-		scriptSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
-		scriptSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
-		scriptSet.IsContextualBased = this.contextBasedToggleSwitch.IsChecked.GetValueOrDefault();
-		
-		// add script set or save to file
-		if (string.IsNullOrEmpty(this.fileNameToSave))
-		{
-			if (!this.IsEmbeddedScriptSet && !LogAnalysisScriptSetManager.Default.ScriptSets.Contains(scriptSet))
-			{
-				if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
-				    && !LogAnalysisScriptSetManager.Default.CanAddScriptSet)
-				{
-					await new MessageDialog
-					{
-						Icon = MessageDialogIcon.Warning,
-						Message = this.GetResourceObservable("String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion"),
-					}.ShowDialog(this);
-					return;
-				}
-				LogAnalysisScriptSetManager.Default.AddScriptSet(scriptSet);
-			}
-		}
-		else
-		{
-			try
-			{
-				await scriptSet.SaveAsync(this.fileNameToSave, true);
-			}
-			catch (Exception ex)
-			{
-				this.Logger.LogError(ex, "Unable to save script set to '{fileName}'", this.fileNameToSave);
-				_ = new MessageDialog
-				{
-					Icon = MessageDialogIcon.Error,
-					Message = $"Unable to save script set to '{this.fileNameToSave}'",
-				}.ShowDialog(this);
-				return;
-			}
-		}
-
-		// complete
-		this.Close(scriptSet);
+		var scriptSet = await this.ApplyAsync();
+		if (scriptSet is not null)
+			this.Close(scriptSet);
 	}
 	
 	
@@ -150,6 +181,12 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 		get => this.GetValue(IsEmbeddedScriptSetProperty);
 		set => this.SetValue(IsEmbeddedScriptSetProperty, value);
 	}
+
+
+	/// <summary>
+	/// Check whether the editing script is newly created or not.
+	/// </summary>
+	public bool IsNewScriptSet => this.isNewScriptSet;
 
 
 	/// <inheritdoc/>
@@ -242,7 +279,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 		
 		// show script
 		var scriptSet = this.scriptSetToEdit;
-		if (scriptSet != null)
+		if (scriptSet is not null)
 		{
 			if (!this.IsEmbeddedScriptSet)
 			{
@@ -255,6 +292,7 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 		else
 		{
 			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+			this.SetAndRaise(IsNewScriptSetProperty, ref this.isNewScriptSet, true);
 			this.contextBasedToggleSwitch.IsChecked = true;
 		}
 		this.isScriptSetShown = true;
@@ -298,6 +336,10 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 		}
 	}
 	
+	
+	// URI of document of setup script.
+	public Uri? SetupScriptDocumentUri => this.GetValue(SetupScriptDocumentUriProperty);
+
 
 	/// <summary>
 	/// Show dialog to edit script set.
@@ -306,17 +348,53 @@ class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow
 	/// <param name="scriptSet">Script set to edit.</param>
 	public static void Show(Avalonia.Controls.Window parent, LogAnalysisScriptSet? scriptSet)
 	{
-		if (scriptSet != null && Dialogs.TryGetValue(scriptSet, out var dialog))
+		if (scriptSet is not null && Dialogs.TryGetValue(scriptSet, out var dialog))
 		{
 			dialog.ActivateAndBringToFront();
 			return;
 		}
-		dialog = new LogAnalysisScriptSetEditorDialog()
+		dialog = new LogAnalysisScriptSetEditorDialog
 		{
 			scriptSetToEdit = scriptSet,
 		};
-		if (scriptSet != null)
+		if (scriptSet is not null)
 			Dialogs[scriptSet] = dialog;
 		dialog.Show(parent);
 	}
+	
+	
+#if DEBUG
+	/// <summary>
+	/// Show dialog to edit script set stored in file.
+	/// </summary>
+	/// <param name="parent">Parent window.</param>
+	/// <param name="fileName">Name of file which stored the script set.</param>
+	public static async void Show(Avalonia.Controls.Window parent, string fileName)
+	{
+		// load script set
+		var scriptSet = await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(App.Current, fileName));
+		if (scriptSet is null)
+		{
+			_ = new MessageDialog
+			{
+				Icon = MessageDialogIcon.Error,
+				Message = $"Unable to load script set from '{fileName}'.",
+			}.ShowDialog(parent);
+			return;
+		}
+		
+		// edit
+		var dialog = new LogAnalysisScriptSetEditorDialog()
+		{
+			fileNameToSave = fileName,
+			scriptSetToEdit = scriptSet,
+		};
+		dialog.Show(parent);
+	}
+#endif
+
+
+	// Update URIs of document of script.
+	void UpdateDocumentUris()
+	{ }
 }

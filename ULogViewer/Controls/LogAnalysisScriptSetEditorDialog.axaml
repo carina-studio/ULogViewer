@@ -27,6 +27,7 @@
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ApplyCommand}" Content="{DynamicResource String/Common.Apply}" IsVisible="{Binding !#window.IsNewScriptSet}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditingCommand}" Content="{DynamicResource String/Common.OK}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
