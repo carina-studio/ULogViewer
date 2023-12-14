@@ -3,9 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using CarinaStudio.AppSuite;
+using CarinaStudio.Configuration;
+using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -17,14 +21,25 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     /// Define <see cref="ItemHeight"/> property.
     /// </summary>
     public static readonly StyledProperty<double> ItemHeightProperty = AvaloniaProperty.Register<SimpleVirtualizingStackPanel, double>(nameof(ItemHeight), 20);
+    /// <summary>
+    /// Maximum duration to realizing containers in single measurement.
+    /// </summary>
+    public static readonly SettingKey<int> MaxRealizingContainersDuration = new($"{nameof(SimpleVirtualizingStackPanel)}.{nameof(MaxRealizingContainersDuration)}", 66);
+    /// <summary>
+    /// Minimum interval between realizing containers in two measurements.
+    /// </summary>
+    public static readonly SettingKey<int> MinRealizingContainersInterval = new($"{nameof(SimpleVirtualizingStackPanel)}.{nameof(MinRealizingContainersInterval)}", 50);
     
     
     // Static fields.
-    private static readonly AttachedProperty<object?> RecycleKeyProperty = AvaloniaProperty.RegisterAttached<SimpleVirtualizingStackPanel, Control, object?>("RecycleKey");
+    static readonly AttachedProperty<object?> RecycleKeyProperty = AvaloniaProperty.RegisterAttached<SimpleVirtualizingStackPanel, Control, object?>("RecycleKey");
+    static readonly Stopwatch Stopwatch = new Stopwatch().Also(it => it.Start());
     
     
     // Fields.
+    IAppSuiteApplication? app;
     int firstRealizedIndex = -1;
+    readonly ScheduledAction invalidateMeasureAction;
     int lastRealizedIndex = -1;
     readonly List<Control?> realizedContainers = new();
     Control? realizingContainer;
@@ -39,6 +54,15 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     static SimpleVirtualizingStackPanel()
     {
         AffectsMeasure<SimpleVirtualizingStackPanel>(ItemHeightProperty);
+    }
+
+
+    /// <summary>
+    /// Initialize new <see cref="SimpleVirtualizingStackPanel"/> instance.
+    /// </summary>
+    public SimpleVirtualizingStackPanel()
+    {
+        this.invalidateMeasureAction = new(this.InvalidateMeasure);
     }
 
 
@@ -233,36 +257,77 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         }
         
         // create containers
-        if (this.firstRealizedIndex < 0)
+        if (!this.invalidateMeasureAction.IsScheduled)
         {
-            for (var index = firstVisibleIndex; index <= lastVisibleIndex; ++index)
+            var startTime = Stopwatch.ElapsedMilliseconds;
+            var maxDuration = this.app?.Configuration.GetValueOrDefault(MaxRealizingContainersDuration) ?? 66;
+            if (this.firstRealizedIndex < 0)
             {
-                var container = this.GetOrCreateContainer(items, index);
-                this.realizedContainers.Add(container);
-            }
-        }
-        else
-        {
-            if (this.firstRealizedIndex > firstVisibleIndex)
-            {
-                for (int index = firstVisibleIndex, i = 0; index < this.firstRealizedIndex; ++index, ++i)
+                for (var index = firstVisibleIndex; index <= lastVisibleIndex; ++index)
                 {
-                    var container = this.GetOrCreateContainer(items, index);
-                    this.realizedContainers.Insert(i, container);
-                }
-            }
-            if (this.lastRealizedIndex < lastVisibleIndex)
-            {
-                for (int index = this.lastRealizedIndex + 1; index <= lastVisibleIndex; ++index)
-                {
+                    // realize container
                     var container = this.GetOrCreateContainer(items, index);
                     this.realizedContainers.Add(container);
+                    
+                    // abort if the duration exceeds the limit
+                    if ((Stopwatch.ElapsedMilliseconds - startTime) >= maxDuration && index < lastVisibleIndex)
+                    {
+                        lastVisibleIndex = index;
+                        this.invalidateMeasureAction.Schedule(this.app?.Configuration.GetValueOrDefault(MinRealizingContainersInterval) ?? 66);
+                        break;
+                    }
                 }
             }
+            else
+            {
+                if (this.firstRealizedIndex > firstVisibleIndex)
+                {
+                    for (int index = this.firstRealizedIndex - 1; index >= firstVisibleIndex; --index)
+                    {
+                        // realize container
+                        var container = this.GetOrCreateContainer(items, index);
+                        this.realizedContainers.Insert(0, container);
+                        
+                        // abort if the duration exceeds the limit
+                        if ((Stopwatch.ElapsedMilliseconds - startTime) >= maxDuration && index > firstVisibleIndex)
+                        {
+                            firstVisibleIndex = index;
+                            this.invalidateMeasureAction.Schedule(this.app?.Configuration.GetValueOrDefault(MinRealizingContainersInterval) ?? 66);
+                            break;
+                        }
+                    }
+                }
+                if (this.lastRealizedIndex < lastVisibleIndex)
+                {
+                    if ((Stopwatch.ElapsedMilliseconds - startTime) < maxDuration)
+                    {
+                        for (int index = this.lastRealizedIndex + 1; index <= lastVisibleIndex; ++index)
+                        {
+                            // realize container
+                            var container = this.GetOrCreateContainer(items, index);
+                            this.realizedContainers.Add(container);
+                            
+                            // abort if the duration exceeds the limit
+                            if ((Stopwatch.ElapsedMilliseconds - startTime) >= maxDuration && index < lastVisibleIndex)
+                            {
+                                lastVisibleIndex = index;
+                                this.invalidateMeasureAction.Schedule(this.app?.Configuration.GetValueOrDefault(MinRealizingContainersInterval) ?? 66);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // abort because the duration exceeds the limit
+                        lastVisibleIndex = this.lastRealizedIndex;
+                        this.invalidateMeasureAction.Schedule(this.app?.Configuration.GetValueOrDefault(MinRealizingContainersInterval) ?? 66);
+                    }
+                }
+            }
+            this.firstRealizedIndex = firstVisibleIndex;
+            this.lastRealizedIndex = lastVisibleIndex;
         }
-        this.firstRealizedIndex = firstVisibleIndex;
-        this.lastRealizedIndex = lastVisibleIndex;
-        
+
         // measure containers
         var maxContainerWidth = 0.0;
         var isScrollBarEnabled = this.scrollViewer?.HorizontalScrollBarVisibility != ScrollBarVisibility.Disabled;
@@ -292,6 +357,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
+        this.app = IAppSuiteApplication.CurrentOrNull;
         this.scrollViewer = this.FindAncestorOfType<ScrollViewer>()?.Also(it =>
         {
             this.scrollViewerOffsetObserverToken = it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateMeasure);
@@ -303,6 +369,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     /// <inheritdoc/>
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        this.app = null;
         this.scrollViewerOffsetObserverToken = this.scrollViewerOffsetObserverToken.DisposeAndReturnNull();
         this.scrollViewerViewportObserverToken = this.scrollViewerViewportObserverToken.DisposeAndReturnNull();
         this.scrollViewer = null;

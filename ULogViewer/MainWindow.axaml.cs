@@ -491,6 +491,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			var keys = new List<SettingKey>(SettingKey.GetDefinedKeys<AppSuite.ConfigurationKeys>());
 			keys.AddRange(SettingKey.GetDefinedKeys<ConfigurationKeys>());
+			keys.AddRange(SettingKey.GetDefinedKeys<SimpleVirtualizingStackPanel>());
 			_ = new SettingsEditorDialog()
 			{
 				SettingKeys = keys,
