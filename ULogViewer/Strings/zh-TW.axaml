@@ -1176,6 +1176,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">選取大量日誌會使用一些時間。是否要繼續選取？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">您是否要繼續在文字篩選欄位中顯示「說明」按鈕？您可以在「應用程式選項」中變更此設定。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切換至「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmUsingIPAddressInClipboard">您是否要使用剪貼簿中的 IP 位址？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmUsingUriInClipboard">您是否要使用剪貼簿中的網址 (URI)？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">複製檔案名稱</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">複製完整檔案路徑</sys:String>

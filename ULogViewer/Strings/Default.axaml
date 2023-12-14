@@ -1223,6 +1223,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">Do you want to keep 'Help' button on input field of text filter? You can change the setting in 'Options' dialog.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">Do you want to switch to '{0}' now?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmUsingIPAddressInClipboard">Do you want to use IP address in clipboard?</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmUsingUriInClipboard">Do you want to use URI in clipboard?</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">Copy file name</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">Copy full path</sys:String>

@@ -5018,14 +5018,20 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// cancel scheduled action
 			this.autoSetIPEndPointAction.Cancel();
+			
+			// check clipboard
+			var ipEndpoint = session.IPEndPoint;
+			var useIPAddressInClipboard = false;
+			//
 
 			// select IP endpoint
 			var endPoint = await new IPEndPointInputDialog().Also(it =>
 			{
-				it.InitialIPEndPoint = session.IPEndPoint;
+				it.FocusOnPort = useIPAddressInClipboard;
+				it.InitialIPEndPoint = ipEndpoint;
 				it.BindToResource(Avalonia.Controls.Window.TitleProperty, "String/SessionView.SetIPEndPoint");
 			}).ShowDialog<IPEndPoint?>(this.attachedWindow);
-			if (endPoint == null)
+			if (endPoint is null)
 				return;
 
 			// check state
