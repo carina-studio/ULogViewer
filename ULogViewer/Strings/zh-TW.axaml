@@ -1176,6 +1176,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">選取大量日誌會使用一些時間。是否要繼續選取？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">您是否要繼續在文字篩選欄位中顯示「說明」按鈕？您可以在「應用程式選項」中變更此設定。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切換至「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmUsingUriInClipboard">您是否要使用剪貼簿中的網址 (URI)？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">複製檔案名稱</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">複製完整檔案路徑</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty">複製日誌屬性「{0}」</sys:String>
@@ -1339,7 +1340,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId.Message">請輸入一個處理程序識別碼 (PID)：</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName">選取/變更處理程序名稱</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName.Message">請輸入一個處理程序名稱：</sys:String>
-	<sys:String x:Key="String/SessionView.SetUri">選取/變更 URI</sys:String>
+	<sys:String x:Key="String/SessionView.SetUri">選取/變更網址 (URI)</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">選取/變更工作目錄</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暫時顯示所有日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在檔案總管中顯示檔案</sys:String>
@@ -1436,7 +1437,7 @@ return None</sys:String>
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP 伺服器</sys:String>
 
 	<!-- UriInputDialog -->
-	<sys:String x:Key="String/UriInputDialog.Message">請輸入有效的 URI：</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Message">請輸入有效的網址 (URI)：</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->

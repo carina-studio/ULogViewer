@@ -1334,7 +1334,7 @@
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Uri.Outline}"/>
 								</DrawingImage>
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" ToolTip.Placement="Left" ToolTip.Tip="{Binding Uri}">
@@ -1353,7 +1353,7 @@
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/IPAddress.Outline}"/>
 								</DrawingImage>
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding IPEndPoint}"/>

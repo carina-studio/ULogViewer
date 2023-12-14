@@ -1187,6 +1187,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">选择大量日志会使用一些时间，是否继续选择？</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">您是否要继续在文字筛选栏位中显示「说明」按钮？您可以在「应用程序选项」中变更此设置。</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">您是否要立即切换至「{0}」？</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmUsingUriInClipboard">您是否要使用剪贴板中网络地址 (URI)？</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFileName">复制文件名称</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogFilePath">复制完整文件路径</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogProperty">复制日志属性「{0}」</sys:String>
@@ -1350,7 +1351,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId.Message">请输入一个进程识别码 (PID)：</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName">选择/变更进程名称</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName.Message">请输入一个进程名称：</sys:String>
-	<sys:String x:Key="String/SessionView.SetUri">选择/变成 URI</sys:String>
+	<sys:String x:Key="String/SessionView.SetUri">选择/变更网络地址 (URI)</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志</sys:String>
 	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在文件管理中显示文件</sys:String>
@@ -1447,7 +1448,7 @@ return None</sys:String>
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP 服务器</sys:String>
 
 	<!-- UriInputDialog -->
-	<sys:String x:Key="String/UriInputDialog.Message">请输入有效的 URI：</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Message">请输入有效的网络地址 (URI)：</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->

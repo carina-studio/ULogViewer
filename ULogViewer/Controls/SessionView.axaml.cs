@@ -5181,16 +5181,23 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// cancel scheduled action
 			this.autoSetUriAction.Cancel();
+			
+			// check clipboard
+			var uri = default(Uri);
+			//
 
 			// select URI
-			var uri = await new UriInputDialog().Also(it =>
+			if (uri is null)
 			{
-				it.DefaultScheme = session.LogProfile?.DataSourceProvider.Name == "Http" ? "https" : null;
-				it.InitialUri = session.Uri;
-				it.BindToResource(Avalonia.Controls.Window.TitleProperty, "String/SessionView.SetUri");
-			}).ShowDialog<Uri?>(this.attachedWindow);
-			if (uri == null)
-				return;
+				uri = await new UriInputDialog().Also(it =>
+				{
+					it.DefaultScheme = session.LogProfile?.DataSourceProvider.Name == "Http" ? "https" : null;
+					it.InitialUri = session.Uri;
+					it.BindToResource(Avalonia.Controls.Window.TitleProperty, "String/SessionView.SetUri");
+				}).ShowDialog<Uri?>(this.attachedWindow);
+				if (uri is null)
+					return;
+			}
 
 			// check state
 			if (!this.canSetUri.Value)
