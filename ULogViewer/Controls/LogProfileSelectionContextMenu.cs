@@ -342,7 +342,7 @@ class LogProfileSelectionContextMenu : ContextMenu
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Copy.Outline");
+            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/Icon.Copy.Outline");
         });
         menuItem.Tag = CopyCurrentLogProfileTag;
     });
@@ -364,7 +364,7 @@ class LogProfileSelectionContextMenu : ContextMenu
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Edit.Outline");
+            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/Icon.Edit.Outline");
         });
         menuItem.Tag = EditCurrentLogProfileTag;
     });
@@ -386,7 +386,7 @@ class LogProfileSelectionContextMenu : ContextMenu
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Export");
+            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/Icon.Export");
         });
         menuItem.Tag = ExportCurrentLogProfileTag;
     });
@@ -498,7 +498,7 @@ class LogProfileSelectionContextMenu : ContextMenu
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Source = this.FindResourceOrDefault<IImage>("Image/Icon.Delete.Outline");
+            icon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/Icon.Delete.Outline");
         });
         menuItem.Tag = RemoveCurrentLogProfileTag;
     });
