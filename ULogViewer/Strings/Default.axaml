@@ -344,6 +344,9 @@
 
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 address:</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.CommonAddresses">Common addresses</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv4">Loopback</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv6">Loopback (IPv6)</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port:</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP endpoint</sys:String>
 

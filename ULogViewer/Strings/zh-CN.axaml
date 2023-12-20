@@ -327,6 +327,9 @@
 
 	<!-- IPEndPointInputDialog -->
 	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 地址：</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.CommonAddresses">通用地址</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv4">本地环回 (Loopback)</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv6">本地环回 (Loopback, IPv6)</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">端口：</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP 端点</sys:String>
 

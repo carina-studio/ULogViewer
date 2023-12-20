@@ -1,12 +1,15 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Controls;
+using CarinaStudio.Threading;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -16,6 +19,8 @@ namespace CarinaStudio.ULogViewer.Controls;
 class IPEndPointInputDialog : AppSuite.Controls.InputDialog
 {
     // Fields.
+    readonly ToggleButton commonIPAddressesButton;
+    readonly ContextMenu commonIPAddressesMenu;
     readonly IPAddressTextBox ipAddressTextBox;
     readonly IntegerTextBox portTextBox;
 
@@ -23,7 +28,14 @@ class IPEndPointInputDialog : AppSuite.Controls.InputDialog
     // Constructor.
     public IPEndPointInputDialog()
     {
+        this.SetIPAddressCommand = new Command<string>(this.SetIPAddress);
         AvaloniaXamlLoader.Load(this);
+        this.commonIPAddressesButton = this.Get<ToggleButton>(nameof(commonIPAddressesButton));
+        this.commonIPAddressesMenu = ((ContextMenu)this.Resources[nameof(commonIPAddressesMenu)]!).Also(it =>
+        {
+            it.Closed += (_, _) => this.SynchronizationContext.Post(() => this.commonIPAddressesButton.IsChecked = false);
+            it.Opened += (_, _) => this.SynchronizationContext.Post(() => this.commonIPAddressesButton.IsChecked = true);
+        });
         this.ipAddressTextBox = this.Get<IPAddressTextBox>(nameof(ipAddressTextBox));
         this.portTextBox = this.Get<IntegerTextBox>(nameof(portTextBox));
     }
@@ -106,4 +118,30 @@ class IPEndPointInputDialog : AppSuite.Controls.InputDialog
     // Validate input.
     protected override bool OnValidateInput() =>
         base.OnValidateInput() && this.ipAddressTextBox.IsTextValid && this.ipAddressTextBox.Object != null;
+
+
+    // Set to given IP address.
+    void SetIPAddress(string s)
+    {
+        if (IPAddress.TryParse(s, out var ipAddress))
+        {
+            this.ipAddressTextBox.Object = ipAddress;
+            this.ipAddressTextBox.Validate();
+            this.ipAddressTextBox.Focus();
+            this.ipAddressTextBox.SelectAll();
+        }
+    }
+    
+    
+    /// <summary>
+    /// Command to set given IP address.
+    /// </summary>
+    public ICommand SetIPAddressCommand { get; }
+
+    
+    /// <summary>
+    /// Show menu to set common IP address.
+    /// </summary>
+    public void ShowCommonIPAddressesMenu() =>
+        this.commonIPAddressesMenu.Open(this.commonIPAddressesButton);
 }

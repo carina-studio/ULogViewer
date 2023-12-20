@@ -6,17 +6,25 @@
 		xmlns:asMedia="using:CarinaStudio.AppSuite.Media"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.IPEndPointInputDialog"
+        Name="window"
 		Classes="Dialog"
         Title="{DynamicResource String/IPEndPointInputDialog.Title}"
 		Width="{DynamicResource Double/IPEndPointInputDialog.Width}">
+	
+	<Window.Resources>
+		<ContextMenu x:Key="commonIPAddressesMenu" Grid.IsSharedSizeScope="True" Placement="Bottom">
+			<MenuItem Command="{Binding #window.SetIPAddressCommand}" CommandParameter="127.0.0.1" Header="{DynamicResource String/IPEndPointInputDialog.Loopback.IPv4}"/>
+			<MenuItem Command="{Binding #window.SetIPAddressCommand}" CommandParameter="::1" Header="{DynamicResource String/IPEndPointInputDialog.Loopback.IPv6}"/>
+		</ContextMenu>
+	</Window.Resources>
 
 	<DockPanel>
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
@@ -25,12 +33,23 @@
 
 			<!-- Address -->
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
-			<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" FontFamily="{x:Static asMedia:BuiltInFonts.RobotoMono}" Grid.Column="1" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged" Watermark="{x:Null}"/>
+			<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" FontFamily="{x:Static asMedia:BuiltInFonts.RobotoMono}" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged" Watermark="{x:Null}">
+				<abControls:IPAddressTextBox.InnerRightContent>
+					<StackPanel Classes="TextBox_InPlaceActions">
+						<ToggleButton Name="commonIPAddressesButton" Classes="TextBox_InPlaceAction" Command="{Binding #window.ShowCommonIPAddressesMenu}" ToolTip.Tip="{DynamicResource String/IPEndPointInputDialog.CommonAddresses}">
+							<Panel>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+							</Panel>
+						</ToggleButton>
+					</StackPanel>
+				</abControls:IPAddressTextBox.InnerRightContent>
+			</abControls:IPAddressTextBox>
 			<Separator Classes="Dialog_Separator_Small"/>
 
 			<!-- Port -->
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
-			<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32768"/>
+			<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32768"/>
 
 		</StackPanel>
 
