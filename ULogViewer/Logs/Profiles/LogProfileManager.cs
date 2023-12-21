@@ -178,6 +178,8 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     protected override void OnAttachToProfile(LogProfile profile)
     {
         base.OnAttachToProfile(profile);
+        if (profile.IsDataUpgraded)
+            this.ScheduleSavingProfile(profile);
         if (profile.IsPinned)
             this.pinnedProfiles.Add(profile);
     }
