@@ -160,6 +160,8 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     protected override void OnAttachToProfile(PredefinedLogTextFilter filter)
     {
         base.OnAttachToProfile(filter);
+        if (filter.IsDataUpgraded)
+            this.ScheduleSavingProfile(filter);
         this.GetOrCreateGroup(filter.GroupName).AddFilter(filter);
     }
 

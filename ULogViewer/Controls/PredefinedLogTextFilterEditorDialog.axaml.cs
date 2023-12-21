@@ -57,7 +57,7 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 		});
 		this.groupNameTextBox = this.Get<TextBox>(nameof(groupNameTextBox)).Also(it =>
 		{
-			it.LostFocus += (_, _) => it.Text = CorrectGroupName(it.Text);
+			it.LostFocus += (_, _) => it.Text = PredefinedLogTextFilter.CorrectGroupName(it.Text);
 		});
 		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
 		{
@@ -97,7 +97,7 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 		
 		// check group name
 		var textFilterManager = PredefinedLogTextFilterManager.Default;
-		var groupName = CorrectGroupName(this.groupNameTextBox.Text);
+		var groupName = PredefinedLogTextFilter.CorrectGroupName(this.groupNameTextBox.Text);
 		if (!string.IsNullOrEmpty(groupName)
 		    && !this.Application.ProductManager.IsProductActivated(Products.Professional)
 		    && textFilterManager.Groups.FirstOrDefault(it => it.Name == groupName) is null
@@ -130,17 +130,6 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 
 		// close window
 		this.Close();
-	}
-	
-	
-	// Convert to valid group name.
-	static string? CorrectGroupName(string? name)
-	{
-		if (string.IsNullOrWhiteSpace(name))
-			return null;
-		if (char.IsWhiteSpace(name[0]) || char.IsWhiteSpace(name[^1]))
-			name = name.Trim();
-		return name.Replace('/', '-').Replace('\\', '-');
 	}
 
 
@@ -263,7 +252,7 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 		else
 		{
 			this.Bind(TitleProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Title.Edit"));
-			this.groupNameTextBox.Text = CorrectGroupName(filter.GroupName);
+			this.groupNameTextBox.Text = PredefinedLogTextFilter.CorrectGroupName(filter.GroupName);
 			this.nameTextBox.Text = filter.Name;
 			this.patternEditor.Pattern = filter.Regex;
 		}
