@@ -1010,6 +1010,7 @@ return False</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">群組</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName.ProVersionOnly">在啟用 ULogViewer 專業版之前您只能建立一個群組。</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">格式</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
