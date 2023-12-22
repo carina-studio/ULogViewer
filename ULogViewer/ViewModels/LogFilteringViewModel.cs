@@ -35,6 +35,14 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<FilterCombinationMode> FiltersCombinationModeProperty = ObservableProperty.Register<LogFilteringViewModel, FilterCombinationMode>(nameof(FiltersCombinationMode), FilterCombinationMode.Auto);
     /// <summary>
+    /// Property of <see cref="HasGlobalTextFilterHistory"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> HasGlobalTextFilterHistoryProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasGlobalTextFilterHistory), false);
+    /// <summary>
+    /// Property of <see cref="HasTextFilterHistory"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> HasTextFilterHistoryProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasTextFilterHistory), false);
+    /// <summary>
     /// Property of <see cref="IgnoreTextFilterCase"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> IgnoreTextFilterCaseProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IgnoreTextFilterCase), true);
@@ -176,7 +184,12 @@ class LogFilteringViewModel : SessionComponent
         });
         this.TextFilterHistory = this.textFilterHistory.Also(it =>
         {
-            it.CollectionChanged += (_, _) => this.UpdateCanUseTextFilterInHistory();
+            it.CollectionChanged += (_, _) =>
+            {
+                if (!this.IsDisposed)
+                    this.SetValue(HasTextFilterHistoryProperty, it.IsNotEmpty());
+                this.UpdateCanUseTextFilterInHistory();
+            };
         }).ReverseAsReadOnly();
 
         // setup properties
@@ -656,6 +669,18 @@ class LogFilteringViewModel : SessionComponent
     /// Global history of applied <see cref="TextFilter"/>.
     /// </summary>
     public IList<string> GlobalTextFilterHistory { get; } = Array.Empty<string>();
+
+
+    /// <summary>
+    /// Check whether <see cref="GlobalTextFilterHistory"/> is empty or not.
+    /// </summary>
+    public bool HasGlobalTextFilterHistory => this.GetValue(HasGlobalTextFilterHistoryProperty);
+    
+    
+    /// <summary>
+    /// Check whether <see cref="TextFilterHistory"/> is empty or not.
+    /// </summary>
+    public bool HasTextFilterHistory => this.GetValue(HasTextFilterHistoryProperty);
 
 
     /// <summary>
