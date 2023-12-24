@@ -28,6 +28,7 @@
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppOptions" Header="{DynamicResource String/SessionView.AppOptions}"/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="CheckForUpdate" Header="{DynamicResource String/SessionView.CheckForAppUpdate}"/>
 			<NativeMenuItemSeparator/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="QuickGuide" Header="{DynamicResource String/SessionView.QuickGuide}"/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Feedback" Header="{DynamicResource String/Common.Feedback}"/>
 			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppInfo" Header="{DynamicResource String/SessionView.AppInfo}"/>
 			<NativeMenuItemSeparator/>

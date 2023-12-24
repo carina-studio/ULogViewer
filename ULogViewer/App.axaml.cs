@@ -148,6 +148,7 @@ namespace CarinaStudio.ULogViewer
 		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = Array.Empty<ExternalDependency>();
 		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
+		DocumentViewerWindow? quickGuideWindow;
 		readonly Stopwatch stopwatch = new();
 
 
@@ -420,6 +421,9 @@ namespace CarinaStudio.ULogViewer
 					break;
 				case "Feedback":
 					this.OpenFeedbackPage();
+					break;
+				case "QuickGuide":
+					this.ShowQuickGuideWindow();
 					break;
 				case "Shutdown":
 					this.Shutdown();
@@ -796,6 +800,29 @@ namespace CarinaStudio.ULogViewer
 					this.Logger.LogWarning("Restart main windows");
 					_ = this.RestartRootWindowsAsync();
 					break;
+			}
+		}
+
+
+		/// <summary>
+		/// Show the window for quick guide.
+		/// </summary>
+		public void ShowQuickGuideWindow()
+		{
+			this.VerifyAccess();
+			if (this.IsShutdownStarted)
+				return;
+			if (this.quickGuideWindow is not null)
+				this.quickGuideWindow.ActivateAndBringToFront();
+			else
+			{
+				this.quickGuideWindow = new DocumentViewerWindow().Also(it =>
+				{
+					it.Closed += (_, _) => this.quickGuideWindow = null;
+					it.DocumentSource = new QuickGuideDocumentSource(this);
+					it.Topmost = true;
+				});
+				this.quickGuideWindow.Show();
 			}
 		}
 

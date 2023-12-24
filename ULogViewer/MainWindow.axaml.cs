@@ -397,7 +397,7 @@ namespace CarinaStudio.ULogViewer
 					if (shown)
 						this.selectAndSetLogProfileAction.Schedule();
 				}),
-				sessionView.GetObservable(SessionView.CanEditCurrentScriptLogDataSourceProviderProperty).Subscribe(shown =>
+				sessionView.GetObservable(SessionView.CanEditCurrentScriptLogDataSourceProviderProperty).Subscribe(_ =>
 				{
 					if (sessionView == (this.tabControl.SelectedItem as TabItem)?.Content)
 						this.UpdateToolMenuItems();

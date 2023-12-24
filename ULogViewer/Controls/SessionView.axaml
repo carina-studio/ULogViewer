@@ -450,6 +450,11 @@
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
+			<MenuItem Command="{Binding #root.Application.ShowQuickGuideWindow}" Header="{DynamicResource String/SessionView.QuickGuide}">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Lightbulb.Outline}"/>
+				</MenuItem.Icon>
+			</MenuItem>
 			<MenuItem Command="{Binding #root.Application.OpenFeedbackPage}" Header="{DynamicResource String/Common.Feedback}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Chat.Outline}"/>
