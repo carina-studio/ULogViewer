@@ -450,7 +450,7 @@
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.Application.ShowQuickGuideWindow}" Header="{DynamicResource String/SessionView.QuickGuide}">
+			<MenuItem Command="{Binding #root.Application.ShowQuickStartGuideWindow}" Header="{DynamicResource String/SessionView.QuickStartGuide}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Lightbulb.Outline}"/>
 				</MenuItem.Icon>

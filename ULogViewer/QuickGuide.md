@@ -1,2 +1,0 @@
-﻿# Quick Guide of ULogViewer
- ---

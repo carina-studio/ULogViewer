@@ -1302,7 +1302,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessId">處理程序識別碼 (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessName">處理程序名稱</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升級至專業版以啟用此功能。</sys:String>
-	<sys:String x:Key="String/SessionView.QuickGuide">快速使用指南</sys:String>
+	<sys:String x:Key="String/SessionView.QuickStartGuide">快速使用指南</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">重新載入日誌</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">變更日誌讀取前置條件…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">變更日誌讀取數量選項…</sys:String>

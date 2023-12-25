@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer;
 
-class QuickGuideDocumentSource : DocumentSource
+class QuickStartGuideDocumentSource : DocumentSource
 {
     // Constructor.
-    public QuickGuideDocumentSource(IAppSuiteApplication app) : base(app)
+    public QuickStartGuideDocumentSource(IAppSuiteApplication app) : base(app)
     { }
 
 
@@ -23,8 +23,8 @@ class QuickGuideDocumentSource : DocumentSource
     /// <inheritdoc/>
     public override Uri Uri => this.Culture switch
     {
-        ApplicationCulture.ZH_CN => new("avares://ULogViewer/QuickGuide-zh-CN.md"),
-        ApplicationCulture.ZH_TW => new("avares://ULogViewer/QuickGuide-zh-TW.md"),
-        _ => new("avares://ULogViewer/QuickGuide.md"),
+        ApplicationCulture.ZH_CN => new("avares://ULogViewer/QuickStartGuide-zh-CN.md"),
+        ApplicationCulture.ZH_TW => new("avares://ULogViewer/QuickStartGuide-zh-TW.md"),
+        _ => new("avares://ULogViewer/QuickStartGuide.md"),
     };
 }

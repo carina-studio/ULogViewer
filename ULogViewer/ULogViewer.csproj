@@ -49,9 +49,9 @@
 		<AvaloniaResource Include="ChangeList.md" />
 		<AvaloniaResource Include="ChangeList-zh-CN.md" />
 		<AvaloniaResource Include="ChangeList-zh-TW.md" />
-		<AvaloniaResource Include="QuickGuide.md" />
-		<AvaloniaResource Include="QuickGuide-zh-CN.md" />
-		<AvaloniaResource Include="QuickGuide-zh-TW.md" />
+		<AvaloniaResource Include="QuickStartGuide.md" />
+		<AvaloniaResource Include="QuickStartGuide-zh-CN.md" />
+		<AvaloniaResource Include="QuickStartGuide-zh-TW.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-TW.md" />
 		<AvaloniaResource Include="Resources/UserAgreement.md" />

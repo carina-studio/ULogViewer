@@ -1313,7 +1313,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessId">进程识别码 (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.ProcessName">进程名称</sys:String>
 	<sys:String x:Key="String/SessionView.ProVersionNeeded">需升级至专业版以启用此功能。</sys:String>
-	<sys:String x:Key="String/SessionView.QuickGuide">快速使用引导</sys:String>
+	<sys:String x:Key="String/SessionView.QuickStartGuide">快速使用引导</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile">重新读入日志</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">变更日志读取前置条件…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">变更日志读取数量设置…</sys:String>
