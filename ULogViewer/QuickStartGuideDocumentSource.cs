@@ -23,8 +23,8 @@ class QuickStartGuideDocumentSource : DocumentSource
     /// <inheritdoc/>
     public override Uri Uri => this.Culture switch
     {
-        ApplicationCulture.ZH_CN => new("avares://ULogViewer/Resources/QuickStartGuide-zh-CN.md"),
-        ApplicationCulture.ZH_TW => new("avares://ULogViewer/Resources/QuickStartGuide-zh-TW.md"),
-        _ => new("avares://ULogViewer/Resources/QuickStartGuide.md"),
+        ApplicationCulture.ZH_CN => new("avares://ULogViewer/Resources/QuickStartGuide/QuickStartGuide-zh-CN.md"),
+        ApplicationCulture.ZH_TW => new("avares://ULogViewer/Resources/QuickStartGuide/QuickStartGuide-zh-TW.md"),
+        _ => new("avares://ULogViewer/Resources/QuickStartGuide/QuickStartGuide.md"),
     };
 }
