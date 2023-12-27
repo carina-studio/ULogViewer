@@ -4,6 +4,7 @@
 + [Create or Edit a Log Profile](#create-or-edit-a-log-profile)
 + [Start Reading Logs](#start-reading-logs)
 + [Mark Logs](#mark-logs)
++ [Filter Logs](#filter-logs)
 
 ## Select a Log Profile
 To start loading and viewing logs, you need to select a proper log profile first. 
@@ -115,15 +116,89 @@ Marked logs will be persisted if logs are read from file(s).
 
 ### Mark/Unmark Logs
 There are 4 ways to mark/unmark logs:
-1. Select one or more logs and press **M** to mark/unmark them.
-2. Right-click on selected logs, click ***Mark logs>No color*** or ***Unmark logs*** item.
-3. Move mouse on the left hand side of logs and click ![](Circle_Outline_24px.png).
-4. Move mouse on the left hand side of logs, right-click on ![](Circle_Outline_24px.png) and click ***No color*** or ***Unmark logs*** item.
++ Select one or more logs and press **M** to mark/unmark them.
++ Right-click on selected logs, click ***Mark logs>No color*** or ***Unmark logs*** item.
++ Move mouse on the left hand side of logs and click ![](Circle_Outline_24px.png).
++ Move mouse on the left hand side of logs, right-click on ![](Circle_Outline_24px.png) and click ***No color*** or ***Unmark logs*** item.
 
 ### Mark Logs with Color
 There are 3 ways to mark logs with color:
-1. Select one or more logs and press **Ctrl+Alt+1** ~ **Ctrl+Alt+8** (**⌥⌘1** ~ **⌥⌘8** on macOS) to mark them with color you want.
-2. Right-click on selected logs, click ***Mark logs*** then click a color item.
-3. Move mouse on the left hand side of logs, right-click on ![](Circle_Outline_24px.png) and click a color item.
++ Select one or more logs and press **Ctrl+Alt+1** ~ **Ctrl+Alt+8** (**⌥⌘1** ~ **⌥⌘8** on macOS) to mark them with color you want.
++ Right-click on selected logs, click ***Mark logs*** then click a color item.
++ Move mouse on the left hand side of logs, right-click on ![](Circle_Outline_24px.png) and click a color item.
+
+[Back to Top](#-quick-start-guide-for-ulogviewer)
+
+
+## Filter logs
+Log filtering is one of the most important feature in ULogViewer which helps you to find and analyze the problem from logs.
+
+### Text Filters
+Logs can be filtered according to visible log properties and text filters.
+One or more text filters can be applied on filtering logs and text filters will be evaluated with **OR/Union** mode.
+
+#### Set Text Filter
+1. Press **Ctrl+F** (**⌘F** on macOS) or click on text filter input field on tool bar.
+2. Set text filter in regular expression. Please refer to [here](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference) for more details about regular expression you can use in ULogViewer.
+
+You can press **Up/Down** key when focusing on text filter input field to navigate through history of text filter in current tab.
+
+#### Save Text Filter
+There are 3 ways to save text filter:
++ Focus on text filter input field on tool bar and press **Ctrl+S** (**⌘S** on macOS). Please noted that you need to set text filter first.
++ Click ![](Filters_Outline_24px.png) on tool bar and click [Create…] button. 
++ Press **Ctrl+P** (**⌘P** on macOS) and click [Create…] button.
+
+#### Apply Saved Text Filters
+There are 2 ways to apply saved text filters:
++ Click ![](Filters_Outline_24px.png) on tool bar and select one or more text filters.
++ Press **Ctrl+P** (**⌘P** on macOS) and select one or more text filters.
+
+To select multiple saved text filters, please pressing **Shift** or **Ctrl** (**⇧** or **⌘** on macOS) when selecting.
+
+#### Use Log Property as Text Filter
+1. Right-click on a log property.
+2. Click ***Filter by '(value)'*** item and select accuracy.
+
+### Level Filter
+1. Select what log level you want to see on level drop down field on tool bar.
+
+Please noted that the level filter will be valid only when ***Level*** log property is defined in current log profile.
+
+### Process Identifier (PID) Filter
+There are 2 ways to set PID filter:
++ Click PID input field on tool bar.
++ Right-click on selected logs and click ***Filter by selected PID*** or ***Filter by selected PID only*** item.
+
+Please noted that the PID filter will be valid only when ***ProcessId*** log property is defined in current log profile.
+
+### Thread Identifier (TID) Filter
+There are 2 ways to set TID filter:
++ Click TID input field on tool bar.
++ Right-click on selected logs and click ***Filter by selected TID*** or ***Filter by selected TID only*** item.
+
+Please noted that the TID filter will be valid only when ***ThreadId*** log property is defined in current log profile.
+
+### Combination of Text Filters and Other Filters
+Level, PID and TID filters are evaluated in **AND** mode and text filters are evaluated in **OR** mode.
+You can choose how to combine text filters and other filters by clicking button between text filter input field and other filter field on tool bar:
++ ![](FilterCombinationMode_Auto_24px.png) Auto.
++ ![](Union_24px.png) OR/Union.
++ ![](Intersection_24px.png) AND/Intersection.
+
+### Show Only Marked Logs Temporarily
+You are allowed showing only marked logs temporarily when one or more filters are applied.
+There are 2 ways to toggle:
++ Press **Alt+M** (**⌥M** on macOS).
++ Click ![](MarkedOnly_Outline_24px.png) on tool bar.
+
+### Show All Logs Temporarily
+You are allowed showing all logs temporarily when one or more filters are applied.
+There are 2 ways to toggle:
++ Press **Alt+A** (**⌥A** on macOS).
++ Click ![](Visibility_Outline_24px.png) on tool bar.
+
+### Clear All Filters
+1. Click ![](ClearFilters_Outline_24px.png) on tool bar.
 
 [Back to Top](#-quick-start-guide-for-ulogviewer)
