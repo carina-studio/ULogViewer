@@ -3,6 +3,7 @@
 + [Select a Log Profile](#select-a-log-profile)
 + [Create or Edit a Log Profile](#create-or-edit-a-log-profile)
 + [Start Reading Logs](#start-reading-logs)
++ [Mark Logs](#mark-logs)
 
 ## Select a Log Profile
 To start loading and viewing logs, you need to select a proper log profile first. 
@@ -100,5 +101,29 @@ There are 2 ways to add file(s) to ULogViewer:
 ### Name of Process
 1. Click ![](Process_Outline_24px.png) on tool bar.
 2. Set process name.
+
+[Back to Top](#-quick-start-guide-for-ulogviewer)
+
+
+## Mark Logs
+You can mark one or more interested logs to make them be easier to be found later.
+All marked logs will be listed in ***Marked logs*** panel.
+Marked logs will be persisted if logs are read from file(s).
+
+### Open Marked Logs Panel
+1. Click ![](Marks_Outline_24px.png) on the side bar.
+
+### Mark/Unmark Logs
+There are 4 ways to mark/unmark logs:
+1. Select one or more logs and press **M** to mark/unmark them.
+2. Right-click on selected logs, click ***Mark logs>No color*** or ***Unmark logs*** item.
+3. Move mouse on the left hand side of logs and click ![](Circle_Outline_24px.png).
+4. Move mouse on the left hand side of logs, right-click on ![](Circle_Outline_24px.png) and click ***No color*** or ***Unmark logs*** item.
+
+### Mark Logs with Color
+There are 3 ways to mark logs with color:
+1. Select one or more logs and press **Ctrl+Alt+1** ~ **Ctrl+Alt+8** (**⌥⌘1** ~ **⌥⌘8** on macOS) to mark them with color you want.
+2. Right-click on selected logs, click ***Mark logs*** then click a color item.
+3. Move mouse on the left hand side of logs, right-click on ![](Circle_Outline_24px.png) and click a color item.
 
 [Back to Top](#-quick-start-guide-for-ulogviewer)

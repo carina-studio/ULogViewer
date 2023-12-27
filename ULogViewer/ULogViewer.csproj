@@ -55,6 +55,7 @@
 		<AvaloniaResource Include="Resources/QuickStartGuide/AddFile_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Analysis_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Calendar_24px.png" />
+		<AvaloniaResource Include="Resources/QuickStartGuide/Circle_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Copy_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Delete_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Edit_Outline_24px.png" />
