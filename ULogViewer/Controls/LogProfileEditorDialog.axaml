@@ -314,14 +314,14 @@
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
@@ -382,35 +382,35 @@
                             							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
                             								<asControls:Image Classes="InPlaceAction_Icon">
                             									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
                             									</DrawingImage>
                             								</asControls:Image>
                             							</Button>
                             							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyLogPattern}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
                             								<asControls:Image Classes="InPlaceAction_Icon">
                             									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy}"/>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
                             									</DrawingImage>
                             								</asControls:Image>
                             							</Button>
                             							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
                             								<asControls:Image Classes="InPlaceAction_Icon">
                             									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
                             									</DrawingImage>
                             								</asControls:Image>
                             							</Button>
                             							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
                             								<asControls:Image Classes="InPlaceAction_Icon">
                             									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
                             									</DrawingImage>
                             								</asControls:Image>
                             							</Button>
                             							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
                             								<asControls:Image Classes="InPlaceAction_Icon">
                             									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
                             									</DrawingImage>
                             								</asControls:Image>
                             							</Button>
@@ -475,14 +475,14 @@
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
@@ -531,14 +531,14 @@
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
@@ -597,28 +597,28 @@
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveVisibleLogPropertyCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditVisibleLogPropertyCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
@@ -718,28 +718,28 @@
 													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 														<asControls:Image Classes="InPlaceAction_Icon">
 															<DrawingImage>
-																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 															</DrawingImage>
 														</asControls:Image>
 													</Button>
 													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 														<asControls:Image Classes="InPlaceAction_Icon">
 															<DrawingImage>
-																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 															</DrawingImage>
 														</asControls:Image>
 													</Button>
 													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
 														<asControls:Image Classes="InPlaceAction_Icon">
 															<DrawingImage>
-																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
 															</DrawingImage>
 														</asControls:Image>
 													</Button>
 													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
 														<asControls:Image Classes="InPlaceAction_Icon">
 															<DrawingImage>
-																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
 															</DrawingImage>
 														</asControls:Image>
 													</Button>
@@ -775,14 +775,14 @@
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
 														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForWritingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 															<asControls:Image Classes="InPlaceAction_Icon">
 																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 																</DrawingImage>
 															</asControls:Image>
 														</Button>

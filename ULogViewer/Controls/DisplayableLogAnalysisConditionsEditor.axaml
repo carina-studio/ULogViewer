@@ -33,14 +33,14 @@
 							<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemoveConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
 							<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditConditionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>

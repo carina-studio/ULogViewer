@@ -78,7 +78,7 @@
 												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOptionCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 													<asControls:Image Classes="InPlaceAction_Icon">
 														<DrawingImage>
-															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 														</DrawingImage>
 													</asControls:Image>
 												</Button>

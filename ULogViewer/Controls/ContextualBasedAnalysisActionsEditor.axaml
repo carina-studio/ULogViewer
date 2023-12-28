@@ -63,28 +63,28 @@
 							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveActionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
 							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditActionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
 							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].MoveActionUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.MoveUp}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
 							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].MoveActionDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.MoveDown}"/>
+										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
