@@ -19,7 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="JsonLogsSavingOptions"/>.
 	/// </summary>
-	partial class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	{
 		// Fields.
 		readonly ObservableList<KeyValuePair<string, string>> logPropertyMap = new();
@@ -34,7 +34,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.EditLogPropertyMapEntryCommand = new Command<ListBoxItem>(this.EditLogPropertyMapEntry);
 			this.RemoveLogPropertyMapEntryCommand = new Command<ListBoxItem>(this.RemoveLogPropertyMapEntry);
 			AvaloniaXamlLoader.Load(this);
-			this.logPropertyMap.CollectionChanged += (_, e) => this.InvalidateInput();
+			this.logPropertyMap.CollectionChanged += (_, _) => this.InvalidateInput();
 			this.logPropertyMapListBox = this.FindControl<ListBox>(nameof(logPropertyMapListBox)).AsNonNull();
 		}
 
@@ -66,15 +66,30 @@ namespace CarinaStudio.ULogViewer.Controls
 					return;
 				}
 				var newKey = newEntry.Value.Key;
+				var newValue = newEntry.Value.Value;
 				if (newKey != entry.Key && this.logPropertyMap.FirstOrDefault(it => it.Key == newKey).Key == newKey)
 				{
-					await new AppSuite.Controls.MessageDialog()
+					await new AppSuite.Controls.MessageDialog
 					{
 						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 						Message = new FormattedString().Also(it =>
 						{
 							it.Arg1 = LogPropertyNameConverter.Default.Convert(newKey);
-							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key"));
+						}),
+						Title = this.Title,
+					}.ShowDialog(this);
+					continue;
+				}
+				if (newValue != entry.Value && this.logPropertyMap.FirstOrDefault(it => it.Value == newValue).Value == newValue)
+				{
+					await new AppSuite.Controls.MessageDialog
+					{
+						Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+						Message = new FormattedString().Also(it =>
+						{
+							it.Arg1 = newValue;
+							it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value"));
 						}),
 						Title = this.Title,
 					}.ShowDialog(this);
@@ -107,7 +122,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			// get log writer
 			var options = this.LogsSavingOptions;
-			if (options == null)
+			if (options is null)
 				return Task.FromResult((object?)null);
 
 			// setup log writer
@@ -121,7 +136,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Log properties to be written.
 		/// </summary>
-		public IList<KeyValuePair<string, string>> LogPropertyMap { get => this.logPropertyMap; }
+		public IList<KeyValuePair<string, string>> LogPropertyMap => this.logPropertyMap;
 
 
 		/// <summary>
@@ -136,9 +151,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (sender is not ListBox listBox)
 				return;
 			var selectedItem = listBox.SelectedItem;
-			if (selectedItem == null 
+			if (selectedItem is null 
 				|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
-				|| listBoxItem == null
+				|| listBoxItem is null
 				|| !listBoxItem.IsPointerOver)
 			{
 				return;
@@ -172,9 +187,28 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			base.OnOpened(e);
 			var options = this.LogsSavingOptions;
-			if (options != null)
+			if (options is not null)
 			{
-				this.logPropertyMap.AddRange(options.LogPropertyMap);
+				this.LogsSavingOptions?.Let(it =>
+				{
+					var propertyNameSet = new HashSet<string>();
+					var displayNameSet = new HashSet<string>();
+					foreach (var (propertyName, displayName) in it.LogPropertyMap)
+					{
+						if (!propertyNameSet.Add(propertyName))
+							continue;
+						if (string.IsNullOrEmpty(displayName))
+						{
+							if (displayNameSet.Add(propertyName))
+								this.logPropertyMap.Add(new(propertyName, propertyName));
+						}
+						else
+						{
+							if (displayNameSet.Add(displayName))
+								this.logPropertyMap.Add(new(propertyName, displayName));
+						}
+					}
+				});
 			}
 			else
 				this.SynchronizationContext.Post(this.Close);
@@ -184,7 +218,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
-			return base.OnValidateInput() && this.logPropertyMap.IsNotEmpty();
+			return base.OnValidateInput()
+			       && this.logPropertyMap.IsNotEmpty()
+			       && this.logPropertyMap.Let(it =>
+			       {
+				       var displayNameSet = new HashSet<string>();
+				       foreach (var (propertyName, displayName) in it)
+				       {
+					       if (string.IsNullOrEmpty(propertyName) 
+					           || string.IsNullOrEmpty(displayName) 
+					           || !displayNameSet.Add(displayName))
+					       {
+						       return false;
+					       }
+				       }
+				       return true;
+			       });
 		}
 
 
