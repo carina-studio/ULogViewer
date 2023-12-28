@@ -55,26 +55,41 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 		var newEntry = (KeyValuePair<string, string>?)entry;
 		while (true)
 		{
-			newEntry = await new StringLogPropertyMapEntryEditorDialog()
+			newEntry = await new StringLogPropertyMapEntryEditorDialog
 			{
 				Entry = newEntry.Value
 			}.ShowDialog<KeyValuePair<string, string>?>(this);
-			if (newEntry == null || newEntry.Value.Equals(entry))
+			if (newEntry is null || newEntry.Value.Equals(entry))
 			{
 				if (index >= 0)
 					this.SelectListBoxItem(this.logPropertyMapListBox, index);
 				return;
 			}
 			var newKey = newEntry.Value.Key;
+			var newValue = newEntry.Value.Value;
 			if (newKey != entry.Key && this.logPropertyMap.FirstOrDefault(it => it.Key == newKey).Key == newKey)
 			{
-				await new AppSuite.Controls.MessageDialog()
+				await new AppSuite.Controls.MessageDialog
 				{
 					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
 					Message = new FormattedString().Also(it =>
 					{
 						it.Arg1 = LogPropertyNameConverter.Default.Convert(newKey);
-						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.DuplicateLogLevelMapEntry"));
+						it.BindToResource(FormattedString.FormatProperty, this, "String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key");
+					}),
+					Title = this.Title,
+				}.ShowDialog(this);
+				continue;
+			}
+			if (newValue != entry.Value && this.logPropertyMap.FirstOrDefault(it => it.Value == newValue).Value == newValue)
+			{
+				await new AppSuite.Controls.MessageDialog
+				{
+					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Arg1 = newValue;
+						it.BindToResource(FormattedString.FormatProperty, this, "String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value");
 					}),
 					Title = this.Title,
 				}.ShowDialog(this);
@@ -107,7 +122,7 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	{
 		// get log writer
 		var options = this.LogsSavingOptions;
-		if (options == null)
+		if (options is null)
 			return Task.FromResult((object?)null);
 
 		// setup log writer
@@ -136,9 +151,9 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 		if (sender is not ListBox listBox)
 			return;
 		var selectedItem = listBox.SelectedItem;
-		if (selectedItem == null 
+		if (selectedItem is null 
 			|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
-			|| listBoxItem == null
+			|| listBoxItem is null
 			|| !listBoxItem.IsPointerOver)
 		{
 			return;
@@ -180,14 +195,48 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	protected override void OnOpening(EventArgs e)
 	{
 		base.OnOpening(e);
-		this.LogsSavingOptions?.Let(it => this.logPropertyMap.AddRange(it.LogPropertyMap));
+		this.LogsSavingOptions?.Let(it =>
+		{
+			var propertyNameSet = new HashSet<string>();
+			var displayNameSet = new HashSet<string>();
+			foreach (var (propertyName, displayName) in it.LogPropertyMap)
+			{
+				if (!propertyNameSet.Add(propertyName))
+					continue;
+				if (string.IsNullOrEmpty(displayName))
+				{
+					if (displayNameSet.Add(propertyName))
+						this.logPropertyMap.Add(new(propertyName, propertyName));
+				}
+				else
+				{
+					if (displayNameSet.Add(displayName))
+						this.logPropertyMap.Add(new(propertyName, displayName));
+				}
+			}
+		});
 	}
 
 
 	// Validate input.
 	protected override bool OnValidateInput()
 	{
-		return base.OnValidateInput() && this.logPropertyMap.IsNotEmpty();
+		return base.OnValidateInput()
+		       && this.logPropertyMap.IsNotEmpty()
+		       && this.logPropertyMap.Let(it =>
+		       {
+			       var displayNameSet = new HashSet<string>();
+			       foreach (var (propertyName, displayName) in it)
+			       {
+				       if (string.IsNullOrEmpty(propertyName) 
+				           || string.IsNullOrEmpty(displayName) 
+				           || !displayNameSet.Add(displayName))
+				       {
+					       return false;
+				       }
+			       }
+			       return true;
+		       });
 	}
 
 

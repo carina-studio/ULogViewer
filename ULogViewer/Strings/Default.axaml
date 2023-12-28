@@ -351,6 +351,8 @@
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP endpoint</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key">Conversion from '{0}' is already defined.</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value">Conversion to '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output:</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">Properties will be sorted by name automatically.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON options</sys:String>

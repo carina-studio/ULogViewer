@@ -334,6 +334,8 @@
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP 端点</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key">已经定义从「{0}」的转换。</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value">已经定义至「{0}」的转换。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">输出的日志属性：</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">日志属性将根据名称自动排序。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 选项</sys:String>
