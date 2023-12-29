@@ -1281,8 +1281,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update memory usage
 			var memorySizeSpan = this.data.AsSpan(MemorySizeDataOffset);
-			var memorySize = readUInt16Function(memorySizeSpan);
-			writeUInt16Function(memorySizeSpan, (ushort)Math.Max(0, memorySize + memorySizeDiff));
+			var memorySize = readUInt32Function(memorySizeSpan);
+			writeUInt32Function(memorySizeSpan, (uint)Math.Max(0, memorySize + memorySizeDiff));
 			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 			{
 				group.OnAnalysisResultRemoved(this);
@@ -1367,8 +1367,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// update memory usage
 			var memorySizeSpan = this.data.AsSpan(MemorySizeDataOffset);
-			var memorySize = readUInt16Function(memorySizeSpan);
-			writeUInt16Function(memorySizeSpan, (ushort)Math.Max(0, memorySize + memorySizeDiff));
+			var memorySize = readUInt32Function(memorySizeSpan);
+			writeUInt32Function(memorySizeSpan, (uint)Math.Max(0, memorySize + memorySizeDiff));
 			if (DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 			{
 				group.OnAnalysisResultRemoved(this);
