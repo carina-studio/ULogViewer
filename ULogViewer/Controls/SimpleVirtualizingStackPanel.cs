@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Platform;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite;
 using CarinaStudio.Configuration;
@@ -48,6 +49,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     ScrollViewer? scrollViewer;
     IDisposable? scrollViewerOffsetObserverToken;
     IDisposable? scrollViewerViewportObserverToken;
+    Window? window;
 
 
     // Static initializer.
@@ -66,19 +68,27 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     }
 
 
+    // Align given value with physical pixels
+    static double AlignToPixels(double value, Screen? screen) =>
+        AlignToPixels(value, screen?.Scaling ?? 1.0);
+    static double AlignToPixels(double value, double screenScale) =>
+        Math.Abs(screenScale - 1) > 0.01 ? (int)(value * screenScale + 0.5) / screenScale : (int)(value + 0.5);
+
+
     /// <inheritdoc/>
     protected override Size ArrangeOverride(Size finalSize)
     {
         if (this.firstRealizedIndex < 0)
             return default;
-        var itemHeight = this.ItemHeight;
-        var roundedItemHeight = (int)(Math.Ceiling(itemHeight) + 0.1);
-        var containerY = this.firstRealizedIndex * roundedItemHeight;
+        var screen = this.GetScreen();
+        var itemHeight = this.GetItemHeightAlignedToPixel(screen);
+        var itemWidth = finalSize.Width;
+        var containerY = this.firstRealizedIndex * itemHeight;
         for (int i = 0, realizedContainerCount = this.realizedContainers.Count; i < realizedContainerCount; ++i)
         {
-            var container = this.realizedContainers[i];
-            container?.Arrange(new(0, containerY, finalSize.Width, roundedItemHeight));
-            containerY += roundedItemHeight;
+            var container = this.realizedContainers[i].AsNonNull();
+            container.Arrange(new(0, AlignToPixels(containerY, screen), itemWidth, itemHeight));
+            containerY += itemHeight;
         }
         return finalSize;
     }
@@ -108,6 +118,11 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     {
         return null;
     }
+    
+    
+    // Get item height which is aligned to physical pixel.
+    double GetItemHeightAlignedToPixel(Screen? screen) =>
+        AlignToPixels(this.ItemHeight, screen);
 
 
     // Get or create container for item.
@@ -157,6 +172,11 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     /// <inheritdoc/>
     protected override IEnumerable<Control> GetRealizedContainers() =>
         (IEnumerable<Control>)this.realizedContainers.Where(it => it is not null);
+
+
+    // Get screen which contains the window.
+    Screen? GetScreen() =>
+        this.window?.Screens.Let(screens => screens.ScreenFromWindow(this.window) ?? screens.Primary);
     
     
     /// <inheritdoc/>
@@ -190,18 +210,17 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         // get state
         var items = this.Items;
         var itemCount = items.Count;
-        var itemHeight = this.ItemHeight;
-        var roundedItemHeight = (int)(Math.Ceiling(itemHeight) + 0.1);
+        var itemHeight = this.GetItemHeightAlignedToPixel(this.GetScreen());
         var viewport = this.scrollViewer?.Viewport ?? default;
         var offset = this.scrollViewer?.Offset ?? default;
         
         // ignore measurement
-        if (itemCount <= 0 || roundedItemHeight <= 0 || viewport.Width <= 0 || viewport.Height <= 0)
+        if (itemCount <= 0 || itemHeight <= 0 || viewport.Width <= 0 || viewport.Height <= 0)
             return default;
         
         // calculate visible range
-        var firstVisibleIndex = Math.Max(0, (int)(offset.Y / roundedItemHeight));
-        var lastVisibleIndex = Math.Min(itemCount - 1, (int)(Math.Ceiling((offset.Y + viewport.Height) / roundedItemHeight) + 0.1));
+        var firstVisibleIndex = Math.Max(0, (int)(offset.Y / itemHeight));
+        var lastVisibleIndex = Math.Min(itemCount - 1, (int)(Math.Ceiling((offset.Y + viewport.Height) / itemHeight) + 0.1));
         
         // recycle containers
         if (this.firstRealizedIndex >= 0)
@@ -348,8 +367,8 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         
         // complete
         if (!isScrollBarEnabled && double.IsFinite(availableSize.Width))
-            return new(availableSize.Width, roundedItemHeight * itemCount);
-        return new(maxContainerWidth, roundedItemHeight * itemCount);
+            return new(availableSize.Width, itemHeight * itemCount);
+        return new(maxContainerWidth, itemHeight * itemCount);
     }
 
 
@@ -363,6 +382,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
             this.scrollViewerOffsetObserverToken = it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateMeasure);
             this.scrollViewerViewportObserverToken = it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(this.InvalidateMeasure);
         });
+        this.window = TopLevel.GetTopLevel(this) as Window;
     }
 
 
@@ -373,6 +393,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         this.scrollViewerOffsetObserverToken = this.scrollViewerOffsetObserverToken.DisposeAndReturnNull();
         this.scrollViewerViewportObserverToken = this.scrollViewerViewportObserverToken.DisposeAndReturnNull();
         this.scrollViewer = null;
+        this.window = null;
         base.OnDetachedFromVisualTree(e);
     }
     
@@ -398,12 +419,13 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
             this.lastRealizedIndex += itemCount;
             if (this.scrollViewer is not null)
             {
-                var roundedItemHeight = (int)(Math.Ceiling(this.ItemHeight) + 0.1);
-                if (roundedItemHeight > 0)
+                var screen = this.GetScreen();
+                var itemHeight = this.GetItemHeightAlignedToPixel(screen);
+                if (itemHeight > 0)
                 {
-                    var addedHeight = itemCount * roundedItemHeight;
+                    var addedHeight = itemCount * itemHeight;
                     var offset = this.scrollViewer.Offset;
-                    this.scrollViewer.Offset = new(offset.X, offset.Y + addedHeight);
+                    this.scrollViewer.Offset = new(offset.X, AlignToPixels(offset.Y + addedHeight, screen));
                 }
             }
             return;
@@ -482,12 +504,13 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
             this.lastRealizedIndex -= itemCount;
             if (this.scrollViewer is not null)
             {
-                var roundedItemHeight = (int)(Math.Ceiling(this.ItemHeight) + 0.1);
-                if (roundedItemHeight > 0)
+                var screen = this.GetScreen();
+                var itemHeight = this.GetItemHeightAlignedToPixel(screen);
+                if (itemHeight > 0)
                 {
-                    var removedHeight = itemCount * roundedItemHeight;
+                    var removedHeight = itemCount * itemHeight;
                     var offset = this.scrollViewer.Offset;
-                    this.scrollViewer.Offset = new(offset.X, Math.Max(0, offset.Y - removedHeight));
+                    this.scrollViewer.Offset = new(offset.X, Math.Max(0, AlignToPixels(offset.Y - removedHeight, screen)));
                 }
             }
             return;
@@ -620,10 +643,11 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         // scroll to item
         if (this.scrollViewer is null)
             return null;
-        var roundedItemHeight = (int)(Math.Ceiling(this.ItemHeight) + 0.1);
-        if (roundedItemHeight <= 0)
+        var screen = this.GetScreen();
+        var itemHeight = this.GetItemHeightAlignedToPixel(screen);
+        if (itemHeight <= 0)
             return null;
-        var containerY = index * roundedItemHeight;
+        var containerY = index * itemHeight;
         var offset = this.scrollViewer.Offset;
         if (index < this.firstRealizedIndex) // scroll up
             offset = new(offset.X, containerY);
@@ -631,7 +655,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         {
             var viewport = this.scrollViewer.Viewport;
             var isScrollBarVisible = this.scrollViewer.HorizontalScrollBarVisibility == ScrollBarVisibility.Visible;
-            offset = new(offset.X, Math.Max(0, containerY + roundedItemHeight + (isScrollBarVisible ? 20 : 0) - viewport.Height));
+            offset = new(offset.X, Math.Max(0, AlignToPixels(containerY + itemHeight + (isScrollBarVisible ? 20 : 0) - viewport.Height, screen)));
         }
         this.scrollViewer.Offset = offset;
         return null;

@@ -1843,23 +1843,6 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
-							/*
-							if (!isAutoWidth)
-							{
-								it.LayoutUpdated += (_, _) =>
-								{
-									if (it.DataContext is null)
-										return;
-									if (it.Margin != default)
-										this.SynchronizationContext.PostDelayed(() => it.Margin = default, 100);
-								};
-								it.DataContextChanged += (_, _) =>
-								{
-									if (it.DataContext is not null)
-										it.Margin = new(-1);
-								};
-							}
-							*/
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
 							if (logProperty.Name == nameof(DisplayableLog.Level))
