@@ -32,7 +32,7 @@ Please refer to [here](https://carinastudio.azurewebsites.net/ULogViewer/HowToRe
 
 ### Edit Current Log Profile
 1. Click drop-down arrow besides ![](LogProfile_Outline_24px.png) on tool bar.
-2. Click ***Edit '(name)' …*** item. Please noted that you cannot edit if it is a built-in log profile. You can refer to [Copy Existing Log Profile](#copy-existing-log-profile) to copy a built-in log profile.
+2. Click ***Edit '(name)' …*** item. Please note that you cannot edit if it is a built-in log profile. You can refer to [Copy Existing Log Profile](#copy-existing-log-profile) to copy a built-in log profile.
 
 ### Edit a Log Profile
 1. Click ![](LogProfile_Outline_24px.png) on tool bar.
@@ -145,7 +145,7 @@ You can press **Up/Down** key when focusing on text filter input field to naviga
 
 #### Save Text Filter
 There are 3 ways to save text filter:
-+ Focus on text filter input field on tool bar and press **Ctrl+S** (**⌘S** on macOS). Please noted that you need to set text filter first.
++ Focus on text filter input field on tool bar and press **Ctrl+S** (**⌘S** on macOS). Please note that you need to set text filter first.
 + Click ![](Filters_Outline_24px.png) on tool bar and click [Create…] button. 
 + Press **Ctrl+P** (**⌘P** on macOS) and click [Create…] button.
 
@@ -163,21 +163,21 @@ To select multiple saved text filters, please pressing **Shift** or **Ctrl** (**
 ### Level Filter
 1. Select what log level you want to see on level drop down field on tool bar.
 
-Please noted that the level filter will be valid only when ***Level*** log property is defined in current log profile.
+Please note that the level filter will be valid only when ***Level*** log property is defined in current log profile.
 
 ### Process Identifier (PID) Filter
 There are 2 ways to set PID filter:
 + Click PID input field on tool bar.
 + Right-click on selected logs and click ***Filter by selected PID*** or ***Filter by selected PID only*** item.
 
-Please noted that the PID filter will be valid only when ***ProcessId*** log property is defined in current log profile.
+Please note that the PID filter will be valid only when ***ProcessId*** log property is defined in current log profile.
 
 ### Thread Identifier (TID) Filter
 There are 2 ways to set TID filter:
 + Click TID input field on tool bar.
 + Right-click on selected logs and click ***Filter by selected TID*** or ***Filter by selected TID only*** item.
 
-Please noted that the TID filter will be valid only when ***ThreadId*** log property is defined in current log profile.
+Please note that the TID filter will be valid only when ***ThreadId*** log property is defined in current log profile.
 
 ### Combination of Text Filters and Other Filters
 Level, PID and TID filters are evaluated in **AND** mode and text filters are evaluated in **OR** mode.
