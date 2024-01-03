@@ -1036,8 +1036,8 @@ return False</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">忽略大小寫</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex">格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex.Description">用以比對文字的正規表示式。</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取特定的字串</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">您可以使分組語法 "(?&lt;&gt;)" 以從文字中擷取對應的日誌屬性</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">您可以使用具名群組語法 "(?&lt;&gt;)" 以從文字中擷取特定的字串</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">您可以使用具名群組語法 "(?&lt;&gt;)" 以從文字中擷取對應的日誌屬性</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">測試文字</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description">用以驗證格式</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingGroups">用以驗證格式及擷取的分組字串</sys:String>
