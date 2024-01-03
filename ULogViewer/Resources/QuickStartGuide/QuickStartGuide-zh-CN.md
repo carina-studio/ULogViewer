@@ -139,7 +139,7 @@
 
 #### 设置文字筛选
 1. 按下 **Ctrl+F** (macOS 为 **⌘F**) 或点击工具列上的文字筛选输入栏位。
-2. 以正则表达式设定文字筛选。关于您在 ULogViewer 中可以使用的正则表达式详细信息请参考 [这里](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference)。
+2. 以正则表达式设定文字筛选。关于在 ULogViewer 中使用正则表达式的详细信息请参考 [这里](https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions)。
 
 当输入焦点位于文字筛选输入栏位时，您可以按下 **上/下** 来巡览该分页中的文字筛选历史纪录。
 

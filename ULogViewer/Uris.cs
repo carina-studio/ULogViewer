@@ -58,7 +58,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>
-		public static readonly Uri RegexReference = new("https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference");
+		public static readonly Uri RegexReference = new("https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions");
 		/// <summary>
 		/// Reference of string interpolation.
 		/// </summary>

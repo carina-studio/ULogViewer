@@ -139,7 +139,7 @@
 
 #### 設定文字篩選
 1. 按下 **Ctrl+F** (macOS 為 **⌘F**) 或點一下工具列上的文字篩選輸入欄位。
-2. 以正規表示式設定文字篩選。關於您在 ULogViewer 中可以使用的正規表示式詳細資訊請參考 [這裡](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference)。
+2. 以正規表示式設定文字篩選。關於在 ULogViewer 中使用正規表示式的詳細資訊請參考 [這裡](https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions)。
 
 當輸入焦點位於文字篩選輸入欄位時，您可以按下 **上/下** 來瀏覽該分頁中的文字篩選歷史紀錄。
 

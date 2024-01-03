@@ -139,7 +139,7 @@ One or more text filters can be applied on filtering logs and text filters will 
 
 #### Set Text Filter
 1. Press **Ctrl+F** (**⌘F** on macOS) or click on text filter input field on tool bar.
-2. Set text filter in regular expression. Please refer to [here](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference) for more details about regular expression you can use in ULogViewer.
+2. Set text filter in Regular Expression. Please refer to [here](https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions) for more details about using Regular Expressions in ULogViewer.
 
 You can press **Up/Down** key when focusing on text filter input field to navigate through history of text filter in current tab.
 
