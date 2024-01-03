@@ -22,6 +22,7 @@
 + Allow selecting common IP addresses in dialog of IP endpoint.
 
 ## Improvement
++ Add Quick-Start Guide.
 + Support formatting JSON data which contains multiple root elements while reading logs.
 + Support showing multiple lines for each log in **Marked logs** panel if there is no log property defined to be shown in current log profile.
 + Add [Apply] button to dialogs of editing script.
