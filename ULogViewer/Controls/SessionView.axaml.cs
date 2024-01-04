@@ -2721,6 +2721,42 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Trigger layout of all log list box items.
+		void ForceLayoutLogListBoxContainers()
+		{
+			if (this.GetVisualParent() is null)
+				return;
+			var itemContainers = new HashSet<Control>();
+			void OnLogListBoxContainerLayoutUpdated(object? sender, EventArgs e)
+			{
+				if (sender is not Control itemContainer)
+					return;
+				if (itemContainer.Margin != default)
+				{
+					itemContainers.Remove(itemContainer);
+					itemContainer.LayoutUpdated -= OnLogListBoxContainerLayoutUpdated;
+					itemContainer.Margin = default;
+				}
+			}
+			foreach (var itemContainer in this.logListBox.GetRealizedContainers())
+			{
+				itemContainers.Add(itemContainer);
+				itemContainer.LayoutUpdated += OnLogListBoxContainerLayoutUpdated;
+				itemContainer.Margin = new(-1);
+			}
+			this.Logger.LogTrace("Force relayout {count} log item containers", itemContainers.Count);
+			this.SynchronizationContext.PostDelayed(() =>
+			{
+				if (itemContainers.IsEmpty())
+					return;
+				this.Logger.LogWarning("Layout of {count} log item containers were not updated", itemContainers.Count);
+				foreach (var itemContainer in itemContainers)
+					itemContainer.LayoutUpdated -= OnLogListBoxContainerLayoutUpdated;
+				itemContainers.Clear();
+			}, 1000);
+		}
+
+
 		/// <summary>
 		/// Check whether log profile has been set or not.
 		/// </summary>
@@ -2926,6 +2962,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (isActive)
 					{
+						// [Workaround] Force relayout to prevent incorrect layout in background
+						this.ForceLayoutLogListBoxContainers();
+						
+						// show tutorials
 						this.SynchronizationContext.Post(() => 
 						{
 							this.ShowLogAnalysisRuleSetsTutorial();
@@ -3009,34 +3049,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			base.OnAttachedToVisualTree(e);
 
 			// [Workaround] Force relayout to prevent incorrect layout on extended screen
-			var itemContainers = new HashSet<Control>();
-			void OnLogListBoxContainerLayoutUpdated(object? sender, EventArgs e)
-			{
-				if (sender is not Control itemContainer)
-					return;
-				if (itemContainer.Margin != default)
-				{
-					itemContainers.Remove(itemContainer);
-					itemContainer.LayoutUpdated -= OnLogListBoxContainerLayoutUpdated;
-					itemContainer.Margin = default;
-				}
-			}
-			foreach (var itemContainer in this.logListBox.GetRealizedContainers())
-			{
-				itemContainers.Add(itemContainer);
-				itemContainer.LayoutUpdated += OnLogListBoxContainerLayoutUpdated;
-				itemContainer.Margin = new(-1);
-			}
-			this.Logger.LogTrace("Force relayout {count} log item containers", itemContainers.Count);
-			this.SynchronizationContext.PostDelayed(() =>
-			{
-				if (itemContainers.IsEmpty())
-					return;
-				this.Logger.LogWarning("Layout of {count} log item containers were not updated", itemContainers.Count);
-				foreach (var itemContainer in itemContainers)
-					itemContainer.LayoutUpdated -= OnLogListBoxContainerLayoutUpdated;
-				itemContainers.Clear();
-			}, 1000);
+			this.ForceLayoutLogListBoxContainers();
 		}
 
 
