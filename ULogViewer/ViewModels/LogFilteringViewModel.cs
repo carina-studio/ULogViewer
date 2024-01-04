@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -93,15 +94,16 @@ class LogFilteringViewModel : SessionComponent
 
 
     // Static fields.
-    static readonly HashSet<char> RegexReservedChars = new()
-    {
+    static readonly List<WeakReference<LogFilteringViewModel>> InstanceRefs = new();
+    static readonly HashSet<char> RegexReservedChars =
+    [
         '(', ')',
         '[', ']',
         '{', '}',
         '<', '>',
         '+', '-', '*', '.', ',', '\\',
         '?', '!', '^', '$', '#',
-    };
+    ];
     static readonly HashSet<string> SpecialPhrases = new(StringComparer.Create(CultureInfo.InvariantCulture, true))
     {
         "at",
@@ -136,6 +138,7 @@ class LogFilteringViewModel : SessionComponent
     IDisposable? selectedLogStringPropertyValueObserverToken;
     IDisposable? selectedPidObserverToken;
     IDisposable? selectedTidObserverToken;
+    readonly ScheduledAction updateTextFilterPhrasesDatabaseAction;
     readonly ObservableList<string> textFilterHistory = new();
 
 
@@ -147,6 +150,7 @@ class LogFilteringViewModel : SessionComponent
     public LogFilteringViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // start initialization
+        InstanceRefs.Add(new(this));
         var isInit = true;
 
         // create command
@@ -206,6 +210,7 @@ class LogFilteringViewModel : SessionComponent
         this.commitFiltersAction = new(this.CommitFilters);
         this.saveGlobalTextFilterHistoryAction = new(() =>
         { });
+        this.updateTextFilterPhrasesDatabaseAction = new(this.UpdateTextFilterPhrasesDatabase);
 
         // attach to configuration
         this.Application.Configuration.SettingChanged += this.OnConfigurationChanged;
@@ -359,6 +364,25 @@ class LogFilteringViewModel : SessionComponent
     public ICommand ClearPredefinedTextFiltersCommand { get; }
 
 
+    /// <summary>
+    /// Clear database of text filter phrases.
+    /// </summary>
+    public static void ClearTextFilterPhrasesDatabase()
+    {
+        // check thread
+        App.CurrentOrNull?.VerifyAccess();
+        
+        // cancel updating database
+        for (var i = InstanceRefs.Count - 1; i >= 0; --i)
+        {
+            if (InstanceRefs[i].TryGetTarget(out var instance))
+                instance.updateTextFilterPhrasesDatabaseAction.Cancel();
+            else
+                InstanceRefs.RemoveAt(i);
+        }
+    }
+
+
     // Commit filters to log filter.
     void CommitFilters()
     {
@@ -435,6 +459,7 @@ class LogFilteringViewModel : SessionComponent
     {
         // cancel filtering
         this.commitFiltersAction.Cancel();
+        this.updateTextFilterPhrasesDatabaseAction.Cancel();
 
         // stop watch
         this.logFilteringWatch.Stop();
@@ -456,6 +481,21 @@ class LogFilteringViewModel : SessionComponent
 
         // detach from configuration
         this.Application.Configuration.SettingChanged -= this.OnConfigurationChanged;
+        
+        // remove instance reference
+        if (disposing)
+        {
+            for (var i = InstanceRefs.Count - 1; i >= 0; --i)
+            {
+                if (InstanceRefs[i].TryGetTarget(out var instance))
+                {
+                    if (ReferenceEquals(this, instance))
+                        InstanceRefs.RemoveAt(i);
+                }
+                else
+                    InstanceRefs.RemoveAt(i);
+            }
+        }
 
         // call base
         base.Dispose(disposing);
@@ -1054,6 +1094,19 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
+    /// Select candidate phrases for text filter input.
+    /// </summary>
+    /// <param name="prefix">Prefix of phrase.</param>
+    /// <param name="postfix">Post of phrase.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Task of suggested phrases selection.</returns>
+    public Task<IList<string>> SelectCandidateTextFilterPhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<IList<string>>(Array.Empty<string>());
+    }
+
+
+    /// <summary>
     /// Command to set <see cref="LogFilteringViewModel.FiltersCombinationMode"/>.
     /// </summary>
     /// <value>The type of parameter is <see cref="FilterCombinationMode"/>.</value>
@@ -1095,6 +1148,7 @@ class LogFilteringViewModel : SessionComponent
                 }
                 else
                     this.ResetValue(IndexOfTextFilterInHistoryProperty);
+                this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
             }
         }
     }
@@ -1148,6 +1202,17 @@ class LogFilteringViewModel : SessionComponent
             this.canUseTextFilterInHistory.Update(true);
         }
     }
+
+
+    // Update database of text filter phrases.
+    void UpdateTextFilterPhrasesDatabase()
+    {
+        if (this.IsDisposed)
+            return;
+        UpdateTextFilterPhrasesDatabase(this.TextFilter?.ToString());
+    }
+    static void UpdateTextFilterPhrasesDatabase(string? pattern)
+    { }
 
 
     // Use next text filter in history.

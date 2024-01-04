@@ -600,7 +600,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
 			});
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
-			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox));
+			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
+			{
+				it.PhraseInputAssistanceProvider = new LogTextFilterPhraseInputAssistanceProvider(this);
+			});
 			this.logThreadIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
 				if (Platform.IsMacOS)
@@ -4078,16 +4081,19 @@ namespace CarinaStudio.ULogViewer.Controls
 						case Key.Down:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
-								if (session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute())
+								if (!this.logTextFilterTextBox.HasOpenedAssistanceMenus)
 								{
-									this.SynchronizationContext.Post(() =>
+									if (session.LogFiltering.UseNextTextFilterInHistoryCommand.TryExecute())
 									{
-										this.logTextFilterTextBox.SelectionStart = 0; // [Workaround] make SelectAll() works expectedly
-										this.logTextFilterTextBox.SelectionEnd = 0; // [Workaround] make SelectAll() works expectedly
-										this.logTextFilterTextBox.SelectAll();
-									});
+										this.SynchronizationContext.Post(() =>
+										{
+											this.logTextFilterTextBox.SelectionStart = 0; // [Workaround] make SelectAll() works expectedly
+											this.logTextFilterTextBox.SelectionEnd = 0; // [Workaround] make SelectAll() works expectedly
+											this.logTextFilterTextBox.SelectAll();
+										});
+									}
+									e.Handled = true;
 								}
-								e.Handled = true;
 							}
 							else if (e.Source is not TextBox)
 							{
@@ -4114,16 +4120,19 @@ namespace CarinaStudio.ULogViewer.Controls
 						case Key.Up:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
-								if (session.LogFiltering.UsePreviousTextFilterInHistoryCommand.TryExecute())
+								if (!this.logTextFilterTextBox.HasOpenedAssistanceMenus)
 								{
-									this.SynchronizationContext.Post(() =>
+									if (session.LogFiltering.UsePreviousTextFilterInHistoryCommand.TryExecute())
 									{
-										this.logTextFilterTextBox.SelectionStart = 0; // [Workaround] make SelectAll() works expectedly
-										this.logTextFilterTextBox.SelectionEnd = 0; // [Workaround] make SelectAll() works expectedly
-										this.logTextFilterTextBox.SelectAll();
-									});
+										this.SynchronizationContext.Post(() =>
+										{
+											this.logTextFilterTextBox.SelectionStart = 0; // [Workaround] make SelectAll() works expectedly
+											this.logTextFilterTextBox.SelectionEnd = 0; // [Workaround] make SelectAll() works expectedly
+											this.logTextFilterTextBox.SelectAll();
+										});
+									}
+									e.Handled = true;
 								}
-								e.Handled = true;
 							}
 							else if (e.Source is not TextBox)
 							{

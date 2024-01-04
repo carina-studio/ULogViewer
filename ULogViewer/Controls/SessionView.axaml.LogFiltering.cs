@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -39,6 +41,26 @@ partial class SessionView
             _ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto"),
         };
     });
+    
+    
+    // Provider of log text filter phrase input assistance.
+    class LogTextFilterPhraseInputAssistanceProvider : IPhraseInputAssistanceProvider
+    {
+        // Fields.
+        readonly SessionView sessionView;
+        
+        // Constructor.
+        public LogTextFilterPhraseInputAssistanceProvider(SessionView sessionView) =>
+            this.sessionView = sessionView;
+        
+        /// <inheritdoc/>
+        public Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken)
+        {
+            if (this.sessionView.DataContext is not Session session)
+                return Task.FromResult<IList<string>>(Array.Empty<string>());
+            return session.LogFiltering.SelectCandidateTextFilterPhrasesAsync(prefix, postfix, cancellationToken);
+        }
+    }
     
     
     // Constants.

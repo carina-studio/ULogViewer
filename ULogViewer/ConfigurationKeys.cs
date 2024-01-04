@@ -72,6 +72,10 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> LogTextFilterHistoryCount = new(nameof(LogTextFilterHistoryCount), 16);
     /// <summary>
+    /// Delay before updating log text filter phrases database in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> LogTextFilterPhrasesDatabaseUpdateDelay = new(nameof(LogTextFilterPhrasesDatabaseUpdateDelay), 1500);
+    /// <summary>
     /// Maximum lines shown for marked logs when there is no user defined display log properties.
     /// </summary>
     public static readonly SettingKey<int> MaxLinesOfMarkedLogWithoutDisplayLogProperties = new(nameof(MaxLinesOfMarkedLogWithoutDisplayLogProperties), 3);
