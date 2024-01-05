@@ -59,6 +59,13 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	}
 
 
+	/// <summary>
+	/// Clear database of log text filter phrases database.
+	/// </summary>
+	public void ClearLogTextFilterPhrasesDatabase() =>
+		LogFilteringViewModel.ClearTextFilterPhrasesDatabase();
+
+
 	// Compare log profiles.
 	static int CompareLogProfiles(LogProfile? x, LogProfile? y)
 	{
@@ -129,6 +136,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 
 		// call base.
 		base.Dispose(disposing);
+	}
+	
+	
+	/// <summary>
+	/// Enable assistance of log text filter phrase input.
+	/// </summary>
+	public bool EnableLogTextFilterPhraseInputAssistance
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.EnableLogTextFilterPhraseInputAssistance);
+		set => this.Settings.SetValue<bool>(SettingKeys.EnableLogTextFilterPhraseInputAssistance, value);
 	}
 
 
@@ -345,6 +362,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
 		else if (key == SettingKeys.DefaultTextShell)
 			this.OnPropertyChanged(nameof(DefaultTextShell));
+		else if (key == SettingKeys.EnableLogTextFilterPhraseInputAssistance)
+			this.OnPropertyChanged(nameof(EnableLogTextFilterPhraseInputAssistance));
 		else if (key == SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs)
 			this.OnPropertyChanged(nameof(EnableScrollingToLatestLogAfterReloadingLogs));
 		else if (key == SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount)

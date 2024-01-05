@@ -34,6 +34,10 @@ static class SettingKeys
 		return TextShell.BourneAgainShell;
 	}));
 	/// <summary>
+	/// Enable assistance of log text filter phrase input.
+	/// </summary>
+	public static readonly SettingKey<bool> EnableLogTextFilterPhraseInputAssistance = new(nameof(EnableLogTextFilterPhraseInputAssistance), true);
+	/// <summary>
 	/// Enable scrolling to latest log automatically after reloading logs.
 	/// </summary>
 	public static readonly SettingKey<bool> EnableScrollingToLatestLogAfterReloadingLogs = new(nameof(EnableScrollingToLatestLogAfterReloadingLogs), true);

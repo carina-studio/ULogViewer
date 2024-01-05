@@ -14,9 +14,12 @@
 	<sys:String x:Key="String/AppCulture.System">自动</sys:String>
 
 	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase">清除单词数据库</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">加入大型文件时确认最大日志读取数量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">连续读取时的日志更新时距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">默认执行指令之命令列壳层 (Command-line Shell)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">文字筛选单词输入辅助</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">根据文字筛选历史纪录帮助您输入文字筛选单词。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新载入日志后滚动到最新的日志</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">仅适用于连续读取日志。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.FileSizeInMBToConfirmMaxLogReadingCount">视为大型文件的大小 (兆字节)</sys:String>

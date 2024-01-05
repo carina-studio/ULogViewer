@@ -11,9 +11,12 @@
 	<sys:String x:Key="String/App.Shutdown">Exit</sys:String>
 
 	<!-- AppOptionsDialog -->
+	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase">Clear phrases database</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">Confirm maximum logs to be read when adding large files</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-line Shell to run commands</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">Phrase input assistance for text filter</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">Help you to type phrase for text filter based-on history of text filter.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.FileSizeInMBToConfirmMaxLogReadingCount">File size (MB) to treat as large files</sys:String>
