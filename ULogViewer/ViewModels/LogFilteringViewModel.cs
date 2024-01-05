@@ -64,6 +64,10 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<bool> IsProcessIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsProcessIdFilterEnabled), false);
     /// <summary>
+    /// Property of <see cref="IsTemporaryTextFilter"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> IsTemporaryTextFilterProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsTemporaryTextFilter), false);
+    /// <summary>
     /// Property of <see cref="IsThreadIdFilterEnabled"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> IsThreadIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsThreadIdFilterEnabled), false);
@@ -380,6 +384,16 @@ class LogFilteringViewModel : SessionComponent
             else
                 InstanceRefs.RemoveAt(i);
         }
+    }
+
+
+    /// <summary>
+    /// Close database of text filter phrases.
+    /// </summary>
+    /// <returns>Task of closing database.</returns>
+    public static Task CloseTextFilterPhrasesDatabaseAsync()
+    {
+        return Task.CompletedTask;
     }
 
 
@@ -766,6 +780,16 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
+    /// Get or set whether <see cref="TextFilter"/> is set temporarily by user or not.
+    /// </summary>
+    public bool IsTemporaryTextFilter
+    {
+        get => this.GetValue(IsTemporaryTextFilterProperty);
+        set => this.SetValue(IsTemporaryTextFilterProperty, value);
+    }
+    
+
+    /// <summary>
     /// Check whether <see cref="ThreadIdFilter"/> is valid to filter logs in current log profile or not.
     /// </summary>
     public bool IsThreadIdFilterEnabled => this.GetValue(IsThreadIdFilterEnabledProperty);
@@ -919,6 +943,13 @@ class LogFilteringViewModel : SessionComponent
         base.OnPropertyChanged(property, oldValue, newValue);
         if (property == IndexOfTextFilterInHistoryProperty)
             this.UpdateCanUseTextFilterInHistory();
+        else if (property == IsTemporaryTextFilterProperty)
+        {
+            if ((bool)newValue!)
+                this.updateTextFilterPhrasesDatabaseAction.Cancel();
+            else
+                this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
+        }
     }
 
 
@@ -1049,6 +1080,11 @@ class LogFilteringViewModel : SessionComponent
                 writer.WriteNumber($"LogFiltering.{IndexOfTextFilterInHistory}", index);
         });
     }
+    
+    
+    // Open database of text filter phrases.
+    static void OpenTextFilterPhrasesDatabase(IApplication app)
+    { }
 
 
     /// <summary>
@@ -1148,7 +1184,8 @@ class LogFilteringViewModel : SessionComponent
                 }
                 else
                     this.ResetValue(IndexOfTextFilterInHistoryProperty);
-                this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
+                if (!this.GetValue(IsTemporaryTextFilterProperty))
+                    this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
             }
         }
     }
@@ -1207,7 +1244,7 @@ class LogFilteringViewModel : SessionComponent
     // Update database of text filter phrases.
     void UpdateTextFilterPhrasesDatabase()
     {
-        if (this.IsDisposed)
+        if (this.IsDisposed || this.GetValue(IsTemporaryTextFilterProperty))
             return;
         UpdateTextFilterPhrasesDatabase(this.TextFilter?.ToString());
     }

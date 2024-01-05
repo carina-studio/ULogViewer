@@ -602,6 +602,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logsSavingButton = this.Get<ToggleButton>(nameof(logsSavingButton));
 			this.logTextFilterTextBox = this.Get<RegexTextBox>(nameof(logTextFilterTextBox)).Also(it =>
 			{
+				it.GetObservable(RegexTextBox.HasOpenedAssistanceMenusProperty).Subscribe(hasOpenedMenus =>
+				{
+					(this.DataContext as Session)?.LogFiltering.Let(it => it.IsTemporaryTextFilter = hasOpenedMenus);
+				});
 				it.PhraseInputAssistanceProvider = new LogTextFilterPhraseInputAssistanceProvider(this);
 			});
 			this.logThreadIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
