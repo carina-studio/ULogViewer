@@ -4121,6 +4121,18 @@ namespace CarinaStudio.ULogViewer.Controls
 								e.Handled = true;
 							}
 							break;
+						case Key.Escape:
+							if (e.Source is TextBox)
+							{
+								if (this.Application.IsDebugMode)
+									this.Logger.LogTrace("[KeyDown] {key} on text box", e.Key);
+								if (e.Source != this.logTextFilterTextBox || !this.logTextFilterTextBox.HasOpenedAssistanceMenus)
+								{
+									this.logListBox.Focus();
+									e.Handled = true;
+								}
+							}
+							break;
 						case Key.Up:
 							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
@@ -4203,15 +4215,6 @@ namespace CarinaStudio.ULogViewer.Controls
 										this.predefinedLogTextFilterListBox.SelectLastItem();
 									else
 										this.logListBox.SelectLastItem();
-									e.Handled = true;
-								}
-								break;
-							case Key.Escape:
-								if (e.Source is TextBox)
-								{
-									if (this.Application.IsDebugMode)
-										this.Logger.LogTrace("[KeyUp] {key} on text box", e.Key);
-									this.logListBox.Focus();
 									e.Handled = true;
 								}
 								break;
