@@ -371,7 +371,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Clear database of text filter phrases.
     /// </summary>
-    public static void ClearTextFilterPhrasesDatabase()
+    public static Task ClearTextFilterPhrasesDatabaseAsync()
     {
         // check thread
         App.CurrentOrNull?.VerifyAccess();
@@ -384,6 +384,9 @@ class LogFilteringViewModel : SessionComponent
             else
                 InstanceRefs.RemoveAt(i);
         }
+        
+        // clear database
+        return Task.CompletedTask;
     }
 
 
