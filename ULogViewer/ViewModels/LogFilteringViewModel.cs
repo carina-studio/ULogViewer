@@ -154,7 +154,6 @@ class LogFilteringViewModel : SessionComponent
     public LogFilteringViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // start initialization
-        InstanceRefs.Add(new(this));
         var isInit = true;
 
         // create command
@@ -218,6 +217,9 @@ class LogFilteringViewModel : SessionComponent
 
         // attach to configuration
         this.Application.Configuration.SettingChanged += this.OnConfigurationChanged;
+        
+        // attach to log text filter phrases database
+        LogTextFilterPhrasesDatabase.Clearing += this.OnLogTextFilterPhrasesDatabaseClearing;
 
         // attach to session
         session.AllLogReadersDisposed += this.OnAllLogReaderDisposed;
@@ -368,38 +370,6 @@ class LogFilteringViewModel : SessionComponent
     public ICommand ClearPredefinedTextFiltersCommand { get; }
 
 
-    /// <summary>
-    /// Clear database of text filter phrases.
-    /// </summary>
-    public static Task ClearTextFilterPhrasesDatabaseAsync()
-    {
-        // check thread
-        App.CurrentOrNull?.VerifyAccess();
-        
-        // cancel updating database
-        for (var i = InstanceRefs.Count - 1; i >= 0; --i)
-        {
-            if (InstanceRefs[i].TryGetTarget(out var instance))
-                instance.updateTextFilterPhrasesDatabaseAction.Cancel();
-            else
-                InstanceRefs.RemoveAt(i);
-        }
-        
-        // clear database
-        return Task.CompletedTask;
-    }
-
-
-    /// <summary>
-    /// Close database of text filter phrases.
-    /// </summary>
-    /// <returns>Task of closing database.</returns>
-    public static Task CloseTextFilterPhrasesDatabaseAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-
     // Commit filters to log filter.
     void CommitFilters()
     {
@@ -495,25 +465,13 @@ class LogFilteringViewModel : SessionComponent
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReaderDisposed;
         this.displayLogPropertiesObserverToken.Dispose();
+        
+        // detach from log text filter phrases database
+        LogTextFilterPhrasesDatabase.Clearing -= this.OnLogTextFilterPhrasesDatabaseClearing;
 
         // detach from configuration
         this.Application.Configuration.SettingChanged -= this.OnConfigurationChanged;
         
-        // remove instance reference
-        if (disposing)
-        {
-            for (var i = InstanceRefs.Count - 1; i >= 0; --i)
-            {
-                if (InstanceRefs[i].TryGetTarget(out var instance))
-                {
-                    if (ReferenceEquals(this, instance))
-                        InstanceRefs.RemoveAt(i);
-                }
-                else
-                    InstanceRefs.RemoveAt(i);
-            }
-        }
-
         // call base
         base.Dispose(disposing);
     }
@@ -940,6 +898,13 @@ class LogFilteringViewModel : SessionComponent
     }
 
 
+    // Called before clearing log text filter phrases database.
+    void OnLogTextFilterPhrasesDatabaseClearing(object? sender, EventArgs e)
+    {
+        this.updateTextFilterPhrasesDatabaseAction.Cancel();
+    }
+
+
     /// <inheritdoc/>
     protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
     {
@@ -1083,11 +1048,6 @@ class LogFilteringViewModel : SessionComponent
                 writer.WriteNumber($"LogFiltering.{IndexOfTextFilterInHistory}", index);
         });
     }
-    
-    
-    // Open database of text filter phrases.
-    static void OpenTextFilterPhrasesDatabase(IApplication app)
-    { }
 
 
     /// <summary>
@@ -1139,10 +1099,8 @@ class LogFilteringViewModel : SessionComponent
     /// <param name="postfix">Post of phrase.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of suggested phrases selection.</returns>
-    public Task<IList<string>> SelectCandidateTextFilterPhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken)
-    {
-        return Task.FromResult<IList<string>>(Array.Empty<string>());
-    }
+    public Task<IList<string>> SelectCandidateTextFilterPhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken) =>
+        LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, cancellationToken);
 
 
     /// <summary>
@@ -1249,10 +1207,8 @@ class LogFilteringViewModel : SessionComponent
     {
         if (this.IsDisposed || this.GetValue(IsTemporaryTextFilterProperty))
             return;
-        UpdateTextFilterPhrasesDatabase(this.TextFilter?.ToString());
+        this.TextFilter?.Let(it => LogTextFilterPhrasesDatabase.UpdatePhrasesAsync(it, default));
     }
-    static void UpdateTextFilterPhrasesDatabase(string? pattern)
-    { }
 
 
     // Use next text filter in history.

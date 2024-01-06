@@ -114,6 +114,21 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		this.Application.PropertyChanged += this.OnApplicationPropertyChanged;
 		this.Application.StringsUpdated += this.OnApplicationStringsUpdated;
 	}
+	
+	
+	// Clear log text filter phrases database.
+	public async Task ClearLogTextFilterPhrasesDatabase()
+	{
+		var deletionCount = await LogTextFilterPhrasesDatabase.ClearAsync();
+		_ = new MessageDialog
+		{
+			Message = new FormattedString().Also(it =>
+			{
+				it.Arg1 = deletionCount;
+				it.BindToResource(FormattedString.FormatProperty, this, "String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result");
+			})
+		}.ShowDialog(this);
+	}
 
 
 	/// <summary>

@@ -12,6 +12,7 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase">Clear phrases database</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">{0} phrase(s) cleared from database.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">Confirm maximum logs to be read when adding large files</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-line Shell to run commands</sys:String>

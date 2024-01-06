@@ -12,13 +12,19 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 static class LogTextFilterPhrasesDatabase
 {
     /// <summary>
-    /// Clear database.
+    /// Clear phrases from database.
     /// </summary>
-    /// <returns>Task of clearing database.</returns>
-    public static Task ClearAsync()
+    /// <returns>Task of clearing database. The result if number of phrases cleared from database.</returns>
+    public static Task<int> ClearAsync()
     {
-        return Task.CompletedTask;
+        return Task.FromResult(1);
     }
+
+
+    /// <summary>
+    /// Raised before start clearing database.
+    /// </summary>
+    public static event EventHandler? Clearing;
     
     
     /// <summary>
@@ -59,8 +65,9 @@ static class LogTextFilterPhrasesDatabase
     /// Update phrases in database by given regular expression.
     /// </summary>
     /// <param name="regex">Regular expression.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of updating phrases.</returns>
-    public static Task UpdatePhrasesAsync(Regex regex)
+    public static Task UpdatePhrasesAsync(Regex regex, CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }

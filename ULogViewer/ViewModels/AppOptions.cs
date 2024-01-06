@@ -11,7 +11,6 @@ using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -58,13 +57,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 		// refresh installed text shells
 		TextShellManager.Default.RefreshInstalledTextShellsAsync();
 	}
-
-
-	/// <summary>
-	/// Clear database of log text filter phrases database.
-	/// </summary>
-	public Task ClearLogTextFilterPhrasesDatabaseAsync() =>
-		LogTextFilterPhrasesDatabase.ClearAsync();
 
 
 	// Compare log profiles.

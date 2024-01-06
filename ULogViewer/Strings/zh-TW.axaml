@@ -15,6 +15,7 @@
 
 	<!-- AppOptionsDialog -->
 	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase">清除單詞資料庫</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">已從資料庫中清除 {0} 個單詞。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">加入大型檔案時確認最大日誌讀取數量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">連續讀取時的日誌更新時距 (毫秒)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">預設執行指令之命令列殼層 (Command-line Shell)</sys:String>
