@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:app="using:CarinaStudio.ULogViewer"
-		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
@@ -65,7 +64,7 @@
 						</StackPanel>
 					</asControls:DialogItemBorder>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
-					<appControls:PatternEditor Name="patternEditor" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+					<appControls:PatternEditor Name="patternEditor" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}"/>
 					
