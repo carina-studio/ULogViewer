@@ -463,7 +463,7 @@ namespace CarinaStudio.ULogViewer
         /// <inheritdoc/>
         protected override async Task OnPrepareShuttingDownAsync()
         {
-	        await LogFilteringViewModel.CloseTextFilterPhrasesDatabaseAsync();
+	        await LogTextFilterPhrasesDatabase.CloseAsync();
 	        await base.OnPrepareShuttingDownAsync();
         }
 
@@ -538,6 +538,10 @@ namespace CarinaStudio.ULogViewer
 
 			// setup internal test cases
 			this.SetupTestCases();
+			
+			// initialize log text filter phrases database
+			await LogTextFilterPhrasesDatabase.InitializeAsync(this);
+			this.UpdateSplashWindowProgress(0.12);
 
 			// initialize syntax highlighting service
 			await SyntaxHighlighting.InitializeAsync(this);

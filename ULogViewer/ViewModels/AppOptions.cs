@@ -64,7 +64,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	/// Clear database of log text filter phrases database.
 	/// </summary>
 	public Task ClearLogTextFilterPhrasesDatabaseAsync() =>
-		LogFilteringViewModel.ClearTextFilterPhrasesDatabaseAsync();
+		LogTextFilterPhrasesDatabase.ClearAsync();
 
 
 	// Compare log profiles.
