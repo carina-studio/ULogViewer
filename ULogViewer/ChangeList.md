@@ -6,6 +6,7 @@
 + Allow changing command to read logs directly in log viewer.
 + Allow stopping reading logs continuously from data source.
 + Allow viewing history of log text filters.
++ Add assistance of typing phrases for log text filter.
 + Allow specifying **Requirement of Working Directory** for each log profile.
 + Add **Raw Text From Standard Output (stdout)** and **Specific Android Device System Trace** built-in log profile and template.
 + Add **Host Name**, **Module**, **Sub Module**, **System** and **Sub System** log property names.
