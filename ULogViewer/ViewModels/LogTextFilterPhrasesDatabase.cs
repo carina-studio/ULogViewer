@@ -67,7 +67,17 @@ static class LogTextFilterPhrasesDatabase
     /// <param name="regex">Regular expression.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of updating phrases.</returns>
-    public static Task UpdatePhrasesAsync(Regex regex, CancellationToken cancellationToken)
+    public static Task UpdatePhrasesAsync(Regex regex, CancellationToken cancellationToken) =>
+        UpdatePhrasesAsync(regex.ToString(), cancellationToken);
+
+
+    /// <summary>
+    /// Update phrases in database by given regular expression.
+    /// </summary>
+    /// <param name="pattern">Pattern of log text filter.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Task of updating phrases.</returns>
+    public static Task UpdatePhrasesAsync(string pattern, CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }
