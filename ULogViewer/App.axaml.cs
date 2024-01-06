@@ -538,10 +538,6 @@ namespace CarinaStudio.ULogViewer
 
 			// setup internal test cases
 			this.SetupTestCases();
-			
-			// initialize log text filter phrases database
-			await LogTextFilterPhrasesDatabase.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(0.12);
 
 			// initialize syntax highlighting service
 			await SyntaxHighlighting.InitializeAsync(this);
@@ -594,6 +590,10 @@ namespace CarinaStudio.ULogViewer
 			await PredefinedLogTextFilterManager.InitializeAsync(this);
 			await this.WaitForSplashWindowAnimationAsync();
 			this.UpdateSplashWindowProgress(0.6);
+			
+			// initialize log text filter phrases database
+			await LogTextFilterPhrasesDatabase.InitializeAsync(this);
+			this.UpdateSplashWindowProgress(0.65);
 
 			// initialize log analysis rules
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));
