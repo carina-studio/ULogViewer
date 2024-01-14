@@ -81,15 +81,6 @@
 		<AvaloniaResource Include="Resources/UserAgreement.md" />
 		<AvaloniaResource Include="Resources/UserAgreement-zh-TW.md" />
 		<AvaloniaResource Include="SplashWindowBackground.jpg" />
-		<AvaloniaResource Include="Strings/Default.axaml" />
-		<AvaloniaResource Include="Strings/Default-Linux.axaml" />
-		<AvaloniaResource Include="Strings/Default-OSX.axaml" />
-		<AvaloniaResource Include="Strings/zh-TW.axaml" />
-		<AvaloniaResource Include="Strings/zh-TW-Linux.axaml" />
-		<AvaloniaResource Include="Strings/zh-TW-OSX.axaml" />
-		<AvaloniaResource Include="Strings/zh-CN.axaml" />
-		<AvaloniaResource Include="Strings/zh-CN-Linux.axaml" />
-		<AvaloniaResource Include="Strings/zh-CN-OSX.axaml" />
 		<AvaloniaResource Include="ULogViewer.ico" />
 	</ItemGroup>
 
