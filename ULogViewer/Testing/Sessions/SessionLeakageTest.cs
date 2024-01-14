@@ -1,6 +1,5 @@
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.ViewModels;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,7 @@ class SessionLeakageTest : BaseTest
         // create sessions
         var sessionRefs = new List<WeakReference<Session>>();
         var logProfile = Logs.Profiles.LogProfileManager.Default.Profiles.First(it => it.Id == "ULogViewerMemoryLog");
-        var randon = new Random();
+        var random = new Random();
         for (var i = 0; i < 10; ++i)
         {
             var session = this.Workspace.CreateAndAttachSession(logProfile);
@@ -39,7 +38,7 @@ class SessionLeakageTest : BaseTest
         while (this.createdSessions.IsNotEmpty())
         {
             var session = this.createdSessions.SelectRandomElement();
-            await Task.Delay(randon.Next(100, 301), cancellationToken);
+            await Task.Delay(random.Next(100, 301), cancellationToken);
             this.Workspace.DetachAndCloseSession(session);
             this.createdSessions.Remove(session);
         }
