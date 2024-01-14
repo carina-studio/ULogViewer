@@ -345,8 +345,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             if (!this.scriptLogAnalyzer.ScriptSets.SequenceEqual(this.logAnalysisScriptSets))
             {
                 this.scriptLogAnalyzer.ScriptSets.Clear();
-                if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript) 
-                    && this.Session.IsProVersionActivated)
+                if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
                 {
                     this.Logger.LogTrace("Update log analysis with {scriptSetsCount} script sets", this.logAnalysisScriptSets.Count);
                     this.scriptLogAnalyzer.ScriptSets.AddAll(this.logAnalysisScriptSets);
