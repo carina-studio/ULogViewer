@@ -93,7 +93,7 @@
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
 		<PackageReference Include="MySqlConnector" Version="2.3.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="SkiaSharp" Version="2.88.6" />
+		<PackageReference Include="SkiaSharp" Version="2.88.7" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.117" />
 		<PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
