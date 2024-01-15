@@ -1225,6 +1225,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				}
 				else if (logPatternMatchingMode == LogPatternMatchingMode.Sequential) // general case (use 1 or more patterns sequentially)
 				{
+					// read logs
 					do
 					{
 						if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
@@ -1403,11 +1404,14 @@ namespace CarinaStudio.ULogViewer.Logs
 							{
 								if (!hasMaxLogCount || readingWindow == LogReadingWindow.StartOfDataSource)
 								{
-									if (nonContinuousPaddingInterval > 0)
-										Thread.Sleep(nonContinuousPaddingInterval);
-									var logArray = readLogs.ToArray();
-									readLogs.Clear();
-									syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
+									if (readLogs.IsNotEmpty())
+									{
+										if (nonContinuousPaddingInterval > 0)
+											Thread.Sleep(nonContinuousPaddingInterval);
+										var logArray = readLogs.ToArray();
+										readLogs.Clear();
+										syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
+									}
 								}
 								else if (readLogs.Count > maxLogCount)
 									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
@@ -1417,6 +1421,37 @@ namespace CarinaStudio.ULogViewer.Logs
 							prevLogPattern = logPattern;
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
+					
+					// build the last log
+					if (!cancellationToken.IsCancellationRequested && logBuilder.IsNotEmpty())
+					{
+						bool canBuildLog;
+						if ((logPattern.IsRepeatable && prevLogPattern == logPattern /* matched at least one time */) || logPattern.IsSkippable)
+						{
+							canBuildLog = true;
+							for (++logPatternIndex; logPatternIndex <= lastLogPatternIndex; ++logPatternIndex)
+							{
+								logPattern = logPatterns[logPatternIndex];
+								if (!logPattern.IsSkippable)
+								{
+									canBuildLog = false;
+									break;
+								}
+							}
+						}
+						else
+							canBuildLog = false;
+						if (canBuildLog)
+						{
+							readLog = logBuilder.BuildAndReset();
+							if (!hasPrecondition || precondition.Matches(readLog))
+							{
+								readLogs.Add(readLog);
+								++logCount;
+								++accumulatedLogCount;
+							}
+						}
+					}
 				}
 				else if (logPatternMatchingMode == LogPatternMatchingMode.Arbitrary
 				         || logPatternMatchingMode == LogPatternMatchingMode.ArbitraryAfterFirstMatch) // general case (use 1 or more patterns in arbitrary order)
@@ -1536,11 +1571,14 @@ namespace CarinaStudio.ULogViewer.Logs
 							{
 								if (!hasMaxLogCount || readingWindow == LogReadingWindow.StartOfDataSource)
 								{
-									if (nonContinuousPaddingInterval > 0)
-										Thread.Sleep(nonContinuousPaddingInterval);
-									var logArray = readLogs.ToArray();
-									readLogs.Clear();
-									syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
+									if (readLogs.IsNotEmpty())
+									{
+										if (nonContinuousPaddingInterval > 0)
+											Thread.Sleep(nonContinuousPaddingInterval);
+										var logArray = readLogs.ToArray();
+										readLogs.Clear();
+										syncContext.Post(() => this.OnLogsRead(readingToken, logArray, stringSourceCache.ByteCount));
+									}
 								}
 								else if (readLogs.Count > maxLogCount)
 									readLogs.RemoveRange(0, readLogs.Count - maxLogCount);
@@ -1549,6 +1587,30 @@ namespace CarinaStudio.ULogViewer.Logs
 							}
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
+					
+					// build the last log
+					if (!cancellationToken.IsCancellationRequested && logBuilder.IsNotEmpty())
+					{
+						var canBuildLog = true;
+						foreach (var unmatchedPattern in unmatchedPatterns)
+						{
+							if (!unmatchedPattern.IsSkippable)
+							{
+								canBuildLog = false;
+								break;
+							}
+						}
+						if (canBuildLog)
+						{
+							readLog = logBuilder.BuildAndReset();
+							if (!hasPrecondition || precondition.Matches(readLog))
+							{
+								readLogs.Add(readLog);
+								++logCount;
+								++accumulatedLogCount;
+							}
+						}
+					}
 				}
 				else
 					throw new NotImplementedException();
