@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Controls;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Net;
 using System.Threading;
@@ -42,6 +43,33 @@ namespace CarinaStudio.ULogViewer.Controls
         {
             if (e.Property == IPAddressTextBox.IsTextValidProperty || e.Property == IPAddressTextBox.ObjectProperty)
                 this.InvalidateInput();
+        }
+        
+        
+        /// <inheritdoc/>
+        protected override void OnEnterKeyClickedOnInputControl(Control control)
+        {
+            base.OnEnterKeyClickedOnInputControl(control);
+            if (control == this.ipAddressTextBox)
+            {
+                if (!this.portTextBox.Validate())
+                    this.portTextBox.Focus();
+                else
+                {
+                    this.ipAddressTextBox.Validate();
+                    this.GenerateResultCommand.TryExecute();
+                }
+            }
+            else if (control == this.portTextBox)
+            {
+                if (!this.ipAddressTextBox.Validate())
+                    this.ipAddressTextBox.Focus();
+                else
+                {
+                    this.portTextBox.Validate();
+                    this.GenerateResultCommand.TryExecute();
+                }
+            }
         }
 
 

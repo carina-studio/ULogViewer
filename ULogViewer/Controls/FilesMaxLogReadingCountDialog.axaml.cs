@@ -119,7 +119,10 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 	{
 		base.OnEnterKeyClickedOnInputControl(control);
 		if (control == this.maxLogReadingCountTextBox)
+		{
+			this.maxLogReadingCountTextBox.Validate();
 			this.GenerateResultCommand.TryExecute();
+		}
 	}
 
 
