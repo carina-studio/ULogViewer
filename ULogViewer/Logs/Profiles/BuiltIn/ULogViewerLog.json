@@ -26,10 +26,10 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<ThreadId>[\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[\\d\\-]+\\s+[\\d\\.:]+)\\s+(?<ProcessId>\\d+)\\s+(?<ThreadId>\\d+)\\s+(?<Level>\\w+)\\s+(?<SourceName>[^\\:]*)\\:\\s(?<Message>.*)$"
 		},
 		{
-			"Regex": "^[\\s](?<Message>.*)$",
+			"Regex": "^(?!\\d+\\-\\d+\\-\\d+\\s+\\d+:\\d+:\\d+\\.\\d+)(?<Message>.*)$",
 			"IsSkippable": true,
 			"IsRepeatable": true
 		}

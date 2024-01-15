@@ -17,7 +17,21 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^\\<log4j\\:event[\\s]+logger=\"(?<SourceName>[^\"]*)\"[\\s]+level=\"(?<Level>[^\"]+)\"[\\s]+timestamp=\"(?<Timestamp>[^\"]+)\"[\\s]+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)\\<.*\\<log4j\\:data[\\s]+name=\"log4japp\"[\\s]+value=\".*\\((?<ProcessId>[\\d]+)\\)\".*\\<log4j\\:data[\\s]+name=\"log4jmachinename\"[\\s]+value=\"(?<DeviceName>[^\"]*)\""
+			"Regex": "^\\<log4j\\:event[\\s]+logger=\"(?<SourceName>[^\"]*)\"\\s+level=\"(?<Level>[^\"]+)\"\\s+timestamp=\"(?<Timestamp>[^\"]+)\"\\s+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)$",
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^\\<log4j\\:event[\\s]+logger=\"(?<SourceName>[^\"]*)\"\\s+level=\"(?<Level>[^\"]+)\"\\s+timestamp=\"(?<Timestamp>[^\"]+)\"\\s+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)\\<.*\\<log4j\\:data\\s+name=\"log4japp\"\\s+value=\".*\\((?<ProcessId>\\d+)\\)\".*\\<log4j\\:data\\s+name=\"log4jmachinename\"\\s+value=\"(?<DeviceName>[^\"]*)\"",
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^(?<Message>[^\\<]+)$",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^(?<Message>[^\\<]*)\\<(?!log4j\\:event).*\\<log4j\\:data\\s+name=\"log4japp\"\\s+value=\".*\\((?<ProcessId>\\d+)\\)\".*\\<log4j\\:data\\s+name=\"log4jmachinename\"\\s+value=\"(?<DeviceName>[^\"]*)\"",
+			"IsSkippable": true
 		}
 	],
 	"LogWritingFormats": [
