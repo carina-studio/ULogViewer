@@ -40,7 +40,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
-		static readonly List<(WeakReference<SessionView>, WeakReference<MainWindow>)> CachedFreeSessionViewsAndWindows = new();
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
@@ -341,53 +340,12 @@ namespace CarinaStudio.ULogViewer
 					header.FindDescendantOfTypeAndName<Panel>("Content")?.Let(app.EnsureClosingToolTipIfWindowIsInactive));
 			}
 			
-			// reuse session view or create new one
-			var sessionView = CachedFreeSessionViewsAndWindows.Let(it =>
+			// create session view
+			var sessionView = new SessionView
 			{
-				var sessionView = default(SessionView);
-				var sessionViewIndex = -1;
-				var isSessionViewCameFromOtherWindow = false;
-				for (var i = it.Count - 1; i >= 0; --i)
-				{
-					var (sessionViewRef, mainWindowRef) = it[i];
-					if (!sessionViewRef.TryGetTarget(out var candidate))
-					{
-						if (sessionViewIndex > i)
-							--sessionViewIndex;
-						it.RemoveAt(i);
-						continue;
-					}
-					if (!mainWindowRef.TryGetTarget(out var candidateMainWindow) || candidateMainWindow != this)
-					{
-						if (!isSessionViewCameFromOtherWindow)
-						{
-							isSessionViewCameFromOtherWindow = true;
-							sessionView = candidate;
-							sessionViewIndex = i;
-						}
-					}
-					else if (sessionView is null)
-					{
-						sessionView = candidate;
-						sessionViewIndex = i;
-					}
-				}
-				if (sessionViewIndex >= 0)
-					it.RemoveAt(sessionViewIndex);
-				this.Logger.LogDebug("Number of cached SessionView: {count}", CachedFreeSessionViewsAndWindows.Count);
-				return sessionView;
-			});
-			if (sessionView is not null)
-				this.Logger.LogDebug("Reuse SessionView");
-			else
-			{
-				this.Logger.LogDebug("Create new SessionView");
-				sessionView = new SessionView().Also(it =>
-				{
-					it.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
-					it.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
-				});
-			}
+				HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+				VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
+			};
 
 			// setup session view
 			var propertyObserverTokens = new List<IDisposable>
@@ -468,8 +426,6 @@ namespace CarinaStudio.ULogViewer
 							token.Dispose();
 					}
 					sessionView.DataContext = null;
-					CachedFreeSessionViewsAndWindows.Add((new(sessionView), new(this)));
-					this.Logger.LogDebug("Cache SessionView, count: {count}", CachedFreeSessionViewsAndWindows.Count);
 				}
 				it.DataContext = null;
 				tabItem.Content = null;

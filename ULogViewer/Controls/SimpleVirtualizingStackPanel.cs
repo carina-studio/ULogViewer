@@ -394,6 +394,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         this.scrollViewerViewportObserverToken = this.scrollViewerViewportObserverToken.DisposeAndReturnNull();
         this.scrollViewer = null;
         this.window = null;
+        this.invalidateMeasureAction.Cancel();
         base.OnDetachedFromVisualTree(e);
     }
     
