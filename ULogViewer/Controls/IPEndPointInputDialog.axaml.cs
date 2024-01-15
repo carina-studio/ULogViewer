@@ -71,14 +71,20 @@ class IPEndPointInputDialog : AppSuite.Controls.InputDialog
             if (!this.portTextBox.Validate())
                 this.portTextBox.Focus();
             else
+            {
+                this.ipAddressTextBox.Validate();
                 this.GenerateResultCommand.TryExecute();
+            }
         }
         else if (control == this.portTextBox)
         {
             if (!this.ipAddressTextBox.Validate())
                 this.ipAddressTextBox.Focus();
             else
+            {
+                this.portTextBox.Validate();
                 this.GenerateResultCommand.TryExecute();
+            }
         }
     }
 
