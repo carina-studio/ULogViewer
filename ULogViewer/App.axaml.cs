@@ -461,10 +461,13 @@ namespace CarinaStudio.ULogViewer
 
 
         /// <inheritdoc/>
-        protected override async Task OnPrepareShuttingDownAsync()
+        protected override async Task OnPrepareShuttingDownAsync(bool isCritical)
         {
-	        await LogTextFilterPhrasesDatabase.CloseAsync();
-	        await base.OnPrepareShuttingDownAsync();
+	        if (isCritical)
+		        LogTextFilterPhrasesDatabase.CloseAsync().Wait();
+	        else
+				await LogTextFilterPhrasesDatabase.CloseAsync();
+	        await base.OnPrepareShuttingDownAsync(isCritical);
         }
 
 
