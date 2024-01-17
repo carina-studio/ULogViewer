@@ -8,7 +8,7 @@
 	"Icon": "Linux",
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d\\:\\.]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>\\w+\\s+\\d+\\s+[\\d\\:\\.]+)\\s+(?<DeviceName>\\S*)\\s+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>\\d+)\\])|(?<ProcessName>[^\\:]*))\\:\\s(?<Message>.*)$"
 		},
 		{
 			"Regex": "^((\\s{4}|\\t))+(?<Message>.*)$",

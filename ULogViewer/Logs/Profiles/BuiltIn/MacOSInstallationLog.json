@@ -8,10 +8,10 @@
 	"Icon": "Apple",
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[\\d\\-]+[\\s]+[\\d\\:\\+\\-]+)[\\s]+(?<DeviceName>[^\\s]*)[\\s]+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>[\\d]+)\\])|(?<ProcessName>[^\\:]*))\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[\\d\\-]+\\s+[\\d\\:\\+\\-]+)\\s+(?<DeviceName>\\S*)\\s+((?<ProcessName>[^\\[]*)(\\[(?<ProcessId>\\d+)\\])|(?<ProcessName>[^\\:]*))\\:\\s(?<Message>.*)$"
 		},
 		{
-			"Regex": "^[\\t](?<Message>.*)$",
+			"Regex": "^\\t(?<Message>.*)$",
 			"IsRepeatable": true,
 			"IsSkippable": true
 		}

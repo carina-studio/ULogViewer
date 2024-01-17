@@ -9,10 +9,10 @@
 	"IsContinuousReading": true,
 	"LogPatterns": [
 		{
-			"Regex": "^(?<Timestamp>[\\d\\-]+[\\s]+[\\d\\:\\.]+)([\\+\\-][\\d]+)?[\\s]+(?<ThreadId>[\\w\\d]+)[\\s]+(?<Level>[\\w]+)[\\s]+(?<Extra1>[^\\s]+)[\\s]+(?<ProcessId>[\\d]+)[\\s]+(?<Extra2>[^\\s]+)[\\s]+(?<SourceName>[^\\:]*)\\:[\\s](?<Message>.*)$"
+			"Regex": "^(?<Timestamp>[\\d\\-]+\\s+[\\d\\:\\.]+)([\\+\\-]\\d+)?\\s+(?<ThreadId>[\\w\\d]+)\\s+(?<Level>\\w+)\\s+(?<Extra1>[^\\s]+)\\s+(?<ProcessId>\\d+)\\s+(?<Extra2>[^\\s]+)\\s+(?<SourceName>[^\\:]*)\\:\\s(?<Message>.*)$"
 		},
 		{
-			"Regex": "^[\\t](?<Message>.*)$",
+			"Regex": "^\\t(?<Message>.*)$",
 			"IsRepeatable": true,
 			"IsSkippable": true
 		}

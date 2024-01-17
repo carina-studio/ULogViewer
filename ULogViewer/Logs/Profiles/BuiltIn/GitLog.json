@@ -8,41 +8,41 @@
 	"Icon": "VersionControl",
 	"LogPatterns": [
 		{
-			"Regex": "^commit[\\s]+(?<Extra1>[\\d\\w]+)([\\s]+(?<Extra2>[\\d\\w]+))?.*$"
+			"Regex": "^commit[\\s]+(?<Extra1>[\\d\\w]+)(\\s+(?<Extra2>[\\d\\w]+))?.*$"
 		},
 		{
 			"Regex": "^Merge:.*$",
 			"IsSkippable": true
 		},
 		{
-			"Regex": "^Author:[\\s]+(?<UserName>.+)$"
+			"Regex": "^Author:\\s+(?<UserName>.+)$"
 		},
 		{
-			"Regex": "^Date:[\\s]+[\\w]+[\\s]+(?<Timestamp>[\\w]+[\\s]+[\\d]+[\\s]+[\\d]+:[\\d]+:[\\d]+[\\s]+[\\d]+).*$"
+			"Regex": "^Date:\\s+\\w+\\s+(?<Timestamp>\\w+\\s+\\d+\\s+\\d+:\\d+:\\d+\\s+\\d+).*$"
 		},
 		{
-			"Regex": "^[\\s]*$"
-		},
-		{
-			"IsRepeatable": true,
-			"IsSkippable": true,
-			"Regex": "^[\\s]{4}(?<Message>.*)$"
-		},
-		{
-			"Regex": "^[\\s]*$"
+			"Regex": "^\\s*$"
 		},
 		{
 			"IsRepeatable": true,
 			"IsSkippable": true,
-			"Regex": "^[\\s]+[^\\|]+[\\s]+\\|[\\s]+(Bin|[\\d]+).*$"
+			"Regex": "^\\s{4}(?<Message>.*)$"
+		},
+		{
+			"Regex": "^\\s*$"
+		},
+		{
+			"IsRepeatable": true,
+			"IsSkippable": true,
+			"Regex": "^\\s+[^\\|]+\\s+\\|\\s+(Bin|\\d+).*$"
 		},
 		{
 			"IsSkippable": true,
-			"Regex": "^[\\s]+(?<Extra3>[\\d]+)[\\s]+file(s)?[\\s]+changed.*$"
+			"Regex": "^\\s+(?<Extra3>\\d+)\\s+file(s)?\\s+changed.*$"
 		},
 		{
 			"IsSkippable": true,
-			"Regex": "^[\\s]*$"
+			"Regex": "^\\s*$"
 		}
 	],
 	"LogWritingFormats": [

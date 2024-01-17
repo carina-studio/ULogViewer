@@ -13,7 +13,7 @@
 			"Regex": "^(?<Timestamp>\\w+\\s+\\d+\\s+[\\d\\:\\.]+)\\s+(?<SourceName>.*)\\[(?<ProcessId>\\d+)\\]\\s+\\<(?<Level>\\w+)\\>:\\s(?<Message>.*)$"
 		},
 		{
-			"Regex": "^[\\t](?<Message>.*)$",
+			"Regex": "^\\t(?<Message>.*)$",
 			"IsRepeatable": true,
 			"IsSkippable": true
 		}

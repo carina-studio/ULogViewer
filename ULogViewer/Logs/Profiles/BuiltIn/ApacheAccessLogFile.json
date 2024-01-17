@@ -8,7 +8,7 @@
   "Icon": "Server",
   "LogPatterns": [
     {
-      "Regex": "(?<SourceName>[\\d\\.]+)\\s+(?<UserId>[^\\s]+)\\s+(?<UserName>[^\\s]+)\\s+\\[(?<Timestamp>\\d+/\\w+/[\\d\\:]+\\s+[\\+\\-]\\d+)\\]\\s+\\\"(?<Extra1>[^\\\"]*)\\\"\\s+(?<Extra2>\\d+)\\s+(?<Extra3>\\d+)\\s+\\\"(?<Extra4>[^\\\"]*)\\\"\\s+\\\"(?<Extra5>[^\\\"]*)\\\"",
+      "Regex": "(?<SourceName>[\\d\\.]+)\\s+(?<UserId>\\S+)\\s+(?<UserName>\\S+)\\s+\\[(?<Timestamp>\\d+/\\w+/[\\d\\:]+\\s+[\\+\\-]\\d+)\\]\\s+\\\"(?<Extra1>[^\\\"]*)\\\"\\s+(?<Extra2>\\d+)\\s+(?<Extra3>\\d+)\\s+\\\"(?<Extra4>[^\\\"]*)\\\"\\s+\\\"(?<Extra5>[^\\\"]*)\\\"",
       "IgnoreCase": true
     }
   ],
