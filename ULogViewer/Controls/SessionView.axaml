@@ -283,7 +283,7 @@
 					<StackPanel>
 						<TextBlock IsVisible="{ReflectionBinding #textBlock.IsTextTrimmed}" TextTrimming="CharacterEllipsis">
 							<TextBlock.Inlines>
-								<Run FontWeight="Bold" Text="{Binding DisplayName}"/>
+								<Run Text="{Binding DisplayName}"/>
 								<Run Text="{Binding SecondaryDisplayName, Converter={x:Static appControls:SessionView.LogSecondaryDisplayNameConverter}}"/>
 								<Run Foreground="{DynamicResource Brush/SessionView.LogHeader.Quantifier.Foreground}" Text="{Binding Quantifier, Converter={x:Static appControls:SessionView.LogQuantifierConverter}}"/>
 							</TextBlock.Inlines>
@@ -293,7 +293,7 @@
 				</ToolTip.Tip>
 				<abControls:TextBlock Name="textBlock" ShowToolTipWhenTextTrimmed="False" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center">
 					<abControls:TextBlock.Inlines>
-						<Run FontWeight="Bold" Text="{Binding DisplayName}"/>
+						<Run Text="{Binding DisplayName}"/>
 						<Run Text="{Binding SecondaryDisplayName, Converter={x:Static appControls:SessionView.LogSecondaryDisplayNameConverter}}"/>
 						<Run Foreground="{DynamicResource Brush/SessionView.LogHeader.Quantifier.Foreground}" Text="{Binding Quantifier, Converter={x:Static appControls:SessionView.LogQuantifierConverter}}"/>
 					</abControls:TextBlock.Inlines>
@@ -1614,6 +1614,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding MarkedLogs.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
+					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 					<asControls:ListBox Classes="Log" 
 					                    Name="markedLogListBox" 
 					                    Background="{x:Static Brushes.Transparent}" 
@@ -1640,6 +1641,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
+					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 					<asControls:ListBox Classes="Log" 
 					                    Name="timestampCategoryListBox" 
 					                    Background="{x:Static Brushes.Transparent}" 
@@ -2163,6 +2165,7 @@
 							</Popup>
 						</Grid>
 					</Border>
+					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 					<asControls:ListBox Classes="Log" 
 					                    Name="logAnalysisResultListBox" 
 					                    AutoScrollToSelectedItem="False"
@@ -2461,6 +2464,7 @@
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogFiles.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
+					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logFileActionMenu}" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding LogFiles}">
 						<asControls:ListBox.ItemTemplate>
 							<DataTemplate>
@@ -2538,9 +2542,12 @@
 
 		</Border>
 		<Panel Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" IsHitTestVisible="False" IsVisible="{Binding #sidePanelContainer.IsVisible}" VerticalAlignment="Stretch">
-			<Border Classes="SessionView_SidePanel_Header" Padding="{StaticResource Thickness/SessionView.SidePanel.Header.Padding.Dummy}" VerticalAlignment="Top">
-				<TextBlock Classes="SessionView_SidePanel_Header_Left" Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy}"/>
-			</Border>
+			<Panel VerticalAlignment="Top">
+				<Border Classes="SessionView_SidePanel_Header" Padding="{StaticResource Thickness/SessionView.SidePanel.Header.Padding.Dummy}">
+					<TextBlock Classes="SessionView_SidePanel_Header_Left" Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy}"/>
+				</Border>
+				<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False" Margin="1,0,0,0"/>
+			</Panel>
 			<Border BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" IsHitTestVisible="False"/>
 		</Panel>
 		<GridSplitter Background="{x:Static Brushes.Transparent}" Classes="GridSplitter_Vertical" Grid.Column="1" Grid.Row="1" IsVisible="{Binding #sidePanelContainer.IsVisible}"/>
