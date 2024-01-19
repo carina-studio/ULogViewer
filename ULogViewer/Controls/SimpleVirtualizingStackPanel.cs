@@ -29,7 +29,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     /// <summary>
     /// Minimum interval between realizing containers in two measurements.
     /// </summary>
-    public static readonly SettingKey<int> MinRealizingContainersInterval = new($"{nameof(SimpleVirtualizingStackPanel)}.{nameof(MinRealizingContainersInterval)}", 50);
+    public static readonly SettingKey<int> MinRealizingContainersInterval = new($"{nameof(SimpleVirtualizingStackPanel)}.{nameof(MinRealizingContainersInterval)}", 33);
     
     
     // Static fields.
