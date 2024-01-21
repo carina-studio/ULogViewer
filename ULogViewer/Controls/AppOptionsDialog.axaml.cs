@@ -201,7 +201,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		};
 		if (initControl != null)
 		{
-			this.rootScrollViewer.ScrollIntoView(initControl);
+			this.rootScrollViewer.ScrollIntoView(initControl, true);
 			if (initControl is Avalonia.Controls.TextBlock textBlock)
 				this.AnimateTextBlock(textBlock);
 			else if (initControl is Border headerBorder)
