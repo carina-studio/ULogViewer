@@ -600,7 +600,7 @@
 						<!-- Set process ID -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessIdCommand}" IsVisible="{Binding CanSetProcessId}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Process.Outline}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessIdNeeded}">
 									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -610,7 +610,7 @@
 						<!-- Set process name -->
 						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessNameCommand}" IsVisible="{Binding CanSetProcessName}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Process.Outline}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessNameNeeded}">
 									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -625,8 +625,8 @@
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 
@@ -1368,7 +1368,7 @@
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process.Outline}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process}"/>
 								</DrawingImage>
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding ProcessId}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.ProcessId}"/>
@@ -1379,7 +1379,7 @@
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process.Outline}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process}"/>
 								</DrawingImage>
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding ProcessName}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.ProcessName}"/>
