@@ -242,7 +242,7 @@ class LogFilteringViewModel : SessionComponent
         {
             if (!isInit)
             {
-                if (this.GetValue(TextFilterProperty) != null)
+                if (this.GetValue(TextFilterProperty) is not null)
                 {
                     this.Logger.LogTrace("Change ignoring case to {ignoreCase} with text filter", ignoreCase);
                     this.commitFiltersAction.Execute();
@@ -283,7 +283,7 @@ class LogFilteringViewModel : SessionComponent
             if (!isInit)
             {
                 this.commitFiltersAction.Schedule();
-                if (pattern != null)
+                if (pattern is not null)
                 {
                     this.Logger.LogTrace($"Change text filter");
                     this.canResetFilters.Update(true);
@@ -374,7 +374,7 @@ class LogFilteringViewModel : SessionComponent
     void CommitFilters()
     {
         // check state
-        if (this.IsDisposed || this.Session.LogProfile == null)
+        if (this.IsDisposed || this.Session.LogProfile is null)
             return;
 
         // setup level
@@ -394,7 +394,7 @@ class LogFilteringViewModel : SessionComponent
         // setup text regex
         var textRegexList = new List<Regex>();
         var textFilter = this.TextFilter;
-        if (textFilter != null)
+        if (textFilter is not null)
         {
             var options = textFilter.Options;
             if ((options & RegexOptions.IgnoreCase) == 0)
@@ -483,7 +483,7 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyAccess();
         this.VerifyDisposed();
         var pid = this.Session.LogSelection.SelectedLogs.FirstOrDefault()?.ProcessId;
-        if (pid == null)
+        if (pid is null)
             return;
         if (resetOtherFilters)
             this.ResetFilters(false);
@@ -637,7 +637,7 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyAccess();
         this.VerifyDisposed();
         var tid = this.Session.LogSelection.SelectedLogs.FirstOrDefault()?.ThreadId;
-        if (tid == null)
+        if (tid is null)
             return;
         if (resetOtherFilters)
             this.ResetFilters(false);
@@ -870,7 +870,7 @@ class LogFilteringViewModel : SessionComponent
     protected override void OnLogProfileChanged(LogProfile? prevLogProfile, LogProfile? newLogProfile)
     {
         base.OnLogProfileChanged(prevLogProfile, newLogProfile);
-        if (newLogProfile == null)
+        if (newLogProfile is null)
         {
             this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProperty.DefaultValue;
             this.commitFiltersAction.Cancel();
@@ -1174,7 +1174,7 @@ class LogFilteringViewModel : SessionComponent
         this.canResetFilters.Update(this.GetValue(LevelFilterProperty) != Logs.LogLevel.Undefined
             || this.GetValue(ProcessIdFilterProperty).HasValue
             || this.GetValue(ThreadIdFilterProperty).HasValue
-            || this.GetValue(TextFilterProperty) != null
+            || this.GetValue(TextFilterProperty) is not null
             || this.predefinedTextFilters.IsNotEmpty()
         );
     }

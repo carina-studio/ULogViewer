@@ -293,7 +293,7 @@ class LogCategorizingViewModel : SessionComponent
     void UpdateTimestampLogPropertyName()
     {
         var profile = this.LogProfile;
-        if (profile == null)
+        if (profile is null)
             return;
         (profile.SortKey switch
         {

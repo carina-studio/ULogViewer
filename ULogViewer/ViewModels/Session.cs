@@ -656,7 +656,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			var releasedMemory = 0L;
 			var hibernatedSessionCount = 0;
 			var node = activationHistoryList.Last;
-			while (node != null && logsMemoryUsage > memoryThresholdToStartHibernation)
+			while (node is not null && logsMemoryUsage > memoryThresholdToStartHibernation)
 			{
 				var session = node.Value;
 				var sessionLogsMemoryUsage = session.LogsMemoryUsage;
@@ -1022,7 +1022,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.updateIsProcessingLogsAction?.Schedule());
 				it.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
 				{
-					this.canShowAllLogsTemporarily.Update(this.LogProfile != null && it.IsFilteringNeeded);
+					this.canShowAllLogsTemporarily.Update(this.LogProfile is not null && it.IsFilteringNeeded);
 					if (!this.canShowAllLogsTemporarily.Value && this.GetValue(IsShowingAllLogsTemporarilyProperty))
 						this.ToggleShowingAllLogsTemporarily();
 					this.selectLogsToReportActions?.Schedule();
@@ -1087,7 +1087,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				if (this.IsDisposed)
 					return;
 				var profile = this.LogProfile;
-				if (profile == null || this.logReaders.IsEmpty() || this.HasAllDataSourceErrors)
+				if (profile is null || this.logReaders.IsEmpty() || this.HasAllDataSourceErrors)
 					this.SetValue(IsWaitingForDataSourcesProperty, false);
 				else
 				{
@@ -1158,7 +1158,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					return;
 				var logs = this.Logs;
 				var profile = this.LogProfile;
-				if (logs.IsNotEmpty() && profile != null && this.logReaders.IsNotEmpty())
+				if (logs.IsNotEmpty() && profile is not null && this.logReaders.IsNotEmpty())
 				{
 					var firstLog = logs[0];
 					var lastLog = logs.Last();
@@ -1172,10 +1172,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(LatestLogTimestampProperty, latestTimestamp);
 					try
 					{
-						if (earliestTimestamp != null && latestTimestamp != null)
+						if (earliestTimestamp is not null && latestTimestamp is not null)
 						{
 							var format = profile.TimestampFormatForDisplaying;
-							if (format != null)
+							if (format is not null)
 							{
 								this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
 								this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
@@ -1186,10 +1186,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 								this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString());
 							}
 						}
-						else if (minTimeSpan != null && maxTimeSpan != null)
+						else if (minTimeSpan is not null && maxTimeSpan is not null)
 						{
 							var format = profile.TimeSpanFormatForDisplaying;
-							if (format != null)
+							if (format is not null)
 							{
 								this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString(format));
 								this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString(format));
@@ -1366,9 +1366,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var logProfile = this.LogProfile;
 				var icon = Global.Run(() =>
 				{
-					if (logProfile == null)
+					if (logProfile is null)
 						return app?.FindResourceOrDefault<IImage>("Image/Icon.Tab");
-					if (app != null)
+					if (app is not null)
 						return LogProfileIconConverter.Default.Convert(new object?[] { logProfile }, typeof(IImage), null, app.CultureInfo) as IImage;
 					return null;
 				});
@@ -1377,7 +1377,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var title = Global.Run(() =>
 				{
 					var customTitle = this.CustomTitle;
-					if (logProfile == null)
+					if (logProfile is null)
 						return customTitle ?? app?.GetString("Session.Empty");
 					if (this.logFileInfoList.IsEmpty() || !logProfile.AllowMultipleFiles)
 						return customTitle ?? logProfile.Name;
@@ -1429,7 +1429,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.SetValue(IsMarkedLogsPanelVisibleProperty, false);
 
 			// set initial log profile
-			if (initLogProfile != null)
+			if (initLogProfile is not null)
 			{
 				this.Logger.LogWarning("Initial lop profile: '{name}' [{id}]", initLogProfile.Name, initLogProfile.Id);
 				this.SetLogProfile(initLogProfile, true, true);
@@ -1450,7 +1450,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			return new ActivationToken(this).Also(it =>
 			{
 				// update activation list
-				if (this.activationHistoryListNode.List != null)
+				if (this.activationHistoryListNode.List is not null)
 					activationHistoryList.Remove(this.activationHistoryListNode);
 				activationHistoryList.AddFirst(this.activationHistoryListNode);
 
@@ -1790,13 +1790,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByBeginningTimeSpan(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by time span
@@ -1810,13 +1810,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByBeginningTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by timestamp
@@ -1830,13 +1830,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByEndingTimeSpan(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by time span
@@ -1850,13 +1850,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByEndingTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by timestamp
@@ -1870,13 +1870,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsById(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by ID
@@ -1894,13 +1894,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByReadTime(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by timestamp
@@ -1914,13 +1914,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByTimeSpan(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by time span
@@ -1934,13 +1934,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static int CompareDisplayableLogsByTimestamp(DisplayableLog? x, DisplayableLog? y)
 		{
 			// compare by reference
-			if (x == null)
+			if (x is null)
 			{
-				if (y == null)
+				if (y is null)
 					return 0;
 				return -1;
 			}
-			if (y == null)
+			if (y is null)
 				return 1;
 
 			// compare by timestamp
@@ -2033,7 +2033,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.Logger.LogDebug("Logs writing completed, start setting to clipboard");
 				var clipboard = app.LatestActiveWindow?.Clipboard;
-				if (clipboard != null)
+				if (clipboard is not null)
 				{
 					await clipboard.SetTextAsync(dataOutput.String ?? "");
 					this.Logger.LogDebug("Logs copying completed");
@@ -2111,7 +2111,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			
 			// prepare displayable log group
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to create log reader.");
-			if (this.displayableLogGroup == null)
+			if (this.displayableLogGroup is null)
 			{
 				this.displayableLogGroup = new DisplayableLogGroup(profile).Also(it =>
 				{
@@ -2372,7 +2372,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.LogProfile?.Let(it => it.PropertyChanged -= this.OnLogProfilePropertyChanged);
 
 			// detach from log data source provider
-			if (this.attachedLogDataSourceProvider != null)
+			if (this.attachedLogDataSourceProvider is not null)
 			{
 				this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
 				this.attachedLogDataSourceProvider = null;
@@ -2395,7 +2395,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			(this.fileLogsReadingTaskFactory?.Scheduler as IDisposable)?.Dispose();
 
 			// remove from activation history
-			if (this.activationHistoryListNode.List != null)
+			if (this.activationHistoryListNode.List is not null)
 				activationHistoryList.Remove(this.activationHistoryListNode);
 			
 			// update total memory usage
@@ -2557,16 +2557,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			firstLog = null;
 			lastLog = null;
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				return;
 			var compare = this.compareDisplayableLogsDelegate;
 			if (profile.SortDirection == SortDirection.Ascending)
 			{
 				foreach (var log in logs)
 				{
-					if (firstLog == null || compare(log, firstLog) < 0)
+					if (firstLog is null || compare(log, firstLog) < 0)
 						firstLog = log;
-					if (lastLog == null || compare(log, lastLog) > 0)
+					if (lastLog is null || compare(log, lastLog) > 0)
 						lastLog = log;
 				}
 			}
@@ -2574,9 +2574,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				foreach (var log in logs)
 				{
-					if (firstLog == null || compare(log, firstLog) > 0)
+					if (firstLog is null || compare(log, firstLog) > 0)
 						firstLog = log;
-					if (lastLog == null || compare(log, lastLog) < 0)
+					if (lastLog is null || compare(log, lastLog) < 0)
 						lastLog = log;
 				}
 			}
@@ -2593,7 +2593,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				return null;
 			var logs = this.Logs;
 			if (logs.IsEmpty())
@@ -2608,7 +2608,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				LogSortKey.Timestamp => log => log.Timestamp.GetValueOrDefault(),
 				_ => default(Func<DisplayableLog, DateTime>?),
 			};
-			if (timestampGetter == null)
+			if (timestampGetter is null)
 				return null;
 			var comparison = new Comparison<DateTime>((x, y) => x.CompareTo(y));
 			if (profile.SortDirection == SortDirection.Descending)
@@ -2741,7 +2741,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// check log profile
 			var profile = this.LogProfile;
-			if (profile == null || profile.IsContinuousReading)
+			if (profile is null || profile.IsContinuousReading)
 				return false;
 
 			this.Logger.LogWarning("Hibernate with {logReaderCount} log reader(s) and {allLogCount} log(s)", this.logReaders.Count, this.AllLogCount);
@@ -2841,7 +2841,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="filePath">Path of log file.</param>
 		/// <returns>True if log file has been added.</returns>
 		public bool IsLogFileAdded(string? filePath) =>
-			filePath != null && this.logFileInfoList.BinarySearch<LogFileInfo, string>(filePath, it => it.FileName, PathComparer.Default.Compare) >= 0;
+			filePath is not null && this.logFileInfoList.BinarySearch<LogFileInfo, string>(filePath, it => it.FileName, PathComparer.Default.Compare) >= 0;
 
 
 		/// <summary>
@@ -3032,7 +3032,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				try
 				{
 					this.Logger.LogTrace("Start loading marked log file '{markedFileName}'", markedFileName);
-					if (!CarinaStudio.IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
+					if (!CarinaStudio.IO.File.TryOpenRead(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream is null)
 					{
 						this.Logger.LogError("Unable to open marked file to load: {markedFileName}", markedFileName);
 						return Array.Empty<MarkedLogInfo>();
@@ -3328,7 +3328,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					logListFileName = markedLogInfo.FileName;
 					this.allLogsByLogFilePath.TryGetValue(logListFileName, out logList);
 				}
-				if (logList == null)
+				if (logList is null)
 					continue;
 				var index = logList.BinarySearch(markedLogInfo.LineNumber, it => it.LineNumber.GetValueOrDefault(), (x, y) => x - y);
 				if (index >= 0)
@@ -3574,10 +3574,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					});
 					break;
 				case nameof(LogProfile.DataSourceProvider):
-					if (this.attachedLogDataSourceProvider != null)
+					if (this.attachedLogDataSourceProvider is not null)
 						this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
 					this.attachedLogDataSourceProvider = (sender as LogProfile)?.DataSourceProvider;
-					if (this.attachedLogDataSourceProvider != null)
+					if (this.attachedLogDataSourceProvider is not null)
 						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
 					this.ClearLogsReadingParameters();
 					this.DisposeLogReaders();
@@ -3685,7 +3685,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						else
 						{
 							var profile = this.LogProfile;
-							if (profile != null 
+							if (profile is not null 
 								&& profile.SortKey == LogSortKey.Id 
 								&& this.logReaders.Count == 1 
 								&& this.logReaders[0] == logReader)
@@ -3823,7 +3823,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.Logger.LogTrace("Can add log file: {canAdd}", newValue);
 			else if (property == CustomTitleProperty)
 			{
-				this.SetValue(HasCustomTitleProperty, newValue != null);
+				this.SetValue(HasCustomTitleProperty, newValue is not null);
 				this.updateTitleAndIconAction.Schedule();
 			}
 			else if (property == HasLogsProperty
@@ -3832,7 +3832,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			}
 			else if (property == IPEndPointProperty)
-				this.SetValue(HasIPEndPointProperty, newValue != null);
+				this.SetValue(HasIPEndPointProperty, newValue is not null);
 			else if (property == IsHighMemoryUsageToStopReadingLogsProperty)
 			{
 				var profile = this.LogProfile;
@@ -3867,17 +3867,17 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.selectLogsToReportActions.Schedule();
 			}
 			else if (property == LastLogsReadingDurationProperty)
-				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration != null);
+				this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration is not null);
 			else if (property == LogFilesPanelSizeProperty)
 			{
 				if (!this.isRestoringState)
 					this.PersistentState.SetValue<double>(latestLogFilesPanelSizeKey, (double)newValue.AsNonNull());
 			}
 			else if (property == LogsDurationProperty)
-				this.SetValue(HasLogsDurationProperty, newValue != null);
+				this.SetValue(HasLogsDurationProperty, newValue is not null);
 			else if (property == LogProfileProperty)
 			{
-				this.SetValue(HasLogProfileProperty, newValue != null);
+				this.SetValue(HasLogProfileProperty, newValue is not null);
 				this.SetValue(IsBuiltInLogProfileProperty, (newValue as LogProfile)?.IsBuiltIn == true);
 			}
 			else if (property == LogsProperty)
@@ -3894,7 +3894,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			else if (property == MaxLogFileCountProperty)
 				this.UpdateCanAddLogFile();
 			else if (property == UriProperty)
-				this.SetValue(HasUriProperty, newValue != null);
+				this.SetValue(HasUriProperty, newValue is not null);
 		}
 
 
@@ -4026,7 +4026,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyAccess();
 			this.VerifyDisposed();
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				throw new InternalStateCorruptedException("No log profile to reload logs.");
 			
 			// cancel scheduled reloading logs
@@ -4107,12 +4107,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (fileName == null)
+			if (fileName is null)
 				return;
 			
 			// find log reader
 			var logReader = this.logReaders.FirstOrDefault(it => it.DataSource.CreationOptions.FileName == fileName);
-			if (logReader == null)
+			if (logReader is null)
 				return;
 			
 			// check state
@@ -4152,7 +4152,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			if (!this.canResetLogProfile.Value)
 				return;
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				throw new InternalStateCorruptedException("No log profile to reset.");
 			
 			// cancel scheduled reloading logs
@@ -4168,7 +4168,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 
 			// detach from log data source provider
-			if (this.attachedLogDataSourceProvider != null)
+			if (this.attachedLogDataSourceProvider is not null)
 			{
 				this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
 				this.attachedLogDataSourceProvider = null;
@@ -4409,7 +4409,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		async Task SaveLogs(LogsSavingOptions? options)
 		{
 			// check state
-			if (options == null)
+			if (options is null)
 				throw new ArgumentNullException(nameof(options));
 			if (!options.HasFileName)
 				return;
@@ -4418,7 +4418,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// get log profile
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				return;
 
 			// create log writer
@@ -4602,7 +4602,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.Logger.LogTrace("Start saving {markedLogInfoCount} marked log(s) to '{markedFileName}'", markedLogInfos.Count, markedFileName);
 					try
 					{
-						if (!CarinaStudio.IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream == null)
+						if (!CarinaStudio.IO.File.TryOpenReadWrite(markedFileName, DefaultFileOpeningTimeout, out var stream) || stream is null)
 						{
 							this.Logger.LogError("Unable to open marked file to save: {markedFileName}", markedFileName);
 							return;
@@ -4762,7 +4762,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (endPoint == null)
+			if (endPoint is null)
 				throw new ArgumentNullException(nameof(endPoint));
 			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to set IP endpoint.");
 			var dataSourceOptions = profile.DataSourceOptions;
@@ -4804,9 +4804,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.VerifyDisposed();
 			if (!this.canSetLogProfile.Value)
 				return;
-			if (profile == null)
+			if (profile is null)
 				throw new ArgumentNullException(nameof(profile));
-			if (this.LogProfile != null)
+			if (this.LogProfile is not null)
 				throw new InternalStateCorruptedException("Already set another log profile.");
 			if (profile.IsTemplate)
 			{
@@ -5083,7 +5083,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// check parameter and state
 			this.VerifyAccess();
 			this.VerifyDisposed();
-			if (uri == null)
+			if (uri is null)
 				throw new ArgumentNullException(nameof(uri));
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException("Cannot set relative URI.");
@@ -5210,7 +5210,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			// check state
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				return;
 			
 			// update state
@@ -5585,7 +5585,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		static void TriggerGC()
 		{
 			var app = IAppSuiteApplication.CurrentOrNull;
-			if (app == null)
+			if (app is null)
 				return;
 			var isHighMemoryUsage = instances.FirstOrDefault(it => it.GetValue(IsHighMemoryUsageToStopReadingLogsProperty)) is not null;
 			if (isHighMemoryUsage)
@@ -5888,7 +5888,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Update logs writing related states.
 		void UpdateIsLogsWritingAvailable(LogProfile? profile)
 		{
-			if (profile == null)
+			if (profile is null)
 			{
 				this.canCopyLogs.Update(false);
 				this.canCopyLogsWithFileNames.Update(false);
@@ -5929,7 +5929,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		void UpdateValidLogLevels()
 		{
 			var profile = this.LogProfile;
-			if (profile == null)
+			if (profile is null)
 				this.SetValue(ValidLogLevelsProperty, Array.Empty<Logs.LogLevel>());
 			else
 			{

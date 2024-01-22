@@ -283,7 +283,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 && this.Session.IsProVersionActivated)
             {
                 var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
-                if (scriptSet != null)
+                if (scriptSet is not null)
                 {
                     this.Logger.LogTrace("Apply cooperative log analysis script set");
                     this.LogProfile?.CooperativeLogAnalysisScriptSet?.Let(it => this.coopScriptLogAnalyzer.ScriptSets.Add(it));
@@ -529,13 +529,13 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         {
             var lhsLog = lhsLogs[lhsLogIndex];
             var rhsLog = rhsLogs[rhsLogIndex];
-            if (lhsLog == null)
+            if (lhsLog is null)
             {
                 ++lhsLogIndex;
-                if (rhsLog == null)
+                if (rhsLog is null)
                     ++rhsLogIndex;
             }
-            else if (rhsLog == null)
+            else if (rhsLog is null)
                 ++rhsLogIndex;
             else
             {
@@ -846,9 +846,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
         // reset cooperative log analysis script set
         this.coopScriptLogAnalyzer.ScriptSets.Clear();
-        if (newLogProfile?.CooperativeLogAnalysisScriptSet == null)
+        if (newLogProfile?.CooperativeLogAnalysisScriptSet is null)
         {
-            if (newLogProfile != null)
+            if (newLogProfile is not null)
                 this.Logger.LogDebug("No cooperative log analysis script set found in log profile '{name}' ({id})", newLogProfile.Name, newLogProfile.Id);
             this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
             if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
@@ -892,7 +892,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             case nameof(LogProfile.CooperativeLogAnalysisScriptSet):
             {
                 var logProfile = this.LogProfile;
-                if (logProfile?.CooperativeLogAnalysisScriptSet == null)
+                if (logProfile?.CooperativeLogAnalysisScriptSet is null)
                 {
                     this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been cleared", logProfile?.Name, logProfile?.Id);
                     this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
@@ -963,7 +963,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 var ruleSet = jsonId.ValueKind == JsonValueKind.String
                     ? KeyLogAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
                     : null;
-                if (ruleSet != null)
+                if (ruleSet is not null)
                     this.keyLogAnalysisRuleSets.Add(ruleSet);
             }
         }
@@ -976,7 +976,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 var scriptSet = jsonId.ValueKind == JsonValueKind.String
                     ? LogAnalysisScriptSetManager.Default.GetScriptSetOrDefault(jsonId.GetString()!)
                     : null;
-                if (scriptSet != null)
+                if (scriptSet is not null)
                     this.logAnalysisScriptSets.Add(scriptSet);
             }
         }
@@ -988,7 +988,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 var ruleSet = jsonId.ValueKind == JsonValueKind.String
                     ? OperationCountingAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
                     : null;
-                if (ruleSet != null)
+                if (ruleSet is not null)
                     this.operationCountingAnalysisRuleSets.Add(ruleSet);
             }
         }
@@ -1001,7 +1001,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 var ruleSet = jsonId.ValueKind == JsonValueKind.String
                     ? OperationDurationAnalysisRuleSetManager.Default.GetRuleSetOrDefault(jsonId.GetString()!)
                     : null;
-                if (ruleSet != null)
+                if (ruleSet is not null)
                     this.operationDurationAnalysisRuleSets.Add(ruleSet);
             }
         }
