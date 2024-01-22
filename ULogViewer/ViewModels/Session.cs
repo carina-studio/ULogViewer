@@ -41,9 +41,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	class Session : ViewModel<IULogViewerApplication>
 	{
 		/// <summary>
+		/// Default size of side panel.
+		/// </summary>
+		public const double DefaultSidePanelSize = 200;
+		/// <summary>
 		/// Maximum size of side panel.
 		/// </summary>
-		public const double MaxSidePanelSize = 400;
+		public const double MaxSidePanelSize = 450;
 		/// <summary>
 		/// Minimum size of side panel.
 		/// </summary>
@@ -341,7 +345,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="LogFilesPanelSize"/>.
 		/// </summary>
-		public static readonly ObservableProperty<double> LogFilesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(LogFilesPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
+		public static readonly ObservableProperty<double> LogFilesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(LogFilesPanelSize), DefaultSidePanelSize, 
 			coerce: (_, it) =>
 			{
 				if (it >= MaxSidePanelSize)
@@ -378,7 +382,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Property of <see cref="MarkedLogsPanelSize"/>.
 		/// </summary>
-		public static readonly ObservableProperty<double> MarkedLogsPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(MarkedLogsPanelSize), (MinSidePanelSize + MaxSidePanelSize) / 2, 
+		public static readonly ObservableProperty<double> MarkedLogsPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(MarkedLogsPanelSize), DefaultSidePanelSize, 
 			coerce: (_, it) =>
 			{
 				if (it >= MaxSidePanelSize)

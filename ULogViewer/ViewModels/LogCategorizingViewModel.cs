@@ -26,7 +26,7 @@ class LogCategorizingViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="TimestampCategoriesPanelSize"/>.
     /// </summary>
-    public static readonly ObservableProperty<double> TimestampCategoriesPanelSizeProperty = ObservableProperty.Register<LogCategorizingViewModel, double>(nameof(TimestampCategoriesPanelSize), (Session.MinSidePanelSize + Session.MaxSidePanelSize) / 2, 
+    public static readonly ObservableProperty<double> TimestampCategoriesPanelSizeProperty = ObservableProperty.Register<LogCategorizingViewModel, double>(nameof(TimestampCategoriesPanelSize), Session.DefaultSidePanelSize, 
         coerce: (_, it) =>
         {
             if (it >= Session.MaxSidePanelSize)

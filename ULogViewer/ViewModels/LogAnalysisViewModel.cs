@@ -58,7 +58,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Property of <see cref="PanelSize"/>.
     /// </summary>
-    public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(PanelSize), (Session.MinSidePanelSize + Session.MaxSidePanelSize) / 2, 
+    public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(PanelSize), Session.DefaultSidePanelSize, 
         coerce: (_, it) =>
         {
             if (it >= Session.MaxSidePanelSize)
