@@ -76,7 +76,7 @@ public class SimpleListBox : CarinaStudio.AppSuite.Controls.ListBox
     /// <inheritdoc/>
     protected override void ClearContainerForItemOverride(Control container)
     {
-        if (container is ListBoxItem listBoxItem)
+        if (container is ListBoxItem listBoxItem && this.ItemCount > 0)
         {
             this.ignoreContainerSelectionChangedField.SetValue(this, true);
             try
@@ -102,7 +102,7 @@ public class SimpleListBox : CarinaStudio.AppSuite.Controls.ListBox
         base.OnApplyTemplate(e);
         Dispatcher.UIThread.Post(() =>
         {
-            if (this.FindDescendantOfType<SimpleVirtualizingStackPanel>() is SimpleVirtualizingStackPanel panel)
+            if (this.FindDescendantOfType<SimpleVirtualizingStackPanel>() is { } panel)
             {
                 var observer = new Action<int>(_ =>
                 {
