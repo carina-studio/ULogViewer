@@ -1073,7 +1073,7 @@
 			</Panel>
 
 			<!-- ListBox -->
-			<asControls:ListBox Classes="Log" 
+			<appControls:SimpleListBox Classes="Log" 
 			                    Name="logListBox" 
 			                    AutoScrollToSelectedItem="False" 
 			                    Background="{x:Static Brushes.Transparent}" 
@@ -1088,20 +1088,20 @@
 			                    SelectedItems="{Binding LogSelection.SelectedLogs}" 
 			                    SelectionChanged="OnLogListBoxSelectionChanged" 
 			                    SelectionMode="Multiple">
-				<asControls:ListBox.ItemsPanel>
+				<appControls:SimpleListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<appControls:SimpleVirtualizingStackPanel ItemHeight="{Binding #root.LogItemHeight}"/>
 					</ItemsPanelTemplate>
-				</asControls:ListBox.ItemsPanel>
-				<asControls:ListBox.Resources>
+				</appControls:SimpleListBox.ItemsPanel>
+				<appControls:SimpleListBox.Resources>
 					<sys:Double x:Key="ToolTipContentMaxWidth">400</sys:Double>
-				</asControls:ListBox.Resources>
-				<asControls:ListBox.Styles>
+				</appControls:SimpleListBox.Resources>
+				<appControls:SimpleListBox.Styles>
 					<Style Selector="ListBoxItem">
 						<Setter Property="ClipToBounds" Value="False"/>
 					</Style>
-				</asControls:ListBox.Styles>
-			</asControls:ListBox>
+				</appControls:SimpleListBox.Styles>
+			</appControls:SimpleListBox>
 
 			<!-- Hints -->
 			<Viewbox Grid.Row="1" Margin="{StaticResource Thickness/SessionView.Hint.Margin}" Stretch="Uniform" StretchDirection="DownOnly">

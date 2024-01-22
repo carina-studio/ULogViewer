@@ -19,9 +19,17 @@ namespace CarinaStudio.ULogViewer.Controls;
 public class SimpleVirtualizingStackPanel : VirtualizingPanel
 {
     /// <summary>
+    /// Define <see cref="FirstVisibleIndex"/> property.
+    /// </summary>
+    public static readonly DirectProperty<SimpleVirtualizingStackPanel, int> FirstVisibleIndexProperty = AvaloniaProperty.RegisterDirect<SimpleVirtualizingStackPanel, int>(nameof(FirstVisibleIndex), p => p.firstVisibleIndex);
+    /// <summary>
     /// Define <see cref="ItemHeight"/> property.
     /// </summary>
     public static readonly StyledProperty<double> ItemHeightProperty = AvaloniaProperty.Register<SimpleVirtualizingStackPanel, double>(nameof(ItemHeight), 20);
+    /// <summary>
+    /// Define <see cref="LastVisibleIndex"/> property.
+    /// </summary>
+    public static readonly DirectProperty<SimpleVirtualizingStackPanel, int> LastVisibleIndexProperty = AvaloniaProperty.RegisterDirect<SimpleVirtualizingStackPanel, int>(nameof(LastVisibleIndex), p => p.lastVisibleIndex);
     /// <summary>
     /// Maximum duration to realizing containers in single measurement.
     /// </summary>
@@ -40,8 +48,10 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     // Fields.
     IAppSuiteApplication? app;
     int firstRealizedIndex = -1;
+    int firstVisibleIndex = -1;
     readonly ScheduledAction invalidateMeasureAction;
     int lastRealizedIndex = -1;
+    int lastVisibleIndex = -1;
     readonly List<Control?> realizedContainers = new();
     Control? realizingContainer;
     int realizingContainerIndex = -1;
@@ -111,6 +121,12 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         }
         return container;
     }
+
+
+    /// <summary>
+    /// Get index of first item which is visible in the panel.
+    /// </summary>
+    public int FirstVisibleIndex => this.firstVisibleIndex;
     
 
     /// <inheritdoc/>
@@ -202,6 +218,12 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         get => this.GetValue(ItemHeightProperty);
         set => this.SetValue(ItemHeightProperty, value);
     }
+    
+    
+    /// <summary>
+    /// Get index of last item which is visible in the panel.
+    /// </summary>
+    public int LastVisibleIndex => this.lastVisibleIndex;
 
 
     /// <inheritdoc/>
@@ -216,11 +238,19 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         
         // ignore measurement
         if (itemCount <= 0 || itemHeight <= 0 || viewport.Width <= 0 || viewport.Height <= 0)
+        {
+            if (this.firstVisibleIndex >= 0)
+                this.SetAndRaise(FirstVisibleIndexProperty, ref this.firstVisibleIndex, -1);
+            if (this.lastVisibleIndex >= 0)
+                this.SetAndRaise(LastVisibleIndexProperty, ref this.lastVisibleIndex, -1);
             return default;
-        
+        }
+
         // calculate visible range
         var firstVisibleIndex = Math.Max(0, (int)(offset.Y / itemHeight));
         var lastVisibleIndex = Math.Min(itemCount - 1, (int)(Math.Ceiling((offset.Y + viewport.Height) / itemHeight) + 0.1));
+        this.SetAndRaise(FirstVisibleIndexProperty, ref this.firstVisibleIndex, firstVisibleIndex);
+        this.SetAndRaise(LastVisibleIndexProperty, ref this.lastVisibleIndex, lastVisibleIndex);
         
         // recycle containers
         if (this.firstRealizedIndex >= 0)
