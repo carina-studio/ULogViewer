@@ -1435,7 +1435,7 @@ partial class SessionView
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
                     this.smoothScrollToLatestLogAnalysisResultAction.Cancel();
                 }
-                if (Math.Abs(distanceY) <= 5 
+                if (Math.Abs(distanceY) <= 3 
                     || !smoothScrolling 
                     || !this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseSmoothLogScrolling))
                 {
@@ -1446,10 +1446,10 @@ partial class SessionView
                 }
                 else
                 {
-                    scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY / 2);
+                    scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY * SmoothScrollingToLatestLogScale);
                     this.isSmoothScrollingToLatestLogAnalysisResult = true;
                     this.scrollToLatestLogAnalysisResultAction.Cancel();
-                    this.smoothScrollToLatestLogAnalysisResultAction.Schedule(ScrollingToLatestLogInterval);
+                    this.smoothScrollToLatestLogAnalysisResultAction.Schedule(SmoothScrollingToLatestLogInterval);
                 }
             }
         });

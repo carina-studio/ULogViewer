@@ -157,10 +157,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		const int InitScrollingToLatestLogDelay = 800;
 		const int LogUpdateIntervalStatisticCount = 4;
 		const int LogUpdateIntervalToResetStatistic = 1000;
+		const double MaxSmoothScrollingToLatestLogDistance = 200;
 		const int ScrollingToLatestLogInterval = 200;
 		const int ScrollingToTargetLogRangeInterval = 200;
-		const int SlowScrollingToLatestLogInterval = 400;
-		const int SmoothScrollingToLatestLogInterval = 66;
+		const int SlowScrollingToLatestLogInterval = 200;
+		const int SmoothScrollingToLatestLogInterval = 33;
+		const double SmoothScrollingToLatestLogScale = 0.33;
 
 
 		// Static fields.
@@ -4794,7 +4796,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.scrollToLatestLogAction.Cancel();
 						this.smoothScrollToLatestLogAction.Cancel();
 					}
-					else if (Math.Abs(distanceY) <= 5 
+					else if (Math.Abs(distanceY) <= 3
 					         || !smoothScrolling 
 					         || !this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseSmoothLogScrolling))
 					{
@@ -4805,16 +4807,18 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					else
 					{
-						distanceY /= 2;
-						if (Math.Abs(distanceY) > 200)
+						if (Math.Abs(distanceY) > MaxSmoothScrollingToLatestLogDistance)
 						{
 							targetOffset = session.LogProfile.SortDirection == SortDirection.Ascending
-								? (extent.Height - viewport.Height) - 200
-								: 200;
+								? (extent.Height - viewport.Height) - MaxSmoothScrollingToLatestLogDistance
+								: MaxSmoothScrollingToLatestLogDistance;
 							scrollViewer.Offset = new(currentOffset.X, targetOffset);
 						}
 						else
+						{
+							distanceY *= SmoothScrollingToLatestLogScale;
 							scrollViewer.Offset = new(currentOffset.X, currentOffset.Y + distanceY);
+						}
 						this.isSmoothScrollingToLatestLog = true;
 						this.scrollToLatestLogAction.Cancel();
 						this.smoothScrollToLatestLogAction.Schedule(SmoothScrollingToLatestLogInterval);
