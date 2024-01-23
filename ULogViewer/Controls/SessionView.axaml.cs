@@ -1530,7 +1530,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				Icon = MessageDialogIcon.Question,
 				Message = new FormattedString().Also(it =>
 				{
-					it.Bind(FormattedString.Arg1Property, new Binding() { Path = nameof(LogProfile.Name), Source = profile });
+					it.Bind(FormattedString.Arg1Property, new Binding { Path = nameof(LogProfile.Name), Source = profile });
 					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.NeedToRestartAsAdministrator"));
 				}),
 			}.ShowDialog(this.attachedWindow);
@@ -1849,7 +1849,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
 								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 							if (isMultiLineProperty)
-								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
+								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, this.GetObservable(MaxDisplayLineCountForEachLogProperty));
 							else
 								it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
@@ -1935,12 +1935,12 @@ namespace CarinaStudio.ULogViewer.Controls
 								{
 									this.logPropertyViewBorderPointerOverBrush ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.Column.Border.PointerOver");
 									it.BorderBrush = this.logPropertyViewBorderPointerOverBrush;
-									//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
+									//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelBrushForPointerOver) });
 								}
 								else
 								{
 									it.BorderBrush = null;
-									//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding() { Path = nameof(DisplayableLog.LevelBrush) });
+									//it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelBrush) });
 								}
 							}));
 						}
@@ -3846,7 +3846,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					if (index >= 0)
 					{
 						it.SelectedIndex = index;
-						this.ScrollToLog(session, index, log, true);
+						this.ScrollToLog(index, log, true);
 					}
 					else
 						this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
@@ -4836,17 +4836,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			var index = session.Logs.IndexOf(log);
 			if (index < 0)
 				return;
-			this.ScrollToLog(session, index, log, moveToCenter);
+			this.ScrollToLog(index, log, moveToCenter);
 		}
-		void ScrollToLog(int index, bool moveToCenter = false)
-		{
-			if (this.DataContext is not Session session)
-				return;
-			if (index < 0 || index >= session.Logs.Count)
-				return;
-			this.ScrollToLog(session, index, session.Logs[index], moveToCenter);
-		}
-		void ScrollToLog(Session session, int index, DisplayableLog log, bool moveToCenter)
+		void ScrollToLog(int index, DisplayableLog log, bool moveToCenter)
 		{
 			if (this.targetLogRangeToScrollTo is not null)
 			{
@@ -4867,7 +4859,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			if (isLogVisible && !moveToCenter)
 				return;
-			this.targetLogRangeToScrollTo = new[] { log, log };
+			this.targetLogRangeToScrollTo = [ log, log ];
 			this.Logger.LogTrace("Start scrolling to log at position {index}", index);
 			this.SetValue(IsScrollingToTargetLogRangeProperty, true);
 			this.scrollToTargetLogRangeAction.Execute();
