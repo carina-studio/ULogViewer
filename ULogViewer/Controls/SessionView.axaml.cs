@@ -592,6 +592,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.logScrollViewer = (it.Scroll as ScrollViewer)?.Also(scrollViewer =>
 					{
 						scrollViewer.AllowAutoHide = false;
+						scrollViewer.LayoutUpdated += (_, _) => this.updateLatestDisplayedLogRangeAction?.Schedule();
 						scrollViewer.ScrollChanged += this.OnLogListBoxScrollChanged;
 					});
 				});
