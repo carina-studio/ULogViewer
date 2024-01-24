@@ -591,12 +591,12 @@ namespace CarinaStudio.ULogViewer
 			// initialize predefined log text filters
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializePredefinedLogTextFilters"));
 			await PredefinedLogTextFilterManager.InitializeAsync(this);
-			await this.WaitForSplashWindowAnimationAsync();
-			this.UpdateSplashWindowProgress(0.6);
+			this.UpdateSplashWindowProgress(0.5);
 			
 			// initialize log text filter phrases database
 			await LogTextFilterPhrasesDatabase.InitializeAsync(this);
-			this.UpdateSplashWindowProgress(0.65);
+			await this.WaitForSplashWindowAnimationAsync();
+			this.UpdateSplashWindowProgress(0.6);
 
 			// initialize log analysis rules
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogAnalysisRules"));

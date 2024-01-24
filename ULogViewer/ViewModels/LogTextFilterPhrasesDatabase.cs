@@ -46,6 +46,12 @@ static class LogTextFilterPhrasesDatabase
     {
         return Task.CompletedTask;
     }
+    
+    
+    /// <summary>
+    /// Check whether database is a newly created one or not.
+    /// </summary>
+    public static bool IsNewlyCreated { get; private set; }
 
 
     /// <summary>
