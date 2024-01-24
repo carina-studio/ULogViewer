@@ -33,6 +33,7 @@
 + Add side navigation bar to dialogs with more content.
 + Show more information of log analysis rules in editor.
 + Show improved notifications after performing operations such as exporting log profile or saving logs to file.
++ Reduce impaction on user interface when running script.
 + Improve input of CJK text on **macOS**.
 + Improve animations of user interface.
 + Allow resizing dialogs with complex content.
