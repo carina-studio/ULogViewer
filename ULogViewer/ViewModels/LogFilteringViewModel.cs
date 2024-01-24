@@ -1194,8 +1194,8 @@ class LogFilteringViewModel : SessionComponent
         {
             this.GetValue(IndexOfTextFilterInHistoryProperty).Let(it =>
             {
-                this.canUseNextTextFilterInHistory.Update(it < this.textFilterHistory.Count - 1);
-                this.canUsePreviousTextFilterInHistory.Update(it > 0);
+                this.canUseNextTextFilterInHistory.Update(it >= 0 && it < this.textFilterHistory.Count - 1);
+                this.canUsePreviousTextFilterInHistory.Update(it != 0);
             });
             this.canUseTextFilterInHistory.Update(true);
         }
@@ -1243,11 +1243,20 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyAccess();
         this.VerifyDisposed();
         var index = this.GetValue(IndexOfTextFilterInHistoryProperty);
-        --index;
-        if (index < 0)
+        if (index >= 0)
         {
-            this.SetValue(IndexOfTextFilterInHistoryProperty, 0);
-            return;
+            --index;
+            if (index < 0)
+            {
+                this.SetValue(IndexOfTextFilterInHistoryProperty, 0);
+                return;
+            }
+        }
+        else
+        {
+            if (this.textFilterHistory.IsEmpty())
+                return;
+            index = this.textFilterHistory.Count - 1;
         }
         this.SetValue(IndexOfTextFilterInHistoryProperty, index);
         var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
