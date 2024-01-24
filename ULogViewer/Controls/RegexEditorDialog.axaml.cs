@@ -39,8 +39,16 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	// Provider for assistance of phrase input.
 	class PhraseInputAssistanceProvider : IPhraseInputAssistanceProvider
 	{
+		// Fields.
+		readonly RegexTextBox regexTextBox;
+		
+		// Constructor.
+		public PhraseInputAssistanceProvider(RegexTextBox regexTextBox) =>
+			this.regexTextBox = regexTextBox;
+		
+		/// <inheritdoc/>
 		public Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken) =>
-			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, cancellationToken);
+			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, this.regexTextBox.IgnoreCase, cancellationToken);
 	}
 
 
@@ -186,7 +194,7 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 				return;
 			if (value)
 			{
-				this.regexTextBox.PhraseInputAssistanceProvider = new PhraseInputAssistanceProvider();
+				this.regexTextBox.PhraseInputAssistanceProvider = new PhraseInputAssistanceProvider(this.regexTextBox);
 				if (!this.regexTextBox.HasOpenedAssistanceMenus)
 					this.updatePhrasesDatabaseAction.Schedule();
 			}

@@ -59,9 +59,10 @@ static class LogTextFilterPhrasesDatabase
     /// </summary>
     /// <param name="prefix">Prefix of phrase.</param>
     /// <param name="postfix">Post of phrase.</param>
+    /// <param name="ignoreCase">True to select phrases with case insensitive.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of candidate phrases selection.</returns>
-    public static Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken)
+    public static Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, bool ignoreCase, CancellationToken cancellationToken)
     {
         return Task.FromResult<IList<string>>(Array.Empty<string>());
     }

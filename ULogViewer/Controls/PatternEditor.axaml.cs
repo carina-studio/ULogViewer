@@ -51,8 +51,16 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	// Provider for assistance of phrase input.
 	class PhraseInputAssistanceProvider : IPhraseInputAssistanceProvider
 	{
+		// Fields.
+		readonly RegexTextBox regexTextBox;
+		
+		// Constructor.
+		public PhraseInputAssistanceProvider(RegexTextBox regexTextBox) =>
+			this.regexTextBox = regexTextBox;
+		
+		/// <inheritdoc/>
 		public Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken) =>
-			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, cancellationToken);
+			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, this.regexTextBox.IgnoreCase, cancellationToken);
 	}
 
 
@@ -244,7 +252,7 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 				return;
 			if (value)
 			{
-				this.patternTextBox.PhraseInputAssistanceProvider = new PhraseInputAssistanceProvider();
+				this.patternTextBox.PhraseInputAssistanceProvider = new PhraseInputAssistanceProvider(this.patternTextBox);
 				if (!this.patternTextBox.HasOpenedAssistanceMenus)
 					this.updatePhrasesDatabaseAction.Schedule();
 			}

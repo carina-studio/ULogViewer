@@ -1100,7 +1100,7 @@ class LogFilteringViewModel : SessionComponent
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Task of suggested phrases selection.</returns>
     public Task<IList<string>> SelectCandidateTextFilterPhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken) =>
-        LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, cancellationToken);
+        LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, this.IgnoreTextFilterCase, cancellationToken);
 
 
     /// <summary>
