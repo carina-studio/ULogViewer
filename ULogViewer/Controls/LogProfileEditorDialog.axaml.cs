@@ -274,7 +274,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Entry = entry
 				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
-				if (entry == null)
+				if (entry is null)
 					return;
 				if (this.logLevelMapEntriesForReading.Contains(entry.Value))
 				{
@@ -310,7 +310,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Entry = entry
 				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
-				if (entry == null)
+				if (entry is null)
 					return;
 				if (this.logLevelMapEntriesForWriting.Contains(entry.Value))
 				{
@@ -354,7 +354,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void AddLogWritingFormat()
 		{
 			var format = await new LogWritingFormatEditorDialog().ShowDialog<string?>(this);
-			if (format != null)
+			if (format is not null)
 			{
 				this.logWritingFormats.Add(format);
 				this.SelectListBoxItem(this.logWritingFormatListBox, this.logWritingFormats.Count - 1);
@@ -425,7 +425,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				LogPattern = logPattern,
 			}.ShowDialog<LogPattern?>(this);
-			if (newLogPattern != null)
+			if (newLogPattern is not null)
 			{
 				this.logPatterns.Add(newLogPattern);
 				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
@@ -490,7 +490,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				IsEmbeddedScriptSet = true,
 				ScriptSetToEdit = this.cooperativeLogAnalysisScriptSet?.Let(it => new LogAnalysisScriptSet(it, "")),
 			}.ShowDialog<LogAnalysisScriptSet?>(this);
-			if (scriptSet == null || this.IsClosed)
+			if (scriptSet is null || this.IsClosed)
 				return;
 			this.cooperativeLogAnalysisScriptSet = scriptSet;
 		}
@@ -509,7 +509,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				IsEmbeddedProvider = true,
 				Provider = new(this.embeddedScriptLogDataSourceProvider, ""),
 			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
-			if (provider == null || this.IsClosed)
+			if (provider is null || this.IsClosed)
 				return;
 			
 			// replace provider
@@ -560,10 +560,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Entry = newEntry
 				}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
-				if (newEntry == null || newEntry.Value.Equals(entry))
+				if (newEntry is null || newEntry.Value.Equals(entry))
 					return;
 				var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
-				if (checkingEntry.Key != null && !entry.Equals(checkingEntry))
+				if (checkingEntry.Key is not null && !entry.Equals(checkingEntry))
 				{
 					await new MessageDialog
 					{
@@ -601,10 +601,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					Entry = newEntry
 				}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
-				if (newEntry == null || newEntry.Value.Equals(entry))
+				if (newEntry is null || newEntry.Value.Equals(entry))
 					return;
 				var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
-				if (checkingEntry.Value != null && !entry.Equals(checkingEntry))
+				if (checkingEntry.Value is not null && !entry.Equals(checkingEntry))
 				{
 					await new MessageDialog
 					{
@@ -671,7 +671,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				Format = format
 			}.ShowDialog<string?>(this);
-			if (newFormat != null && newFormat != format)
+			if (newFormat is not null && newFormat != format)
 			{
 				this.logWritingFormats[index] = newFormat;
 				this.SelectListBoxItem(this.logWritingFormatListBox, index);
@@ -784,7 +784,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.SynchronizationContext.PostDelayed(() =>
 						{
-							this.Get<Control>("logPatternsContainer").BringIntoView();
+							this.baseScrollViewer.ScrollIntoView(this.Get<Control>("logPatternsContainer"), true);
 							this.Get<Button>("addLogPatternButton").Focus();
 							this.AnimateTextBlock(this.Get<Avalonia.Controls.TextBlock>("logPatternsTextBlock"));
 						}, 100);
@@ -806,7 +806,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					this.SynchronizationContext.PostDelayed(() =>
 					{
-						this.Get<Control>("visibleLogPropertiesContainer").BringIntoView();
+						this.baseScrollViewer.ScrollIntoView(this.Get<Control>("visibleLogPropertiesContainer"), true);
 						this.Get<Button>("addVisibleLogPropertyButton").Focus();
 						this.AnimateTextBlock(this.Get<Avalonia.Controls.TextBlock>("visiblePropertiesTextBlock"));
 					}, 100);
@@ -868,7 +868,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// try loading script set
 			var scriptSet = await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(this.Application, fileName));
-			if (scriptSet == null)
+			if (scriptSet is null)
 			{
 				_ = new MessageDialog
 				{
@@ -888,7 +888,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				IsEmbeddedScriptSet = true,
 				ScriptSetToEdit = scriptSet,
 			}.ShowDialog<LogAnalysisScriptSet?>(this);
-			if (scriptSet != null)
+			if (scriptSet is not null)
 			{
 				this.cooperativeLogAnalysisScriptSet = scriptSet;
 				this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
@@ -908,7 +908,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// try loading provider
 			var provider = await Global.RunOrDefaultAsync(async () => await ScriptLogDataSourceProvider.LoadAsync(this.Application, fileName));
-			if (provider == null)
+			if (provider is null)
 			{
 				_ = new MessageDialog
 				{
@@ -928,7 +928,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				IsEmbeddedProvider = true,
 				Provider = provider,
 			}.ShowDialog<ScriptLogDataSourceProvider?>(this);
-			if (provider != null)
+			if (provider is not null)
 			{
 				provider = new EmbeddedScriptLogDataSourceProvider(provider);
 				var prevProvider = this.embeddedScriptLogDataSourceProvider;
@@ -992,7 +992,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Get or set <see cref="LogProfile"/> to be edited.
 		/// </summary>
-		public LogProfile? LogProfile { get; set; }
+		public LogProfile? LogProfile { get; init; }
 
 
 		// Log writing formats.
@@ -1183,7 +1183,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <inheritdoc/>
 		protected override void OnClosed(EventArgs e)
 		{
-			if (this.LogProfile != null 
+			if (this.LogProfile is not null 
 				&& NonBlockingDialogs.TryGetValue(this.LogProfile, out var dialog)
 				&& dialog == this)
 			{
@@ -1217,7 +1217,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (sender is not Avalonia.Controls.ListBox listBox)
 				return;
-			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
+			if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem is null)
 				return;
 			if (listBox == this.logLevelMapForReadingListBox)
 				this.EditLogLevelMapEntryForReading((KeyValuePair<string, Logs.LogLevel>)e.Item);
@@ -1355,7 +1355,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.dataSourceOptions = profile.DataSourceOptions;
 				this.descriptionTextBox.Text = profile.Description;
 				this.embeddedScriptLogDataSourceProvider = profile.EmbeddedScriptLogDataSourceProvider;
-				if (this.embeddedScriptLogDataSourceProvider != null)
+				if (this.embeddedScriptLogDataSourceProvider is not null)
 					this.dataSourceProviders.Add(this.embeddedScriptLogDataSourceProvider);
 				this.dataSourceProviderComboBox.SelectedItem = profile.DataSourceProvider;
 				this.iconColorComboBox.SelectedItem = profile.IconColor;
@@ -1388,8 +1388,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			
 			// update state
-			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet != null);
-			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, this.embeddedScriptLogDataSourceProvider != null);
+			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet is not null);
+			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, this.embeddedScriptLogDataSourceProvider is not null);
 			
 			// get defined log property names
 			this.UpdateLogPropertyNamesInLogPatterns();
@@ -1408,7 +1408,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when state of product changed.
 		void OnProductStateChanged(IProductManager? productManager, string productId)
 		{
-			if (productManager != null && productId == Products.Professional)
+			if (productManager is not null && productId == Products.Professional)
 			{
 				this.SetValue(IsProVersionActivatedProperty, productManager.IsProductActivated(productId));
 				this.InvalidateInput();
@@ -1477,7 +1477,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check data source and options
 			var isTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault();
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
-			if (dataSourceProvider == null)
+			if (dataSourceProvider is null)
 				return false;
 			this.allowMultipleFilesPanel.IsVisible = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
 			if (!isTemplate)
@@ -1542,7 +1542,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void RemoveCooperativeLogAnalysisScript()
 		{
-			if (this.cooperativeLogAnalysisScriptSet == null)
+			if (this.cooperativeLogAnalysisScriptSet is null)
 				return;
 			var result = await new MessageDialog
 			{
@@ -1754,7 +1754,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void SetDataSourceOptions()
 		{
 			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
-			if (dataSourceProvider == null)
+			if (dataSourceProvider is null)
 				return;
 			var options = await new LogDataSourceOptionsDialog
 			{
@@ -1762,7 +1762,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				IsTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault(),
 				Options = this.dataSourceOptions,
 			}.ShowDialog<LogDataSourceOptions?>(this);
-			if (options != null)
+			if (options is not null)
 			{
 				this.dataSourceOptions = options.Value;
 				this.InvalidateInput();
@@ -1777,7 +1777,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <param name="logProfile">Log profile to be edited.</param>
 		public static void Show(Avalonia.Controls.Window? parent, LogProfile? logProfile)
 		{
-			if (logProfile != null && NonBlockingDialogs.TryGetValue(logProfile, out var dialog))
+			if (logProfile is not null && NonBlockingDialogs.TryGetValue(logProfile, out var dialog))
 			{
 				dialog.ActivateAndBringToFront();
 				return;
@@ -1786,9 +1786,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				LogProfile = logProfile,
 			};
-			if (logProfile != null)
+			if (logProfile is not null)
 				NonBlockingDialogs[logProfile] = dialog;
-			if (parent != null)
+			if (parent is not null)
 				dialog.Show(parent);
 			else
 				dialog.Show();
