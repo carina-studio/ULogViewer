@@ -11,6 +11,7 @@
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.VisibleLogPropertyEditorDialog"
+        Name="window"
         Classes="Dialog"
 		SizeToContent="Height"
         Title="{DynamicResource String/VisibleLogPropertyEditorDialog.Title}"
@@ -29,8 +30,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
@@ -42,7 +43,7 @@
 					<!-- Name -->
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.LogPropertyNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
@@ -52,6 +53,13 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
+					</asControls:DialogItemGrid>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					
+					<!-- Show defined log properties only -->
+					<asControls:DialogItemGrid Classes="Dialog_Item_Container_Small">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly}"/>
+						<ToggleSwitch Name="showDefinedLogPropertiesOnlySwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="True"/>
 					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
@@ -70,10 +78,10 @@
 						</ComboBox>
 						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
 					</asControls:DialogItemGrid>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
 
 					<!-- Custom display name -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItemGrid Classes="Dialog_Item_Container_Small">
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged"/>
 					</asControls:DialogItemGrid>

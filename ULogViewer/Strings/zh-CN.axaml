@@ -1477,6 +1477,7 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier.Description"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName"/>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly">只列出已定义及可用的日志属性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定栏位宽度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">显示的日志属性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">栏位宽度</sys:String>

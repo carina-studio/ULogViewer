@@ -85,6 +85,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly AppSuite.Controls.ListBox logPatternListBox;
 		readonly ComboBox logPatternMatchingModeComboBox;
 		readonly ObservableList<LogPattern> logPatterns = new();
+		readonly HashSet<string> logPropertyNamesInLogPatterns = new();
 		readonly Panel logReadingPanel;
 		readonly ToggleButton logReadingPanelButton;
 		readonly ComboBox logStringEncodingForReadingComboBox;
@@ -338,9 +339,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async void AddLogPattern()
 		{
 			var logPattern = await new LogPatternEditorDialog().ShowDialog<LogPattern?>(this);
-			if (logPattern != null)
+			if (logPattern is not null)
 			{
 				this.logPatterns.Add(logPattern);
+				this.logPropertyNamesInLogPatterns.AddAll(logPattern.DefinedLogPropertyNames);
 				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
 			}
 		}
@@ -399,8 +401,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public async void AddVisibleLogProperty()
 		{
-			var logProperty = await new VisibleLogPropertyEditorDialog().ShowDialog<LogProperty?>(this);
-			if (logProperty != null)
+			var logProperty = await new VisibleLogPropertyEditorDialog
+			{
+				DefinedLogPropertyNames = this.logPropertyNamesInLogPatterns,
+			}.ShowDialog<LogProperty?>(this);
+			if (logProperty is not null)
 			{
 				this.visibleLogProperties.Add(logProperty);
 				this.SelectListBoxItem(this.visibleLogPropertyListBox, this.visibleLogProperties.Count - 1);
@@ -639,9 +644,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				LogPattern = logPattern
 			}.ShowDialog<LogPattern?>(this);
-			if (newLogPattern != null && newLogPattern != logPattern)
+			if (newLogPattern is not null && newLogPattern != logPattern)
 			{
 				this.logPatterns[index] = newLogPattern;
+				this.UpdateLogPropertyNamesInLogPatterns();
 				this.SelectListBoxItem(this.logPatternListBox, index);
 			}
 		}
@@ -741,9 +747,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			var newLogProperty = await new VisibleLogPropertyEditorDialog
 			{
+				DefinedLogPropertyNames = this.logPropertyNamesInLogPatterns,
 				LogProperty = logProperty
 			}.ShowDialog<LogProperty?>(this);
-			if (newLogProperty != null && newLogProperty != logProperty)
+			if (newLogProperty is not null && newLogProperty != logProperty)
 			{
 				this.visibleLogProperties[index] = newLogProperty;
 				this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
@@ -1384,6 +1391,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, this.cooperativeLogAnalysisScriptSet != null);
 			this.SetValue(HasEmbeddedScriptLogDataSourceProviderProperty, this.embeddedScriptLogDataSourceProvider != null);
 			
+			// get defined log property names
+			this.UpdateLogPropertyNamesInLogPatterns();
+			
 			// setup initial size
 			this.Screens.Let(screens =>
 			{
@@ -1615,6 +1625,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (index < 0)
 				return;
 			this.logPatterns.RemoveAt(index);
+			this.UpdateLogPropertyNamesInLogPatterns();
 			this.SelectListBoxItem(this.logPatternListBox, -1);
 		}
 
@@ -1810,6 +1821,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// List of timestamp format to read logs.
 		/// </summary>
 		public IList<string> TimestampFormatsForReading { get; }
+
+
+		// Extract name of log properties defined by log patterns.
+		void UpdateLogPropertyNamesInLogPatterns()
+		{
+			this.logPropertyNamesInLogPatterns.Clear();
+			foreach (var logPattern in this.logPatterns)
+				this.logPropertyNamesInLogPatterns.AddAll(logPattern.DefinedLogPropertyNames);
+		}
 
 
 		/// <summary>

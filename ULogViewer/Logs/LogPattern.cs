@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CarinaStudio.ULogViewer.Logs;
@@ -8,6 +9,14 @@ namespace CarinaStudio.ULogViewer.Logs;
 /// </summary>
 public class LogPattern
 {
+	// Static fields.
+	static Regex? LogPropertyNamePattern;
+	
+	
+	// Fields.
+	IList<string>? definedLogPropertyNames;
+	
+	
 	/// <summary>
 	/// Initialize new <see cref="LogPattern"/> instance.
 	/// </summary>
@@ -37,6 +46,30 @@ public class LogPattern
 		this.IsRepeatable = isRepeatable;
 		this.IsSkippable = isSkippable;
 		this.Regex = regex;
+	}
+
+
+	/// <summary>
+	/// Get list of name of log properties defined by the pattern.
+	/// </summary>
+	public IList<string> DefinedLogPropertyNames
+	{
+		get
+		{
+			this.definedLogPropertyNames ??= new List<string>().Also(it =>
+			{
+				LogPropertyNamePattern ??= new(@"(^|[^\\])(\\\\)*\(\?\<(?<PropertyName>\w+)\>", RegexOptions.Compiled);
+				var propertyNameSet = new HashSet<string>();
+				var match = LogPropertyNamePattern.Match(this.Regex.ToString());
+				while (match.Success)
+				{
+					propertyNameSet.Add(match.Groups["PropertyName"].Value);
+					match = match.NextMatch();
+				}
+				it.AddRange(propertyNameSet);
+			}).AsReadOnly();
+			return this.definedLogPropertyNames;
+		}
 	}
 	
 	
