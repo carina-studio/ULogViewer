@@ -94,8 +94,7 @@
 		<PackageReference Include="MySqlConnector" Version="2.3.3" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SkiaSharp" Version="2.88.7" />
-		<PackageReference Condition="$(RuntimeIdentifier.Contains('osx'))" Include="System.Data.SQLite" Version="1.0.117"/>
-		<PackageReference Condition="$(RuntimeIdentifier.Contains('osx'))=='False'" Include="System.Data.SQLite" Version="1.0.118">
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118">
 			<ExcludeAssets Condition="$(RuntimeIdentifier.Contains('win'))">native</ExcludeAssets>
 		</PackageReference>
 		<PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" />
@@ -160,10 +159,10 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
-		<Content Include="../SQLite/1.0.117/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
+		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="../SQLite/1.0.117/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
+		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
