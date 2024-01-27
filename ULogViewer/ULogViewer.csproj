@@ -145,26 +145,17 @@
 	</ItemGroup>
 
 	<!-- SQLite -->
-	<ItemGroup Condition="$(RuntimeIdentifier.Contains('win'))">
-		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
+	<ItemGroup Condition="$(RuntimeIdentifier.Length) > 0">
+		<Content Condition="$(RuntimeIdentifier.Contains('win'))" Include="../SQLite/1.0.118/$(RuntimeIdentifier)/sni.dll" Link="sni.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
 		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
-		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/sni.dll" Link="sni.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
-		</Content>
-	</ItemGroup>
-	<ItemGroup Condition="$(RuntimeIdentifier.Contains('osx'))">
 		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/System.Data.SQLite.dll" Link="System.Data.SQLite.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="../SQLite/1.0.118/$(RuntimeIdentifier)/SQLite.Interop.dll" Link="SQLite.Interop.dll">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>True</ExcludeFromSingleFile>
 		</Content>
 	</ItemGroup>
 
