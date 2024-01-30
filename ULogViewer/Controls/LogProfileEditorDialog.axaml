@@ -300,7 +300,7 @@
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
@@ -351,7 +351,7 @@
 											</WrapPanel>
 											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns.Description}"/>
 										</StackPanel>
-										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 									</asControls:DialogItemGrid>
 									<Line Classes="Dialog_Item_Separator_Inner"/>
 									<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" ItemsSource="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
@@ -453,7 +453,7 @@
 								<!-- Timestamp format for reading -->
 								<asControls:DialogItemGrid>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatsForReading}"/>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<StackPanel>
@@ -509,7 +509,7 @@
 								<!-- Time span format for reading -->
 								<asControls:DialogItemGrid>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatsForReading}"/>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<StackPanel>
@@ -571,7 +571,7 @@
 											<TextBlock Name="visiblePropertiesTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties}"/>
 											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties.Description}"/>
 										</StackPanel>
-										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 									</asControls:DialogItemGrid>
 									<Line Classes="Dialog_Item_Separator_Inner"/>
 									<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
@@ -705,7 +705,7 @@
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats.Description}"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<asControls:ListBox Name="logWritingFormatListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogWritingFormats.Count}" ItemsSource="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
@@ -758,7 +758,7 @@
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting.Description}"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItemGrid>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<asControls:ListBox Name="logLevelMapForWritingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForWriting.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">

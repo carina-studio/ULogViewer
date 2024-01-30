@@ -113,7 +113,7 @@
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile}"/>
 						<SelectableTextBlock Grid.Column="1" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding #window.MaxLogReadingCountOfLogProfile}" TextAlignment="Right" VerticalAlignment="Center"/>
-						<TextBlock Grid.Column="1" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNull}}" Text="{DynamicResource String/Common.None}" TextAlignment="Right" VerticalAlignment="Center"/>
+						<TextBlock Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNull}}" Text="{DynamicResource String/Common.None}" VerticalAlignment="Center"/>
 					</asControls:DialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 					

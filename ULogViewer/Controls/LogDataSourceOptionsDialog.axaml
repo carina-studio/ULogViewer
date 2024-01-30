@@ -106,7 +106,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
 							</asControls:DialogItemBorder>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" HorizontalContentAlignment="Left" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}"/>
 							<Button Name="selectAzureResourcesButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SelectAzureResources}" Content="{DynamicResource String/LogDataSourceOptionsDialog.SelectAzureResources}" HorizontalAlignment="Right" IsVisible="{Binding $parent[Window].IsAzureRelatedDataSourceProvider}"/>
 							<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].CommandReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}"/>
@@ -234,7 +234,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}"/>
 							</asControls:DialogItemBorder>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<TextBox Name="connectionStringStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+							<TextBox Name="connectionStringStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" HorizontalContentAlignment="Left" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsConnectionStringRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
@@ -267,7 +267,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.QueryString}"/>
 							</asControls:DialogItemBorder>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding $parent[Window].SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" HorizontalContentAlignment="Left" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding $parent[Window].IsQueryStringRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
@@ -322,7 +322,7 @@
 						<StackPanel IsVisible="{Binding $parent[Window].IsSetupCommandsSupported}">
 							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding $parent[Window].SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
@@ -335,7 +335,7 @@
 						<StackPanel IsVisible="{Binding $parent[Window].IsTeardownCommandsSupported}">
 							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding $parent[Window].TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
@@ -348,7 +348,7 @@
 						<StackPanel IsVisible="{Binding $parent[Window].IsEnvironmentVariablesSupported}">
 							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.EnvironmentVariables}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="environmentVariablesListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding $parent[Window].EnvironmentVariables}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">

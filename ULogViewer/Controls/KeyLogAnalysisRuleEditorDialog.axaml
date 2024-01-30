@@ -88,7 +88,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].Conditions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].Conditions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
@@ -130,7 +130,7 @@
 							</WrapPanel>
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_Item_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
+						<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_Item_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}" HorizontalContentAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>

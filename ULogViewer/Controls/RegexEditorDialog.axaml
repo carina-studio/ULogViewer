@@ -48,7 +48,7 @@
 							</StackPanel>
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_Item_TextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
+						<asControls:RegexTextBox Name="regexTextBox" Classes="Dialog_Item_TextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" HorizontalContentAlignment="Left" IgnoreCase="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
 						<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].IsCapturingGroupsEnabled}"/>
 						<Panel IsVisible="{Binding $parent[Window].IsCapturingGroupsEnabled}">
 							<SelectableTextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !$parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.Regex.Description.CapturingGroups}"/>
@@ -78,7 +78,7 @@
 							</StackPanel>
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<TextBox Name="testLogLineTextBox" Classes="Dialog_Item_TextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" Height="{DynamicResource Double/RegexEditorDialog.TestLogLine.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding $parent[Window].TestLogLine, Mode=TwoWay}" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.None}"/>
+						<TextBox Name="testLogLineTextBox" Classes="Dialog_Item_TextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" Height="{DynamicResource Double/RegexEditorDialog.TestLogLine.Height}" HorizontalContentAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding $parent[Window].TestLogLine, Mode=TwoWay}" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.None}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Test result -->
@@ -88,7 +88,7 @@
 								<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding $parent[Window].TestResult}" Text="{DynamicResource String/RegexEditorDialog.TestResult.Success}"/>
 								<TextBlock Classes="Dialog_TextBlock" IsVisible="{Binding !$parent[Window].TestResult}" Text="{DynamicResource String/RegexEditorDialog.TestResult.Failed}"/>
 							</Panel>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].HasTestResult}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].HasTestResult}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 
 						<!-- Captured groups -->
@@ -97,7 +97,7 @@
 							<asControls:DialogItemGrid>
 								<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding !$parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.TestResult.CapturedGroups}"/>
 								<TextBlock Classes="Dialog_TextBlock_Label" IsVisible="{Binding $parent[Window].IsCapturingLogPropertiesEnabled}" Text="{DynamicResource String/RegexEditorDialog.TestResult.CapturedLogProperties}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].CapturedGroups.Count}" Text="{DynamicResource String/Common.None}"/>
+								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].CapturedGroups.Count}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItemGrid>
 							<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding $parent[Window].CapturedGroups.Count}"/>
 							<ListBox Classes="Dialog_Item_ListBox" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].CapturedGroups.Count}" ItemsSource="{Binding $parent[Window].CapturedGroups}">

@@ -56,7 +56,7 @@
 						<!-- Supported source options -->
 						<asControls:DialogItemGrid>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>
-							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<ListBox Name="supportedSourceOptionListBox" Classes="Dialog_Item_ListBox" ItemsSource="{Binding $parent[Window].SupportedSourceOptions}">

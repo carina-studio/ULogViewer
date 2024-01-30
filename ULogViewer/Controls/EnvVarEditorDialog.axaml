@@ -29,7 +29,7 @@
 					
 			<!-- Value -->
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/EnvVarEditorDialog.Value}"/>
-			<TextBox Name="valueTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/EnvVarEditorDialog.Value.Height}" HorizontalAlignment="Stretch" MaxLength="8191" TextAlignment="Left"/>
+			<TextBox Name="valueTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/EnvVarEditorDialog.Value.Height}" HorizontalAlignment="Stretch" MaxLength="8191"/>
 			
 		</StackPanel>
 		
