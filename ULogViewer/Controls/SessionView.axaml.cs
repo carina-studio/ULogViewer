@@ -4658,9 +4658,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Report width of each log header so that items in log list box can change width of each column.
 		void ReportLogHeaderColumnWidths()
 		{
-			if (this.DataContext is not Session session)
-				return;
-			var lastLogPropertyIndex = session.DisplayLogProperties.Count - 1;
+			var lastLogPropertyIndex = this.logHeaderColumns.Count - 1;
 			for (var columnIndex = 0; columnIndex <= lastLogPropertyIndex; ++columnIndex)
 			{
 				var headerColumn = this.logHeaderColumns[columnIndex];
