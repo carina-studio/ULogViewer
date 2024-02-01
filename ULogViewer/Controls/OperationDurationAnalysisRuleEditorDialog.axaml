@@ -83,7 +83,7 @@
 							</StackPanel>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:PatternEditor Name="beginningPatternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+						<appControls:PatternEditor Name="beginningPatternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Beginning pre-actions -->
@@ -146,7 +146,7 @@
 							</StackPanel>
 						</asControls:DialogItemGrid>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:PatternEditor Name="endingPatternEditor" IsCapturingGroupsEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{DynamicResource String/Common.Required}"/>
+						<appControls:PatternEditor Name="endingPatternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Ending pre-actions -->
