@@ -17,7 +17,7 @@
 	},
 	"LogPatterns": [
 		{
-			"Regex": "^\\<log4j\\:event\\s+logger=\"(?<SourceName>[^\"]*)\"\\s+level=\"(?<Level>[^\"]+)\"\\s+timestamp=\"(?<Timestamp>[^\"]+)\"\\s+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)$",
+			"Regex": "^\\<log4j\\:event\\s+logger=\"(?<SourceName>[^\"]*)\"\\s+level=\"(?<Level>[^\"]+)\"\\s+timestamp=\"(?<Timestamp>[^\"]+)\"\\s+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)(\\</log4j\\:message\\>\\<log4j\\:throwable\\>(?<Message>[^\\<]*))?$",
 			"IsSkippable": true
 		},
 		{
