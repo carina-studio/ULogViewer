@@ -819,7 +819,7 @@ namespace CarinaStudio.ULogViewer.Logs
 
 
 		// Read single line of log.
-		void ReadLog(LogBuilder logBuilder, Match match, string[]? timeSpanFormats, string[]? timestampFormats)
+		unsafe void ReadLog(LogBuilder logBuilder, Match match, string[]? timeSpanFormats, string[]? timestampFormats)
 		{
 #pragma warning disable IDE0220
 			foreach (Group group in match.Groups)
@@ -828,7 +828,20 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (!group.Success)
 					continue;
 				var name = group.Name;
-				if (name == "0")
+				var isAnonymousGroup = name.Pin(p =>
+				{
+					if (p is null)
+						return true;
+					var cPtr = p + name.Length - 1;
+					while (cPtr >= p)
+					{
+						if (!char.IsDigit(*cPtr))
+							return false;
+						--cPtr;
+					}
+					return true;
+				});
+				if (isAnonymousGroup)
 					continue;
 				var value = group.Value.Let(it =>
 				{
@@ -842,7 +855,10 @@ namespace CarinaStudio.ULogViewer.Logs
 					};
 				});
 				if (Log.HasMultiLineStringProperty(name))
-					logBuilder.AppendToNextLine(name, value);
+				{
+					foreach (Capture capture in group.Captures)
+						logBuilder.AppendToNextLine(name, capture.Value);
+				}
 				else if (Log.HasStringProperty(name))
 					logBuilder.Set(name, value);
 				else if (Log.HasDateTimeProperty(name))
