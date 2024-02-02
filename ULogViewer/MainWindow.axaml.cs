@@ -7,7 +7,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
-using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
@@ -389,9 +388,6 @@ namespace CarinaStudio.ULogViewer
 		// Dispose native menu item properly.
 		void DisposeNativeMenuItem(NativeMenuItem menuItem)
 		{
-			menuItem.Click -= this.OnNativeMenuItemClick;
-			menuItem.Command = null;
-			menuItem.ClearBindings();
 			menuItem.Menu?.Let(menu =>
 			{
 				foreach (var item in menu.Items)
@@ -399,6 +395,7 @@ namespace CarinaStudio.ULogViewer
 					if (item is NativeMenuItem menuItem)
 						this.DisposeNativeMenuItem(menuItem);
 				}
+				menu.Items.Clear();
 			});
 		}
 
@@ -676,6 +673,7 @@ namespace CarinaStudio.ULogViewer
 						if (item is NativeMenuItem menuItem)
 							this.DisposeNativeMenuItem(menuItem);
 					}
+					menu.Items.Clear();
 				});
 			}
 
