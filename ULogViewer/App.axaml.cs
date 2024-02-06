@@ -266,18 +266,32 @@ namespace CarinaStudio.ULogViewer
 		/// <inheritdoc/>
 		protected override bool OnExceptionOccurredInApplicationLifetime(Exception ex)
 		{
-			if (ex is IndexOutOfRangeException) // [Workaround] Prevent unexpected error occurred in TextBox
+			switch (ex)
 			{
-				var stackTrace = ex.StackTrace ?? "";
-				if (stackTrace.Contains("at Avalonia.Media.GlyphRun.FindNearestCharacterHit("))
+				case IndexOutOfRangeException: // [Workaround] Prevent unexpected error occurred in TextBox
 				{
-					this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.FindNearestCharacterHit() caused by unknown reason");
-					return true;
+					var stackTrace = ex.StackTrace ?? "";
+					if (stackTrace.Contains("at Avalonia.Media.GlyphRun.FindNearestCharacterHit("))
+					{
+						this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.FindNearestCharacterHit() caused by unknown reason");
+						return true;
+					}
+					if (stackTrace.Contains(" at Avalonia.Media.GlyphRun.GetDistanceFromCharacterHit("))
+					{
+						this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.GetDistanceFromCharacterHit() caused by unknown reason");
+						return true;
+					}
+					break;
 				}
-				if (stackTrace.Contains(" at Avalonia.Media.GlyphRun.GetDistanceFromCharacterHit("))
+				case InvalidOperationException: // [Workaround] Prevent unexpected error occurred in TextBlock
 				{
-					this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.GetDistanceFromCharacterHit() caused by unknown reason");
-					return true;
+					var stackTrace = ex.StackTrace ?? "";
+					if (stackTrace.Contains("at Avalonia.Media.Typeface.get_GlyphTypeface("))
+					{
+						this.Logger.LogWarning("Ignore InvalidOperationException thrown by Typeface.GlyphTypeface caused by unknown reason");
+						return true;
+					}
+					break;
 				}
 			}
 			return base.OnExceptionOccurredInApplicationLifetime(ex);
