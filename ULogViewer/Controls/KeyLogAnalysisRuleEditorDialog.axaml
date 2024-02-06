@@ -130,7 +130,7 @@
 							</WrapPanel>
 						</asControls:DialogItemBorder>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_Item_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}" HorizontalContentAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
+						<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Classes="Dialog_Item_TextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{DynamicResource String/Common.Required}"/>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Message.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
