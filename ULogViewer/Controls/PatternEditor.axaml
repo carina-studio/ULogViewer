@@ -12,7 +12,7 @@
 		VerticalContentAlignment="Stretch">
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:RegexTextBox Name="patternTextBox" Classes="Dialog_Item_TextBox" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" HorizontalContentAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Stretch" Watermark="{Binding $parent[UserControl].Watermark}"/>
+		<asControls:RegexTextBox Name="patternTextBox" Classes="Dialog_Item_TextBox" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Stretch" Watermark="{Binding $parent[UserControl].Watermark}"/>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
 		<StackPanel HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
 			<Button Name="editPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].EditPattern}" Content="{DynamicResource String/PatternEditor.EditDetailedly}"/>
