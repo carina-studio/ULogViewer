@@ -910,55 +910,55 @@ namespace CarinaStudio.ULogViewer.Logs
 									{
 										if (TimeSpan.TryParseExact(value, timeSpanFormats[i], this.timeSpanCultureInfo, TimeSpanStyles.None, out var timeSpan))
 										{
-											logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+											logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 											break;
 										}
 									}
 								}
 								else if (TimeSpan.TryParse(value, out var timeSpan))
-									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							}
 							break;
 						case LogTimeSpanEncoding.TotalDays:
 							{
 								if (double.TryParse(value, out var days) && double.IsFinite(days))
-									logBuilder.Set(name, TimeSpan.FromDays(days).TotalMilliseconds.ToString());
+									logBuilder.Set(name, TimeSpan.FromDays(days).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 								break;
 							}
 						case LogTimeSpanEncoding.TotalHours:
 							{
 								if (double.TryParse(value, out var hours) && double.IsFinite(hours))
-									logBuilder.Set(name, TimeSpan.FromHours(hours).TotalMilliseconds.ToString());
+									logBuilder.Set(name, TimeSpan.FromHours(hours).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 								break;
 							}
 						case LogTimeSpanEncoding.TotalMicroseconds:
 							{
 								if (double.TryParse(value, out var us))
-									logBuilder.Set(name, TimeSpan.FromMilliseconds(us / 1000).TotalMilliseconds.ToString());
+									logBuilder.Set(name, TimeSpan.FromMilliseconds(us / 1000).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 								break;
 							}
 						case LogTimeSpanEncoding.TotalMilliseconds:
 							{
 								if (double.TryParse(value, out var ms))
-									logBuilder.Set(name, TimeSpan.FromMilliseconds(ms).TotalMilliseconds.ToString());
+									logBuilder.Set(name, TimeSpan.FromMilliseconds(ms).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 								break;
 							}
 						case LogTimeSpanEncoding.TotalMinutes:
 							{
 								if (double.TryParse(value, out var mins) && double.IsFinite(mins))
-									logBuilder.Set(name, TimeSpan.FromMinutes(mins).TotalMilliseconds.ToString());
+									logBuilder.Set(name, TimeSpan.FromMinutes(mins).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 								break;
 							}
 						case LogTimeSpanEncoding.TotalSeconds:
 							{
 								if (double.TryParse(value, out var sec) && double.IsFinite(sec))
-									logBuilder.Set(name, TimeSpan.FromSeconds(sec).TotalMilliseconds.ToString());
+									logBuilder.Set(name, TimeSpan.FromSeconds(sec).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 								break;
 							}
 						default:
 							{
 								if (TimeSpan.TryParse(value, out var timeSpan))
-									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString());
+									logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							}
 							break;
 					}
@@ -1242,6 +1242,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				else if (logPatternMatchingMode == LogPatternMatchingMode.Sequential) // general case (use 1 or more patterns sequentially)
 				{
 					// read logs
+					var numberOfSkippedLogPatterns = 0;
 					do
 					{
 						if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
@@ -1254,6 +1255,7 @@ namespace CarinaStudio.ULogViewer.Logs
 							if (match.Success)
 							{
 								// read log
+								numberOfSkippedLogPatterns = 0;
 								this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
 
 								// set file name and line number
@@ -1300,6 +1302,25 @@ namespace CarinaStudio.ULogViewer.Logs
 							}
 							else if (logPattern.IsSkippable)
 							{
+								// read next line if all patterns were skipped
+								++numberOfSkippedLogPatterns;
+								if (numberOfSkippedLogPatterns > lastLogPatternIndex)
+								{
+									// log
+									if (this.printTraceLogs)
+										this.Logger.LogTrace("All patterns were skipped");
+									
+									// read next log line
+									numberOfSkippedLogPatterns = 0;
+									ReadNextLineSkippable();
+									
+									// move to first pattern
+									logPatternIndex = 0;
+									if (this.printTraceLogs)
+										this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
+									continue;
+								}
+								
 								// move to next pattern
 								if (logPatternIndex < lastLogPatternIndex)
 								{
