@@ -2989,6 +2989,9 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 				});
 			});
+			
+			// attach to control fonts
+			ControlFonts.Default.PropertyChanged += this.OnControlFontsPropertyChanged;
 
 			// attach to predefined log text filter list
 			this.AttachToPredefinedLogTextFilters();
@@ -3073,6 +3076,20 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		
 		
+		// Called when property of control fonts changed.
+		void OnControlFontsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(ControlFonts.LogFontFamily):
+				case nameof(ControlFonts.LogFontSize):
+					if (this.DataContext is Session session && session.IsActivated)
+						this.ForceLayoutLogListBoxContainers();
+					break;
+			}
+		}
+		
+		
 		// Called when debug message generated.
 		void OnDebugMessageGeneratedBySession(object? sender, MessageEventArgs e)
 		{
@@ -3116,6 +3133,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			// release predefined log text filter list
 			this.DetachFromPredefinedLogTextFilters();
 			this.selectedPredefinedLogTextFilters.Clear();
+			
+			// detach from control fonts
+			ControlFonts.Default.PropertyChanged -= this.OnControlFontsPropertyChanged;
 
 			// detach from window
 			this.areInitDialogsClosedObserverToken = this.areInitDialogsClosedObserverToken.DisposeAndReturnNull();
