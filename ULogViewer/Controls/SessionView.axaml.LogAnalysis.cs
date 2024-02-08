@@ -12,6 +12,7 @@ using CarinaStudio.AppSuite.Data;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -65,6 +66,7 @@ partial class SessionView
     // Fields.
     readonly ToggleButton createLogAnalysisRuleSetButton;
 	readonly ContextMenu createLogAnalysisRuleSetMenu;
+    bool hasPendingLogAnalysisResultSelectionChange;
     bool isPointerPressedOnLogAnalysisResultListBox;
     bool isSmoothScrollingToLatestLogAnalysisResult;
     readonly Avalonia.Controls.ListBox keyLogAnalysisRuleSetListBox;
@@ -901,8 +903,12 @@ partial class SessionView
         this.OnLogAnalysisResultListBoxSelectionChanged(false);
     void OnLogAnalysisResultListBoxSelectionChanged(bool forceReSelection)
     {
+        if (this.hasPendingLogAnalysisResultSelectionChange)
+            return;
+        this.hasPendingLogAnalysisResultSelectionChange = true;
         this.SynchronizationContext.Post(() =>
         {
+            this.hasPendingLogAnalysisResultSelectionChange = false;
             var count = this.logAnalysisResultListBox.SelectedItems!.Count;
             if (count == 0)
                 return;
@@ -929,72 +935,100 @@ partial class SessionView
                     });
 
                 // focus on log
-                if (log != null && (forceReSelection || !isLogSelected))
+                if (log is not null && (forceReSelection || !isLogSelected))
                 {
-                    log.Let(new Func<DisplayableLog, Task>(async log =>
+                    this.Logger.LogTrace("Start selecting log of analysis result");
+                    log.LetAsync(async log =>
                     {
                         // show all logs if needed
-                        if (!session.Logs.Contains(log))
+                        var isLogFound = session.Logs.Contains(log);
+                        if (!isLogFound)
                         {
                             // cancel showing marked logs only
-                            var isLogFound = false;
                             var window = this.attachedWindow as MainWindow;
                             if (session.IsShowingMarkedLogsTemporarily)
                             {
-                                // cancel showing marked logs only
-                                if (!session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute())
-                                    return;
-                                await Task.Yield();
-                                
-                                // show tutorial
-                                isLogFound = session.Logs.Contains(log);
-                                if (isLogFound 
-                                    && !this.PersistentState.GetValueOrDefault(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey)
-                                    && window != null)
+                                this.Logger.LogTrace("Cancel showing marked logs only because log of analysis result cannot be found in the list");
+                                if (session.ToggleShowingMarkedLogsTemporarilyCommand.TryExecute())
                                 {
-                                    window.ShowTutorial(new Tutorial().Also(it =>
+                                    // check whether log can be found in list or not
+                                    if (session.Logs.Contains(log))
+                                        isLogFound = true;
+                                    else
                                     {
-                                        it.Anchor = this.FindControl<Control>("showMarkedLogsOnlyButton");
-                                        it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
-                                        it.Dismissed += (_, _) =>
-                                            this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
-                                        it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-                                        it.IsSkippingAllTutorialsAllowed = false;
-                                    }));
+                                        await Task.Delay(100);
+                                        isLogFound = session.Logs.Contains(log);
+                                    }
+
+                                    // show tutorial
+                                    if (isLogFound
+                                        && !this.PersistentState.GetValueOrDefault(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey)
+                                        && window is not null)
+                                    {
+                                        window.ShowTutorial(new Tutorial().Also(it =>
+                                        {
+                                            it.Anchor = this.Get<Control>("showMarkedLogsOnlyButton");
+                                            it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
+                                            it.Dismissed += (_, _) =>
+                                                this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
+                                            it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored");
+                                            it.IsSkippingAllTutorialsAllowed = false;
+                                        }));
+                                    }
                                 }
+                                else
+                                    this.Logger.LogError("Unable to cancel showing marked logs only");
                             }
 
-                            // show all logs
-                            if (!isLogFound)
+                            // show all logs temporarily
+                            if (!isLogFound && !session.IsShowingAllLogsTemporarily)
                             {
-                                // show all logs
-                                if (session.IsShowingAllLogsTemporarily || !session.ShowAllLogsTemporarilyCommand.TryExecute())
-                                    return;
-                                await Task.Yield();
-                                
-                                // show tutorial
-                                if (!this.PersistentState.GetValueOrDefault(IsShowAllLogsForLogAnalysisResultTutorialShownKey)
-                                    && window != null)
+                                this.Logger.LogTrace("Show all logs temporarily because log of analysis result cannot be found in the list");
+                                if (session.ShowAllLogsTemporarilyCommand.TryExecute())
                                 {
-                                    window.ShowTutorial(new Tutorial().Also(it =>
+                                    // wait for log to be ready in list
+                                    for (var i = 0; i < 10; ++i)
                                     {
-                                        it.Anchor = this.FindControl<Control>("showAllLogsTemporarilyButton");
-                                        it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
-                                        it.Dismissed += (_, _) =>
-                                            this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
-                                        it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
-                                        it.IsSkippingAllTutorialsAllowed = false;
-                                    }));
+                                        if (session.Logs.Contains(log))
+                                        {
+                                            isLogFound = true;
+                                            break;
+                                        }
+                                        await Task.Delay(50);
+                                    }
+
+                                    // show tutorial
+                                    if (!this.PersistentState.GetValueOrDefault(IsShowAllLogsForLogAnalysisResultTutorialShownKey)
+                                        && window is not null)
+                                    {
+                                        window.ShowTutorial(new Tutorial().Also(it =>
+                                        {
+                                            it.Anchor = this.Get<Control>("showAllLogsTemporarilyButton");
+                                            it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
+                                            it.Dismissed += (_, _) =>
+                                                this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
+                                            it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored");
+                                            it.IsSkippingAllTutorialsAllowed = false;
+                                        }));
+                                    }
                                 }
+                                else
+                                    this.Logger.LogError("Unable to show all logs temporarily");
                             }
                         }
 
                         // select log
-                        this.logListBox.SelectedItems!.Clear();
-                        this.logListBox.SelectedItem = log;
-                        this.ScrollToLog(log, true);
-                        this.IsScrollingToLatestLogNeeded = false;
-                    }));
+                        if (isLogFound)
+                        {
+                            this.Logger.LogTrace("Complete selecting log of analysis result");
+                            this.logListBox.SelectedItems!.Clear();
+                            this.logListBox.SelectedItem = log;
+                            this.ScrollToLog(log, true);
+                            this.IsScrollingToLatestLogNeeded = false;
+                        }
+                        else
+                            this.Logger.LogError("Cannot find log of selected analysis result in the list");
+                    });
                 }
 
                 // cancel auto scrolling
