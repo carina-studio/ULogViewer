@@ -9,7 +9,7 @@ ULogViewer 是一個由 C# 撰寫並基於 [.NET](https://dotnet.microsoft.com/)
 
 ## 📥 Download
 
-### 4.0.5.208 Preview
+### 4.0.5.208 RC
 [![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.5.208/ULogViewer-4.0.5.208-win-x64.zip)
 [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.5.208/ULogViewer-4.0.5.208-win-arm64.zip)
 [![](https://img.shields.io/badge/Windows-x86-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.5.208/ULogViewer-4.0.5.208-win-x86.zip)
