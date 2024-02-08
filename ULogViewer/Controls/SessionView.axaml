@@ -938,7 +938,7 @@
 						</Button>
 						
 						<!-- Show marked logs temporarily -->
-						<ToggleButton Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
+						<ToggleButton Name="showMarkedLogsOnlyButton" Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
