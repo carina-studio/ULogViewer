@@ -239,6 +239,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Border dragDropReceiverBorder;
 		readonly ScheduledAction handleDisplayLogPropertiesChangedAction;
 		IDisposable? hasDialogsObserverToken;
+		bool hasPendingLogSelectionChange;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
@@ -3610,14 +3611,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		// ReSharper restore UnusedParameter.Local
 		void OnLogListBoxSelectionChanged()
 		{
+			// skip if there is already a pending change
+			if (this.hasPendingLogSelectionChange)
+				return;
+			
 			// [Workaround] Keep horizontal scroll position after selection
 			var scrollViewerOffset = this.logScrollViewerOffsetWhenSelectingItems 
 			                         ?? this.logScrollViewer?.Offset 
 			                         ?? default;
 			
 			// [Workaround] ListBox.SelectedItems is not update yet when calling this method
+			this.hasPendingLogSelectionChange = true;
 			this.SynchronizationContext.Post(() =>
 			{
+				// update state
+				this.hasPendingLogSelectionChange = false;
+				
 				// check state
 				if (this.DataContext is not Session session)
 					return;
