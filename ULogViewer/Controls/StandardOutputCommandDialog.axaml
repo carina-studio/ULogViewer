@@ -27,10 +27,10 @@
 				<StackPanel>
 					
 					<!-- Command -->
-					<asControls:DialogItemBorder>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" 
 						           Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
-					</asControls:DialogItemBorder>
+					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<asControls:SyntaxHighlightingTextBox Name="commandTextBox" 
 					                                      Classes="Dialog_Item_TextBox" 
@@ -44,10 +44,10 @@
 					<!-- Use text shell -->
 					<StackPanel IsVisible="{Binding #window.UseTextShell, Converter={x:Static ObjectConverters.IsNotNull}}">
 						<Separator Classes="Dialog_Item_Separator"/>
-						<asControls:DialogItemGrid>
+						<asControls:DialogItem>
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UseTextShell}"/>
-							<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
+							<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+						</asControls:DialogItem>
 						<Separator Classes="Dialog_Separator_Small"/>
 						<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{DynamicResource String/Common.Options.WithDialog}"/>
 					</StackPanel>

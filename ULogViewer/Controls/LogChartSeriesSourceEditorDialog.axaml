@@ -38,9 +38,9 @@
 				<StackPanel>
 
 					<!-- Name -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appControls:LogChartSeriesSourceEditorDialog.LogChartPropertyNames}">
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appControls:LogChartSeriesSourceEditorDialog.LogChartPropertyNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
@@ -50,13 +50,13 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
-					</asControls:DialogItemGrid>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Display name -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DisplayName}"/>
-						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
+						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
@@ -66,39 +66,39 @@
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
 						</ComboBox>
-						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.Required}"/>
-					</asControls:DialogItemGrid>
+						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.Required}"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Custom display name -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.CustomDisplayName}"/>
-						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</asControls:DialogItemGrid>
+						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Secondary display name -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName}"/>
-						<TextBox Name="secondaryDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
-					</asControls:DialogItemGrid>
+						<TextBox Name="secondaryDisplayNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Quantifier -->
-					<asControls:DialogItemGrid ClipToBounds="True">
+					<asControls:DialogItem ClipToBounds="True">
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Quantifier}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Quantifier.Description}"/>
 						</StackPanel>
-						<TextBox Name="quantifierTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="32" Watermark="{DynamicResource String/Common.None}"/>
-					</asControls:DialogItemGrid>
+						<TextBox Name="quantifierTextBox" Classes="Dialog_Item_TextBox" MaxLength="32" Watermark="{DynamicResource String/Common.None}"/>
+					</asControls:DialogItem>
 					
 					<!-- Properties for direct number value -->
 					<StackPanel IsVisible="{Binding $parent[Window].IsDirectNumberValueSeries}">
 						
 						<!-- Default value -->
 						<Separator Classes="Dialog_Item_Separator"/>
-						<asControls:DialogItemGrid>
+						<asControls:DialogItem>
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DefaultValue}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #defaultValueTextBox.IsTextValid}" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DefaultValue.Description}"/>
@@ -107,12 +107,12 @@
 									<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 								</Grid>
 							</StackPanel>
-							<abControls:RealNumberTextBox Name="defaultValueTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" MaxLength="20" Watermark="{DynamicResource String/Common.None}"/>
-						</asControls:DialogItemGrid>
+							<abControls:RealNumberTextBox Name="defaultValueTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="True" MaxLength="20" Watermark="{DynamicResource String/Common.None}"/>
+						</asControls:DialogItem>
 						
 						<!-- Value scaling -->
 						<Separator Classes="Dialog_Item_Separator"/>
-						<asControls:DialogItemGrid>
+						<asControls:DialogItem>
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.ValueScaling}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #valueScalingTextBox.IsTextValid}" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.ValueScaling.Description}"/>
@@ -121,8 +121,8 @@
 									<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 								</Grid>
 							</StackPanel>
-							<abControls:RealNumberTextBox Name="valueScalingTextBox" Classes="Dialog_Item_TextBox" DefaultValue="1" Grid.Column="1" IsNullValueAllowed="False" MaxLength="20"/>
-						</asControls:DialogItemGrid>
+							<abControls:RealNumberTextBox Name="valueScalingTextBox" Classes="Dialog_Item_TextBox" DefaultValue="1" IsNullValueAllowed="False" MaxLength="20"/>
+						</asControls:DialogItem>
 						
 					</StackPanel>
 					

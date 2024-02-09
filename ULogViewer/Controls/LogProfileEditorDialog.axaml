@@ -101,41 +101,41 @@
 							<StackPanel>
 						
 								<!-- Name -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>
-									<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
-								</asControls:DialogItemGrid>
+									<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Description -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Description}"/>
-									<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="1024" Watermark="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" MaxLength="1024" Watermark="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Icon -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Icon}"/>
-									<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
-								</asControls:DialogItemGrid>
+									<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Icon color -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IconColor}"/>
-									<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Is template -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsTemplate.Description}"/>
 									</StackPanel>
-									<ToggleSwitch Name="isTemplateSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<ToggleSwitch Name="isTemplateSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+								</asControls:DialogItem>
 								
 							</StackPanel>
 						</Border>
@@ -151,7 +151,7 @@
 							<StackPanel>
 
 								<!-- DataSource -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<WrapPanel>
 											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
@@ -180,7 +180,7 @@
 											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 										</Grid>
 									</StackPanel>
-									<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
+									<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
 										<ComboBox.ItemTemplate>
 											<DataTemplate>
 												<Grid ColumnDefinitions="Auto,Auto,Auto,*">
@@ -202,7 +202,7 @@
 											</DataTemplate>
 										</ComboBox.ItemTemplate>
 									</ComboBox>
-								</asControls:DialogItemGrid>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Separator_Small"/>
 								<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
 									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
@@ -223,38 +223,38 @@
 
 								<!-- Allow multiple files -->
 								<StackPanel Name="allowMultipleFilesPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
-									<asControls:DialogItemGrid>
+									<asControls:DialogItem>
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.AllowMultipleFiles}"/>
-										<ToggleSwitch Name="allowMultipleFilesSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-									</asControls:DialogItemGrid>
+										<ToggleSwitch Name="allowMultipleFilesSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+									</asControls:DialogItem>
 									<Separator Classes="Dialog_Item_Separator"/>
 								</StackPanel>
 
 								<!-- Working directory requirement -->
 								<StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding $parent[Window].IsWorkingDirectorySupported}" Orientation="Vertical">
-									<asControls:DialogItemGrid>
+									<asControls:DialogItem>
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.WorkingDirectoryRequirement}"/>
-										<asControls:EnumComboBox Name="workingDirPriorityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogProfilePropertyRequirement}" Grid.Column="1"/>
-									</asControls:DialogItemGrid>
+										<asControls:EnumComboBox Name="workingDirPriorityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogProfilePropertyRequirement}"/>
+									</asControls:DialogItem>
 									<Separator Classes="Dialog_Item_Separator"/>
 								</StackPanel>
 
 								<!-- Is administrator needed -->
 								<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
-									<asControls:DialogItemGrid>
+									<asControls:DialogItem>
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsAdministratorNeeded}"/>
-										<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-									</asControls:DialogItemGrid>
+										<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+									</asControls:DialogItem>
 									<Separator Classes="Dialog_Item_Separator"/>
 								</StackPanel>
 
 								<!-- Is continuous reading -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.IsContinuousReading.Description}"/>
 									</StackPanel>
-									<ToggleSwitch Name="continuousReadingSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1">
+									<ToggleSwitch Name="continuousReadingSwitch" Classes="Dialog_Item_ToggleSwitch">
 										<ia:Interaction.Behaviors>
 											<iaCore:DataTriggerBehavior Binding="{Binding #dataSourceProviderComboBox.SelectedItem.Name, FallbackValue={}}" ComparisonCondition="Equal" Value="File">
 												<iaCore:ChangePropertyAction PropertyName="IsChecked" Value="False"/>
@@ -265,23 +265,23 @@
 											</iaCore:DataTriggerBehavior>
 										</ia:Interaction.Behaviors>
 									</ToggleSwitch>
-								</asControls:DialogItemGrid>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Restart reading delay -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
-									<abControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
-								</asControls:DialogItemGrid>
+									<abControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_Item_TextBox" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Raw log level property -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.RawLogLevelPropertyName.Description}"/>
 									</StackPanel>
-									<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
+									<ComboBox Name="rawLogLevelPropertyComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appLogs:Log.PropertyNames}">
 										<ComboBox.ItemTemplate>
 											<DataTemplate>
 												<Grid ColumnDefinitions="*,Auto">
@@ -291,17 +291,17 @@
 											</DataTemplate>
 										</ComboBox.ItemTemplate>
 									</ComboBox>
-								</asControls:DialogItemGrid>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log level map -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 									<asControls:ListBox.ItemTemplate>
@@ -341,7 +341,7 @@
 
 								<!-- Log patterns -->
 								<StackPanel Name="logPatternsContainer">
-									<asControls:DialogItemGrid>
+									<asControls:DialogItem>
 										<StackPanel Classes="Dialog_Item_Text_Container">
 											<WrapPanel>
 												<TextBlock Name="logPatternsTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns}"/>
@@ -351,8 +351,8 @@
 											</WrapPanel>
 											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogPatterns.Description}"/>
 										</StackPanel>
-										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-									</asControls:DialogItemGrid>
+										<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									</asControls:DialogItem>
 									<Line Classes="Dialog_Item_Separator_Inner"/>
 									<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].LogPatterns.Count}" ItemsSource="{Binding $parent[Window].LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
                             			<asControls:ListBox.ItemTemplate>
@@ -425,36 +425,36 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Log pattern matching mode -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogPatternMatchingMode}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.LogPatternMatchingModeDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="logPatternMatchingModeComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogPatternMatchingMode}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log string encoding for reading -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForReading}"/>
-									<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="logStringEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" HorizontalAlignment="Right"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp encoding for reading -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampEncodingForReading}"/>
-									<asControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}" Grid.Column="1" HorizontalAlignment="Right"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}" HorizontalAlignment="Right"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for reading -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatsForReading}"/>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<StackPanel>
 									<ia:Interaction.Behaviors>
@@ -497,20 +497,20 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span encoding for reading -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description}"/>
 									</StackPanel>
-									<asControls:EnumComboBox Name="timeSpanEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" EnumType="{x:Type appLogs:LogTimeSpanEncoding}"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="timeSpanEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimeSpanEncoding}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for reading -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatsForReading}"/>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<StackPanel>
 									<ia:Interaction.Behaviors>
@@ -566,13 +566,13 @@
 						
 								<!-- Visible log properties -->
 								<StackPanel Name="visibleLogPropertiesContainer">
-									<asControls:DialogItemGrid>
+									<asControls:DialogItem>
 										<StackPanel Classes="Dialog_Item_Text_Container">
 											<TextBlock Name="visiblePropertiesTextBlock" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties}"/>
 											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.VisibleLogProperties.Description}"/>
 										</StackPanel>
-										<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-									</asControls:DialogItemGrid>
+										<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#visibleLogPropertyListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									</asControls:DialogItem>
 									<Line Classes="Dialog_Item_Separator_Inner"/>
 									<asControls:ListBox Name="visibleLogPropertyListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $parent[Window].VisibleLogProperties.Count}" ItemsSource="{Binding $parent[Window].VisibleLogProperties}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 										<asControls:ListBox.ItemTemplate>
@@ -633,58 +633,58 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for displaying -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.DateTimeFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for displaying -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.TimeSpanFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForDisplayingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Color indicator -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.ColorIndicator.Description}"/>
 									</StackPanel>
-									<asControls:EnumComboBox Name="colorIndicatorComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="colorIndicatorComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogColorIndicator}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Sort key -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.SortKey}"/>
-									<asControls:EnumComboBox Name="sortKeyComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogSortKey}" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="sortKeyComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogProfiles:LogSortKey}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Sort direction -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.SortDirection}"/>
-									<asControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:SortDirection}" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="sortDirectionComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type app:SortDirection}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp category granularity -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCategoryGranularity}"/>
-									<asControls:EnumComboBox Name="timestampCategoryGranularityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appCategorizing:TimestampDisplayableLogCategoryGranularity}" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="timestampCategoryGranularityComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appCategorizing:TimestampDisplayableLogCategoryGranularity}"/>
+								</asControls:DialogItem>
 
 							</StackPanel>
 						</Border>
@@ -700,13 +700,13 @@
 							<StackPanel>
 						
 								<!-- Log writing formats -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogWritingFormats.Description}"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logWritingFormatListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<asControls:ListBox Name="logWritingFormatListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogWritingFormats.Count}" ItemsSource="{Binding $parent[Window].LogWritingFormats}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 									<asControls:ListBox.ItemTemplate>
@@ -753,13 +753,13 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Log level map -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting}"/>
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForWriting.Description}"/>
 									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItemGrid>
+									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForWritingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+								</asControls:DialogItem>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
 								<asControls:ListBox Name="logLevelMapForWritingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForWriting.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForWriting}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 									<asControls:ListBox.ItemTemplate>
@@ -798,34 +798,34 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log string format for writing -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogStringEncodingForWriting}"/>
-									<asControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}" Grid.Column="1"/>
-								</asControls:DialogItemGrid>
+									<asControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for writing -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.DateTimeFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
-								</asControls:DialogItemGrid>
+									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
+								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for writing -->
-								<asControls:DialogItemGrid>
+								<asControls:DialogItem>
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.TimeSpanFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
-								</asControls:DialogItemGrid>
+									<asControls:SyntaxHighlightingTextBox Name="timeSpanFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding $parent[Window].TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark}"/>
+								</asControls:DialogItem>
 								
 							</StackPanel>
 						</Border>

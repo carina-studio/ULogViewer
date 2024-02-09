@@ -45,36 +45,36 @@
 						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
 							
 							<!-- Name -->
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
-								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-							</asControls:DialogItemGrid>
+								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Icon -->
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
-								<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
+								<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Icon color -->
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
-								<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
+								<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 							
 						</StackPanel>
 
 						<!-- Contextual-based -->
-						<asControls:DialogItemGrid>
+						<asControls:DialogItem>
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description}"/>
 							</StackPanel>
-							<ToggleSwitch Name="contextBasedToggleSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
+							<ToggleSwitch Name="contextBasedToggleSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+						</asControls:DialogItem>
 
 					</StackPanel>
 				</Border>
@@ -85,29 +85,29 @@
 					<StackPanel>
 
 						<!-- Setup script -->
-						<asControls:DialogItemGrid>
+						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
 								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].SetupScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Analysis script -->
-						<asControls:DialogItemGrid>
+						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
 								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].AnalysisScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" Grid.Column="1" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
-						</asControls:DialogItemGrid>
+							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
 

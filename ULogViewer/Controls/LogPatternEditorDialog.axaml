@@ -29,7 +29,7 @@
 				<StackPanel>
 
 					<!-- Pattern -->
-					<asControls:DialogItemBorder>
+					<asControls:DialogItem>
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Regex}"/>
@@ -43,7 +43,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 							</Grid>
 						</StackPanel>
-					</asControls:DialogItemBorder>
+					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -51,24 +51,24 @@
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Description -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.Description}"/>
-						<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.None}"/>
-					</asControls:DialogItemGrid>
+						<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Watermark="{DynamicResource String/Common.None}"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 		
 					<!-- Repeatable -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsRepeatable}"/>
-						<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</asControls:DialogItemGrid>
+						<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 		
 					<!-- Skippable -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogPatternEditorDialog.IsSkippable}"/>
-						<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</asControls:DialogItemGrid>
+						<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+					</asControls:DialogItem>
 
 				</StackPanel>
 			</Border>

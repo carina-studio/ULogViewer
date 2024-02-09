@@ -26,17 +26,17 @@
 				<StackPanel>
 
 					<!-- Name -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Name}"/>
-						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
-					</asControls:DialogItemGrid>
+						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Group -->
-					<asControls:DialogItemGrid Name="groupNameItemContainer">
+					<asControls:DialogItem Name="groupNameItemContainer">
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.GroupName}"/>
-						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
-					</asControls:DialogItemGrid>
+						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Separator_Small"/>
 					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowGroupNameSelectionMenu}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}">
 						<Grid ColumnDefinitions="*,Auto">
@@ -48,7 +48,7 @@
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Pattern -->
-					<asControls:DialogItemBorder>
+					<asControls:DialogItem>
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Regex}"/>
@@ -62,7 +62,7 @@
 								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
 							</Grid>
 						</StackPanel>
-					</asControls:DialogItemBorder>
+					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<appControls:PatternEditor Name="patternEditor" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 					<Line Classes="Dialog_Item_Separator_Inner"/>

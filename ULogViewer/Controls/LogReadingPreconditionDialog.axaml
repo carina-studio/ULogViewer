@@ -27,16 +27,16 @@
 				<StackPanel>
 			
 					<!-- Description -->
-					<asControls:DialogItemBorder>
+					<asControls:DialogItem>
 						<Grid ColumnDefinitions="Auto,*">
 							<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored}"/>
 							<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
 						</Grid>
-					</asControls:DialogItemBorder>
+					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Timestamps -->
-					<asControls:DialogItemGrid>
+					<asControls:DialogItem>
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.PreconditionTimestamps.Description}">
@@ -72,8 +72,8 @@
 								<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogReadingPreconditionDialog.InvalidTimestampRange}"/>
 							</Grid>
 						</StackPanel>
-						<ToggleSwitch Name="timestampsSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</asControls:DialogItemGrid>
+						<ToggleSwitch Name="timestampsSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<Grid ColumnDefinitions="*,Auto,*" IsEnabled="{Binding #timestampsSwitch.IsChecked}">
 						<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_Item_TextBox" TextAlignment="Center"/>
@@ -95,13 +95,13 @@
 						</StackPanel.IsVisible>
 
 						<!-- Files -->
-						<asControls:DialogItemGrid IsVisible="{Binding #window.IsReadingFromFiles}">
+						<asControls:DialogItem IsVisible="{Binding #window.IsReadingFromFiles}">
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}"/>
 							</StackPanel>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding $parent[Window].SelectPreconditionForFiles, Mode=TwoWay}" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
+							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding $parent[Window].SelectPreconditionForFiles, Mode=TwoWay}"/>
+						</asControls:DialogItem>
 
 					</StackPanel>
 

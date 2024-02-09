@@ -85,7 +85,7 @@
 					<StackPanel Name="itemsPanel">
 
 						<!-- Category -->
-						<asControls:DialogItemGrid Name="categoryItemGrid" IsVisible="{Binding #window.IsCategorySupported}">
+						<asControls:DialogItem Name="categoryItemGrid" IsVisible="{Binding #window.IsCategorySupported}">
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Category}"/>
 								<Button Classes="Dialog_Info_Button" 
@@ -96,7 +96,7 @@
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+							<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsCategoryRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
@@ -106,12 +106,12 @@
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</TextBox>
-						</asControls:DialogItemGrid>
+						</asControls:DialogItem>
 						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #categoryItemGrid.IsVisible}"/>
 
 						<!-- Command -->
 						<StackPanel IsVisible="{Binding #window.IsCommandSupported}">
-							<asControls:DialogItemBorder Name="commandItemGrid">
+							<asControls:DialogItem Name="commandItemGrid">
 								<WrapPanel VerticalAlignment="Center">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
 									<Button Classes="Dialog_Info_Button" 
@@ -122,7 +122,7 @@
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
-							</asControls:DialogItemBorder>
+							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}"/>
@@ -131,18 +131,18 @@
 						</StackPanel>
 
 						<!-- Include standard error -->
-						<asControls:DialogItemGrid Name="includeStderrItemGrid" IsVisible="{Binding #window.IsIncludeStandardErrorSupported}">
+						<asControls:DialogItem Name="includeStderrItemGrid" IsVisible="{Binding #window.IsIncludeStandardErrorSupported}">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.IncludeStandardError}"/>
-							<ToggleSwitch Name="includeStderrSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-						</asControls:DialogItemGrid>
+							<ToggleSwitch Name="includeStderrSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+						</asControls:DialogItem>
 						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #includeStderrItemGrid.IsVisible}"/>
 
 						<!-- Use text shell -->
 						<StackPanel IsVisible="{Binding #window.IsUseTextShellSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UseTextShell}"/>
-								<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
+								<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Separator_Small"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{DynamicResource String/Common.Options.WithDialog}" HorizontalAlignment="Right"/>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -150,10 +150,10 @@
 						
 						<!-- File name -->
 						<StackPanel IsVisible="{Binding #window.IsFileNameSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.FileName}"/>
-								<TextBox Name="fileNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<TextBox Name="fileNameTextBox" Classes="Dialog_Item_TextBox" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Separator_Small"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding #window.SelectFileName}" Content="{DynamicResource String/LogDataSourceOptions.SelectFileName}" HorizontalAlignment="Right" IsEnabled="{Binding !#window.IsSelectingFileName}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -161,10 +161,10 @@
 
 						<!-- Working directory -->
 						<StackPanel IsVisible="{Binding #window.IsWorkingDirectorySupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.WorkingDirectory}"/>
-								<TextBox Name="workingDirectoryTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" Watermark="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<TextBox Name="workingDirectoryTextBox" Classes="Dialog_Item_TextBox" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Separator_Small"/>
 							<Button Classes="Dialog_Item_Button" Command="{Binding #window.SelectWorkingDirectory}" Content="{DynamicResource String/LogDataSourceOptions.SelectWorkingDirectory}" HorizontalAlignment="Right" IsEnabled="{Binding !#window.IsSelectingWorkingDirectory}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -172,81 +172,81 @@
 
 						<!-- IP endpoint -->
 						<StackPanel IsVisible="{Binding #window.IsIPEndPointSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
-								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
-								<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32678"/>
-							</asControls:DialogItemGrid>
+								<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32678"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- URI -->
 						<StackPanel IsVisible="{Binding #window.IsUriSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Uri}"/>
-								<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 						
 						<!-- Process ID -->
 						<StackPanel IsVisible="{Binding #window.IsProcessIdSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ProcessId}"/>
-								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 						
 						<!-- Process name -->
 						<StackPanel IsVisible="{Binding #window.IsProcessNameSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ProcessName}"/>
-								<TextBox Name="processNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" MaxLength="128" Watermark="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<TextBox Name="processNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="128" Watermark="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Encoding -->
 						<StackPanel IsVisible="{Binding #window.IsEncodingSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Encoding}"/>
-								<ComboBox Name="encodingComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsSource="{Binding #window.Encodings}">
+								<ComboBox Name="encodingComboBox" Classes="Dialog_Item_ComboBox" ItemsSource="{Binding #window.Encodings}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<TextBlock Text="{Binding EncodingName}"/>
 										</DataTemplate>
 									</ComboBox.ItemTemplate>
 								</ComboBox>
-							</asControls:DialogItemGrid>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Format JSON data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatJsonDataSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData}"/>
-								<ToggleSwitch Name="formatJsonDataSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
+								<ToggleSwitch Name="formatJsonDataSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Format XML data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatXmlDataSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData}"/>
-								<ToggleSwitch Name="formatXmlDataSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
+								<ToggleSwitch Name="formatXmlDataSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Connection string -->
 						<StackPanel IsVisible="{Binding #window.IsConnectionStringSupported}">
-							<asControls:DialogItemBorder>
+							<asControls:DialogItem>
 								<WrapPanel VerticalAlignment="Center">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}"/>
 									<Button Classes="Dialog_Info_Button" 
@@ -257,7 +257,7 @@
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
-							</asControls:DialogItemBorder>
+							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<TextBox Name="connectionStringStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
 								<ia:Interaction.Behaviors>
@@ -274,19 +274,19 @@
 
 						<!-- Resource on Azure -->
 						<StackPanel IsVisible="{Binding #window.IsResourceOnAzureSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.IsResourceOnAzure}"/>
 									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description}"/>
 								</StackPanel>
-								<ToggleSwitch Name="isResourceOnAzureSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-							</asControls:DialogItemGrid>
+								<ToggleSwitch Name="isResourceOnAzureSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Query string -->
 						<StackPanel IsVisible="{Binding #window.IsQueryStringSupported}">
-							<asControls:DialogItemBorder>
+							<asControls:DialogItem>
 								<WrapPanel VerticalAlignment="Center">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.QueryString}"/>
 									<Button Classes="Dialog_Info_Button" 
@@ -297,7 +297,7 @@
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
-							</asControls:DialogItemBorder>
+							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding #window.SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
 								<ia:Interaction.Behaviors>
@@ -314,9 +314,9 @@
 
 						<!-- User name -->
 						<StackPanel IsVisible="{Binding #window.IsUserNameSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UserName}"/>
-								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsUserNameRequired}" ComparisonCondition="Equal" Value="True">
 											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
@@ -326,15 +326,15 @@
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</TextBox>
-							</asControls:DialogItemGrid>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Password -->
 						<StackPanel IsVisible="{Binding #window.IsPasswordSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Password}"/>
-								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsPasswordRequired}" ComparisonCondition="Equal" Value="True">
 											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
@@ -344,16 +344,16 @@
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</TextBox>
-							</asControls:DialogItemGrid>
+							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Setup commands -->
 						<StackPanel IsVisible="{Binding #window.IsSetupCommandsSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #window.SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #setupCommandsListBox.IsVisible}"/>
@@ -363,10 +363,10 @@
 
 						<!-- Teardown commands -->
 						<StackPanel IsVisible="{Binding #window.IsTeardownCommandsSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #window.TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #teardownCommandsListBox.IsVisible}"/>
@@ -376,10 +376,10 @@
 						
 						<!-- Environment variables -->
 						<StackPanel IsVisible="{Binding #window.IsEnvironmentVariablesSupported}">
-							<asControls:DialogItemGrid>
+							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.EnvironmentVariables}"/>
-								<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" HorizontalAlignment="Right" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-							</asControls:DialogItemGrid>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="environmentVariablesListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #window.EnvironmentVariables}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 								<asControls:ListBox.ItemTemplate>
