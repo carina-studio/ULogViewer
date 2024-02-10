@@ -63,17 +63,19 @@
 					<!-- Display name -->
 					<asControls:DialogItem>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.DisplayName}"/>
-						<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<Grid ColumnDefinitions="Auto,*">
-										<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-										<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartSeriesSourceEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-									</Grid>
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-						</ComboBox>
-						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.Required}"/>
+						<Panel HorizontalAlignment="Stretch">
+							<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<Grid ColumnDefinitions="Auto,*">
+											<TextBlock Text="{Binding Converter={x:Static appConverters:LogPropertyNameConverter.Default}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+											<abControls:FormattedTextBlock Arg1="{Binding}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" HorizontalAlignment="Right" Margin="{StaticResource Thickness/LogChartSeriesSourceEditorDialog.NameComboBox.Name.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+										</Grid>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+							<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.Required}"/>
+						</Panel>
 					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 
