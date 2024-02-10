@@ -408,6 +408,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier">數量詞</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier.Description">屬性值的數量詞，例如「KB」和「公分」。</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName">次要顯示名稱</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly">只列出已定義及可用的日誌屬性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">圖表的來源日誌屬性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">數值縮放</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">從屬性取得數值後再乘以的值。</sys:String>
@@ -1466,7 +1467,7 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier.Description"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName"/>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly">只列出已定義及可用的日誌屬性</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly" ResourceKey="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定欄位寬度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">欄位寬度</sys:String>
