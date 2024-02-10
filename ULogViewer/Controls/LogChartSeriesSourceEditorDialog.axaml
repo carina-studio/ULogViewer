@@ -3,12 +3,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
-        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogChartSeriesSourceEditorDialog"
+        Name="window"
         Classes="Dialog"
 		SizeToContent="Height"
         Title="{DynamicResource String/LogChartSeriesSourceEditorDialog.Title}"
@@ -27,8 +27,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
@@ -40,7 +40,7 @@
 					<!-- Name -->
 					<asControls:DialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.Name}"/>
-						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appControls:LogChartSeriesSourceEditorDialog.LogChartPropertyNames}">
+						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" Grid.Column="1" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.LogPropertyNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<Grid ColumnDefinitions="Auto,*">
@@ -51,6 +51,13 @@
 							</ComboBox.ItemTemplate>
 						</ComboBox>
 					</asControls:DialogItemGrid>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
+					
+					<!-- Show defined log properties only -->
+					<asControls:CompactDialogItemGrid>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly}"/>
+						<ToggleSwitch Name="showDefinedLogPropertiesOnlySwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="True"/>
+					</asControls:CompactDialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Display name -->
@@ -68,13 +75,13 @@
 						</ComboBox>
 						<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" Grid.Column="1" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{DynamicResource String/Common.Required}"/>
 					</asControls:DialogItemGrid>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Line Classes="Dialog_Item_Separator_Inner"/>
 
 					<!-- Custom display name -->
-					<asControls:DialogItemGrid>
+					<asControls:CompactDialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogChartSeriesSourceEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
-					</asControls:DialogItemGrid>
+					</asControls:CompactDialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Secondary display name -->
@@ -94,7 +101,7 @@
 					</asControls:DialogItemGrid>
 					
 					<!-- Properties for direct number value -->
-					<StackPanel IsVisible="{Binding $parent[Window].IsDirectNumberValueSeries}">
+					<StackPanel IsVisible="{Binding #window.IsDirectNumberValueSeries}">
 						
 						<!-- Default value -->
 						<Separator Classes="Dialog_Item_Separator"/>

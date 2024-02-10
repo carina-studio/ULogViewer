@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
@@ -8,6 +9,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,9 +45,11 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	readonly RealNumberTextBox defaultValueTextBox;
 	readonly ComboBox displayNameComboBox;
 	bool isDisplayNameSameAsName;
+	readonly SortedObservableList<string> logPropertyNames = new(string.CompareOrdinal);
 	readonly ComboBox nameComboBox;
 	readonly TextBox quantifierTextBox;
 	readonly TextBox secondaryDisplayNameTextBox;
+	readonly ToggleSwitch showDefinedLogPropertiesOnlySwitch;
 	readonly RealNumberTextBox valueScalingTextBox;
 
 
@@ -54,6 +58,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	/// </summary>
 	public LogChartSeriesSourceEditorDialog()
 	{
+		this.LogPropertyNames = ListExtensions.AsReadOnly(this.logPropertyNames);
 		AvaloniaXamlLoader.Load(this);
 		this.customDisplayNameSwitch = this.Get<ToggleSwitch>(nameof(customDisplayNameSwitch)).Also(it =>
 		{
@@ -90,6 +95,14 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		});
 		this.quantifierTextBox = this.Get<TextBox>(nameof(quantifierTextBox));
 		this.secondaryDisplayNameTextBox = this.Get<TextBox>(nameof(secondaryDisplayNameTextBox));
+		this.showDefinedLogPropertiesOnlySwitch = this.Get<ToggleSwitch>(nameof(showDefinedLogPropertiesOnlySwitch)).Also(it =>
+		{
+			it.IsCheckedChanged += (_, _) =>
+			{
+				if (this.IsOpened)
+					this.UpdateLogPropertyNames();
+			};
+		});
 		this.valueScalingTextBox = this.Get<RealNumberTextBox>(nameof(valueScalingTextBox)).Also(it =>
 		{
 			it.GetObservable(RealNumberTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
@@ -109,6 +122,12 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 			this.SetValue(IsDirectNumberValueSeriesProperty, value.IsDirectNumberValueSeriesType());
 		}
 	}
+	
+	
+	/// <summary>
+	/// Get or set name of log properties defined by user.
+	/// </summary>
+	public ISet<string>? DefinedLogPropertyNames { get; init; }
 
 
 	/// <inheritdoc/>
@@ -124,6 +143,12 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 			this.defaultValueTextBox.Value,
 			this.valueScalingTextBox.Value.GetValueOrDefault()));
 	}
+	
+	
+	/// <summary>
+	/// Get all valid name of log properties.
+	/// </summary>
+	public IList<string> LogPropertyNames { get; }
 
 
 	/// <inheritdoc/>
@@ -138,13 +163,9 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	protected override void OnOpening(EventArgs e)
 	{
 		base.OnOpening(e);
-		var source = this.Source;
-		if (source == null)
-		{
-			this.displayNameComboBox.SelectedItem = nameof(Log.Message);
+		this.UpdateLogPropertyNames();
+		if (this.Source is not { } source)
 			this.isDisplayNameSameAsName = true;
-			this.nameComboBox.SelectedItem = nameof(Log.Message);
-		}
 		else
 		{
 			this.defaultValueTextBox.Value = source.DefaultValue;
@@ -176,4 +197,38 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	/// Get or set <see cref="Source"/> to be edited.
 	/// </summary>
 	public LogChartSeriesSource? Source { get; set; }
+	
+	
+	// Update valid name of log properties.
+	void UpdateLogPropertyNames()
+	{
+		var prevSelectedPropertyName = this.nameComboBox.SelectedItem as string;
+		string? newSelectedPropertyName;
+		var propertyNames = new HashSet<string>();
+		if (this.showDefinedLogPropertiesOnlySwitch.IsChecked != true)
+		{
+			this.logPropertyNames.Clear();
+			this.logPropertyNames.AddAll(Log.PropertyNames);
+			propertyNames.AddAll(Log.PropertyNames);
+		}
+		else
+		{
+			propertyNames.Add(nameof(Log.ReadTime));
+			if (this.Source is { } source && Log.HasProperty(source.PropertyName))
+				propertyNames.Add(source.PropertyName);
+			if (this.DefinedLogPropertyNames is not null)
+				propertyNames.AddAll(this.DefinedLogPropertyNames.Where(Log.HasProperty));
+			this.logPropertyNames.Clear();
+			this.logPropertyNames.AddAll(propertyNames);
+		}
+		if (string.IsNullOrEmpty(prevSelectedPropertyName) || !propertyNames.Contains(prevSelectedPropertyName))
+		{
+			newSelectedPropertyName = propertyNames.Contains(nameof(Log.Message)) 
+				? nameof(Log.Message) 
+				: this.logPropertyNames[0];
+		}
+		else
+			newSelectedPropertyName = prevSelectedPropertyName;
+		this.nameComboBox.SelectedItem = newSelectedPropertyName;
+	}
 }

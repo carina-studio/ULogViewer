@@ -428,6 +428,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier">Quantifier</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier.Description">Quantifier of property value such as 'KB' and 'cm'.</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName">Secondary display name</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly">List defined/available log properties only</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">Source log property of chart</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">Scaling of value</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">The number which the value of property will be multiplied by.</sys:String>
@@ -1525,7 +1526,7 @@ return None</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier.Description"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName"/>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly">List defined/available log properties only</sys:String>
+	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly" ResourceKey="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly"/>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the column width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column width</sys:String>

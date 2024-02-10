@@ -57,10 +57,10 @@
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					
 					<!-- Show defined log properties only -->
-					<asControls:DialogItemGrid Classes="Dialog_Item_Container_Small">
+					<asControls:CompactDialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly}"/>
 						<ToggleSwitch Name="showDefinedLogPropertiesOnlySwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" IsChecked="True"/>
-					</asControls:DialogItemGrid>
+					</asControls:CompactDialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Display name -->
@@ -81,10 +81,10 @@
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 
 					<!-- Custom display name -->
-					<asControls:DialogItemGrid Classes="Dialog_Item_Container_Small">
+					<asControls:CompactDialogItemGrid>
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1" PropertyChanged="OnEditorControlPropertyChanged"/>
-					</asControls:DialogItemGrid>
+					</asControls:CompactDialogItemGrid>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Secondary display name -->

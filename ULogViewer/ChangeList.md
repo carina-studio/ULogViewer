@@ -7,7 +7,7 @@
 + Allow stopping reading logs continuously from data source.
 + Allow viewing history of log text filters.
 + Add assistance of typing phrases for log text filter.
-+ Support listing defined/available log properties only in **Visible log property** dialog.
++ Support listing defined/available log properties only in **Source log property of chart** and **Visible log property** dialog.
 + Allow specifying **Requirement of Working Directory** for each log profile.
 + Add **Raw Text From Standard Output (stdout)** and **Specific Android Device System Trace** built-in log profile and template.
 + Add **Host Name**, **Module**, **Sub Module**, **System** and **Sub System** log property names.
