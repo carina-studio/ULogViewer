@@ -181,6 +181,8 @@ class VisibleLogPropertyEditorDialog : AppSuite.Controls.InputDialog<IULogViewer
 		}
 		else
 		{
+			propertyNames.Add(nameof(Log.FileName));
+			propertyNames.Add(nameof(Log.LineNumber));
 			propertyNames.Add(nameof(Log.ReadTime));
 			if (this.LogProperty is { } logProperty && Log.HasProperty(logProperty.Name))
 				propertyNames.Add(logProperty.Name);
