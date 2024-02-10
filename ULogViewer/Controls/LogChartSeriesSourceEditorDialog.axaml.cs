@@ -213,6 +213,8 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 		}
 		else
 		{
+			propertyNames.Add(nameof(Log.FileName));
+			propertyNames.Add(nameof(Log.LineNumber));
 			propertyNames.Add(nameof(Log.ReadTime));
 			if (this.Source is { } source && Log.HasProperty(source.PropertyName))
 				propertyNames.Add(source.PropertyName);
