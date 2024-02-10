@@ -62,7 +62,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly Panel allowMultipleFilesPanel;
 		readonly ToggleSwitch allowMultipleFilesSwitch;
 		readonly ScrollViewer baseScrollViewer;
-		readonly MutableObservableBoolean canAddLogChartSeriesSource = new();
+		readonly MutableObservableBoolean canAddLogChartSeriesSource = new(true);
 		readonly ComboBox colorIndicatorComboBox;
 		readonly Panel commonPanel;
 		readonly ToggleButton commonPanelButton;
