@@ -169,7 +169,7 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         public IList<ContextualBasedAnalysisAction> EndingPreActions { get; }
 
         /// <summary>
-        /// Get list of variables to compare when <see cref="EndingMode"/> is <see cref="OperationEndingMode.CompareVariables"/>.
+        /// Get list of variables to compare for matching beginning log.
         /// </summary>
         public IList<string> EndingVariables { get; }
 
@@ -188,6 +188,7 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
             && rule.EndingPattern.ToString() == this.EndingPattern.ToString()
             && rule.EndingPattern.Options == this.EndingPattern.Options
             && rule.EndingConditions.SequenceEqual(this.EndingConditions)
+            && rule.EndingMode == this.EndingMode
             && rule.EndingPreActions.SequenceEqual(this.EndingPreActions)
             && rule.EndingPostActions.SequenceEqual(this.EndingPostActions)
             && rule.EndingVariables.SequenceEqual(this.EndingVariables)
@@ -223,13 +224,13 @@ class OperationDurationAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         /// Equality operator.
         /// </summary>
         public static bool operator ==(Rule? lhs, Rule? rhs) =>
-            lhs?.Equals(rhs) ?? object.ReferenceEquals(rhs, null);
-        
+            lhs?.Equals(rhs) ?? ReferenceEquals(rhs, null);
+
         /// <summary>
         /// Inequality operator.
         /// </summary>
         public static bool operator !=(Rule? lhs, Rule? rhs) =>
-            object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
+            !(lhs?.Equals(rhs) ?? ReferenceEquals(rhs, null));
         
         /// <summary>
         /// Name of variable to be treat as quantity of result.
