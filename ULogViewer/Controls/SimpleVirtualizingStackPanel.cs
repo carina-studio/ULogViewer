@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite;
@@ -58,6 +59,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     readonly Dictionary<object, Stack<Control>> recycledContainers = new();
     ScrollViewer? scrollViewer;
     IDisposable? scrollViewerOffsetObserverToken;
+    Vector? scrollViewerTargetOffset;
     IDisposable? scrollViewerViewportObserverToken;
     Window? window;
 
@@ -90,6 +92,13 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     {
         if (this.firstRealizedIndex < 0)
             return default;
+        if (this.scrollViewerTargetOffset.HasValue)
+        {
+            this.scrollViewer!.Offset = this.scrollViewerTargetOffset.Value;
+            this.scrollViewerTargetOffset = null;
+            this.InvalidateMeasure();
+            return finalSize;
+        }
         var screen = this.GetScreen();
         var itemHeight = this.GetItemHeightAlignedToPixel(screen);
         var itemWidth = finalSize.Width;
@@ -411,6 +420,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         {
             this.scrollViewerOffsetObserverToken = it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateMeasure);
             this.scrollViewerViewportObserverToken = it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(this.InvalidateMeasure);
+            it.AddHandler(PointerWheelChangedEvent, this.OnScrollViewerPointerWheelChanged, RoutingStrategies.Tunnel);
         });
         this.window = TopLevel.GetTopLevel(this) as Window;
     }
@@ -422,7 +432,11 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         this.app = null;
         this.scrollViewerOffsetObserverToken = this.scrollViewerOffsetObserverToken.DisposeAndReturnNull();
         this.scrollViewerViewportObserverToken = this.scrollViewerViewportObserverToken.DisposeAndReturnNull();
-        this.scrollViewer = null;
+        if (this.scrollViewer is not null)
+        {
+            this.scrollViewer.RemoveHandler(PointerWheelChangedEvent, this.OnScrollViewerPointerWheelChanged);
+            this.scrollViewer = null;
+        }
         this.window = null;
         this.invalidateMeasureAction.Cancel();
         base.OnDetachedFromVisualTree(e);
@@ -455,8 +469,10 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
                 if (itemHeight > 0)
                 {
                     var addedHeight = itemCount * itemHeight;
-                    var offset = this.scrollViewer.Offset;
-                    this.scrollViewer.Offset = new(offset.X, AlignToPixels(offset.Y + addedHeight, screen));
+                    var offset = this.scrollViewerTargetOffset ?? this.scrollViewer.Offset;
+                    var newOffset = new Vector(offset.X, AlignToPixels(offset.Y + addedHeight, screen));
+                    this.scrollViewer.Offset = newOffset;
+                    this.scrollViewerTargetOffset = newOffset;
                 }
             }
             return;
@@ -540,8 +556,10 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
                 if (itemHeight > 0)
                 {
                     var removedHeight = itemCount * itemHeight;
-                    var offset = this.scrollViewer.Offset;
-                    this.scrollViewer.Offset = new(offset.X, Math.Max(0, AlignToPixels(offset.Y - removedHeight, screen)));
+                    var offset = this.scrollViewerTargetOffset ?? this.scrollViewer.Offset;
+                    var newOffset = new Vector(offset.X, Math.Max(0, AlignToPixels(offset.Y - removedHeight, screen)));
+                    this.scrollViewer.Offset = newOffset;
+                    this.scrollViewerTargetOffset = newOffset;
                 }
             }
             return;
@@ -595,6 +613,13 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
             this.RecycleContainer(this.realizedContainers[containerIndex]);
             this.realizedContainers[containerIndex] = null;
         }
+    }
+    
+    
+    // Called when pointer wheel changed on scroll viewer.
+    void OnScrollViewerPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        this.scrollViewerTargetOffset = null;
     }
 
 
@@ -679,7 +704,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
         if (itemHeight <= 0)
             return null;
         var containerY = index * itemHeight;
-        var offset = this.scrollViewer.Offset;
+        var offset = this.scrollViewerTargetOffset ?? this.scrollViewer.Offset;
         if (index < this.firstRealizedIndex) // scroll up
             offset = new(offset.X, containerY);
         else // scroll down
@@ -689,6 +714,7 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
             offset = new(offset.X, Math.Max(0, AlignToPixels(containerY + itemHeight + (isScrollBarVisible ? 20 : 0) - viewport.Height, screen)));
         }
         this.scrollViewer.Offset = offset;
+        this.scrollViewerTargetOffset = offset;
         return null;
     }
 
