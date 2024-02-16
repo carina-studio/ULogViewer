@@ -3516,6 +3516,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isPointerPressedOnLogListBox = true;
 
 			// clear selection
+			var hasSelectedItemsBefore = this.logListBox.SelectedItems!.Count > 0;
 			var hitControl = this.logListBox.InputHitTest(point.Position).Let(it =>
 			{
 				if (it is not Visual visual)
@@ -3545,7 +3546,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canShowLogProperty.Update(false);
 			
 			// stop auto scrolling
-			this.IsScrollingToLatestLogNeeded = false;
+			if (hasSelectedItemsBefore || hitControl is ListBoxItem)
+				this.IsScrollingToLatestLogNeeded = false;
 			
 			// focus to list box
 			this.logListBox.Focus();
@@ -3662,6 +3664,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
+				
+				// stop auto scrolling
+				if (hasSelectedItems)
+					this.IsScrollingToLatestLogNeeded = false;
 				
 				// scroll to selected log
 				if (!session.LogSelection.IsAllLogsSelectionRequested)
