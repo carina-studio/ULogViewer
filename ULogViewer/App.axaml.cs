@@ -489,6 +489,7 @@ namespace CarinaStudio.ULogViewer
 		protected override SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref SplashWindowParams param) =>
 		{
 			param.AccentColor = Avalonia.Media.Color.FromRgb(0x8a, 0x5c, 0xe6);
+			param.BackgroundImageOpacity = 0.5;
 		});
 
 
