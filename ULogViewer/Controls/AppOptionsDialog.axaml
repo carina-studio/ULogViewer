@@ -127,13 +127,6 @@
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding UseCompactUserInterface, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
-
-								<!-- Enable blurry background -->
-								<asControls:DialogItem>
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/ApplicationOptions.EnableBlurryBackground}"/>
-									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding EnableBlurryBackground, Mode=TwoWay}"/>
-								</asControls:DialogItem>
-								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Culture -->
 								<asControls:DialogItem>
@@ -448,8 +441,8 @@
 							<StackPanel>
 
 								<!-- Default text shell -->
-								<asControls:DialogItem>
-									<TextBlock Name="defaultTextShellLabel" Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.DefaultTextShell}"/>
+								<asControls:DialogItem Name="defaultTextShellItem">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/AppOptionsDialog.DefaultTextShell}"/>
 									<ComboBox Classes="Dialog_Item_ComboBox" ItemsSource="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
 										<ComboBox.ItemTemplate>
 											<DataTemplate x:CompileBindings="True" x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">

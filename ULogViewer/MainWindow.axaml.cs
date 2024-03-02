@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using TabItem = CarinaStudio.AppSuite.Controls.TabItem;
 
 namespace CarinaStudio.ULogViewer
 {

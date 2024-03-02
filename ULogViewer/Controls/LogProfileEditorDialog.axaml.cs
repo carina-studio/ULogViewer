@@ -784,9 +784,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						this.SynchronizationContext.PostDelayed(() =>
 						{
-							this.baseScrollViewer.ScrollIntoView(this.Get<Control>("logPatternsContainer"), true);
+							this.Get<Control>("logPatternsContainer").Let(it =>
+							{
+								this.baseScrollViewer.ScrollIntoView(it, true);
+								this.AnimateItem(it);
+							});
 							this.Get<Button>("addLogPatternButton").Focus();
-							this.AnimateTextBlock(this.Get<Avalonia.Controls.TextBlock>("logPatternsTextBlock"));
 						}, 100);
 						return null;
 					}
@@ -806,9 +809,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					this.SynchronizationContext.PostDelayed(() =>
 					{
-						this.baseScrollViewer.ScrollIntoView(this.Get<Control>("visibleLogPropertiesContainer"), true);
+						this.Get<Control>("visibleLogPropertiesContainer").Let(it =>
+						{
+							this.baseScrollViewer.ScrollIntoView(it, true);
+							this.AnimateItem(it);
+						});
 						this.Get<Button>("addVisibleLogPropertyButton").Focus();
-						this.AnimateTextBlock(this.Get<Avalonia.Controls.TextBlock>("visiblePropertiesTextBlock"));
 					}, 100);
 					return null;
 				}

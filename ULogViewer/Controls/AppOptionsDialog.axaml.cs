@@ -196,16 +196,13 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		// scroll to given section
 		var initControl = this.InitSectionName switch
 		{
-			DefaultTextShellSection => this.Get<Control>("defaultTextShellLabel"),
+			DefaultTextShellSection => this.Get<Control>("defaultTextShellItem"),
 			_ => null,
 		};
-		if (initControl != null)
+		if (initControl is not null)
 		{
 			this.rootScrollViewer.ScrollIntoView(initControl, true);
-			if (initControl is Avalonia.Controls.TextBlock textBlock)
-				this.AnimateTextBlock(textBlock);
-			else if (initControl is Border headerBorder)
-				this.AnimateHeader(headerBorder);
+			this.AnimateItem(initControl);
 		}
 	}
 
