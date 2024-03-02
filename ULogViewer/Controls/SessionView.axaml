@@ -777,7 +777,7 @@
 									<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
 										<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 									</Button>
-									<ToggleButton Name="ignoreLogTextFilterCaseButton" Classes="TextBox_InPlaceAction" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsVisible="{Binding #root.HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
+									<ToggleButton Name="ignoreLogTextFilterCaseButton" Classes="TextBox_InPlaceAction" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsEnabled="{Binding #root.HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
 										<Panel>
 											<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase}"/>
 											<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase.Light}"/>
