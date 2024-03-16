@@ -114,7 +114,7 @@
 												<ColumnDefinition Width="Auto"/>
 												<ColumnDefinition Width="*"/>
 											</Grid.ColumnDefinitions>
-											<TextBlock TextAlignment="Right" Text="{Binding Item1, StringFormat={}{0}:}" VerticalAlignment="Center"/>
+											<TextBlock HorizontalAlignment="Right" Text="{Binding Item1, StringFormat={}{0}:}" VerticalAlignment="Center"/>
 											<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
 											<TextBlock Grid.Column="2" Text="{Binding Item2}" VerticalAlignment="Center"/>
 										</Grid>
