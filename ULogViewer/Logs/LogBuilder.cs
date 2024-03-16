@@ -95,24 +95,31 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to append.</param>
-		public void AppendToNextLine(string propertyName, string value)
+		/// <param name="skipFirstEmptyLine">True to skip first line if it is empty.</param>
+		public void AppendToNextLine(string propertyName, string value, bool skipFirstEmptyLine = true)
 		{
 			if (this.properties.TryGetValue(propertyName, out var current))
 			{
 				if (current is ReadOnlyMemory<char> memory)
 				{
-					var oldLength = memory.Length;
-					var newValue = new char[oldLength + value.Length + 1];
-					memory.CopyTo(newValue);
-					newValue[oldLength] = '\n';
-					value.AsMemory().CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
-					properties[propertyName] = newValue;
-					return;
+					if (!skipFirstEmptyLine || !IsWhiteSpace(memory))
+					{
+						var oldLength = memory.Length;
+						var newValue = new char[oldLength + value.Length + 1];
+						memory.CopyTo(newValue);
+						newValue[oldLength] = '\n';
+						value.AsMemory().CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
+						properties[propertyName] = newValue;
+						return;
+					}
 				}
-				if (current is string str)
+				else if (current is string str)
 				{
-					properties[propertyName] = str + '\n' + value;
-					return;
+					if (!skipFirstEmptyLine || !string.IsNullOrWhiteSpace(str))
+					{
+						properties[propertyName] = str + '\n' + value;
+						return;
+					}
 				}
 			}
 			properties[propertyName] = value;
@@ -124,24 +131,31 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <param name="propertyName">Name of property of log.</param>
 		/// <param name="value">Value to append.</param>
-		public void AppendToNextLine(string propertyName, ReadOnlyMemory<char> value)
+		/// <param name="skipFirstEmptyLine">True to skip first line if it is empty.</param>
+		public void AppendToNextLine(string propertyName, ReadOnlyMemory<char> value, bool skipFirstEmptyLine = true)
 		{
 			if (this.properties.TryGetValue(propertyName, out var current))
 			{
 				if (current is ReadOnlyMemory<char> memory)
 				{
-					var oldLength = memory.Length;
-					var newValue = new char[oldLength + value.Length + 1];
-					memory.CopyTo(newValue);
-					newValue[oldLength] = '\n';
-					value.CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
-					properties[propertyName] = newValue;
-					return;
+					if (!skipFirstEmptyLine || !IsWhiteSpace(memory))
+					{
+						var oldLength = memory.Length;
+						var newValue = new char[oldLength + value.Length + 1];
+						memory.CopyTo(newValue);
+						newValue[oldLength] = '\n';
+						value.CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
+						properties[propertyName] = newValue;
+						return;
+					}
 				}
-				if (current is string str)
+				else if (current is string str)
 				{
-					properties[propertyName] = str + '\n' + new string(value.Span);
-					return;
+					if (!skipFirstEmptyLine || !string.IsNullOrWhiteSpace(str))
+					{
+						properties[propertyName] = str + '\n' + new string(value.Span);
+						return;
+					}
 				}
 			}
 			properties[propertyName] = value;
@@ -444,6 +458,25 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <returns></returns>
 		public bool IsNotEmpty() => this.properties.Count > 0;
+
+
+		// Check whether given character sequence is consist of white spaces or not.
+		[Obsolete("Should be moved in AppBase.")]
+		static unsafe bool IsWhiteSpace(ReadOnlyMemory<char> s) =>
+			s.PinAs((char* cPtr) =>
+			{
+				if (cPtr is null)
+					return true;
+				var count = s.Length;
+				while (count > 0)
+				{
+					if (!char.IsWhiteSpace(*cPtr))
+						return false;
+					++cPtr;
+					--count;
+				}
+				return true;
+			});
 
 
 		/// <summary>
