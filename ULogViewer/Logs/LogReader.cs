@@ -1247,7 +1247,6 @@ namespace CarinaStudio.ULogViewer.Logs
 					{
 						if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
 							break;
-						logPattern = logPatterns[logPatternIndex];
 						updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 						try
 						{
@@ -1456,6 +1455,7 @@ namespace CarinaStudio.ULogViewer.Logs
 								startReadingTime = stopWatch.ElapsedMilliseconds;
 							}
 							prevLogPattern = logPattern;
+							logPattern = logPatterns[logPatternIndex];
 						}
 					} while (logLine != null && !cancellationToken.IsCancellationRequested);
 					
