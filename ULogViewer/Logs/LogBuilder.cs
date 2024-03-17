@@ -102,7 +102,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				if (current is ReadOnlyMemory<char> memory)
 				{
-					if (!skipFirstEmptyLine || !IsWhiteSpace(memory))
+					if (!skipFirstEmptyLine || memory.IsNotWhiteSpace())
 					{
 						var oldLength = memory.Length;
 						var newValue = new char[oldLength + value.Length + 1];
@@ -138,7 +138,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			{
 				if (current is ReadOnlyMemory<char> memory)
 				{
-					if (!skipFirstEmptyLine || !IsWhiteSpace(memory))
+					if (!skipFirstEmptyLine || memory.IsNotWhiteSpace())
 					{
 						var oldLength = memory.Length;
 						var newValue = new char[oldLength + value.Length + 1];
@@ -458,25 +458,6 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// </summary>
 		/// <returns></returns>
 		public bool IsNotEmpty() => this.properties.Count > 0;
-
-
-		// Check whether given character sequence is consist of white spaces or not.
-		[Obsolete("Should be moved in AppBase.")]
-		static unsafe bool IsWhiteSpace(ReadOnlyMemory<char> s) =>
-			s.PinAs((char* cPtr) =>
-			{
-				if (cPtr is null)
-					return true;
-				var count = s.Length;
-				while (count > 0)
-				{
-					if (!char.IsWhiteSpace(*cPtr))
-						return false;
-					++cPtr;
-					--count;
-				}
-				return true;
-			});
 
 
 		/// <summary>
