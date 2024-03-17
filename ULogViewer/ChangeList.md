@@ -5,7 +5,7 @@
 + 
 
 ## Improvement
-+ 
++ Better indications for required or invalid value in ```Edit log profile``` and ```Data source options``` dialogs.
 
 ## Behavior Changes
 + 

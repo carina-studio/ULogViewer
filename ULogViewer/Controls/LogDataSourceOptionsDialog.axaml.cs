@@ -72,10 +72,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// Fields.
+	readonly ScrollViewer baseScrollViewer;
 	readonly TextBox categoryTextBox;
 	readonly TextBox commandTextBox;
 	Range<int> commandTextBoxSelection;
-	readonly TextBox connectionStringStringTextBox;
+	readonly TextBox connectionStringTextBox;
 	readonly ComboBox encodingComboBox;
 	readonly SortedObservableList<Tuple<string, string>> environmentVariables = new((lhs, rhs) => 
 		string.Compare(lhs.Item1, rhs.Item1, StringComparison.Ordinal));
@@ -117,6 +118,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		this.CommandSyntaxHighlightingDefinitionSet = Highlighting.TextShellCommandSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		this.SqlSyntaxHighlightingDefinitionSet = Highlighting.SqlSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
+		this.baseScrollViewer = this.Get<ScrollViewer>(nameof(baseScrollViewer));
 		this.categoryTextBox = this.Get<TextBox>(nameof(categoryTextBox));
 		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox)).Also(it =>
 		{
@@ -133,7 +135,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			it.GetObservable(TextBox.SelectionStartProperty).Subscribe(_ =>
 				this.saveCommandTextBoxSelectionAction?.Schedule());
 		});
-		this.connectionStringStringTextBox = this.Get<TextBox>(nameof(connectionStringStringTextBox));
+		this.connectionStringTextBox = this.Get<TextBox>(nameof(this.connectionStringTextBox));
 		this.encodingComboBox = this.Get<ComboBox>(nameof(encodingComboBox));
 		this.environmentVariablesListBox = this.Get<AppSuite.Controls.ListBox>(nameof(environmentVariablesListBox));
 		this.fileNameTextBox = this.Get<TextBox>(nameof(fileNameTextBox));
@@ -334,13 +336,86 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	// Generate valid result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		// check category
+		if (this.IsCategoryRequired && string.IsNullOrWhiteSpace(this.categoryTextBox.Text))
+		{
+			this.Get<Control>("categoryItem").Let(it =>
+			{
+				this.baseScrollViewer.ScrollIntoView(it, true);
+				this.AnimateItem(it);
+			});
+			this.categoryTextBox.Focus();
+			return Task.FromResult<object?>(null);
+		}
+		
+		// check connection string
+		if (this.GetValue(IsConnectionStringRequiredProperty) && string.IsNullOrWhiteSpace(this.connectionStringTextBox.Text))
+		{
+			this.Get<Control>("connectionStringContainer").Let(it =>
+			{
+				this.baseScrollViewer.ScrollIntoView(it, true);
+				this.AnimateItem(it);
+			});
+			this.connectionStringTextBox.Focus();
+			return Task.FromResult<object?>(null);
+		}
+		
+		// check query string
+		if (this.IsQueryStringRequired && string.IsNullOrWhiteSpace(this.queryStringTextBox.Text))
+		{
+			this.Get<Control>("queryStringContainer").Let(it =>
+			{
+				this.baseScrollViewer.ScrollIntoView(it, true);
+				this.AnimateItem(it);
+			});
+			this.queryStringTextBox.Focus();
+			return Task.FromResult<object?>(null);
+		}
+		
+		// check user name
+		if (this.IsUserNameRequired && string.IsNullOrWhiteSpace(this.userNameTextBox.Text))
+		{
+			this.Get<Control>("userNameItem").Let(it =>
+			{
+				this.baseScrollViewer.ScrollIntoView(it, true);
+				this.AnimateItem(it);
+			});
+			this.userNameTextBox.Focus();
+			return Task.FromResult<object?>(null);
+		}
+		
+		// check password
+		if (this.IsPasswordRequired && string.IsNullOrWhiteSpace(this.passwordTextBox.Text))
+		{
+			this.Get<Control>("passwordItem").Let(it =>
+			{
+				this.baseScrollViewer.ScrollIntoView(it, true);
+				this.AnimateItem(it);
+			});
+			this.passwordTextBox.Focus();
+			return Task.FromResult<object?>(null);
+		}
+		
+		// check IP address
+		if (this.IsIPEndPointSupported && !this.ipAddressTextBox.IsTextValid)
+		{
+			this.Get<Control>("ipAddressItem").Let(it =>
+			{
+				this.baseScrollViewer.ScrollIntoView(it, true);
+				this.AnimateItem(it);
+			});
+			this.ipAddressTextBox.Focus();
+			return Task.FromResult<object?>(null);
+		}
+		
+		// generate data source options
 		var options = new LogDataSourceOptions();
 		if (this.IsCategorySupported)
 			options.Category = this.categoryTextBox.Text?.Trim();
 		if (this.IsCommandSupported)
 			options.Command = this.commandTextBox.Text?.Trim();
 		if (this.GetValue(IsConnectionStringSupportedProperty))
-			options.ConnectionString = this.connectionStringStringTextBox.Text?.Trim();
+			options.ConnectionString = this.connectionStringTextBox.Text?.Trim();
 		if (this.IsEncodingSupported)
 			options.Encoding = this.encodingComboBox.SelectedItem as Encoding;
 		if (this.IsEnvironmentVariablesSupported)
@@ -588,11 +663,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.commandTextBox.Text = options.Command;
 			this.initFocusedControl ??= this.commandTextBox;
 		}
-		if (this.GetValue(IsConnectionStringSupportedProperty))
-		{
-			this.connectionStringStringTextBox.Text = options.ConnectionString;
-			this.initFocusedControl ??= this.connectionStringStringTextBox;
-		}
 		if (this.IsEnvironmentVariablesSupported)
 		{
 			foreach (var (k, v) in options.EnvironmentVariables)
@@ -646,6 +716,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.encodingComboBox.SelectedItem = options.Encoding ?? Encoding.UTF8;
 			this.initFocusedControl ??= this.encodingComboBox;
 		}
+		if (this.GetValue(IsConnectionStringSupportedProperty))
+		{
+			this.connectionStringTextBox.Text = options.ConnectionString;
+			this.initFocusedControl ??= this.connectionStringTextBox;
+		}
 		if (this.IsQueryStringSupported)
 		{
 			this.queryStringTextBox.Text = options.QueryString;
@@ -691,31 +766,10 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	}
 
 
-	// Validate input.
-	protected override bool OnValidateInput()
-	{
-		if (!base.OnValidateInput())
-			return false;
-		if (this.IsCategoryRequired && string.IsNullOrWhiteSpace(this.categoryTextBox.Text))
-			return false;
-		if (this.GetValue(IsConnectionStringRequiredProperty) && string.IsNullOrWhiteSpace(this.connectionStringStringTextBox.Text))
-			return false;
-		if (this.IsIPEndPointSupported && !this.ipAddressTextBox.IsTextValid)
-			return false;
-		if (this.IsQueryStringRequired && string.IsNullOrWhiteSpace(this.queryStringTextBox.Text))
-			return false;
-		if (this.IsPasswordRequired && string.IsNullOrWhiteSpace(this.passwordTextBox.Text))
-			return false;
-		if (this.IsUserNameRequired && string.IsNullOrWhiteSpace(this.userNameTextBox.Text))
-			return false;
-		return true;
-	}
-
-
 	/// <summary>
 	/// Get or set <see cref="LogDataSourceOptions"/> to be edited.
 	/// </summary>
-	public LogDataSourceOptions Options { get; set; }
+	public LogDataSourceOptions Options { get; init; }
 
 
 	// Refresh state of all options.

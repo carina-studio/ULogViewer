@@ -645,6 +645,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternMatchingMode">日志行格式匹配方式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">日志行格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap">您在其中一个「日志行格式」定义了「{0}」作为原始日志等级属性但没有定义「日志等级对照表」，这将导致日志等级无法正常运作。您是否要定义「日志等级对照表」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了「日志行格式」但没有定义「显示的日志属性」，这可能导致日志显示错误。您是否要定义「显示的日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">日志读取设定</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>

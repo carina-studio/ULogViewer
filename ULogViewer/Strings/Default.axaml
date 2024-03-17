@@ -675,6 +675,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternMatchingMode">Way of matching log lines with patterns</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap">You have defined '{0}' as property of raw log level in one of 'Log line patterns' without defining 'Mapping of log level' which makes log level not work as expected. Do you want to define 'Mapping of log level'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You have defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>

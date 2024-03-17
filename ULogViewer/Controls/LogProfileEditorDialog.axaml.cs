@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -12,6 +13,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
@@ -43,7 +45,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="Logs.LogLevel"/> to readable name.
 		/// </summary>
-		public static readonly IValueConverter LogLevelNameConverter = Converters.EnumConverters.LogLevel;
+		public static readonly IValueConverter LogLevelNameConverter = EnumConverters.LogLevel;
 		
 
 		// Static fields.
@@ -767,6 +769,81 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Generate result.
 		protected override async Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 		{
+			// check name
+			if (string.IsNullOrEmpty(this.nameTextBox.Text))
+			{
+				this.Get<Control>("nameItem").Let(it =>
+				{
+					this.baseScrollViewer.ScrollIntoView(it, true);
+					this.AnimateItem(it);
+				});
+				this.nameTextBox.Focus();
+				return null;
+			}
+			
+			// check data source and options
+			if (!this.GetValue(IsValidDataSourceOptionsProperty))
+			{
+				this.Get<Control>("dataSourceProviderContainer").Let(it =>
+				{
+					this.baseScrollViewer.ScrollIntoView(it, true);
+					this.AnimateItem(it);
+				});
+				this.dataSourceProviderComboBox.Focus();
+				return null;
+			}
+			
+			// data pro-version only data source
+			if (this.dataSourceProviderComboBox.SelectionBoxItem is not ILogDataSourceProvider dataSourceProvider)
+				return null;
+			if (dataSourceProvider.IsProVersionOnly && !this.GetValue(IsProVersionActivatedProperty))
+			{
+				this.Get<Control>("dataSourceProviderItem").Let(it =>
+				{
+					this.baseScrollViewer.ScrollIntoView(it, true);
+					this.AnimateItem(it);
+				});
+				this.dataSourceProviderComboBox.Focus();
+				return null;
+			}
+			
+			// check log level map for reading
+			if (this.rawLogLevelPropertyComboBox.SelectedItem is string rawLogLevelProperty 
+			    && this.logPropertyNamesInLogPatterns.Contains(rawLogLevelProperty) 
+			    && this.logLevelMapEntriesForReading.IsEmpty())
+			{
+				var result = await new MessageDialog
+				{
+					Buttons = MessageDialogButtons.YesNo,
+					DefaultResult = MessageDialogResult.Yes,
+					Icon = MessageDialogIcon.Warning,
+					Message = new FormattedString().Also(it =>
+					{
+						it.Bind(FormattedString.Arg1Property, new Binding
+						{
+							Converter = LogPropertyNameConverter.Default,
+							Path = nameof(ComboBox.SelectedItem), 
+							Source = this.rawLogLevelPropertyComboBox,
+						});
+						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap"));
+					}),
+				}.ShowDialog(this);
+				if (result == MessageDialogResult.Yes)
+				{
+					this.SynchronizationContext.PostDelayed(() =>
+					{
+						this.Get<Control>("logLevelMapForReadingContainer").Let(it =>
+						{
+							this.baseScrollViewer.ScrollIntoView(it, true);
+							this.AnimateItem(it);
+						});
+						this.Get<Button>("addLogLevelMapEntryForReadingButton").Focus();
+					}, 100);
+					return null;
+				}
+				await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
+			}
+			
 			// check log patterns and visible log properties
 			var isTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault();
 			if (this.logPatterns.IsEmpty() && !isTemplate)
@@ -1482,8 +1559,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// check data source and options
 			var isTemplate = this.isTemplateSwitch.IsChecked.GetValueOrDefault();
-			var dataSourceProvider = (this.dataSourceProviderComboBox.SelectedItem as ILogDataSourceProvider);
-			if (dataSourceProvider is null)
+			if (this.dataSourceProviderComboBox.SelectedItem is not ILogDataSourceProvider dataSourceProvider)
 				return false;
 			this.allowMultipleFilesPanel.IsVisible = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
 			if (!isTemplate)
@@ -1498,30 +1574,22 @@ namespace CarinaStudio.ULogViewer.Controls
 						case nameof(LogDataSourceOptions.QueryString):
 						case nameof(LogDataSourceOptions.UserName):
 							if (!this.dataSourceOptions.IsOptionSet(optionName))
-							{
 								this.SetValue(IsValidDataSourceOptionsProperty, false);
-								return false;
-							}
+							else
+								this.SetValue(IsValidDataSourceOptionsProperty, true);
 							break;
 						case nameof(LogDataSourceOptions.Command):
 							if (this.dataSourceOptions.CheckPlaceholderInCommands())
-							{
 								this.SetValue(IsValidDataSourceOptionsProperty, false);
-								return false;
-							}
+							else
+								this.SetValue(IsValidDataSourceOptionsProperty, true);
+							break;
+						default:
+							this.SetValue(IsValidDataSourceOptionsProperty, true);
 							break;
 					}
 				}
 			}
-			this.SetValue(IsValidDataSourceOptionsProperty, true);
-
-			// check name
-			if (string.IsNullOrEmpty(this.nameTextBox.Text))
-				return false;
-			
-			// data pro-version only data source
-			if (dataSourceProvider.IsProVersionOnly && !this.GetValue(IsProVersionActivatedProperty))
-				return false;
 
 			// ok
 			return true;

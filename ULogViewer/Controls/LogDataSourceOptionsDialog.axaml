@@ -79,13 +79,13 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double/LogDataSourceOptionsDialog.Content.MaxHeight}">
+		<ScrollViewer Name="baseScrollViewer" HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double/LogDataSourceOptionsDialog.Content.MaxHeight}">
 			<Border Classes="Dialog_ContentPanel_WithItemsGroups">
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel Name="itemsPanel">
 
 						<!-- Category -->
-						<asControls:DialogItem Name="categoryItemGrid" IsVisible="{Binding #window.IsCategorySupported}">
+						<asControls:DialogItem Name="categoryItem" IsVisible="{Binding #window.IsCategorySupported}">
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Category}"/>
 								<Button Classes="Dialog_Info_Button" 
@@ -107,7 +107,7 @@
 								</ia:Interaction.Behaviors>
 							</TextBox>
 						</asControls:DialogItem>
-						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #categoryItemGrid.IsVisible}"/>
+						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #categoryItem.IsVisible}"/>
 
 						<!-- Command -->
 						<StackPanel IsVisible="{Binding #window.IsCommandSupported}">
@@ -172,11 +172,17 @@
 
 						<!-- IP endpoint -->
 						<StackPanel IsVisible="{Binding #window.IsIPEndPointSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
+							<asControls:DialogItem Name="ipAddressItem">
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
+									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#ipAddressTextBox.IsTextValid}">
+										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
+									</Grid>
+								</StackPanel>
 								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItem>
-							<Separator Classes="Dialog_Item_Separator"/>
+							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:DialogItem>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
 								<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32678"/>
@@ -245,7 +251,7 @@
 						</StackPanel>
 
 						<!-- Connection string -->
-						<StackPanel IsVisible="{Binding #window.IsConnectionStringSupported}">
+						<StackPanel Name="connectionStringContainer" IsVisible="{Binding #window.IsConnectionStringSupported}">
 							<asControls:DialogItem>
 								<WrapPanel VerticalAlignment="Center">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}"/>
@@ -259,7 +265,7 @@
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<TextBox Name="connectionStringStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+							<TextBox Name="connectionStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsConnectionStringRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
@@ -269,8 +275,8 @@
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</TextBox>
-							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
+						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #connectionStringContainer.IsVisible}"/>
 
 						<!-- Resource on Azure -->
 						<StackPanel IsVisible="{Binding #window.IsResourceOnAzureSupported}">
@@ -285,7 +291,7 @@
 						</StackPanel>
 
 						<!-- Query string -->
-						<StackPanel IsVisible="{Binding #window.IsQueryStringSupported}">
+						<StackPanel Name="queryStringContainer" IsVisible="{Binding #window.IsQueryStringSupported}">
 							<asControls:DialogItem>
 								<WrapPanel VerticalAlignment="Center">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.QueryString}"/>
@@ -309,12 +315,12 @@
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</asControls:SyntaxHighlightingTextBox>
-							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
+						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #queryStringContainer.IsVisible}"/>
 
 						<!-- User name -->
 						<StackPanel IsVisible="{Binding #window.IsUserNameSupported}">
-							<asControls:DialogItem>
+							<asControls:DialogItem Name="userNameItem">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UserName}"/>
 								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
 									<ia:Interaction.Behaviors>
@@ -332,7 +338,7 @@
 
 						<!-- Password -->
 						<StackPanel IsVisible="{Binding #window.IsPasswordSupported}">
-							<asControls:DialogItem>
+							<asControls:DialogItem Name="passwordItem">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Password}"/>
 								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
 									<ia:Interaction.Behaviors>

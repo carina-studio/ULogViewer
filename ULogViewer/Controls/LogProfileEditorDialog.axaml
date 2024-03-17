@@ -101,7 +101,7 @@
 							<StackPanel>
 						
 								<!-- Name -->
-								<asControls:DialogItem>
+								<asControls:DialogItem Name="nameItem">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>
 									<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
 								</asControls:DialogItem>
@@ -151,73 +151,75 @@
 							<StackPanel>
 
 								<!-- DataSource -->
-								<asControls:DialogItem>
-									<StackPanel Classes="Dialog_Item_Text_Container">
-										<WrapPanel>
-											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
-											<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.LogDataSourcesDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
-												<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
-											</Button>
-										</WrapPanel>
-										<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-											<Grid.IsVisible>
-												<MultiBinding Converter="{x:Static BoolConverters.And}">
-													<Binding Path="!IsProVersionActivated" ElementName="window"/>
-													<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox" FallbackValue="False"/>
-												</MultiBinding>
-											</Grid.IsVisible>
-											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
-										</Grid>
-										<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-											<Grid.IsVisible>
-												<MultiBinding Converter="{x:Static BoolConverters.And}">
-													<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
-													<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
-												</MultiBinding>
-											</Grid.IsVisible>
-											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
-										</Grid>
-									</StackPanel>
-									<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
-										<ComboBox.ItemTemplate>
-											<DataTemplate>
-												<Grid ColumnDefinitions="Auto,Auto,Auto,*">
-													<Panel Classes="ComboBoxItem_Icon">
-														<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
-														<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
-													</Panel>
-													<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding DisplayName}" Grid.Column="1"/>
-													<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
-													<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
-														<TextBlock.IsVisible>
-															<MultiBinding Converter="{x:Static BoolConverters.And}">
-																<Binding Path="!IsProVersionActivated" ElementName="window"/>
-																<Binding Path="IsProVersionOnly"/>
-															</MultiBinding>
-														</TextBlock.IsVisible>
-													</TextBlock>
-												</Grid>
-											</DataTemplate>
-										</ComboBox.ItemTemplate>
-									</ComboBox>
-								</asControls:DialogItem>
-								<Separator Classes="Dialog_Separator_Small"/>
-								<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
+								<StackPanel Name="dataSourceProviderContainer">
+									<asControls:DialogItem>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<WrapPanel>
+												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider}"/>
+												<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.LogDataSourcesDocument}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+												</Button>
+											</WrapPanel>
+											<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+												<Grid.IsVisible>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="!IsProVersionActivated" ElementName="window"/>
+														<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox" FallbackValue="False"/>
+													</MultiBinding>
+												</Grid.IsVisible>
+												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
+												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
+											</Grid>
+											<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
+												<Grid.IsVisible>
+													<MultiBinding Converter="{x:Static BoolConverters.And}">
+														<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
+														<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
+													</MultiBinding>
+												</Grid.IsVisible>
+												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
+												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
+											</Grid>
+										</StackPanel>
+										<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].DataSourceProviders}" VerticalAlignment="Center">
+											<ComboBox.ItemTemplate>
+												<DataTemplate>
+													<Grid ColumnDefinitions="Auto,Auto,Auto,*">
+														<Panel Classes="ComboBoxItem_Icon">
+															<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}, ConverterParameter=Light}"/>
+															<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:LogDataSourceProviderIconConverter.Default}}"/>
+														</Panel>
+														<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding DisplayName}" Grid.Column="1"/>
+														<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
+														<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
+															<TextBlock.IsVisible>
+																<MultiBinding Converter="{x:Static BoolConverters.And}">
+																	<Binding Path="!IsProVersionActivated" ElementName="window"/>
+																	<Binding Path="IsProVersionOnly"/>
+																</MultiBinding>
+															</TextBlock.IsVisible>
+														</TextBlock>
+													</Grid>
+												</DataTemplate>
+											</ComboBox.ItemTemplate>
+										</ComboBox>
+									</asControls:DialogItem>
 									<Separator Classes="Dialog_Separator_Small"/>
-									<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
-										<Button.IsEnabled>
-											<MultiBinding Converter="{x:Static BoolConverters.And}">
-												<Binding Path="HasDataSourceOptions" ElementName="window"/>
-												<MultiBinding Converter="{x:Static BoolConverters.Or}">
-													<Binding Path="IsProVersionActivated" ElementName="window"/>
-													<Binding Path="!SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
+									<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+										<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
+										<Separator Classes="Dialog_Separator_Small"/>
+										<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
+											<Button.IsEnabled>
+												<MultiBinding Converter="{x:Static BoolConverters.And}">
+													<Binding Path="HasDataSourceOptions" ElementName="window"/>
+													<MultiBinding Converter="{x:Static BoolConverters.Or}">
+														<Binding Path="IsProVersionActivated" ElementName="window"/>
+														<Binding Path="!SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox"/>
+													</MultiBinding>
 												</MultiBinding>
-											</MultiBinding>
-										</Button.IsEnabled>
-									</Button>
+											</Button.IsEnabled>
+										</Button>
+									</StackPanel>
 								</StackPanel>
 								<Separator Classes="Dialog_Item_Separator"/>
 
@@ -295,48 +297,50 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log level map -->
-								<asControls:DialogItem>
-									<StackPanel Classes="Dialog_Item_Text_Container">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
-										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}"/>
-									</StackPanel>
-									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
-								</asControls:DialogItem>
-								<Line Classes="Dialog_Item_Separator_Inner"/>
-								<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
-									<asControls:ListBox.ItemTemplate>
-										<DataTemplate>
-											<Grid ColumnDefinitions="*,*">
-												<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Key}"/>
-												<Border Classes="InPlaceAction_Reserved"/>
-												<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-													<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
-															<asControls:Image Classes="InPlaceAction_Icon">
-																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
-																</DrawingImage>
-															</asControls:Image>
-														</Button>
-														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
-															<asControls:Image Classes="InPlaceAction_Icon">
-																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
-																</DrawingImage>
-															</asControls:Image>
-														</Button>
-													</StackPanel>
-													<Grid ColumnDefinitions="Auto,*">
-														<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-														<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
-													</Grid>
-												</DockPanel>
-											</Grid>
-										</DataTemplate>
-									</asControls:ListBox.ItemTemplate>
-								</asControls:ListBox>
-								<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logLevelMapForReadingListBox.IsVisible}"/>
-								<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								<StackPanel Name="logLevelMapForReadingContainer">
+									<asControls:DialogItem>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.LogLevelMapForReading.Description}"/>
+										</StackPanel>
+										<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logLevelMapForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+									</asControls:DialogItem>
+									<Line Classes="Dialog_Item_Separator_Inner"/>
+									<asControls:ListBox Name="logLevelMapForReadingListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $parent[Window].LogLevelMapEntriesForReading.Count}" ItemsSource="{Binding $parent[Window].LogLevelMapEntriesForReading}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+										<asControls:ListBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="*,*">
+													<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Key}"/>
+													<Border Classes="InPlaceAction_Reserved"/>
+													<DockPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+														<StackPanel DockPanel.Dock="Right" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+															<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveLogLevelMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																<asControls:Image Classes="InPlaceAction_Icon">
+																	<DrawingImage>
+																		<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
+																	</DrawingImage>
+																</asControls:Image>
+															</Button>
+															<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditLogLevelMapEntryForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																<asControls:Image Classes="InPlaceAction_Icon">
+																	<DrawingImage>
+																		<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
+																	</DrawingImage>
+																</asControls:Image>
+															</Button>
+														</StackPanel>
+														<Grid ColumnDefinitions="Auto,*">
+															<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+															<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+														</Grid>
+													</DockPanel>
+												</Grid>
+											</DataTemplate>
+										</asControls:ListBox.ItemTemplate>
+									</asControls:ListBox>
+									<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #logLevelMapForReadingListBox.IsVisible}"/>
+									<Button Name="addLogLevelMapEntryForReadingButton" Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddLogLevelMapEntryForReading}" Content="{DynamicResource String/Common.Add.WithDialog}" HorizontalAlignment="Right"/>
+								</StackPanel>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log patterns -->
