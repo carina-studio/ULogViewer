@@ -2485,7 +2485,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async Task<bool> DropAsync(KeyModifiers keyModifiers, IDataObject data)
 		{
 			// check data
-			var hasFileNames = Global.RunOrDefault(() => data.HasFileNames()); // [Workaround] Prevent NRE when dragging without files on macOS
+			var hasFileNames = data.HasFileNames();
 			if (!hasFileNames || this.IsHandlingDragAndDrop)
 				return false;
 
@@ -2502,15 +2502,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				// [Workaround] clone data to prevent underlying resource being released later
 				if (data is not DataObject)
-				{
-					var dataObject = new DataObject();
-					foreach (var format in data.GetDataFormats())
-					{
-						if (data.TryGetData(format, out object? value) && value != null)
-							dataObject.Set(format, value);
-					}
-					data = dataObject;
-				}
+					data = data.Clone();
 
 				// collect files
 				var dropFilePaths = data.GetFiles().Let(it =>
@@ -2695,6 +2687,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// complete
 				return true;
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError(ex, "Error occurred while dropping data");
+				return false;
 			}
 			finally
 			{
