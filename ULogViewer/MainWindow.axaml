@@ -173,7 +173,7 @@
 		<asControls:TabControl Name="tabControl" DragDrop.AllowDrop="True" DragLeaveItem="OnDragLeaveTabItem" DragOverItem="OnDragOverTabItem" DropOnItem="OnDropOnTabItem" ItemDragged="OnTabItemDragged">
 
 			<!-- Add new tab -->
-			<asControls:TabItem Classes="Empty">
+			<asControls:TabItem Classes="EmptyWithSeparator">
 				<TabItem.Header>
 					<Button Classes="AddTabItem" Command="{Binding $parent[Window].CreateSessionTabItem}">
 						<Button.ContextMenu>
