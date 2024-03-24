@@ -49,6 +49,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Path = System.IO.Path;
 
 namespace CarinaStudio.ULogViewer.Controls
@@ -2485,7 +2486,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public async Task<bool> DropAsync(KeyModifiers keyModifiers, IDataObject data)
 		{
 			// check data
-			var hasFileNames = Global.RunOrDefault(() => data.HasFileNames()); // [Workaround] Prevent NRE when dragging without files on macOS
+			var hasFileNames = data.HasFileNames();
 			if (!hasFileNames || this.IsHandlingDragAndDrop)
 				return false;
 
@@ -2503,13 +2504,13 @@ namespace CarinaStudio.ULogViewer.Controls
 				// [Workaround] clone data to prevent underlying resource being released later
 				if (data is not DataObject)
 				{
-					var dataObject = new DataObject();
-					foreach (var format in data.GetDataFormats())
+					if (data.TryClone(out var cloneData, out var ex))
+						data = cloneData;
+					else
 					{
-						if (data.TryGetData(format, out object? value) && value != null)
-							dataObject.Set(format, value);
+						Logger.LogError(ex, "Failed to clone data object while dropping data");
+						return false;
 					}
-					data = dataObject;
 				}
 
 				// collect files
@@ -2695,6 +2696,11 @@ namespace CarinaStudio.ULogViewer.Controls
 
 				// complete
 				return true;
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError(ex, "Error occurred while dropping data");
+				return false;
 			}
 			finally
 			{
