@@ -1851,7 +1851,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (logProperty.ForegroundColor == LogPropertyForegroundColor.Level)
 								it.Bind(Avalonia.Controls.TextBlock.ForegroundProperty, new Binding { Path = nameof(DisplayableLog.LevelForegroundBrush) });
 							if (isMultiLineProperty)
-								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, this.GetObservable(MaxDisplayLineCountForEachLogProperty));
+								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
 							it.MaxWidth = itemMaxWidth;
