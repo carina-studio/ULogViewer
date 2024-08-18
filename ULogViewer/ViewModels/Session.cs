@@ -2137,7 +2137,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				: defaultLogsReadingTaskFactory;
 
 			// create log reader
-			var logReader = new LogReader(dataSource, readingTaskFactory).Also(it =>
+			var logReader = new LogReader(this.displayableLogGroup, dataSource, readingTaskFactory).Also(it =>
 			{
 				if (profile.IsContinuousReading)
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;

@@ -55,6 +55,7 @@ namespace CarinaStudio.ULogViewer.Logs
 		readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new();
 		LogReadingPrecondition precondition;
 		bool printTraceLogs;
+		IDisposable? progressiveLogsClearingToken;
 		string? rawLogLevelPropertyName;
 		readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 		readonly TaskFactory readingTaskFactory;
@@ -75,9 +76,10 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// <summary>
 		/// Initialize new <see cref="LogReader"/> instance.
 		/// </summary>
+		/// <param name="group"><see cref="ILogGroup"/> the reader belongs to.</param>
 		/// <param name="dataSource"><see cref="ILogDataSource"/> to read log data from.</param>
 		/// <param name="readingTaskFactory"><see cref="TaskFactory"/> to perform logs reading tasks.</param>
-		public LogReader(ILogDataSource dataSource, TaskFactory readingTaskFactory)
+		public LogReader(ILogGroup? group, ILogDataSource dataSource, TaskFactory readingTaskFactory)
 		{
 			// check thread
 			dataSource.VerifyAccess();
@@ -87,6 +89,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			this.DataSource = dataSource;
 			this.Id = nextId++;
 			this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
+			this.LogGroup = group;
 			this.Logs = new ReadOnlyObservableList<Log>(this.logs);
 			this.printTraceLogs = this.Application.IsDebugMode;
 			this.readingTaskFactory = readingTaskFactory;
@@ -226,10 +229,31 @@ namespace CarinaStudio.ULogViewer.Logs
 
 			// start clearing logs
 			if (progressive)
-				this.clearLogChunkAction.Schedule();
+			{
+				if (this.LogGroup != null)
+				{
+					this.Logger.LogDebug("Schedule progressive logs clearing");
+					this.progressiveLogsClearingToken = this.LogGroup.ScheduleProgressiveLogsRemoving(() =>
+					{
+						if (this.state == LogReaderState.ClearingLogs)
+						{
+							this.Logger.LogDebug("Start progressive logs clearing");
+							this.clearLogChunkAction.Schedule();
+							return true;
+						}
+						return false;
+					});
+				}
+				else
+				{
+					this.Logger.LogDebug("Start progressive logs clearing");
+					this.clearLogChunkAction.Schedule();
+				}
+			}
 			else
 			{
 				this.clearLogChunkAction.Cancel();
+				this.progressiveLogsClearingToken = this.progressiveLogsClearingToken.DisposeAndReturnNull();
 				this.logs.Clear();
 				if (this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
 					this.logs.TrimExcess();
@@ -411,6 +435,12 @@ namespace CarinaStudio.ULogViewer.Logs
 		
 		
 		/// <summary>
+		/// Get <see cref="ILogGroup"/> the reader belongs to.
+		/// </summary>
+		public ILogGroup? LogGroup { get; }
+		
+		
+		/// <summary>
 		/// Get or set mode of matching raw log lines by patterns.
 		/// </summary>
 		public LogPatternMatchingMode LogPatternMatchingMode
@@ -500,7 +530,7 @@ namespace CarinaStudio.ULogViewer.Logs
 				this.VerifyAccess();
 				if (this.state != LogReaderState.Preparing)
 					throw new InvalidOperationException($"Cannot change {nameof(LogLevelMap)} when state is {this.state}.");
-				if (this.logLevelMap.SequenceEqual(value))
+				if (this.logLevelMap.Equals(value))
 					return;
 				this.logLevelMap.Clear();
 				foreach (var pair in value)
@@ -613,6 +643,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			if (this.state != LogReaderState.ClearingLogs)
 				return;
 			this.logsReadingCacheMemorySize = 0;
+			this.progressiveLogsClearingToken = this.progressiveLogsClearingToken.DisposeAndReturnNull();
 			if (this.isRestarting)
 			{
 				this.Logger.LogWarning("Logs cleared, start reading logs");

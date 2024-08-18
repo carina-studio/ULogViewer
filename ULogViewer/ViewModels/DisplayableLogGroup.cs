@@ -24,7 +24,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// <summary>
 	/// Group of <see cref="DisplayableLog"/>.
 	/// </summary>
-	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject
+	partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGroup
 	{
 		/// <summary>
 		/// Maximum number of log reader can be added to each group.
@@ -33,18 +33,37 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		// Control block of log reader.
-		class LogReaderInfo
+		class LogReaderInfo(LogReader reader, byte localId)
 		{
 			// Fields.
 			public int DisplayableLogCount;
-			public readonly byte LocalId;
-			public readonly LogReader LogReader;
+			public readonly byte LocalId = localId;
+			public readonly LogReader LogReader = reader;
+		}
 
-			// Constructor.
-			public LogReaderInfo(LogReader reader, byte localId)
+
+		// Token of progressive logs removing.
+		class ProgressiveLogsRemovingToken(DisplayableLogGroup group, Func<bool> triggerAction): BaseDisposable
+		{
+			// Dispose.
+			protected override void Dispose(bool disposing)
 			{
-				this.LocalId = localId;
-				this.LogReader = reader;
+				if (disposing) 
+					group.CancelProgressiveLogsRemoving(this);
+			}
+			
+			// Whether logs removing was triggered or not.
+			public bool IsTriggered { get; private set; }
+			
+			// Trigger logs removing.
+			public bool Trigger()
+			{
+				if (triggerAction())
+				{
+					IsTriggered = true;
+					return true;
+				}
+				return false;
 			}
 		}
 		
@@ -64,6 +83,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Fields.
+		ProgressiveLogsRemovingToken? activeProgressiveLogsRemovingToken;
 		IList<Regex> activeTextFilters = Array.Empty<Regex>();
 		readonly Dictionary<DisplayableLogAnalysisResultType, IImage> analysisResultIndicatorIcons = new();
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new();
@@ -80,11 +100,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly object memorySizeLock = new();
 		readonly Random random = new();
 		readonly Queue<Color> recentlyUsedColorIndicatorColors = new(RecentlyUsedColorIndicatorColorCount);
+		readonly List<ProgressiveLogsRemovingToken> scheduledProgressiveLogsRemovingTokens = new();
 		int? selectedProcessId;
 		int? selectedThreadId;
 		readonly Stopwatch stopwatch = new();
 		IBrush? textHighlightingBackground;
 		IBrush? textHighlightingForeground;
+		readonly ScheduledAction triggerProgressiveLogsRemovingAction;
 		readonly ScheduledAction updateLevelMapAction;
 		readonly ScheduledAction updateTextHighlightingDefSetAction;
 
@@ -123,6 +145,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.UpdateLevelMapForDisplaying();
 
 			// setup actions
+			this.triggerProgressiveLogsRemovingAction = new(() =>
+			{
+				if (this.activeProgressiveLogsRemovingToken != null)
+					return;
+				while (this.scheduledProgressiveLogsRemovingTokens.IsNotEmpty())
+				{
+					var token = this.scheduledProgressiveLogsRemovingTokens[0];
+					this.scheduledProgressiveLogsRemovingTokens.RemoveAt(0);
+					if (token.Trigger())
+					{
+						this.activeProgressiveLogsRemovingToken = token;
+						this.logger.LogDebug("Progressive logs removing triggered, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
+						break;
+					}
+				}
+				if (this.activeProgressiveLogsRemovingToken == null && this.scheduledProgressiveLogsRemovingTokens.IsEmpty())
+					this.logger.LogDebug("All progressive logs removing completed");
+			});
 			this.updateTextHighlightingDefSetAction = new(() =>
 			{
 				var definitions = this.TextHighlightingDefinitionSet.TokenDefinitions;
@@ -277,6 +317,21 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get <see cref="IULogViewerApplication"/> instance.
 		/// </summary>
 		public IULogViewerApplication Application { get; }
+		
+		
+		// Cancel scheduled or on going progressive logs removing.
+		void CancelProgressiveLogsRemoving(ProgressiveLogsRemovingToken token)
+		{
+			this.VerifyAccess();
+			if (this.activeProgressiveLogsRemovingToken == token)
+			{
+				this.logger.LogDebug("Complete current progressive logs removing");
+				this.activeProgressiveLogsRemovingToken = null;
+				this.triggerProgressiveLogsRemovingAction.Schedule();
+			}
+			else if (this.scheduledProgressiveLogsRemovingTokens.Remove(token))
+				this.logger.LogDebug("Cancel scheduled progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
+		}
 
 
 		// Check state of Extra* log properties.
@@ -802,6 +857,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				log.RemoveAnalysisResults(analyzer);
 				log = log.Next;
 			}
+		}
+		
+		
+		// Schedule progressive logs removing.
+		IDisposable ILogGroup.ScheduleProgressiveLogsRemoving(Func<bool> triggerAction)
+		{
+			this.VerifyAccess();
+			var token = new ProgressiveLogsRemovingToken(this, triggerAction);
+			this.scheduledProgressiveLogsRemovingTokens.Add(token);
+			this.logger.LogDebug("Schedule progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
+			this.triggerProgressiveLogsRemovingAction.Schedule();
+			return token;
 		}
 
 
