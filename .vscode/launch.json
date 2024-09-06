@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/ULogViewer/bin/Debug/net7.0/ULogViewer.dll",
+            "program": "${workspaceFolder}/ULogViewer/bin/Debug/net8.0/ULogViewer.dll",
             "args": [],
             "cwd": "${workspaceFolder}/ULogViewer",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -22,7 +22,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-Windows",
-            "program": "${workspaceFolder}/ULogViewer/bin/Debug-Windows/net7.0-windows10.0.17763.0/ULogViewer.dll",
+            "program": "${workspaceFolder}/ULogViewer/bin/Debug-Windows/net8.0-windows10.0.17763.0/ULogViewer.dll",
             "args": [],
             "cwd": "${workspaceFolder}/ULogViewer",
             "console": "internalConsole",
@@ -33,7 +33,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-macOS-arm64",
-            "program": "${workspaceFolder}/ULogViewer/bin/Debug/net7.0/osx.11.0-arm64/ULogViewer.dll",
+            "program": "${workspaceFolder}/ULogViewer/bin/Debug/net8.0/osx.11.0-arm64/ULogViewer.dll",
             "args": [],
             "cwd": "${workspaceFolder}/ULogViewer",
             "console": "internalConsole",
@@ -44,7 +44,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-TextShellHost",
-            "program": "${workspaceFolder}/TextShellHost/bin/Debug/net7.0/TextShellHost.dll",
+            "program": "${workspaceFolder}/TextShellHost/bin/Debug/net8.0/TextShellHost.dll",
             "args": [
             ],
             "cwd": "${workspaceFolder}/TextShellHost",
