@@ -35,6 +35,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						{
 							return Encoding.GetEncoding(encodingName);
 						}
+						// ReSharper disable once EmptyGeneralCatchClause
 						catch
 						{ }
 					}
@@ -100,7 +101,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 			// get response
 			var uri = options.Uri.AsNonNull();
-			var response = (HttpResponseMessage?)null;
+			HttpResponseMessage? response;
 			try
 			{
 #if DEBUG

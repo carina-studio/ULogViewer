@@ -94,7 +94,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	/// <summary>
 	/// Options to create <see cref="ILogDataSource"/>.
 	/// </summary>
-	public struct LogDataSourceOptions
+	public struct LogDataSourceOptions : IEquatable<LogDataSourceOptions>
 	{
 		// Static fields.
 		static Regex? commandArgPattern;
@@ -193,34 +193,33 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 
 
 		// Check equality.
-		public override bool Equals(object? obj)
-		{
-			if (obj is LogDataSourceOptions options)
-			{
-				return this.Category == options.Category
-					&& this.Command == options.Command
-					&& this.ConnectionString == options.ConnectionString
-					&& this.Encoding == options.Encoding
-					&& this.EnvironmentVariables.Equals(options.EnvironmentVariables)
-					&& this.FileName == options.FileName
-					&& this.FormatJsonData == options.FormatJsonData
-					&& this.FormatXmlData == options.FormatXmlData
-					&& this.IncludeStandardError == options.IncludeStandardError
-					&& Equals(this.IPEndPoint, options.IPEndPoint)
-					&& this.IsResourceOnAzure == options.IsResourceOnAzure
-					&& this.Password == options.Password
-					&& this.ProcessId == options.ProcessId
-					&& this.ProcessName == options.ProcessName
-					&& this.QueryString == options.QueryString
-					&& this.SetupCommands.SequenceEqual(options.SetupCommands)
-					&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
-					&& this.UseTextShell == options.UseTextShell
-					&& this.Uri == options.Uri
-					&& this.UserName == options.UserName
-					&& this.WorkingDirectory == options.WorkingDirectory;
-			}
-			return false;
-		}
+		public bool Equals(LogDataSourceOptions options) =>
+			this.Category == options.Category
+			&& this.Command == options.Command
+			&& this.ConnectionString == options.ConnectionString
+			&& Equals(this.Encoding, options.Encoding)
+			&& this.EnvironmentVariables.Equals(options.EnvironmentVariables)
+			&& this.FileName == options.FileName
+			&& this.FormatJsonData == options.FormatJsonData
+			&& this.FormatXmlData == options.FormatXmlData
+			&& this.IncludeStandardError == options.IncludeStandardError
+			&& Equals(this.IPEndPoint, options.IPEndPoint)
+			&& this.IsResourceOnAzure == options.IsResourceOnAzure
+			&& this.Password == options.Password
+			&& this.ProcessId == options.ProcessId
+			&& this.ProcessName == options.ProcessName
+			&& this.QueryString == options.QueryString
+			&& this.SetupCommands.SequenceEqual(options.SetupCommands)
+			&& this.TeardownCommands.SequenceEqual(options.TeardownCommands)
+			&& this.UseTextShell == options.UseTextShell
+			&& this.Uri == options.Uri
+			&& this.UserName == options.UserName
+			&& this.WorkingDirectory == options.WorkingDirectory;
+		
+		
+		// Check equality.
+		public override bool Equals(object? obj) =>
+			obj is LogDataSourceOptions options && this.Equals(options);
 
 
 		/// <summary>

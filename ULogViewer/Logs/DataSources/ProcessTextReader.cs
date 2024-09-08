@@ -275,6 +275,7 @@ class ProcessTextReader : TextReader
                     }
                 }
             }
+            // ReSharper disable once EmptyGeneralCatchClause
             catch
             { }
 

@@ -1,27 +1,26 @@
 ﻿using System;
 
-namespace CarinaStudio.ULogViewer.Logs
+namespace CarinaStudio.ULogViewer.Logs;
+
+/// <summary>
+/// Encoding of timestamp of log.
+/// </summary>
+enum LogTimestampEncoding
 {
 	/// <summary>
-	/// Encoding of timestamp of log.
+	/// Custom format.
 	/// </summary>
-	enum LogTimestampEncoding
-	{
-		/// <summary>
-		/// Custom format.
-		/// </summary>
-		Custom,
-		/// <summary>
-		/// Unix timestamp.
-		/// </summary>
-		Unix,
-		/// <summary>
-		/// Unix timestamp in milliseconds.
-		/// </summary>
-		UnixMilliseconds,
-		/// <summary>
-		/// Unix timestamp in microseconds.
-		/// </summary>
-		UnixMicroseconds,
-	}
+	Custom,
+	/// <summary>
+	/// Unix timestamp.
+	/// </summary>
+	Unix,
+	/// <summary>
+	/// Unix timestamp in milliseconds.
+	/// </summary>
+	UnixMilliseconds,
+	/// <summary>
+	/// Unix timestamp in microseconds.
+	/// </summary>
+	UnixMicroseconds,
 }

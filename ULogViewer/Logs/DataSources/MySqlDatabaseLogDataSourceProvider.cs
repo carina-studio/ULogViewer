@@ -7,16 +7,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 /// <summary>
 /// Provider for <see cref="MySqlDatabaseLogDataSource"/>.
 /// </summary>
-class MySqlDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
+/// <param name="app">Application.</param>
+class MySqlDatabaseLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceProvider(app)
 {
-    /// <summary>
-    /// Initialize new <see cref="MySqlDatabaseLogDataSourceProvider"/> instance.
-    /// </summary>
-    /// <param name="app">Application.</param>
-    public MySqlDatabaseLogDataSourceProvider(IULogViewerApplication app) : base(app)
-    { }
-
-
     /// <inheritdoc/>
     protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) =>
         new MySqlDatabaseLogDataSource(this, options);
@@ -39,7 +32,7 @@ class MySqlDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+    public override ISet<string> RequiredSourceOptions => new HashSet<string>
     {
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.QueryString),
@@ -47,7 +40,7 @@ class MySqlDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+    public override ISet<string> SupportedSourceOptions => new HashSet<string>
     {
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.IsResourceOnAzure),

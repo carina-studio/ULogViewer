@@ -6,115 +6,105 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarinaStudio.ULogViewer.Logs.DataSources
+namespace CarinaStudio.ULogViewer.Logs.DataSources;
+
+/// <summary>
+/// <see cref="ILogDataSource"/> based-on <see cref="TcpListener"/>.
+/// </summary>
+class TcpServerLogDataSource : BaseLogDataSource
 {
-	/// <summary>
-	/// <see cref="ILogDataSource"/> based-on <see cref="TcpListener"/>.
-	/// </summary>
-	class TcpServerLogDataSource : BaseLogDataSource
+	// Implementation of text reader.
+	class ReaderImpl(TcpServerLogDataSource source, TcpListener listener, Encoding encoding) : TextReader
 	{
-		// Implmentation of text reader.
-		class ReaderImpl : TextReader
+		// Fields.
+		bool isListenerStarted;
+		TextReader? reader;
+		Socket? socket;
+
+		// Dispose.
+		protected override void Dispose(bool disposing)
 		{
-			// Fields.
-			readonly Encoding encoding;
-			bool isListenerStarted;
-			readonly TcpListener listener;
-			TextReader? reader;
-			Socket? socket;
-			readonly TcpServerLogDataSource source;
-
-			// Constructor.
-			public ReaderImpl(TcpServerLogDataSource source, TcpListener listener, Encoding encoding)
+			this.reader = null;
+			if (this.socket != null)
 			{
-				this.encoding = encoding;
-				this.listener = listener;
-				this.source = source;
+				source.Logger.LogWarning($"Close socket");
+				Global.RunWithoutError(this.socket.Close);
 			}
-
-			// Dispose.
-			protected override void Dispose(bool disposing)
+			if (this.isListenerStarted)
 			{
-				this.reader = null;
-				if (this.socket != null)
-				{
-					this.source.Logger.LogWarning($"Close socket");
-					Global.RunWithoutError(this.socket.Close);
-				}
-				if (this.isListenerStarted)
-				{
-					this.source.Logger.LogWarning("Stop listening {localEndpoint}", this.listener.LocalEndpoint);
-					Global.RunWithoutError(this.listener.Stop);
-				}
-				base.Dispose(disposing);
+				// ReSharper disable once ComplexObjectDestructuringProblem
+				source.Logger.LogWarning("Stop listening {localEndpoint}", listener.LocalEndpoint);
+				Global.RunWithoutError(listener.Stop);
 			}
+			base.Dispose(disposing);
+		}
 
-			// Implementations.
-			public override string? ReadLine()
+		// Implementations.
+		public override string? ReadLine()
+		{
+			// wait for client
+			if (!this.isListenerStarted)
 			{
-				// wait for client
-				if (!this.isListenerStarted)
-				{
-					this.source.Logger.LogWarning("Start listening {localEndpoint}", this.listener.LocalEndpoint);
-					this.isListenerStarted = true;
-					try
-					{
-						this.listener.ExclusiveAddressUse = true;
-						this.listener.Start();
-						this.socket = this.listener.AcceptSocket();
-						this.source.Logger.LogWarning("Socket accepted");
-						this.reader = new StreamReader(new NetworkStream(this.socket, false), this.encoding);
-					}
-					catch (Exception ex)
-					{
-						this.source.Logger.LogError(ex, "Failed to listen");
-						return null;
-					}
-				}
-
-				// check state
-				if (this.reader == null)
-					return null;
-
-				// read line
+				// ReSharper disable once ComplexObjectDestructuringProblem
+				source.Logger.LogWarning("Start listening {localEndpoint}", listener.LocalEndpoint);
+				this.isListenerStarted = true;
 				try
 				{
-					return this.reader.ReadLine();
+					listener.ExclusiveAddressUse = true;
+					listener.Start();
+					this.socket = listener.AcceptSocket();
+					source.Logger.LogWarning("Socket accepted");
+					this.reader = new StreamReader(new NetworkStream(this.socket, false), encoding);
 				}
-				catch
+				catch (Exception ex)
 				{
-					if (this.reader == null)
-						return null;
-					throw;
+					source.Logger.LogError(ex, "Failed to listen");
+					return null;
 				}
 			}
+
+			// check state
+			if (this.reader == null)
+				return null;
+
+			// read line
+			try
+			{
+				return this.reader.ReadLine();
+			}
+			catch
+			{
+				if (this.reader == null)
+					return null;
+				throw;
+			}
 		}
-
-
-		/// <summary>
-		/// Initialize new <see cref="TcpServerLogDataSource"/> instance.
-		/// </summary>
-		/// <param name="provider">Provider.</param>
-		/// <param name="options">Options.</param>
-		public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
-		{
-			if (options.IPEndPoint == null)
-				throw new ArgumentException("No IP endpoint specified.");
-		}
-
-
-		// Open reader.
-		protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
-		{
-			var options = this.CreationOptions;
-			var endPoint = options.IPEndPoint.AsNonNull();
-			var listener = new TcpListener(endPoint);
-			return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened, new ReaderImpl(this, listener, options.Encoding ?? Encoding.UTF8)));
-		}
-
-
-		// Prepare.
-		protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => 
-			Task.FromResult(LogDataSourceState.ReadyToOpenReader);
 	}
+
+
+	/// <summary>
+	/// Initialize new <see cref="TcpServerLogDataSource"/> instance.
+	/// </summary>
+	/// <param name="provider">Provider.</param>
+	/// <param name="options">Options.</param>
+	public TcpServerLogDataSource(TcpServerLogDataSourceProvider provider, LogDataSourceOptions options) : base(provider, options)
+	{
+		if (options.IPEndPoint == null)
+			throw new ArgumentException("No IP endpoint specified.");
+	}
+
+
+	// Open reader.
+	protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
+	{
+		var options = this.CreationOptions;
+		var endPoint = options.IPEndPoint.AsNonNull();
+		var listener = new TcpListener(endPoint);
+		return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened, new ReaderImpl(this, listener, options.Encoding ?? Encoding.UTF8)));
+	}
+
+
+	// Prepare.
+	protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => 
+		Task.FromResult(LogDataSourceState.ReadyToOpenReader);
 }

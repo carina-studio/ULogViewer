@@ -18,20 +18,16 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 abstract class DatabaseLogDataSource<TConnection, TDataReader> : BaseLogDataSource where TConnection : DbConnection where TDataReader : DbDataReader
 {
 	// Implementation of reader.
-	class ReaderImpl : TextReader
+	class ReaderImpl(TDataReader reader) : TextReader
 	{
 		// Fields.
-		readonly TDataReader dataReader;
 		int lineIndex;
 		readonly List<string> lines = new();
-
-		// Constructor.
-		public ReaderImpl(TDataReader dataReader) => this.dataReader = dataReader;
 
 		// Dispose.
 		protected override void Dispose(bool disposing)
 		{
-			this.dataReader.Close();
+			reader.Close();
 			base.Dispose(disposing);
 		}
 
@@ -44,7 +40,7 @@ abstract class DatabaseLogDataSource<TConnection, TDataReader> : BaseLogDataSour
 				var lines = this.lines;
 				lines.Clear();
 				this.lineIndex = 0;
-				var dataReader = this.dataReader;
+				var dataReader = reader;
 				if (!dataReader.Read())
 					return null;
 				var columnCount = dataReader.FieldCount;

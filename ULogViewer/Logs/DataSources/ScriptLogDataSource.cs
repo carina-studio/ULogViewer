@@ -32,23 +32,16 @@ class ScriptLogDataSource : BaseLogDataSource, IScriptRunningHost
 
 
     /// <inheritdoc/>
-    protected override void OnReaderClosed()
-    {
-        base.OnReaderClosed();
-    }
-
-
-    /// <inheritdoc/>
     protected override Task<(LogDataSourceState, TextReader?)> OpenReaderCoreAsync(CancellationToken cancellationToken)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
 
     /// <inheritdoc/>
     protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
 

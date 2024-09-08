@@ -39,7 +39,7 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-	public override bool IsProVersionOnly { get => true; }
+	public override bool IsProVersionOnly => true;
 
 
     /// <inheritdoc/>

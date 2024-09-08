@@ -7,16 +7,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 /// <summary>
 /// Provider for <see cref="SqlServerDatabaseLogDataSource"/>.
 /// </summary>
-class SqlServerDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
+/// <param name="app">Application.</param>
+class SqlServerDatabaseLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceProvider(app)
 {
-    /// <summary>
-    /// Initialize new <see cref="SqlServerDatabaseLogDataSourceProvider"/> instance.
-    /// </summary>
-    /// <param name="app">Application.</param>
-    public SqlServerDatabaseLogDataSourceProvider(IULogViewerApplication app) : base(app)
-    { }
-
-
     /// <inheritdoc/>
     protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) =>
         new SqlServerDatabaseLogDataSource(this, options);
@@ -40,7 +33,7 @@ class SqlServerDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+    public override ISet<string> RequiredSourceOptions => new HashSet<string>
     {
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.QueryString),

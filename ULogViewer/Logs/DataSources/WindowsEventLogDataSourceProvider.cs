@@ -1,32 +1,22 @@
 ﻿using CarinaStudio.Collections;
-using System;
 using System.Collections.Generic;
 
-namespace CarinaStudio.ULogViewer.Logs.DataSources
+namespace CarinaStudio.ULogViewer.Logs.DataSources;
+
+/// <summary>
+/// <see cref="ILogDataSourceProvider"/> for <see cref="WindowsEventLogDataSource"/>.
+/// </summary>
+/// <param name="app">Application.</param>
+class WindowsEventLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceProvider(app)
 {
-	/// <summary>
-	/// <see cref="ILogDataSourceProvider"/> for <see cref="WindowsEventLogDataSource"/>.
-	/// </summary>
-	class WindowsEventLogDataSourceProvider : BaseLogDataSourceProvider
+	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new WindowsEventLogDataSource(this, options);
+	public override string Name => "WindowsEventLogs";
+	public override ISet<string> RequiredSourceOptions => new HashSet<string>
 	{
-		/// <summary>
-		/// Initialize new <see cref="WindowsEventLogDataSourceProvider"/> instance.
-		/// </summary>
-		/// <param name="app">Application.</param>
-		public WindowsEventLogDataSourceProvider(IULogViewerApplication app) : base(app)
-		{ }
-
-
-		// Implementations.
-		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new WindowsEventLogDataSource(this, options);
-		public override string Name => "WindowsEventLogs";
-		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
-		{
-			nameof(LogDataSourceOptions.Category),
-		}.AsReadOnly();
-		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
-		{
-			nameof(LogDataSourceOptions.Category),
-		}.AsReadOnly();
-	}
+		nameof(LogDataSourceOptions.Category),
+	}.AsReadOnly();
+	public override ISet<string> SupportedSourceOptions => new HashSet<string>
+	{
+		nameof(LogDataSourceOptions.Category),
+	}.AsReadOnly();
 }

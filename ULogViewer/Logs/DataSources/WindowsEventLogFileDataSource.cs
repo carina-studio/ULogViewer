@@ -14,16 +14,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources;
 class WindowsEventLogFileDataSource : BaseLogDataSource
 {
     // Reader of raw log.
-    class Reader : TextReader
+    class Reader(EventLog eventLog) : TextReader
     {
         // Fields.
-        readonly IEnumerator<EventRecord> eventLogEnumerator;
+        readonly IEnumerator<EventRecord> eventLogEnumerator = eventLog.GetEventRecords().GetEnumerator();
         readonly Queue<string> recordLines = new();
 
-        // Constructor.
-        public Reader(EventLog eventLog) =>
-            this.eventLogEnumerator = eventLog.GetEventRecords().GetEnumerator();
-        
         // Read message from payload.
         static TextReader ReadMessage(string? payload)
         {

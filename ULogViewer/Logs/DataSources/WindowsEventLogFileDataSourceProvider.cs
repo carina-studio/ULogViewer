@@ -3,18 +3,8 @@ using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
-class WindowsEventLogFileDataSourceProvider : BaseLogDataSourceProvider
+class WindowsEventLogFileDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceProvider(app)
 {
-    // Constructor.
-    public WindowsEventLogFileDataSourceProvider(IULogViewerApplication app) : base(app)
-    { 
-        this.SupportedSourceOptions = new HashSet<string>()
-        {
-            nameof(LogDataSourceOptions.FileName),
-        }.AsReadOnly();
-    }
-
-
     /// <inheritdoc/>
     protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) =>
         new WindowsEventLogFileDataSource(this, options);
@@ -29,5 +19,8 @@ class WindowsEventLogFileDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions { get; }
+    public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
+    {
+        nameof(LogDataSourceOptions.FileName),
+    }.AsReadOnly();
 }

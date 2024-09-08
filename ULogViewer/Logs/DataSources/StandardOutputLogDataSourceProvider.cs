@@ -1,40 +1,30 @@
 ﻿using CarinaStudio.Collections;
 using System.Collections.Generic;
 
-namespace CarinaStudio.ULogViewer.Logs.DataSources
+namespace CarinaStudio.ULogViewer.Logs.DataSources;
+
+/// <summary>
+/// <see cref="ILogDataSourceProvider"/> for <see cref="StandardOutputLogDataSource"/>.
+/// </summary>
+/// <param name="app"><see cref="IULogViewerApplication"/>.</param>
+class StandardOutputLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceProvider(app)
 {
-	/// <summary>
-	/// <see cref="ILogDataSourceProvider"/> for <see cref="StandardOutputLogDataSource"/>.
-	/// </summary>
-	class StandardOutputLogDataSourceProvider : BaseLogDataSourceProvider
+	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new StandardOutputLogDataSource(this, options);
+	public override string Name => "StandardOutput";
+	public override ISet<string> RequiredSourceOptions => new HashSet<string>
 	{
-		/// <summary>
-		/// Initialize new <see cref="StandardOutputLogDataSourceProvider"/> instance.
-		/// </summary>
-		/// <param name="app"><see cref="IULogViewerApplication"/>.</param>
-		public StandardOutputLogDataSourceProvider(IULogViewerApplication app) : base(app)
-		{
-		}
-
-
-		// Interface implementations.
-		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new StandardOutputLogDataSource(this, options);
-		public override string Name => "StandardOutput";
-		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
-		{
-			nameof(LogDataSourceOptions.Command),
-		}.AsReadOnly();
-		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
-		{
-			nameof(LogDataSourceOptions.Command),
-			nameof(LogDataSourceOptions.EnvironmentVariables),
-			nameof(LogDataSourceOptions.FormatJsonData),
-			//nameof(LogDataSourceOptions.FormatXmlData),
-			nameof(LogDataSourceOptions.IncludeStandardError),
-			nameof(LogDataSourceOptions.SetupCommands),
-			nameof(LogDataSourceOptions.TeardownCommands),
-			nameof(LogDataSourceOptions.UseTextShell),
-			nameof(LogDataSourceOptions.WorkingDirectory),
-		}.AsReadOnly();
-	}
+		nameof(LogDataSourceOptions.Command),
+	}.AsReadOnly();
+	public override ISet<string> SupportedSourceOptions => new HashSet<string>
+	{
+		nameof(LogDataSourceOptions.Command),
+		nameof(LogDataSourceOptions.EnvironmentVariables),
+		nameof(LogDataSourceOptions.FormatJsonData),
+		//nameof(LogDataSourceOptions.FormatXmlData),
+		nameof(LogDataSourceOptions.IncludeStandardError),
+		nameof(LogDataSourceOptions.SetupCommands),
+		nameof(LogDataSourceOptions.TeardownCommands),
+		nameof(LogDataSourceOptions.UseTextShell),
+		nameof(LogDataSourceOptions.WorkingDirectory),
+	}.AsReadOnly();
 }
