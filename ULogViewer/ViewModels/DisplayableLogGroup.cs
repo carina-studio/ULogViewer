@@ -5,8 +5,10 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
+using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using Microsoft.Extensions.Logging;
@@ -18,6 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -69,11 +72,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		
 		
 		// Constants.
+		const int FileLogsReadingConcurrencyLevel = 1;
 		const int RecentlyUsedColorIndicatorColorCount = 8;
 
 
 		// Static fields.
 		static readonly long BaseMemorySize = Memory.EstimateInstanceSize<DisplayableLogGroup>();
+		static readonly TaskFactory DefaultLogsReadingTaskFactory = new(TaskScheduler.Default);
 		static Regex? ExtraCaptureRegex;
 		static readonly SortedList<uint, DisplayableLogGroup> InstancesById = new();
 		static readonly long LogReaderInfoKeyValuePairMemorySize = Memory.EstimateInstanceSize<KeyValuePair<byte, LogReaderInfo>>();
@@ -89,6 +94,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly Dictionary<string, IBrush> colorIndicatorBrushes = new();
 		Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 		DisplayableLog? displayableLogsHead;
+		TaskFactory? fileLogsReadingTaskFactory;
 		readonly Dictionary<string, IBrush> levelBackgroundBrushes = new();
 		readonly Dictionary<string, IBrush> levelForegroundBrushes = new();
 		readonly ILogger logger;
@@ -440,6 +446,9 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// clear log reader info
 			this.logReaderInfosByLogReader.Clear();
 			this.logReaderInfosByLocalId.Clear();
+			
+			// dispose logs reading task factory
+			(this.fileLogsReadingTaskFactory?.Scheduler as IDisposable)?.Dispose();
 		}
 
 
@@ -869,6 +878,16 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.logger.LogDebug("Schedule progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
 			this.triggerProgressiveLogsRemovingAction.Schedule();
 			return token;
+		}
+
+
+		// Select property task factory for logs reading.
+		public TaskFactory SelectLogsReadingTaskFactory(ILogDataSource source)
+		{
+			this.VerifyAccess();
+			return source.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
+				? fileLogsReadingTaskFactory ?? new TaskFactory(new FixedThreadsTaskScheduler(FileLogsReadingConcurrencyLevel)).Also(it => this.fileLogsReadingTaskFactory = it)
+				: DefaultLogsReadingTaskFactory;
 		}
 
 

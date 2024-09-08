@@ -456,13 +456,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			/// <summary>
 			/// Command to execute.
 			/// </summary>
-			public string? Command { get; set; }
+			public string? Command { get; init; }
 			
 			
 			/// <summary>
 			/// Whether text-shell should be used to execute command or not.
 			/// </summary>
-			public bool? UseTextShell { get; set; }
+			public bool? UseTextShell { get; init; }
 		}
 
 
@@ -599,14 +599,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int DisplayableLogDisposingChunkSize = 65536;
 		const int DelaySaveMarkedLogs = 1000;
 		const int DisposeDisplayableLogsInterval = 100;
-		const int FileLogsReadingConcurrencyLevel = 1;
 		const int LogsTimeInfoReportingInterval = 500;
 
 
 		// Static fields.
 		static readonly LinkedList<Session> activationHistoryList = new();
 		static readonly SettingKey<bool> areAllPanelsHiddenKey = new("Session.AreAllPanelsHidden", false);
-		static readonly TaskFactory defaultLogsReadingTaskFactory = new(TaskScheduler.Default);
 		static readonly List<DisplayableLog> displayableLogsToDispose = new();
 		static readonly ScheduledAction disposeDisplayableLogsAction = new(App.Current, () =>
 		{
@@ -687,43 +685,34 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Activation token.
-		class ActivationToken : IDisposable
+		class ActivationToken(Session session) : IDisposable
 		{
-			readonly Session session;
-			public ActivationToken(Session session) => this.session = session;
-			public void Dispose() => this.session.Deactivate(this);
+			public void Dispose() => session.Deactivate(this);
 		}
 
 
 		// Implementation of ISessionInternalAccessor.
-		class InternalAccessorImpl : ISessionInternalAccessor
+		class InternalAccessorImpl(Session session) : ISessionInternalAccessor
 		{
-			// Fields.
-			readonly Session session;
-
-			// Constructor.
-			public InternalAccessorImpl(Session session) =>
-				this.session = session;
-			
 			/// <inheritdoc/>
 			public DisplayableLogGroup? DisplayableLogGroup =>
-				this.session.displayableLogGroup;
+				session.displayableLogGroup;
 			
 			/// <inheritdoc/>
 			public event EventHandler? DisplayableLogGroupCreated
 			{
-				add => this.session.DisplayableLogGroupCreated += value;
-				remove => this.session.DisplayableLogGroupCreated -= value;
+				add => session.DisplayableLogGroupCreated += value;
+				remove => session.DisplayableLogGroupCreated -= value;
 			}
 
 			/// <inheritdoc/>
 			public MemoryUsagePolicy MemoryUsagePolicy =>
-				this.session.memoryUsagePolicy;
+				session.memoryUsagePolicy;
 		}
 
 
 		// Implementation of LogFileInfo.
-		class LogFileInfoImpl : LogFileInfo
+		class LogFileInfoImpl(Session session, string fileName, LogReadingPrecondition precondition, LogReadingWindow? readingWindow, int? maxLogReadingCount, bool isPredefined = false) : LogFileInfo(fileName)
 		{
 			// Fields.
 			bool hasError;
@@ -731,23 +720,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			bool isReadingLogs = true;
 			bool isRemoving;
 			int logCount;
-			int? maxLogReadingCount;
-			LogReadingPrecondition readingPrecondition;
-			LogReadingWindow? readingWindow;
-			readonly Session session;
-
-			// Constructor.
-			public LogFileInfoImpl(Session session, string fileName, LogReadingPrecondition precondition, LogReadingWindow? readingWindow, int? maxLogReadingCount, bool isPredefined = false) : base(fileName)
-			{ 
-				this.IsPredefined = isPredefined;
-				this.maxLogReadingCount = maxLogReadingCount;
-				this.readingPrecondition = precondition;
-				this.readingWindow = readingWindow;
-				this.session = session;
-			}
+			int? maxLogReadingCount = maxLogReadingCount;
+			LogReadingPrecondition readingPrecondition = precondition;
+			LogReadingWindow? readingWindow = readingWindow;
 
 			// Color indicator brush.
-			public override IBrush? ColorIndicatorBrush => this.session.displayableLogGroup?.GetColorIndicatorBrush(this.FileName);
+			public override IBrush? ColorIndicatorBrush => session.displayableLogGroup?.GetColorIndicatorBrush(this.FileName);
 
 			// Has error.
 			public override bool HasError => this.hasError;
@@ -756,7 +734,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			public override bool IsLogsReadingCompleted => this.isLogsReadingCompleted;
 
 			// Is predefined.
-			public override bool IsPredefined { get; }
+			public override bool IsPredefined { get; } = isPredefined;
 
 			// Is reading logs.
 			public override bool IsReadingLogs => this.isReadingLogs;
@@ -867,19 +845,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		// Class for marked log info.
-		class MarkedLogInfo
+		class MarkedLogInfo(string fileName, int lineNumber, DateTime? timestamp, MarkColor color)
 		{
-			public readonly MarkColor Color;
-			public readonly string FileName;
-			public readonly int LineNumber;
-			public readonly DateTime? Timestamp;
-			public MarkedLogInfo(string fileName, int lineNumber, DateTime? timestamp, MarkColor color)
-			{
-				this.Color = color;
-				this.FileName = fileName;
-				this.LineNumber = lineNumber;
-				this.Timestamp = timestamp;
-			}
+			public readonly MarkColor Color = color;
+			public readonly string FileName = fileName;
+			public readonly int LineNumber = lineNumber;
+			public readonly DateTime? Timestamp = timestamp;
 		}
 
 
@@ -912,7 +883,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		readonly ScheduledAction checkLogsMemoryUsageAction;
 		Comparison<DisplayableLog?> compareDisplayableLogsDelegate;
 		DisplayableLogGroup? displayableLogGroup;
-		TaskFactory? fileLogsReadingTaskFactory;
 		bool hasLogDataSourceCreationFailure;
 		bool isInitLogProfile;
 		bool isRestoringState;
@@ -1186,8 +1156,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							}
 							else
 							{
-								this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString());
-								this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString());
+								this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(Application.CultureInfo));
+								this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(Application.CultureInfo));
 							}
 						}
 						else if (minTimeSpan is not null && maxTimeSpan is not null)
@@ -2131,13 +2101,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				this.DisplayableLogGroupCreated?.Invoke(this, EventArgs.Empty);
 			}
 
-			// select logs reading task factory
-			var readingTaskFactory = dataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName))
-				? (fileLogsReadingTaskFactory ?? new TaskFactory(new FixedThreadsTaskScheduler(FileLogsReadingConcurrencyLevel)).Also(it => this.fileLogsReadingTaskFactory = it))
-				: defaultLogsReadingTaskFactory;
-
 			// create log reader
-			var logReader = new LogReader(this.displayableLogGroup, dataSource, readingTaskFactory).Also(it =>
+			var logReader = new LogReader(this.displayableLogGroup, dataSource).Also(it =>
 			{
 				if (profile.IsContinuousReading)
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
@@ -2394,9 +2359,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// stop watches
 			this.logsReadingWatch.Stop();
-
-			// dispose task factories
-			(this.fileLogsReadingTaskFactory?.Scheduler as IDisposable)?.Dispose();
 
 			// remove from activation history
 			if (this.activationHistoryListNode.List is not null)
@@ -3541,7 +3503,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when property of log profile changed.
 		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (sender != this.LogProfile)
+			if (!ReferenceEquals(sender, this.LogProfile))
 				return;
 			switch (e.PropertyName)
 			{
