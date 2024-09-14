@@ -18,6 +18,7 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 {
 	// Fields.
 	string? groupName;
+	PredefinedLogTextFilterMode mode;
 	Regex? regex;
 	bool? saveWithGroupName;
 
@@ -86,6 +87,7 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 		profile is PredefinedLogTextFilter filter
 		&& filter.Name == this.Name
 		&& filter.groupName == this.groupName
+		&& filter.mode == this.mode
 		&& filter.Regex.ToString() == this.Regex.ToString()
 		&& filter.Regex.Options == this.Regex.Options;
 
@@ -147,6 +149,23 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 
 
 	/// <summary>
+	/// Mode to apply the filter.
+	/// </summary>
+	public PredefinedLogTextFilterMode Mode
+	{
+		get => this.mode;
+		set
+		{
+			this.VerifyAccess();
+			if (this.mode == value)
+				return;
+			this.mode = value;
+			this.OnPropertyChanged(nameof(Mode));
+		}
+	}
+
+
+	/// <summary>
 	/// Get or set <see cref="Regex"/> to filter log text.
 	/// </summary>
 	public Regex Regex
@@ -169,6 +188,14 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 		// name
 		this.Name = element.GetProperty(nameof(Name)).GetString();
 		
+		// mode
+		if (element.TryGetProperty(nameof(Mode), out var jsonProperty) 
+		    && jsonProperty.ValueKind == JsonValueKind.String 
+		    && Enum.TryParse(jsonProperty.GetString(), out PredefinedLogTextFilterMode mode))
+		{
+			this.mode = mode;
+		}
+
 		// regex
 		var ignoreCase = false;
 		if (element.TryGetProperty("IgnoreCase", out var jsonValue))
@@ -179,7 +206,7 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 		this.regex = new Regex(element.GetProperty(nameof(Regex)).GetString().AsNonNull(), options);
 		
 		// group name
-		var groupName = element.TryGetProperty(nameof(GroupName), out var jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
+		var groupName = element.TryGetProperty(nameof(GroupName), out jsonProperty) && jsonProperty.ValueKind == JsonValueKind.String
 			? jsonProperty.GetString()?.Let(it => string.IsNullOrWhiteSpace(it) ? null : it)
 			: null;
 		this.groupName = CorrectGroupName(groupName, out var isGroupNameCorrected);
@@ -198,6 +225,8 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 			writer.WriteString(nameof(Id), this.Id);
 		if (this.saveWithGroupName != false && this.groupName is not null)
 			writer.WriteString(nameof(GroupName), this.groupName);
+		if (this.mode != default)
+			writer.WriteString(nameof(Mode), this.mode.ToString());
 		this.regex?.Let(it =>
 		{
 			if ((it.Options & RegexOptions.IgnoreCase) != 0)
@@ -229,4 +258,20 @@ class PredefinedLogTextFilter : BaseProfile<IULogViewerApplication>
 			this.saveWithGroupName = null;
 		}
 	}
+}
+
+
+/// <summary>
+/// Mode to apply <see cref="PredefinedLogTextFilter"/>.
+/// </summary>
+enum PredefinedLogTextFilterMode
+{
+	/// <summary>
+	/// Logs matched by the filter should be included.
+	/// </summary>
+	Inclusion,
+	/// <summary>
+	/// Logs matched by the filter should be excluded.
+	/// </summary>
+	Exclusion,
 }

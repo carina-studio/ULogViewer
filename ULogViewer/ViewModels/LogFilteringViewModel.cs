@@ -1,3 +1,4 @@
+using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -386,9 +387,8 @@ class LogFilteringViewModel : SessionComponent
         this.logFilter.CombinationMode = this.GetValue(FiltersCombinationModeProperty);
 
         // setup text regex
-        var textRegexList = new List<Regex>();
-        var exclusionRegexList = new List<Regex>();
-        
+        var inclusionTextRegexList = new List<Regex>();
+        var exclusionTextRegexList = new List<Regex>();
         var textFilter = this.TextFilter;
         if (textFilter is not null)
         {
@@ -411,27 +411,27 @@ class LogFilteringViewModel : SessionComponent
                     this.commitFiltersAction.Cancel();
                 }
             }
-            textRegexList.Add(textFilter);
+            inclusionTextRegexList.Add(textFilter);
         }
 
         // In the predefinedTextFilters, look for those with name starting with '!'
         // These will be treated as exclude filters rather than include filters
         foreach (var filter in this.predefinedTextFilters)
         {
-            if ((filter.Name ?? "").StartsWith("!"))
+            switch (filter.Mode)
             {
-                exclusionRegexList.Add(filter.Regex);
-            } 
-            else
-            {
-                textRegexList.Add(filter.Regex);
+                case PredefinedLogTextFilterMode.Exclusion:
+                    exclusionTextRegexList.Add(filter.Regex);
+                    break;
+                case PredefinedLogTextFilterMode.Inclusion:
+                    inclusionTextRegexList.Add(filter.Regex);
+                    break;
             }
         }
-        this.logFilter.TextRegexList = textRegexList;
-        this.logFilter.ExclusionTextRegexList = exclusionRegexList;
-
+        this.logFilter.InclusiveTextRegexList = inclusionTextRegexList;
+        this.logFilter.ExclusiveTextRegexList = exclusionTextRegexList;
         this.DisplayableLogGroup?.Let(it =>
-            it.ActiveTextFilters = textRegexList); //leave exclusionary filters out of this
+            it.ActiveInclusiveTextFilters = inclusionTextRegexList); // leave exclusionary filters out of this
 
         // print log
         if (this.Application.IsDebugMode)
@@ -440,8 +440,8 @@ class LogFilteringViewModel : SessionComponent
             this.Logger.LogDebug("  Level: {level}", this.logFilter.Level);
             this.Logger.LogDebug("  PID: {pid}", this.logFilter.ProcessId.Let(pid => pid.HasValue ? pid.ToString() : "Null"));
             this.Logger.LogDebug("  TID: {tid}", this.logFilter.ThreadId.Let(tid => tid.HasValue ? tid.ToString() : "Null"));
-            this.Logger.LogDebug("  Text inclusion filters: {textRegexListCount}", textRegexList.Count);
-            this.Logger.LogDebug("  Text exclusion filters: {exclRegexListCount}", exclusionRegexList.Count);
+            this.Logger.LogDebug("  Text inclusion filters: {textRegexListCount}", inclusionTextRegexList.Count);
+            this.Logger.LogDebug("  Text exclusion filters: {exclRegexListCount}", exclusionTextRegexList.Count);
         }
 
         // cancel temporarily shown logs
@@ -854,7 +854,7 @@ class LogFilteringViewModel : SessionComponent
         base.OnDisplayableLogGroupCreated();
         this.DisplayableLogGroup?.Let(it =>
         {
-            it.ActiveTextFilters = this.logFilter.TextRegexList;
+            it.ActiveInclusiveTextFilters = this.logFilter.InclusiveTextRegexList;
         });
     }
 
@@ -938,6 +938,7 @@ class LogFilteringViewModel : SessionComponent
         switch (e.PropertyName)
         {
             case nameof(PredefinedLogTextFilter.Regex):
+            case nameof(PredefinedLogTextFilter.Mode):
                 this.commitFiltersAction.Reschedule();
                 break;
         }

@@ -8,17 +8,20 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.VisualTree;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +36,7 @@ partial class SessionView
     /// </summary>
     public static readonly IValueConverter LogFilterCombinationModeIconConverter = new FuncValueConverter<FilterCombinationMode, Geometry?>(mode =>
     {
-        var app = App.CurrentOrNull;
+        var app = IAppSuiteApplication.CurrentOrNull;
         return mode switch
         {
             FilterCombinationMode.Intersection => app?.FindResourceOrDefault<Geometry>("Geometry/Intersection"),
@@ -41,25 +44,42 @@ partial class SessionView
             _ => app?.FindResourceOrDefault<Geometry>("Geometry/FilterCombinationMode.Auto"),
         };
     });
+
+
+    /// <summary>
+    /// <see cref="IValueConverter"/> to convert from <see cref="PredefinedLogTextFilterMode"/> to <see cref="IImage"/>.
+    /// </summary>
+    public static readonly IValueConverter PredefinedLogTextFilterIconConverter = new PredefinedLogTextFilterIconConverterImpl();
     
     
     // Provider of log text filter phrase input assistance.
-    class LogTextFilterPhraseInputAssistanceProvider : IPhraseInputAssistanceProvider
+    class LogTextFilterPhraseInputAssistanceProvider(SessionView sessionView) : IPhraseInputAssistanceProvider
     {
-        // Fields.
-        readonly SessionView sessionView;
-        
-        // Constructor.
-        public LogTextFilterPhraseInputAssistanceProvider(SessionView sessionView) =>
-            this.sessionView = sessionView;
-        
         /// <inheritdoc/>
         public Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken)
         {
-            if (this.sessionView.DataContext is not Session session)
+            if (sessionView.DataContext is not Session session)
                 return Task.FromResult<IList<string>>(Array.Empty<string>());
             return session.LogFiltering.SelectCandidateTextFilterPhrasesAsync(prefix, postfix, cancellationToken);
         }
+    }
+    
+    
+    // Implementation of converter to convert from PredefinedLogTextFilterMode to IImage.
+    class PredefinedLogTextFilterIconConverterImpl: BaseValueConverter<PredefinedLogTextFilterMode, IImage?>
+    {
+        protected override IImage? Convert(PredefinedLogTextFilterMode value, object? parameter, CultureInfo culture) =>
+            IAppSuiteApplication.CurrentOrNull?.FindResourceOrDefault<IImage>(
+            value switch
+            {
+                PredefinedLogTextFilterMode.Exclusion => (parameter as string) == "Selected"
+                    ? "Image/Filter.Exclusion.Outline.Light"
+                    : "Image/Filter.Exclusion.Outline",
+                PredefinedLogTextFilterMode.Inclusion => (parameter as string) == "Selected"
+                    ? "Image/Filter.Inclusion.Outline.Light"
+                    : "Image/Filter.Inclusion.Outline",
+                _ => "",
+            });
     }
     
     

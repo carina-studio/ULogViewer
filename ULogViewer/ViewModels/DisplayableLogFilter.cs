@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Text;
-using Avalonia.Controls.Templates;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -22,18 +21,18 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     public class FilteringToken
     {
         public FilterCombinationMode CombinationMode;
+        public Regex[] ExclusiveTextRegexList = [];
         public bool HasLogProcessId;
         public bool HasLogTextPropertyGetter;
         public bool HasLogThreadId;
         public bool HasTextRegex;
         public bool IncludeMarkedLogs;
+        public Regex[] InclusiveTextRegexList = [];
         public volatile bool IsTextRegexListReady;
         public LogLevel Level;
         public IList<Func<DisplayableLog, IStringSource?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, IStringSource?>>();
         public int? ProcessId;
         public int? ThreadId;
-        public Regex[] TextRegexList = Array.Empty<Regex>();
-        public Regex[] ExclusionaryTextRegexList = Array.Empty<Regex>();
     }
 
 
@@ -44,13 +43,13 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
     // Fields.
     FilterCombinationMode combinationMode = FilterCombinationMode.Auto;
+    IList<Regex> exclusiveTextRegexList = Array.Empty<Regex>();
     readonly SortedObservableList<DisplayableLog> filteredLogs;
     IList<DisplayableLogProperty> filteringLogProperties = Array.Empty<DisplayableLogProperty>();
     bool includeMarkedLogs = true;
+    IList<Regex> inclusiveTextRegexList = Array.Empty<Regex>();
     LogLevel level = LogLevel.Undefined;
     int? processId;
-    IList<Regex> textRegexList = Array.Empty<Regex>();
-    IList<Regex> exclusionRegexList = Array.Empty<Regex>();
     int? threadId;
     
 
@@ -68,7 +67,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
 
     /// <summary>
-    /// Get or set mode to combine condition of <see cref="TextRegexList"/> and other conditions excluding <see cref="IncludeMarkedLogs"/>.
+    /// Get or set mode to combine condition of <see cref="InclusiveTextRegexList"/>/<see cref="ExclusiveTextRegexList"/> and other conditions excluding <see cref="IncludeMarkedLogs"/>.
     /// </summary>
     public FilterCombinationMode CombinationMode
     {
@@ -108,9 +107,9 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         }
         if (isProcessingNeeded)
         {
-            if (this.textRegexList.IsNotEmpty() || this.exclusionRegexList.IsNotEmpty())
+            if (this.inclusiveTextRegexList.IsNotEmpty() || this.exclusiveTextRegexList.IsNotEmpty())
             {
-                foreach (var regex in this.textRegexList)
+                foreach (var regex in this.inclusiveTextRegexList)
                 {
                     if (Utility.IsAllMatchingRegex(regex))
                     {
@@ -118,7 +117,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                         break;
                     }
                 }
-                foreach (var regex in this.exclusionRegexList)
+                foreach (var regex in this.exclusiveTextRegexList)
                 {
                     if (Utility.IsAllMatchingRegex(regex))
                     {
@@ -149,22 +148,41 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         {
             if (it != FilterCombinationMode.Auto)
                 return it;
-            if (textRegexList.IsEmpty())
+            if (this.inclusiveTextRegexList.IsEmpty())
                 return FilterCombinationMode.Intersection;
             if (this.processId.HasValue || this.threadId.HasValue)
                 return FilterCombinationMode.Union;
             return FilterCombinationMode.Intersection;
         });
         filteringToken.HasLogTextPropertyGetter = textPropertyGetters.IsNotEmpty();
-        filteringToken.HasTextRegex = this.textRegexList.IsNotEmpty() || this.exclusionRegexList.IsNotEmpty();
+        filteringToken.HasTextRegex = this.inclusiveTextRegexList.IsNotEmpty() || this.exclusiveTextRegexList.IsNotEmpty();
         filteringToken.IncludeMarkedLogs = this.includeMarkedLogs;
         filteringToken.Level = this.level;
         filteringToken.LogTextPropertyGetters = textPropertyGetters;
         filteringToken.ProcessId = this.processId;
-        filteringToken.TextRegexList = this.textRegexList.ToArray();
-        filteringToken.ExclusionaryTextRegexList = this.exclusionRegexList.ToArray();
+        filteringToken.InclusiveTextRegexList = this.inclusiveTextRegexList.ToArray();
+        filteringToken.ExclusiveTextRegexList = this.exclusiveTextRegexList.ToArray();
         filteringToken.ThreadId = this.threadId;
         return filteringToken;
+    }
+    
+    
+    /// <summary>
+    /// Get or set list of <see cref="Regex"/> to filter (exclusionary) text properties.
+    /// </summary>
+    public IList<Regex> ExclusiveTextRegexList
+    {
+        get => this.exclusiveTextRegexList;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.exclusiveTextRegexList.SequenceEqual(value))
+                return;
+            this.exclusiveTextRegexList = new List<Regex>(value).AsReadOnly();
+            this.InvalidateProcessing();
+            this.OnPropertyChanged(nameof(ExclusiveTextRegexList));
+        }
     }
 
 
@@ -209,6 +227,25 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.includeMarkedLogs = value;
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(IncludeMarkedLogs));
+        }
+    }
+    
+    
+    /// <summary>
+    /// Get or set list of <see cref="Regex"/> to filter (inclusionary) text properties.
+    /// </summary>
+    public IList<Regex> InclusiveTextRegexList
+    {
+        get => this.inclusiveTextRegexList;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.inclusiveTextRegexList.SequenceEqual(value))
+                return;
+            this.inclusiveTextRegexList = new List<Regex>(value).AsReadOnly();
+            this.InvalidateProcessing();
+            this.OnPropertyChanged(nameof(this.InclusiveTextRegexList));
         }
     }
 
@@ -299,22 +336,20 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         // In such cases we treat everything as included by default unless an exlusion pattern says otherwise.
         var isTextFilteringNeeded = (token.HasTextRegex && token.HasLogTextPropertyGetter);
         var isTextRegexMatched = false;
-        var isLogExcluded = false;
         if (isTextFilteringNeeded)
         {
-            // Inclusionary regexes
-            var textRegexList = token.TextRegexList;
-            var textRegexCount = textRegexList.Length;
-            if (textRegexCount == 0)
+            // Inclusion regexes
+            var inclusiveTextRegexList = token.InclusiveTextRegexList;
+            var inclusiveTextRegexCount = inclusiveTextRegexList.Length;
+            if (inclusiveTextRegexCount == 0)
             {
                 // when there are no inclusionary regexes, treat everything as accepted by default. 
                 isTextRegexMatched = true;
-                isLogExcluded = false;
             }
 
             // Exclusionary regexes
-            var exclusionaryRegexList = token.ExclusionaryTextRegexList;
-            var exclusionaryRegexCount = exclusionaryRegexList.Length;
+            var exclusiveTextRegexList = token.ExclusiveTextRegexList;
+            var exclusiveTextRegexCount = exclusiveTextRegexList.Length;
             
             // Optionally compile all regexes
             if (!token.IsTextRegexListReady)
@@ -325,17 +360,17 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                     {
                         if (this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex))
                         {
-                            for (var i = textRegexCount - 1; i >= 0 ; --i)
+                            for (var i = inclusiveTextRegexCount - 1; i >= 0 ; --i)
                             {
-                                var regex = textRegexList[i];
+                                var regex = inclusiveTextRegexList[i];
                                 if ((regex.Options & RegexOptions.Compiled) == 0)
-                                    textRegexList[i] = new(regex.ToString(), regex.Options | RegexOptions.Compiled);
+                                    inclusiveTextRegexList[i] = new(regex.ToString(), regex.Options | RegexOptions.Compiled);
                             }
-                            for (var i = exclusionaryRegexCount - 1; i >= 0 ; --i)
+                            for (var i = exclusiveTextRegexCount - 1; i >= 0 ; --i)
                             {
-                                var regex = exclusionaryRegexList[i];
+                                var regex = exclusiveTextRegexList[i];
                                 if ((regex.Options & RegexOptions.Compiled) == 0)
-                                    exclusionaryRegexList[i] = new(regex.ToString(), regex.Options | RegexOptions.Compiled);
+                                    exclusiveTextRegexList[i] = new(regex.ToString(), regex.Options | RegexOptions.Compiled);
                             }
                         }
                         token.IsTextRegexListReady = true;
@@ -380,9 +415,9 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             }
 
             // Perform inclusionary testing of this log line. If any regex matches this log is included.
-            for (var j = textRegexCount - 1; j >= 0; --j)
+            for (var j = inclusiveTextRegexCount - 1; j >= 0; --j)
             {
-                var e = textRegexList[j].EnumerateMatches(textSpanToMatch[0..textBufferLength]);
+                var e = inclusiveTextRegexList[j].EnumerateMatches(textSpanToMatch[..textBufferLength]);
                 if (e.MoveNext())
                 {
                     isTextRegexMatched = true;
@@ -391,27 +426,19 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             }
             // Perform exclusionary testing of this log line. If any of these regex patterns match this log is excluded.
             // Any potential match must pass ALL the exclusion test(s). To 'pass' an exclusion test means it doesnt match an exclusion pattern.
-            if (isTextRegexMatched && exclusionaryRegexCount > 0) 
+            if (isTextRegexMatched && exclusiveTextRegexCount > 0) 
             {
-                for (var j = exclusionaryRegexCount - 1; j >= 0; --j)
+                for (var j = exclusiveTextRegexCount - 1; j >= 0; --j)
                 {
-                    var e = exclusionaryRegexList[j].EnumerateMatches(textSpanToMatch[0..textBufferLength]);
+                    var e = exclusiveTextRegexList[j].EnumerateMatches(textSpanToMatch[..textBufferLength]);
                     if (e.MoveNext()) 
                     {
                         // only takes 1 exclusion pattern match to disqualify a log.
-                        isLogExcluded = true;
-                        break;
-                    }
-                    else
-                    {
-                        isLogExcluded = false;                        
-                    }                         
+                        return false;
+                    }                     
                 }                                  
             }            
         }
-        if (isLogExcluded)
-            return false;
-
         if (isTextRegexMatched && isTextFilteringNeeded && token.CombinationMode == FilterCombinationMode.Union)
             return true;
 
@@ -458,44 +485,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.OnPropertyChanged(nameof(ProcessId));
         }
     }
-
-
-    /// <summary>
-    /// Get or set list of <see cref="Regex"/> to filter(include) text properties.
-    /// </summary>
-    public IList<Regex> TextRegexList
-    {
-        get => this.textRegexList;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyDisposed();
-            if (this.textRegexList.SequenceEqual(value))
-                return;
-            this.textRegexList = new List<Regex>(value).AsReadOnly();
-            this.InvalidateProcessing();
-            this.OnPropertyChanged(nameof(TextRegexList));
-        }
-    }
-
     
-    /// <summary>
-    /// Get or set list of <see cref="Regex"/> to filter(exclude) text properties.
-    /// </summary>
-    public IList<Regex> ExclusionTextRegexList
-    {
-        get => this.exclusionRegexList;
-        set
-        {
-            this.VerifyAccess();
-            this.VerifyDisposed();
-            if (this.exclusionRegexList.SequenceEqual(value))
-                return;
-            this.exclusionRegexList = new List<Regex>(value).AsReadOnly();
-            this.InvalidateProcessing();
-            this.OnPropertyChanged(nameof(ExclusionTextRegexList));
-        }
-    }
 
     /// <summary>
     /// Get or set thread ID of log to filter.

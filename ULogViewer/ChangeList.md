@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+ 
++ Support setting text filter as ```exclusionary``` to filter logs **without** text matched by the pattern.
 
 ## Improvement
 +
