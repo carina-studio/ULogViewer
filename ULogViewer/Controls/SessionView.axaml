@@ -864,17 +864,16 @@
 																			</Button>
 																		</Grid>
 																	</Expander.Header>
-																	<ListBox Name="textFilterListBox" Classes="Dialog_Item_ListBox" ItemsSource="{Binding Filters}" SelectionMode="Multiple">
-																		<ListBox.ItemsPanel>
-																			<ItemsPanelTemplate>
-																				<StackPanel/>
-																			</ItemsPanelTemplate>
-																		</ListBox.ItemsPanel>
-																	</ListBox>
+																	<ListBox Name="textFilterListBox" ItemsSource="{Binding Filters}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" SelectionMode="Multiple"/>
 																</Expander>
 															</DataTemplate>
 														</StackPanel.DataTemplates>
 														<StackPanel.Styles>
+															<Style Selector="ListBox">
+																<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+																<Setter Property="BorderThickness" Value="0"/>
+																<Setter Property="Padding" Value="0"/>
+															</Style>
 															<Style Selector="ListBoxItem">
 																<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 																<Setter Property="Padding" Value="0"/>
@@ -894,13 +893,7 @@
 															</asControls:GroupBox.Header>
 														</asControls:GroupBox>
 														<Border ClipToBounds="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
-															<ListBox Name="predefinedLogTextFilterListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" SelectionMode="Multiple">
-																<ListBox.ItemsPanel>
-																	<ItemsPanelTemplate>
-																		<StackPanel/>
-																	</ItemsPanelTemplate>
-																</ListBox.ItemsPanel>
-															</ListBox>
+															<ListBox Name="predefinedLogTextFilterListBox" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" SelectionMode="Multiple"/>
 														</Border>
 													</StackPanel>
 												</ScrollViewer>
