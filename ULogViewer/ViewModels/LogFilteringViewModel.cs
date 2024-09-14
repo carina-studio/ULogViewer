@@ -124,6 +124,7 @@ class LogFilteringViewModel : SessionComponent
 
 
     // Fields.
+    readonly HashSet<PredefinedLogTextFilter> attachedPredefinedLogTextFilters = new();
     readonly MutableObservableBoolean canClearGlobalTextFilterHistory = new();
     readonly MutableObservableBoolean canClearPredefinedTextFilters = new();
     readonly MutableObservableBoolean canFilterBySelectedPid = new();
@@ -171,23 +172,7 @@ class LogFilteringViewModel : SessionComponent
         // create collection
         this.predefinedTextFilters = new ObservableList<PredefinedLogTextFilter>().Also(it =>
         {
-            it.CollectionChanged += (_, _) =>
-            {
-                if (this.IsDisposed)
-                    return;
-                this.canClearPredefinedTextFilters.Update(it.IsNotEmpty());
-                this.commitFiltersAction?.Reschedule();
-                if (it.IsNotEmpty())
-                {
-                    this.Logger.LogTrace("Clear predefined text filters");
-                    this.canResetFilters.Update(true);
-                }
-                else
-                {
-                    this.Logger.LogTrace("Change predefined text filters: {filterCount}", it.Count);
-                    this.UpdateCanResetFilters();
-                }
-            };
+            it.CollectionChanged += this.OnPredefinedTextFiltersChanged;
         });
         this.TextFilterHistory = this.textFilterHistory.Also(it =>
         {
@@ -319,6 +304,15 @@ class LogFilteringViewModel : SessionComponent
     // Add text filter to global history.
     void AddToGlobalTextFilterHistory(string? pattern)
     { }
+    
+    
+    // Attach to given predefined log text filter.
+    void AttachToPredefinedLogTextFilter(PredefinedLogTextFilter filter)
+    {
+        if (!this.attachedPredefinedLogTextFilters.Add(filter))
+            return;
+        filter.PropertyChanged += this.OnPredefinedLogTextFilterPropertyChanged;
+    }
 
 
     // Update state by checking visible log properties.
@@ -439,6 +433,15 @@ class LogFilteringViewModel : SessionComponent
         // raise event
         this.FiltersApplied?.Invoke(this, EventArgs.Empty);
     }
+    
+    
+    // Detach from given predefined log text filter.
+    void DetachFromPredefinedLogTextFilter(PredefinedLogTextFilter filter)
+    {
+        if (!this.attachedPredefinedLogTextFilters.Remove(filter))
+            return;
+        filter.PropertyChanged -= this.OnPredefinedLogTextFilterPropertyChanged;
+    }
 
 
     /// <inheritdoc/>
@@ -450,6 +453,13 @@ class LogFilteringViewModel : SessionComponent
 
         // stop watch
         this.logFilteringWatch.Stop();
+        
+        // clear predefined log text filters
+        if (disposing)
+        {
+            this.predefinedTextFilters.Clear();
+            this.predefinedTextFilters.CollectionChanged -= this.OnPredefinedTextFiltersChanged;
+        }
 
         // detach from log filter
         if (this.Application.IsDebugMode)
@@ -902,6 +912,60 @@ class LogFilteringViewModel : SessionComponent
     void OnLogTextFilterPhrasesDatabaseClearing(object? sender, EventArgs e)
     {
         this.updateTextFilterPhrasesDatabaseAction.Cancel();
+    }
+    
+    
+    // Called when property of predefined log text filter changed.
+    void OnPredefinedLogTextFilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(PredefinedLogTextFilter.Regex):
+                this.commitFiltersAction.Reschedule();
+                break;
+        }
+    }
+    
+    
+    // Called when list of predefined log text filters changed.
+    void OnPredefinedTextFiltersChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                foreach (PredefinedLogTextFilter filter in e.NewItems!)
+                    this.AttachToPredefinedLogTextFilter(filter);
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                foreach (PredefinedLogTextFilter filter in e.OldItems!)
+                    this.DetachFromPredefinedLogTextFilter(filter);
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                foreach (PredefinedLogTextFilter filter in e.OldItems!)
+                    this.DetachFromPredefinedLogTextFilter(filter);
+                foreach (PredefinedLogTextFilter filter in e.NewItems!)
+                    this.AttachToPredefinedLogTextFilter(filter);
+                break;
+            case NotifyCollectionChangedAction.Reset:
+                foreach (var filter in this.attachedPredefinedLogTextFilters.ToArray())
+                    this.DetachFromPredefinedLogTextFilter(filter);
+                foreach (var filter in this.predefinedTextFilters)
+                    this.AttachToPredefinedLogTextFilter(filter);
+                break;
+        }
+        var filterCount = this.predefinedTextFilters.Count;
+        this.canClearPredefinedTextFilters.Update(filterCount > 0);
+        this.commitFiltersAction.Reschedule();
+        if (filterCount > 0)
+        {
+            this.Logger.LogTrace("Clear predefined text filters");
+            this.canResetFilters.Update(true);
+        }
+        else
+        {
+            this.Logger.LogTrace("Change predefined text filters: {filterCount}", filterCount);
+            this.UpdateCanResetFilters();
+        }
     }
 
 
