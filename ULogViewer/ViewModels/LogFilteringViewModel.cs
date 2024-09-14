@@ -387,6 +387,8 @@ class LogFilteringViewModel : SessionComponent
 
         // setup text regex
         var textRegexList = new List<Regex>();
+        var exclusionRegexList = new List<Regex>();
+        
         var textFilter = this.TextFilter;
         if (textFilter is not null)
         {
@@ -411,11 +413,25 @@ class LogFilteringViewModel : SessionComponent
             }
             textRegexList.Add(textFilter);
         }
+
+        // In the predefinedTextFilters, look for those with name starting with '!'
+        // These will be treated as exclude filters rather than include filters
         foreach (var filter in this.predefinedTextFilters)
-            textRegexList.Add(filter.Regex);
+        {
+            if ((filter.Name ?? "").StartsWith("!"))
+            {
+                exclusionRegexList.Add(filter.Regex);
+            } 
+            else
+            {
+                textRegexList.Add(filter.Regex);
+            }
+        }
         this.logFilter.TextRegexList = textRegexList;
+        this.logFilter.ExclusionTextRegexList = exclusionRegexList;
+
         this.DisplayableLogGroup?.Let(it =>
-            it.ActiveTextFilters = textRegexList);
+            it.ActiveTextFilters = textRegexList); //leave exclusionary filters out of this
 
         // print log
         if (this.Application.IsDebugMode)
@@ -424,7 +440,8 @@ class LogFilteringViewModel : SessionComponent
             this.Logger.LogDebug("  Level: {level}", this.logFilter.Level);
             this.Logger.LogDebug("  PID: {pid}", this.logFilter.ProcessId.Let(pid => pid.HasValue ? pid.ToString() : "Null"));
             this.Logger.LogDebug("  TID: {tid}", this.logFilter.ThreadId.Let(tid => tid.HasValue ? tid.ToString() : "Null"));
-            this.Logger.LogDebug("  Text filters: {textRegexListCount}", textRegexList.Count);
+            this.Logger.LogDebug("  Text inclusion filters: {textRegexListCount}", textRegexList.Count);
+            this.Logger.LogDebug("  Text exclusion filters: {exclRegexListCount}", exclusionRegexList.Count);
         }
 
         // cancel temporarily shown logs
