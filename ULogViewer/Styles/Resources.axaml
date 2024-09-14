@@ -257,7 +257,7 @@
 	<sys:Double x:Key="Double/SessionView.LogsProgressBar.Height">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogTextFilterHistory.Item.MaxWidth">300</sys:Double>
 	<StaticResourceExtension x:Key="Double/SessionView.MarkedLogListBox.ToolTip.MaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
-	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">12</sys:Double>
+	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MinHeight">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>
@@ -312,6 +312,7 @@
 	<Thickness x:Key="Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterGroup.Margin">0,5,0,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterGroup.Padding">0,3,0,3</Thickness>
+	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin">0,0,8,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding">8,5,20,5</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Border">1</Thickness>
 	<Thickness x:Key="Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding">10</Thickness>

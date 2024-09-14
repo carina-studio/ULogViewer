@@ -67,6 +67,16 @@
 					<appControls:PatternEditor Name="patternEditor" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/PredefinedLogTextFilterEditorDialog.RegexInput.Height}" Watermark="{DynamicResource String/Common.Required}"/>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}"/>
+					<Separator Classes="Dialog_Item_Separator"/>
+					
+					<!-- Mode -->
+					<asControls:DialogItem>
+						<StackPanel Classes="Dialog_Item_Text_Container">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion.Description}"/>
+						</StackPanel>
+						<ToggleSwitch Name="exclusiveModeSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+					</asControls:DialogItem>
 					
 				</StackPanel>
 			</Border>

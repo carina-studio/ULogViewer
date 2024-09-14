@@ -1062,6 +1062,8 @@ return False</sys:String>
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">Group</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName.ProVersionOnly">Only one group can be created before activating ULogViewer Pro.</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion">Used for excluding logs</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion.Description">Logs matched by the pattern will be excluded.</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>

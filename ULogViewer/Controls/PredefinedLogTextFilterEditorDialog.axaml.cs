@@ -35,6 +35,7 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 
 	// Fields.
 	PredefinedLogTextFilter? editingFilter;
+	readonly ToggleSwitch exclusiveModeSwitch;
 	readonly ObservableList<MenuItem> groupMenuItems = new();
 	readonly ContextMenu groupNameSelectionMenu;
 	readonly TextBox groupNameTextBox;
@@ -49,6 +50,7 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 	public PredefinedLogTextFilterEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
+		this.exclusiveModeSwitch = this.Get<ToggleSwitch>(nameof(exclusiveModeSwitch));
 		this.groupNameSelectionMenu = ((ContextMenu)this.Resources[nameof(groupNameSelectionMenu)]!).Also(it =>
 		{
 			it.ItemsSource = this.groupMenuItems;
@@ -125,6 +127,9 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 		else
 			filter = new PredefinedLogTextFilter(this.Application, name, regex);
 		filter.GroupName = groupName;
+		filter.Mode = this.exclusiveModeSwitch.IsChecked.GetValueOrDefault()
+			? PredefinedLogTextFilterMode.Exclusion
+			: PredefinedLogTextFilterMode.Inclusion;
 		if (!textFilterManager.Filters.Contains(filter))
 			textFilterManager.AddFilter(filter);
 
@@ -252,6 +257,7 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 		else
 		{
 			this.Bind(TitleProperty, this.Application.GetObservableString("PredefinedLogTextFilterEditorDialog.Title.Edit"));
+			this.exclusiveModeSwitch.IsChecked = filter.Mode == PredefinedLogTextFilterMode.Exclusion;
 			this.groupNameTextBox.Text = PredefinedLogTextFilter.CorrectGroupName(filter.GroupName);
 			this.nameTextBox.Text = filter.Name;
 			this.patternEditor.Pattern = filter.Regex;
