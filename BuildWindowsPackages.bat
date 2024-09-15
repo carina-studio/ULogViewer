@@ -71,7 +71,7 @@ REM Build packages
     )
 
     REM Generate package
-    start /Wait PowerShell -NoLogo -Command Compress-Archive -Force -Path %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\* -DestinationPath Packages\%CURRENT_VERSION%\%APP_NAME%-%CURRENT_VERSION%-%%r.zip
+    start /Wait PowerShell -ExecutionPolicy RemoteSigned -NoLogo -Command Compress-Archive -Force -Path %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\* -DestinationPath Packages\%CURRENT_VERSION%\%APP_NAME%-%CURRENT_VERSION%-%%r.zip
     if %ERRORLEVEL% neq 0 (
         echo Failed to generate package: %ERRORLEVEL%
         del /Q Packages\Packaging.txt
