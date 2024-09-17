@@ -33,7 +33,7 @@ abstract class BaseLogDataSourceProvider : ILogDataSourceProvider
 		this.Application = app;
 		this.appStringsUpdatedHandler = (_, _) =>
 			this.DisplayName = this.OnUpdateDisplayName();
-		this.appStringsUpdatedHandlerToken = app.AddWeakEventHandler(nameof(IApplication.StringsUpdated), this.appStringsUpdatedHandler);
+		this.appStringsUpdatedHandlerToken = app.AddWeakEventHandler<IApplication>(nameof(IApplication.StringsUpdated), this.appStringsUpdatedHandler);
 		this.Logger = app.LoggerFactory.CreateLogger(this.GetType().Name);
 		this.SynchronizationContext.Post(() => this.DisplayName = this.OnUpdateDisplayName());
 	}

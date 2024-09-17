@@ -72,7 +72,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             : new(comparer.Compare);
 
         // setup properties
-        this.baseMemorySize = Memory.EstimateInstanceSize(this.GetType());
+        this.baseMemorySize = Memory.EstimateInstanceSize(this.GetType(), 0);
         this.processingPriority = priority;
         this.ProcessingTaskFactory = BaseDisplayableLogProcessors.GetProcessingTaskFactory(priority);
         this.sourceLogComparer = comparer;
