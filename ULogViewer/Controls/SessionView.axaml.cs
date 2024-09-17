@@ -437,8 +437,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// setup properties
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
-			this.LogChartXAxes = ListExtensions.AsReadOnly(new[] { this.logChartXAxis });
-			this.LogChartYAxes = ListExtensions.AsReadOnly(new[] { this.logChartYAxis });
+			this.LogChartXAxes = ListExtensions.AsReadOnly([ this.logChartXAxis ]);
+			this.LogChartYAxes = ListExtensions.AsReadOnly([ this.logChartYAxis ]);
 			this.ValidLogLevels = ListExtensions.AsReadOnly(this.validLogLevels);
 
 			// create value converters
@@ -2364,10 +2364,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							it.Bind(Avalonia.Controls.TextBlock.FontFamilyProperty, new Binding { Path = nameof(ControlFonts.LogFontFamily), Source = ControlFonts.Default });
 							it.MaxLines = 8;
-							if (timestampStringProperty is not null)
-								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = timestampStringProperty.Name });
-							else
-								it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = propertyInMarkedItem.Name });
+							it.Bind(Avalonia.Controls.TextBlock.TextProperty, timestampStringProperty is not null 
+								? new Binding { Path = timestampStringProperty.Name }
+								: new Binding { Path = propertyInMarkedItem.Name }
+							);
 							it.TextTrimming = TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.Wrap;
 						}));
@@ -3263,10 +3263,10 @@ namespace CarinaStudio.ULogViewer.Controls
 				// define header column
 				var logProperty = logProperties[logPropertyIndex];
 				var width = logProperty.Width;
-				if (width == null)
-					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star)));
-				else
-					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel)));
+				this.logHeaderWidths.Add(width is null 
+					? new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star)) 
+					: new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel))
+				);
 				var headerColumn = new ColumnDefinition(this.logHeaderWidths[logPropertyIndex].Value).Also(it =>
 				{
 					it.MinWidth = minHeaderWidth;
@@ -3931,6 +3931,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (e.Source is not TextBox && !hasOpenedPopup)
 							{
 								// intercept
+								// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
 								if (Platform.IsMacOS)
 									this.Logger.LogTrace("Intercept Cmd+A");
 								else
@@ -5525,7 +5526,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return false;
-			new LogStringPropertyDialog()
+			new LogStringPropertyDialog
 			{
 				Log = log,
 				LogPropertyDisplayName = property.DisplayName,

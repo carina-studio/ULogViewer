@@ -18,6 +18,7 @@
              xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
 			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
 			 xmlns:appInput="using:CarinaStudio.ULogViewer.Input"
+             xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
              xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 			 xmlns:cs="using:CarinaStudio"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
@@ -686,7 +687,7 @@
 					<StackPanel Name="toolBarOtherLogFilterItemsPanel" Orientation="Horizontal">
 
 						<!-- Level filter -->
-						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
+						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, FallbackValue={x:Static appLogs:LogLevel.Undefined}, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">
