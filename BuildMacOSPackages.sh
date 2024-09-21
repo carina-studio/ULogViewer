@@ -1,5 +1,5 @@
 APP_NAME="ULogViewer"
-FRAMEWORK="net8.0"
+FRAMEWORK="net9.0"
 RID_LIST=("osx-arm64" "osx-x64")
 PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
