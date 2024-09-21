@@ -20,20 +20,20 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#909090"/>
 
 			<!-- LogLevel -->
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Debug.Background">#66c0ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Debug.Foreground">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Debug.Background">#80bfff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Debug.Foreground">#4da6ff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Error.Background">#ff6666</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Error.Foreground">#ff3232</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Failure.Background">#ff5959</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Failure.Foreground">#ff3f3f</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Fatal.Background">#ff5959</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Fatal.Foreground">#ff3f3f</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Failure.Background">#e66767</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Failure.Foreground">#e63939</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Fatal.Background">#ff4d4d</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Fatal.Foreground">#ff0d0d</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Info.Background">#94ff66</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Info.Foreground">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Success.Background">#94ff66</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Success.Foreground">#4cff00</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Trace.Background">#66c0ff</SolidColorBrush>
-			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Trace.Foreground">#32aaff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Success.Background">#76cc52</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Success.Foreground">#3dcc00</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Trace.Background">#66f2ff</SolidColorBrush>
+			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Trace.Foreground">#32eeff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Undefined.Background">#cccccc</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Undefined.Foreground">#ffffff</SolidColorBrush>
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Verbose.Background">#cccccc</SolidColorBrush>
