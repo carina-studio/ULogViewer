@@ -39,6 +39,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CarinaStudio.AppSuite.Media;
+using System.Collections;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -472,7 +473,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = series.Values,
+                    Values = series.Values as ICollection,
                     XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -505,7 +506,7 @@ partial class SessionView
                         IsAntialias = true,
                     },
                     Tag = series,
-                    Values = series.Values,
+                    Values = series.Values as ICollection,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -521,7 +522,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = series.Values,
+                    Values = series.Values as ICollection,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -578,7 +579,7 @@ partial class SessionView
                         },
                     },
                     Tag = series,
-                    Values = series.Values,
+                    Values = series.Values as ICollection,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
