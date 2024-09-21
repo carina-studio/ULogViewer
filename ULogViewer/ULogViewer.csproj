@@ -107,6 +107,9 @@
 	
 	<!-- Trimming options -->
 	<ItemGroup>
+		<TrimmerRootAssembly Include="CarinaStudio.AppBase.Core" />
+		<TrimmerRootAssembly Include="CarinaStudio.AppSuite.Core" />
+		<TrimmerRootAssembly Include="CarinaStudio.AppSuite.SyntaxHighlighting" />
 		<TrimmerRootAssembly Include="IronPython" />
 		<TrimmerRootAssembly Include="IronPython.Modules" />
 		<TrimmerRootAssembly Include="IronPython.SQLite" />
