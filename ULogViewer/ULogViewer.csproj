@@ -23,7 +23,8 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-		<AppSuiteVersion>3.0.0.917-dev</AppSuiteVersion>
+		<AppSuiteVersion>3.0.0.922-dev</AppSuiteVersion>
+		<AvaloniaVersion></AvaloniaVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -82,6 +83,13 @@
 		<AvaloniaResource Include="Resources/UserAgreement-zh-TW.md" />
 		<AvaloniaResource Include="SplashWindowBackground.jpg" />
 		<AvaloniaResource Include="ULogViewer.ico" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(AvaloniaVersion)'!=''">
+		<PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>
