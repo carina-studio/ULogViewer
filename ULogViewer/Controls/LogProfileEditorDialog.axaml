@@ -6,6 +6,7 @@
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         xmlns:app="clr-namespace:CarinaStudio.ULogViewer;assembly=ULogViewer"
 		xmlns:appCategorizing="using:CarinaStudio.ULogViewer.ViewModels.Categorizing"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
@@ -160,23 +161,16 @@
 													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 												</Button>
 											</WrapPanel>
-											<Grid Name="proVersionOnlyDataSourceProvider" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-												<Grid.IsVisible>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="!IsProVersionActivated" ElementName="window"/>
-														<Binding Path="SelectedItem.IsProVersionOnly" ElementName="dataSourceProviderComboBox" FallbackValue="False"/>
-													</MultiBinding>
-												</Grid.IsVisible>
+											<Grid Name="proVersionOnlyDataSourceProvider" 
+											      Classes="Dialog_IconText_Container_Description" 
+											      ColumnDefinitions="Auto,*"
+											      IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding #dataSourceProviderComboBox.SelectedItem.IsProVersionOnly, FallbackValue=False}}">
 												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
 												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.ProVersionOnly}"/>
 											</Grid>
-											<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-												<Grid.IsVisible>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="!IsValidDataSourceOptions" ElementName="window"/>
-														<Binding Path="!IsVisible" ElementName="proVersionOnlyDataSourceProvider"/>
-													</MultiBinding>
-												</Grid.IsVisible>
+											<Grid Classes="Dialog_IconText_Container_Description" 
+											      ColumnDefinitions="Auto,*"
+											      IsVisible="{asXaml:AndBindings {Binding !#window.IsValidDataSourceOptions}, {Binding !#proVersionOnlyDataSourceProvider.IsVisible}}">
 												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
 												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 											</Grid>
@@ -191,14 +185,11 @@
 														</Panel>
 														<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding DisplayName}" Grid.Column="1"/>
 														<Separator Classes="Dialog_Separator_Small" Grid.Column="2" IsVisible="{Binding #proVersionOnly.IsVisible}"/>
-														<TextBlock Classes="ComboBoxItem_TextBlock" Name="proVersionOnly" Grid.Column="3" Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}">
-															<TextBlock.IsVisible>
-																<MultiBinding Converter="{x:Static BoolConverters.And}">
-																	<Binding Path="!IsProVersionActivated" ElementName="window"/>
-																	<Binding Path="IsProVersionOnly"/>
-																</MultiBinding>
-															</TextBlock.IsVisible>
-														</TextBlock>
+														<TextBlock Classes="ComboBoxItem_TextBlock" 
+														           Name="proVersionOnly" 
+														           Grid.Column="3" 
+														           IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding IsProVersionOnly}}"
+														           Text="{DynamicResource String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly}"/>
 													</Grid>
 												</DataTemplate>
 											</ComboBox.ItemTemplate>
@@ -208,7 +199,9 @@
 									<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
 										<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
 										<Separator Classes="Dialog_Separator_Small"/>
-										<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].SetDataSourceOptions}" Content="{DynamicResource String/Common.Options.WithDialog}">
+										<Button Classes="Dialog_Item_Button" 
+										        Command="{Binding $parent[Window].SetDataSourceOptions}" 
+										        Content="{DynamicResource String/Common.Options.WithDialog}">
 											<Button.IsEnabled>
 												<MultiBinding Converter="{x:Static BoolConverters.And}">
 													<Binding Path="HasDataSourceOptions" ElementName="window"/>

@@ -170,7 +170,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (logProfile.IsTemplate)
 			{
-				if (categoryToExclude != this.templateLogProfiles && this.Filter == null)
+				if (!ReferenceEquals(categoryToExclude, this.templateLogProfiles) && this.Filter == null)
 					this.templateLogProfiles.Add(logProfile);
 				return;
 			}
@@ -178,19 +178,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			if (logProfile.IsPinned)
 			{
-				if (categoryToExclude != this.pinnedLogProfiles)
+				if (!ReferenceEquals(categoryToExclude, this.pinnedLogProfiles))
 					this.pinnedLogProfiles.Add(logProfile);
 			}
-			else if (categoryToExclude != this.recentlyUsedLogProfiles)
+			else if (!ReferenceEquals(categoryToExclude, this.recentlyUsedLogProfiles))
 			{
 				if (this.logProfileManager.RecentlyUsedProfiles.Contains(logProfile))
 					this.recentlyUsedLogProfiles.Add(logProfile);
-				else if (categoryToExclude != this.otherLogProfiles)
+				else if (!ReferenceEquals(categoryToExclude, this.otherLogProfiles))
 					this.otherLogProfiles.Add(logProfile);
 			}
 			else
 			{
-				if (categoryToExclude != this.otherLogProfiles)
+				if (!ReferenceEquals(categoryToExclude, this.otherLogProfiles))
 					this.otherLogProfiles.Add(logProfile);
 			}
 		}
@@ -605,7 +605,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							continue;
 						this.SelectLogProfileCategory(logProfile).Let(it =>
 						{
-							if (it == this.recentlyUsedLogProfiles)
+							if (ReferenceEquals(it, this.recentlyUsedLogProfiles))
 							{
 								this.UncategorizeLogProfile(logProfile);
 								it.Add(logProfile);
@@ -620,7 +620,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						{
 							for (var i = it.Count - 1; i >= 0; --i)
 							{
-								if (it[i] == logProfile)
+								if (ReferenceEquals(it[i], logProfile))
 									return i;
 							}
 							return -1;
@@ -652,7 +652,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								this.SelectLogProfileCategory(logProfile).Let(category =>
 								{
-									if (category == this.recentlyUsedLogProfiles)
+									if (ReferenceEquals(category, this.recentlyUsedLogProfiles))
 									{
 										this.UncategorizeLogProfile(logProfile);
 										category.Add(logProfile);

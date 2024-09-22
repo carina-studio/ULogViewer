@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Converters;
@@ -41,7 +42,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
 		/// </summary>
-		public static readonly IValueConverter LogChartTypeNameConverter = new EnumConverter(App.CurrentOrNull, typeof(LogChartType));
+		public static readonly IValueConverter LogChartTypeNameConverter = new EnumConverter(IAppSuiteApplication.CurrentOrNull, typeof(LogChartType));
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="Logs.LogLevel"/> to readable name.
 		/// </summary>
@@ -192,7 +193,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
 			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
 			{
-				it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(this.OnSelectedDataSourceChanged);
+				it.GetObservable(SelectingItemsControl.SelectedItemProperty).Subscribe(this.OnSelectedDataSourceChanged);
 			});
 			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
 			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
@@ -201,7 +202,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Get<Control>("isAdminNeededPanel").IsVisible = false;
 			this.isTemplateSwitch = this.Get<ToggleSwitch>(nameof(isTemplateSwitch)).Also(it =>
 			{
-				it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
+				it.GetObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
 			});
 			this.logDisplayingPanel = this.Get<Panel>(nameof(logDisplayingPanel));
 			this.logDisplayingPanelButton = this.Get<ToggleButton>(nameof(logDisplayingPanelButton)).Also(it =>
@@ -1573,16 +1574,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						case nameof(LogDataSourceOptions.Password):
 						case nameof(LogDataSourceOptions.QueryString):
 						case nameof(LogDataSourceOptions.UserName):
-							if (!this.dataSourceOptions.IsOptionSet(optionName))
-								this.SetValue(IsValidDataSourceOptionsProperty, false);
-							else
-								this.SetValue(IsValidDataSourceOptionsProperty, true);
+							this.SetValue(IsValidDataSourceOptionsProperty, this.dataSourceOptions.IsOptionSet(optionName));
 							break;
 						case nameof(LogDataSourceOptions.Command):
-							if (this.dataSourceOptions.CheckPlaceholderInCommands())
-								this.SetValue(IsValidDataSourceOptionsProperty, false);
-							else
-								this.SetValue(IsValidDataSourceOptionsProperty, true);
+							this.SetValue(IsValidDataSourceOptionsProperty, !this.dataSourceOptions.CheckPlaceholderInCommands());
 							break;
 						default:
 							this.SetValue(IsValidDataSourceOptionsProperty, true);

@@ -10,6 +10,7 @@
 			 xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 			 xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
 			 xmlns:asInput="using:CarinaStudio.AppSuite.Input"
+			 xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
 			 xmlns:app="using:CarinaStudio.ULogViewer"
 			 xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
 			 xmlns:appAnalysisScripting="using:CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting"
@@ -538,10 +539,17 @@
 					<StackPanel Name="toolBarLogActionItemsPanel" Orientation="Horizontal">
 
 						<!-- Select log profiles -->
-						<Button Name="selectAndSetLogProfileButton" Classes="ToolBar_Button_WithDropDownButton" Command="{Binding #root.SelectAndSetLogProfileCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+						<Button Name="selectAndSetLogProfileButton" 
+						        Classes="ToolBar_Button_WithDropDownButton" 
+						        Command="{Binding #root.SelectAndSetLogProfileCommand}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
 							<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
 						</Button>
-						<ToggleButton Name="selectAndSetLogProfileDropDownButton" Classes="ToolBar_DropDownButton" Command="{Binding #root.ShowLogProfileSelectionMenu}" IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+						<ToggleButton Name="selectAndSetLogProfileDropDownButton" 
+						              Classes="ToolBar_DropDownButton" 
+						              Command="{Binding #root.ShowLogProfileSelectionMenu}" 
+						              IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
 							<Panel>
 								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
 								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
@@ -549,7 +557,10 @@
 						</ToggleButton>
 
 						<!-- Set working directory -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" IsVisible="{Binding CanSetWorkingDirectory}" ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" 
+						        IsVisible="{Binding CanSetWorkingDirectory}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsWorkingDirectoryNeeded}">
@@ -559,7 +570,10 @@
 						</Button>
 
 						<!-- Add files -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.AddLogFilesCommand}" IsVisible="{Binding CanAddLogFile}" ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.AddLogFilesCommand}" 
+						        IsVisible="{Binding CanAddLogFile}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsLogFileNeeded}">
@@ -569,7 +583,10 @@
 						</Button>
 						
 						<!-- Set command -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetCommandCommand}" IsVisible="{Binding CanSetCommand}" ToolTip.Tip="{DynamicResource String/SessionView.SetCommand}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.SelectAndSetCommandCommand}" 
+						        IsVisible="{Binding CanSetCommand}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetCommand}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Terminal.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsCommandNeeded}">
@@ -579,7 +596,10 @@
 						</Button>
 
 						<!-- Set URI -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetUriCommand}" IsVisible="{Binding CanSetUri}" ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.SelectAndSetUriCommand}" 
+						        IsVisible="{Binding CanSetUri}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Uri.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsUriNeeded}">
@@ -589,7 +609,10 @@
 						</Button>
 
 						<!-- Set IP endpoint -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetIPEndPointCommand}" IsVisible="{Binding CanSetIPEndPoint}" ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.SelectAndSetIPEndPointCommand}" 
+						        IsVisible="{Binding CanSetIPEndPoint}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/IPAddress.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsIPEndPointNeeded}">
@@ -599,7 +622,10 @@
 						</Button>
 						
 						<!-- Set process ID -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessIdCommand}" IsVisible="{Binding CanSetProcessId}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.SelectAndSetProcessIdCommand}" 
+						        IsVisible="{Binding CanSetProcessId}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessIdNeeded}">
@@ -609,7 +635,10 @@
 						</Button>
 						
 						<!-- Set process name -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.SelectAndSetProcessNameCommand}" IsVisible="{Binding CanSetProcessName}" ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.SelectAndSetProcessNameCommand}"
+						        IsVisible="{Binding CanSetProcessName}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessNameNeeded}">
@@ -619,7 +648,11 @@
 						</Button>
 
 						<!-- Save logs -->
-						<ToggleButton Name="logsSavingButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogsSavingMenu}" IsVisible="{Binding HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs}">
+						<ToggleButton Name="logsSavingButton" 
+						              Classes="ToolBar_ToggleButton" 
+						              Command="{Binding #root.ShowLogsSavingMenu}" 
+						              IsVisible="{Binding HasLogProfile}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs}">
 							<ia:Interaction.Behaviors>
 								<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
 									<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
@@ -632,40 +665,35 @@
 						</ToggleButton>
 
 						<!-- Clear files -->
-						<Button Classes="ToolBar_Button" Command="{Binding ClearLogFilesCommand}" IsVisible="{Binding IsLogFileSupported}" ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding ClearLogFilesCommand}" 
+						        IsVisible="{Binding IsLogFileSupported}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 						</Button>
 						
 						<!-- Stop reading logs (non-continuous reading) -->
-						<Button Classes="ToolBar_Button" Command="{Binding StopReadingLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
-							<Button.IsVisible>
-								<MultiBinding Converter="{x:Static BoolConverters.And}">
-									<Binding Path="CanStopReadingLogs"/>
-									<Binding Path="!IsReadingLogsContinuously"/>
-								</MultiBinding>
-							</Button.IsVisible>
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding StopReadingLogsCommand}" 
+						        IsVisible="{asXaml:AndBindings {Binding CanStopReadingLogs}, {Binding !IsReadingLogsContinuously}}"
+						        ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 						</Button>
 
 						<!-- Reload logs -->
-						<Button Classes="ToolBar_Button" Command="{Binding #root.ReloadLogsCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
-							<Button.IsVisible>
-								<MultiBinding Converter="{x:Static BoolConverters.Or}">
-									<Binding Path="!CanStopReadingLogs"/>
-									<Binding Path="IsReadingLogsContinuously"/>
-								</MultiBinding>
-							</Button.IsVisible>
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding #root.ReloadLogsCommand}" 
+						        IsVisible="{asXaml:OrBindings {Binding !CanStopReadingLogs}, {Binding IsReadingLogsContinuously}}"
+						        ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
 						<!-- Pause/Resume -->
-						<Button Classes="ToolBar_Button" Command="{Binding PauseResumeLogsReadingCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
-							<Button.IsEnabled>
-								<MultiBinding Converter="{x:Static BoolConverters.Or}">
-									<Binding Path="IsLogsReadingPaused"/>
-									<Binding Path="IsReadingLogs"/>
-								</MultiBinding>
-							</Button.IsEnabled>
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding PauseResumeLogsReadingCommand}"
+						        IsEnabled="{asXaml:OrBindings {Binding IsLogsReadingPaused}, {Binding IsReadingLogs}}"
+						        IsVisible="{Binding IsReadingLogsContinuously}" 
+						        ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
 							<Panel>
 								<Image Classes="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
 								<Image Classes="Icon" IsVisible="{Binding IsLogsReadingPaused}">
@@ -677,7 +705,10 @@
 						</Button>
 						
 						<!-- Stop reading logs (continuous reading) -->
-						<Button Classes="ToolBar_Button" Command="{Binding StopReadingLogsCommand}" IsVisible="{Binding IsReadingLogsContinuously}" ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding StopReadingLogsCommand}" 
+						        IsVisible="{Binding IsReadingLogsContinuously}"
+						        ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.StopMedia.Outline}"/>
 						</Button>
 
@@ -687,7 +718,15 @@
 					<StackPanel Name="toolBarOtherLogFilterItemsPanel" Orientation="Horizontal">
 
 						<!-- Level filter -->
-						<ComboBox Name="logLevelFilterComboBox" Classes="ToolBar_ComboBox" IsEnabled="{Binding #root.HasLogProfile}" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #root.ValidLogLevels}" SelectedItem="{Binding LogFiltering.LevelFilter, FallbackValue={x:Static appLogs:LogLevel.Undefined}, Mode=TwoWay}" ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
+						<ComboBox Name="logLevelFilterComboBox" 
+						          Classes="ToolBar_ComboBox"
+						          IsEnabled="{Binding #root.HasLogProfile}"
+						          IsVisible="{Binding $self.ItemCount}" 
+						          ItemsSource="{Binding #root.ValidLogLevels}" 
+						          SelectedItem="{Binding LogFiltering.LevelFilter, FallbackValue={x:Static appLogs:LogLevel.Undefined}, Mode=TwoWay}" 
+						          ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" 
+						          VerticalAlignment="Center"
+						          Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
 									<StackPanel Orientation="Horizontal">
@@ -740,7 +779,11 @@
 						</abControls:IntegerTextBox>
 
 						<!-- Filters combination mode -->
-						<ToggleButton Name="logFilterCombinationModeButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowLogFiltersCombinationModeMenu}" IsVisible="{Binding #root.CanFilterLogsByNonTextFilters}" ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
+						<ToggleButton Name="logFilterCombinationModeButton" 
+						              Classes="ToolBar_ToggleButton" 
+						              Command="{Binding #root.ShowLogFiltersCombinationModeMenu}" 
+						              IsVisible="{Binding #root.CanFilterLogsByNonTextFilters}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
 							<Panel>
 								<asControls:Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 									<DrawingImage>
@@ -792,7 +835,11 @@
 						</asControls:RegexTextBox>
 
 						<!-- Predefined text filters -->
-						<ToggleButton Name="predefinedLogTextFiltersButton" Classes="ToolBar_ToggleButton" Grid.Column="1" IsEnabled="{Binding #root.HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+						<ToggleButton Name="predefinedLogTextFiltersButton" 
+						              Classes="ToolBar_ToggleButton" 
+						              Grid.Column="1" 
+						              IsEnabled="{Binding #root.HasLogProfile}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
 							<Panel>
 								<Panel>
 									<Panel IsVisible="{Binding !#root.HasSelectedPredefinedLogTextFilters}">
@@ -927,12 +974,18 @@
 					<StackPanel Name="toolBarOtherItemsPanel" Orientation="Horizontal">
 
 						<!-- Reset log filters -->
-						<Button Classes="ToolBar_Button" Command="{Binding LogFiltering.ResetFiltersCommand}" ToolTip.Tip="{DynamicResource String/SessionView.ResetLogFilters}">
+						<Button Classes="ToolBar_Button" 
+						        Command="{Binding LogFiltering.ResetFiltersCommand}"
+						        ToolTip.Tip="{DynamicResource String/SessionView.ResetLogFilters}">
 							<Image Classes="Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 						</Button>
 						
 						<!-- Show marked logs temporarily -->
-						<ToggleButton Name="showMarkedLogsOnlyButton" Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}" IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
+						<ToggleButton Name="showMarkedLogsOnlyButton" 
+						              Classes="ToolBar_ToggleButton" 
+						              Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}"
+						              IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -940,7 +993,11 @@
 						</ToggleButton>
 						
 						<!-- Show all logs temporarily -->
-						<ToggleButton Name="showAllLogsTemporarilyButton" Classes="ToolBar_ToggleButton" Command="{Binding ToggleShowingAllLogsTemporarilyCommand}" IsChecked="{Binding IsShowingAllLogsTemporarily, Mode=OneWay}" ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
+						<ToggleButton Name="showAllLogsTemporarilyButton"
+						              Classes="ToolBar_ToggleButton" 
+						              Command="{Binding ToggleShowingAllLogsTemporarilyCommand}"
+						              IsChecked="{Binding IsShowingAllLogsTemporarily, Mode=OneWay}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -948,10 +1005,15 @@
 						</ToggleButton>
 
 						<!-- Separator -->
-						<Separator Classes="ToolBar_Separator" IsVisible="{Binding #otherActionsButton.IsVisible}"/>
+						<Separator Classes="ToolBar_Separator" 
+						           IsVisible="{Binding #otherActionsButton.IsVisible}"/>
 
 						<!-- Other actions -->
-						<ToggleButton Name="otherActionsButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowOtherActions}" IsVisible="{x:Static cs:Platform.IsNotMacOS}" ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
+						<ToggleButton Name="otherActionsButton"
+						              Classes="ToolBar_ToggleButton" 
+						              Command="{Binding #root.ShowOtherActions}" 
+						              IsVisible="{x:Static cs:Platform.IsNotMacOS}" 
+						              ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -969,6 +1031,7 @@
 			<!-- Progress bar -->
 			<ProgressBar Background="{x:Null}" 
 			             CornerRadius="0" 
+			             IsIndeterminate="{asXaml:OrBindings {Binding IsReadingLogs}, {Binding IsRemovingLogFiles}}"
 			             Margin="0,0,0,1" 
 			             MaxHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" 
 			             MinHeight="{StaticResource Double/SessionView.LogsProgressBar.Height}" 
@@ -976,12 +1039,6 @@
 			             Minimum="0"
 			             Value="{Binding LogFiltering.FilteringProgress}"
 			             VerticalAlignment="Bottom">
-				<ProgressBar.IsIndeterminate>
-					<MultiBinding Converter="{x:Static BoolConverters.Or}">
-						<Binding Path="IsReadingLogs"/>
-						<Binding Path="IsRemovingLogFiles"/>
-					</MultiBinding>
-				</ProgressBar.IsIndeterminate>
 				<ProgressBar.IsVisible>
 					<MultiBinding Converter="{x:Static BoolConverters.And}">
 						<Binding Path="IsProcessingLogs"/>
@@ -1176,6 +1233,7 @@
 					<lvc:CartesianChart Name="logChart" 
 					                    AnimationsSpeed="{StaticResource TimeSpan/Animation.Fast}"
 					                    Background="{x:Static Brushes.Transparent}" 
+					                    IsVisible="{asXaml:AndBindings {Binding IsProVersionActivated}, {Binding !LogChart.IsMaxTotalSeriesValueCountReached}}"
 					                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
 					                    LegendPosition="Right"
 					                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
@@ -1185,23 +1243,10 @@
 					                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
 					                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
 					                    XAxes="{Binding #root.LogChartXAxes}"
-					                    YAxes="{Binding #root.LogChartYAxes}">
-						<lvc:CartesianChart.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="IsProVersionActivated"/>
-								<Binding Path="!LogChart.IsMaxTotalSeriesValueCountReached"/>
-							</MultiBinding>
-						</lvc:CartesianChart.IsVisible>
-					</lvc:CartesianChart>
+					                    YAxes="{Binding #root.LogChartYAxes}"/>
 					
 					<!-- Hint -->
-					<Border>
-						<Border.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="IsProVersionActivated"/>
-								<Binding Path="LogChart.IsMaxTotalSeriesValueCountReached"/>
-							</MultiBinding>
-						</Border.IsVisible>
+					<Border IsVisible="{asXaml:AndBindings {Binding IsProVersionActivated}, {Binding LogChart.IsMaxTotalSeriesValueCountReached}}">
 						<TextBlock HorizontalAlignment="Center" 
 						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
 						           Text="{DynamicResource String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}" 
@@ -1292,7 +1337,9 @@
 						</Grid.ColumnDefinitions>
 
 						<!-- Analyzing progress -->
-						<StackPanel Grid.Column="0" IsVisible="{Binding LogAnalysis.IsAnalyzing}" Orientation="Horizontal">
+						<StackPanel Grid.Column="0" 
+						            IsVisible="{Binding LogAnalysis.IsAnalyzing}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<abControls:ProgressRing Classes="StatusBar_ProgressRingWithText"
 							                         IsIndeterminate="True"/>
@@ -1308,7 +1355,9 @@
 						</StackPanel>
 
 						<!-- Saving logs -->
-						<StackPanel Grid.Column="1" IsVisible="{Binding IsSavingLogs}" Orientation="Horizontal">
+						<StackPanel Grid.Column="1" 
+						            IsVisible="{Binding IsSavingLogs}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<abControls:ProgressRing Classes="StatusBar_ProgressRingWithText"
 							                         IsIndeterminate="True"/>
@@ -1317,79 +1366,98 @@
 						</StackPanel>
 
 						<!-- Waiting for data sources -->
-						<StackPanel Grid.Column="2" IsVisible="{Binding IsWaitingForDataSources}" Orientation="Horizontal">
+						<StackPanel Grid.Column="2" 
+						            IsVisible="{Binding IsWaitingForDataSources}"
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{DynamicResource String/SessionView.WaitingForDataSources}"/>
 						</StackPanel>
 
 						<!-- URI -->
-						<StackPanel Grid.Column="3" IsVisible="{Binding HasUri}" Orientation="Horizontal">
+						<StackPanel Grid.Column="3" 
+						            IsVisible="{Binding HasUri}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Uri.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" ToolTip.Placement="Left" ToolTip.Tip="{Binding Uri}">
-								<TextBlock.Text>
-									<MultiBinding StringFormat="{}{0}://{1}:{2}">
-										<Binding Path="Uri.Scheme"/>
-										<Binding Path="Uri.Host"/>
-										<Binding Path="Uri.Port"/>
-									</MultiBinding>
-								</TextBlock.Text>
-							</TextBlock>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{asXaml:MultiBinding {Binding Uri.Scheme}, {Binding Uri.Host}, {Binding Uri.Port}, StringFormat={}{0}://{1}:{2}}"
+							           ToolTip.Placement="Left" 
+							           ToolTip.Tip="{Binding Uri}"/>
 						</StackPanel>
 
 						<!-- IP endpoint -->
-						<StackPanel Grid.Column="4" IsVisible="{Binding HasIPEndPoint}" Orientation="Horizontal">
+						<StackPanel Grid.Column="4" 
+						            IsVisible="{Binding HasIPEndPoint}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/IPAddress.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding IPEndPoint}"/>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{Binding IPEndPoint}"/>
 						</StackPanel>
 						
 						<!-- Process ID -->
-						<StackPanel Grid.Column="5" IsVisible="{Binding ProcessId, Converter={x:Static ObjectConverters.IsNotNull}}" Orientation="Horizontal">
+						<StackPanel Grid.Column="5" 
+						            IsVisible="{Binding ProcessId, Converter={x:Static ObjectConverters.IsNotNull}}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding ProcessId}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.ProcessId}"/>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{Binding ProcessId}" 
+							           ToolTip.Placement="Left" 
+							           ToolTip.Tip="{DynamicResource String/SessionView.ProcessId}"/>
 						</StackPanel>
 						
 						<!-- Process name -->
-						<StackPanel Grid.Column="6" IsVisible="{Binding ProcessName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Orientation="Horizontal">
+						<StackPanel Grid.Column="6" 
+						            IsVisible="{Binding ProcessName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{Binding ProcessName}" ToolTip.Placement="Left" ToolTip.Tip="{DynamicResource String/SessionView.ProcessName}"/>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{Binding ProcessName}" 
+							           ToolTip.Placement="Left"
+							           ToolTip.Tip="{DynamicResource String/SessionView.ProcessName}"/>
 						</StackPanel>
 
 						<!-- Working directory -->
-						<StackPanel Grid.Column="7" IsVisible="{Binding HasWorkingDirectory}" Orientation="Horizontal">
+						<StackPanel Grid.Column="7" 
+						            IsVisible="{Binding HasWorkingDirectory}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
-							<ToggleButton Name="workingDirectoryActionsButton" Classes="StatusBar_ToggleButton" Command="{Binding #root.ShowWorkingDirectoryActions}" ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
+							<ToggleButton Name="workingDirectoryActionsButton" 
+							              Classes="StatusBar_ToggleButton" 
+							              Command="{Binding #root.ShowWorkingDirectoryActions}"
+							              ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
 								<StackPanel Orientation="Horizontal">
 									<Image Classes="StatusBar_IconWithText">
 										<DrawingImage>
 											<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
 										</DrawingImage>
 									</Image>
-									<TextBlock Classes="StatusBar_TextBlock" Text="{Binding WorkingDirectoryName}"/>
+									<TextBlock Classes="StatusBar_TextBlock" 
+									           Text="{Binding WorkingDirectoryName}"/>
 									<Image Classes="StatusBar_DropDownIcon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.DropDown.Up}"/>
@@ -1400,18 +1468,25 @@
 						</StackPanel>
 						
 						<!-- High memory usage -->
-						<StackPanel Grid.Column="8" IsVisible="{Binding IsHighMemoryUsageToStopReadingLogs}" Orientation="Horizontal">
+						<StackPanel Grid.Column="8" 
+						            IsVisible="{Binding IsHighMemoryUsageToStopReadingLogs}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{DynamicResource String/SessionView.HighMemoryUsageToStopReadingLogs}" ToolTip.Tip="{DynamicResource String/SessionView.HighMemoryUsageToStopReadingLogs.Description}"/>
+							<TextBlock Classes="StatusBar_TextBlock"
+							           Background="{x:Static Brushes.Transparent}" 
+							           Text="{DynamicResource String/SessionView.HighMemoryUsageToStopReadingLogs}" 
+							           ToolTip.Tip="{DynamicResource String/SessionView.HighMemoryUsageToStopReadingLogs.Description}"/>
 						</StackPanel>
 
 						<!-- Error message -->
-						<StackPanel Grid.Column="9" IsVisible="{Binding HasAllDataSourceErrors}" Orientation="Horizontal">
+						<StackPanel Grid.Column="9" 
+						            IsVisible="{Binding HasAllDataSourceErrors}"
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
@@ -1420,17 +1495,22 @@
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasAllDataSourceErrors}"/>
 						</StackPanel>
-						<StackPanel Grid.Column="9" IsVisible="{Binding HasPartialDataSourceErrors}" Orientation="Horizontal">
+						<StackPanel Grid.Column="9" 
+						            IsVisible="{Binding HasPartialDataSourceErrors}"
+						            Orientation="Horizontal">
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{DynamicResource String/SessionView.HasPartialDataSourceErrors}"/>
+							<TextBlock Classes="StatusBar_TextBlock" 
+							           Text="{DynamicResource String/SessionView.HasPartialDataSourceErrors}"/>
 						</StackPanel>
 
 						<!-- Process info -->
-						<StackPanel Grid.Column="10" IsVisible="{Binding #root.IsProcessInfoVisible}" Orientation="Horizontal">
+						<StackPanel Grid.Column="10" 
+						            IsVisible="{Binding #root.IsProcessInfoVisible}" 
+						            Orientation="Horizontal">
 							<Separator Classes="StatusBar_Separator"/>
 							<StackPanel IsVisible="{Binding #root.Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
 								<Image Classes="StatusBar_IconWithText">
@@ -1479,42 +1559,70 @@
 					<Grid ClipToBounds="True" ColumnDefinitions="Auto,Auto,Auto,Auto">
 
 						<!-- Empty view to reserve space -->
-						<TextBlock Classes="StatusBar_TextBlock" Grid.ColumnSpan="5" Text="{DynamicResource String/SessionView.AllLogCount}" Opacity="0"/>
+						<TextBlock Classes="StatusBar_TextBlock" 
+						           Grid.ColumnSpan="5" 
+						           Text="{DynamicResource String/SessionView.AllLogCount}"
+						           Opacity="0"/>
 
 						<!-- Number of logs -->
-						<StackPanel IsVisible="{Binding AllLogCount}" Opacity="0" Orientation="Horizontal">
+						<StackPanel IsVisible="{Binding AllLogCount}" 
+						            Opacity="0" 
+						            Orientation="Horizontal">
 							<!-- Empty view to reserve space -->
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="0000000" Format="{DynamicResource String/SessionView.AllLogCount}" VerticalAlignment="Center"/>
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="0000000" Format="{DynamicResource String/SessionView.FilteredLogCount}" IsVisible="{Binding IsFilteringLogsNeeded}" VerticalAlignment="Center"/>
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+							                               Arg1="0000000" 
+							                               Format="{DynamicResource String/SessionView.AllLogCount}"
+							                               VerticalAlignment="Center"/>
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+							                               Arg1="0000000" 
+							                               Format="{DynamicResource String/SessionView.FilteredLogCount}" 
+							                               IsVisible="{Binding IsFilteringLogsNeeded}"
+							                               VerticalAlignment="Center"/>
 							<Separator Classes="StatusBar_Separator"/>
 						</StackPanel>
-						<StackPanel IsVisible="{Binding AllLogCount}" Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding AllLogCount}" Format="{DynamicResource String/SessionView.AllLogCount}" VerticalAlignment="Center"/>
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogFiltering.FilteredLogs.Count}" Format="{DynamicResource String/SessionView.FilteredLogCount}" IsVisible="{Binding LogFiltering.IsFilteringNeeded}" VerticalAlignment="Center"/>
+						<StackPanel IsVisible="{Binding AllLogCount}"
+						            Orientation="Horizontal">
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding AllLogCount}" 
+							                               Format="{DynamicResource String/SessionView.AllLogCount}"
+							                               VerticalAlignment="Center"/>
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+							                               Arg1="{Binding LogFiltering.FilteredLogs.Count}" 
+							                               Format="{DynamicResource String/SessionView.FilteredLogCount}" 
+							                               IsVisible="{Binding LogFiltering.IsFilteringNeeded}" 
+							                               VerticalAlignment="Center"/>
 							<Separator Classes="StatusBar_Separator"/>
 						</StackPanel>
 
 						<!-- Last logs reading duration -->
-						<StackPanel Grid.Column="1" IsVisible="{Binding HasLastLogsReadingDuration}" Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LastLogsReadingDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Format="{DynamicResource String/SessionView.LastLogsReadingDuration}" VerticalAlignment="Center"/>
+						<StackPanel Grid.Column="1" 
+						            IsVisible="{Binding HasLastLogsReadingDuration}" 
+						            Orientation="Horizontal">
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+							                               Arg1="{Binding LastLogsReadingDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"
+							                               Format="{DynamicResource String/SessionView.LastLogsReadingDuration}" 
+							                               VerticalAlignment="Center"/>
 							<Separator Classes="StatusBar_Separator"/>
 						</StackPanel>
 
 						<!-- Last logs filtering duration -->
-						<StackPanel Grid.Column="2" Orientation="Horizontal">
-							<StackPanel.IsVisible>
-								<MultiBinding Converter="{x:Static BoolConverters.And}">
-									<Binding Path="LogFiltering.IsFilteringNeeded"/>
-									<Binding Path="LogFiltering.LastFilteringDuration" Converter="{x:Static ObjectConverters.IsNotNull}"/>
-								</MultiBinding>
-							</StackPanel.IsVisible>
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogFiltering.LastFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Format="{DynamicResource String/SessionView.LastLogsFilteringDuration}" VerticalAlignment="Center"/>
+						<StackPanel Grid.Column="2" 
+						            IsVisible="{asXaml:AndBindings {Binding LogFiltering.IsFilteringNeeded}, {Binding LogFiltering.LastFilteringDuration, Converter={x:Static ObjectConverters.IsNotNull}}}"
+						            Orientation="Horizontal">
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+							                               Arg1="{Binding LogFiltering.LastFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+							                               Format="{DynamicResource String/SessionView.LastLogsFilteringDuration}" 
+							                               VerticalAlignment="Center"/>
 							<Separator Classes="StatusBar_Separator"/>
 						</StackPanel>
 
 						<!-- Selected logs -->
-						<StackPanel Grid.Column="3" IsVisible="{Binding #logListBox.SelectedItems.Count, FallbackValue=False}" Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogSelection.SelectedLogs.Count}" Format="{DynamicResource String/SessionView.SelectedLogCount}" VerticalAlignment="Center"/>
+						<StackPanel Grid.Column="3" 
+						            IsVisible="{Binding #logListBox.SelectedItems.Count, FallbackValue=False}" 
+						            Orientation="Horizontal">
+							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
+							                               Arg1="{Binding LogSelection.SelectedLogs.Count}" 
+							                               Format="{DynamicResource String/SessionView.SelectedLogCount}" 
+							                               VerticalAlignment="Center"/>
 							<Separator Classes="StatusBar_Separator"/>
 						</StackPanel>
 
@@ -1706,64 +1814,36 @@
 										<asControls:DialogItem ItemSize="Small">
 											<StackPanel Classes="Dialog_Item_Text_Container">
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
-												<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-													<Grid.IsVisible>
-														<MultiBinding Converter="{x:Static BoolConverters.And}">
-															<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-															<Binding Path="!IsScriptRunningEnabled" ElementName="root"/>
-														</MultiBinding>
-													</Grid.IsVisible>
+												<Grid Classes="Dialog_IconText_Container_Description" 
+												      ColumnDefinitions="Auto,*"
+												      IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !#root.IsScriptRunningEnabled}}">
 													<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
 													<TextBlock Classes="Dialog_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.Disabled}"/>
 												</Grid>
-												<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-													<Grid.IsVisible>
-														<MultiBinding Converter="{x:Static BoolConverters.And}">
-															<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-															<Binding Path="!IsProVersionActivated"/>
-															<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
-														</MultiBinding>
-													</Grid.IsVisible>
+												<Grid Classes="Dialog_IconText_Container_Description" 
+												      ColumnDefinitions="Auto,*"
+												      IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !IsProVersionActivated}, {Binding #root.IsScriptRunningEnabled}}">
 													<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
 													<TextBlock Classes="Dialog_TextBlock_Description_Warning" Grid.Column="1" Text="{DynamicResource String/SessionView.LogAnalysisRuleSets.ProVersionOnly}"/>
 												</Grid>
 											</StackPanel>
-											<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}">
-												<ToggleSwitch.IsEnabled>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-														<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
-														<Binding Path="IsProVersionActivated"/>
-													</MultiBinding>
-												</ToggleSwitch.IsEnabled>
-											</ToggleSwitch>
+											<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" 
+											              IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}"
+											              IsEnabled="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding #root.IsScriptRunningEnabled}, {Binding IsProVersionActivated}}"/>
 										</asControls:DialogItem>
-										<Line Classes="Dialog_Item_Separator_Inner">
-											<Separator.IsVisible>
-												<MultiBinding Converter="{x:Static BoolConverters.Or}">
-													<Binding Path="IsVisible" ElementName="enableRunningScriptButton"/>
-													<Binding Path="IsVisible" ElementName="editCooperativeLogAnalysisScriptSetPanel"/>
-												</MultiBinding>
-											</Separator.IsVisible>
-										</Line>
+										<Line Classes="Dialog_Item_Separator_Inner"
+										      IsVisible="{asXaml:OrBindings {Binding #enableRunningScriptButton.IsVisible}, {Binding #editCooperativeLogAnalysisScriptSetPanel.IsVisible}}"/>
 										<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-											<Button Classes="Dialog_Item_Button" Name="enableRunningScriptButton" Command="{Binding #root.EnableRunningScript}" Content="{DynamicResource String/SessionView.EnableRunningScript}">
-												<Button.IsVisible>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="LogAnalysis.HasCooperativeLogAnalysisScriptSet"/>
-														<Binding Path="!IsScriptRunningEnabled" ElementName="root"/>
-													</MultiBinding>
-												</Button.IsVisible>
-											</Button>
-											<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #editCooperativeLogAnalysisScriptSetPanel.IsVisible}"/>
-											<StackPanel Name="editCooperativeLogAnalysisScriptSetPanel" IsEnabled="{Binding IsProVersionActivated}" Orientation="Horizontal">
-												<StackPanel.IsVisible>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="HasLogProfile"/>
-														<Binding Path="!IsBuiltInLogProfile"/>
-														<Binding Path="IsScriptRunningEnabled" ElementName="root"/>
-													</MultiBinding>
-												</StackPanel.IsVisible>
+											<Button Classes="Dialog_Item_Button" Name="enableRunningScriptButton" 
+											        Command="{Binding #root.EnableRunningScript}" 
+											        Content="{DynamicResource String/SessionView.EnableRunningScript}"
+											        IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !#root.IsScriptRunningEnabled}}"/>
+											<Separator Classes="Dialog_Separator_Small" 
+											           IsVisible="{Binding #editCooperativeLogAnalysisScriptSetPanel.IsVisible}"/>
+											<StackPanel Name="editCooperativeLogAnalysisScriptSetPanel" 
+											            IsEnabled="{Binding IsProVersionActivated}" 
+											            IsVisible="{asXaml:AndBindings {Binding HasLogProfile}, {Binding !IsBuiltInLogProfile}, {Binding #root.IsScriptRunningEnabled}}"
+											            Orientation="Horizontal">
 												
 												<!-- Delete -->
 												<Button Classes="Dialog_Item_Button" Command="{Binding #root.RemoveCooperativeLogAnalysisScript}" Content="{DynamicResource String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove}" IsVisible="{Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}"/>
@@ -2245,16 +2325,10 @@
 										      Grid.Column="1" 
 										      Grid.Row="1" 
 										      HorizontalAlignment="Stretch"
+										      IsVisible="{asXaml:OrBindings {Binding HasByteSize}, {Binding HasDuration}, {Binding HasQuantity}}"
 										      Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.SubInfoPanel.Padding}"
 										      RowDefinitions="Auto,Auto,Auto"
 										      VerticalAlignment="Top">
-											<Grid.IsVisible>
-												<MultiBinding Converter="{x:Static BoolConverters.Or}">
-													<Binding Path="HasByteSize"/>
-													<Binding Path="HasDuration"/>
-													<Binding Path="HasQuantity"/>
-												</MultiBinding>
-											</Grid.IsVisible>
 											
 											<!-- Duration -->
 											<asControls:Image Name="durationIcon"
@@ -2472,13 +2546,8 @@
 												<Image Classes="Icon" IsVisible="{Binding IsRemoving}" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 												<Image Classes="Icon" IsVisible="{Binding HasError}" Source="{StaticResource Image/Icon.Error.Outline}"/>
 											</Panel>
-											<Panel Name="lightLogFileIconsContainer">
-												<Panel.IsVisible>
-													<MultiBinding Converter="{x:Static BoolConverters.And}">
-														<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-														<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
-													</MultiBinding>
-												</Panel.IsVisible>
+											<Panel Name="lightLogFileIconsContainer"
+											       IsVisible="{asXaml:AndBindings {Binding IsPointerOver, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}, {Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}}">
 												<Image Classes="Icon" IsVisible="{Binding IsLogsReadingCompleted}">
 													<DrawingImage>
 														<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text.Outline}"/>
@@ -2505,7 +2574,7 @@
 											<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
 											<abControls:FormattedTextBlock Arg1="{Binding LogCount}" Format="{DynamicResource String/SessionView.LogCountInLogFile}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" TextTrimming="CharacterEllipsis"/>
 										</StackPanel>
-										<StackPanel Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+										<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
 											<Border Background="{x:Static Brushes.Transparent}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" ToolTip.Tip="{DynamicResource String/SessionView.HasLogReadingPrecondition}">
 												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Filter}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
 											</Border>
@@ -2518,13 +2587,9 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
-						<Border.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="IsProVersionActivated"/>
-								<Binding Path="!IsLogFileSupported"/>
-							</MultiBinding>
-						</Border.IsVisible>
+					<Border Background="{x:Static Brushes.Transparent}" 
+					        Grid.Row="1"
+					        IsVisible="{asXaml:AndBindings {Binding IsProVersionActivated}, {Binding !IsLogFileSupported}}">
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogFileIsUnsupported}"/>
 					</Border>
 					<Border Background="{StaticResource Brush/SessionView.SidePanel.FullPanelHint.Background}" Grid.Row="1" IsVisible="{Binding !IsProVersionActivated}">

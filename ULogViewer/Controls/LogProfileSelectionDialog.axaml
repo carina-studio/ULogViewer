@@ -8,6 +8,7 @@
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appProfiles="using:CarinaStudio.ULogViewer.Logs.Profiles"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         xmlns:i="using:Avalonia.Xaml.Interactivity"
         xmlns:iCore="using:Avalonia.Xaml.Interactions.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -45,22 +46,17 @@
 								</Grid.Styles>
 
 								<!-- Icon -->
-								<Panel Grid.RowSpan="3" Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" VerticalAlignment="Top" Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
-									<Panel.IsEnabled>
-										<MultiBinding Converter="{x:Static BoolConverters.Or}">
-											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
-										</MultiBinding>
-									</Panel.IsEnabled>
-									<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
-										<Image.Source>
-											<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-												<Binding Path="Icon"/>
-												<Binding Path="IconColor"/>
-											</MultiBinding>
-										</Image.Source>
-									</Image>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
+								<Panel Grid.RowSpan="3" 
+								       Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" 
+								       IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+								       Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" 
+								       VerticalAlignment="Top" 
+								       Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
+									<Image Classes="Icon" 
+									       IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"
+									       Source="{asXaml:MultiBinding {Binding Icon}, {Binding IconColor}, Converter={x:Static appConverters:LogProfileIconConverter.Default}}"/>
+									<Image Classes="Icon" 
+									       IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
 										<Image.Source>
 											<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
 												<Binding Path="Icon"/>
@@ -72,46 +68,43 @@
 								
 								<!-- Name -->
 								<Grid ColumnDefinitions="*,Auto" Grid.Column="1" HorizontalAlignment="Left">
-									<TextBlock Classes="LogProfileInfo" FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Name.FontSize}" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-										<TextBlock.IsEnabled>
-											<MultiBinding Converter="{x:Static BoolConverters.Or}">
-												<Binding Path="IsProVersionActivated" ElementName="window"/>
-												<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
-											</MultiBinding>
-										</TextBlock.IsEnabled>
-									</TextBlock>
-									<Panel Background="{x:Static Brushes.Transparent}" Height="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}" Grid.Column="1" Margin="{StaticResource Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ProVersionOnly}" VerticalAlignment="Center" Width="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}">
-										<Panel.IsVisible>
-											<MultiBinding Converter="{x:Static BoolConverters.And}">
-												<Binding Path="!IsProVersionActivated" ElementName="window"/>
-												<Binding Path="DataSourceProvider.IsProVersionOnly"/>
-											</MultiBinding>
-										</Panel.IsVisible>
+									<TextBlock Classes="LogProfileInfo" 
+									           FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Name.FontSize}" 
+									           IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+									           Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin}" 
+									           Text="{Binding Name}" 
+									           TextWrapping="NoWrap" 
+									           TextTrimming="CharacterEllipsis" 
+									           VerticalAlignment="Center"/>
+									<Panel Background="{x:Static Brushes.Transparent}" 
+									       Height="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}" 
+									       IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding DataSourceProvider.IsProVersionOnly}}"
+									       Grid.Column="1" 
+									       Margin="{StaticResource Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin}" 
+									       ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ProVersionOnly}"
+									       VerticalAlignment="Center" Width="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}">
 										<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Icon.Professional.Colored}"/>
 										<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Icon.Professional}"/>
 									</Panel>
 								</Grid>
 
 								<!-- Description -->
-								<Panel Classes="LogProfileInfo" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}">
-									<Panel.IsEnabled>
-										<MultiBinding Converter="{x:Static BoolConverters.Or}">
-											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
-										</MultiBinding>
-									</Panel.IsEnabled>
+								<Panel Classes="LogProfileInfo" 
+								       IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+								       Grid.Column="1" 
+								       Grid.ColumnSpan="2" 
+								       Grid.Row="1" 
+								       Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}">
 									<abControls:TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
 									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding !HasDescription}" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{DynamicResource String/LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
 								</Panel>
 
 								<!-- Labels -->
-								<WrapPanel Classes="LogProfileInfo" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal">
-									<WrapPanel.IsEnabled>
-										<MultiBinding Converter="{x:Static BoolConverters.Or}">
-											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
-										</MultiBinding>
-									</WrapPanel.IsEnabled>
+								<WrapPanel Classes="LogProfileInfo" 
+								           IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+								           Grid.Column="1" 
+								           Grid.ColumnSpan="2" Grid.Row="2" 
+								           Orientation="Horizontal">
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding !#proDataSourceProviderLabel.IsVisible}">
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.DisplayName}"/>
 									</Border>
@@ -139,7 +132,10 @@
 								</WrapPanel>
 
 								<!-- Actions -->
-								<StackPanel Grid.Column="2" Grid.RowSpan="3" Orientation="Horizontal" VerticalAlignment="Top">
+								<StackPanel Grid.Column="2" 
+								            Grid.RowSpan="3" 
+								            Orientation="Horizontal" 
+								            VerticalAlignment="Top">
 									<StackPanel.IsVisible>
 										<MultiBinding Converter="{x:Static BoolConverters.And}">
 											<Binding Path="IsPointerOver" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"/>
@@ -218,8 +214,11 @@
 		</Border>
 		
 		<!-- Navigation bar -->
-		<Border Name="navigationBar" Classes="ToolBar" BorderBrush="{DynamicResource Brush/ToolBar.Border}" BorderThickness="0,0,1,0" DockPanel.Dock="Left">
-			<Border.IsVisible>
+		<Border Name="navigationBar" 
+		        Classes="ToolBar" 
+		        BorderBrush="{DynamicResource Brush/ToolBar.Border}"
+		        BorderThickness="0,0,1,0" DockPanel.Dock="Left">
+		    <Border.IsVisible>
 				<MultiBinding Converter="{x:Static BoolConverters.Or}">
 					<Binding Path="IsVisible" ElementName="pinnedLogProfilesButton"/>
 					<Binding Path="IsVisible" ElementName="recentlyUsedLogProfilesButton"/>
