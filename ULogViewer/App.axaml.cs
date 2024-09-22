@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.Json;
 using System.Threading;
@@ -153,6 +154,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Constructor.
+		[DynamicDependency(DynamicallyAccessedMemberTypes.All, "CompiledAvaloniaXaml.!AvaloniaResources", "CarinaStudio.AppSuite.SyntaxHighlighting")]
+		[DynamicDependency(DynamicallyAccessedMemberTypes.All, "CompiledAvaloniaXaml.!XamlLoader", "CarinaStudio.AppSuite.SyntaxHighlighting")]
 		public App()
 		{
 			LogToConsole("Initialize App instance");
