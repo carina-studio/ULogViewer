@@ -203,6 +203,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					&& this.Encoding == options.Encoding
 					&& this.EnvironmentVariables.Equals(options.EnvironmentVariables)
 					&& this.FileName == options.FileName
+					&& this.FormatClefData == options.FormatClefData 
 					&& this.FormatJsonData == options.FormatJsonData
 					&& this.FormatXmlData == options.FormatXmlData
 					&& this.IncludeStandardError == options.IncludeStandardError
@@ -227,6 +228,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set name of file to open.
 		/// </summary>
 		public string? FileName { get; set; }
+		
+		
+		/// <summary>
+		/// Get or set whether CLEF data should be formatted when reading or not.
+		/// </summary>
+		public bool FormatClefData { get; set; }
 
 
 		/// <summary>
@@ -383,6 +390,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(FileName):
 							options.FileName = jsonProperty.Value.GetString();
 							break;
+						case nameof(FormatClefData):
+							options.FormatClefData = jsonProperty.Value.ValueKind == JsonValueKind.True;
+							break;
 						case nameof(FormatJsonData):
 							options.FormatJsonData = jsonProperty.Value.ValueKind == JsonValueKind.True;
 							break;
@@ -535,6 +545,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				});
 				this.FileName?.Let(it => 
 					jsonWriter.WriteString(nameof(FileName), it));
+				if (this.FormatClefData)
+					jsonWriter.WriteBoolean(nameof(FormatClefData), true);
 				if (this.FormatJsonData)
 					jsonWriter.WriteBoolean(nameof(FormatJsonData), true);
 				if (this.FormatXmlData)

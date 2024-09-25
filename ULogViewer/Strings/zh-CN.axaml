@@ -473,8 +473,12 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">环境变量</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">环境变量 '{0}' 先前已加入。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">文件路径</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">读取时格式化 CLEF 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData.Description">仅针对扩展名为 .clef 之文件有效。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">读取时格式化 JSON 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData.Description">仅针对扩展名为 .json 之文件有效。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">读取时格式化 XML 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData.Description">仅针对扩展名为 .xml 之文件有效。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">包含标准错误输出 (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP 地址</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">这是 Azure 上的资源</sys:String>
