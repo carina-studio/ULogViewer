@@ -30,6 +30,7 @@ class FormattedJsonTextReader : TextReader
     {
         this.jsonReader = new JsonTextReader(reader)
         {
+            DateParseHandling = DateParseHandling.None,
             SupportMultipleContent = true
         };
     }
