@@ -11,7 +11,7 @@ namespace CarinaStudio.ULogViewer;
 class StringFormatter
 {
     // Static fields.
-	static readonly Regex ParamRegex = new("\\{(?<Name>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
+	static readonly Regex ParamRegex = new("(?<!\\{)\\{(?<Name>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
 
     
     // Fields.
@@ -80,7 +80,17 @@ class StringFormatter
 
     /// <inheritdoc/>
     public override string ToString() =>
-        this.ToString(null);
+        this.ToString(target: null);
+    
+    
+    /// <summary>
+    /// Get formatted string.
+    /// </summary>
+    /// <param name="buffer"><see cref="StringBuilder"/> to receive formatted string.</param>
+    /// <param name="append">True to append formatted string without clearing <paramref name="buffer"/>.</param>
+    /// <returns>Formatted string.</returns>
+    public void ToString(StringBuilder buffer, bool append = false) =>
+        this.ToString(null, buffer, append);
 
 
     /// <summary>
@@ -103,5 +113,37 @@ class StringFormatter
         
         // format
         return string.Format(this.format, parameters);
+    }
+    
+    
+    /// <summary>
+    /// Get formatted string.
+    /// </summary>
+    /// <param name="target">Target object.</param>
+    /// <param name="buffer"><see cref="StringBuilder"/> to receive formatted string.</param>
+    /// <param name="append">True to append formatted string without clearing <paramref name="buffer"/>.</param>
+    /// <returns>Formatted string.</returns>
+    public void ToString(object? target, StringBuilder buffer, bool append = false)
+    {
+        // clear buffer
+        if (!append)
+            buffer.Clear();
+        
+        // output without format
+        var paramNames = this.ParameterNames;
+        var paramCount = paramNames.Count;
+        if (paramCount == 0)
+        {
+            buffer.Append(this.format);
+            return;
+        }
+
+        // get parameters
+        var parameters = new object?[paramCount];
+        for (var i = paramCount - 1; i >= 0; --i)
+            parameters[i] = this.parameterProvider(target, paramNames[i]);
+        
+        // format
+        buffer.AppendFormat(this.format, parameters);
     }
 }
