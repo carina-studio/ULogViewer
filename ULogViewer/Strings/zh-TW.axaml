@@ -317,7 +317,7 @@
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">從每個檔案中所讀取的最大日誌數量。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">數量的有效範圍為 1 至 {0} (包含)。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">日誌類型所定義之最大日誌讀取數量</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly">需要升級至專業版。</sys:String>
+	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion">升級至專業版前您可以設定一次。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">日誌讀取數量選項</sys:String>
 
@@ -490,6 +490,7 @@ return False</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若這是 Azure 上的資源則 ULogViewer 將自動設定相關環境，例如登入或更新防火牆規則。</sys:String>
+	<StaticResourceExtension x:Key="String/LogDataSourceOptionsDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">選取 Azure 上的資源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">資料來源參數</sys:String>
 
@@ -655,7 +656,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">從每個資料來源中所讀取的最大日誌數量。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">數量的有效範圍為 1 至 2147483647 (包含)。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名稱</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">需要升級至專業版。</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">原始日誌等級屬性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">該日誌屬性將用於提供日誌等級的原始值。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新開始讀取日誌前的延遲 (毫秒)</sys:String>
@@ -714,7 +715,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">其他日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">已釘選</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">釘選/移除釘選日誌類型</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">需要升級至專業版。</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileSelectionDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">最近使用的日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">刪除日誌類型</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles">清除紀錄</sys:String>
@@ -1254,7 +1255,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">日誌分析腳本</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">動作計數分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">動作時距分析</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">需要升級至專業版。</sys:String>
+	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析規則集 (可多選)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">執行「{0}」之腳本以分析日誌時發生錯誤：</sys:String>
