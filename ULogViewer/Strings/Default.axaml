@@ -337,7 +337,7 @@
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each file.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to {0} inclusively.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by log profile</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly">Upgrade to Pro version needed.</sys:String>
+	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion">You can set the value one time before activating Pro version.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Log reading count options</sys:String>
 
@@ -513,6 +513,7 @@ return False</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will setup environment automatically if it is the resource on Azure. For ex, logging in or updating firewall rules.</sys:String>
+	<StaticResourceExtension x:Key="String/LogDataSourceOptionsDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select resources on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
 
@@ -693,7 +694,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each data source.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to 2147483647 inclusively.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ProVersionOnly">Upgrade to Pro version needed.</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">Name of property of raw log level</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">The property will be used for providing raw value of log level.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
@@ -752,7 +753,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ProVersionOnly">Upgrade to Pro version needed.</sys:String>
+	<StaticResourceExtension x:Key="String/LogProfileSelectionDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">Recently used profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles">Clear history</sys:String>
@@ -1302,7 +1303,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">Operation counting analysis</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly">Upgrade to Pro version needed.</sys:String>
+	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">Analysis rule sets to apply (multi-selectable)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">Error occurred while running script of '{0}' to analyze log:</sys:String>
