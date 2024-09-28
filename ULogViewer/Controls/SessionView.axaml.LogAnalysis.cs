@@ -136,7 +136,7 @@ partial class SessionView
         // show log analysis results
         if (this.DataContext is Session session && !session.IsRemovingLogFiles)
         {
-            this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding
+            this.logAnalysisResultListBox.Bind(ItemsControl.ItemsSourceProperty, new Binding
             {
                 Path = $"{nameof(Session.LogAnalysis)}.{nameof(LogAnalysisViewModel.AnalysisResults)}"
             });
@@ -173,7 +173,7 @@ partial class SessionView
         }.ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
         if (scriptSet == null)
             return;
-        if (this.DataContext != session || session.LogProfile != profile)
+        if (this.DataContext != session || !ReferenceEquals(session.LogProfile, profile))
             return;
         profile.CooperativeLogAnalysisScriptSet = scriptSet;
     }
@@ -363,7 +363,7 @@ partial class SessionView
         }.ShowDialog<LogAnalysisScriptSet?>(this.attachedWindow);
         if (scriptSet == null)
             return;
-        if (this.DataContext != session || session.LogProfile != profile)
+        if (this.DataContext != session || !ReferenceEquals(session.LogProfile, profile))
             return;
         profile.CooperativeLogAnalysisScriptSet = scriptSet;
     }
@@ -1211,6 +1211,7 @@ partial class SessionView
             // [Workaround] Need to sync selection back to control because selection will be cleared when popup opened
             if (selectedRuleSetCount > 0)
             {
+                // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
                 var isScheduled = this.updateLogAnalysisAction?.IsScheduled ?? false;
                 this.SynchronizationContext.Post(() =>
                 {
@@ -1235,11 +1236,11 @@ partial class SessionView
             return;
         if (e.ScriptContainer is not LogAnalysisScriptSet scriptSet)
             return;
-        bool isCooperativeLogAnalysis = (this.DataContext as Session)?.LogProfile?.CooperativeLogAnalysisScriptSet == scriptSet;
+        bool isCooperativeLogAnalysis = ReferenceEquals((this.DataContext as Session)?.LogProfile?.CooperativeLogAnalysisScriptSet, scriptSet);
         string scriptType;
-        if (scriptSet.AnalysisScript == e.Script)
+        if (ReferenceEquals(scriptSet.AnalysisScript, e.Script))
             scriptType = "AnalysisScript";
-        else if (scriptSet.SetupScript == e.Script)
+        else if (ReferenceEquals(scriptSet.SetupScript, e.Script))
             scriptType = "SetupScript";
         else
             scriptType = "UnknownScript";
@@ -1270,13 +1271,13 @@ partial class SessionView
         var syncBack = false;
         var selectedItems = Global.Run(() =>
         {
-            if (sender == session.LogAnalysis.KeyLogAnalysisRuleSets)
+            if (ReferenceEquals(sender, session.LogAnalysis.KeyLogAnalysisRuleSets))
                 return this.keyLogAnalysisRuleSetListBox.SelectedItems;
-            if (sender == session.LogAnalysis.LogAnalysisScriptSets)
+            if (ReferenceEquals(sender, session.LogAnalysis.LogAnalysisScriptSets))
                 return this.logAnalysisScriptSetListBox.SelectedItems;
-            if (sender == session.LogAnalysis.OperationCountingAnalysisRuleSets)
+            if (ReferenceEquals(sender, session.LogAnalysis.OperationCountingAnalysisRuleSets))
                 return this.operationCountingAnalysisRuleSetListBox.SelectedItems;
-            if (sender == session.LogAnalysis.OperationDurationAnalysisRuleSets)
+            if (ReferenceEquals(sender, session.LogAnalysis.OperationDurationAnalysisRuleSets))
                 return this.operationDurationAnalysisRuleSetListBox.SelectedItems;
             throw new NotSupportedException();
         });

@@ -1,4 +1,5 @@
 using Avalonia.Data.Converters;
+using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
@@ -101,7 +102,7 @@ class LogChartViewModel : SessionComponent
 
 
     // Static fields.
-    static readonly IValueConverter ChartValueGranularityConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(LogChartValueGranularity));
+    static readonly IValueConverter ChartValueGranularityConverter = new AppSuite.Converters.EnumConverter(IAppSuiteApplication.CurrentOrNull, typeof(LogChartValueGranularity));
     static readonly SettingKey<int> LatestPanelSizeKey = new("LogChartViewModel.LatestPanelSize", (int)(PanelSizeProperty.DefaultValue + 0.5));
 
 

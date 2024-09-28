@@ -40,7 +40,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.logProfileObserverToken = session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
         {
             var prevLogProfile = this.attachedLogProfile;
-            if (prevLogProfile == logProfile)
+            if (ReferenceEquals(prevLogProfile, logProfile))
                 return;
             this.attachedLogProfile = logProfile;
             this.OnLogProfileChanged(prevLogProfile, logProfile);

@@ -2,6 +2,7 @@
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -15,6 +16,7 @@ using CarinaStudio.Input;
 using CarinaStudio.Threading;
 using CarinaStudio.VisualTree;
 using CarinaStudio.ULogViewer.Controls;
+using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -88,7 +90,7 @@ namespace CarinaStudio.ULogViewer
 			this.notificationPresenter = this.Get<NotificationPresenter>(nameof(notificationPresenter));
 			this.tabControl = this.Get<AppSuite.Controls.TabControl>(nameof(tabControl)).Also(it =>
 			{
-				it.GetObservable(Avalonia.Controls.TabControl.SelectedIndexProperty).Subscribe(_ =>
+				it.GetObservable(SelectingItemsControl.SelectedIndexProperty).Subscribe(_ =>
 				{
 					// [Workaround] TabControl.SelectionChanged will be raised unexpectedly when selection change in log list box in SessionView
 					this.tabControlSelectionChangedAction?.Schedule(); // Should not call OnTabControlSelectionChanged() directly because of timing issue that SelectedIndex will be changed temporarily when attaching to Workspace
@@ -171,10 +173,9 @@ namespace CarinaStudio.ULogViewer
 				{
 					if (session.IsReadingLogs)
 					{
-						if (session.IsReadingLogsContinuously)
-							this.TaskbarIconProgressState = TaskbarIconProgressState.None;
-						else
-							this.TaskbarIconProgressState = TaskbarIconProgressState.Indeterminate;
+						this.TaskbarIconProgressState = session.IsReadingLogsContinuously 
+							? TaskbarIconProgressState.None 
+							: TaskbarIconProgressState.Indeterminate;
 					}
 					else if (double.IsFinite(session.LogFiltering.FilteringProgress))
 					{
@@ -502,7 +503,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			foreach (var candidate in this.tabItems)
 			{
-				if (candidate is TabItem tabItem && tabItem.DataContext == session)
+				if (candidate is { } tabItem && tabItem.DataContext == session)
 					return tabItem;
 			}
 			return null;
@@ -749,7 +750,6 @@ namespace CarinaStudio.ULogViewer
 
 			// handle session dragging
 			if (e.Data.TryGetData<Session>(DraggingSessionKey, out var session) 
-				&& session != null 
 				&& e.ItemIndex < this.tabItems.Count - 1)
 			{
 				// find source position
@@ -822,7 +822,6 @@ namespace CarinaStudio.ULogViewer
 
 			// drop session
 			if (e.Data.TryGetData<Session>(DraggingSessionKey, out var session) 
-				&& session != null 
 				&& e.ItemIndex < this.tabItems.Count - 1)
 			{
 				// find source position
@@ -885,7 +884,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Called when user selected a log profile.
 #pragma warning disable IDE0051
-		void OnLogProfileSelected(LogProfileSelectionContextMenu _, Logs.Profiles.LogProfile logProfile)
+		void OnLogProfileSelected(LogProfileSelectionContextMenu _, LogProfile logProfile)
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;

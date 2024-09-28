@@ -61,7 +61,7 @@ partial class SessionView
     /// <summary>
     /// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
     /// </summary>
-    public static readonly IValueConverter LogChartTypeNameConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(LogChartType));
+    public static readonly IValueConverter LogChartTypeNameConverter = new AppSuite.Converters.EnumConverter(IAppSuiteApplication.CurrentOrNull, typeof(LogChartType));
     /// <summary>
     /// Define <see cref="LogChartToolTipBackgroundPaint"/> property.
     /// </summary>
@@ -73,17 +73,10 @@ partial class SessionView
     
     
     // Legend of log chart.
-    class LogChartLegend : IChartLegend<SkiaSharpDrawingContext>
+    class LogChartLegend(SessionView view) : IChartLegend<SkiaSharpDrawingContext>
     {
         // Fields.
         StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
-        readonly SessionView sessionView;
-        
-        // Constructor.
-        public LogChartLegend(SessionView sessionView)
-        {
-            this.sessionView = sessionView;
-        }
         
         // Draw.
         public void Draw(Chart<SkiaSharpDrawingContext> chart)
@@ -101,7 +94,7 @@ partial class SessionView
         public LvcSize Measure(Chart<SkiaSharpDrawingContext> chart)
         {
             // create container
-            var sessionView = this.sessionView;
+            var sessionView = view;
             var logChart = sessionView.logChart;
             var container = this.container ?? new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(it =>
             {
@@ -154,18 +147,11 @@ partial class SessionView
     
     
     // Tool tip of log chart.
-    class LogChartToolTip : IChartTooltip<SkiaSharpDrawingContext>
+    class LogChartToolTip(SessionView view) : IChartTooltip<SkiaSharpDrawingContext>
     {
         // Fields.
         StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
-        readonly SessionView sessionView;
-        
-        // Constructor.
-        public LogChartToolTip(SessionView sessionView)
-        {
-            this.sessionView = sessionView;
-        }
-        
+
         // Hide.
         public void Hide(Chart<SkiaSharpDrawingContext> chart)
         {
@@ -185,12 +171,12 @@ partial class SessionView
         public void Show(IEnumerable<ChartPoint> foundPoints, Chart<SkiaSharpDrawingContext> chart)
         {
             // creat container
-            var sessionView = this.sessionView;
+            var sessionView = view;
             var logChart = sessionView.logChart;
             var container = this.container ?? new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(container =>
             {
                 var cornerRadius = sessionView.FindResourceOrDefault<CornerRadius>("CornerRadius/ToolTip");
-                var padding = this.sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Padding");
+                var padding = view.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Padding");
                 container.BackgroundGeometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
                 container.BackgroundPaint = logChart.TooltipBackgroundPaint;
                 container.ClippingMode = ClipMode.None;
@@ -275,12 +261,8 @@ partial class SessionView
 
 
     // Extended SolidColorPaint.
-    class SolidColorPaintEx : SolidColorPaint
+    class SolidColorPaintEx(SKColor color) : SolidColorPaint(color)
     {
-        // Constructor.
-        public SolidColorPaintEx(SKColor color) : base(color)
-        { }
-        
         // Blend mode.
         public SKBlendMode BlendMode { get; init; } = SKBlendMode.Overlay;
 
@@ -309,7 +291,7 @@ partial class SessionView
     static SKTypeface? InterSKTypeFace;
     static readonly SettingKey<bool> IsLogChartTutorialShownKey = new("SessionView.IsLogChartTutorialShown", false);
     static readonly SKColor[] LogChartSeriesColorsDark =
-    {
+    [
         SKColor.FromHsl(0, 100, 60), // Red
         SKColor.FromHsl(30, 100, 60), // Orange
         SKColor.FromHsl(53, 100, 60), // Yellow
@@ -321,9 +303,9 @@ partial class SessionView
         SKColor.FromHsl(220, 100, 60), // Navy
         SKColor.FromHsl(260, 100, 60), // Purple
         SKColor.FromHsl(315, 100, 60), // Magenta
-    };
+    ];
     static readonly SKColor[] LogChartSeriesColorsLight =
-    {
+    [
         SKColor.FromHsl(0, 100, 35), // Red
         SKColor.FromHsl(30, 100, 35), // Orange
         SKColor.FromHsl(53, 100, 35), // Yellow
@@ -335,7 +317,7 @@ partial class SessionView
         SKColor.FromHsl(220, 100, 40), // Navy
         SKColor.FromHsl(260, 100, 50), // Purple
         SKColor.FromHsl(315, 100, 40), // Magenta
-    };
+    ];
     // ReSharper disable IdentifierTypo
     static SKTypeface? NotoSansSCSKTypeFace;
     static SKTypeface? NotoSansTCSKTypeFace;
@@ -1434,7 +1416,7 @@ partial class SessionView
                     e.Handled = true;
                     (this.DataContext as Session)?.LogChart.ResetVisibleSeriesSourcesCommand.TryExecute();
                 };
-                it.BindToResource(MenuItem.HeaderProperty, this, "String/Common.Reset");
+                it.BindToResource(HeaderedSelectingItemsControl.HeaderProperty, this, "String/Common.Reset");
                 it.StaysOpenOnClick = true;
             }));
             menu.ItemsSource = menuItems;

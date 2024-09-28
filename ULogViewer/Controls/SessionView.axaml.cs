@@ -51,6 +51,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Path = System.IO.Path;
+using Window = CarinaStudio.Controls.Window;
 
 namespace CarinaStudio.ULogViewer.Controls
 {
@@ -94,7 +95,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly IValueConverter StatusBarBackgroundConverter = new FuncValueConverter<SessionViewStatusBarState, IBrush?>(state =>
 		{
-			var app = App.CurrentOrNull;
+			var app = CarinaStudio.Application.CurrentOrNull;
 			if (app is null)
 				return null;
 			IBrush? brush;
@@ -125,14 +126,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
         // Implementation of LogLevelNameConverter.
-        class LogLevelNameConverterImpl : IValueConverter
-		{
-			readonly App app;
-			public LogLevelNameConverterImpl(App app)
-			{
-				this.app = app;
-			}
-			public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        class LogLevelNameConverterImpl(App app) : IValueConverter
+        {
+	        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 			{
 				if (value is Logs.LogLevel level)
 				{
@@ -686,7 +682,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.timestampCategoryListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampCategoryListBox)).Also(it =>
 			{
-				it.GetObservable(Avalonia.Controls.ListBox.SelectedItemProperty).Subscribe(item =>
+				it.GetObservable(SelectingItemsControl.SelectedItemProperty).Subscribe(item =>
 					this.OnLogCategoryListBoxSelectedItemChanged(it, item as DisplayableLogCategory));
 			});
 			this.toolBarLogActionItemsPanel = this.toolBarContainer.FindControl<Panel>(nameof(toolBarLogActionItemsPanel)).AsNonNull().Also(it =>
@@ -913,7 +909,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									{
 										if (this.DataContext is Session session)
 											commandBindingToken = subItem.Bind(MenuItem.CommandProperty, new Binding() { Path = nameof(Session.SearchLogPropertyOnInternetCommand), Source = session });
-										headerBindingToken = subItem.Bind(MenuItem.HeaderProperty, new Binding() { Path = nameof(Net.SearchProvider.Name), Source = provider });
+										headerBindingToken = subItem.Bind(HeaderedSelectingItemsControl.HeaderProperty, new Binding() { Path = nameof(Net.SearchProvider.Name), Source = provider });
 										iconBindingToken = iconImage.Bind(Avalonia.Controls.Image.SourceProperty, new Binding() { Source = provider, Converter = Converters.SearchProviderIconConverters.Default });
 									};
 									subItem.DetachedFromLogicalTree += (_, _) =>
@@ -938,6 +934,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.showLogPropertyMenuItem.AsNonNull();
 			
 			// create scheduled actions
+			// ReSharper disable once AsyncVoidLambda
 			this.autoAddLogFilesAction = new(async () =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders || this.isAutoSettingLogsReadingParameters)
@@ -962,6 +959,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 				}
 			});
+			// ReSharper disable once AsyncVoidLambda
 			this.autoSetCommandAction = new(async () =>
 			{
 				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
@@ -972,6 +970,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isAutoSettingLogsReadingParameters = false;
 				this.AutoSelectAndSetLogsReadingParameters();
 			});
+			// ReSharper disable once AsyncVoidLambda
 			this.autoSetIPEndPointAction = new(async () =>
 			{
 				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
@@ -982,6 +981,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isAutoSettingLogsReadingParameters = false;
 				this.AutoSelectAndSetLogsReadingParameters();
 			});
+			// ReSharper disable once AsyncVoidLambda
 			this.autoSetProcessIdAction = new(async () =>
 			{
 				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
@@ -992,6 +992,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isAutoSettingLogsReadingParameters = false;
 				this.AutoSelectAndSetLogsReadingParameters();
 			});
+			// ReSharper disable once AsyncVoidLambda
 			this.autoSetProcessNameAction = new(async () =>
 			{
 				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
@@ -1002,6 +1003,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isAutoSettingLogsReadingParameters = false;
 				this.AutoSelectAndSetLogsReadingParameters();
 			});
+			// ReSharper disable once AsyncVoidLambda
 			this.autoSetUriAction = new(async () =>
 			{
 				if (this.DataContext is not Session || this.isAutoSettingLogsReadingParameters)
@@ -1012,6 +1014,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.isAutoSettingLogsReadingParameters = false;
 				this.AutoSelectAndSetLogsReadingParameters();
 			});
+			// ReSharper disable once AsyncVoidLambda
 			this.autoSetWorkingDirectoryAction = new(async () =>
 			{
 				if (this.DataContext is not Session session || session.HasLogReaders || this.isAutoSettingLogsReadingParameters)
@@ -1251,7 +1254,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// bind to logs
 			this.logsBindingToken = this.logsBindingToken.DisposeAndReturnNull();
-			this.logsBindingToken = this.logListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding { Path = nameof(Session.Logs)} ); 
+			this.logsBindingToken = this.logListBox.Bind(ItemsControl.ItemsSourceProperty, new Binding { Path = nameof(Session.Logs)} ); 
 			
 			// add event handler
 			session.DebugMessageGenerated += this.OnDebugMessageGeneratedBySession;
@@ -1506,9 +1509,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (profile != null && profile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
 			{
 				this.isRestartingAsAdminConfirmed = true;
+				// ReSharper disable once AsyncVoidLambda
 				this.SynchronizationContext.PostDelayed(async () =>
 				{
-					if (this.DataContext == session && session.LogProfile == profile)
+					if (this.DataContext == session && ReferenceEquals(session.LogProfile, profile))
 					{
 						if (await this.ConfirmRestartingAsAdmin(profile))
 							this.RestartAsAdministrator();
@@ -2965,17 +2969,17 @@ namespace CarinaStudio.ULogViewer.Controls
 			// attach to window
 			this.attachedWindow = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>().AsNonNull().Also(window =>
 			{
-				this.areInitDialogsClosedObserverToken = (window as MainWindow)?.GetObservable(MainWindow.AreInitialDialogsClosedProperty).Subscribe(closed =>
+				this.areInitDialogsClosedObserverToken = (window as MainWindow)?.GetObservable(AppSuite.Controls.MainWindow.AreInitialDialogsClosedProperty).Subscribe(closed =>
 				{
 					if (closed)
 						this.ShowNextTutorial();
 				});
-				this.hasDialogsObserverToken = (window as CarinaStudio.Controls.Window)?.GetObservable(CarinaStudio.Controls.Window.HasDialogsProperty).Subscribe(hasDialogs =>
+				this.hasDialogsObserverToken = (window as Window)?.GetObservable(Window.HasDialogsProperty).Subscribe(hasDialogs =>
 				{
 					if (!hasDialogs)
 						this.ShowNextTutorial();
 				});
-				this.isActiveObserverToken = window.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isActive =>
+				this.isActiveObserverToken = window.GetObservable(WindowBase.IsActiveProperty).Subscribe(isActive =>
 				{
 					if (isActive)
 					{
@@ -3398,7 +3402,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				var waitingTask = new TaskCompletionSource();
 				var observableToken = (IDisposable?)null;
-				observableToken = mainWindow.GetObservable(MainWindow.HasDialogsProperty).Subscribe(_ =>
+				observableToken = mainWindow.GetObservable(Window.HasDialogsProperty).Subscribe(_ =>
 				{
 					this.SynchronizationContext.Post(() =>
 					{
@@ -3455,24 +3459,24 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (e.ScriptContainer is not ScriptLogDataSourceProvider provider)
 				return;
 			string scriptType;
-			if (provider.ClosingReaderScript == e.Script)
+			if (ReferenceEquals(provider.ClosingReaderScript, e.Script))
 				scriptType = "ClosingReaderScript";
-			else if (provider.OpeningReaderScript == e.Script)
+			else if (ReferenceEquals(provider.OpeningReaderScript, e.Script))
 				scriptType = "OpeningReaderScript";
-			else if (provider.ReadingLineScript == e.Script)
+			else if (ReferenceEquals(provider.ReadingLineScript, e.Script))
 				scriptType = "ReadingLineScript";
 			else
 				scriptType = "UnknownScript";
 			
 			// generate message
-			var message = new FormattedString()
+			var message = new FormattedString
 			{
 				Arg1 = ((ILogDataSourceProvider)provider).DisplayName,
 			};
 			message.Bind(FormattedString.FormatProperty, this.Application.GetObservableString($"SessionView.LogDataSourceScript.RuntimeError.{scriptType}"));
 
 			// show dialog
-			_ = new ScriptRuntimeErrorDialog()
+			_ = new ScriptRuntimeErrorDialog
 			{
 				Error = e.Error,
 				Message = message,
@@ -4057,7 +4061,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							e.Handled = true;
 							break;
 						case Key.S:
-							if (e.Source == this.logTextFilterTextBox)
+							if (ReferenceEquals(e.Source, this.logTextFilterTextBox))
 							{
 								this.logTextFilterTextBox.Validate();
 								if (this.logTextFilterTextBox.IsTextValid && this.logTextFilterTextBox.Object != null)
@@ -4171,7 +4175,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								if (this.Application.IsDebugMode)
 									this.Logger.LogTrace("[KeyDown] {key} on text box", e.Key);
-								if (e.Source != this.logTextFilterTextBox || !this.logTextFilterTextBox.HasOpenedAssistanceMenus)
+								if (!ReferenceEquals(e.Source, this.logTextFilterTextBox) || !this.logTextFilterTextBox.HasOpenedAssistanceMenus)
 								{
 									this.logListBox.Focus();
 									e.Handled = true;
@@ -4516,7 +4520,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					else
 					{
-						this.logAnalysisResultListBox.Bind(Avalonia.Controls.ListBox.ItemsSourceProperty, new Binding
+						this.logAnalysisResultListBox.Bind(ItemsControl.ItemsSourceProperty, new Binding
 						{
 							Path = $"{nameof(Session.LogAnalysis)}.{nameof(LogAnalysisViewModel.AnalysisResults)}"
 						});
@@ -5368,7 +5372,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.VerifyAccess();
 			if (this.DataContext is not Session session)
 				return false;
-			if (session.LogProfile == logProfile)
+			if (ReferenceEquals(session.LogProfile, logProfile))
 				return true;
 
 			// check administrator role
