@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
@@ -492,13 +493,38 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	void OnEditorControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
 	{
 		var property = e.Property;
-		if (property == UriTextBox.IsTextValidProperty
-			|| property == IPAddressTextBox.IsTextValidProperty
-			|| property == ComboBox.SelectedItemProperty
+		if (property == ObjectTextBox.IsTextValidProperty
+			|| property == ObjectTextBox.IsTextValidProperty
+			|| property == SelectingItemsControl.SelectedItemProperty
 			|| (property == TextBox.TextProperty && sender is not UriTextBox)
 			|| property == UriTextBox.ObjectProperty)
 		{
 			this.InvalidateInput();
+		}
+	}
+	
+	
+	// Called when check state of one of switch for formatting data changed.
+	void OnFormatDataSwitchIsCheckedChanged(object? sender, RoutedEventArgs e)
+	{
+		if (sender is not ToggleSwitch toggleSwitch 
+		    || !toggleSwitch.IsEnabled
+		    || this.GetValue(IsFileNameSupportedProperty))
+			return;
+		if (!toggleSwitch.IsChecked.GetValueOrDefault())
+		{
+			this.formatJsonDataSwitch.IsEnabled = true;
+			this.formatXmlDataSwitch.IsEnabled = true;
+		}
+		else if (ReferenceEquals(toggleSwitch, this.formatJsonDataSwitch))
+		{
+			this.formatXmlDataSwitch.IsEnabled = false;
+			this.formatXmlDataSwitch.IsChecked = false;
+		}
+		else if (ReferenceEquals(toggleSwitch, this.formatXmlDataSwitch))
+		{
+			this.formatJsonDataSwitch.IsEnabled = false;
+			this.formatJsonDataSwitch.IsChecked = false;
 		}
 	}
 
@@ -605,9 +631,18 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.initFocusedControl ??= this.fileNameTextBox;
 		}
 		if (this.GetValue(IsFormatJsonDataSupportedProperty))
+		{
 			this.formatJsonDataSwitch.IsChecked = options.FormatJsonData;
+			this.formatJsonDataSwitch.IsCheckedChanged += this.OnFormatDataSwitchIsCheckedChanged;
+		}
 		if (this.GetValue(IsFormatXmlDataSupportedProperty))
-			this.formatXmlDataSwitch.IsChecked = options.FormatXmlData;
+		{
+			if (!this.GetValue(IsFormatJsonDataSupportedProperty) || !options.FormatJsonData)
+				this.formatXmlDataSwitch.IsChecked = options.FormatXmlData;
+			else
+				this.formatXmlDataSwitch.IsEnabled = false;
+			this.formatXmlDataSwitch.IsCheckedChanged += this.OnFormatDataSwitchIsCheckedChanged;
+		}
 		if (this.GetValue(IsIncludeStandardErrorSupportedProperty))
 			this.includeStderrSwitch.IsChecked = options.IncludeStandardError;
 		if (this.IsWorkingDirectorySupported)

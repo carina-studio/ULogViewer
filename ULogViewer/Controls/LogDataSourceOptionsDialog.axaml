@@ -229,7 +229,13 @@
 						<!-- Format JSON data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatJsonDataSupported}">
 							<asControls:DialogItemGrid>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData}"/>
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" 
+									           Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" 
+									           IsVisible="{Binding #window.IsFileNameSupported}" 
+									           Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData.Description}"/>
+								</StackPanel>
 								<ToggleSwitch Name="formatJsonDataSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -238,7 +244,13 @@
 						<!-- Format XML data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatXmlDataSupported}">
 							<asControls:DialogItemGrid>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData}"/>
+								<StackPanel Classes="Dialog_Item_Text_Container">
+									<TextBlock Classes="Dialog_TextBlock_Label" 
+									           Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" 
+									           IsVisible="{Binding #window.IsFileNameSupported}" 
+									           Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData.Description}"/>
+								</StackPanel>
 								<ToggleSwitch Name="formatXmlDataSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 							</asControls:DialogItemGrid>
 							<Separator Classes="Dialog_Item_Separator"/>
