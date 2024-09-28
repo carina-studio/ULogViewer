@@ -45,6 +45,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 		IDisposable? coopLogAnalysisScriptSetPropChangedHandlerToken;
 		LogDataSourceOptions dataSourceOptions;
 		ILogDataSourceProvider dataSourceProvider = LogDataSourceProviders.Empty;
+		LogLevel defaultLogLevel = LogLevel.Undefined;
 		string? description;
 		EmbeddedScriptLogDataSourceProvider? embScriptLogDataSourceProvider;
 		readonly PropertyChangedEventHandler embScriptLogDataSourceProviderPropChangedHandler;
@@ -290,6 +291,24 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				this.dataSourceProvider = value;
 				this.OnPropertyChanged(nameof(DataSourceProvider));
 				this.Validate();
+			}
+		}
+
+
+		/// <summary>
+		/// Get or set default log level if it is not presented in raw log.
+		/// </summary>
+		public LogLevel DefaultLogLevel
+		{
+			get => this.defaultLogLevel;
+			set
+			{
+				this.VerifyAccess();
+				this.VerifyBuiltIn();
+				if (this.defaultLogLevel == value)
+					return;
+				this.defaultLogLevel = value;
+				this.OnPropertyChanged(nameof(DefaultLogLevel));
 			}
 		}
 
@@ -824,7 +843,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.logLevelMapForReading.SequenceEqual(value))
+				if (this.logLevelMapForReading.Equals(value))
 					return;
 				this.logLevelMapForReading.Clear();
 				this.logLevelMapForReading.AddAll(value);
@@ -843,7 +862,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			{
 				this.VerifyAccess();
 				this.VerifyBuiltIn();
-				if (this.logLevelMapForWriting.SequenceEqual(value))
+				if (this.logLevelMapForWriting.Equals(value))
 					return;
 				this.logLevelMapForWriting.Clear();
 				this.logLevelMapForWriting.AddAll(value);
@@ -1044,6 +1063,10 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 						{
 							this.Logger.LogError(ex, "Failed to load cooperative log analysis script set");
 						}
+						break;
+					case nameof(DefaultLogLevel):
+						if (Enum.TryParse<LogLevel>(jsonProperty.Value.GetString(), out var defaultLogLevel))
+							this.defaultLogLevel = defaultLogLevel;
 						break;
 					case nameof(Description):
 						this.description = jsonProperty.Value.GetString();
@@ -1253,6 +1276,8 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 				writer.WritePropertyName(nameof(CooperativeLogAnalysisScriptSet));
 				scriptSet.Save(writer);
 			});
+			if (this.defaultLogLevel != LogLevel.Undefined)
+				writer.WriteString(nameof(DefaultLogLevel), this.defaultLogLevel.ToString());
 			writer.WriteString(nameof(Description), this.description);
 			this.embScriptLogDataSourceProvider?.Let(it =>
 			{
@@ -1398,10 +1423,9 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			var provider = this.dataSourceProvider;
 			var options = this.dataSourceOptions;
 			writer.WriteStartObject();
-			if (provider != this.embScriptLogDataSourceProvider)
-				writer.WriteString(nameof(ILogDataSourceProvider.Name), provider.Name);
-			else
-				writer.WriteString(nameof(ILogDataSourceProvider.Name), "Embedded");
+			writer.WriteString(nameof(ILogDataSourceProvider.Name), provider != this.embScriptLogDataSourceProvider 
+				? provider.Name 
+				: "Embedded");
 			writer.WritePropertyName("Options");
 			options.Save(writer);
 			writer.WriteEndObject();

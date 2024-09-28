@@ -2141,12 +2141,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				if (profile.IsContinuousReading)
 					it.UpdateInterval = this.ContinuousLogReadingUpdateInterval;
+				it.DefaultLogLevel = profile.DefaultLogLevel;
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				it.LogPatternMatchingMode = profile.LogPatternMatchingMode;
 				it.LogPatterns = profile.LogPatterns.IsNotEmpty() 
 					? profile.LogPatterns 
-					: new[] { new LogPattern("^(?<Message>.*)", false, false, null) };
+					: [ new LogPattern("^(?<Message>.*)", false, false, null) ];
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
 				if (profile.IsContinuousReading)
 				{
@@ -3587,6 +3588,24 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.DisposeLogReaders();
 					this.StartReadingLogs();
 					break;
+				case nameof(LogProfile.DefaultLogLevel):
+				case nameof(LogProfile.LogPatternMatchingMode):
+				case nameof(LogProfile.LogPatterns):
+				case nameof(LogProfile.LogStringEncodingForReading):
+				case nameof(LogProfile.RawLogLevelPropertyName):
+				case nameof(LogProfile.SortDirection):
+				case nameof(LogProfile.SortKey):
+				case nameof(LogProfile.TimeSpanCultureInfoForReading):
+				case nameof(LogProfile.TimeSpanEncodingForReading):
+				case nameof(LogProfile.TimeSpanFormatForDisplaying):
+				case nameof(LogProfile.TimeSpanFormatsForReading):
+				case nameof(LogProfile.TimestampCultureInfoForReading):
+				case nameof(LogProfile.TimestampFormatForDisplaying):
+				case nameof(LogProfile.TimestampEncodingForReading):
+				case nameof(LogProfile.TimestampFormatsForReading):
+				case nameof(LogProfile.WorkingDirectoryRequirement):
+					this.ScheduleReloadingLogs(true, false);
+					break;
 				case nameof(LogProfile.Icon):
 				case nameof(LogProfile.IconColor):
 				case nameof(LogProfile.Name):
@@ -3610,23 +3629,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					goto case nameof(LogProfile.LogPatterns);
 				case nameof(LogProfile.LogWritingFormats):
 					this.UpdateIsLogsWritingAvailable(this.LogProfile);
-					break;
-				case nameof(LogProfile.LogPatternMatchingMode):
-				case nameof(LogProfile.LogPatterns):
-				case nameof(LogProfile.LogStringEncodingForReading):
-				case nameof(LogProfile.RawLogLevelPropertyName):
-				case nameof(LogProfile.SortDirection):
-				case nameof(LogProfile.SortKey):
-				case nameof(LogProfile.TimeSpanCultureInfoForReading):
-				case nameof(LogProfile.TimeSpanEncodingForReading):
-				case nameof(LogProfile.TimeSpanFormatForDisplaying):
-				case nameof(LogProfile.TimeSpanFormatsForReading):
-				case nameof(LogProfile.TimestampCultureInfoForReading):
-				case nameof(LogProfile.TimestampFormatForDisplaying):
-				case nameof(LogProfile.TimestampEncodingForReading):
-				case nameof(LogProfile.TimestampFormatsForReading):
-                case nameof(LogProfile.WorkingDirectoryRequirement):
-					this.ScheduleReloadingLogs(true, false);
 					break;
 				case nameof(LogProfile.LogReadingWindow):
 					if ((this.LogProfile?.MaxLogReadingCount).HasValue)
