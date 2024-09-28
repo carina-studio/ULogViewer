@@ -24,11 +24,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new HttpLogDataSource(this, options);
 		public override string Name => "Http";
-		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.Uri),
 		}.AsReadOnly();
-		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.FormatJsonData),
 			//nameof(LogDataSourceOptions.FormatXmlData),

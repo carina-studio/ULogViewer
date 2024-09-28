@@ -20,11 +20,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new TcpServerLogDataSource(this, options);
 		public override string Name => "TCP Server";
-		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.IPEndPoint),
 		}.AsReadOnly();
-		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.Encoding),
 			nameof(LogDataSourceOptions.IPEndPoint),

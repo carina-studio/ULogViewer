@@ -39,7 +39,7 @@ class MySqlDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+    public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
     {
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.QueryString),
@@ -47,7 +47,7 @@ class MySqlDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+    public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
     {
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.IsResourceOnAzure),

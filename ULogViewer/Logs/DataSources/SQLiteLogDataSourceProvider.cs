@@ -28,12 +28,12 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new SQLiteLogDataSource(this, options);
 		public override string Name => "SQLite";
-		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.FileName),
 			nameof(LogDataSourceOptions.QueryString),
 		}.AsReadOnly();
-		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.FileName),
 			nameof(LogDataSourceOptions.Password),

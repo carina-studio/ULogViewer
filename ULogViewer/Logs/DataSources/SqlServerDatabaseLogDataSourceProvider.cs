@@ -40,7 +40,7 @@ class SqlServerDatabaseLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+    public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
     {
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.QueryString),

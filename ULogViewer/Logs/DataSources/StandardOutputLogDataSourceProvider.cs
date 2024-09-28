@@ -20,11 +20,11 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		// Interface implementations.
 		protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new StandardOutputLogDataSource(this, options);
 		public override string Name => "StandardOutput";
-		public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+		public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.Command),
 		}.AsReadOnly();
-		public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+		public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
 		{
 			nameof(LogDataSourceOptions.Command),
 			nameof(LogDataSourceOptions.EnvironmentVariables),
