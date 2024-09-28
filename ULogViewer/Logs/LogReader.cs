@@ -35,6 +35,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 	// Fields.
 	readonly ScheduledAction clearLogChunkAction;
+	LogLevel defaultLogLevel = LogLevel.Undefined;
 	int dropLogCount = -1;
 	readonly ScheduledAction flushPendingLogsAction;
 	bool isContinuousReading;
@@ -270,6 +271,25 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	/// Get <see cref="ILogDataSource"/> to read log data from.
 	/// </summary>
 	public ILogDataSource DataSource { get; }
+
+
+	/// <summary>
+	/// Get or set default log level if it is not presented in raw log.
+	/// </summary>
+	public LogLevel DefaultLogLevel
+	{
+		get => this.defaultLogLevel;
+		set
+		{
+			this.VerifyAccess();
+			if (this.state != LogReaderState.Preparing)
+				throw new InvalidOperationException($"Cannot change {nameof(DefaultLogLevel)} when state is {this.state}.");
+			if (this.defaultLogLevel == value)
+				return;
+			this.defaultLogLevel = value;
+			this.OnPropertyChanged(nameof(DefaultLogLevel));
+		}
+	}
 
 
 	// Dispose.
@@ -1058,8 +1078,9 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				return IStringSource.Empty;
 			return new CompressedStringSource(it);
 		});
-		var logBuilder = new LogBuilder()
+		var logBuilder = new LogBuilder
 		{
+			DefaultLogLevel = this.defaultLogLevel,
 			MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy),
 			StringCache = stringSourceCache,
 		};

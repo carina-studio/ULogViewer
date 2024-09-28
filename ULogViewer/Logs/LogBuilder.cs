@@ -177,6 +177,12 @@ class LogBuilder
 
 
 	/// <summary>
+	/// Get or set default log level if it is not presented in the builder.
+	/// </summary>
+	public LogLevel DefaultLogLevel { get; set; } = LogLevel.Undefined;
+
+
+		/// <summary>
 	/// Get log property as <see cref="DateTime"/> or return null if unable to get the property.
 	/// </summary>
 	/// <param name="propertyName">Name of property of log.</param>
@@ -206,17 +212,20 @@ class LogBuilder
 	/// <returns>Value or null.</returns>
 	public T? GetEnumOrNull<T>(string propertyName) where T : struct, Enum
 	{
-		if (!this.properties.TryGetValue(propertyName, out var value))
-			return null;
-		var span = value switch
+		if (this.properties.TryGetValue(propertyName, out var value))
 		{
-			ReadOnlyMemory<char> memory => memory.Span,
-			string s => s.AsSpan(),
-			_ => default,
-		};
-		if (Enum.TryParse<T>(span, out var enumValue))
-			return enumValue;
-		return null;
+			var span = value switch
+			{
+				ReadOnlyMemory<char> memory => memory.Span,
+				string s => s.AsSpan(),
+				_ => default,
+			};
+			if (Enum.TryParse<T>(span, out var enumValue))
+				return enumValue;
+		}
+		return propertyName == nameof(Log.Level) && typeof(T) == typeof(LogLevel)
+			? (T)(object)this.DefaultLogLevel
+			: null;
 	}
 
 
