@@ -47,14 +47,14 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions => new HashSet<string>()
+    public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
     {
         nameof(LogDataSourceOptions.Command),
     }.AsReadOnly(); 
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions => new HashSet<string>()
+    public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
     {
         nameof(LogDataSourceOptions.Command),
     }.AsReadOnly(); 

@@ -11,11 +11,11 @@ class FileLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceP
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new FileLogDataSource(this, options);
 	public override string Name => "File";
-	public override ISet<string> RequiredSourceOptions => new HashSet<string>
+	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
 	{
 		nameof(LogDataSourceOptions.FileName),
 	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions => new HashSet<string>
+	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
 	{
 		nameof(LogDataSourceOptions.Encoding),
 		nameof(LogDataSourceOptions.FileName),

@@ -11,11 +11,11 @@ class WindowsEventLogDataSourceProvider(IULogViewerApplication app) : BaseLogDat
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new WindowsEventLogDataSource(this, options);
 	public override string Name => "WindowsEventLogs";
-	public override ISet<string> RequiredSourceOptions => new HashSet<string>
+	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
 	{
 		nameof(LogDataSourceOptions.Category),
 	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions => new HashSet<string>
+	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
 	{
 		nameof(LogDataSourceOptions.Category),
 	}.AsReadOnly();
