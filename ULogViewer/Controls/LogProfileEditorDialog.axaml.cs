@@ -29,6 +29,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+// ReSharper disable RedundantNameQualifier
 namespace CarinaStudio.ULogViewer.Controls
 {
 	/// <summary>
@@ -39,7 +40,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
 		/// </summary>
-		public static readonly IValueConverter LogChartTypeNameConverter = new EnumConverter(App.CurrentOrNull, typeof(LogChartType));
+		public static readonly IValueConverter LogChartTypeNameConverter = new EnumConverter(CarinaStudio.Application.CurrentOrNull, typeof(LogChartType));
 		/// <summary>
 		/// <see cref="IValueConverter"/> to convert <see cref="Logs.LogLevel"/> to readable name.
 		/// </summary>
@@ -50,7 +51,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
 		static readonly StyledProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasCooperativeLogAnalysisScriptSet");
 		static readonly StyledProperty<bool> HasEmbeddedScriptLogDataSourceProviderProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasEmbeddedScriptLogDataSourceProvider");
-		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasDataSourceOptions");
+		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(HasDataSourceOptions));
 		static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsProVersionActivated));
 		static readonly StyledProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
@@ -71,6 +72,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		LogDataSourceOptions dataSourceOptions;
 		readonly ComboBox dataSourceProviderComboBox;
 		readonly ObservableList<ILogDataSourceProvider> dataSourceProviders = new();
+		readonly ComboBox defaultLogLevelComboBox;
 		readonly TextBox descriptionTextBox;
 		EmbeddedScriptLogDataSourceProvider? embeddedScriptLogDataSourceProvider;
 		readonly LogProfileIconColorComboBox iconColorComboBox;
@@ -190,8 +192,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
 			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
 			{
-				it.GetObservable(ComboBox.SelectedItemProperty).Subscribe(this.OnSelectedDataSourceChanged);
+				it.GetObservable(SelectingItemsControl.SelectedItemProperty).Subscribe(this.OnSelectedDataSourceChanged);
 			});
+			this.defaultLogLevelComboBox = this.Get<ComboBox>(nameof(defaultLogLevelComboBox));
 			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
 			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 			this.iconComboBox = this.Get<LogProfileIconComboBox>("iconComboBox");
@@ -199,7 +202,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.Get<Control>("isAdminNeededPanel").IsVisible = false;
 			this.isTemplateSwitch = this.Get<ToggleSwitch>(nameof(isTemplateSwitch)).Also(it =>
 			{
-				it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
+				it.GetObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
 			});
 			this.logDisplayingPanel = this.Get<Panel>(nameof(logDisplayingPanel));
 			this.logDisplayingPanelButton = this.Get<ToggleButton>(nameof(logDisplayingPanelButton)).Also(it =>
@@ -822,6 +825,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.CooperativeLogAnalysisScriptSet = this.cooperativeLogAnalysisScriptSet;
 			logProfile.DataSourceOptions = this.dataSourceOptions;
 			logProfile.DataSourceProvider = (ILogDataSourceProvider)this.dataSourceProviderComboBox.SelectedItem.AsNonNull();
+			logProfile.DefaultLogLevel = (Logs.LogLevel)this.defaultLogLevelComboBox.SelectedItem.AsNonNull();
 			logProfile.Description = this.descriptionTextBox.Text;
 			logProfile.EmbeddedScriptLogDataSourceProvider = this.embeddedScriptLogDataSourceProvider;
 			logProfile.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
@@ -854,6 +858,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.WorkingDirectoryRequirement = (LogProfilePropertyRequirement)this.workingDirPriorityComboBox.SelectedItem.AsNonNull();
 			return logProfile;
 		}
+
+
+		/// <summary>
+		/// Check whether options of log data source is supported or not.
+		/// </summary>
+		public bool HasDataSourceOptions => this.GetValue(HasDataSourceOptionsProperty);
 
 
 		/// <summary>
@@ -981,6 +991,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Entries of log level map.
 		/// </summary>
 		public IList<KeyValuePair<Logs.LogLevel, string>> LogLevelMapEntriesForWriting { get; }
+		
+		
+		/// <summary>
+		/// Get all log levels.
+		/// </summary>
+		public LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
 
 
 		/// <summary>
@@ -1333,6 +1349,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.allowMultipleFilesSwitch.IsChecked = true;
 				this.colorIndicatorComboBox.SelectedItem = LogColorIndicator.None;
 				this.SelectDefaultDataSource();
+				this.defaultLogLevelComboBox.SelectedItem = Logs.LogLevel.Undefined;
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
 				this.logPatternMatchingModeComboBox.SelectedItem = LogPatternMatchingMode.Sequential;
 				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
@@ -1353,6 +1370,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.colorIndicatorComboBox.SelectedItem = profile.ColorIndicator;
 				this.cooperativeLogAnalysisScriptSet = profile.CooperativeLogAnalysisScriptSet;
 				this.dataSourceOptions = profile.DataSourceOptions;
+				this.defaultLogLevelComboBox.SelectedItem = profile.DefaultLogLevel;
 				this.descriptionTextBox.Text = profile.Description;
 				this.embeddedScriptLogDataSourceProvider = profile.EmbeddedScriptLogDataSourceProvider;
 				if (this.embeddedScriptLogDataSourceProvider is not null)
