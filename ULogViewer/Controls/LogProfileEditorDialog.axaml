@@ -288,6 +288,25 @@
 									</ComboBox>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Default log level -->
+								<asControls:DialogItem>
+									<StackPanel Classes="Dialog_Item_Text_Container">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.DefaultLogLevel}"/>
+										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.DefaultLogLevel.Description}"/>
+									</StackPanel>
+									<ComboBox Name="defaultLogLevelComboBox" Classes="Dialog_Item_ComboBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.LogLevels}">
+										<ComboBox.ItemTemplate>
+											<DataTemplate>
+												<Grid ColumnDefinitions="Auto,*">
+													<Border Classes="ListBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+													<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:LogProfileEditorDialog.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+												</Grid>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+								</asControls:DialogItem>
+								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log level map -->
 								<StackPanel Name="logLevelMapForReadingContainer">

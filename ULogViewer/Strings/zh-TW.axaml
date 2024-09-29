@@ -607,6 +607,8 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">資料來源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(專業版)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel">預設日誌等級</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel.Description">當日誌等級的原始值沒有對照或未提供時使用。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已經定義從「{0}」的轉換。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">內嵌日誌資料來源腳本</sys:String>
