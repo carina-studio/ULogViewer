@@ -40,6 +40,7 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Game" Color="#49ccae"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Image" Color="#4289d9"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Inspiration" Color="#e6d16d"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Json" Color="#0b736c"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Launch" Color="#ff3f00"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Layers" Color="#9f67d9"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Debian" Color="#d40a4e"/>
@@ -67,6 +68,7 @@
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Video" Color="#89cc3e"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Website" Color="#016abf"/>
 			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Windows" Color="#00a8e9"/>
+			<SolidColorBrush x:Key="Brush/Icon.LogProfile.XML" Color="#ec981f"/>
 
 			<!-- LogProfileIconColor -->
 			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Blue" Color="#0094ff"/>

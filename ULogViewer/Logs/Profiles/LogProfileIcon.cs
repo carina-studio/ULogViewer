@@ -124,6 +124,10 @@ enum LogProfileIcon
 	/// </summary>
 	Inspiration,
 	/// <summary>
+	/// JSON.
+	/// </summary>
+	Json,
+	/// <summary>
 	/// Layers.
 	/// </summary>
 	Layers,
@@ -271,6 +275,10 @@ enum LogProfileIcon
 	/// Windows.
 	/// </summary>
 	Windows,
+	/// <summary>
+	/// XML.
+	/// </summary>
+	XML,
 }
 
 
