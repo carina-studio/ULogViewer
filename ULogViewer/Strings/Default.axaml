@@ -579,6 +579,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Image">Image</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Information">Information</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Inspiration">Inspiration</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Json">JSON</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Launch">Launch</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Layers">Layers</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Linux">Linux</sys:String>
@@ -616,6 +617,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Watch">Watch</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Website">Website</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Windows">Windows</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.XML">XML</sys:String>
 
 	<!-- LogProfileIconColor -->
 	<sys:String x:Key="String/LogProfileIconColor.Blue">Blue</sys:String>
