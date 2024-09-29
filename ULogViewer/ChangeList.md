@@ -7,6 +7,7 @@
 
 ## Improvement
 + Use different colors for different log levels.
++ Add more icons for log profile.
 
 ## Bug Fixing
 + Minor bug fixing.
