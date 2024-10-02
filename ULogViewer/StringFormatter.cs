@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,12 +12,14 @@ namespace CarinaStudio.ULogViewer;
 class StringFormatter
 {
     // Static fields.
-	static readonly Regex ParamRegex = new("(?<!\\{)\\{(?<Name>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
+	static readonly Regex ParamRegex = new("(?<!\\{)\\{(?<Structured>@)?(?<Name>[\\w\\d]+)(\\,(?<Alignment>[\\+\\-]?[\\d]+))?(\\:(?<Format>[^\\}]+))?\\}");
 
     
     // Fields.
     readonly string format;
     readonly Func<object?, string, object?> parameterProvider;
+    readonly Func<object, StringBuilder, bool>? structuredParameterFormatter;
+    readonly List<int> structuredParameterIndices = new();
 
 
     /// <summary>
@@ -24,10 +27,14 @@ class StringFormatter
     /// </summary>
     /// <param name="format">String format.</param>
     /// <param name="paramProvider">Function to get named parameters.</param>
-    public StringFormatter(string format, Func<object?, string, object?> paramProvider)
+    /// <param name="structuredParamFormatter">Function to format structured parameter.</param>
+    public StringFormatter(string format, Func<object?, string, object?> paramProvider, Func<object, StringBuilder, bool>? structuredParamFormatter = null)
     {
         // keep provider
         this.parameterProvider = paramProvider;
+        
+        // keep formatter
+        this.structuredParameterFormatter = structuredParamFormatter;
 
         // convert format
         var formatStart = 0;
@@ -50,6 +57,8 @@ class StringFormatter
             }
 
             // convert parameter format
+            if (match.Groups["Structured"].Success && structuredParamFormatter is not null)
+                this.structuredParameterIndices.Add(paramIndex);
             formatBuilder.Append($"{{{paramIndex}");
             match.Groups["Alignment"].Let(it =>
             {
@@ -69,6 +78,26 @@ class StringFormatter
         formatBuilder.Append(format.Substring(formatStart));
         this.format = formatBuilder.ToString();
         this.ParameterNames = parameterNames.AsReadOnly();
+    }
+
+
+    // Format enumerable parameter.
+    static void FormatEnumerableParameter(IEnumerable enumerable, StringBuilder buffer)
+    {
+        var isFirstElement = true;
+        buffer.Append("[ ");
+        foreach (var value in enumerable)
+        {
+            if (!isFirstElement)
+                buffer.Append(", ");
+            else
+                isFirstElement = false;
+            if (value is not string && value is IEnumerable enumerableValue)
+                FormatEnumerableParameter(enumerableValue, buffer);
+            else
+                buffer.Append(value);
+        }
+        buffer.Append(" ]");
     }
 
 
@@ -107,10 +136,31 @@ class StringFormatter
             return this.format;
 
         // get parameters
+        var paramProvider = this.parameterProvider;
+        var structuredParamFormatter = this.structuredParameterFormatter;
+        var structuredParamIndices = this.structuredParameterIndices;
         var parameters = new object?[paramCount];
+        StringBuilder? paramBuffer = null;
         for (var i = paramCount - 1; i >= 0; --i)
-            parameters[i] = this.parameterProvider(target, paramNames[i]);
-        
+        {
+            var param = paramProvider(target, paramNames[i]);
+            if (param is not null && structuredParamIndices.Contains(i) && structuredParamFormatter is not null)
+            {
+                paramBuffer ??= new();
+                if (structuredParamFormatter(param, paramBuffer))
+                    param = paramBuffer.ToString();
+                paramBuffer.Clear();
+            }
+            else if (param is not string && param is IEnumerable enumerable)
+            {
+                paramBuffer ??= new();
+                FormatEnumerableParameter(enumerable, paramBuffer);
+                param = paramBuffer.ToString();
+                paramBuffer.Clear();
+            }
+            parameters[i] = param;
+        }
+
         // format
         return string.Format(this.format, parameters);
     }
@@ -139,9 +189,30 @@ class StringFormatter
         }
 
         // get parameters
+        var paramProvider = this.parameterProvider;
+        var structuredParamFormatter = this.structuredParameterFormatter;
+        var structuredParamIndices = this.structuredParameterIndices;
         var parameters = new object?[paramCount];
+        StringBuilder? paramBuffer = null;
         for (var i = paramCount - 1; i >= 0; --i)
-            parameters[i] = this.parameterProvider(target, paramNames[i]);
+        {
+            var param = paramProvider(target, paramNames[i]);
+            if (param is not null && structuredParamIndices.Contains(i) && structuredParamFormatter is not null)
+            {
+                paramBuffer ??= new();
+                if (structuredParamFormatter(param, paramBuffer))
+                    param = paramBuffer.ToString();
+                paramBuffer.Clear();
+            }
+            else if (param is not string && param is IEnumerable enumerable)
+            {
+                paramBuffer ??= new();
+                FormatEnumerableParameter(enumerable, paramBuffer);
+                param = paramBuffer.ToString();
+                paramBuffer.Clear();
+            }
+            parameters[i] = param;
+        }
         
         // format
         buffer.AppendFormat(this.format, parameters);
