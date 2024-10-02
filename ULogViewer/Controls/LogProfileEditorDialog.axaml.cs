@@ -431,6 +431,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (newLogPattern is not null)
 			{
 				this.logPatterns.Add(newLogPattern);
+				this.logPropertyNamesInLogPatterns.AddAll(newLogPattern.DefinedLogPropertyNames);
 				this.SelectListBoxItem(this.logPatternListBox, this.logPatterns.Count - 1);
 			}
 		}
