@@ -48,7 +48,7 @@
 								<!-- Icon -->
 								<Panel Grid.RowSpan="3" 
 								       Height="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}" 
-								       IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+								       IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !IsProVersionOnly}}"
 								       Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin}" 
 								       VerticalAlignment="Top" 
 								       Width="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Icon.Size}">
@@ -70,7 +70,7 @@
 								<Grid ColumnDefinitions="*,Auto" Grid.Column="1" HorizontalAlignment="Left">
 									<TextBlock Classes="LogProfileInfo" 
 									           FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Name.FontSize}" 
-									           IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+									           IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !IsProVersionOnly}}"
 									           Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin}" 
 									           Text="{Binding Name}" 
 									           TextWrapping="NoWrap" 
@@ -78,7 +78,7 @@
 									           VerticalAlignment="Center"/>
 									<Panel Background="{x:Static Brushes.Transparent}" 
 									       Height="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}" 
-									       IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding DataSourceProvider.IsProVersionOnly}}"
+									       IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding IsProVersionOnly}}"
 									       Grid.Column="1" 
 									       Margin="{StaticResource Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin}" 
 									       ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ProVersionOnly}"
@@ -90,7 +90,7 @@
 
 								<!-- Description -->
 								<Panel Classes="LogProfileInfo" 
-								       IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+								       IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !IsProVersionOnly}}"
 								       Grid.Column="1" 
 								       Grid.ColumnSpan="2" 
 								       Grid.Row="1" 
@@ -101,7 +101,7 @@
 
 								<!-- Labels -->
 								<WrapPanel Classes="LogProfileInfo" 
-								           IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !DataSourceProvider.IsProVersionOnly}}"
+								           IsEnabled="{asXaml:OrBindings {Binding #window.IsProVersionActivated}, {Binding !IsProVersionOnly}}"
 								           Grid.Column="1" 
 								           Grid.ColumnSpan="2" Grid.Row="2" 
 								           Orientation="Horizontal">
@@ -141,7 +141,7 @@
 											<Binding Path="IsPointerOver" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"/>
 											<MultiBinding Converter="{x:Static BoolConverters.Or}">
 												<Binding Path="IsProVersionActivated" ElementName="window"/>
-												<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
+												<Binding Path="!IsProVersionOnly"/>
 											</MultiBinding>
 										</MultiBinding>
 									</StackPanel.IsVisible>

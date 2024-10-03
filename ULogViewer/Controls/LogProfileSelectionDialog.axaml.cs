@@ -364,7 +364,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			
 			// check pro-version only parameters
-			if (!this.GetValue(IsProVersionActivatedProperty) && logProfile.DataSourceProvider.IsProVersionOnly)
+			if (!this.GetValue(IsProVersionActivatedProperty) && logProfile.IsProVersionOnly)
 			{
 				_ = new MessageDialog
 				{
@@ -761,7 +761,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				?? this.otherLogProfileListBox.SelectedItem;
 			if (selectedItem is not LogProfile logProfile)
 				return false;
-			return !logProfile.DataSourceProvider.IsProVersionOnly || this.GetValue(IsProVersionActivatedProperty);
+			return !logProfile.IsProVersionOnly || this.GetValue(IsProVersionActivatedProperty);
 		}
 
 
