@@ -129,6 +129,7 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 			});
 			this.dataSourceOptions = template.dataSourceOptions;
 			this.dataSourceProvider = template.dataSourceProvider;
+			this.defaultLogLevel = template.defaultLogLevel;
 			this.description = template.description;
 			if (template.embScriptLogDataSourceProvider is not null)
 			{
