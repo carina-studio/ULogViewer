@@ -476,6 +476,13 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Check whether the log profile is available in Pro version only or not.
+		/// </summary>
+		public bool IsProVersionOnly =>
+			this.dataSourceProvider.IsProVersionOnly || this.dataSourceOptions.FormatClefData;
+
+
+		/// <summary>
 		/// Check whether the profile should be treated as template or not.
 		/// </summary>
 		public bool IsTemplate

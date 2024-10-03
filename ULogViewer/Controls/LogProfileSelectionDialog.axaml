@@ -49,7 +49,7 @@
 									<Panel.IsEnabled>
 										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
+											<Binding Path="!IsProVersionOnly"/>
 										</MultiBinding>
 									</Panel.IsEnabled>
 									<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
@@ -76,7 +76,7 @@
 										<TextBlock.IsEnabled>
 											<MultiBinding Converter="{x:Static BoolConverters.Or}">
 												<Binding Path="IsProVersionActivated" ElementName="window"/>
-												<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
+												<Binding Path="!IsProVersionOnly"/>
 											</MultiBinding>
 										</TextBlock.IsEnabled>
 									</TextBlock>
@@ -84,7 +84,7 @@
 										<Panel.IsVisible>
 											<MultiBinding Converter="{x:Static BoolConverters.And}">
 												<Binding Path="!IsProVersionActivated" ElementName="window"/>
-												<Binding Path="DataSourceProvider.IsProVersionOnly"/>
+												<Binding Path="IsProVersionOnly"/>
 											</MultiBinding>
 										</Panel.IsVisible>
 										<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Icon.Professional.Colored}"/>
@@ -97,7 +97,7 @@
 									<Panel.IsEnabled>
 										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
+											<Binding Path="!IsProVersionOnly"/>
 										</MultiBinding>
 									</Panel.IsEnabled>
 									<abControls:TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
@@ -109,7 +109,7 @@
 									<WrapPanel.IsEnabled>
 										<MultiBinding Converter="{x:Static BoolConverters.Or}">
 											<Binding Path="IsProVersionActivated" ElementName="window"/>
-											<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
+											<Binding Path="!IsProVersionOnly"/>
 										</MultiBinding>
 									</WrapPanel.IsEnabled>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding !#proDataSourceProviderLabel.IsVisible}">
@@ -145,7 +145,7 @@
 											<Binding Path="IsPointerOver" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}"/>
 											<MultiBinding Converter="{x:Static BoolConverters.Or}">
 												<Binding Path="IsProVersionActivated" ElementName="window"/>
-												<Binding Path="!DataSourceProvider.IsProVersionOnly"/>
+												<Binding Path="!IsProVersionOnly"/>
 											</MultiBinding>
 										</MultiBinding>
 									</StackPanel.IsVisible>
