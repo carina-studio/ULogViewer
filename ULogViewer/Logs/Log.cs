@@ -31,7 +31,9 @@ unsafe class Log
 		DeviceName,
 		EndingTimeSpan,
 		EndingTimestamp,
+		Error,
 		Event,
+		Exception,
 		Extra1,
 		Extra10,
 		Extra11,
@@ -67,6 +69,7 @@ unsafe class Log
 		Title,
 		UserId,
 		UserName,
+		Warning,
 	}
 	
 	
@@ -111,8 +114,11 @@ unsafe class Log
 	static volatile bool isPropertyMapReady;
 	static readonly HashSet<string> multiLineStringPropertyNames =
 	[
+		nameof(Error),
+		nameof(Exception),
 		nameof(Message),
-		nameof(Summary)
+		nameof(Summary),
+		nameof(Warning),
 	];
 	static long nextId;
 	static readonly Dictionary<string, PropertyInfo> propertyMap = new();
@@ -125,7 +131,9 @@ unsafe class Log
 		PropertyType.String,
 		PropertyType.String,
 		PropertyType.TimeSpan,
-		PropertyType.DateTime,
+		PropertyType.DateTime, // EndingTimestamp
+		PropertyType.String,
+		PropertyType.String,
 		PropertyType.String,
 		PropertyType.String, // Extra1
 		PropertyType.String,
@@ -159,6 +167,7 @@ unsafe class Log
 		PropertyType.String,
 		PropertyType.TimeSpan,
 		PropertyType.DateTime,
+		PropertyType.String,
 		PropertyType.String,
 		PropertyType.String,
 		PropertyType.String
@@ -436,12 +445,24 @@ unsafe class Log
 	/// Get ending timestamp.
 	/// </summary>
 	public DateTime? EndingTimestamp => this.GetValueProperty<DateTime>(PropertyName.EndingTimestamp);
+	
+	
+	/// <summary>
+	/// Get error message of log.
+	/// </summary>
+	public IStringSource? Error => this.GetObjectProperty<IStringSource>(PropertyName.Error);
 
 
 	/// <summary>
 	/// Get event of log.
 	/// </summary>
 	public IStringSource? Event => this.GetObjectProperty<IStringSource>(PropertyName.Event);
+	
+	
+	/// <summary>
+	/// Get exception message of log.
+	/// </summary>
+	public IStringSource? Exception => this.GetObjectProperty<IStringSource>(PropertyName.Exception);
 
 
 	/// <summary>
@@ -961,4 +982,10 @@ unsafe class Log
 	/// Get name of user which generates log.
 	/// </summary>
 	public IStringSource? UserName => this.GetObjectProperty<IStringSource>(PropertyName.UserName);
+	
+	
+	/// <summary>
+	/// Get warning message of log.
+	/// </summary>
+	public IStringSource? Warning => this.GetObjectProperty<IStringSource>(PropertyName.Warning);
 }
