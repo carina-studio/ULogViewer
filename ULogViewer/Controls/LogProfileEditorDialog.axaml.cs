@@ -997,7 +997,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Get all log levels.
 		/// </summary>
-		public LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
+		public Logs.LogLevel[] LogLevels { get; } = Enum.GetValues<Logs.LogLevel>();
 
 
 		/// <summary>
