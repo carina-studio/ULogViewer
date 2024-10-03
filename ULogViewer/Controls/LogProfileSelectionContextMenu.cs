@@ -475,7 +475,7 @@ class LogProfileSelectionContextMenu : ContextMenu
             });
             it.Bindings.Add(new Binding
             {
-                Path = $"!{nameof(LogProfile.DataSourceProvider)}.{nameof(Logs.DataSources.ILogDataSourceProvider.IsProVersionOnly)}",
+                Path = $"!{nameof(LogProfile.IsProVersionOnly)}",
             });
             it.Converter = Avalonia.Data.Converters.BoolConverters.Or;
         }));
@@ -957,7 +957,7 @@ class LogProfileSelectionContextMenu : ContextMenu
     void UpdateActionOnCurrentLogProfileMenuItemStates()
     {
         var profile = this.CurrentLogProfile;
-        var isValidProfile = profile is not null && (!profile.DataSourceProvider.IsProVersionOnly || this.GetValue(IsProVersionActivatedProperty));
+        var isValidProfile = profile is not null && (!profile.IsProVersionOnly || this.GetValue(IsProVersionActivatedProperty));
         var isBuiltInProfile = profile?.IsBuiltIn == true;
         this.copyCurrentLogProfileMenuItem?.Let(it => it.IsEnabled = isValidProfile);
         this.editCurrentLogProfileMenuItem?.Let(it => it.IsEnabled = isValidProfile && !isBuiltInProfile);
