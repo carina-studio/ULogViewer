@@ -2,9 +2,9 @@
  ---
 
 ## New Features
-+ Support setting text filter as ```exclusionary``` to filter logs **without** text matched by the pattern.
++ Support setting text filter as **exclusionary** to filter logs **without** text matched by the pattern.
 + Support specifying default log level in case of value of raw log level cannot be mapped or not presented.
-+ Add ```Error```, ```Exception``` and ```Warning``` log properties.
++ Add **Error**, **Exception** and **Warning** log properties.
 
 ## Improvement
 + Use different colors for different log levels.
