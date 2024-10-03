@@ -9,6 +9,17 @@ ULogViewer 是一個由 C# 撰寫並基於 [.NET](https://dotnet.microsoft.com/)
 
 ## 📥 Download
 
+### 4.1.0.1003 Preview
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-win-x64.zip)
+[![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x86-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-win-x86.zip)
+
+[![](https://img.shields.io/badge/macOS-arm64%20(Apple%20Silicon)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-osx-arm64.zip)
+[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-osx-x64.zip)
+
+[![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-linux-x64.zip)
+[![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.0.1003/ULogViewer-4.1.0.1003-linux-arm64.zip)
+
 ### 4.0.13.1002
 [![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.13.1002/ULogViewer-4.0.13.1002-win-x64.zip)
 [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.13.1002/ULogViewer-4.0.13.1002-win-arm64.zip)
@@ -20,30 +31,16 @@ ULogViewer 是一個由 C# 撰寫並基於 [.NET](https://dotnet.microsoft.com/)
 [![](https://img.shields.io/badge/Linux-x64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.13.1002/ULogViewer-4.0.13.1002-linux-x64.zip)
 [![](https://img.shields.io/badge/Linux-arm64-orange?style=flat-square&logo=linux&logoColor=fff)](https://github.com/carina-studio/ULogViewer/releases/download/4.0.13.1002/ULogViewer-4.0.13.1002-linux-arm64.zip)
 
-## 📣 What's Change in 4.0
-- Allow toggling visibilities of data sources of chart.
-- Allow changing command to read logs directly in log viewer.
-- Allow stopping reading logs continuously from data source.
-- Allow viewing history of log text filters.
-- Add **Raw Text From Standard Output (stdout)** and **Specific Android Device System Trace** built-in log profile and template.
-- Place holder (##_##) is also supported in **Setup Commands** and **Teardown Commands** of log data source options.
-- Support adding description to each pattern of log line in log profile.
-- Support showing labels on X axis of log chart.
-- Support using built-in font (Noto Sans) for Chinese.
-- Support renaming group of log text filters.
-- Support showing horizontal and vertical lines between logs.
-- Show timestamp of log in tool tip of chart.
-- Allow using IP address and URI in clipboard automatically for reading logs.
-- Allow selecting common IP addresses in dialog of IP endpoint.
-- Support formatting JSON data which contains multiple root elements while reading logs.
-- Improve logs filtering/analysis with descending sort direction.
-- Show indicators for required options to start reading logs.
-- Add side navigation bar to dialogs with more content.
-- Show more information of log analysis rules in editor.
-- Show improved notifications after performing operations such as exporting log profile or saving logs to file.
-- Improve input of CJK text on **macOS**.
+## 📣 What's Change in 4.1 Preview
+- Support setting text filter as ```exclusionary``` to filter logs **without** text matched by the pattern.
+- Support formatting [CLEF](https://clef-json.org/) data when reading raw logs through ```Standard output (stdout)```, ```File``` and ```HTTP```.
+- Add ```CLEF Files``` built-in log profile.
+- Support specifying default log level in case of value of raw log level cannot be mapped or not presented.
+- Add ```Error```, ```Exception``` and ```Warning``` log properties.
+- Use different colors for different log levels.
+- Add more icons for log profile.
 
-[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#StableChangeList)
+[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#PreviewChangeList)
 
 ## 🤝 Dependencies
 - [.NET](https://dotnet.microsoft.com/)
