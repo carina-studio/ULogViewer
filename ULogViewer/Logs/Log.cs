@@ -31,7 +31,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			DeviceName,
 			EndingTimeSpan,
 			EndingTimestamp,
+			Error,
 			Event,
+			Exception,
 			Extra1,
 			Extra10,
 			Extra11,
@@ -67,6 +69,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			Title,
 			UserId,
 			UserName,
+			Warning,
 		}
 		
 		
@@ -111,8 +114,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		static volatile bool isPropertyMapReady;
 		static readonly HashSet<string> multiLineStringPropertyNames = new()
 		{
+			nameof(Error),
+			nameof(Exception),
 			nameof(Message),
 			nameof(Summary),
+			nameof(Warning),
 		};
 		static long nextId;
 		static readonly Dictionary<string, PropertyInfo> propertyMap = new();
@@ -125,7 +131,9 @@ namespace CarinaStudio.ULogViewer.Logs
 			PropertyType.String,
 			PropertyType.String,
 			PropertyType.TimeSpan,
-			PropertyType.DateTime,
+			PropertyType.DateTime, // EndingTimestamp
+			PropertyType.String,
+			PropertyType.String,
 			PropertyType.String,
 			PropertyType.String, // Extra1
 			PropertyType.String,
@@ -162,6 +170,7 @@ namespace CarinaStudio.ULogViewer.Logs
 			PropertyType.String,
 			PropertyType.String,
 			PropertyType.String,
+			PropertyType.String
 		};
 		static readonly delegate*<ReadOnlySpan<byte>, int> readInt32Function;
 		static readonly delegate*<ReadOnlySpan<byte>, long> readInt64Function;
@@ -436,12 +445,24 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get ending timestamp.
 		/// </summary>
 		public DateTime? EndingTimestamp => this.GetValueProperty<DateTime>(PropertyName.EndingTimestamp);
+	
+	
+		/// <summary>
+		/// Get error message of log.
+		/// </summary>
+		public IStringSource? Error => this.GetObjectProperty<IStringSource>(PropertyName.Error);
 
 
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
 		public IStringSource? Event => this.GetObjectProperty<IStringSource>(PropertyName.Event);
+	
+	
+		/// <summary>
+		/// Get exception message of log.
+		/// </summary>
+		public IStringSource? Exception => this.GetObjectProperty<IStringSource>(PropertyName.Exception);
 
 
 		/// <summary>
@@ -961,5 +982,11 @@ namespace CarinaStudio.ULogViewer.Logs
 		/// Get name of user which generates log.
 		/// </summary>
 		public IStringSource? UserName => this.GetObjectProperty<IStringSource>(PropertyName.UserName);
+		
+		
+		/// <summary>
+		/// Get warning message of log.
+		/// </summary>
+		public IStringSource? Warning => this.GetObjectProperty<IStringSource>(PropertyName.Warning);
 	}
 }

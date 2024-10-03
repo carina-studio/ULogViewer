@@ -30,9 +30,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		const int IsDisposedDataOffset = 6; // byte
 		const int MarkedColorDataOffset = 7; // byte
 		const int MemorySizeDataOffset = 8; // uint
-		const int MessageLineCountDataOffset = 12; // byte
-		const int SummaryLineCountDataOffset = 13; // byte
-		const int ExtraLineCountsDataOffset = 14; // byte[], should be last one
+		const int ErrorLineCountOffset = 12; // byte
+		const int ExceptionLineCountOffset = 13; // byte
+		const int MessageLineCountDataOffset = 14; // byte
+		const int SummaryLineCountDataOffset = 15; // byte
+		const int WarningLineCountDataOffset = 16; // byte
+		const int ExtraLineCountsDataOffset = 17; // byte[], should be last one
 
 
 		// Static fields.
@@ -356,12 +359,52 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get ending timestamp of log in string format.
 		/// </summary>
 		public IStringSource? EndingTimestampString => this.FormatTimestamp(this.Log.EndingTimestamp);
+		
+		
+		/// <summary>
+		/// Get error message of log.
+		/// </summary>
+		public IStringSource? Error => this.Log.Error;
+
+
+		/// <summary>
+		/// Get line count of <see cref="Error"/>.
+		/// </summary>
+		public int ErrorLineCount
+		{
+			get
+			{
+				if (this.data[ErrorLineCountOffset] == 0)
+					this.data[ErrorLineCountOffset] = CalculateLineCount(this.Log.Error);
+				return this.data[ErrorLineCountOffset];
+			}
+		}
 
 
 		/// <summary>
 		/// Get event of log.
 		/// </summary>
 		public IStringSource? Event => this.Log.Event;
+		
+		
+		/// <summary>
+		/// Get exception message of log.
+		/// </summary>
+		public IStringSource? Exception => this.Log.Exception;
+
+
+		/// <summary>
+		/// Get line count of <see cref="Exception"/>.
+		/// </summary>
+		public int ExceptionLineCount
+		{
+			get
+			{
+				if (this.data[ExceptionLineCountOffset] == 0)
+					this.data[ExceptionLineCountOffset] = CalculateLineCount(this.Log.Exception);
+				return this.data[ExceptionLineCountOffset];
+			}
+		}
 
 
 		/// <summary>
@@ -693,6 +736,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		public static bool HasDateTimeProperty(string propertyName) =>
 			Log.HasDateTimeProperty(propertyName);
 		
+		
+		/// <summary>
+		/// Check whether number of lines in <see cref="Error"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfError => this.ErrorLineCount > this.GroupOrNull?.MaxDisplayLineCount;
+		
+		
+		/// <summary>
+		/// Check whether number of lines in <see cref="Exception"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfException => this.ExceptionLineCount > this.GroupOrNull?.MaxDisplayLineCount;
+		
 
 		/// <summary>
 		/// Check whether number of lines in <see cref="Extra1"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
@@ -824,6 +879,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether number of lines in <see cref="Summary"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
 		/// </summary>
 		public bool HasExtraLinesOfSummary => this.SummaryLineCount > this.GroupOrNull?.MaxDisplayLineCount;
+		
+		
+		/// <summary>
+		/// Check whether number of lines in <see cref="Warning"/> is greater than <see cref="DisplayableLogGroup.MaxDisplayLineCount"/> or not.
+		/// </summary>
+		public bool HasExtraLinesOfWarning => this.WarningLineCount > this.GroupOrNull?.MaxDisplayLineCount;
 
 
 		/// <summary>
@@ -1570,6 +1631,26 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Get name of user which generates log.
 		/// </summary>
 		public IStringSource? UserName => this.Log.UserName;
+		
+		
+		/// <summary>
+		/// Get warning message of log.
+		/// </summary>
+		public IStringSource? Warning => this.Log.Warning;
+
+
+		/// <summary>
+		/// Get line count of <see cref="Warning"/>.
+		/// </summary>
+		public int WarningLineCount
+		{
+			get
+			{
+				if (this.data[WarningLineCountDataOffset] == 0)
+					this.data[WarningLineCountDataOffset] = CalculateLineCount(this.Log.Warning);
+				return this.data[WarningLineCountDataOffset];
+			}
+		}
 
 
 		// Interface implementations.

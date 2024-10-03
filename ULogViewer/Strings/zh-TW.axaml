@@ -749,7 +749,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingTimestamp">結束時間</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingValue">結束值</sys:String>
 	<sys:String x:Key="String/LogProperty.EndPoint">端點</sys:String>
+	<sys:String x:Key="String/LogProperty.Error">錯誤</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">事件</sys:String>
+	<sys:String x:Key="String/LogProperty.Exception">例外</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra1">附加資料 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra10">附加資料 10</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra11">附加資料 11</sys:String>
@@ -849,6 +851,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Value7">值 7</sys:String>
 	<sys:String x:Key="String/LogProperty.Value8">值 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Value9">值 9</sys:String>
+	<sys:String x:Key="String/LogProperty.Warning">警告</sys:String>
 
 	<!-- LogPropertyForegroundColor -->
 	<sys:String x:Key="String/LogPropertyForegroundColor.Level">日誌等級</sys:String>

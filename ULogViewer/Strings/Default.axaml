@@ -788,7 +788,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingTimestamp">Ending Timestamp</sys:String>
 	<sys:String x:Key="String/LogProperty.EndingValue">Ending Value</sys:String>
 	<sys:String x:Key="String/LogProperty.EndPoint">End Point</sys:String>
+	<sys:String x:Key="String/LogProperty.Error">Error</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">Event</sys:String>
+	<sys:String x:Key="String/LogProperty.Exception">Exception</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra1">Extra 1</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra10">Extra 10</sys:String>
 	<sys:String x:Key="String/LogProperty.Extra11">Extra 11</sys:String>
@@ -892,6 +894,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Value7">Value 7</sys:String>
 	<sys:String x:Key="String/LogProperty.Value8">Value 8</sys:String>
 	<sys:String x:Key="String/LogProperty.Value9">Value 9</sys:String>
+	<sys:String x:Key="String/LogProperty.Warning">Warning</sys:String>
 
 	<!-- LogPropertyForegroundColor -->
 	<sys:String x:Key="String/LogPropertyForegroundColor.Level">Level of log</sys:String>
