@@ -30,6 +30,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ListBox = Avalonia.Controls.ListBox;
 
 // ReSharper disable RedundantNameQualifier
 namespace CarinaStudio.ULogViewer.Controls
@@ -151,14 +152,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.EditTimeSpanFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimeSpanFormatForReading);
 			this.EditTimestampFormatForReadingCommand = new Command<ListBoxItem>(this.EditTimestampFormatForReading);
 			this.EditVisibleLogPropertyCommand = new Command<ListBoxItem>(this.EditVisibleLogProperty);
-			this.MoveLogChartSeriesSourceDownCommand = new Command<ListBoxItem>(this.MoveLogChartSeriesSourceDown);
-			this.MoveLogChartSeriesSourceUpCommand = new Command<ListBoxItem>(this.MoveLogChartSeriesSourceUp);
-			this.MoveLogPatternDownCommand = new Command<ListBoxItem>(this.MoveLogPatternDown);
-			this.MoveLogPatternUpCommand = new Command<ListBoxItem>(this.MoveLogPatternUp);
-			this.MoveLogWritingFormatDownCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatDown);
-			this.MoveLogWritingFormatUpCommand = new Command<ListBoxItem>(this.MoveLogWritingFormatUp);
-			this.MoveVisibleLogPropertyDownCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyDown);
-			this.MoveVisibleLogPropertyUpCommand = new Command<ListBoxItem>(this.MoveVisibleLogPropertyUp);
 			this.RemoveLogChartSeriesSourceCommand = new Command<ListBoxItem>(this.RemoveLogChartSeriesSource);
 			this.RemoveLogLevelMapEntryCommand = new Command<object>(this.RemoveLogLevelMapEntry);
 			this.RemoveLogPatternCommand = new Command<ListBoxItem>(this.RemoveLogPattern);
@@ -175,6 +168,17 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
+			
+			// prepare function to setup item dragging
+			void SetupItemDragging<T>(CarinaStudio.AppSuite.Controls.ListBox listBox, ObservableList<T> items)
+			{
+				ListBoxItemDragging.SetItemDraggingEnabled(listBox, true);
+				listBox.AddHandler(ListBoxItemDragging.ItemDragCancelledEvent, (_, _) => ItemInsertionIndicator.ClearInsertingItems(listBox));
+				listBox.AddHandler(ListBoxItemDragging.ItemDraggedEvent, (_, e) => this.OnListBoxItemDragged(listBox, e));
+				listBox.AddHandler(ListBoxItemDragging.ItemDragLeavedEvent, (_, _) => ItemInsertionIndicator.ClearInsertingItems(listBox));
+				listBox.AddHandler(ListBoxItemDragging.ItemDragStartedEvent, (_, e) => this.OnListBoxItemDragStarted(listBox, e));
+				listBox.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (_, e) => this.OnListBoxItemDropped(listBox, items, e));
+			}
 
 			// setup controls
 			this.adminNeededSwitch = this.Get<ToggleSwitch>("adminNeededSwitch");
@@ -213,7 +217,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
 			this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
-			this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>("logPatternListBox");
+			this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logPatternListBox)).Also(it =>
+			{
+				SetupItemDragging(it, this.logPatterns);
+			});
 			this.logPatternMatchingModeComboBox = this.Get<ComboBox>(nameof(logPatternMatchingModeComboBox));
 			this.logReadingPanel = this.Get<Panel>(nameof(logReadingPanel));
 			this.logReadingPanelButton = this.Get<ToggleButton>(nameof(logReadingPanelButton)).Also(it =>
@@ -222,7 +229,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
 			this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
-			this.logWritingFormatListBox = this.Get<Avalonia.Controls.ListBox>(nameof(logWritingFormatListBox));
+			this.logWritingFormatListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(logWritingFormatListBox)).Also(it =>
+			{
+				SetupItemDragging(it, this.logWritingFormats);
+			});
 			this.logWritingPanel = this.Get<Panel>(nameof(logWritingPanel));
 			this.logWritingPanelButton = this.Get<ToggleButton>(nameof(logWritingPanelButton)).Also(it =>
 			{
@@ -242,7 +252,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.timestampFormatForDisplayingTextBox = this.Get<TextBox>("timestampFormatForDisplayingTextBox");
 			this.timestampFormatForWritingTextBox = this.Get<TextBox>("timestampFormatForWritingTextBox");
 			this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
-			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>("visibleLogPropertyListBox");
+			this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>(nameof(visibleLogPropertyListBox)).Also(it =>
+			{
+				SetupItemDragging(it, this.visibleLogProperties);
+			});
 			this.workingDirPriorityComboBox = this.Get<ComboBox>(nameof(workingDirPriorityComboBox));
 
 			// attach to log data source providers
@@ -1103,154 +1116,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Definition set of log writing format syntax highlighting.
 		/// </summary>
 		public SyntaxHighlightingDefinitionSet LogWritingFormatSyntaxHighlightingDefinitionSet { get; }
-		
-		
-		// Move source of log chart series down.
-		void MoveLogChartSeriesSourceDown(ListBoxItem item)
-		{ }
-
-
-		/// <summary>
-		/// Command to move source of log chart series down.
-		/// </summary>
-		public ICommand MoveLogChartSeriesSourceDownCommand { get; }
-
-
-		// Move source of log chart series up.
-		void MoveLogChartSeriesSourceUp(ListBoxItem item)
-		{ }
-
-
-		/// <summary>
-		/// Command to move source of log chart series up.
-		/// </summary>
-		public ICommand MoveLogChartSeriesSourceUpCommand { get; }
-
-
-		// Move log pattern down.
-		void MoveLogPatternDown(ListBoxItem item)
-		{
-			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
-			if (index < this.logPatterns.Count - 1)
-			{
-				this.logPatterns.Move(index, index + 1);
-				++index;
-			}
-			this.SelectListBoxItem(this.logPatternListBox, index);
-		}
-
-
-		/// <summary>
-		/// Command to move log pattern down.
-		/// </summary>
-		public ICommand MoveLogPatternDownCommand { get; }
-
-
-		// Move log pattern up.
-		void MoveLogPatternUp(ListBoxItem item)
-		{
-			var index = this.logPatterns.IndexOf((LogPattern)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
-			if (index > 0)
-			{
-				this.logPatterns.Move(index, index - 1);
-				--index;
-			}
-			this.SelectListBoxItem(this.logPatternListBox, index);
-		}
-
-
-		/// <summary>
-		/// Command to move log pattern up.
-		/// </summary>
-		public ICommand MoveLogPatternUpCommand { get; }
-
-
-		// Move log writing format down.
-		void MoveLogWritingFormatDown(ListBoxItem item)
-		{
-			var index = this.logWritingFormats.IndexOf((string)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
-			if (index < this.logWritingFormats.Count - 1)
-			{
-				this.logWritingFormats.Move(index, index + 1);
-				++index;
-			}
-			this.SelectListBoxItem(this.logWritingFormatListBox, index);
-		}
-
-
-		/// <summary>
-		/// Command to move log writing format down.
-		/// </summary>
-		public ICommand MoveLogWritingFormatDownCommand { get; }
-
-
-		// Move log writing format up.
-		void MoveLogWritingFormatUp(ListBoxItem item)
-		{
-			var index = this.logWritingFormats.IndexOf((string)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
-			if (index > 0)
-			{
-				this.logWritingFormats.Move(index, index - 1);
-				--index;
-			}
-			this.SelectListBoxItem(this.logWritingFormatListBox, index);
-		}
-
-
-		/// <summary>
-		/// Command to move log writing format up.
-		/// </summary>
-		public ICommand MoveLogWritingFormatUpCommand { get; }
-
-
-		// Move visible log property down.
-		void MoveVisibleLogPropertyDown(ListBoxItem item)
-		{
-			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
-			if (index < this.visibleLogProperties.Count - 1)
-			{
-				this.visibleLogProperties.Move(index, index + 1);
-				++index;
-			}
-			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
-		}
-
-
-		/// <summary>
-		/// Command to move visible log property down.
-		/// </summary>
-		public ICommand MoveVisibleLogPropertyDownCommand { get; }
-
-
-		// Move visible log property up.
-		void MoveVisibleLogPropertyUp(ListBoxItem item)
-		{
-			var index = this.visibleLogProperties.IndexOf((LogProperty)item.DataContext.AsNonNull());
-			if (index < 0)
-				return;
-			if (index > 0)
-			{
-				this.visibleLogProperties.Move(index, index - 1);
-				--index;
-			}
-			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
-		}
-
-
-		/// <summary>
-		/// Command to move visible log property up.
-		/// </summary>
-		public ICommand MoveVisibleLogPropertyUpCommand { get; }
 
 
 		// Called when list of all log data source providers changed.
@@ -1333,6 +1198,47 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.EditTimestampFormatForReading(listBoxItem);
 			else if (listBox == this.visibleLogPropertyListBox)
 				this.EditVisibleLogProperty(listBoxItem);
+		}
+		
+		
+		// Called when user dragged item in list box.
+		void OnListBoxItemDragged(ListBox listBox, ListBoxItemDragEventArgs e)
+		{
+			if (e.PreviousItemIndex >= 0 && listBox.ContainerFromIndex(e.PreviousItemIndex) is { } prevContainer)
+			{
+				ItemInsertionIndicator.SetInsertingItemAfter(prevContainer, false);
+				ItemInsertionIndicator.SetInsertingItemBefore(prevContainer, false);
+			}
+			if (e.ItemIndex < e.StartItemIndex)
+			{
+				if (listBox.ContainerFromIndex(e.ItemIndex) is { } container)
+					ItemInsertionIndicator.SetInsertingItemBefore(container, true);
+			}
+			else if (e.ItemIndex > e.StartItemIndex)
+			{
+				if (listBox.ContainerFromIndex(e.ItemIndex) is { } container)
+					ItemInsertionIndicator.SetInsertingItemAfter(container, true);
+			}
+		}
+		
+		
+		// Called when user start dragging item in list box.
+		void OnListBoxItemDragStarted(ListBox listBox, ListBoxItemDragEventArgs e)
+		{
+			if (listBox.ItemCount <= 1)
+				e.Handled = true;
+		}
+		
+		
+		// Called when user dropped item on list box.
+		void OnListBoxItemDropped<T>(ListBox listBox, ObservableList<T> items, ListBoxItemDragEventArgs e)
+		{
+			ItemInsertionIndicator.ClearInsertingItems(listBox);
+			if (e.ItemIndex != e.StartItemIndex)
+			{
+				items.Move(e.StartItemIndex, e.ItemIndex);
+				listBox.SelectedIndex = e.ItemIndex;
+			}
 		}
 
 

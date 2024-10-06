@@ -416,20 +416,6 @@
                             									</DrawingImage>
                             								</asControls:Image>
                             							</Button>
-                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-                            								<asControls:Image Classes="InPlaceAction_Icon">
-                            									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
-                            									</DrawingImage>
-                            								</asControls:Image>
-                            							</Button>
-                            							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogPatternDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-                            								<asControls:Image Classes="InPlaceAction_Icon">
-                            									<DrawingImage>
-                            										<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
-                            									</DrawingImage>
-                            								</asControls:Image>
-                            							</Button>
                             						</StackPanel>
                             					</Grid>
                             				</DataTemplate>
@@ -624,20 +610,6 @@
 																</DrawingImage>
 															</asControls:Image>
 														</Button>
-														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-															<asControls:Image Classes="InPlaceAction_Icon">
-																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
-																</DrawingImage>
-															</asControls:Image>
-														</Button>
-														<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveVisibleLogPropertyDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-															<asControls:Image Classes="InPlaceAction_Icon">
-																<DrawingImage>
-																	<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
-																</DrawingImage>
-															</asControls:Image>
-														</Button>
 													</StackPanel>
 												</Grid>
 											</DataTemplate>
@@ -742,20 +714,6 @@
 														<asControls:Image Classes="InPlaceAction_Icon">
 															<DrawingImage>
 																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
-															</DrawingImage>
-														</asControls:Image>
-													</Button>
-													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-														<asControls:Image Classes="InPlaceAction_Icon">
-															<DrawingImage>
-																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
-															</DrawingImage>
-														</asControls:Image>
-													</Button>
-													<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].MoveLogWritingFormatDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-														<asControls:Image Classes="InPlaceAction_Icon">
-															<DrawingImage>
-																<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
 															</DrawingImage>
 														</asControls:Image>
 													</Button>
