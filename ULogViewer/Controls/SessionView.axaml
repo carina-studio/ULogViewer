@@ -206,52 +206,65 @@
 
 		<!-- Log file action menu -->
 		<ContextMenu x:Key="logFileActionMenu" IsEnabled="{Binding $self.DataContext, Converter={x:Static ObjectConverters.IsNotNull}}">
-			<MenuItem Command="{Binding #root.CopyLogFileNameCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFileName}">
+			<MenuItem Command="{Binding #root.CopyLogFileNameCommand}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.CopyLogFileName}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.CopyLogFilePathCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.CopyLogFilePath}">
+			<MenuItem Command="{Binding #root.CopyLogFilePathCommand}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.CopyLogFilePath}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithNewPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}">
-				<MenuItem.IsEnabled>
-					<MultiBinding Converter="{x:Static BoolConverters.And}">
-						<Binding Path="!IsPredefined" FallbackValue="False"/>
-						<Binding Path="DataContext.HasTimestampDisplayableLogProperty" ElementName="root" FallbackValue="False"/>
-					</MultiBinding>
-				</MenuItem.IsEnabled>
+			<MenuItem Command="{Binding #root.ReloadLogFileWithNewPreconditionCommand}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition}"
+			          IsEnabled="{asXaml:AndBindings
+			              {Binding !IsPredefined, FallbackValue=False},
+			              {Binding #root.DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}
+			          }">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/CheckFilter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithoutLogReadingPreconditionCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition}">
-				<MenuItem.IsEnabled>
-					<MultiBinding Converter="{x:Static BoolConverters.And}">
-						<Binding Path="!IsPredefined" FallbackValue="False"/>
-						<Binding Path="!LogReadingPrecondition.IsEmpty" FallbackValue="False"/>
-					</MultiBinding>
-				</MenuItem.IsEnabled>
+			<MenuItem Command="{Binding #root.ReloadLogFileWithoutLogReadingPreconditionCommand}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition}"
+			          IsEnabled="{asXaml:AndBindings
+			              {Binding !IsPredefined, FallbackValue=False},
+			              {Binding !LogReadingPrecondition.IsEmpty, FallbackValue=False}
+			          }">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithNewMaxLogReadingCountCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}" IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
+			<MenuItem Command="{Binding #root.ReloadLogFileWithNewMaxLogReadingCountCommand}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount}" 
+			          IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Layers.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.DataContext.RemoveLogFileCommand, FallbackValue={x:Null}}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.RemoveLogFile}" IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
+			<MenuItem Command="{Binding #root.DataContext.RemoveLogFileCommand, FallbackValue={x:Null}}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.RemoveLogFile}" 
+			          IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.ShowLogFileInExplorerCommand}" CommandParameter="{Binding FileName}" Header="{DynamicResource String/SessionView.ShowFileInExplorer}" IsEnabled="{x:Static cs:Platform.IsOpeningFileManagerSupported}">
+			<MenuItem Command="{Binding #root.ShowLogFileInExplorerCommand}" 
+			          CommandParameter="{Binding FileName}" 
+			          Header="{DynamicResource String/SessionView.ShowFileInExplorer}"
+			          IsEnabled="{x:Static cs:Platform.IsOpeningFileManagerSupported}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.FileManager.Outline}"/>
 				</MenuItem.Icon>
@@ -260,18 +273,24 @@
 
 		<!-- Log filter combination mode menu -->
 		<ContextMenu x:Key="logFilterCombinationModeMenu" Placement="Bottom">
-			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Auto}" Header="{DynamicResource String/FilterCombinationMode.Auto}">
+			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" 
+			          CommandParameter="{x:Static appViewModels:FilterCombinationMode.Auto}" 
+			          Header="{DynamicResource String/FilterCombinationMode.Auto}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/FilterCombinationMode.Auto}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Intersection}" Header="{DynamicResource String/FilterCombinationMode.Intersection}">
+			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" 
+			          CommandParameter="{x:Static appViewModels:FilterCombinationMode.Intersection}" 
+			          Header="{DynamicResource String/FilterCombinationMode.Intersection}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Intersection}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" CommandParameter="{x:Static appViewModels:FilterCombinationMode.Union}" Header="{DynamicResource String/FilterCombinationMode.Union}">
+			<MenuItem Command="{Binding LogFiltering.SetFilterCombinationModeCommand}" 
+			          CommandParameter="{x:Static appViewModels:FilterCombinationMode.Union}" 
+			          Header="{DynamicResource String/FilterCombinationMode.Union}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Union}"/>
 				</MenuItem.Icon>
@@ -379,12 +398,14 @@
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" Placement="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].Application.ShowApplicationOptionsDialog}" Header="{DynamicResource String/SessionView.AppOptions}">
+			<MenuItem Command="{Binding $parent[UserControl].Application.ShowApplicationOptionsDialog}" 
+			          Header="{DynamicResource String/SessionView.AppOptions}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.Application.CheckForApplicationUpdate}" Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
+			<MenuItem Command="{Binding #root.Application.CheckForApplicationUpdate}" 
+			          Header="{DynamicResource String/SessionView.CheckForAppUpdate}">
 				<MenuItem.Icon>
 					<Panel>
 						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update.Outline}"/>
@@ -392,77 +413,100 @@
 					</Panel>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.RestartAsAdministratorCommand}" Header="{DynamicResource String/SessionView.RestartAsAdministrator}">
+			<MenuItem Command="{Binding #root.RestartAsAdministratorCommand}" 
+			          Header="{DynamicResource String/SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Administrator}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" InputGesture="{x:Static appInput:KeyGestures.NewWindow}">
+			<MenuItem Command="{Binding $parent[Window].CreateMainWindow}" 
+			          Header="{DynamicResource String/Common.CreateWindow}" InputGesture="{x:Static appInput:KeyGestures.NewWindow}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}">
+			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" 
+			          CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" 
+			          Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Horizontal}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}">
+			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" 
+			          CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" 
+			          Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Vertical}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}">
+			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" 
+			          CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" 
+			          Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Tile}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Name="toolsMenuItem" Header="{DynamicResource String/SessionView.Tools}" IsVisible="{Binding #root.IsToolsMenuItemVisible}">
+			<MenuItem Name="toolsMenuItem" 
+			          Header="{DynamicResource String/SessionView.Tools}" 
+			          IsVisible="{Binding #root.IsToolsMenuItemVisible}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 				</MenuItem.Icon>
-				<MenuItem Command="{Binding #root.EditPathEnvVar}" Header="{DynamicResource String/SessionView.EditPathEnvVar}" IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}">
+				<MenuItem Command="{Binding #root.EditPathEnvVar}" 
+				          Header="{DynamicResource String/SessionView.EditPathEnvVar}" 
+				          IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Edit.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
 				<Separator IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}"/>
-				<MenuItem Command="{Binding $parent[Window].EditConfiguration}" Header="{DynamicResource String/SessionView.EditConfiguration}" IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
+				<MenuItem Command="{Binding $parent[Window].EditConfiguration}" 
+				          Header="{DynamicResource String/SessionView.EditConfiguration}" 
+				          IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[Window].EditPersistentState}" Header="{DynamicResource String/SessionView.EditPersistentState}" IsVisible="{Binding #root.Application.IsDebugMode}">
+				<MenuItem Command="{Binding $parent[Window].EditPersistentState}" 
+				          Header="{DynamicResource String/SessionView.EditPersistentState}" 
+				          IsVisible="{Binding #root.Application.IsDebugMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[Window].Application.ShowSelfTestingWindow}" Header="{DynamicResource String/Common.SelfTesting}" IsVisible="{Binding #root.Application.IsTestingMode}">
+				<MenuItem Command="{Binding $parent[Window].Application.ShowSelfTestingWindow}" 
+				          Header="{DynamicResource String/Common.SelfTesting}" 
+				          IsVisible="{Binding #root.Application.IsTestingMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Lab}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding #root.TakeMemorySnapshot}" Header="{DynamicResource String/Common.TakeMemorySnapshot.WithDialog}" IsVisible="{Binding #root.Application.IsDebugMode}">
+				<MenuItem Command="{Binding #root.TakeMemorySnapshot}" 
+				          Header="{DynamicResource String/Common.TakeMemorySnapshot.WithDialog}"
+				          IsVisible="{Binding #root.Application.IsDebugMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Memory.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.Application.ShowQuickStartGuideWindow}" Header="{DynamicResource String/SessionView.QuickStartGuide}">
+			<MenuItem Command="{Binding #root.Application.ShowQuickStartGuideWindow}" 
+			          Header="{DynamicResource String/SessionView.QuickStartGuide}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Lightbulb.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.Application.OpenFeedbackPage}" Header="{DynamicResource String/Common.Feedback}">
+			<MenuItem Command="{Binding #root.Application.OpenFeedbackPage}" 
+			          Header="{DynamicResource String/Common.Feedback}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Chat.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.Application.ShowApplicationInfoDialog}" Header="{DynamicResource String/SessionView.AppInfo}">
+			<MenuItem Command="{Binding #root.Application.ShowApplicationInfoDialog}" 
+			          Header="{DynamicResource String/SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>
 				</MenuItem.Icon>
@@ -945,14 +989,16 @@
 														</Border>
 													</StackPanel>
 												</ScrollViewer>
-												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">
-													<TextBlock.IsVisible>
-														<MultiBinding Converter="{x:Static BoolConverters.And}">
-															<Binding Path="!DefaultGroup.Filters.Count" Source="{x:Static appViewModels:PredefinedLogTextFilterManager.Default}" Converter="{x:Static DefaultValueConverter.Instance}"/>
-															<Binding Path="!Groups.Count" Source="{x:Static appViewModels:PredefinedLogTextFilterManager.Default}" Converter="{x:Static DefaultValueConverter.Instance}"/>
-														</MultiBinding>
-													</TextBlock.IsVisible>
-												</TextBlock>
+												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
+												           HorizontalAlignment="Center" 
+												           IsVisible="{asXaml:AndBindings
+												               {Binding !DefaultGroup.Filters.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}, Converter={x:Static DefaultValueConverter.Instance}},
+												               {Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}, Converter={x:Static DefaultValueConverter.Instance}}
+												           }"
+												           Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" 
+												           Text="{DynamicResource String/Common.Empty}" 
+												           TextWrapping="Wrap" 
+												           VerticalAlignment="Center"/>
 												<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
 												<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
 													<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{DynamicResource String/Common.Help}"/>
@@ -1390,7 +1436,12 @@
 								</DrawingImage>
 							</Image>
 							<TextBlock Classes="StatusBar_TextBlock" 
-							           Text="{asXaml:MultiBinding {Binding Uri.Scheme}, {Binding Uri.Host}, {Binding Uri.Port}, StringFormat={}{0}://{1}:{2}}"
+							           Text="{asXaml:MultiBinding 
+							               {Binding Uri.Scheme}, 
+							               {Binding Uri.Host},
+							               {Binding Uri.Port}, 
+							               StringFormat={}{0}://{1}:{2}
+							           }"
 							           ToolTip.Placement="Left" 
 							           ToolTip.Tip="{Binding Uri}"/>
 						</StackPanel>
@@ -1696,15 +1747,18 @@
 		</Border>
 
 		<!-- Side panel -->
-		<Border Name="sidePanelContainer" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding #root.HasProfile}">
-			<Border.IsVisible>
-				<MultiBinding Converter="{x:Static BoolConverters.Or}">
-					<Binding Path="LogAnalysis.IsPanelVisible"/>
-					<Binding Path="IsLogFilesPanelVisible"/>
-					<Binding Path="IsMarkedLogsPanelVisible"/>
-					<Binding Path="LogCategorizing.IsTimestampCategoriesPanelVisible"/>
-				</MultiBinding>
-			</Border.IsVisible>
+		<Border Name="sidePanelContainer" 
+		        Background="{DynamicResource Brush/WorkingArea.Panel.Background}" 
+		        Grid.Column="2" 
+		        Grid.Row="1" 
+		        HorizontalAlignment="Stretch" 
+		        IsEnabled="{Binding #root.HasProfile}"
+		        IsVisible="{asXaml:OrBindings
+		            {Binding LogAnalysis.IsPanelVisible},
+		            {Binding IsLogFilesPanelVisible},
+		            {Binding IsMarkedLogsPanelVisible},
+		            {Binding LogCategorizing.IsTimestampCategoriesPanelVisible}
+		        }">
 
 			<Panel>
 
@@ -1916,22 +1970,21 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
-																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding $parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default},
+																					    ConverterParameter=Light
+																					}"/>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default}
+																					}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -1989,22 +2042,21 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
-																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding $parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default},
+																					    ConverterParameter=Light
+																					}"/>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default}
+																					}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -2062,22 +2114,21 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
-																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding $parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default},
+																					    ConverterParameter=Light
+																					}"/>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default}
+																					}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -2138,22 +2189,21 @@
 																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
-																				<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}" ConverterParameter="Light">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
-																				<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}">
-																					<Image.Source>
-																						<MultiBinding Converter="{x:Static appConverters:LogProfileIconConverter.Default}">
-																							<Binding Path="Icon"/>
-																							<Binding Path="IconColor"/>
-																						</MultiBinding>
-																					</Image.Source>
-																				</Image>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding $parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default},
+																					    ConverterParameter=Light
+																					}"/>
+																				<Image Classes="Icon" 
+																					IsVisible="{Binding !$parent[ListBoxItem].IsSelected}"
+																					Source="{asXaml:MultiBinding
+																					    {Binding Icon},
+																					    {Binding IconColor},
+																					    Converter={x:Static appConverters:LogProfileIconConverter.Default}
+																					}"/>
 																			</Panel>
 																			<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																			<Border Grid.Column="1" Classes="InPlaceAction_Reserved"/>
@@ -2195,35 +2245,43 @@
 														
 													</StackPanel>
 												</ScrollViewer>
-												<TextBlock Name="noLogAnalysisRuleSetsTextBlock" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" HorizontalAlignment="Center" Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" Text="{DynamicResource String/Common.Empty}" TextWrapping="Wrap" VerticalAlignment="Center">
-													<TextBlock.IsVisible>
-														<MultiBinding Converter="{x:Static BoolConverters.And}">
-															<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-															<Binding Path="RuleSets.Count" Source="{x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-															<Binding Path="RuleSets.Count" Source="{x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-															<Binding Path="ScriptSets.Count" Source="{x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-														</MultiBinding>
-													</TextBlock.IsVisible>
-												</TextBlock>
+												<TextBlock Name="noLogAnalysisRuleSetsTextBlock" 
+												           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
+												           HorizontalAlignment="Center" 
+												           IsVisible="{asXaml:AndBindings
+												               {Binding RuleSets.Count, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}, Converter={x:Static abConverters:NumberConverters.IsZero}},
+												               {Binding RuleSets.Count, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}, Converter={x:Static abConverters:NumberConverters.IsZero}},
+												               {Binding RuleSets.Count, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}, Converter={x:Static abConverters:NumberConverters.IsZero}},
+												               {Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}, Converter={x:Static abConverters:NumberConverters.IsZero}}
+												           }"
+												           Margin="{StaticResource Thickness/SessionView.NoLogAnalysisRuleSetHint.Margin}" 
+												           Text="{DynamicResource String/Common.Empty}" 
+												           TextWrapping="Wrap" 
+												           VerticalAlignment="Center"/>
 											</Panel>
 											<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
 											<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
-												<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenLogAnalysisDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+												<Button Classes="Dialog_Item_Button" 
+												        Command="{Binding #root.OpenLogAnalysisDocumentation}" 
+												        Content="{DynamicResource String/Common.Help}"/>
 												<Separator Classes="Dialog_Separator"/>
-												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearLogAnalysisRuleSetSelection}" Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}">
-													<Button.IsEnabled>
-														<MultiBinding Converter="{x:Static BoolConverters.Or}">
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="keyLogAnalysisRuleSetListBox" FallbackValue="False"/>
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationDurationAnalysisRuleSetListBox" FallbackValue="False"/>
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="operationCountingAnalysisRuleSetListBox" FallbackValue="False"/>
-															<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsNonZero}" ElementName="logAnalysisScriptSetListBox" FallbackValue="False"/>
-														</MultiBinding>
-													</Button.IsEnabled>
-												</Button>
+												<Button Classes="Dialog_Item_Button" 
+												        Command="{Binding #root.ClearLogAnalysisRuleSetSelection}" 
+												        Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"
+												        IsEnabled="{asXaml:OrBindings
+												            {Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
+												            {Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
+												            {Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
+												            {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False}
+												        }"/>
 												<Separator Classes="Dialog_Separator_Small"/>
-												<Button Classes="Dialog_Item_Button" Command="{Binding #root.ImportLogAnalysisRuleSet}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+												<Button Classes="Dialog_Item_Button" 
+												        Command="{Binding #root.ImportLogAnalysisRuleSet}" 
+												        Content="{DynamicResource String/Common.Import.WithDialog}"/>
 												<Separator Classes="Dialog_Separator_Small"/>
-												<ToggleButton Name="createLogAnalysisRuleSetButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #root.CreateLogAnalysisRuleSet}">
+												<ToggleButton Name="createLogAnalysisRuleSetButton" 
+												              Classes="Dialog_Item_ToggleButton" 
+												              Command="{Binding #root.CreateLogAnalysisRuleSet}">
 													<Grid ColumnDefinitions="*,Auto">
 														<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Create}"/>
 														<Panel Grid.Column="1">
@@ -2308,17 +2366,15 @@
 										<Image x:CompileBindings="False" 
 										       Classes="Icon"
 										       Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" 
-										       Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}" 
+										       Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}"
+										       Source="{asXaml:MultiBinding
+										           {Binding Type, FallbackValue={x:Static appAnalysis:DisplayableLogAnalysisResultType.Debug}},
+										           {Binding IsPointerOver, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, FallbackValue=False},
+										           {Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}, FallbackValue=False},
+										           Converter={x:Static appControls:SessionView.LogAnalysisResultIconConverter}
+										       }"
 										       Width="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}"
-										       VerticalAlignment="Top">
-											<Image.Source>
-												<MultiBinding Converter="{x:Static appControls:SessionView.LogAnalysisResultIconConverter}">
-													<Binding Path="Type" FallbackValue="{x:Static appAnalysis:DisplayableLogAnalysisResultType.Debug}"/>
-													<Binding Path="IsPointerOver" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" FallbackValue="False"/>
-													<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}" FallbackValue="False"/>
-												</MultiBinding>
-											</Image.Source>
-										</Image>
+										       VerticalAlignment="Top"/>
 										
 										<!-- Sub information -->
 										<Grid ColumnDefinitions="Auto,*"
@@ -2411,29 +2467,29 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1">
-						<Border.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="!IsRemovingLogFiles"/>
-								<Binding Path="LogAnalysis.AnalysisResults.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}"/>
-								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="keyLogAnalysisRuleSetListBox" FallbackValue="False"/>
-								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="operationDurationAnalysisRuleSetListBox" FallbackValue="False"/>
-								<Binding Path="SelectedItems.Count" Converter="{x:Static abConverters:NumberConverters.IsZero}" ElementName="logAnalysisScriptSetListBox" FallbackValue="False"/>
-							</MultiBinding>
-						</Border.IsVisible>
+					<Border Background="{x:Static Brushes.Transparent}" 
+					        Grid.Row="1"
+					        IsVisible="{asXaml:AndBindings
+					            {Binding !IsRemovingLogFiles},
+					            {Binding LogAnalysis.AnalysisResults.Count, Converter={x:Static abConverters:NumberConverters.IsZero}},
+					            {Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False},
+					            {Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False},
+					            {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False}
+					        }">
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
 					</Border>
 					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding IsRemovingLogFiles}">
 						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles}"/>
 					</Border>
-					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" Classes="StatusBar" Grid.Row="2" Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
-						<Border.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.Or}">
-								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsDurationPanel"/>
-								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsByteSizePanel"/>
-								<Binding Path="IsVisible" ElementName="selectedLogAnalysisResultsQuantityPanel"/>
-							</MultiBinding>
-						</Border.IsVisible>
+					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" 
+					        Classes="StatusBar" 
+					        Grid.Row="2" 
+					        IsVisible="{asXaml:OrBindings
+					            {Binding #selectedLogAnalysisResultsDurationPanel.IsVisible},
+					            {Binding #selectedLogAnalysisResultsByteSizePanel.IsVisible},
+					            {Binding #selectedLogAnalysisResultsQuantityPanel.IsVisible}
+					        }"
+					        Padding="{StaticResource Thickness/StatusBar.Item.Margin}">
 						<StackPanel TextBlock.Foreground="{DynamicResource TextControlForeground}" VerticalAlignment="Center">
 
 							<!-- Duration -->
