@@ -173,9 +173,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			void SetupItemDragging<T>(CarinaStudio.AppSuite.Controls.ListBox listBox, ObservableList<T> items)
 			{
 				ListBoxItemDragging.SetItemDraggingEnabled(listBox, true);
-				listBox.AddHandler(ListBoxItemDragging.ItemDragCancelledEvent, (_, _) => ItemInsertionIndicator.ClearInsertingItems(listBox));
-				listBox.AddHandler(ListBoxItemDragging.ItemDraggedEvent, (_, e) => this.OnListBoxItemDragged(listBox, e));
-				listBox.AddHandler(ListBoxItemDragging.ItemDragLeavedEvent, (_, _) => ItemInsertionIndicator.ClearInsertingItems(listBox));
 				listBox.AddHandler(ListBoxItemDragging.ItemDragStartedEvent, (_, e) => this.OnListBoxItemDragStarted(listBox, e));
 				listBox.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (_, e) => this.OnListBoxItemDropped(listBox, items, e));
 			}
@@ -1201,27 +1198,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 		
 		
-		// Called when user dragged item in list box.
-		void OnListBoxItemDragged(ListBox listBox, ListBoxItemDragEventArgs e)
-		{
-			if (e.PreviousItemIndex >= 0 && listBox.ContainerFromIndex(e.PreviousItemIndex) is { } prevContainer)
-			{
-				ItemInsertionIndicator.SetInsertingItemAfter(prevContainer, false);
-				ItemInsertionIndicator.SetInsertingItemBefore(prevContainer, false);
-			}
-			if (e.ItemIndex < e.StartItemIndex)
-			{
-				if (listBox.ContainerFromIndex(e.ItemIndex) is { } container)
-					ItemInsertionIndicator.SetInsertingItemBefore(container, true);
-			}
-			else if (e.ItemIndex > e.StartItemIndex)
-			{
-				if (listBox.ContainerFromIndex(e.ItemIndex) is { } container)
-					ItemInsertionIndicator.SetInsertingItemAfter(container, true);
-			}
-		}
-		
-		
 		// Called when user start dragging item in list box.
 		void OnListBoxItemDragStarted(ListBox listBox, ListBoxItemDragEventArgs e)
 		{
@@ -1233,7 +1209,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when user dropped item on list box.
 		void OnListBoxItemDropped<T>(ListBox listBox, ObservableList<T> items, ListBoxItemDragEventArgs e)
 		{
-			ItemInsertionIndicator.ClearInsertingItems(listBox);
 			if (e.ItemIndex != e.StartItemIndex)
 			{
 				items.Move(e.StartItemIndex, e.ItemIndex);

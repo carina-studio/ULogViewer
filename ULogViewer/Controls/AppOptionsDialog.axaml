@@ -21,9 +21,9 @@
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" BoxShadow="{StaticResource BoxShadows/None}" DockPanel.Dock="Bottom">
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{ReflectionBinding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{ReflectionBinding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
 			</StackPanel>
 		</Border>
 		
@@ -496,7 +496,6 @@
 					
 				</StackPanel>
 			</ScrollViewer>
-			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Margin="0,-100,-100,0"/>
 		</Panel>
 
 	</DockPanel>

@@ -203,13 +203,13 @@
 	<DockPanel>
 
 		<!-- Control buttons -->
-		<Border Classes="Dialog_ControlButtonsPanel" BoxShadow="{StaticResource BoxShadows/None}" DockPanel.Dock="Bottom">
+		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.AddLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.ImportLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 		
@@ -217,15 +217,14 @@
 		<Border Name="navigationBar" 
 		        Classes="ToolBar" 
 		        BorderBrush="{DynamicResource Brush/ToolBar.Border}"
-		        BorderThickness="0,0,1,0" DockPanel.Dock="Left">
-		    <Border.IsVisible>
-				<MultiBinding Converter="{x:Static BoolConverters.Or}">
-					<Binding Path="IsVisible" ElementName="pinnedLogProfilesButton"/>
-					<Binding Path="IsVisible" ElementName="recentlyUsedLogProfilesButton"/>
-					<Binding Path="IsVisible" ElementName="otherLogProfilesButton"/>
-					<Binding Path="IsVisible" ElementName="templateLogProfilesButton"/>
-				</MultiBinding>
-			</Border.IsVisible>
+		        BorderThickness="0,0,1,0" 
+		        DockPanel.Dock="Left"
+		        IsVisible="{asXaml:OrBindings
+		            {Binding #pinnedLogProfilesButton.IsVisible},
+		            {Binding #recentlyUsedLogProfilesButton.IsVisible},
+		            {Binding #otherLogProfilesButton.IsVisible},
+		            {Binding #templateLogProfilesButton.IsVisible}
+		        }">
 			<asControls:ToolBarScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
 				<StackPanel>
 					
@@ -280,14 +279,11 @@
 						</Border>
 					</StackPanel>
 					
-					<Separator Classes="Dialog_Separator_Large">
-						<Separator.IsVisible>
-							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="IsVisible" ElementName="pinnedLogProfilesPanel"/>
-								<Binding Path="IsVisible" ElementName="recentlyUsedLogProfilesPanel"/>
-							</MultiBinding>
-						</Separator.IsVisible>
-					</Separator>
+					<Separator Classes="Dialog_Separator_Large" 
+					           IsVisible="{asXaml:AndBindings
+					               {Binding #pinnedLogProfilesPanel.IsVisible},
+					               {Binding #recentlyUsedLogProfilesPanel.IsVisible}
+					           }"/>
 
 					<!-- Recently used profiles -->
 					<StackPanel Name="recentlyUsedLogProfilesPanel" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}">
@@ -353,6 +349,7 @@
 					</iCore:DataTriggerBehavior>
 				</i:Interaction.Behaviors>
 			</Border>
+			
 		</Panel>
 		
 	</DockPanel>
