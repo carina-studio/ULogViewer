@@ -38,7 +38,7 @@
 						<TextBox Name="groupNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="64" Watermark="{DynamicResource String/Common.None}"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Separator_Small"/>
-					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowGroupNameSelectionMenu}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}">
+					<ToggleButton Name="selectGroupNameButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #window.ShowGroupNameSelectionMenu}" IsEnabled="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}">
 						<Grid ColumnDefinitions="*,Auto">
 							<TextBlock Classes="Button_Text" Text="{DynamicResource String/PredefinedLogTextFilterEditorDialog.SelectGroupName}"/>
 							<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.DropDown.Down}"/>
@@ -85,8 +85,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditing}" Content="{Binding #window.OKButtonText}" IsEnabled="{Binding #window.AreValidParameters}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 		

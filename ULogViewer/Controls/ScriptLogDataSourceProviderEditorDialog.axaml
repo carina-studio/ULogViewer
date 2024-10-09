@@ -31,7 +31,7 @@
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.ApplyCommand}" Content="{DynamicResource String/Common.Apply}" IsVisible="{Binding !#window.IsNewProvider}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditingCommand}" Content="{DynamicResource String/Common.OK}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditingCommand}" Content="{Binding #window.OKButtonText}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>

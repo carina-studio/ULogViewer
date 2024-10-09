@@ -20,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit log analysis script set.
 /// </summary>
-class LogAnalysisScriptSetEditorDialog : CarinaStudio.Controls.ApplicationWindow<IULogViewerApplication>
+class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, Uri?> AnalysisScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, Uri?>(nameof(AnalysisScriptDocumentUri), d => d.analysisScriptDocumentUri);

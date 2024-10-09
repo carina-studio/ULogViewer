@@ -20,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="KeyLogAnalysisRuleSet"/>.
 /// </summary>
-class KeyLogAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
+class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
@@ -277,11 +277,6 @@ class KeyLogAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
 		}
 		this.validateParametersAction.Execute();
 	}
-
-
-	/// <inheritdoc/>
-	protected override WindowTransparencyLevel OnSelectTransparentLevelHint() =>
-		WindowTransparencyLevel.None;
 	
 
 	/// <summary>

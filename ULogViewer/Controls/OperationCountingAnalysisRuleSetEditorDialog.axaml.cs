@@ -19,7 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls
 	/// <summary>
 	/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet"/>.
 	/// </summary>
-	class OperationCountingAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
+	class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 	{
 		/// <summary>
 		/// Definition set of patterns of rule.
@@ -252,11 +252,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			this.validateParametersAction.Schedule();
 		}
-
-
-		/// <inheritdoc/>
-		protected override WindowTransparencyLevel OnSelectTransparentLevelHint() =>
-			WindowTransparencyLevel.None;
 		
 
 		/// <summary>
@@ -285,7 +280,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Rules.
 		/// </summary>
-		public IList<OperationCountingAnalysisRuleSet.Rule> Rules { get => this.rules; }
+		public IList<OperationCountingAnalysisRuleSet.Rule> Rules => this.rules;
 
 
 		/// <summary>
@@ -298,7 +293,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show existing dialog
 			if (ruleSet != null && DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
 			{
-				dialog?.ActivateAndBringToFront();
+				dialog.ActivateAndBringToFront();
 				return;
 			}
 

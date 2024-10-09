@@ -7,6 +7,7 @@
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleSetEditorDialog"
+        Name="dialog"
         CanResize="True"
         Classes="Dialog"
         Height="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.Height}"
@@ -23,10 +24,10 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditing}" Content="{DynamicResource String/Common.OK}" IsEnabled="{Binding $parent[Window].AreValidParameters}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}" IsEnabled="{Binding #dialog.AreValidParameters}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
@@ -70,7 +71,7 @@
 							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[Window].Rules}">
+						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding #dialog.Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #dialog.Rules}">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
@@ -78,25 +79,25 @@
 											<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
 											<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
 										</Panel>
-										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Pattern}" TextTrimming="None"/>
-										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding $parent[Window].MessageSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin}" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="None"/>
+										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #dialog.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Pattern}" TextTrimming="None"/>
+										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #dialog.MessageSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin}" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="None"/>
 										<Border Classes="InPlaceAction_Reserved"/>
 										<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -109,7 +110,7 @@
 							</asControls:ListBox.ItemTemplate>
 						</asControls:ListBox>
 						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #ruleListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddRule}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+						<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.AddRule}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
 
 					</StackPanel>
 				</Border>

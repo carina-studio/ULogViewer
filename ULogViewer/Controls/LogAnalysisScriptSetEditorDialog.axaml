@@ -25,11 +25,11 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ApplyCommand}" Content="{DynamicResource String/Common.Apply}" IsVisible="{Binding !#window.IsNewScriptSet}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].CompleteEditingCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.ApplyCommand}" Content="{DynamicResource String/Common.Apply}" IsVisible="{Binding !#window.IsNewScriptSet}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditingCommand}" Content="{Binding #window.OKButtonText}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
 			</StackPanel>
 		</Border>
 
@@ -42,7 +42,7 @@
 					<StackPanel>
 				
 						<!-- Name and Icon -->
-						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedScriptSet}">
+						<StackPanel IsVisible="{Binding !#window.IsEmbeddedScriptSet}">
 							
 							<!-- Name -->
 							<asControls:DialogItem>
@@ -88,7 +88,7 @@
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].SetupScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding #window.SetupScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
@@ -102,7 +102,7 @@
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding $parent[Window].AnalysisScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding #window.AnalysisScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>

@@ -21,7 +21,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="ScriptLogDataSourceProvider"/>s.
 /// </summary>
-class ScriptLogDataSourceProviderEditorDialog : CarinaStudio.Controls.Dialog<IULogViewerApplication>
+class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 {
 	// Supported source option.
 	public class SupportedSourceOption

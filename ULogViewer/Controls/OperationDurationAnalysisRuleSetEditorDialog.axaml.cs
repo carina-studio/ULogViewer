@@ -19,7 +19,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="OperationDurationAnalysisRuleSet"/>.
 /// </summary>
-class OperationDurationAnalysisRuleSetEditorDialog : Window<IULogViewerApplication>
+class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 {
 	/// <summary>
 	/// Definition set of patterns of rule.
@@ -317,11 +317,6 @@ class OperationDurationAnalysisRuleSetEditorDialog : Window<IULogViewerApplicati
 		}
 		this.validateParametersAction.Schedule();
 	}
-
-
-	/// <inheritdoc/>
-	protected override WindowTransparencyLevel OnSelectTransparentLevelHint() =>
-		WindowTransparencyLevel.None;
 	
 
 	/// <summary>

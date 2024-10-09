@@ -20,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit or create <see cref="PredefinedLogTextFilter"/>.
 /// </summary>
-class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
+class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 {
 	/// <summary>
 	/// Key of persistent state tp indicate whether tutorial of group name has been shown or not.
@@ -270,11 +270,6 @@ class PredefinedLogTextFilterEditorDialog : Window<IULogViewerApplication>
 				this.groupMenuItems.Add(this.CreateGroupMenuItem(group));
 		});
 	}
-
-
-	/// <inheritdoc/>
-	protected override WindowTransparencyLevel OnSelectTransparentLevelHint() =>
-		WindowTransparencyLevel.None;
 
 
 	// Select group name.
