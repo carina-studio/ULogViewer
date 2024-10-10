@@ -22,9 +22,9 @@
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel Classes="Dialog_ControlButtonsPanel">
+			<Panel Classes="Dialog_ControlButtonsPanel">
 				<Button Classes="Dialog_ControlButton" Command="{ReflectionBinding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
-			</StackPanel>
+			</Panel>
 		</Border>
 		
 		<!-- Navigation bar -->

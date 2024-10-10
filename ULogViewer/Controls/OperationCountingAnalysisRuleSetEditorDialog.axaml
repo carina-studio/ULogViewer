@@ -23,12 +23,16 @@
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
-			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}" IsEnabled="{Binding #dialog.AreValidParameters}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{DynamicResource String/Common.Cancel}"/>
-			</StackPanel>
+			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
+				<StackPanel Classes="Dialog_ControlButtonsPanel">
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
+					<Separator Classes="Dialog_Separator_Small"/>
+				</StackPanel>
+				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}" IsEnabled="{Binding #dialog.AreValidParameters}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				</StackPanel>
+			</Grid>
 		</Border>
 
 		<!-- Content -->

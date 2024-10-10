@@ -7,6 +7,7 @@
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.DateTimeFormatInputDialog"
+        Name="dialog"
 		Classes="Dialog"
         Width="{DynamicResource Double/TextInputDialog.Width}">
 
@@ -14,9 +15,9 @@
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
+			<StackPanel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -25,7 +26,7 @@
 
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DateTimeFormatInputDialog.Message}"/>
 			<asControls:DateTimeFormatTextBox Name="formatTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnFormatTextBoxPropertyChanged"/>
-			<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding $parent[Window].SampleResult}" Format="{DynamicResource String/TimeSpanFormatInputDialog.SampleResult}" IsVisible="{Binding $parent[Window].SampleResult, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+			<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding #dialog.SampleResult}" Format="{DynamicResource String/TimeSpanFormatInputDialog.SampleResult}" IsVisible="{Binding #dialog.SampleResult, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 			<Separator Classes="Dialog_Separator_Small"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.DateTimeFormatReference}"/>
 

@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to manage <see cref="ScriptLogDataSourceProvider"/>s.
 /// </summary>
-class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogViewerApplication>
+class ScriptLogDataSourceProvidersDialog : Dialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("ScriptLogDataSourceProvidersDialog.DonotShowRestrictionsWithNonProVersion");
@@ -236,6 +236,7 @@ class ScriptLogDataSourceProvidersDialog : CarinaStudio.Controls.Dialog<IULogVie
 		base.OnOpened(e);
 		if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
 		{
+			// ReSharper disable once AsyncVoidLambda
 			this.SynchronizationContext.PostDelayed(async () =>
 			{
 				if (this.IsOpened 

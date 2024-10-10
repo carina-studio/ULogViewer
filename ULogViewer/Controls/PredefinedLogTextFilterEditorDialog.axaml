@@ -86,7 +86,7 @@
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditing}" Content="{Binding #window.OKButtonText}" IsEnabled="{Binding #window.AreValidParameters}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{DynamicResource String/Common.Cancel}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 		

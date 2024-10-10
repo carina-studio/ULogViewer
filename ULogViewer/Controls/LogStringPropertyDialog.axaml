@@ -5,15 +5,11 @@
         xmlns:sys="using:System"
         xmlns:ia="using:Avalonia.Xaml.Interactivity"
         xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
-        xmlns:ma="using:Markdown.Avalonia"
-		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asInput="using:CarinaStudio.AppSuite.Input"
-        xmlns:app="using:CarinaStudio.ULogViewer"
-        xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
-        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogStringPropertyDialog"
+        Name="dialog"
         CanResize="True"
         Classes="Dialog"
         Height="{DynamicResource Double/LogStringPropertyDialog.Height}"
@@ -27,9 +23,9 @@
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
-			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.OK}"/>
-			</StackPanel>
+			<Panel Classes="Dialog_ControlButtonsPanel">
+				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.OKButtonText}"/>
+			</Panel>
 		</Border>
 
 		<!-- Content -->
@@ -47,14 +43,14 @@
 					<CheckBox Grid.Column="2" Content="{DynamicResource String/LogStringPropertyDialog.WrapText}" IsChecked="True" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center">
 						<ia:Interaction.Behaviors>
 							<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
-								<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+								<iaCore:InvokeCommandAction Command="{Binding #dialog.SetTextWrappingCommand}">
 									<iaCore:InvokeCommandAction.CommandParameter>
 										<sys:Boolean>True</sys:Boolean>
 									</iaCore:InvokeCommandAction.CommandParameter>
 								</iaCore:InvokeCommandAction>
 							</iaCore:DataTriggerBehavior>
 							<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="False">
-								<iaCore:InvokeCommandAction Command="{Binding $parent[Window].SetTextWrappingCommand}">
+								<iaCore:InvokeCommandAction Command="{Binding #dialog.SetTextWrappingCommand}">
 									<iaCore:InvokeCommandAction.CommandParameter>
 										<sys:Boolean>False</sys:Boolean>
 									</iaCore:InvokeCommandAction.CommandParameter>
@@ -87,7 +83,7 @@
 						</MenuItem>
 						<MenuItem Command="{Binding $parent[TextBox].SelectAll}" Header="{DynamicResource String/Common.SelectAll}" IsEnabled="{Binding $parent[TextBox].Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" InputGesture="{x:Static asInput:KeyGestures.SelectAll}"/>
 						<Separator/>
-						<MenuItem Name="searchOnInternetMenuItem" Header="{DynamicResource String/LogStringPropertyDialog.SearchOnInternet}" IsEnabled="{Binding $parent[Window].CanSearchOnInternet}">
+						<MenuItem Name="searchOnInternetMenuItem" Header="{DynamicResource String/LogStringPropertyDialog.SearchOnInternet}" IsEnabled="{Binding #dialog.CanSearchOnInternet}">
 							<MenuItem.Icon>
 								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Search}"/>
 							</MenuItem.Icon>

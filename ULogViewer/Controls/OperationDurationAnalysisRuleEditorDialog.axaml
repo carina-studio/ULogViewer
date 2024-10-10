@@ -13,6 +13,7 @@
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationDurationAnalysisRuleEditorDialog"
+        Name="dialog"
         CanResize="True"
         Classes="Dialog"
         Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.Height}"
@@ -36,12 +37,16 @@
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
-			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
-			</StackPanel>
+			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
+				<StackPanel Classes="Dialog_ControlButtonsPanel">
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
+					<Separator Classes="Dialog_Separator_Small"/>
+				</StackPanel>
+				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				</StackPanel>
+			</Grid>
 		</Border>
 
 		<!-- Content -->
@@ -92,10 +97,10 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].BeginningPreActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.BeginningPreActions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPreActions}"/>
+						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding #dialog.BeginningPreActions}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Beginning conditions -->
@@ -104,10 +109,10 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].BeginningConditions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.BeginningConditions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].BeginningConditions}"/>
+						<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding #dialog.BeginningConditions}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Beginning post-actions -->
@@ -116,10 +121,10 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].BeginningPostActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.BeginningPostActions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].BeginningPostActions}"/>
+						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding #dialog.BeginningPostActions}"/>
 
 					</StackPanel>
 				</Border>
@@ -155,10 +160,10 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].EndingPreActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.EndingPreActions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPreActions}"/>
+						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding #dialog.EndingPreActions}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Ending conditions -->
@@ -167,10 +172,10 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].EndingConditions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.EndingConditions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].EndingConditions}"/>
+						<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding #dialog.EndingConditions}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Ending post-actions -->
@@ -179,10 +184,10 @@
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions.Description}"/>
 							</StackPanel>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].EndingPostActions.Count}" Text="{DynamicResource String/Common.None}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.EndingPostActions.Count}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding $parent[Window].EndingPostActions}"/>
+						<appControls:ContextualBasedAnalysisActionsEditor Actions="{Binding #dialog.EndingPostActions}"/>
 
 					</StackPanel>
 				</Border>
@@ -208,7 +213,7 @@
 							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#endingVariableListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="endingVariableListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $parent[Window].EndingVariables.Count}" ItemsSource="{Binding $parent[Window].EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+						<asControls:ListBox Name="endingVariableListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding #dialog.EndingVariables.Count}" ItemsSource="{Binding #dialog.EndingVariables}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
 							<asControls:ListBox.ItemsPanel>
 								<ItemsPanelTemplate>
 									<StackPanel/>
@@ -220,14 +225,14 @@
 										<TextBlock Grid.Column="0" Text="{Binding StringFormat={}{{{0}}}}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 										<Border Classes="InPlaceAction_Reserved"/>
 										<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
@@ -240,7 +245,7 @@
 							</asControls:ListBox.ItemTemplate>
 						</asControls:ListBox>
 						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #endingVariableListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddEndingVariable}" Content="{DynamicResource String/Common.Add.WithDialog}" IsEnabled="{Binding #endingVariableListBox.IsEnabled}"/>
+						<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.AddEndingVariable}" Content="{DynamicResource String/Common.Add.WithDialog}" IsEnabled="{Binding #endingVariableListBox.IsEnabled}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Min/Max duration -->

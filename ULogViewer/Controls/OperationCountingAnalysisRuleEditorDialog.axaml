@@ -12,6 +12,7 @@
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationCountingAnalysisRuleEditorDialog"
+        Name="dialog"
         CanResize="True"
         Classes="Dialog"
         Height="{StaticResource Double/OperationCountingAnalysisRuleEditorDialog.Height}"
@@ -28,12 +29,16 @@
 
 			<!-- Control buttons -->
 			<Border Classes="Dialog_ControlButtonsPanel">
-				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].GenerateResultCommand}" Content="{DynamicResource String/Common.OK}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Cancel}"/>
-				</StackPanel>
+				<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
+					<StackPanel Classes="Dialog_ControlButtonsPanel">
+						<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
+						<Separator Classes="Dialog_Separator_Small"/>
+					</StackPanel>
+					<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
+						<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+						<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+					</StackPanel>
+				</Grid>
 			</Border>
 
 			<!-- Content -->
@@ -98,10 +103,10 @@
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions}"/>
 									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description}"/>
 								</StackPanel>
-								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].Conditions.Count}" Text="{DynamicResource String/Common.None}"/>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#dialog.Conditions.Count}" Text="{DynamicResource String/Common.None}"/>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding $parent[Window].Conditions}" VerticalScrollBarVisibility="Disabled"/>
+							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding #dialog.Conditions}" VerticalScrollBarVisibility="Disabled"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Interval -->

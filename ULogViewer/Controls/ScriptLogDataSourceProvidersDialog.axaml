@@ -6,6 +6,7 @@
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.ScriptLogDataSourceProvidersDialog"
+        Name="dialog"
         Classes="Dialog"
 		SizeToContent="WidthAndHeight"
         Title="{DynamicResource String/ScriptLogDataSourceProvidersDialog.Title}">
@@ -14,14 +15,18 @@
 
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
-			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].OpenDocumentation}" Content="{DynamicResource String/Common.Help}"/>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].AddProvider}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].ImportProvider}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
-				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding $parent[Window].Close}" Content="{DynamicResource String/Common.Close}"/>
-			</StackPanel>
+			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
+				<StackPanel Classes="Dialog_ControlButtonsPanel">
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
+					<Separator Classes="Dialog_Separator_Small"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.AddProvider}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.ImportProvider}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+					<Separator Classes="Dialog_Separator_Small"/>
+				</StackPanel>
+				<Panel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{DynamicResource String/Common.Close}"/>
+				</Panel>
+			</Grid>
 		</Border>
 
 		<!-- Content -->
@@ -38,28 +43,28 @@
 							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding DisplayName}"/>
 							<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].ExportProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.ExportProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Export}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Export}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].CopyProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.CopyProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].EditProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditProviderCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -74,9 +79,9 @@
 			
 			<!--Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #providerListBox.IsVisible}"/>
 			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].AddProvider}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+				<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.AddProvider}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
 				<Separator Classes="Dialog_Separator_Small"/>
-				<Button Classes="Dialog_Item_Button" Command="{Binding $parent[Window].ImportProvider}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
+				<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.ImportProvider}" Content="{DynamicResource String/Common.Import.WithDialog}"/>
 			</StackPanel-->
 
 		</StackPanel>
