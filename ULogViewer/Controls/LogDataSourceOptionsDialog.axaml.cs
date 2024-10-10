@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ListBox = Avalonia.Controls.ListBox;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -112,8 +113,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	{
 		this.EditEnvironmentVariableCommand = new Command<Tuple<string, string>>(this.EditEnvironmentVariable);
 		this.EditSetupTeardownCommandCommand = new Command<ListBoxItem>(this.EditSetupTeardownCommand);
-		this.MoveSetupTeardownCommandDownCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandDown);
-		this.MoveSetupTeardownCommandUpCommand = new Command<ListBoxItem>(this.MoveSetupTeardownCommandUp);
 		this.RemoveEnvironmentVariableCommand = new Command<Tuple<string, string>>(this.RemoveEnvironmentVariable);
 		this.RemoveSetupTeardownCommandCommand = new Command<ListBoxItem>(this.RemoveSetupTeardownCommand);
 		this.CommandSyntaxHighlightingDefinitionSet = Highlighting.TextShellCommandSyntaxHighlighting.CreateDefinitionSet(this.Application);
@@ -156,9 +155,35 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 				this.commandTextBoxSelection = new(this.commandTextBox.SelectionStart, this.commandTextBox.SelectionEnd);
 		});
 		this.setupCommands.CollectionChanged += (_, _) => this.InvalidateInput();
-		this.setupCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(setupCommandsListBox));
+		this.setupCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(setupCommandsListBox)).Also(it =>
+		{
+			ListBoxItemDragging.SetItemDraggingEnabled(it, true);
+			it.AddHandler(ListBoxItemDragging.ItemDragStartedEvent, (sender, e) =>
+			{
+				if (sender is ListBox listBox)
+					OnSetupTeardownCommandsListBoxItemDragStarted(listBox, e);
+			});
+			it.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (sender, e) =>
+			{
+				if (sender is ListBox listBox)
+					this.OnSetupTeardownCommandsListBoxItemDropped(listBox, e);
+			});
+		});
 		this.teardownCommands.CollectionChanged += (_, _) => this.InvalidateInput();
-		this.teardownCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(teardownCommandsListBox));
+		this.teardownCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(teardownCommandsListBox)).Also(it =>
+		{
+			ListBoxItemDragging.SetItemDraggingEnabled(it, true);
+			it.AddHandler(ListBoxItemDragging.ItemDragStartedEvent, (sender, e) =>
+			{
+				if (sender is ListBox listBox)
+					OnSetupTeardownCommandsListBoxItemDragStarted(listBox, e);
+			});
+			it.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (sender, e) =>
+			{
+				if (sender is ListBox listBox)
+					this.OnSetupTeardownCommandsListBoxItemDropped(listBox, e);
+			});
+		});
 		this.uriTextBox = this.Get<UriTextBox>(nameof(uriTextBox));
 		this.userNameTextBox = this.Get<TextBox>(nameof(userNameTextBox));
 		this.useTextShellSwitch = this.Get<ToggleSwitch>(nameof(useTextShellSwitch));
@@ -305,7 +330,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	async void EditSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
-		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
+		var listBox = (ListBox)item.Parent.AsNonNull();
 		var isSetupCommand = (listBox == this.setupCommandsListBox);
 		var index = isSetupCommand ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 		if (index < 0)
@@ -324,7 +349,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.setupCommands[index] = newCommand;
 		else
 			this.teardownCommands[index] = newCommand;
-		this.SelectListBoxItem((Avalonia.Controls.ListBox)item.Parent.AsNonNull(), index);
+		this.SelectListBoxItem((ListBox)item.Parent.AsNonNull(), index);
 	}
 
 
@@ -607,7 +632,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	// Called when double-tapped on list box.
 	void OnListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 	{
-		if (sender is not Avalonia.Controls.ListBox listBox)
+		if (sender is not ListBox listBox)
 			return;
 		if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 			return;
@@ -621,7 +646,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	// Called when list box lost focus.
 	void OnListBoxLostFocus(object? sender, RoutedEventArgs e)
 	{
-		if (sender is not Avalonia.Controls.ListBox listBox)
+		if (sender is not ListBox listBox)
 			return;
 		listBox.SelectedItems?.Clear();
 	}
@@ -630,7 +655,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	// Called when selection in list box changed.
 	void OnListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 	{
-		if (sender is not Avalonia.Controls.ListBox listBox)
+		if (sender is not ListBox listBox)
 			return;
 		if (listBox.SelectedIndex >= 0)
 			listBox.ScrollIntoView(listBox.SelectedIndex);
@@ -801,6 +826,34 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	}
 
 
+	// Called when user start dragging setup/teardown command.
+	void OnSetupTeardownCommandsListBoxItemDragStarted(ListBox listBox, ListBoxItemDragEventArgs e)
+	{
+		if (listBox.ItemCount <= 1)
+			e.Handled = true;
+	}
+	
+	
+	// Called when user dropped a setup/teardown command.
+	void OnSetupTeardownCommandsListBoxItemDropped(ListBox listBox, ListBoxItemDragEventArgs e)
+	{
+		ObservableList<string> commands;
+		if (ReferenceEquals(listBox, this.setupCommandsListBox))
+			commands = this.setupCommands;
+		else if (ReferenceEquals(listBox, this.teardownCommandsListBox))
+			commands = this.teardownCommands;
+		else
+			return;
+		var startIndex = e.StartItemIndex;
+		var index = e.ItemIndex;
+		if (startIndex >= 0 && startIndex < commands.Count && index >= 0 && index < commands.Count && startIndex != index)
+		{
+			commands.Move(startIndex, index);
+			listBox.SelectedIndex = index;
+		}
+	}
+
+
 	/// <summary>
 	/// Get or set <see cref="LogDataSourceOptions"/> to be edited.
 	/// </summary>
@@ -908,7 +961,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	void RemoveSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
-		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
+		var listBox = (ListBox)item.Parent.AsNonNull();
 		var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 		if (index < 0)
 			return;
@@ -953,7 +1006,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// Select given item in list box.
-	void SelectListBoxItem(Avalonia.Controls.ListBox listBox, int index)
+	void SelectListBoxItem(ListBox listBox, int index)
 	{
 		this.SynchronizationContext.Post(() =>
 		{

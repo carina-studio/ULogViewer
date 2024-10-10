@@ -74,20 +74,6 @@
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].MoveActionUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-								<asControls:Image Classes="InPlaceAction_Icon">
-									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
-									</DrawingImage>
-								</asControls:Image>
-							</Button>
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].MoveActionDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-								<asControls:Image Classes="InPlaceAction_Icon">
-									<DrawingImage>
-										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
-									</DrawingImage>
-								</asControls:Image>
-							</Button>
 						</StackPanel>
 					</Grid>
 				</DataTemplate>

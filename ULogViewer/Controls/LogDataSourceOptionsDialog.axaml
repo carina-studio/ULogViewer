@@ -41,20 +41,6 @@
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding #window.MoveSetupTeardownCommandUpCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveUp}">
-									<asControls:Image Classes="InPlaceAction_Icon">
-										<DrawingImage>
-											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveUp.Outline}"/>
-										</DrawingImage>
-									</asControls:Image>
-								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding #window.MoveSetupTeardownCommandDownCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.MoveDown}">
-									<asControls:Image Classes="InPlaceAction_Icon">
-										<DrawingImage>
-											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.MoveDown.Outline}"/>
-										</DrawingImage>
-									</asControls:Image>
-								</Button>
 							</StackPanel>
 						</Grid>
 					</DataTemplate>
