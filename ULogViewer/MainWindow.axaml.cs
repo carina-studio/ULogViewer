@@ -42,7 +42,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Static fields.
-		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>("HasMultipleSessions");
+		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>(nameof(HasMultipleSessions));
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static bool IsReactivatingProVersionHintDialogShown;
@@ -513,6 +513,12 @@ namespace CarinaStudio.ULogViewer
 		// Find SessionView for specific session.
 		public SessionView? FindSessionView(Session session) => 
 			this.FindSessionTabItem(session)?.Content as SessionView;
+
+
+		/// <summary>
+		/// Check whether at least 2 sessions are available in the window or not.
+		/// </summary>
+		public bool HasMultipleSessions => this.GetValue(HasMultipleSessionsProperty);
 
 
 		/// <summary>

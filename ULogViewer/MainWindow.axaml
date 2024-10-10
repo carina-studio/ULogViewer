@@ -12,6 +12,7 @@
 		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
+        Name="window"
 		Classes="Tabbed"
 		Icon="/ULogViewer.ico"
 		MinHeight="{StaticResource Double/MainWindow.MinHeight}"
@@ -30,16 +31,16 @@
 			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Stretch">
 				<Grid.ContextMenu>
 					<ContextMenu Placement="Bottom">
-						<MenuItem Command="{Binding $parent[Window].SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
+						<MenuItem Command="{Binding #window.SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Edit}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
-						<MenuItem Command="{Binding $parent[Window].ClearCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+						<MenuItem Command="{Binding #window.ClearCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
 						<Separator/>
-						<MenuItem Command="{Binding $parent[Window].MoveSessionToNewWorkspaceCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $parent[Window].HasMultipleSessions}">
+						<MenuItem Command="{Binding #window.MoveSessionToNewWorkspaceCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
@@ -47,7 +48,7 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator/>
-						<MenuItem Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="{x:Static appInput:KeyGestures.CloseTab}">
+						<MenuItem Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="{x:Static appInput:KeyGestures.CloseTab}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
@@ -100,7 +101,7 @@
 					<Image Classes="TabItem_Icon" IsEnabled="{Binding !IsHibernated}" Source="{Binding Icon}"/>
 					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
-				<Button Classes="TabItem_Button" Command="{Binding $parent[Window].CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
+				<Button Classes="TabItem_Button" Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
 					<Button.IsVisible>
 						<MultiBinding Converter="{x:Static BoolConverters.Or}">
 							<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type TabItem}}"/>
@@ -121,37 +122,37 @@
 			<NativeMenuItem Header="{DynamicResource String/MainWindow.Windows}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding $self.CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" Gesture="Cmd+N"/>
+						<NativeMenuItem Command="{Binding #window.CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" Gesture="Cmd+N"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}"/>
-						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}"/>
-						<NativeMenuItem Command="{Binding $self.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
 			<NativeMenuItem Header="{DynamicResource String/MainWindow.Tabs}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding $self.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
+						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
-						<NativeMenuItem Command="{Binding $self.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
+						<NativeMenuItem Command="{Binding #window.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
+						<NativeMenuItem Command="{Binding #window.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding $self.HasMultipleSessions}"/>
+						<NativeMenuItem Command="{Binding #window.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.CloseCurrentSessionTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
+						<NativeMenuItem Command="{Binding #window.CloseCurrentSessionTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
 			<NativeMenuItem CommandParameter="Tools" Header="{DynamicResource String/SessionView.Tools}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding $self.EditPathEnvironmentVariable}" Header="{DynamicResource String/SessionView.EditPathEnvVar}"/>
+						<NativeMenuItem Command="{Binding #window.EditPathEnvironmentVariable}" Header="{DynamicResource String/SessionView.EditPathEnvVar}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding $self.EditConfiguration}" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
-						<NativeMenuItem Command="{Binding $self.EditPersistentState}" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
-						<NativeMenuItem Command="{Binding $self.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{DynamicResource String/Common.SelfTesting}"/>
-						<NativeMenuItem Command="{Binding $self.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{DynamicResource String/Common.TakeMemorySnapshot.WithDialog}"/>
+						<NativeMenuItem Command="{Binding #window.EditConfiguration}" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
+						<NativeMenuItem Command="{Binding #window.EditPersistentState}" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
+						<NativeMenuItem Command="{Binding #window.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{DynamicResource String/Common.SelfTesting}"/>
+						<NativeMenuItem Command="{Binding #window.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{DynamicResource String/Common.TakeMemorySnapshot.WithDialog}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
@@ -162,7 +163,7 @@
 	<!-- Styles -->
 	<Window.Styles>
 		<Style Selector="CaptionButtons">
-			<Setter Property="MaxHeight" Value="{Binding $parent[Window].ExtendClientAreaTitleBarHeightHint}"/>
+			<Setter Property="MaxHeight" Value="{Binding #window.ExtendClientAreaTitleBarHeightHint}"/>
 		</Style>
 	</Window.Styles>
 
@@ -175,7 +176,7 @@
 			<!-- Add new tab -->
 			<asControls:TabItem Classes="EmptyWithSeparator">
 				<TabItem.Header>
-					<Button Classes="AddTabItem" Command="{Binding $parent[Window].CreateSessionTabItem}">
+					<Button Classes="AddTabItem" Command="{Binding #window.CreateSessionTabItem}">
 						<Button.ContextMenu>
 							<appControls:LogProfileSelectionContextMenu LogProfileSelected="OnLogProfileSelected"/>
 						</Button.ContextMenu>
