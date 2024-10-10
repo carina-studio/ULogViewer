@@ -24,6 +24,18 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly Uri DevelopmentAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Development.json");
 		/// <summary>
+		/// Documentation of formatting CLEF data while reading raw logs.
+		/// </summary>
+		public static readonly Uri FormattingClefDataDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#FormatClefData");
+		/// <summary>
+		/// Documentation of formatting JSON data while reading raw logs.
+		/// </summary>
+		public static readonly Uri FormattingJsonDataDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#FormatJsonData");
+		/// <summary>
+		/// Documentation of formatting XML data while reading raw logs.
+		/// </summary>
+		public static readonly Uri FormattingXmlDataDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#FormatXmlData");
+		/// <summary>
 		/// Documentation of log data sources.
 		/// </summary>
 		public static readonly Uri LogDataSourcesDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources");
