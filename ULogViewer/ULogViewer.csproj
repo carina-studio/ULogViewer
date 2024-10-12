@@ -106,11 +106,11 @@
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118">
 			<ExcludeAssets Condition="$(RuntimeIdentifier.Contains('win'))">native</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.0-rc.1.24431.7" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.0-rc.1.24451.1" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.0-rc.2.24473.5" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.0-rc.2.24474.1" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0-rc.1.24431.7" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0-rc.2.24473.5" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 	
