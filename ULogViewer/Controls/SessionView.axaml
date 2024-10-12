@@ -1000,13 +1000,17 @@
 												           TextWrapping="Wrap" 
 												           VerticalAlignment="Center"/>
 												<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
-												<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
-													<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{DynamicResource String/Common.Help}"/>
-													<Separator Classes="Dialog_Separator"/>
-													<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
-													<Separator Classes="Dialog_Separator_Small"/>
-													<Button Classes="Dialog_Item_Button" Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
-												</StackPanel>
+												<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
+													<StackPanel Orientation="Horizontal">
+														<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+														<Separator Classes="Dialog_Separator"/>
+													</StackPanel>
+													<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+														<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
+														<Separator Classes="Dialog_Separator_Small"/>
+														<Button Classes="Dialog_Item_Button" Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
+													</StackPanel>
+												</Grid>
 											</Grid>
 										</StackPanel>
 									</Border>
@@ -2260,37 +2264,41 @@
 												           VerticalAlignment="Center"/>
 											</Panel>
 											<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
-											<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
-												<Button Classes="Dialog_Item_Button" 
-												        Command="{Binding #root.OpenLogAnalysisDocumentation}" 
-												        Content="{DynamicResource String/Common.Help}"/>
-												<Separator Classes="Dialog_Separator"/>
-												<Button Classes="Dialog_Item_Button" 
-												        Command="{Binding #root.ClearLogAnalysisRuleSetSelection}" 
-												        Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"
-												        IsEnabled="{asXaml:OrBindings
-												            {Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
-												            {Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
-												            {Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
-												            {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False}
-												        }"/>
-												<Separator Classes="Dialog_Separator_Small"/>
-												<Button Classes="Dialog_Item_Button" 
-												        Command="{Binding #root.ImportLogAnalysisRuleSet}" 
-												        Content="{DynamicResource String/Common.Import.WithDialog}"/>
-												<Separator Classes="Dialog_Separator_Small"/>
-												<ToggleButton Name="createLogAnalysisRuleSetButton" 
-												              Classes="Dialog_Item_ToggleButton" 
-												              Command="{Binding #root.CreateLogAnalysisRuleSet}">
-													<Grid ColumnDefinitions="*,Auto">
-														<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Create}"/>
-														<Panel Grid.Column="1">
-															<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#createLogAnalysisRuleSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
-															<Image Classes="Button_DropDownIcon" IsVisible="{Binding #createLogAnalysisRuleSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
-														</Panel>
-													</Grid>
-												</ToggleButton>
-											</StackPanel>
+											<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
+												<StackPanel Orientation="Horizontal">
+													<Button Classes="Dialog_Item_Button" 
+													        Command="{Binding #root.OpenLogAnalysisDocumentation}" 
+													        Content="{DynamicResource String/Common.Help}"/>
+													<Separator Classes="Dialog_Separator_Small"/>
+												</StackPanel>
+												<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+													<Button Classes="Dialog_Item_Button" 
+													        Command="{Binding #root.ClearLogAnalysisRuleSetSelection}" 
+													        Content="{DynamicResource String/SessionView.ClearLogAnalysisRuleSetsSelection}"
+													        IsEnabled="{asXaml:OrBindings
+													            {Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
+													            {Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
+													            {Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
+													            {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False}
+													        }"/>
+													<Separator Classes="Dialog_Separator_Small"/>
+													<Button Classes="Dialog_Item_Button" 
+													        Command="{Binding #root.ImportLogAnalysisRuleSet}" 
+													        Content="{DynamicResource String/Common.Import.WithDialog}"/>
+													<Separator Classes="Dialog_Separator_Small"/>
+													<ToggleButton Name="createLogAnalysisRuleSetButton" 
+													              Classes="Dialog_Item_ToggleButton" 
+													              Command="{Binding #root.CreateLogAnalysisRuleSet}">
+														<Grid ColumnDefinitions="*,Auto">
+															<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Create}"/>
+															<Panel Grid.Column="1">
+																<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#createLogAnalysisRuleSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+																<Image Classes="Button_DropDownIcon" IsVisible="{Binding #createLogAnalysisRuleSetButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
+															</Panel>
+														</Grid>
+													</ToggleButton>
+												</StackPanel>
+											</Grid>
 										</Grid>
 									</StackPanel>
 								</Border>
