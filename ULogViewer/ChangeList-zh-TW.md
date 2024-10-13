@@ -2,7 +2,7 @@
  ---
 
 ## 新功能
-+ 
++ 支援在已定義[日誌行格式](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns)後暫時顯示原始日誌行。
 
 ## 改善
 + 允許在 ```編輯日誌類型```、```編輯動作時距分析規則``` 及 ```資料來源參數``` 對話方塊中使用滑鼠拖動以調整項目順序，而非原先的使用按鈕。

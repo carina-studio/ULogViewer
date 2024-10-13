@@ -2,7 +2,7 @@
  ---
 
 ## 新功能
-+ 
++ 支持在已定义[日志行格式](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns)后暂时显示原始日志行。
 
 ## 优化
 + 允许在```编辑日志类型```、```编辑动作时距分析规则``` 及```资料来源参数``` 对话窗中使用鼠标拖动以调整项目顺序，而非原先的点击按钮。

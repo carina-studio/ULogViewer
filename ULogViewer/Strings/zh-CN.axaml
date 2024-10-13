@@ -1221,6 +1221,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogText">复制筛选用日志文字</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含文件名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
+	<sys:String x:Key="String/SessionView.DisableLogPatterns">显示原始日志行</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">编辑内嵌日志资料来源脚本</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">编辑「{0}」日志资料来源脚本</sys:String>

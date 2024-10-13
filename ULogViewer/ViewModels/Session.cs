@@ -63,6 +63,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreDisplayLogPropertiesDefinedByLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(AreDisplayLogPropertiesDefinedByLogProfile));
 		/// <summary>
+		/// Property of <see cref="AreLogPatternsDisabled"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> AreLogPatternsDisabledProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogPatternsDisabled));
+		/// <summary>
 		/// Property of <see cref="AreLogsSortedByTimestamp"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
@@ -146,6 +150,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Property of <see cref="HasLogFiles"/>.
 		/// </summary>
 		public static readonly ObservableProperty<bool> HasLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogFiles));
+		/// <summary>
+		/// Property of <see cref="HasLogPatterns"/>.
+		/// </summary>
+		public static readonly ObservableProperty<bool> HasLogPatternsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogPatterns));
 		/// <summary>
 		/// Property of <see cref="HasLogProfile"/>.
 		/// </summary>
@@ -951,6 +959,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.ShowAllLogsTemporarilyCommand = new Command(this.ShowAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.ShowMarkedLogsTemporarilyCommand = new Command(this.ShowMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.StopReadingLogsCommand = new Command(this.StopReadingLogs, this.GetValueAsObservable(CanStopReadingLogsProperty));
+			this.ToggleLogPatternsCommand = new Command(this.ToggleLogPatterns, this.GetValueAsObservable(HasLogPatternsProperty));
 			this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
 			this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
 			this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
@@ -1540,6 +1549,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether <see cref="DisplayLogProperties"/> are defined by log profile or not.
 		/// </summary>
 		public bool AreDisplayLogPropertiesDefinedByLogProfile => this.GetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
+		
+		
+		/// <summary>
+		/// Check whether logs pattern defined in log profile are disabled or not.
+		/// </summary>
+		public bool AreLogPatternsDisabled => this.GetValue(AreLogPatternsDisabledProperty);
 
 
 		/// <summary>
@@ -2110,7 +2125,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				it.LogPatternMatchingMode = profile.LogPatternMatchingMode;
-				it.LogPatterns = profile.LogPatterns.IsNotEmpty() 
+				it.LogPatterns = profile.LogPatterns.IsNotEmpty() && !this.GetValue(AreLogPatternsDisabledProperty)
 					? profile.LogPatterns 
 					: [ new LogPattern("^(?<Message>.*)", false, false, null) ];
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
@@ -2291,7 +2306,34 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Raised when debug message has been generated.
 		/// </summary>
-		public event EventHandler<MessageEventArgs>? DebugMessageGenerated; 
+		public event EventHandler<MessageEventArgs>? DebugMessageGenerated;
+
+
+		/// <summary>
+		/// Disable log patterns defined in log profile.
+		/// </summary>
+		/// <returns>True if log patterns disabled successfully.</returns>
+		public bool DisableLogPatterns()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (this.GetValue(AreLogPatternsDisabledProperty))
+				return true;
+			if (!this.GetValue(HasLogPatternsProperty))
+				return false;
+			if (this.GetValue(LogProfileProperty) is not { } logProfile)
+				return false;
+			
+			this.Logger.LogWarning("Disable log patterns defined in '{logProfile}'", logProfile.Name);
+			
+			// update state
+			this.SetValue(AreLogPatternsDisabledProperty, true);
+			
+			// reload logs
+			this.ScheduleReloadingLogs(true, true);
+			return true;
+		}
 
 
 		// Raised when group of displayable log created.
@@ -2492,6 +2534,33 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public DateTime? EarliestLogTimestamp => 
 			this.GetValue(EarliestLogTimestampProperty);
+		
+		
+		/// <summary>
+		/// Enable log patterns defined in log profile.
+		/// </summary>
+		/// <returns>True if log patterns enabled successfully.</returns>
+		public bool EnableLogPatterns()
+		{
+			// check state
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (!this.GetValue(AreLogPatternsDisabledProperty))
+				return true;
+			if (!this.GetValue(HasLogPatternsProperty))
+				return false;
+			if (this.GetValue(LogProfileProperty) is not { } logProfile)
+				return false;
+			
+			this.Logger.LogWarning("Enable log patterns defined in '{logProfile}'", logProfile.Name);
+			
+			// update state
+			this.SetValue(AreLogPatternsDisabledProperty, false);
+			
+			// reload logs
+			this.ScheduleReloadingLogs(true, true);
+			return true;
+		}
 
 
 		/// <summary>
@@ -2641,6 +2710,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// Check whether at least one log file was added to session or not.
 		/// </summary>
 		public bool HasLogFiles => this.GetValue(HasLogFilesProperty);
+		
+		
+		/// <summary>
+		/// Check whether at least one log pattern has been defined in log profile or not.
+		/// </summary>
+		public bool HasLogPatterns => this.GetValue(HasLogPatternsProperty);
 
 
 		/// <summary>
@@ -4147,6 +4222,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// update state
 			this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
+			this.ResetValue(AreLogPatternsDisabledProperty);
 			this.ResetValue(AreLogsSortedByTimestampProperty);
 			this.canResetLogProfile.Update(false);
 			this.canShowAllLogsTemporarily.Update(false);
@@ -4159,6 +4235,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			this.UpdateCanSetWorkingDirectory(null);
 			this.ResetValue(HasLogColorIndicatorProperty);
 			this.ResetValue(HasLogColorIndicatorByFileNameProperty);
+			this.ResetValue(HasLogPatternsProperty);
 			this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
 			this.ResetValue(IsIPEndPointNeededProperty);
 			this.ResetValue(IsIPEndPointSupportedProperty);
@@ -4257,6 +4334,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var isInitLogProfile = jsonState.TryGetProperty("IsInitLogProfile", out jsonValue)
 					&& jsonValue.ValueKind == JsonValueKind.True;
 				this.SetLogProfile(profile, isInitLogProfile, false);
+				
+				// restore log patterns disabling state
+				if (jsonState.TryGetProperty(nameof(AreLogPatternsDisabled), out jsonValue) && jsonState.ValueKind == JsonValueKind.True)
+					this.SetValue(AreLogPatternsDisabledProperty, true);
 
 				// restore log reading precondition
 				if (jsonState.TryGetProperty(nameof(LastLogReadingPrecondition), out jsonValue))
@@ -4815,6 +4896,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.SetValue(HasLogColorIndicatorProperty, profile.ColorIndicator != LogColorIndicator.None);
 			this.SetValue(HasLogColorIndicatorByFileNameProperty, profile.ColorIndicator == LogColorIndicator.FileName);
+			this.SetValue(HasLogPatternsProperty, profile.LogPatterns.IsNotEmpty());
 			this.ResetValue(LastLogReadingPreconditionProperty);
 
 			// start reading logs
@@ -4928,6 +5010,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				jsonWriter.WriteString(nameof(LogProfile), profile.Id);
 				if (this.isInitLogProfile)
 					jsonWriter.WriteBoolean("IsInitLogProfile", true);
+				
+				// save log patterns disabling state
+				if (this.GetValue(AreLogPatternsDisabledProperty))
+					jsonWriter.WriteBoolean(nameof(AreLogPatternsDisabled), true);
 				
 				// save logs reading parameters
 				if (this.logFileInfoList.IsNotEmpty())
@@ -5547,6 +5633,22 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public long TotalLogsMemoryUsage => 
 			this.GetValue(TotalLogsMemoryUsageProperty);
+		
+		
+		// Enable or disable log patterns defined in log profile.
+		void ToggleLogPatterns()
+		{
+			if (this.GetValue(AreLogPatternsDisabledProperty))
+				this.EnableLogPatterns();
+			else
+				this.DisableLogPatterns();
+		}
+		
+		
+		/// <summary>
+		/// Command to enable or disable log patterns defined in log profile.
+		/// </summary>
+		public ICommand ToggleLogPatternsCommand { get; }
 
 
 		// Trigger GC if needed.
@@ -5833,13 +5935,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				var visibleLogProperties = profile.VisibleLogProperties;
 				var displayLogProperties = new List<DisplayableLogProperty>();
 				var hasTimestamp = false;
-				foreach (var logProperty in visibleLogProperties)
+				if (!this.GetValue(AreLogPatternsDisabledProperty))
 				{
-					var displayableLogProperty = new DisplayableLogProperty(app, logProperty);
-					displayLogProperties.Add(displayableLogProperty);
-					if (!hasTimestamp)
-						hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
+					foreach (var logProperty in visibleLogProperties)
+					{
+						var displayableLogProperty = new DisplayableLogProperty(app, logProperty);
+						displayLogProperties.Add(displayableLogProperty);
+						if (!hasTimestamp)
+							hasTimestamp = DisplayableLog.HasDateTimeProperty(logProperty.Name);
+					}
 				}
+				else if (visibleLogProperties.IsNotEmpty())
+					this.Logger.LogWarning("Ignore visible log properties because log patterns have been disabled");
 				if (displayLogProperties.IsEmpty())
 				{
 					this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);

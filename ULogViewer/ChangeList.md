@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+ 
++ Support showing raw log lines temporarily even when [log patterns](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns) were defined.
 
 ## Improvement
 + Allow reordering items in ```Edit log profile```, ```Edit operation duration analysis rule``` and ```Data source options``` dialogs by mouse dragging instead of clicking action button.

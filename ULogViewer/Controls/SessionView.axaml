@@ -586,7 +586,7 @@
 						<Button Name="selectAndSetLogProfileButton" 
 						        Classes="ToolBar_Button_WithDropDownButton" 
 						        Command="{Binding #root.SelectAndSetLogProfileCommand}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetLogProfile}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetLogProfile}">
 							<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
 						</Button>
 						<ToggleButton Name="selectAndSetLogProfileDropDownButton" 
@@ -604,7 +604,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" 
 						        IsVisible="{Binding CanSetWorkingDirectory}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetWorkingDirectory}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetWorkingDirectory}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsWorkingDirectoryNeeded}">
@@ -617,7 +617,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.AddLogFilesCommand}" 
 						        IsVisible="{Binding CanAddLogFile}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.AddLogFiles.WithShortcut}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.AddLogFiles.WithShortcut}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsLogFileNeeded}">
@@ -630,7 +630,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.SelectAndSetCommandCommand}" 
 						        IsVisible="{Binding CanSetCommand}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetCommand}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetCommand}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Terminal.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsCommandNeeded}">
@@ -643,7 +643,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.SelectAndSetUriCommand}" 
 						        IsVisible="{Binding CanSetUri}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetUri}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetUri}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Uri.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsUriNeeded}">
@@ -656,7 +656,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.SelectAndSetIPEndPointCommand}" 
 						        IsVisible="{Binding CanSetIPEndPoint}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetIPEndPoint}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetIPEndPoint}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/IPAddress.Outline}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsIPEndPointNeeded}">
@@ -669,7 +669,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.SelectAndSetProcessIdCommand}" 
 						        IsVisible="{Binding CanSetProcessId}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetProcessId}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetProcessId}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessIdNeeded}">
@@ -682,7 +682,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.SelectAndSetProcessNameCommand}"
 						        IsVisible="{Binding CanSetProcessName}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.SetProcessName}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SetProcessName}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
 								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessNameNeeded}">
@@ -696,7 +696,7 @@
 						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding #root.ShowLogsSavingMenu}" 
 						              IsVisible="{Binding HasLogProfile}" 
-						              ToolTip.Tip="{DynamicResource String/SessionView.SaveLogs}">
+						              ToolTip.Tip="{asXaml:StringResource SessionView.SaveLogs}">
 							<ia:Interaction.Behaviors>
 								<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
 									<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
@@ -712,7 +712,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding ClearLogFilesCommand}" 
 						        IsVisible="{Binding IsLogFileSupported}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.ClearLogFiles}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.ClearLogFiles}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 						</Button>
 						
@@ -720,7 +720,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding StopReadingLogsCommand}" 
 						        IsVisible="{asXaml:AndBindings {Binding CanStopReadingLogs}, {Binding !IsReadingLogsContinuously}}"
-						        ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.StopReadingLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 						</Button>
 
@@ -728,7 +728,7 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding #root.ReloadLogsCommand}" 
 						        IsVisible="{asXaml:OrBindings {Binding !CanStopReadingLogs}, {Binding IsReadingLogsContinuously}}"
-						        ToolTip.Tip="{DynamicResource String/SessionView.ReloadLogs}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.ReloadLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
@@ -737,7 +737,7 @@
 						        Command="{Binding PauseResumeLogsReadingCommand}"
 						        IsEnabled="{asXaml:OrBindings {Binding IsLogsReadingPaused}, {Binding IsReadingLogs}}"
 						        IsVisible="{Binding IsReadingLogsContinuously}" 
-						        ToolTip.Tip="{DynamicResource String/SessionView.PauseResumeLogsReading}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.PauseResumeLogsReading}">
 							<Panel>
 								<Image Classes="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
 								<Image Classes="Icon" IsVisible="{Binding IsLogsReadingPaused}">
@@ -752,9 +752,23 @@
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding StopReadingLogsCommand}" 
 						        IsVisible="{Binding IsReadingLogsContinuously}"
-						        ToolTip.Tip="{DynamicResource String/SessionView.StopReadingLogs}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.StopReadingLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.StopMedia.Outline}"/>
 						</Button>
+						
+						<!-- Separator -->
+						<Separator Classes="ToolBar_Separator"
+						           IsVisible="{Binding #disableLogPatternsButton.IsVisible}"/>
+						
+						<!-- Disable log patterns -->
+						<ToggleButton Name="disableLogPatternsButton" 
+						              Classes="ToolBar_ToggleButton"
+						              Command="{Binding ToggleLogPatternsCommand}"
+						              IsChecked="{Binding AreLogPatternsDisabled}"
+						              IsVisible="{Binding HasLogPatterns}"
+						              ToolTip.Tip="{asXaml:StringResource SessionView.DisableLogPatterns}">
+							<Image Classes="Icon" Source="{DynamicResource Image/DisableLogPatterns}"/>
+						</ToggleButton>
 
 					</StackPanel>
 
@@ -768,7 +782,7 @@
 						          IsVisible="{Binding $self.ItemCount}" 
 						          ItemsSource="{Binding #root.ValidLogLevels}" 
 						          SelectedItem="{Binding LogFiltering.LevelFilter, FallbackValue={x:Static appLogs:LogLevel.Undefined}, Mode=TwoWay}" 
-						          ToolTip.Tip="{DynamicResource String/SessionView.LogLevelFilter.Description}" 
+						          ToolTip.Tip="{asXaml:StringResource SessionView.LogLevelFilter.Description}" 
 						          VerticalAlignment="Center"
 						          Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
 							<ComboBox.ItemTemplate>
@@ -788,7 +802,7 @@
 						                           IsVisible="{Binding LogFiltering.IsProcessIdFilterEnabled}" 
 						                           Maximum="2147483647" 
 						                           Minimum="0" 
-						                           ToolTip.Tip="{DynamicResource String/SessionView.LogProcessIdFilter.Description}" 
+						                           ToolTip.Tip="{asXaml:StringResource SessionView.LogProcessIdFilter.Description}" 
 						                           Value="{Binding LogFiltering.ProcessIdFilter, Mode=TwoWay}" 
 						                           VerticalAlignment="Center" 
 						                           Watermark="{DynamicResource String/LogProperty.ProcessId}"
@@ -809,7 +823,7 @@
 						                           IsVisible="{Binding LogFiltering.IsThreadIdFilterEnabled}"
 						                           Maximum="2147483647" 
 						                           Minimum="0" 
-						                           ToolTip.Tip="{DynamicResource String/SessionView.LogThreadIdFilter.Description}" 
+						                           ToolTip.Tip="{asXaml:StringResource SessionView.LogThreadIdFilter.Description}" 
 						                           Value="{Binding LogFiltering.ThreadIdFilter, Mode=TwoWay}" 
 						                           Watermark="{DynamicResource String/LogProperty.ThreadId}"
 						                           Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
@@ -827,7 +841,7 @@
 						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding #root.ShowLogFiltersCombinationModeMenu}" 
 						              IsVisible="{Binding #root.CanFilterLogsByNonTextFilters}" 
-						              ToolTip.Tip="{DynamicResource String/SessionView.LogFiltersCombinationMode}">
+						              ToolTip.Tip="{asXaml:StringResource SessionView.LogFiltersCombinationMode}">
 							<Panel>
 								<asControls:Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 									<DrawingImage>
@@ -858,20 +872,20 @@
 						                         MaxLines="1"
 						                         Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" 
 						                         TextWrapping="NoWrap"
-						                         ToolTip.Tip="{DynamicResource String/SessionView.LogTextFilter.ToolTip}"
-						                         Watermark="{DynamicResource String/SessionView.LogTextFilter.Watermark}">
+						                         ToolTip.Tip="{asXaml:StringResource SessionView.LogTextFilter.ToolTip}"
+						                         Watermark="{asXaml:StringResource SessionView.LogTextFilter.Watermark}">
 							<asControls:RegexTextBox.InnerRightContent>
 								<StackPanel Classes="TextBox_InPlaceActions">
-									<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{DynamicResource String/Common.Clear}">
+									<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{asXaml:StringResource Common.Clear}">
 										<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 									</Button>
-									<ToggleButton Name="ignoreLogTextFilterCaseButton" Classes="TextBox_InPlaceAction" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsEnabled="{Binding #root.HasLogProfile}" ToolTip.Tip="{DynamicResource String/SessionView.IgnoreLogTextFilterCase}">
+									<ToggleButton Name="ignoreLogTextFilterCaseButton" Classes="TextBox_InPlaceAction" IsChecked="{Binding LogFiltering.IgnoreTextFilterCase, Mode=TwoWay}" IsEnabled="{Binding #root.HasLogProfile}" ToolTip.Tip="{asXaml:StringResource SessionView.IgnoreLogTextFilterCase}">
 										<Panel>
 											<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase}"/>
 											<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/IgnoreCase.Light}"/>
 										</Panel>
 									</ToggleButton>
-									<Button Name="logFilteringHelpButton" Classes="TextBox_InPlaceAction" Command="{Binding #root.OpenLogFilteringDocumentation}" IsVisible="{Binding #root.ShowHelpButtonOnLogTextFilter}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+									<Button Name="logFilteringHelpButton" Classes="TextBox_InPlaceAction" Command="{Binding #root.OpenLogFilteringDocumentation}" IsVisible="{Binding #root.ShowHelpButtonOnLogTextFilter}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
 										<Image Classes="Icon" Source="{StaticResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</StackPanel>
@@ -883,7 +897,7 @@
 						              Classes="ToolBar_ToggleButton" 
 						              Grid.Column="1" 
 						              IsEnabled="{Binding #root.HasLogProfile}" 
-						              ToolTip.Tip="{DynamicResource String/SessionView.PredefinedLogTextFilters}">
+						              ToolTip.Tip="{asXaml:StringResource SessionView.PredefinedLogTextFilters}">
 							<Panel>
 								<Panel>
 									<Panel IsVisible="{Binding !#root.HasSelectedPredefinedLogTextFilters}">
@@ -919,21 +933,21 @@
 																		<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
 																		<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 																		<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemovePredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemovePredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 																				<asControls:Image Classes="InPlaceAction_Icon">
 																					<DrawingImage>
 																						<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 																					</DrawingImage>
 																				</asControls:Image>
 																			</Button>
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
 																				<asControls:Image Classes="InPlaceAction_Icon">
 																					<DrawingImage>
 																						<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
 																					</DrawingImage>
 																				</asControls:Image>
 																			</Button>
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 																				<asControls:Image Classes="InPlaceAction_Icon">
 																					<DrawingImage>
 																						<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -955,7 +969,7 @@
 																				</DrawingImage>
 																			</Image>
 																			<abControls:FormattedTextBlock Arg1="{Binding Name}" Arg2="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #textFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.RenamePredefinedLogTextFilterGroupCommand}" CommandParameter="{Binding}" Grid.Column="2" IsVisible="{Binding #rootGrid.IsPointerOver}" ToolTip.Tip="{DynamicResource String/Common.Rename}">
+																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.RenamePredefinedLogTextFilterGroupCommand}" CommandParameter="{Binding}" Grid.Column="2" IsVisible="{Binding #rootGrid.IsPointerOver}" ToolTip.Tip="{asXaml:StringResource Common.Rename}">
 																				<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit.Outline}"/>
 																			</Button>
 																		</Grid>
@@ -1002,13 +1016,13 @@
 												<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
 												<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
 													<StackPanel Orientation="Horizontal">
-														<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{DynamicResource String/Common.Help}"/>
+														<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{asXaml:StringResource Common.Help}"/>
 														<Separator Classes="Dialog_Separator"/>
 													</StackPanel>
 													<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-														<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{DynamicResource String/SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
+														<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{asXaml:StringResource SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
 														<Separator Classes="Dialog_Separator_Small"/>
-														<Button Classes="Dialog_Item_Button" Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{DynamicResource String/Common.Create.WithDialog}"/>
+														<Button Classes="Dialog_Item_Button" Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{asXaml:StringResource Common.Create.WithDialog}"/>
 													</StackPanel>
 												</Grid>
 											</Grid>
@@ -1026,7 +1040,7 @@
 						<!-- Reset log filters -->
 						<Button Classes="ToolBar_Button" 
 						        Command="{Binding LogFiltering.ResetFiltersCommand}"
-						        ToolTip.Tip="{DynamicResource String/SessionView.ResetLogFilters}">
+						        ToolTip.Tip="{asXaml:StringResource SessionView.ResetLogFilters}">
 							<Image Classes="Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 						</Button>
 						
@@ -1035,7 +1049,7 @@
 						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}"
 						              IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" 
-						              ToolTip.Tip="{DynamicResource String/SessionView.ShowMarkedLogsTemporarily}">
+						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -1047,7 +1061,7 @@
 						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding ToggleShowingAllLogsTemporarilyCommand}"
 						              IsChecked="{Binding IsShowingAllLogsTemporarily, Mode=OneWay}" 
-						              ToolTip.Tip="{DynamicResource String/SessionView.ShowAllLogsTemporarily}">
+						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowAllLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -1063,7 +1077,7 @@
 						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding #root.ShowOtherActions}" 
 						              IsVisible="{x:Static cs:Platform.IsNotMacOS}" 
-						              ToolTip.Tip="{DynamicResource String/SessionView.OtherActions}">
+						              ToolTip.Tip="{asXaml:StringResource SessionView.OtherActions}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>

@@ -1259,6 +1259,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogText">Copy text of log for filtering</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
+	<sys:String x:Key="String/SessionView.DisableLogPatterns">Show raw log lines</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">Edit embedded log data source script</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">Edit log data source script '{0}'</sys:String>
