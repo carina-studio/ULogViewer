@@ -763,11 +763,11 @@
 						<!-- Disable log patterns -->
 						<ToggleButton Name="disableLogPatternsButton" 
 						              Classes="ToolBar_ToggleButton"
-						              Command="{Binding ToggleLogPatternsCommand}"
-						              IsChecked="{Binding AreLogPatternsDisabled}"
+						              Command="{Binding ToggleShowingRawLogLinesTemporarilyCommand}"
+						              IsChecked="{Binding IsShowingRawLogLinesTemporarily}"
 						              IsVisible="{Binding HasLogPatterns}"
-						              ToolTip.Tip="{asXaml:StringResource SessionView.DisableLogPatterns}">
-							<Image Classes="Icon" Source="{DynamicResource Image/DisableLogPatterns}"/>
+						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowRawLogLinesTemporarily}">
+							<Image Classes="Icon" Source="{DynamicResource Image/ShowRawLogLines}"/>
 						</ToggleButton>
 
 					</StackPanel>
@@ -1800,11 +1800,17 @@
 					                    ItemsSource="{Binding MarkedLogs}" 
 					                    SelectionChanged="OnMarkedLogListBoxSelectionChanged" 
 					                    SelectionMode="Single"/>
-					<Border Background="{x:Static Brushes.Transparent}" 
-					        Grid.Row="1"
-					        IsVisible="{Binding !#markedLogListBox.ItemCount}">
-						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.MarkedLogsPanel.Hint}"/>
-					</Border>
+					<TextBlock Classes="SessionView_SidePanel_FullPanelHint" 
+					           Grid.Row="1"
+					           IsVisible="{asXaml:AndBindings
+					               {Binding !#markedLogListBox.ItemCount},
+					               {Binding !IsShowingRawLogLinesTemporarily}
+					           }"
+					           Text="{asXaml:StringResource SessionView.MarkedLogsPanel.Hint}"/>
+					<TextBlock Classes="SessionView_SidePanel_FullPanelHint" 
+					           Grid.Row="1"
+					           IsVisible="{Binding IsShowingRawLogLinesTemporarily}"
+					           Text="{asXaml:StringResource SessionView.MarkedLogsPanel.Hint.ShowingRawLogLines}"/>
 				</Grid>
 
 				<!-- Timestamp categories -->
@@ -2489,20 +2495,20 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Border Background="{x:Static Brushes.Transparent}" 
-					        Grid.Row="1"
-					        IsVisible="{asXaml:AndBindings
-					            {Binding !IsRemovingLogFiles},
-					            {Binding LogAnalysis.AnalysisResults.Count, Converter={x:Static abConverters:NumberConverters.IsZero}},
-					            {Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False},
-					            {Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False},
-					            {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False}
-					        }">
-						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.Hint}"/>
-					</Border>
-					<Border Background="{x:Static Brushes.Transparent}" Grid.Row="1" IsVisible="{Binding IsRemovingLogFiles}">
-						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles}"/>
-					</Border>
+					<TextBlock Classes="SessionView_SidePanel_FullPanelHint" 
+					           Grid.Row="1"
+					           IsVisible="{asXaml:AndBindings
+					               {Binding !IsRemovingLogFiles},
+					               {Binding LogAnalysis.AnalysisResults.Count, Converter={x:Static abConverters:NumberConverters.IsZero}},
+					               {Binding #keyLogAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False},
+					               {Binding #operationDurationAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False},
+					               {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsZero}, FallbackValue=False}
+					           }"
+					           Text="{asXaml:StringResource SessionView.LogAnalysisPanel.Hint}"/>
+					<TextBlock Classes="SessionView_SidePanel_FullPanelHint"
+					           Grid.Row="1"
+					           IsVisible="{Binding IsRemovingLogFiles}"
+					           Text="{asXaml:StringResource SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles}"/>
 					<Border Background="{DynamicResource Brush/SessionView.LogHeader.Background}" 
 					        Classes="StatusBar" 
 					        Grid.Row="2" 
@@ -2665,13 +2671,18 @@
 							</DataTemplate>
 						</asControls:ListBox.ItemTemplate>
 					</asControls:ListBox>
-					<Border Background="{x:Static Brushes.Transparent}" 
-					        Grid.Row="1"
-					        IsVisible="{asXaml:AndBindings {Binding IsProVersionActivated}, {Binding !IsLogFileSupported}}">
-						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.LogFileIsUnsupported}"/>
-					</Border>
-					<Border Background="{StaticResource Brush/SessionView.SidePanel.FullPanelHint.Background}" Grid.Row="1" IsVisible="{Binding !IsProVersionActivated}">
-						<TextBlock Classes="SessionView_SidePanel_FullPanelHint" Text="{DynamicResource String/SessionView.ProVersionNeeded}"/>
+					<TextBlock Classes="SessionView_SidePanel_FullPanelHint" 
+					           Grid.Row="1"
+					           IsVisible="{asXaml:AndBindings 
+					               {Binding IsProVersionActivated}, 
+					               {Binding !IsLogFileSupported}
+					           }"
+					           Text="{asXaml:StringResource SessionView.LogFileIsUnsupported}"/>
+					<Border Background="{StaticResource Brush/SessionView.SidePanel.FullPanelHint.Background}" 
+					        Grid.Row="1" 
+					        IsVisible="{Binding !IsProVersionActivated}">
+						<TextBlock Classes="SessionView_SidePanel_FullPanelHint"
+						           Text="{asXaml:StringResource SessionView.ProVersionNeeded}"/>
 					</Border>
 				</Grid>
 

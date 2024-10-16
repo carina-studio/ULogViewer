@@ -95,6 +95,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	Func<DisplayableLog, string>? colorIndicatorKeyGetter;
 	DisplayableLog? displayableLogsHead;
 	TaskFactory? fileLogsReadingTaskFactory;
+	bool isShowingRawLogLinesTemporarily;
 	readonly Dictionary<string, IBrush> levelBackgroundBrushes = new();
 	readonly Dictionary<string, IBrush> levelForegroundBrushes = new();
 	readonly ILogger logger;
@@ -595,6 +596,23 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 
 
 	/// <summary>
+	/// Get or set whether raw logs lines are shown temporarily.
+	/// </summary>
+	internal bool IsShowingRawLogsTemporarily
+	{
+		get => this.isShowingRawLogLinesTemporarily;
+		set
+		{
+			if (this.isShowingRawLogLinesTemporarily != value)
+			{
+				this.isShowingRawLogLinesTemporarily = true;
+				this.UpdateColorIndicatorBrushes();
+			}
+		}
+	}
+
+
+	/// <summary>
 	/// Get map of converting from <see cref="Logs.LogLevel"/> to string.
 	/// </summary>
 	public IDictionary<Logs.LogLevel, string> LevelMapForDisplaying { get; private set; }
@@ -987,17 +1005,23 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		this.colorIndicatorBrushes.Clear();
 
 		// setup key getter
-		this.colorIndicatorKeyGetter = this.LogProfile.ColorIndicator switch
-		{
-			LogColorIndicator.FileName => it => it.FileName?.ToString() ?? "",
-			LogColorIndicator.ProcessId => it => it.ProcessId?.ToString() ?? "",
-			LogColorIndicator.ProcessName => it => it.ProcessName?.ToString() ?? "",
-			LogColorIndicator.ThreadId => it => it.ThreadId?.ToString() ?? "",
-			LogColorIndicator.ThreadName => it => it.ThreadName?.ToString() ?? "",
-			LogColorIndicator.UserId => it => it.UserId?.ToString() ?? "",
-			LogColorIndicator.UserName => it => it.UserName?.ToString() ?? "",
-			_ => null,
-		};
+		this.colorIndicatorKeyGetter = this.isShowingRawLogLinesTemporarily
+			? this.LogProfile.ColorIndicator switch
+			{
+				LogColorIndicator.FileName => it => it.FileName?.ToString() ?? "",
+				_ => null,
+			}
+			: this.LogProfile.ColorIndicator switch
+			{
+				LogColorIndicator.FileName => it => it.FileName?.ToString() ?? "",
+				LogColorIndicator.ProcessId => it => it.ProcessId?.ToString() ?? "",
+				LogColorIndicator.ProcessName => it => it.ProcessName?.ToString() ?? "",
+				LogColorIndicator.ThreadId => it => it.ThreadId?.ToString() ?? "",
+				LogColorIndicator.ThreadName => it => it.ThreadName?.ToString() ?? "",
+				LogColorIndicator.UserId => it => it.UserId?.ToString() ?? "",
+				LogColorIndicator.UserName => it => it.UserName?.ToString() ?? "",
+				_ => null,
+			};
 
 		// raise event
 		this.ColorIndicatorBrushesUpdated?.Invoke(this, EventArgs.Empty);

@@ -1221,7 +1221,6 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogText">复制筛选用日志文字</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含文件名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
-	<sys:String x:Key="String/SessionView.DisableLogPatterns">显示原始日志行</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">编辑内嵌日志资料来源脚本</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">编辑「{0}」日志资料来源脚本</sys:String>
@@ -1313,6 +1312,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">选择日志然后点击 M，或是透过点击鼠标右键的选单来标记/解除标记日志。</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint.ShowingRawLogLines">显示原始日志行时暂时停用日志标记。</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLog">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">标记/解除标记</sys:String>
@@ -1385,6 +1385,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">查看日志属性「{0}」…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">查看日志属性…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志</sys:String>
+	<sys:String x:Key="String/SessionView.ShowRawLogLinesTemporarily">暂时显示原始日志行</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在文件管理中开启工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.StopReadingLogs">中止日志读取</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>

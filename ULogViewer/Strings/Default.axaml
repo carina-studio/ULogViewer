@@ -1259,7 +1259,6 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogText">Copy text of log for filtering</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
-	<sys:String x:Key="String/SessionView.DisableLogPatterns">Show raw log lines</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">Edit embedded log data source script</sys:String>
 	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">Edit log data source script '{0}'</sys:String>
@@ -1351,6 +1350,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">Select logs and press M, or use the context menu by right-clicking the mouse, to mark/unmark logs.</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint.ShowingRawLogLines">Log marking is temporarily disabled when showing raw log lines.</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLog">Mark log</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">Mark logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">Mark/Unmark</sys:String>
@@ -1423,6 +1423,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty">View log property '{0}'…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily</sys:String>
+	<sys:String x:Key="String/SessionView.ShowRawLogLinesTemporarily">Show raw log lines temporarily</sys:String>
 	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
 	<sys:String x:Key="String/SessionView.StopReadingLogs">Abort reading logs</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Categories of timestamp</sys:String>
