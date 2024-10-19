@@ -38,7 +38,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		this.maxLogReadingCountTextBox = this.Get<IntegerTextBox>(nameof(maxLogReadingCountTextBox)).Also(it =>
 		{
 			it.Minimum = 1;
-			it.GetObservable(IntegerTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
+			it.GetObservable(ValueTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
 		});
 		this.SetValue(ConfirmMaxLogReadingCountForLargeFilesProperty, this.Settings.GetValueOrDefault(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles));
 		this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
@@ -69,11 +69,11 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 	
 
 	// Initial log reading window to be shown.
-	public LogReadingWindow InitialLogReadingWindow { get; set; }
+	public LogReadingWindow InitialLogReadingWindow { get; init; }
 
 
 	// Initial max log reading count to be shown.
-	public int? InitialMaxLogReadingCount { get; set; }
+	public int? InitialMaxLogReadingCount { get; init; }
 
 
 	// Whether cancellation of dialog is allowed or not.

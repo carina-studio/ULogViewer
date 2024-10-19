@@ -5,6 +5,8 @@
         xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
+        xmlns:s="using:System"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.FilesMaxLogReadingCountDialog"
 		Name="window"
@@ -107,13 +109,11 @@
 						</StackPanel>
 						<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" Classes="Dialog_Item_TextBox" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}" IsNullValueAllowed="True" Watermark="{DynamicResource String/Common.None}"/>
 					</asControls:DialogItem>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding #maxLogReadingCountOfLogProfileTextBlock.IsVisible}"/>
 
 					<!-- Max log reading count defined in log profile -->
-					<asControls:DialogItem>
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile}"/>
-						<SelectableTextBlock IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding #window.MaxLogReadingCountOfLogProfile}" TextAlignment="Right" VerticalAlignment="Center"/>
-						<TextBlock HorizontalAlignment="Right" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNull}}" Text="{DynamicResource String/Common.None}" VerticalAlignment="Center"/>
+					<asControls:DialogItem Name="maxLogReadingCountOfLogProfileTextBlock" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNotNull}}" ItemSize="Small">
+						<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding #window.MaxLogReadingCountOfLogProfile}" Format="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile}"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 					

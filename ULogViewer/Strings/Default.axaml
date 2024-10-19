@@ -336,7 +336,7 @@
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">Max reading count</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each file.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to {0} inclusively.</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by log profile</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by log profile is {0}.</sys:String>
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion">You can set the value one time before activating Pro version.</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Log reading count options</sys:String>
