@@ -238,6 +238,14 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 	}
 
 
+	/// <inheritdoc/>
+	protected override void OnLostFocus(RoutedEventArgs e)
+	{
+		this.actionListBox.SelectedIndex = -1;
+		base.OnLostFocus(e);
+	}
+
+
 	// Remove action.
 	void RemoveAction(ListBoxItem item)
 	{
