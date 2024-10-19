@@ -5891,17 +5891,19 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		{
 			var profile = this.LogProfile.AsNonNull();
 			var sortedByTimestamp = true;
-			this.compareDisplayableLogsDelegate = profile.SortKey switch
-			{
-				LogSortKey.BeginningTimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByBeginningTimeSpan).Also(_ => sortedByTimestamp = false),
-				LogSortKey.BeginningTimestamp => CompareDisplayableLogsByBeginningTimestamp,
-				LogSortKey.EndingTimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByEndingTimeSpan).Also(_ => sortedByTimestamp = false),
-				LogSortKey.EndingTimestamp => CompareDisplayableLogsByEndingTimestamp,
-				LogSortKey.ReadTime => CompareDisplayableLogsByReadTime,
-				LogSortKey.TimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByTimeSpan).Also(_ => sortedByTimestamp = false),
-				LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
-				_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
-			};
+			this.compareDisplayableLogsDelegate = GetValue(IsShowingRawLogLinesTemporarilyProperty)
+				? ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false) 
+				: profile.SortKey switch
+				{
+					LogSortKey.BeginningTimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByBeginningTimeSpan).Also(_ => sortedByTimestamp = false),
+					LogSortKey.BeginningTimestamp => CompareDisplayableLogsByBeginningTimestamp,
+					LogSortKey.EndingTimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByEndingTimeSpan).Also(_ => sortedByTimestamp = false),
+					LogSortKey.EndingTimestamp => CompareDisplayableLogsByEndingTimestamp,
+					LogSortKey.ReadTime => CompareDisplayableLogsByReadTime,
+					LogSortKey.TimeSpan => ((Comparison<DisplayableLog?>)CompareDisplayableLogsByTimeSpan).Also(_ => sortedByTimestamp = false),
+					LogSortKey.Timestamp => CompareDisplayableLogsByTimestamp,
+					_ => ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false),
+				};
 			if (profile.SortDirection == SortDirection.Descending)
 				this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
 			this.SetValue(AreLogsSortedByTimestampProperty, sortedByTimestamp);
