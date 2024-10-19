@@ -271,21 +271,6 @@ namespace CarinaStudio.ULogViewer
 		{
 			switch (ex)
 			{
-				case IndexOutOfRangeException: // [Workaround] Prevent unexpected error occurred in TextBox
-				{
-					var stackTrace = ex.StackTrace ?? "";
-					if (stackTrace.Contains("at Avalonia.Media.GlyphRun.FindNearestCharacterHit("))
-					{
-						this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.FindNearestCharacterHit() caused by unknown reason");
-						return true;
-					}
-					if (stackTrace.Contains(" at Avalonia.Media.GlyphRun.GetDistanceFromCharacterHit("))
-					{
-						this.Logger.LogWarning("Ignore IndexOutOfRangeException thrown by GlyphRun.GetDistanceFromCharacterHit() caused by unknown reason");
-						return true;
-					}
-					break;
-				}
 				case InvalidOperationException: // [Workaround] Prevent unexpected error occurred in TextBlock
 				{
 					var stackTrace = ex.StackTrace ?? "";
