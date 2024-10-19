@@ -3542,28 +3542,25 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Called when property of log profile changed.
 		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
-			if (sender != this.LogProfile)
+			if (sender is not LogProfile logProfile || !ReferenceEquals(logProfile, this.LogProfile))
 				return;
 			switch (e.PropertyName)
 			{
 				case nameof(LogProfile.AllowMultipleFiles):
-					(sender as LogProfile)?.Let(profile =>
+					if (this.GetValue(IsLogFileSupportedProperty))
 					{
-						if (this.GetValue(IsLogFileSupportedProperty))
+						this.UpdateMaxLogFileCount(logProfile);
+						this.UpdateCanAddLogFile(logProfile);
+						if (logProfile.AllowMultipleFiles)
+							this.ScheduleReloadingLogs(true, false);
+						else
 						{
-							this.UpdateMaxLogFileCount(profile);
-							this.UpdateCanAddLogFile(profile);
-							if (profile.AllowMultipleFiles)
-								this.ScheduleReloadingLogs(true, false);
+							if (this.logFileInfoList.Count > 1)
+								this.ClearLogFiles();
 							else
-							{
-								if (this.logFileInfoList.Count > 1)
-									this.ClearLogFiles();
-								else
-									this.ScheduleReloadingLogs(true, false);
-							}
+								this.ScheduleReloadingLogs(true, false);
 						}
-					});
+					}
 					break;
 				case nameof(LogProfile.ColorIndicator):
 					this.SetValue(HasLogColorIndicatorProperty, this.LogProfile?.ColorIndicator != LogColorIndicator.None);
@@ -3571,17 +3568,14 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.ScheduleReloadingLogs(false, true);
 					break;
 				case nameof(LogProfile.DataSourceOptions):
-					(sender as LogProfile)?.Let(profile =>
-					{
-						this.UpdateMaxLogFileCount(profile);
-						this.UpdateCanAddLogFile(profile);
-						this.ScheduleReloadingLogs(true, false);
-					});
+					this.UpdateMaxLogFileCount(logProfile);
+					this.UpdateCanAddLogFile(logProfile);
+					this.ScheduleReloadingLogs(true, false);
 					break;
 				case nameof(LogProfile.DataSourceProvider):
 					if (this.attachedLogDataSourceProvider is not null)
 						this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
-					this.attachedLogDataSourceProvider = (sender as LogProfile)?.DataSourceProvider;
+					this.attachedLogDataSourceProvider = logProfile?.DataSourceProvider;
 					if (this.attachedLogDataSourceProvider is not null)
 						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
 					this.ClearLogsReadingParameters();
@@ -3615,14 +3609,11 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
 					goto case nameof(LogProfile.LogPatterns);
 				case nameof(LogProfile.IsTemplate):
-					(sender as LogProfile)?.Let(it =>
+					if (logProfile.IsTemplate)
 					{
-						if (it.IsTemplate)
-						{
-							this.Logger.LogWarning("Log profile '{profileName}' has been set as template, reset log profile", it.Name);
-							this.ResetLogProfile();
-						}
-					});
+						this.Logger.LogWarning("Log profile '{profileName}' has been set as template, reset log profile", logProfile.Name);
+						this.ResetLogProfile();
+					}
 					break;
 				case nameof(LogProfile.LogLevelMapForReading):
 					this.UpdateValidLogLevels();
@@ -3639,11 +3630,8 @@ namespace CarinaStudio.ULogViewer.ViewModels
 						goto case nameof(LogProfile.LogPatterns);
 					break;
 				case nameof(LogProfile.RestartReadingDelay):
-					(sender as LogProfile)?.Let(profile =>
-					{
-						if (profile.IsContinuousReading && this.logReaders.IsNotEmpty())
-							this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(profile.RestartReadingDelay);
-					});
+					if (logProfile.IsContinuousReading && this.logReaders.IsNotEmpty())
+						this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(logProfile.RestartReadingDelay);
 					break;
 				case nameof(LogProfile.VisibleLogProperties):
 					this.ScheduleReloadingLogs(false, true);
@@ -5252,8 +5240,18 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				}
 				else if (this.logFileInfoList.IsNotEmpty())
 				{
-					this.SetValue(HasLogFilesProperty, true);
-					this.ResetValue(IsLogFileNeededProperty);
+					if (this.logFileInfoList.FirstOrDefault(it => it.IsPredefined) is null)
+					{
+						this.SetValue(HasLogFilesProperty, true);
+						this.ResetValue(IsLogFileNeededProperty);
+					}
+					else
+					{
+						this.Logger.LogWarning("Clear predefined log file");
+						this.ResetValue(HasLogFilesProperty);
+						this.SetValue(IsLogFileNeededProperty, true);
+						this.logFileInfoList.Clear();
+					}
 				}
 				else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 				{
