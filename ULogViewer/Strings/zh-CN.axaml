@@ -1280,8 +1280,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogChart.NoLogTimestamp">(没有日志的时间信息)</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel">图表面板</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">图表因资料点过多而被暂时停用</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升级至专业版以启用图表</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">图表因资料点过多而暂时停用。</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升级至专业版以启用图表。</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.ShowingRawLogLines">图表因显示原始日志行而暂时停用。</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(当前使用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">运行「{0}」之脚本以关闭原始日志行读取器时发生错误：</sys:String>

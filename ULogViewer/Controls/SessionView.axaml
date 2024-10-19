@@ -1297,7 +1297,11 @@
 					<lvc:CartesianChart Name="logChart" 
 					                    AnimationsSpeed="{StaticResource TimeSpan/Animation.Fast}"
 					                    Background="{x:Static Brushes.Transparent}" 
-					                    IsVisible="{asXaml:AndBindings {Binding IsProVersionActivated}, {Binding !LogChart.IsMaxTotalSeriesValueCountReached}}"
+					                    IsVisible="{asXaml:AndBindings 
+					                        {Binding IsProVersionActivated}, 
+					                        {Binding !LogChart.IsMaxTotalSeriesValueCountReached},
+					                        {Binding !IsShowingRawLogLinesTemporarily}
+					                    }"
 					                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
 					                    LegendPosition="Right"
 					                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
@@ -1310,17 +1314,31 @@
 					                    YAxes="{Binding #root.LogChartYAxes}"/>
 					
 					<!-- Hint -->
-					<Border IsVisible="{asXaml:AndBindings {Binding IsProVersionActivated}, {Binding LogChart.IsMaxTotalSeriesValueCountReached}}">
+					<Border IsVisible="{asXaml:AndBindings 
+					                       {Binding IsProVersionActivated}, 
+					                       {Binding LogChart.IsMaxTotalSeriesValueCountReached},
+					                       {Binding !IsShowingRawLogLinesTemporarily}
+					                   }">
 						<TextBlock HorizontalAlignment="Center" 
 						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
-						           Text="{DynamicResource String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}" 
+						           Text="{asXaml:StringResource SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}" 
+						           TextWrapping="WrapWithOverflow" 
+						           VerticalAlignment="Center"/>
+					</Border>
+					<Border IsVisible="{asXaml:AndBindings 
+					                       {Binding IsProVersionActivated},
+					                       {Binding IsShowingRawLogLinesTemporarily}
+					                   }">
+						<TextBlock HorizontalAlignment="Center" 
+						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
+						           Text="{asXaml:StringResource SessionView.LogChartPanel.ShowingRawLogLines}" 
 						           TextWrapping="WrapWithOverflow" 
 						           VerticalAlignment="Center"/>
 					</Border>
 					<Border IsVisible="{Binding !IsProVersionActivated}">
 						<TextBlock HorizontalAlignment="Center" 
 						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
-						           Text="{DynamicResource String/SessionView.LogChartPanel.ProVersionNeeded}" 
+						           Text="{asXaml:StringResource SessionView.LogChartPanel.ProVersionNeeded}" 
 						           TextWrapping="WrapWithOverflow" 
 						           VerticalAlignment="Center"/>
 					</Border>

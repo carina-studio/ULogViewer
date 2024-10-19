@@ -111,6 +111,7 @@ class LogChartViewModel : SessionComponent
     readonly DisplayableLogChartSeriesGenerator allLogsSeriesGenerator;
     readonly Dictionary<DisplayableLogChartSeries, DisplayableLogChartSeriesGenerator> attachedSeries = new();
     readonly MutableObservableBoolean canSetChartType = new();
+    DisplayableLogChartSeriesGenerator? emptySeriesGenerator;
     DisplayableLogChartSeriesGenerator? filteredLogsSeriesGenerator;
     readonly List<IDisposable> observerTokens = new();
     readonly DisplayableLogChartSeriesGenerator markedLogsSeriesGenerator;
@@ -157,7 +158,12 @@ class LogChartViewModel : SessionComponent
                 return;
             var session = this.Session;
             DisplayableLogChartSeriesGenerator seriesGenerator;
-            if (session.IsShowingMarkedLogsTemporarily)
+            if (session.IsShowingRawLogLinesTemporarily)
+            {
+                this.emptySeriesGenerator ??= new(this.Application, [], logComparer);
+                seriesGenerator = this.emptySeriesGenerator;
+            }
+            else if (session.IsShowingMarkedLogsTemporarily)
                 seriesGenerator = this.markedLogsSeriesGenerator;
             else if (session.LogFiltering.IsFilteringNeeded && !session.IsShowingAllLogsTemporarily)
                 seriesGenerator = this.filteredLogsSeriesGenerator.AsNonNull();
@@ -316,7 +322,7 @@ class LogChartViewModel : SessionComponent
     DisplayableLogChartSeriesSource[] ConvertToDisplayableLogChartSources(IList<LogChartSeriesSource>? properties)
     {
         if (properties.IsNullOrEmpty())
-            return Array.Empty<DisplayableLogChartSeriesSource>();
+            return [];
         var logChartProperties = new DisplayableLogChartSeriesSource[properties.Count];
         for (var i = properties.Count - 1; i >= 0; --i)
         {
@@ -508,6 +514,7 @@ class LogChartViewModel : SessionComponent
         // attach to session
         this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
         this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
+        this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingRawLogLinesTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
         
         // attach to components
         this.observerTokens.Add(session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
