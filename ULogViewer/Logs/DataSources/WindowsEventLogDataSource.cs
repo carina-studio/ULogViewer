@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -64,10 +63,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						it.Add($"<Timestamp>{timestamp:yyyy/MM/dd HH:mm:ss}</Timestamp>");
 						it.Add($"<EventId>{eventId}</EventId>");
 						it.Add($"<Level>{level}</Level>");
-						it.Add($"<Source>{WebUtility.HtmlEncode(sourceName)}</Source>");
+						it.Add($"<Source>{sourceName}</Source>");
 						it.Add("<Message>");
 						foreach (var messageLine in message.Split('\n'))
-							it.Add($"{WebUtility.HtmlEncode(messageLine.TrimEnd())}");
+							it.Add($"{messageLine.TrimEnd()}");
 					});
 					return "</Message>";
 				}

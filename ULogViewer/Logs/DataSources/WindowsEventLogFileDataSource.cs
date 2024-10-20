@@ -64,7 +64,7 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
                 if (dataNode.NodeType == XmlNodeType.Element && dataNode.Name == "Data")
                 {
                     if (dataNode.Attributes?.Count == 0 && dataNode.FirstChild is XmlText dataText)
-                        return new StringReader(dataText.Value ?? "");
+                        return new StringReader(WebUtility.HtmlDecode(dataText.Value) ?? "");
                     var dataLines = new StringBuilder();
                     do
                     {
@@ -79,19 +79,19 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
                                 {
                                     dataLines.Append(nameAttr.Value);
                                     dataLines.Append(": ");
-                                    dataLines.Append(dataNode.InnerXml.Trim());
+                                    dataLines.Append(WebUtility.HtmlDecode(dataNode.InnerXml.Trim()));
                                 }
                                 else if (dataNode.FirstChild is not null)
                                 {
                                     dataLines.Append("Data: ");
-                                    dataLines.Append(dataNode.InnerXml.Trim());
+                                    dataLines.Append(WebUtility.HtmlDecode(dataNode.InnerXml.Trim()));
                                 }
                             }
                             else if (dataNode.FirstChild is not null)
                             {
                                 dataLines.Append(dataNode.Name);
                                 dataLines.Append(": ");
-                                dataLines.Append(dataNode.InnerXml.Trim());
+                                dataLines.Append(WebUtility.HtmlDecode(dataNode.InnerXml.Trim()));
                             }
                         }
                         finally
@@ -137,10 +137,10 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
                                 if (propertyValueNode?.NodeType == XmlNodeType.Element
                                     && propertyValueNode.ChildNodes.Count <= 1)
                                 {
-                                    messageBuffer.Append(propertyValueNode.InnerXml.Trim());
+                                    messageBuffer.Append(WebUtility.HtmlDecode(propertyValueNode.InnerXml.Trim()));
                                 }
                                 else
-                                    messageBuffer.Append(propertyNode.InnerXml.Trim());
+                                    messageBuffer.Append(WebUtility.HtmlDecode(propertyNode.InnerXml.Trim()));
                             }
                             propertyNode = propertyNode.NextSibling;
                         }
@@ -149,8 +149,8 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
                 childNode = childNode.NextSibling;
             }
             if (messageBuffer.Length > 0)
-                return new StringReader(messageBuffer.ToString());
-            return new StringReader(userDataNode.InnerXml.Trim());
+                return new StringReader(WebUtility.HtmlDecode(messageBuffer.ToString()));
+            return new StringReader(WebUtility.HtmlDecode(userDataNode.InnerXml.Trim()));
         }
 
         /// <inheritdoc/>
@@ -177,20 +177,20 @@ class WindowsEventLogFileDataSource : BaseLogDataSource
             
             // generate lines for record
             recordLines.Enqueue($"<Timestamp>{record.Timestamp.DateTime.ToLocalTime():yyyy/MM/dd HH:mm:ss}</Timestamp>");
-            recordLines.Enqueue($"<Computer>{WebUtility.HtmlEncode(record.Computer)}</Computer>");
-            recordLines.Enqueue($"<UserName>{WebUtility.HtmlEncode(record.UserName)}</UserName>");
-            recordLines.Enqueue($"<Category>{WebUtility.HtmlEncode(record.Channel)}</Category>");
+            recordLines.Enqueue($"<Computer>{record.Computer}</Computer>");
+            recordLines.Enqueue($"<UserName>{record.UserName}</UserName>");
+            recordLines.Enqueue($"<Category>{record.Channel}</Category>");
             recordLines.Enqueue($"<ProcessId>{record.ProcessId}</ProcessId>");
             recordLines.Enqueue($"<ThreadId>{record.ThreadId}</ThreadId>");
             recordLines.Enqueue($"<EventId>{record.EventId}</EventId>");
             recordLines.Enqueue($"<Level>{level}</Level>");
-            recordLines.Enqueue($"<SourceName>{WebUtility.HtmlEncode(record.Provider)}</SourceName>");
+            recordLines.Enqueue($"<SourceName>{record.Provider}</SourceName>");
             recordLines.Enqueue("<Message>");
             var messageReader = ReadMessage(record.Payload);
             var messageLine = messageReader.ReadLine();
             while (messageLine != null)
             {
-                recordLines.Enqueue(WebUtility.HtmlEncode(messageLine).TrimEnd());
+                recordLines.Enqueue(messageLine.TrimEnd());
                 messageLine = messageReader.ReadLine();
             }
             recordLines.Enqueue("</Message>");
