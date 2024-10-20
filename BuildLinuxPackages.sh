@@ -4,16 +4,23 @@ RID_LIST=("linux-x64" "linux-arm64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
+PACKAGING_TOOL_PATH="PackagingTool/bin/Release/$FRAMEWORK/CarinaStudio.ULogViewer.Packaging.dll"
 echo "********** Start building $APP_NAME **********"
 
+# Build packaging tool
+dotnet build --project PackagingTool -c Release -f $FRAMEWORK
+if [ "$?" != "0" ]; then
+    exit
+fi
+
 # Get application version
-VERSION=$(dotnet run --project PackagingTool get-current-version $APP_NAME/$APP_NAME.csproj)
+VERSION=$(dotnet $PACKAGING_TOOL_PATH get-current-version $APP_NAME/$APP_NAME.csproj)
 if [ "$?" != "0" ]; then
     echo "Unable to get version of $APP_NAME"
     exit
 fi
 echo "Version: $VERSION"
-PREV_VERSION=$(dotnet run --project PackagingTool get-previous-version $APP_NAME/$APP_NAME.csproj $VERSION)
+PREV_VERSION=$(dotnet $PACKAGING_TOOL_PATH get-previous-version $APP_NAME/$APP_NAME.csproj $VERSION)
 if [ ! -z "$PREV_VERSION" ]; then
     echo "Previous version: $PREV_VERSION"
 fi
@@ -62,8 +69,8 @@ done
 
 # Generate diff packages
 if [ ! -z "$PREV_VERSION" ]; then
-    dotnet run --project PackagingTool create-diff-packages linux $PREV_VERSION $VERSION
+    dotnet $PACKAGING_TOOL_PATH create-diff-packages linux $PREV_VERSION $VERSION
 fi
 
 # Generate package manifest
-# dotnet run --project PackagingTool create-package-manifest linux $APP_NAME $VERSION
+# dotnet $PACKAGING_TOOL_PATH create-package-manifest linux $APP_NAME $VERSION
