@@ -5,13 +5,20 @@ PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
+PACKAGING_TOOL_PATH="PackagingTool/bin/Release/$FRAMEWORK/CarinaStudio.ULogViewer.Packaging.dll"
 ICON_VERSION="3"
 CERT_NAME="" # Name of certification to sign the application
 
 echo "********** Start building $APP_NAME **********"
 
+# Build packaging tool
+dotnet build --project PackagingTool -c Release -f $FRAMEWORK
+if [ "$?" != "0" ]; then
+    exit
+fi
+
 # Get application version
-VERSION=$(dotnet run --project PackagingTool get-current-version $APP_NAME/$APP_NAME.csproj)
+VERSION=$(dotnet $PACKAGING_TOOL_PATH get-current-version $APP_NAME/$APP_NAME.csproj)
 if [ "$?" != "0" ]; then
     echo "Unable to get version of $APP_NAME"
     exit
@@ -99,4 +106,4 @@ for i in "${!RID_LIST[@]}"; do
 done
 
 # Generate package manifest
-# dotnet run --project PackagingTool create-package-manifest osx $APP_NAME $VERSION
+# dotnet $PACKAGING_TOOL_PATH create-package-manifest osx $APP_NAME $VERSION

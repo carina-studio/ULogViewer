@@ -7,6 +7,7 @@ set FRAMEWORK=net8.0
 set SELF_CONTAINED=true
 set TRIM_ASSEMBLIES=true
 set TESTING_MODE_BUILD=false
+set PACKAGING_TOOL_PATH=PackagingTool\bin\Release\%FRAMEWORK%\CarinaStudio.ULogViewer.Packaging.dll
 set ERRORLEVEL=0
 
 echo ********** Start building %APP_NAME% **********
@@ -20,8 +21,14 @@ IF not exist Packages (
     )
 )
 
+REM Build packaging tool
+dotnet build --project PackagingTool -c Release -f %FRAMEWORK%
+if %ERRORLEVEL% neq 0 ( 
+    exit
+)
+
 REM Get current version
-dotnet run --project PackagingTool get-current-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
+dotnet %PACKAGING_TOOL_PATH% get-current-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
 if %ERRORLEVEL% neq 0 ( 
     del /Q Packages\Packaging.txt
     exit
@@ -30,7 +37,7 @@ set /p CURRENT_VERSION=<Packages\Packaging.txt
 echo Version: %CURRENT_VERSION%
 
 REM Get previous version
-dotnet run --project PackagingTool get-previous-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
+dotnet %PACKAGING_TOOL_PATH% get-previous-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
 if %ERRORLEVEL% neq 0 ( 
     del /Q Packages\Packaging.txt
     exit
@@ -81,11 +88,11 @@ REM Build packages
 
 REM Generate diff packages
 if [%PREVIOUS_VERSION%] neq [] (
-    dotnet run --project PackagingTool create-diff-packages win %PREVIOUS_VERSION% %CURRENT_VERSION%
+    dotnet %PACKAGING_TOOL_PATH% create-diff-packages win %PREVIOUS_VERSION% %CURRENT_VERSION%
 )
 
 REM Generate package manifest
-REM dotnet run --project PackagingTool create-package-manifest win %APP_NAME% %CURRENT_VERSION%
+REM dotnet %PACKAGING_TOOL_PATH% create-package-manifest win %APP_NAME% %CURRENT_VERSION%
 
 REM Complete
 del /Q Packages\Packaging.txt
