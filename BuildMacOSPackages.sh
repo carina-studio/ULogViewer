@@ -12,7 +12,7 @@ CERT_NAME="" # Name of certification to sign the application
 echo "********** Start building $APP_NAME **********"
 
 # Build packaging tool
-dotnet build --project PackagingTool -c Release -f $FRAMEWORK
+dotnet build PackagingTool -c Release -f $FRAMEWORK
 if [ "$?" != "0" ]; then
     exit
 fi

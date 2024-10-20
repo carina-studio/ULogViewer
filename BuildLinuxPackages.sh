@@ -8,7 +8,7 @@ PACKAGING_TOOL_PATH="PackagingTool/bin/Release/$FRAMEWORK/CarinaStudio.ULogViewe
 echo "********** Start building $APP_NAME **********"
 
 # Build packaging tool
-dotnet build --project PackagingTool -c Release -f $FRAMEWORK
+dotnet build PackagingTool -c Release -f $FRAMEWORK
 if [ "$?" != "0" ]; then
     exit
 fi
