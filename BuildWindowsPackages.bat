@@ -22,7 +22,7 @@ IF not exist Packages (
 )
 
 REM Build packaging tool
-dotnet build --project PackagingTool -c Release -f %FRAMEWORK%
+dotnet build PackagingTool -c Release -f %FRAMEWORK%
 if %ERRORLEVEL% neq 0 ( 
     exit
 )
