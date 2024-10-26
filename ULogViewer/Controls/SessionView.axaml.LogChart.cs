@@ -39,7 +39,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CarinaStudio.AppSuite.Media;
-using System.Collections;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -119,7 +118,7 @@ partial class SessionView
                 new Padding(it.Left, it.Top, it.Right, it.Bottom));
             foreach (var series in chart.Series.Where(it => it.IsVisible && it.IsVisibleAtLegend))
             {
-                var sketch = series.GetMiniaturesSketch().AsDrawnControl(LogChartLegendZIndex + 1);
+                var sketch = series.GetMiniature(null, LogChartLegendZIndex + 1);
                 containerChildViews.Add(new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(it =>
                 {
                     it.Children.Add(sketch);
@@ -201,7 +200,7 @@ partial class SessionView
             foreach (var point in foundPoints)
             {
                 var series = (ICartesianSeries<SkiaSharpDrawingContext>)point.Context.Series;
-                var sketch = series.GetMiniaturesSketch().AsDrawnControl(LogChartToolTipZIndex + 1);
+                var sketch = series.GetMiniature(null, LogChartToolTipZIndex + 1);
                 if (isFirstPoint)
                 {
                     isFirstPoint = false;
@@ -455,7 +454,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = series.Values as ICollection,
+                    Values = series.Values,
                     XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -488,7 +487,7 @@ partial class SessionView
                         IsAntialias = true,
                     },
                     Tag = series,
-                    Values = series.Values as ICollection,
+                    Values = series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -504,7 +503,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = series.Values as ICollection,
+                    Values = series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -561,7 +560,7 @@ partial class SessionView
                         },
                     },
                     Tag = series,
-                    Values = series.Values as ICollection,
+                    Values = series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
