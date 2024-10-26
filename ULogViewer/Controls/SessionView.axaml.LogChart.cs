@@ -146,7 +146,7 @@ partial class SessionView
     
     
     // Tool tip of log chart.
-    class LogChartToolTip(SessionView view) : IChartTooltip<SkiaSharpDrawingContext>
+    class LogChartToolTip(SessionView view, bool isXAxisInverted) : IChartTooltip<SkiaSharpDrawingContext>
     {
         // Fields.
         StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
@@ -165,6 +165,9 @@ partial class SessionView
                 }
             }
         }
+        
+        // Whether X-axis is inverted or not.
+        public bool IsXAxisInverted { get; } = isXAxisInverted;
         
         // Show
         public void Show(IEnumerable<ChartPoint> foundPoints, Chart<SkiaSharpDrawingContext> chart)
@@ -211,7 +214,7 @@ partial class SessionView
                             it.ClippingMode = ClipMode.None;
                             it.HorizontalAlignment = Align.Start;
                             it.Paint = logChart.TooltipTextPaint;
-                            it.Text = sessionView.GetLogChartXToolTipLabel(point);
+                            it.Text = sessionView.GetLogChartXToolTipLabel(point, this.IsXAxisInverted);
                             it.TextSize = logChart.TooltipTextSize ?? 12.0;
                             it.VerticalAlignment = Align.Start;
                         }));
@@ -275,7 +278,6 @@ partial class SessionView
     
     
     // Constants.
-    const int InitLogChartAnimationDelay = 1000;
     const double LogBarChartXCoordinateScaling = 1.3;
     const long DurationToDropClickEvent = 500;
     const double PointerDistanceToDropClickEvent = 5;
@@ -284,6 +286,7 @@ partial class SessionView
     const int LogChartXAxisMinValueCount = 10;
     const double LogChartXAxisMinMaxReservedRatio = 0.01;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
+    const int ResumeLogChartAnimationDelay = 500;
     
     
     // Static fields.
@@ -333,7 +336,7 @@ partial class SessionView
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
-    ChartPoint[] logChartPointerDownData = Array.Empty<ChartPoint>();
+    ChartPoint[] logChartPointerDownData = [];
     Point? logChartPointerDownPosition;
     readonly Stopwatch logChartPointerDownWatch = new();
     readonly ObservableList<ISeries> logChartSeries = new();
@@ -345,6 +348,7 @@ partial class SessionView
     {
         CrosshairSnapEnabled = true,
     };
+    (double?, double?)? logChartXAxisLimitToKeep;
     double logChartXCoordinateScaling = 1.0;
     readonly Axis logChartYAxis = new()
     {
@@ -378,9 +382,6 @@ partial class SessionView
         this.areLogChartAxesReady = false;
         this.UpdateLogChartAxes();
         this.UpdateLogChartPanelVisibility();
-        
-        // start animation later
-        this.startLogChartAnimationsAction.Reschedule(InitLogChartAnimationDelay);
     }
     
     
@@ -439,6 +440,7 @@ partial class SessionView
         
         // create series
         var chartType = viewModel.ChartType;
+        var isInverted = viewModel.IsXAxisInverted;
         switch (chartType)
         {
             case LogChartType.ValueStatisticBars:
@@ -454,7 +456,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = series.Values,
+                    Values = isInverted ? series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -487,7 +489,7 @@ partial class SessionView
                         IsAntialias = true,
                     },
                     Tag = series,
-                    Values = series.Values,
+                    Values = isInverted ? series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -503,7 +505,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = series.Values,
+                    Values = isInverted ? series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -560,7 +562,7 @@ partial class SessionView
                         },
                     },
                     Tag = series,
-                    Values = series.Values,
+                    Values = isInverted ? series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -677,7 +679,7 @@ partial class SessionView
     // Get X label of tool tip of log chart.
     string GetLogChartXToolTipLabel<TVisual>(ChartPoint<DisplayableLogChartSeriesValue?, TVisual, LabelGeometry> point) =>
         this.GetLogChartXToolTipLabel(point.Model);
-    string GetLogChartXToolTipLabel(ChartPoint point)
+    string GetLogChartXToolTipLabel(ChartPoint point, bool isInverted)
     {
         if (point.Context.Series is not ICartesianSeries<SkiaSharpDrawingContext> cartesianSeries
             || cartesianSeries.Tag is not DisplayableLogChartSeries series)
@@ -685,6 +687,8 @@ partial class SessionView
             return "";
         }
         var index = (int)(point.Coordinate.SecondaryValue / this.logChartXCoordinateScaling + 0.5);
+        if (isInverted)
+            index = series.Values.Count - index - 1;
         if (index < 0 || index >= series.Values.Count)
             return "";
         return this.GetLogChartXToolTipLabel(series.Values[index]);
@@ -908,7 +912,7 @@ partial class SessionView
     // Called when pointer moved on log chart.
     void OnLogChartPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (this.logChartPointerDownPosition.HasValue && this.logChartPointerDownData.Length > 0)
+        if (this.logChartPointerDownPosition.HasValue && this.logChartPointerDownData.IsNotEmpty())
         {
             var downPosition = this.logChartPointerDownPosition.Value;
             var position = e.GetPosition(this.logChart);
@@ -917,7 +921,7 @@ partial class SessionView
             var distance = Math.Sqrt(diffX * diffX + diffY * diffY);
             if (distance >= PointerDistanceToDropClickEvent)
             {
-                this.logChartPointerDownData = Array.Empty<ChartPoint>();
+                this.logChartPointerDownData = [];
                 this.logChartPointerDownPosition = null;
                 this.logChartPointerDownWatch.Reset();
             }
@@ -938,6 +942,13 @@ partial class SessionView
     }
     
     
+    // Called when pointer wheel changed on log chart.
+    void OnLogChartPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        //
+    }
+    
+    
     // Called when pointer released on log chart.
     void OnLogChartPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
@@ -950,18 +961,18 @@ partial class SessionView
             if (this.isLogChartDoubleTapped)
             {
                 this.isLogChartDoubleTapped = false;
-                this.logChartPointerDownData = Array.Empty<ChartPoint>();
                 this.logChartPointerDownPosition = null;
                 this.logChartPointerDownWatch.Reset();
-                this.SynchronizationContext.PostDelayed(this.ResetLogChartZoom, 100);
+                if (this.logChartXAxis.MinLimit.HasValue || this.logChartXAxis.MaxLimit.HasValue)
+                    this.SynchronizationContext.Post(this.ResetLogChartZoom);
                 return;
             }
             
             // single click
-            if (this.logChartPointerDownData.Length > 0)
+            if (this.logChartPointerDownData.IsNotEmpty())
             {
                 var data = this.logChartPointerDownData;
-                this.logChartPointerDownData = Array.Empty<ChartPoint>();
+                this.logChartPointerDownData = [];
                 if (this.logChartPointerDownPosition.HasValue)
                 {
                     var downPosition = this.logChartPointerDownPosition.Value;
@@ -972,6 +983,9 @@ partial class SessionView
                     this.logChartPointerDownPosition = null;
                     if (distance < PointerDistanceToDropClickEvent && this.logChartPointerDownWatch.ElapsedMilliseconds < DurationToDropClickEvent)
                         this.OnLogChartDataClick(data);
+                    var minLimit = this.logChartXAxis.MinLimit;
+                    var maxLimit = this.logChartXAxis.MaxLimit;
+                    this.logChartXAxisLimitToKeep = (minLimit, maxLimit); // [Workaround] Prevent changing limit by click
                 }
                 this.logChartPointerDownWatch.Reset();
             }
@@ -1327,7 +1341,9 @@ partial class SessionView
         return this.SelectLogChartSeriesAnimationSpeed(session.LogChart);
     }
     TimeSpan SelectLogChartSeriesAnimationSpeed(LogChartViewModel viewModel) =>
-        default;
+        this.startLogChartAnimationsAction.IsScheduled
+            ? TimeSpan.Zero
+            : this.Application.FindResourceOrDefault("TimeSpan/Animation.Fast", TimeSpan.FromMilliseconds(200));
     
     
     // Select color for series.
@@ -1550,10 +1566,10 @@ partial class SessionView
         this.logChartTypeMenu.DataContext = (this.DataContext as Session)?.LogChart.ChartType;
         this.logChartTypeMenu.Open(this.logChartTypeButton);
     }
-
-
-    // Start all animations og log chart.
-    void StartLogChartAnimations()
+    
+    
+    // Update all animations of log chart.
+    void UpdateLogChartAnimations()
     {
         var animationSpeed = this.SelectLogChartSeriesAnimationSpeed();
         foreach (var series in this.logChartSeries)
@@ -1588,7 +1604,7 @@ partial class SessionView
             var viewModel = (this.DataContext as Session)?.LogChart;
             var chartType = viewModel?.ChartType ?? LogChartType.None;
             var axisType = viewModel?.XAxisType ?? LogChartXAxisType.None;
-            axis.IsInverted = (this.DataContext as Session)?.LogChart.IsXAxisInverted ?? false;
+            axis.IsInverted = viewModel?.IsXAxisInverted ?? false;
             if (axisType != LogChartXAxisType.None && chartType.IsDirectNumberValueSeriesType())
             {
                 var textPaint = textBrush.Let(brush =>
@@ -1603,6 +1619,12 @@ partial class SessionView
                         var doubleIndex = (value / this.logChartXCoordinateScaling);
                         var intIndex = (int)(doubleIndex + 0.5);
                         var logs = session.Logs;
+                        if (axis.IsInverted)
+                        {
+                            var diff = doubleIndex - intIndex;
+                            intIndex = (logs.Count - intIndex - 1);
+                            doubleIndex = intIndex - diff;
+                        }
                         if (Math.Abs(intIndex - doubleIndex) < 0.001 && intIndex >= 0 && intIndex < logs.Count)
                             return this.GetLogChartXToolTipLabel(logs[intIndex], axisType == LogChartXAxisType.SimpleTimestamp, true);
                         return "";
@@ -1656,6 +1678,8 @@ partial class SessionView
             axis.TextSize = (float)axisFontSize;
             axis.ZeroPaint = new SolidColorPaint(textPaint.Color, (float)axisWidth);
         });
+        if ((this.logChart.Tooltip as LogChartToolTip)?.IsXAxisInverted != this.logChartXAxis.IsInverted)
+            this.logChart.Tooltip = new LogChartToolTip(this, this.logChartXAxis.IsInverted);
         this.areLogChartAxesReady = true;
     }
 
@@ -1741,6 +1765,27 @@ partial class SessionView
         var axis = this.logChartXAxis;
         var minLimit = axis.MinLimit ?? double.NaN;
         var maxLimit = axis.MaxLimit ?? double.NaN;
+        if (this.logChartXAxisLimitToKeep.HasValue)
+        {
+            var limit = this.logChartXAxisLimitToKeep.Value;
+            this.logChartXAxisLimitToKeep = null;
+            if (limit.Item1.HasValue)
+            {
+                if (double.IsNaN(minLimit) || Math.Abs(minLimit - limit.Item1.Value) >= 0.001)
+                    axis.MinLimit = limit.Item1.Value;
+            }
+            else if (double.IsFinite(minLimit))
+                axis.MinLimit = null;
+            if (limit.Item2.HasValue)
+            {
+                if (double.IsNaN(maxLimit) || Math.Abs(maxLimit - limit.Item2.Value) >= 0.001)
+                    axis.MaxLimit = limit.Item2.Value;
+            }
+            else if (double.IsFinite(maxLimit))
+                axis.MaxLimit = null;
+            minLimit = limit.Item1 ?? double.NaN;
+            maxLimit = limit.Item2 ?? double.NaN;
+        }
         if (!double.IsFinite(minLimit) && !double.IsFinite(maxLimit))
         {
             this.SetValue(IsLogChartHorizontallyZoomedProperty, false);

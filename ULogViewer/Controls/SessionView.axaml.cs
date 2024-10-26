@@ -551,9 +551,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerMovedEvent, this.OnLogChartPointerMoved, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerPressedEvent, this.OnLogChartPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerReleasedEvent, this.OnLogChartPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(PointerWheelChangedEvent, this.OnLogChartPointerWheelChanged, RoutingStrategies.Tunnel);
 				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
 				it.Legend = new LogChartLegend(this);
-				it.Tooltip = new LogChartToolTip(this);
 				this.logChartXAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 				this.logChartYAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 			});
@@ -1049,7 +1049,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.scrollToLatestLogAnalysisResultAction.Cancel();
 				this.ScrollToLatestLogAnalysisResult(true);
 			});
-			this.startLogChartAnimationsAction = new(this.StartLogChartAnimations);
+			this.startLogChartAnimationsAction = new(this.UpdateLogChartAnimations);
 			this.updateCanEditCurrentScriptLogDataSourceProviderAction = new(() =>
 			{
 				var session = this.DataContext as Session;
@@ -3007,6 +3007,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						});
 					}
 				});
+				window.SizeChanged += this.OnWindowSizeChanged;
 			});
 			
 			// attach to control fonts
@@ -3160,7 +3161,11 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.areInitDialogsClosedObserverToken = this.areInitDialogsClosedObserverToken.DisposeAndReturnNull();
 			this.hasDialogsObserverToken = this.hasDialogsObserverToken.DisposeAndReturnNull();
 			this.isActiveObserverToken = this.isActiveObserverToken.DisposeAndReturnNull();
-			this.attachedWindow = null;
+			if (this.attachedWindow is not null)
+			{
+				this.attachedWindow.SizeChanged -= this.OnWindowSizeChanged;
+				this.attachedWindow = null;
+			}
 
 			// call base
 			base.OnDetachedFromLogicalTree(e);
@@ -4616,6 +4621,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow?.FocusManager?.GetFocusedElement() is not TextBox)
 				this.SynchronizationContext.Post(() => this.logListBox.Focus());
+		}
+
+
+		// Called when size of attached window changed.
+		void OnWindowSizeChanged(object? sender, SizeChangedEventArgs e)
+		{
+			// pause animation of log chart temporarily
+			this.startLogChartAnimationsAction.Reschedule(ResumeLogChartAnimationDelay);
+			this.UpdateLogChartAnimations();
 		}
 
 

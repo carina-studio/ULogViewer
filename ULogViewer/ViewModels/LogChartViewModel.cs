@@ -271,6 +271,7 @@ class LogChartViewModel : SessionComponent
         if (this.filteredLogsSeriesGenerator is not null)
             this.filteredLogsSeriesGenerator.LogChartType = chartType;
         this.markedLogsSeriesGenerator.LogChartType = chartType;
+        this.UpdateAxisInversionState(chartType);
     }
 
 
@@ -644,6 +645,7 @@ class LogChartViewModel : SessionComponent
                     if (this.filteredLogsSeriesGenerator is not null)
                         this.filteredLogsSeriesGenerator.SourceLogComparer = logComparer;
                     this.markedLogsSeriesGenerator.SourceLogComparer = logComparer;
+                    this.UpdateAxisInversionState(this.GetValue(ChartTypeProperty));
                 });
                 break;
         }
@@ -1149,6 +1151,23 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     /// <remarks>The type of parameter is <see cref="DisplayableLogChartSeriesSource"/>.</remarks>
     public ICommand ToggleVisibleSeriesSourceCommand { get; }
+    
+    
+    // Update inversion state of axes.
+    void UpdateAxisInversionState(LogChartType chartType)
+    {
+        if (this.LogProfile is not { } logProfile || logProfile.SortDirection == SortDirection.Ascending)
+        {
+            this.ResetValue(IsXAxisInvertedProperty);
+            return;
+        }
+        this.SetValue(IsXAxisInvertedProperty, chartType switch
+        {
+            LogChartType.None
+                or LogChartType.ValueStatisticBars => false,
+            _ => true,
+        });
+    }
     
     
     // Update whether setting type of log chart is available or not.
