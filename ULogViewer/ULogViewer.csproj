@@ -85,6 +85,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CarinaStudio.AppBase.Application.Avalonia" Version="2.1.36.1027" />
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />
