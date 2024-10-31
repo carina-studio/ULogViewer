@@ -1119,6 +1119,8 @@ partial class SessionView
                 break;
             case nameof(LogChartViewModel.MaxSeriesValueCount):
                 this.updateLogChartXAxisLimitAction.Schedule();
+                if (viewModel.MaxSeriesValueCount == 0)
+                    this.ResetLogChartZoom();
                 break;
             case nameof(LogChartViewModel.PanelSize):
                 if (!this.isSyncingLogChartPanelSize && viewModel.IsPanelVisible)
