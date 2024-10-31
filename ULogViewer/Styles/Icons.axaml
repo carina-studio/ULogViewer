@@ -282,6 +282,19 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/CreateLogProfile" Drawing="{StaticResource Drawing/CreateLogProfile}"/>
+	
+	<!-- MIT License: https://www.svgrepo.com/page/licensing#MIT -->
+	<DrawingImage x:Key="Image/Cursor.Hand">
+		<DrawingGroup>
+			<GeometryDrawing Brush="#ffffff" Geometry="F1 M10 10.5L10 6C10 4.89543 9.10457 4 8 4L8 4C6.89543 4 6 4.89543 6 6L6 14L7 15L5.24 13.24C4.45109 12.5226 3.23807 12.5503 2.48272 13.303C1.72738 14.0556 1.69538 15.2686 2.41 16.06L6.01 19.66C7.5 21.14 9.2 22 12 22L14 22C18.4183 22 22 18.4183 22 14L22 8C22 6.89543 21.1046 6 20 6C18.8954 6 18 6.89543 18 8L18 11L18 6C18 4.89543 17.1046 4 16 4L16 4C14.8954 4 14 4.89543 14 6L14 6L14 10L14 4C14 2.89543 13.1046 2 12 2L12 2C10.8954 2 10 2.89543 10 4L10 6" />
+			<GeometryDrawing Geometry="F1 M10 10.5L10 6C10 4.89543 9.10457 4 8 4L8 4C6.89543 4 6 4.89543 6 6L6 14L7 15L5.24 13.24C4.45109 12.5226 3.23807 12.5503 2.48272 13.303C1.72738 14.0556 1.69538 15.2686 2.41 16.06L6.01 19.66C7.5 21.14 9.2 22 12 22L14 22C18.4183 22 22 18.4183 22 14L22 8C22 6.89543 21.1046 6 20 6C18.8954 6 18 6.89543 18 8L18 11L18 6C18 4.89543 17.1046 4 16 4L16 4C14.8954 4 14 4.89543 14 6L14 6L14 10L14 4C14 2.89543 13.1046 2 12 2L12 2C10.8954 2 10 2.89543 10 4L10 6">
+				<GeometryDrawing.Pen>
+					<Pen Brush="#000000"/>
+				</GeometryDrawing.Pen>
+			</GeometryDrawing>
+		</DrawingGroup>
+	</DrawingImage>
+	
 	<DrawingImage x:Key="Image/Database">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
 	</DrawingImage>

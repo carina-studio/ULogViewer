@@ -12,6 +12,9 @@
 
 	<!-- CopyVarEditorDialog -->
 	<sys:Double x:Key="Double/CopyVarEditorDialog.Width">300</sys:Double>
+	
+	<!-- Cursor -->
+	<sys:Double x:Key="Double/Cursor.MaxSide">16</sys:Double>
 
 	<!-- DateTimeSelectionDialog -->
 	<sys:Double x:Key="Double/DateTimeSelectionDialog.Width">500</sys:Double>

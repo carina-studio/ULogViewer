@@ -12,7 +12,9 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Media.Immutable;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite;
@@ -552,6 +554,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerPressedEvent, this.OnLogChartPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerReleasedEvent, this.OnLogChartPointerReleased, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerWheelChangedEvent, this.OnLogChartPointerWheelChanged, RoutingStrategies.Tunnel);
+				it.PropertyChanged += (_, e) => this.OnLogChartPropertyChanged(e);
 				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
 				it.Legend = new LogChartLegend(this);
 				this.logChartXAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
@@ -2871,6 +2874,25 @@ namespace CarinaStudio.ULogViewer.Controls
 		public bool IsToolsMenuItemVisible { get; }
 
 
+		// Load cursor from resource.
+		Cursor LoadCursor(string resourceKey)
+		{
+			var image = this.Application.FindResourceOrDefault<IImage?>(resourceKey) ?? throw new ArgumentException();
+			var maxSide = this.Application.FindResourceOrDefault("Double/Cursor.MaxSide", 16.0);
+			var imageSize = image.Size;
+			var scaleX = maxSide / imageSize.Width;
+			var scaleY = maxSide / imageSize.Height;
+			var scale = Math.Min(scaleX, scaleY);
+			var renderScaling = this.attachedWindow?.RenderScaling ?? 1.0;
+			var cursorWidth = (int)(imageSize.Width * scale * renderScaling + 0.5);
+			var cursorHeight = (int)(imageSize.Height * scale * renderScaling + 0.5);
+			var cursorBitmap = new RenderTargetBitmap(new(cursorWidth, cursorHeight));
+			using var cursorDrawingContext = cursorBitmap.CreateDrawingContext();
+			image.Draw(cursorDrawingContext, new(default, imageSize), new(0, 0, cursorWidth, cursorHeight));
+			return new(cursorBitmap, new(cursorWidth >> 1, cursorHeight >> 1));
+		}
+		
+		
 		/// <summary>
 		/// Log in to Azure.
 		/// </summary>
@@ -3007,6 +3029,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						});
 					}
 				});
+				window.ScalingChanged += this.OnWindowScalingChanged;
 				window.SizeChanged += this.OnWindowSizeChanged;
 			});
 			
@@ -3163,6 +3186,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.isActiveObserverToken = this.isActiveObserverToken.DisposeAndReturnNull();
 			if (this.attachedWindow is not null)
 			{
+				this.attachedWindow.ScalingChanged -= this.OnWindowScalingChanged;
 				this.attachedWindow.SizeChanged -= this.OnWindowSizeChanged;
 				this.attachedWindow = null;
 			}
@@ -4378,6 +4402,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				(change.OldValue as Session)?.Let(this.DetachFromSession);
 				(change.NewValue as Session)?.Let(this.AttachToSession);
 			}
+			else if (property == IsLogChartHorizontallyZoomedProperty)
+				this.UpdateLogChartZoomMode();
 			else if (property == IsScrollingToLatestLogNeededProperty)
 			{
 				if ((bool)change.NewValue!)
@@ -4621,6 +4647,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow?.FocusManager?.GetFocusedElement() is not TextBox)
 				this.SynchronizationContext.Post(() => this.logListBox.Focus());
+		}
+		
+		
+		// Called when scaling of attached window has been changed.
+		void OnWindowScalingChanged(object? sender, EventArgs e)
+		{
+			this.logChartHandCursor = null;
+			this.logChartHandCursorValueToken = this.logChartHandCursorValueToken.DisposeAndReturnNull();
+			this.UpdateLogChartCursor();
 		}
 
 

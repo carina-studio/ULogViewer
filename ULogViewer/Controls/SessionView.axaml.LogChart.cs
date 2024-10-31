@@ -283,8 +283,8 @@ partial class SessionView
     const double PointerDistanceToDropClickEvent = 5;
     const int LogChartLegendZIndex = 89999;
     const int LogChartToolTipZIndex = 99999;
-    const int LogChartXAxisMinValueCount = 10;
-    const double LogChartXAxisMinMaxReservedRatio = 0.01;
+    const double LogChartXAxisMinRange = 10.0;
+    const double LogChartXRangeWhenDoubleClick = 20.0;
     const double LogChartYAxisMinMaxReservedRatio = 0.05;
     const int ResumeLogChartAnimationDelay = 500;
     
@@ -336,12 +336,15 @@ partial class SessionView
     bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
     readonly RowDefinition logChartGridRow;
+    Cursor? logChartHandCursor;
+    IDisposable? logChartHandCursorValueToken;
     ChartPoint[] logChartPointerDownData = [];
     Point? logChartPointerDownPosition;
     readonly Stopwatch logChartPointerDownWatch = new();
     readonly ObservableList<ISeries> logChartSeries = new();
     readonly List<SKColor> logChartSeriesColorPool = new();
     readonly Dictionary<string, SKColor> logChartSeriesColors = new();
+    LogChartToolTip? logChartToolTip;
     readonly ToggleButton logChartTypeButton;
     readonly ContextMenu logChartTypeMenu;
     readonly Axis logChartXAxis = new()
@@ -939,13 +942,23 @@ partial class SessionView
             this.logChartPointerDownPosition = point.Position;
             this.logChartPointerDownWatch.Restart();
         }
+        this.UpdateLogChartCursor();
+        this.UpdateLogChartToolTip();
     }
     
     
     // Called when pointer wheel changed on log chart.
     void OnLogChartPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        //
+        var delta = (int)Math.Round(e.Delta.Y);
+        if (delta == 0)
+            return;
+        var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
+        if (this.logChart.Series.FirstOrDefault() is not { } series)
+            return;
+        if (series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is not { } point)
+            return;
+        this.ZoomLogChart(point, delta);
     }
     
     
@@ -957,14 +970,33 @@ partial class SessionView
             // reset state
             this.isPointerPressedOnLogChart = false;
             
+            // update cursor and tool tip
+            this.UpdateLogChartCursor();
+            this.UpdateLogChartToolTip();
+            
             // double click
             if (this.isLogChartDoubleTapped)
             {
                 this.isLogChartDoubleTapped = false;
                 this.logChartPointerDownPosition = null;
                 this.logChartPointerDownWatch.Reset();
-                if (this.logChartXAxis.MinLimit.HasValue || this.logChartXAxis.MaxLimit.HasValue)
+                if (this.GetValue(IsLogChartHorizontallyZoomedProperty))
                     this.SynchronizationContext.Post(this.ResetLogChartZoom);
+                else
+                {
+                    this.SynchronizationContext.Post(() =>
+                    {
+                        if (!this.GetValue(IsLogChartHorizontallyZoomedProperty) && !this.isPointerPressedOnLogChart)
+                        {
+                            var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
+                            if (this.logChart.Series.FirstOrDefault() is { } series
+                                && series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is { } point)
+                            {
+                                this.ZoomLogChart(point, LogChartXRangeWhenDoubleClick);
+                            }
+                        }
+                    });
+                }
                 return;
             }
             
@@ -989,6 +1021,17 @@ partial class SessionView
                 }
                 this.logChartPointerDownWatch.Reset();
             }
+        }
+    }
+    
+    
+    // Called when property of log chart has been changed.
+    void OnLogChartPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.Property == CartesianChart.ZoomModeProperty)
+        {
+            this.UpdateLogChartCursor();
+            this.UpdateLogChartToolTip();
         }
     }
     
@@ -1075,9 +1118,6 @@ partial class SessionView
                 this.updateLogChartYAxisLimitAction.Schedule();
                 break;
             case nameof(LogChartViewModel.MaxSeriesValueCount):
-                this.logChart.ZoomMode = viewModel.MaxSeriesValueCount > LogChartXAxisMinValueCount 
-                    ? ZoomAndPanMode.X 
-                    : ZoomAndPanMode.None;
                 this.updateLogChartXAxisLimitAction.Schedule();
                 break;
             case nameof(LogChartViewModel.PanelSize):
@@ -1277,60 +1317,45 @@ partial class SessionView
     }
     
     
+    // Scroll to start of end of log chart.
+    void ScrollToEdgeOfLogChart(bool scrollToStart)
+    {
+        if (!this.GetValue(IsLogChartHorizontallyZoomedProperty))
+            return;
+        var dataBounds = this.logChartXAxis.DataBounds;
+        var minCoordinate = dataBounds.Min;
+        var maxCoordinate = dataBounds.Max;
+        var minLimit = this.logChartXAxis.MinLimit ?? minCoordinate;
+        var maxLimit = this.logChartXAxis.MaxLimit ?? maxCoordinate;
+        var range = (maxLimit - minLimit);
+        if (this.logChartXAxis.IsInverted)
+            scrollToStart = !scrollToStart;
+        if (scrollToStart)
+        {
+            this.logChartXAxis.MinLimit = minCoordinate;
+            this.logChartXAxis.MaxLimit = minCoordinate + range;
+        }
+        else
+        {
+            this.logChartXAxis.MinLimit = maxCoordinate - range;
+            this.logChartXAxis.MaxLimit = maxCoordinate;
+        }
+        this.updateLogChartXAxisLimitAction.Execute();
+    }
+
+
     /// <summary>
     /// Horizontally scroll to end of log chart.
     /// </summary>
-    public void ScrollToEndOfLogChart()
-    {
-        var minLimit = this.logChartXAxis.MinLimit ?? double.NaN;
-        var maxLimit = this.logChartXAxis.MaxLimit ?? double.NaN;
-        if (this.DataContext is not Session session)
-            return;
-        var maxSeriesValueCount = 0;
-        foreach (var series in session.LogChart.Series)
-            maxSeriesValueCount = Math.Max(maxSeriesValueCount, series.Values.Count);
-        if (!double.IsFinite(minLimit))
-        {
-            if (!double.IsFinite(maxLimit))
-                return;
-            minLimit = 0;
-        }
-        if (!double.IsFinite(maxLimit))
-            maxLimit = maxSeriesValueCount;
-        var length = (maxLimit - minLimit);
-        var reserved = (length * LogChartXAxisMinMaxReservedRatio);
-        this.logChartXAxis.MinLimit = maxSeriesValueCount - length + reserved;
-        this.logChartXAxis.MaxLimit = maxSeriesValueCount + reserved;
-    }
+    public void ScrollToEndOfLogChart() =>
+        this.ScrollToEdgeOfLogChart(false);
 
 
     /// <summary>
     /// Horizontally scroll to start of log chart.
     /// </summary>
-    public void ScrollToStartOfLogChart()
-    {
-        var minLimit = this.logChartXAxis.MinLimit ?? double.NaN;
-        var maxLimit = this.logChartXAxis.MaxLimit ?? double.NaN;
-        if (this.DataContext is not Session session)
-            return;
-        if (!double.IsFinite(minLimit))
-        {
-            if (!double.IsFinite(maxLimit))
-                return;
-            minLimit = 0;
-        }
-        if (!double.IsFinite(maxLimit))
-        {
-            var maxSeriesValueCount = 0;
-            foreach (var series in session.LogChart.Series)
-                maxSeriesValueCount = Math.Max(maxSeriesValueCount, series.Values.Count);
-            maxLimit = maxSeriesValueCount;
-        }
-        var length = (maxLimit - minLimit);
-        var reserved = (length * LogChartXAxisMinMaxReservedRatio);
-        this.logChartXAxis.MinLimit = -reserved;
-        this.logChartXAxis.MaxLimit = length - reserved;
-    }
+    public void ScrollToStartOfLogChart() =>
+        this.ScrollToEdgeOfLogChart(true);
 
 
     // Select animation speed of log chart series.
@@ -1678,9 +1703,23 @@ partial class SessionView
             axis.TextSize = (float)axisFontSize;
             axis.ZeroPaint = new SolidColorPaint(textPaint.Color, (float)axisWidth);
         });
-        if ((this.logChart.Tooltip as LogChartToolTip)?.IsXAxisInverted != this.logChartXAxis.IsInverted)
-            this.logChart.Tooltip = new LogChartToolTip(this, this.logChartXAxis.IsInverted);
+        this.UpdateLogChartToolTip();
         this.areLogChartAxesReady = true;
+    }
+    
+    
+    // Update cursor of log chart.
+    void UpdateLogChartCursor()
+    {
+        if (this.logChart.ZoomMode == ZoomAndPanMode.None || !this.isPointerPressedOnLogChart)
+        {
+            this.logChartHandCursorValueToken = this.logChartHandCursorValueToken.DisposeAndReturnNull();
+            return;
+        }
+        if (this.logChartHandCursorValueToken is not null)
+            return;
+        this.logChartHandCursor ??= this.LoadCursor("Image/Cursor.Hand");
+        this.logChartHandCursorValueToken = this.logChart.SetValue(CursorProperty, this.logChartHandCursor, BindingPriority.Template);
     }
 
 
@@ -1740,15 +1779,27 @@ partial class SessionView
         this.logChartXAxis.UnitWidth = this.logChartXCoordinateScaling;
         
         // update zoom mode
-        this.logChart.ZoomMode = viewModel.MaxSeriesValueCount > LogChartXAxisMinValueCount 
-            ? ZoomAndPanMode.X 
-            : ZoomAndPanMode.None;
+        this.UpdateLogChartZoomMode();
     }
     
     
     // Update visibility of log chart panel.
     void UpdateLogChartPanelVisibility()
     { }
+    
+    
+    // Update tooltip of log chart.
+    void UpdateLogChartToolTip()
+    {
+        if (this.logChart.ZoomMode != ZoomAndPanMode.None && this.isPointerPressedOnLogChart)
+        {
+            this.logChart.Tooltip = null;
+            return;
+        }
+        if (this.logChartToolTip is null || this.logChartToolTip.IsXAxisInverted != this.logChartXAxis.IsInverted)
+            this.logChartToolTip = new(this, this.logChartXAxis.IsInverted);
+        this.logChart.Tooltip = this.logChartToolTip;
+    }
     
     
     // Update limit of X-axis.
@@ -1763,6 +1814,9 @@ partial class SessionView
             return;
         }
         var axis = this.logChartXAxis;
+        var dataBounds = axis.DataBounds;
+        var minCoordinate = dataBounds.Min;
+        var maxCoordinate = dataBounds.Max;
         var minLimit = axis.MinLimit ?? double.NaN;
         var maxLimit = axis.MaxLimit ?? double.NaN;
         if (this.logChartXAxisLimitToKeep.HasValue)
@@ -1791,47 +1845,44 @@ partial class SessionView
             this.SetValue(IsLogChartHorizontallyZoomedProperty, false);
             return;
         }
-        var maxValueCount = viewModel.MaxSeriesValueCount;
-        if (maxValueCount <= LogChartXAxisMinValueCount)
+        if ((maxCoordinate - minCoordinate) <= LogChartXAxisMinRange)
         {
             axis.MinLimit = null;
             axis.MaxLimit = null;
             this.SetValue(IsLogChartHorizontallyZoomedProperty, false);
             return;
         }
-        var maxXCoordinate = maxValueCount * this.logChartXCoordinateScaling;
-        var reserved = maxXCoordinate * LogChartXAxisMinMaxReservedRatio;
         var isSnappedToEdge = false;
         if (!this.isPointerPressedOnLogChart)
         {
-            if (minLimit < 0.5)
+            if (minLimit < minCoordinate + 0.5)
             {
-                minLimit = -reserved;
-                axis.MinLimit = null;
+                var range = maxLimit - minLimit;
+                minLimit = minCoordinate;
+                maxLimit = minCoordinate + range;
+                if (maxLimit > maxCoordinate - 0.5)
+                    maxLimit = maxCoordinate;
+                axis.MinLimit = minLimit;
+                axis.MaxLimit = maxLimit;
                 isSnappedToEdge = true;
-                if (maxLimit < minLimit + LogChartXAxisMinValueCount)
-                {
-                    maxLimit = minLimit + LogChartXAxisMinValueCount + 0.0001;
-                    axis.MaxLimit = maxLimit;
-                }
             }
-            if (maxLimit > maxXCoordinate - 0.5)
+            else if (maxLimit > maxCoordinate - 0.5)
             {
-                maxLimit = maxXCoordinate + reserved;
-                axis.MaxLimit = null;
+                var range = maxLimit - minLimit;
+                maxLimit = maxCoordinate;
+                minLimit = maxCoordinate - range;
+                if (minLimit < minCoordinate + 0.5)
+                    minLimit = minCoordinate;
+                axis.MinLimit = minLimit;
+                axis.MaxLimit = maxLimit;
                 isSnappedToEdge = true;
-                if (minLimit > maxLimit - LogChartXAxisMinValueCount)
-                {
-                    minLimit = maxLimit - LogChartXAxisMinValueCount - 0.0001;
-                    axis.MinLimit = minLimit;
-                }
             }
         }
-        if (!isSnappedToEdge && (maxLimit - minLimit) < LogChartXAxisMinValueCount)
+        if (!isSnappedToEdge && (maxLimit - minLimit) < LogChartXAxisMinRange)
         {
-            var center = (minLimit + maxLimit) / 2;
-            minLimit = center - (LogChartXAxisMinValueCount / 2.0);
-            maxLimit = center + (LogChartXAxisMinValueCount / 2.0);
+            var center = (minLimit + maxLimit) * 0.5;
+            minLimit = center - (LogChartXAxisMinRange * 0.5);
+            maxLimit = center + (LogChartXAxisMinRange * 0.5);
             axis.MinLimit = minLimit;
             axis.MaxLimit = maxLimit;
         }
@@ -1884,5 +1935,75 @@ partial class SessionView
         }
         this.logChartYAxis.MinLimit = null;
         this.logChartYAxis.MaxLimit = null;
+    }
+    
+    
+    // Update zoom mode of log chart based on current state.
+    void UpdateLogChartZoomMode()
+    {
+        this.logChart.ZoomMode = this.GetValue(IsLogChartHorizontallyZoomedProperty)
+            ? ZoomAndPanMode.PanX 
+            : ZoomAndPanMode.None;
+    }
+    
+    
+    // Zoom in or out log chart.
+    void ZoomLogChart(ChartPoint anchor, int step /* positive to zoom in */)
+    {
+        if (step == 0)
+            return;
+        var dataBounds = this.logChartXAxis.DataBounds;
+        var minCoordinate = dataBounds.Min;
+        var maxCoordinate = dataBounds.Max;
+        var minLimit = this.logChartXAxis.MinLimit ?? minCoordinate;
+        var maxLimit = this.logChartXAxis.MaxLimit ?? maxCoordinate;
+        var currentRange = (maxLimit - minLimit);
+        this.ZoomLogChart(anchor, currentRange * Math.Pow(0.7, step));
+    }
+    
+    
+    // Zoom log chart to given range.
+    void ZoomLogChart(ChartPoint anchor, double range)
+    {
+        if (!double.IsFinite(range))
+            return;
+        var centerCoordinate = anchor.Coordinate.SecondaryValue;
+        var dataBounds = this.logChartXAxis.DataBounds;
+        var minCoordinate = dataBounds.Min;
+        var maxCoordinate = dataBounds.Max;
+        var minLimit = this.logChartXAxis.MinLimit ?? minCoordinate;
+        var maxLimit = this.logChartXAxis.MaxLimit ?? maxCoordinate;
+        if (centerCoordinate < minLimit || centerCoordinate > maxLimit)
+            return;
+        var currentRange = (maxLimit - minLimit);
+        var maxRange = (maxCoordinate - minCoordinate);
+        range = Math.Max(range, LogChartXAxisMinRange);
+        if (Math.Abs(range - currentRange) < 0.1)
+            return;
+        if (range >= maxRange - 0.5)
+        {
+            this.logChartXAxis.MinLimit = null;
+            this.logChartXAxis.MaxLimit = null;
+        }
+        else
+        {
+            var startingRatio = (centerCoordinate - minLimit) / currentRange;
+            var newMinLimit = centerCoordinate - (range * startingRatio);
+            var newMaxLimit = newMinLimit + range;
+            if (newMinLimit < minCoordinate)
+            {
+                newMinLimit = minCoordinate;
+                newMaxLimit = minCoordinate + range;
+            }
+            else if (newMaxLimit > maxCoordinate)
+            {
+                newMaxLimit = maxCoordinate;
+                newMinLimit = maxCoordinate - range;
+            }
+            this.logChartXAxis.MinLimit = newMinLimit;
+            this.logChartXAxis.MaxLimit = newMaxLimit;
+        }
+        this.logChartXAxisLimitToKeep = null;
+        this.updateLogChartXAxisLimitAction.Execute();
     }
 }
