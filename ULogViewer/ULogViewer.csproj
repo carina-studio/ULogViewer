@@ -23,8 +23,8 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-		<AppSuiteVersion>3.0.0.1029-dev</AppSuiteVersion>
-		<AvaloniaVersion>11.2.0-rc2</AvaloniaVersion>
+		<AppSuiteVersion>3.0.0.1109-dev</AppSuiteVersion>
+		<AvaloniaVersion>11.2.0</AvaloniaVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -101,7 +101,7 @@
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc4.5" />
 		<PackageReference Include="MySqlConnector" Version="2.3.7" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="SkiaSharp" Version="2.88.8" />
+		<PackageReference Include="SkiaSharp" Version="2.88.9" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118">
 			<ExcludeAssets Condition="$(RuntimeIdentifier.Contains('win'))">native</ExcludeAssets>
