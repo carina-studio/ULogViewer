@@ -6,6 +6,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
+using Avalonia.Input.GestureRecognizers;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
@@ -553,6 +554,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerMovedEvent, this.OnLogChartPointerMoved, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerPressedEvent, this.OnLogChartPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerReleasedEvent, this.OnLogChartPointerReleased, RoutingStrategies.Tunnel);
+				it.AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, this.OnLogChartPointerTouchPadGestureMagnify, RoutingStrategies.Bubble);
 				it.AddHandler(PointerWheelChangedEvent, this.OnLogChartPointerWheelChanged, RoutingStrategies.Tunnel);
 				it.PropertyChanged += (_, e) => this.OnLogChartPropertyChanged(e);
 				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
@@ -2883,9 +2885,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			var scaleX = maxSide / imageSize.Width;
 			var scaleY = maxSide / imageSize.Height;
 			var scale = Math.Min(scaleX, scaleY);
-			var renderScaling = this.attachedWindow?.RenderScaling ?? 1.0;
-			var cursorWidth = (int)(imageSize.Width * scale * renderScaling + 0.5);
-			var cursorHeight = (int)(imageSize.Height * scale * renderScaling + 0.5);
+			var cursorWidth = (int)(imageSize.Width * scale + 0.5);
+			var cursorHeight = (int)(imageSize.Height * scale + 0.5);
 			var cursorBitmap = new RenderTargetBitmap(new(cursorWidth, cursorHeight));
 			using var cursorDrawingContext = cursorBitmap.CreateDrawingContext();
 			image.Draw(cursorDrawingContext, new(default, imageSize), new(0, 0, cursorWidth, cursorHeight));

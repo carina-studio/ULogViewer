@@ -950,15 +950,15 @@ partial class SessionView
     // Called when pointer wheel changed on log chart.
     void OnLogChartPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        var delta = (int)Math.Round(e.Delta.Y);
-        if (delta == 0)
+        var steps = e.Delta.Y;
+        if (Math.Abs(steps) < 0.01)
             return;
         var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
         if (this.logChart.Series.FirstOrDefault() is not { } series)
             return;
         if (series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is not { } point)
             return;
-        this.ZoomLogChart(point, delta);
+        this.ZoomLogChartWithSteps(point, steps);
     }
     
     
@@ -992,7 +992,7 @@ partial class SessionView
                             if (this.logChart.Series.FirstOrDefault() is { } series
                                 && series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is { } point)
                             {
-                                this.ZoomLogChart(point, LogChartXRangeWhenDoubleClick);
+                                this.ZoomLogChartTo(point, LogChartXRangeWhenDoubleClick);
                             }
                         }
                     });
@@ -1022,6 +1022,22 @@ partial class SessionView
                 this.logChartPointerDownWatch.Reset();
             }
         }
+    }
+    
+    
+    // Called when magnify gesture on touchpad detected.
+    void OnLogChartPointerTouchPadGestureMagnify(object? sender, PointerDeltaEventArgs e)
+    {
+        var delta = e.Delta;
+        var steps = Math.Sqrt(delta.X * delta.X + delta.Y * delta.Y) * 2.0;
+        if (Math.Abs(steps) < 0.01)
+            return;
+        var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
+        if (this.logChart.Series.FirstOrDefault() is not { } series)
+            return;
+        if (series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is not { } point)
+            return;
+        this.ZoomLogChartWithSteps(point, Math.Sign(delta.X) * steps);
     }
     
     
@@ -1949,23 +1965,8 @@ partial class SessionView
     }
     
     
-    // Zoom in or out log chart.
-    void ZoomLogChart(ChartPoint anchor, int step /* positive to zoom in */)
-    {
-        if (step == 0)
-            return;
-        var dataBounds = this.logChartXAxis.DataBounds;
-        var minCoordinate = dataBounds.Min;
-        var maxCoordinate = dataBounds.Max;
-        var minLimit = this.logChartXAxis.MinLimit ?? minCoordinate;
-        var maxLimit = this.logChartXAxis.MaxLimit ?? maxCoordinate;
-        var currentRange = (maxLimit - minLimit);
-        this.ZoomLogChart(anchor, currentRange * Math.Pow(0.7, step));
-    }
-    
-    
     // Zoom log chart to given range.
-    void ZoomLogChart(ChartPoint anchor, double range)
+    void ZoomLogChartTo(ChartPoint anchor, double range)
     {
         if (!double.IsFinite(range))
             return;
@@ -2007,5 +2008,20 @@ partial class SessionView
         }
         this.logChartXAxisLimitToKeep = null;
         this.updateLogChartXAxisLimitAction.Execute();
+    }
+    
+    
+    // Zoom in or out log chart.
+    void ZoomLogChartWithSteps(ChartPoint anchor, double steps /* positive to zoom in */)
+    {
+        if (!double.IsFinite(steps) || Math.Abs(steps) < 0.01)
+            return;
+        var dataBounds = this.logChartXAxis.DataBounds;
+        var minCoordinate = dataBounds.Min;
+        var maxCoordinate = dataBounds.Max;
+        var minLimit = this.logChartXAxis.MinLimit ?? minCoordinate;
+        var maxLimit = this.logChartXAxis.MaxLimit ?? maxCoordinate;
+        var currentRange = (maxLimit - minLimit);
+        this.ZoomLogChartTo(anchor, currentRange * Math.Pow(0.7, steps));
     }
 }
