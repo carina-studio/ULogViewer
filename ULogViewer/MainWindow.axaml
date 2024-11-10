@@ -10,6 +10,7 @@
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asConverters="using:CarinaStudio.AppSuite.Converters"
+		xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.MainWindow"
         Name="window"
@@ -31,16 +32,16 @@
 			<Grid ColumnDefinitions="*,Auto" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Stretch">
 				<Grid.ContextMenu>
 					<ContextMenu Placement="Bottom">
-						<MenuItem Command="{Binding #window.SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}">
+						<MenuItem Command="{Binding #window.SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource MainWindow.SetCustomSessionTitle}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Edit}"/>
 								</Border>
 							</MenuItem.Icon>
 						</MenuItem>
-						<MenuItem Command="{Binding #window.ClearCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
+						<MenuItem Command="{Binding #window.ClearCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
 						<Separator/>
-						<MenuItem Command="{Binding #window.MoveSessionToNewWorkspaceCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}">
+						<MenuItem Command="{Binding #window.MoveSessionToNewWorkspaceCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
@@ -48,7 +49,7 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator/>
-						<MenuItem Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{DynamicResource String/Common.CloseTab}" InputGesture="{x:Static appInput:KeyGestures.CloseTab}">
+						<MenuItem Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource Common.CloseTab}" InputGesture="{x:Static appInput:KeyGestures.CloseTab}">
 							<MenuItem.Icon>
 								<Border Classes="MenuItem_Icon">
 									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
@@ -78,30 +79,30 @@
 								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">
 									<StackPanel Orientation="Horizontal">
 										<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.PauseMedia}"/>
-										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Paused}"/>
+										<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.Paused}"/>
 									</StackPanel>
 									<Separator Classes="Dialog_Separator_Small"/>
 								</StackPanel>
 								<StackPanel IsVisible="{Binding IsWaitingForDataSources}">
 									<StackPanel Orientation="Horizontal">
 										<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Waiting}"/>
-										<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.WaitingForDataSources}"/>
+										<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.WaitingForDataSources}"/>
 									</StackPanel>
 									<Separator Classes="Dialog_Separator_Small"/>
 								</StackPanel>
-								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding AllLogCount}" Format="{DynamicResource String/MainWindow.Session.AllLogCount}"/>
-								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" Format="{DynamicResource String/MainWindow.Session.LogsMemoryUsage}"/>
+								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding AllLogCount}" Format="{asXaml:StringResource MainWindow.Session.AllLogCount}"/>
+								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" Format="{asXaml:StringResource MainWindow.Session.LogsMemoryUsage}"/>
 							</StackPanel>
 							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
 								<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Leaf.Colored}"/>
-								<TextBlock Classes="ToolTipText" Text="{DynamicResource String/MainWindow.Session.Hibernated}"/>
+								<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.Hibernated}"/>
 							</StackPanel>
 						</StackPanel>
 					</ToolTip.Tip>
 					<Image Classes="TabItem_Icon" IsEnabled="{Binding !IsHibernated}" Source="{Binding Icon}"/>
 					<TextBlock Name="titleTextBlock" Classes="TabItem_TextBlock" Grid.Column="1" Text="{Binding Title}"/>
 				</Grid>
-				<Button Classes="TabItem_Button" Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{DynamicResource String/Common.CloseTab.WithGesture}">
+				<Button Classes="TabItem_Button" Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Grid.Column="1" ToolTip.Tip="{asXaml:StringResource Common.CloseTab.WithGesture}">
 					<Button.IsVisible>
 						<MultiBinding Converter="{x:Static BoolConverters.Or}">
 							<Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType={x:Type TabItem}}"/>
@@ -119,40 +120,40 @@
 
 		<!-- Native menu -->
 		<NativeMenu x:Key="nativeMenu">
-			<NativeMenuItem Header="{DynamicResource String/MainWindow.Windows}">
+			<NativeMenuItem Header="{asXaml:StringResource MainWindow.Windows}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.CreateMainWindow}" Header="{DynamicResource String/Common.CreateWindow}" Gesture="Cmd+N"/>
+						<NativeMenuItem Command="{Binding #window.CreateMainWindow}" Header="{asXaml:StringResource Common.CreateWindow}" Gesture="Cmd+N"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Horizontal}"/>
-						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Vertical}"/>
-						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{DynamicResource String/MainWindow.LayoutMainWindows.Tile}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Horizontal}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Vertical}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Tile}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
-			<NativeMenuItem Header="{DynamicResource String/MainWindow.Tabs}">
+			<NativeMenuItem Header="{asXaml:StringResource MainWindow.Tabs}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{DynamicResource String/Common.CreateTab}"  Gesture="Cmd+T"/>
+						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{asXaml:StringResource Common.CreateTab}"  Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.SetCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.SetCustomSessionTitle}"/>
-						<NativeMenuItem Command="{Binding #window.ClearCurrentCustomSessionTitle}" Header="{DynamicResource String/MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
+						<NativeMenuItem Command="{Binding #window.SetCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.SetCustomSessionTitle}"/>
+						<NativeMenuItem Command="{Binding #window.ClearCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.MoveCurrentSessionToNewWorkspace}" Header="{DynamicResource String/Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}"/>
+						<NativeMenuItem Command="{Binding #window.MoveCurrentSessionToNewWorkspace}" Header="{asXaml:StringResource Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.CloseCurrentSessionTabItem}" Header="{DynamicResource String/Common.CloseTab}" Gesture="Cmd+W"/>
+						<NativeMenuItem Command="{Binding #window.CloseCurrentSessionTabItem}" Header="{asXaml:StringResource Common.CloseTab}" Gesture="Cmd+W"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
-			<NativeMenuItem CommandParameter="Tools" Header="{DynamicResource String/SessionView.Tools}">
+			<NativeMenuItem CommandParameter="Tools" Header="{asXaml:StringResource SessionView.Tools}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.EditPathEnvironmentVariable}" Header="{DynamicResource String/SessionView.EditPathEnvVar}"/>
+						<NativeMenuItem Command="{Binding #window.EditPathEnvironmentVariable}" Header="{asXaml:StringResource SessionView.EditPathEnvVar}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.EditConfiguration}" CommandParameter="EditConfiguration" Header="{DynamicResource String/SessionView.EditConfiguration}"/>
-						<NativeMenuItem Command="{Binding #window.EditPersistentState}" CommandParameter="EditPersistentState" Header="{DynamicResource String/SessionView.EditPersistentState}"/>
-						<NativeMenuItem Command="{Binding #window.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{DynamicResource String/Common.SelfTesting}"/>
-						<NativeMenuItem Command="{Binding #window.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{DynamicResource String/Common.TakeMemorySnapshot.WithDialog}"/>
+						<NativeMenuItem Command="{Binding #window.EditConfiguration}" CommandParameter="EditConfiguration" Header="{asXaml:StringResource SessionView.EditConfiguration}"/>
+						<NativeMenuItem Command="{Binding #window.EditPersistentState}" CommandParameter="EditPersistentState" Header="{asXaml:StringResource SessionView.EditPersistentState}"/>
+						<NativeMenuItem Command="{Binding #window.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{asXaml:StringResource Common.SelfTesting}"/>
+						<NativeMenuItem Command="{Binding #window.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{asXaml:StringResource Common.TakeMemorySnapshot.WithDialog}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>

@@ -52,6 +52,7 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		IDisposable? activeFilteringProgressObserverToken;
+		bool areNativeMenuItemHeadersRefreshNeeded;
 		bool areULogViewerInitialDialogsShown;
 		Session? attachedActiveSession;
 		readonly ScheduledAction focusOnTabItemContentAction;
@@ -607,6 +608,7 @@ namespace CarinaStudio.ULogViewer
 		// Called when application strings updated.
 		void OnApplicationStringsUpdated(object? sender, EventArgs e)
 		{
+			this.areNativeMenuItemHeadersRefreshNeeded = !this.IsActive;
 			this.UpdateToolMenuItems();
 		}
 
@@ -1049,7 +1051,19 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-        // Called when list of session changed.
+		/// <inheritdoc/>
+		protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+		{
+			base.OnPropertyChanged(change);
+			if (change.Property == IsActiveProperty && this.areNativeMenuItemHeadersRefreshNeeded)
+			{
+				this.areNativeMenuItemHeadersRefreshNeeded = false;
+				this.RefreshNativeMenuItemHeaders();
+			}
+		}
+
+
+		// Called when list of session changed.
         void OnSessionsChanged(object? sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (this.DataContext is not Workspace workspace)
@@ -1155,6 +1169,20 @@ namespace CarinaStudio.ULogViewer
 					this.DetachFromActiveSession();
 				}
 			}
+		}
+		
+		
+		// Refresh headers of native menu items.
+		// [Workaround] Header of first level menu items won't be refreshed when window is inactive
+		void RefreshNativeMenuItemHeaders()
+		{
+			if (NativeMenu.GetMenu(this) is not { } nativeMenu)
+				return;
+			var menuItems = nativeMenu.Items.ToArray();
+			if (menuItems.IsEmpty())
+				return;
+			nativeMenu.Items.Clear();
+			this.SynchronizationContext.PostDelayed(() => nativeMenu.Items.AddAll(menuItems), 500);
 		}
 
 
