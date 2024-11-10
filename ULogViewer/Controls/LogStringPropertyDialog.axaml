@@ -2,9 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:sys="using:System"
-        xmlns:ia="using:Avalonia.Xaml.Interactivity"
-        xmlns:iaCore="using:Avalonia.Xaml.Interactions.Core"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asInput="using:CarinaStudio.AppSuite.Input"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -40,24 +37,7 @@
 					<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
 
 					<!-- Wrap text -->
-					<CheckBox Grid.Column="2" Content="{DynamicResource String/LogStringPropertyDialog.WrapText}" IsChecked="True" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center">
-						<ia:Interaction.Behaviors>
-							<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
-								<iaCore:InvokeCommandAction Command="{Binding #dialog.SetTextWrappingCommand}">
-									<iaCore:InvokeCommandAction.CommandParameter>
-										<sys:Boolean>True</sys:Boolean>
-									</iaCore:InvokeCommandAction.CommandParameter>
-								</iaCore:InvokeCommandAction>
-							</iaCore:DataTriggerBehavior>
-							<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="False">
-								<iaCore:InvokeCommandAction Command="{Binding #dialog.SetTextWrappingCommand}">
-									<iaCore:InvokeCommandAction.CommandParameter>
-										<sys:Boolean>False</sys:Boolean>
-									</iaCore:InvokeCommandAction.CommandParameter>
-								</iaCore:InvokeCommandAction>
-							</iaCore:DataTriggerBehavior>
-						</ia:Interaction.Behaviors>
-					</CheckBox>
+					<CheckBox Name="wrapTextCheckBox" Grid.Column="2" Content="{DynamicResource String/LogStringPropertyDialog.WrapText}" IsChecked="True" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center"/>
 
 				</Grid>
 			</Border>
