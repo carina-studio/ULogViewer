@@ -6,7 +6,6 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Input;
-using Avalonia.Input.GestureRecognizers;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
@@ -14,8 +13,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Media.Immutable;
-using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using CarinaStudio.AppSuite;
@@ -813,14 +810,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (Platform.IsOpeningFileManagerSupported)
 						{
-							it.Actions = new[]
-							{
+							it.Actions =
+							[
 								new NotificationAction().Also(it =>
 								{
 									it.Command = new Command(() => Platform.OpenFileManager(fileName));
 									it.Bind(NotificationAction.NameProperty, this.Application.GetObservableString("SessionView.ShowFileInExplorer"));
 								})
-							};
+							];
 						}
 						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
 						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
@@ -2095,7 +2092,7 @@ namespace CarinaStudio.ULogViewer.Controls
 										session.MarkLogsCommand.TryExecute(new Session.MarkingLogsParams
 										{
 											Color = MarkColor.Default,
-											Logs = new[] { log },
+											Logs = [ log ],
 										});
 									}
 								}
@@ -2197,7 +2194,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						isSelectedObserverToken = listBoxItem.GetObservable(ListBoxItem.IsSelectedProperty).Subscribe(isSelected =>
 						{
-							markIndicatorSelectionBackground!.IsVisible = isSelected;
+							markIndicatorSelectionBackground.IsVisible = isSelected;
 						});
 					}
 					
@@ -2885,8 +2882,9 @@ namespace CarinaStudio.ULogViewer.Controls
 			var scaleX = maxSide / imageSize.Width;
 			var scaleY = maxSide / imageSize.Height;
 			var scale = Math.Min(scaleX, scaleY);
-			var cursorWidth = (int)(imageSize.Width * scale + 0.5);
-			var cursorHeight = (int)(imageSize.Height * scale + 0.5);
+			var desktopScaling = this.attachedWindow?.DesktopScaling ?? 1.0;
+			var cursorWidth = (int)(imageSize.Width * scale * desktopScaling + 0.5);
+			var cursorHeight = (int)(imageSize.Height * scale * desktopScaling + 0.5);
 			var cursorBitmap = new RenderTargetBitmap(new(cursorWidth, cursorHeight));
 			using var cursorDrawingContext = cursorBitmap.CreateDrawingContext();
 			image.Draw(cursorDrawingContext, new(default, imageSize), new(0, 0, cursorWidth, cursorHeight));
@@ -3819,14 +3817,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						if (Platform.IsOpeningFileManagerSupported)
 						{
-							it.Actions = new[]
-							{
+							it.Actions =
+							[
 								new NotificationAction().Also(it =>
 								{
 									it.Command = new Command(() => Platform.OpenFileManager(fileName));
 									it.Bind(NotificationAction.NameProperty, this.Application.GetObservableString("SessionView.ShowFileInExplorer"));
 								})
-							};
+							];
 						}
 						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
 						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
