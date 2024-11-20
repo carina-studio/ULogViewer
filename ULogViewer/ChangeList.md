@@ -8,6 +8,7 @@
 + Allow reordering items in ```Edit log profile```, ```Edit operation duration analysis rule``` and ```Data source options``` dialogs by mouse dragging instead of clicking action button.
 + Better indications for required or invalid value in ```Edit log profile``` and ```Data source options``` dialogs.
 + Improve user experience of using ```Select log profile``` dialog.
++ Show selected file name, command, IP endpoint, Process ID/name, URL or working directory on tab.
 
 ## Behavior Changes
 + 

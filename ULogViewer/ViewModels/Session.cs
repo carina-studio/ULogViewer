@@ -29,6 +29,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -368,6 +369,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
 		/// <summary>
+		/// Property of <see cref="LogProfileName"/>.
+		/// </summary>
+		public static readonly ObservableProperty<string?> LogProfileNameProperty = ObservableProperty.Register<Session, string?>(nameof(LogProfileName));
+		/// <summary>
 		/// Property of <see cref="LogsMemoryUsage"/>.
 		/// </summary>
 		public static readonly ObservableProperty<long> LogsMemoryUsageProperty = ObservableProperty.Register<Session, long>(nameof(LogsMemoryUsage));
@@ -613,6 +618,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		// Static fields.
 		static readonly LinkedList<Session> activationHistoryList = new();
 		static readonly SettingKey<bool> areAllPanelsHiddenKey = new("Session.AreAllPanelsHidden", false);
+		static readonly Regex commandExecutableRegex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")(\\s|$)", RegexOptions.Compiled);
 		static readonly List<DisplayableLog> displayableLogsToDispose = new();
 		static readonly ScheduledAction disposeDisplayableLogsAction = new(App.Current, () =>
 		{
@@ -1338,39 +1344,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				else
 					this.SetValue(IsProcessingLogsProperty, false);
 			});
-			this.updateTitleAndIconAction = new(() =>
-			{
-				// check state
-				if (this.IsDisposed)
-					return;
-
-				// select icon
-				var app = this.Application as App;
-				var logProfile = this.LogProfile;
-				var icon = Global.Run(() =>
-				{
-					if (logProfile is null)
-						return app?.FindResourceOrDefault<IImage>("Image/Icon.Tab");
-					if (app is not null)
-						return LogProfileIconConverter.Default.Convert(new object?[] { logProfile }, typeof(IImage), null, app.CultureInfo) as IImage;
-					return null;
-				});
-
-				// select title
-				var title = Global.Run(() =>
-				{
-					var customTitle = this.CustomTitle;
-					if (logProfile is null)
-						return customTitle ?? app?.GetString("Session.Empty");
-					if (this.logFileInfoList.IsEmpty() || !logProfile.AllowMultipleFiles)
-						return customTitle ?? logProfile.Name;
-					return $"{customTitle ?? logProfile.Name} ({this.logFileInfoList.Count})";
-				});
-
-				// update properties
-				this.SetValue(IconProperty, icon);
-				this.SetValue(TitleProperty, title);
-			});
+			this.updateTitleAndIconAction = new(this.UpdateTitleAndIcon);
 			this.checkLogsMemoryUsageAction.Schedule();
 			this.updateTitleAndIconAction.Execute();
 			
@@ -3147,6 +3121,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// </summary>
 		public LogProfile? LogProfile => 
 			this.GetValue(LogProfileProperty);
+		
+		
+		/// <summary>
+		/// Get name of current log profile.
+		/// </summary>
+		public string? LogProfileName => 
+			this.GetValue(LogProfileNameProperty);
 
 
 		/// <summary>
@@ -3384,6 +3365,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					this.SetValue(IsLogFileNeededProperty, true);
 				}
 			}
+			this.updateTitleAndIconAction.Schedule();
 			this.UpdateCanAddLogFile(profile);
 		}
 
@@ -3571,7 +3553,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.DataSourceProvider):
 					if (this.attachedLogDataSourceProvider is not null)
 						this.attachedLogDataSourceProvider.PropertyChanged -= this.OnLogDataSourceProviderPropertyChanged;
-					this.attachedLogDataSourceProvider = logProfile?.DataSourceProvider;
+					this.attachedLogDataSourceProvider = logProfile.DataSourceProvider;
 					if (this.attachedLogDataSourceProvider is not null)
 						this.attachedLogDataSourceProvider.PropertyChanged += this.OnLogDataSourceProviderPropertyChanged;
 					this.ClearLogsReadingParameters();
@@ -3598,7 +3580,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					break;
 				case nameof(LogProfile.Icon):
 				case nameof(LogProfile.IconColor):
-				case nameof(LogProfile.Name):
 					this.updateTitleAndIconAction.Schedule();
 					break;
 				case nameof(LogProfile.IsContinuousReading):
@@ -3624,6 +3605,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				case nameof(LogProfile.MaxLogReadingCount):
 					if (this.LogProfile?.IsContinuousReading == false)
 						goto case nameof(LogProfile.LogPatterns);
+					break;
+				case nameof(LogProfile.Name):
+					this.SetValue(LogProfileNameProperty, logProfile.Name);
+					this.updateTitleAndIconAction.Schedule();
 					break;
 				case nameof(LogProfile.RestartReadingDelay):
 					if (logProfile.IsContinuousReading && this.logReaders.IsNotEmpty())
@@ -3742,6 +3727,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 							{
 								this.Logger.LogDebug("All logs cleared, remove log file '{logFileInfoFileName}'", logFileInfo.FileName);
 								this.logFileInfoList.Remove(logFileInfo);
+								this.updateTitleAndIconAction.Schedule();
 								if (this.logFileInfoList.IsEmpty())
 									this.OnAllLogFilesCleared();
 								this.DisposeLogReader(reader, false);
@@ -3881,6 +3867,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			{
 				this.SetValue(HasLogProfileProperty, newValue is not null);
 				this.SetValue(IsBuiltInLogProfileProperty, (newValue as LogProfile)?.IsBuiltIn == true);
+				this.SetValue(LogProfileNameProperty, (newValue as LogProfile)?.Name);
 			}
 			else if (property == LogsProperty)
 			{
@@ -4366,7 +4353,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					if (dir.IsValidFilePath() && Path.IsPathRooted(dir))
 					{
 						this.SetValue(WorkingDirectoryPathProperty, dir);
-						this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dir));
+						if (dir.Length > 0 && dir[^1] == Path.DirectorySeparatorChar)
+							this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dir[..^1]));
+						else
+							this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dir));
 						this.SetValue(HasWorkingDirectoryProperty, true);
 					}
 				}
@@ -5161,7 +5151,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 			// start reading logs
 			this.SetValue(WorkingDirectoryPathProperty, directory);
-			this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
+			if (directory.Length > 0 && directory[^1] == Path.DirectorySeparatorChar)
+				this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory[..^1]));
+			else
+				this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
 			this.SetValue(HasWorkingDirectoryProperty, true);
 			this.StartReadingLogs();
 		}
@@ -5986,6 +5979,99 @@ namespace CarinaStudio.ULogViewer.ViewModels
 			// update state
 			this.Logger.LogTrace("Max log file count: {count}", maxLogFileCount);
 			this.SetValue(MaxLogFileCountProperty, maxLogFileCount);
+		}
+		
+		
+		// Update title and icon.
+		void UpdateTitleAndIcon()
+		{
+			// check state
+			if (this.IsDisposed)
+				return;
+
+			// select icon
+			var app = this.Application as App;
+			var logProfile = this.LogProfile;
+			var icon = Global.Run(() =>
+			{
+				if (logProfile is null)
+					return app?.FindResourceOrDefault<IImage>("Image/Icon.Tab");
+				if (app is not null)
+					return LogProfileIconConverter.Default.Convert([ logProfile ], typeof(IImage), null, app.CultureInfo) as IImage;
+				return null;
+			});
+
+			// select title
+			var title = Global.Run(() =>
+			{
+				// no log profile
+				var customTitle = this.CustomTitle;
+				if (logProfile is null)
+					return customTitle ?? app?.GetString("Session.Empty");
+				var dataSourceOptions = logProfile.DataSourceOptions;
+					
+				// single file
+				if (this.logFileInfoList.Count == 1
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				{
+					return Path.GetFileName(this.logFileInfoList[0].FileName);
+				}
+
+				// command
+				if (this.GetValue(CommandProperty) is { } command 
+				    && !string.IsNullOrEmpty(command)
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)))
+				{
+					var match = commandExecutableRegex.Match(command);
+					return match.Success
+						? match.Groups["ExecutableCommand"].Value
+						: command;
+				}
+
+				// IP end point
+				if (this.GetValue(IPEndPointProperty) is { } ipEndPoint
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
+				{
+					return ipEndPoint.ToString();
+				}
+				
+				// process ID and name
+				if (this.GetValue(ProcessIdProperty) is { } pid
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)))
+				{
+					return pid.ToString();
+				}
+				if (this.GetValue(ProcessNameProperty) is { } processName
+				    && !string.IsNullOrEmpty(processName)
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
+				{
+					return processName;
+				}
+
+				// URI
+				if (this.GetValue(UriProperty) is { } uri
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
+				{
+					return uri.ToString();
+				}
+
+				// working directory
+				if (this.GetValue(WorkingDirectoryNameProperty) is { } workingDirName 
+				    && !string.IsNullOrEmpty(workingDirName)
+				    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
+				{
+					return workingDirName;
+				}
+
+				// 0 or multiple files
+				if (this.logFileInfoList.IsEmpty())
+					return customTitle ?? logProfile.Name;
+				return $"{customTitle ?? logProfile.Name} ({this.logFileInfoList.Count})";
+			});
+
+			// update properties
+			this.SetValue(IconProperty, icon);
+			this.SetValue(TitleProperty, title);
 		}
 
 

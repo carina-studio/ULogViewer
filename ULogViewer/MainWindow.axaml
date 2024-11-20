@@ -73,7 +73,8 @@
 									<Setter Property="VerticalAlignment" Value="Center"/>
 								</Style>
 							</StackPanel.Styles>
-							<TextBlock FontWeight="Bold" Text="{Binding Title}"/>
+							<TextBlock FontWeight="Bold" IsVisible="{Binding LogProfileName, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding LogProfileName}"/>
+							<TextBlock FontWeight="Bold" IsVisible="{Binding LogProfileName, Converter={x:Static ObjectConverters.IsNull}}" Text="{asXaml:StringResource Session.Empty}"/>
 							<Separator Classes="Dialog_Separator_Small"/>
 							<StackPanel IsVisible="{Binding !IsHibernated}">
 								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">

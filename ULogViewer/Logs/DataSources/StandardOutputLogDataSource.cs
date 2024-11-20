@@ -29,7 +29,7 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 	// Fields.
 	volatile string? arguments;
 	volatile string? commandFileOnReady;
-	static readonly Regex regex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")(\\s|$)");
+	static readonly Regex regex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")(\\s|$)", RegexOptions.Compiled);
 	Task? teardownCommandsTask;
 	string? tempWorkingDirectory;
 
