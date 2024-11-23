@@ -9,6 +9,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Controls;
+using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -34,16 +35,14 @@ namespace CarinaStudio.ULogViewer
 	class App : AppSuiteApplication, IULogViewerApplication
 	{
 		// Source of change list.
-		class ChangeListSource : DocumentSource
+		class ChangeListSource(App app) : DocumentSource(app)
 		{
-			public ChangeListSource(App app) : base(app)
-			{ }
-			public override IList<ApplicationCulture> SupportedCultures => new[]
-			{
+			public override IList<ApplicationCulture> SupportedCultures =>
+			[
 				ApplicationCulture.EN_US,
 				ApplicationCulture.ZH_CN,
-				ApplicationCulture.ZH_TW,
-			};
+				ApplicationCulture.ZH_TW
+			];
 			public override Uri Uri => this.Culture switch
 			{
 				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/ChangeList-zh-CN.md"),
@@ -54,8 +53,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Info of main window.
-		class MainWindowInfo
-		{ }
+		class MainWindowInfo;
 
 
 		// Source of document of Privacy Policy.
@@ -65,11 +63,11 @@ namespace CarinaStudio.ULogViewer
 			{ 
 				this.SetToCurrentCulture();
 			}
-			public override IList<ApplicationCulture> SupportedCultures => new[]
-			{
+			public override IList<ApplicationCulture> SupportedCultures =>
+			[
 				ApplicationCulture.EN_US,
-				ApplicationCulture.ZH_TW,
-			};
+				ApplicationCulture.ZH_TW
+			];
 			public override Uri Uri => this.Culture switch
 			{
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-zh-TW.md"),
@@ -85,11 +83,11 @@ namespace CarinaStudio.ULogViewer
 			{ 
 				this.SetToCurrentCulture();
 			}
-			public override IList<ApplicationCulture> SupportedCultures => new[]
-			{
+			public override IList<ApplicationCulture> SupportedCultures =>
+			[
 				ApplicationCulture.EN_US,
-				ApplicationCulture.ZH_TW,
-			};
+				ApplicationCulture.ZH_TW
+			];
 			public override Uri Uri => this.Culture switch
 			{
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-zh-TW.md"),
@@ -99,12 +97,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// External dependency of Xcode command-line tools settings.
-		class XcodeCmdLineToolsSettingExtDependency : ExternalDependency
+		class XcodeCmdLineToolsSettingExtDependency(App app) : ExternalDependency(app, "XcodeCommandLineToolsSetting", ExternalDependencyType.Configuration, ExternalDependencyPriority.RequiredByFeatures)
 		{
-			// Constructor.
-			public XcodeCmdLineToolsSettingExtDependency(App app) : base(app, "XcodeCommandLineToolsSetting", ExternalDependencyType.Configuration, ExternalDependencyPriority.RequiredByFeatures)
-			{ }
-
 			/// <inheritdoc/>
 			protected override async Task<bool> OnCheckAvailabilityAsync() => await Task.Run(() =>
 			{
@@ -147,7 +141,7 @@ namespace CarinaStudio.ULogViewer
 		AppOptionsDialog? appOptionsDialog;
 		IResourceProvider? compactResources;
 		IDisposable? compactResourcesToken;
-		ExternalDependency[] externalDependencies = Array.Empty<ExternalDependency>();
+		ExternalDependency[] externalDependencies = [];
 		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
 		DocumentViewerWindow? quickStartGuideWindow;
 		readonly Stopwatch stopwatch = new();
@@ -513,7 +507,7 @@ namespace CarinaStudio.ULogViewer
 			this.externalDependencies = new List<ExternalDependency>().Also(it =>
 			{
 				// ReSharper disable StringLiteralTypo
-				it.Add(new ExecutableExternalDependency(this, "AndroidSdkPlatformTools", ExternalDependencyPriority.RequiredByFeatures, "adb", new Uri("https://developer.android.com/tools/releases/platform-tools"), new Uri("https://developer.android.com/tools/releases/platform-tools#downloads")));
+				it.Add(new ExecutableExternalDependency(this, "AndroidSdkPlatformTools", ExternalDependencyPriority.RequiredByFeatures, FallbackCommandSearchPaths.AndroidSdkPlatformTools, "adb", new Uri("https://developer.android.com/tools/releases/platform-tools"), new Uri("https://developer.android.com/tools/releases/platform-tools#downloads")));
 				it.Add(new ExecutableExternalDependency(this, "Git", ExternalDependencyPriority.RequiredByFeatures, "git", new Uri("https://git-scm.com/"), new Uri("https://git-scm.com/downloads")));
 				it.Add(new ExecutableExternalDependency(this, "LibIMobileDevice", ExternalDependencyPriority.RequiredByFeatures, "idevicesyslog", new Uri("https://libimobiledevice.org/"), Global.Run(() =>
 				{
@@ -736,19 +730,17 @@ namespace CarinaStudio.ULogViewer
 
 		// URI of package manifest.
 		public override IEnumerable<Uri> PackageManifestUris => !this.Settings.GetValueOrDefault(AppSuite.SettingKeys.AcceptNonStableApplicationUpdate)
-			? new[]{ Uris.AppPackageManifest }
+			? [ Uris.AppPackageManifest ]
 			: this.ReleasingType == ApplicationReleasingType.Development
-				? new[]
-				{
+				? [
 					Uris.DevelopmentAppPackageManifest,
 					Uris.PreviewAppPackageManifest,
 					Uris.AppPackageManifest,
-				} 
-				: new[]
-				{
+				]
+				: [
 					Uris.PreviewAppPackageManifest,
 					Uris.AppPackageManifest,
-				};
+				];
 
 
 		/// <inheritdoc/>
