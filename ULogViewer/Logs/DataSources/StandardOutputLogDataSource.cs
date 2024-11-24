@@ -1,14 +1,16 @@
-﻿using CarinaStudio.Collections;
+﻿using CarinaStudio.AppSuite.IO;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.IO;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,11 +67,16 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 		var useTextShell = this.CreationOptions.UseTextShell;
 		var executablePath = (string?)null;
 		var args = (string?)null;
-		if (!useTextShell && !ParseCommand(command, workingDirectory, out executablePath, out args))
+		if (!useTextShell)
 		{
-			if (TryGettingExecutableCommand(command, out var exe))
-				this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
-			return false;
+			if (!ParseCommand(command, workingDirectory, out executablePath, out args))
+			{
+				if (TryGettingExecutableCommand(command, out var exe))
+					this.GenerateMessage(LogDataSourceMessageType.Error, this.Application.GetFormattedString("StandardOutputLogDataSource.CommandNotFound", exe));
+				return false;
+			}
+			if (IsScriptFile(executablePath))
+				useTextShell = true;
 		}
 		try
 		{
@@ -114,6 +121,14 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 			return false;
 		}
 	}
+	
+	
+	// Check whether given path is a path to a script/batch file or not.
+	static bool IsScriptFile(string filePath) => Path.GetExtension(filePath).ToLower(CultureInfo.InvariantCulture) switch
+	{
+		".bat" or ".ps" or ".py" or ".sh" => true,
+		_ => false,
+	};
 
 
 	// Reader closed.
@@ -315,72 +330,33 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 		if (string.IsNullOrWhiteSpace(command))
 			return false;
 
-		// find executable path
+		// find executable path in working directory
 		var match = regex.Match(command);
 		if (!match.Success)
 			return false;
 		var commandGroup = match.Groups["ExecutableCommand"];
-		executablePath = command[0..commandGroup.Length];
-		arguments = command[commandGroup.Length..^0];
-		if (Platform.IsWindows && !executablePath.ToLower().EndsWith(".exe"))
-			executablePath += ".exe";
+		executablePath = command[..commandGroup.Length];
+		arguments = command[commandGroup.Length..];
 		if (Path.IsPathRooted(executablePath))
 			return File.Exists(executablePath);
-		else
+		if (workingDirectory is not null && CommandSearchPaths.FindCommandPath(workingDirectory, executablePath) is { } exePathInWorkingDir)
 		{
-			if (workingDirectory != null)
-			{
-				string commandFile = Path.Combine(workingDirectory, executablePath);
-				if (File.Exists(commandFile))
-				{
-					executablePath = commandFile;
-					return true;
-				}
-			}
-			var environmentPaths = Global.Run(() =>
-			{
-				if (Platform.IsMacOS)
-				{
-					try
-					{
-						using var reader = new StreamReader("/etc/paths");
-						var paths = new List<string>();
-						var path = reader.ReadLine();
-						while (path != null)
-						{
-							if (!string.IsNullOrWhiteSpace(path))
-								paths.Add(path);
-							path = reader.ReadLine();
-						}
-						return paths.IsNotEmpty() ? paths.ToArray() : null;
-					}
-					catch
-					{
-						return null;
-					}
-				}
-				else if (Platform.IsWindows)
-				{
-					return new HashSet<string>(CarinaStudio.IO.PathEqualityComparer.Default).Also(pathSet =>
-					{
-						Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User)?.Split(Path.PathSeparator).Let(pathSet.AddAll);
-						Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine)?.Split(Path.PathSeparator).Let(pathSet.AddAll);
-					}).ToArray();
-				}
-				return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator);
-			});
-			if (environmentPaths != null)
-			{
-				foreach (var environmentPath in environmentPaths)
-				{
-					string commandFile = Path.Combine(environmentPath, executablePath);
-					if (File.Exists(commandFile))
-					{
-						executablePath = commandFile;
-						return true;
-					}
-				}
-			}
+			executablePath = exePathInWorkingDir;
+			return true;
+		}
+		
+		// select fall-back search paths
+		var fallbackSearchPaths = Path.GetFileNameWithoutExtension(executablePath).ToLower(CultureInfo.InvariantCulture) switch
+		{
+			"adb" => FallbackCommandSearchPaths.AndroidSdkPlatformTools,
+			_ => ImmutableHashSet<string>.Empty,
+		};
+		
+		// find executable path in search paths
+		if (CommandSearchPaths.FindCommandPath(executablePath, fallbackSearchPaths) is { } exePath)
+		{
+			executablePath = exePath;
+			return true;
 		}
 
 		// cannot find executable
@@ -410,11 +386,8 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 				this.arguments = PrepareTextShellArguments(shell, this.CreationOptions.Command.AsNonNull());
 				return LogDataSourceState.ReadyToOpenReader;
 			}
-			else
-			{
-				this.Logger.LogError("No text shell on system to run commands");
-				return LogDataSourceState.SourceNotFound;
-			}
+			this.Logger.LogError("No text shell on system to run commands");
+			return LogDataSourceState.SourceNotFound;
 		}
 		if (!ParseCommand(this.CreationOptions.Command, this.CreationOptions.WorkingDirectory, out var executablePath, out var arguments))
 		{
