@@ -9,6 +9,7 @@
 + Better indications for required or invalid value in ```Edit log profile``` and ```Data source options``` dialogs.
 + Improve user experience of using ```Select log profile``` dialog.
 + Show selected file name, command, IP endpoint, Process ID/name, URL or working directory on tab.
++ Add more default paths to search commands.
 
 ## Behavior Changes
 + 

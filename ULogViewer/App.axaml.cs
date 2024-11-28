@@ -508,7 +508,7 @@ namespace CarinaStudio.ULogViewer
 			{
 				// ReSharper disable StringLiteralTypo
 				it.Add(new ExecutableExternalDependency(this, "AndroidSdkPlatformTools", ExternalDependencyPriority.RequiredByFeatures, FallbackCommandSearchPaths.AndroidSdkPlatformTools, "adb", new Uri("https://developer.android.com/tools/releases/platform-tools"), new Uri("https://developer.android.com/tools/releases/platform-tools#downloads")));
-				it.Add(new ExecutableExternalDependency(this, "Git", ExternalDependencyPriority.RequiredByFeatures, "git", new Uri("https://git-scm.com/"), new Uri("https://git-scm.com/downloads")));
+				it.Add(new ExecutableExternalDependency(this, "Git", ExternalDependencyPriority.RequiredByFeatures, FallbackCommandSearchPaths.Git, "git", new Uri("https://git-scm.com/"), new Uri("https://git-scm.com/downloads")));
 				it.Add(new ExecutableExternalDependency(this, "LibIMobileDevice", ExternalDependencyPriority.RequiredByFeatures, "idevicesyslog", new Uri("https://libimobiledevice.org/"), Global.Run(() =>
 				{
 					if (Platform.IsWindows)

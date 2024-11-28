@@ -348,7 +348,8 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 		// select fall-back search paths
 		var fallbackSearchPaths = Path.GetFileNameWithoutExtension(executablePath).ToLower(CultureInfo.InvariantCulture) switch
 		{
-			"adb" => FallbackCommandSearchPaths.AndroidSdkPlatformTools,
+			"adb" or "fastboot" or "hprof-conv" => FallbackCommandSearchPaths.AndroidSdkPlatformTools,
+			"git" => FallbackCommandSearchPaths.Git,
 			_ => ImmutableHashSet<string>.Empty,
 		};
 		
