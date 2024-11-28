@@ -24,7 +24,7 @@
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
 		<AppSuiteVersion>3.0.0.1124-dev</AppSuiteVersion>
-		<AvaloniaVersion>11.2.1</AvaloniaVersion>
+		<AvaloniaVersion>11.2.2</AvaloniaVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
