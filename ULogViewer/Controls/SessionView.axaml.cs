@@ -1866,6 +1866,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								it.Bind(Avalonia.Controls.TextBlock.MaxLinesProperty, new Binding { Path = nameof(MaxDisplayLineCountForEachLog), Source = this });
 							else
 								it.MaxLines = 1;
+							it.HorizontalAlignment = isAutoWidth ? HorizontalAlignment.Stretch : HorizontalAlignment.Left;
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
 							if (logProperty.Name == nameof(DisplayableLog.Level))
