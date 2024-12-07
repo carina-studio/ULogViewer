@@ -583,22 +583,12 @@
 					<StackPanel Name="toolBarLogActionItemsPanel" Orientation="Horizontal">
 
 						<!-- Select log profiles -->
-						<Button Name="selectAndSetLogProfileButton" 
-						        Classes="ToolBar_Button_WithDropDownButton" 
-						        Command="{Binding #root.SelectAndSetLogProfileCommand}" 
-						        ToolTip.Tip="{asXaml:StringResource SessionView.SetLogProfile}">
+						<asControls:SplitButton Name="selectAndSetLogProfileButton"
+						                              Classes="ToolBar_SplitButton"
+						                              Command="{Binding #root.SelectAndSetLogProfileCommand}" 
+						                              ToolTip.Tip="{asXaml:StringResource SessionView.SetLogProfile}">
 							<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
-						</Button>
-						<ToggleButton Name="selectAndSetLogProfileDropDownButton" 
-						              Classes="ToolBar_DropDownButton" 
-						              Command="{Binding #root.ShowLogProfileSelectionMenu}" 
-						              IsEnabled="{Binding #selectAndSetLogProfileButton.IsEnabled}" 
-						              ToolTip.Tip="{asXaml:StringResource SessionView.SetLogProfile}">
-							<Panel>
-								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
-								<Image Classes="ToolBar_DropDownButtonIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>
-							</Panel>
-						</ToggleButton>
+						</asControls:SplitButton>
 
 						<!-- Set working directory -->
 						<Button Classes="ToolBar_Button" 

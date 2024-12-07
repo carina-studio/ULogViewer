@@ -1,4 +1,5 @@
 using System.Threading;
+using AsControls = CarinaStudio.AppSuite.Controls;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -295,7 +296,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly MenuItem searchLogPropertyOnInternetMenuItem;
 		IBrush? selectableValueLogItemBackgroundBrush;
 		readonly IMultiValueConverter selectableValueLogItemBackgroundConverter;
-		readonly ToggleButton selectAndSetLogProfileDropDownButton;
+		readonly AsControls.SplitButton selectAndSetLogProfileButton;
 		readonly MenuItem showLogPropertyMenuItem;
 		readonly ColumnDefinition sidePanelColumn;
 		readonly Control sidePanelContainer;
@@ -646,7 +647,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.predefinedLogTextFilterListBox.Focus();
 				});
 			});
-			this.selectAndSetLogProfileDropDownButton = toolBarContainer.FindControl<ToggleButton>(nameof(selectAndSetLogProfileDropDownButton)).AsNonNull();
+			this.selectAndSetLogProfileButton = this.Get<AsControls.SplitButton>(nameof(selectAndSetLogProfileButton));
 			this.sidePanelColumn = this.Get<Grid>("RootGrid").Let(grid =>
 			{
 				return grid.ColumnDefinitions[2].Also(it =>
@@ -800,6 +801,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logProfileSelectionMenu = ((LogProfileSelectionContextMenu)this.Resources[nameof(logProfileSelectionMenu)].AsNonNull()).Also(it =>
 			{
+				this.selectAndSetLogProfileButton.DropDownMenu = it;
 				it.LogProfileCreated += (_, logProfile) =>
 					this.OnLogProfileCreatedByLogProfileSelectionMenu(logProfile);
 				it.LogProfileExported += (_, _, fileName) =>
@@ -845,12 +847,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				};
 				it.LogProfileSelected += async (_, logProfile) =>
 					await this.SetLogProfileAsync(logProfile);
-				it.Closed += (_, _) => this.SynchronizationContext.Post(() => this.selectAndSetLogProfileDropDownButton.IsChecked = false);
-				it.Opened += (_, _) => this.SynchronizationContext.Post(() =>
-				{
-					ToolTip.SetIsOpen(this.selectAndSetLogProfileDropDownButton, false);
-					this.selectAndSetLogProfileDropDownButton.IsChecked = true;
-				});
 			});
 			this.logsSavingMenu = ((ContextMenu)this.Resources[nameof(logsSavingMenu)].AsNonNull()).Also(it =>
 			{
@@ -5545,13 +5541,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to show single log file in system file manager.
 		/// </summary>
 		public ICommand ShowLogFileInExplorerCommand { get; }
-		
-
-		/// <summary>
-		/// Show menu to select log profile.
-		/// </summary>
-		public void ShowLogProfileSelectionMenu() =>
-			this.logProfileSelectionMenu.Open(this.selectAndSetLogProfileDropDownButton);
 
 
 		/// <summary>
@@ -5610,7 +5599,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check state
 			if (this.areAllTutorialsShown)
 				return false;
-			if (this.attachedWindow is not CarinaStudio.AppSuite.Controls.Window window)
+			if (this.attachedWindow is not AsControls.Window window)
 				return false;
 			if ((window as MainWindow)?.AreInitialDialogsClosed == false
 				|| window.HasDialogs
@@ -5634,7 +5623,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					return window.ShowTutorial(new Tutorial().Also(it =>
 					{
-						it.Anchor = this.FindControl<Control>("selectAndSetLogProfileButton");
+						it.Anchor = this.selectAndSetLogProfileButton;
 						it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SelectLogProfileToStart"));
 						it.Dismissed += (_, _) => 
 						{
