@@ -5862,6 +5862,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				case "RestartRootWindows":
 					this.Application.RestartRootWindowsAsync();
 					break;
+				case "Test":
+					if (this.DataContext is Session session && session.HasTimestampDisplayableLogProperty)
+					{
+						if (session.LogFiltering.HasTimestampRange)
+							session.LogFiltering.ResetTimestampRangeCommand.TryExecute();
+						else
+						{
+							var endingTimestamp = DateTime.Now;
+							session.LogFiltering.BeginningTimestamp = endingTimestamp - TimeSpan.FromMilliseconds(3000);
+							session.LogFiltering.EndingTimestamp = endingTimestamp;
+						}
+					}
+					break;
 			}
 		}
 

@@ -20,7 +20,9 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     // Token of filtering.
     public class FilteringToken
     {
+        public DateTime? BeginningTimestamp;
         public FilterCombinationMode CombinationMode;
+        public DateTime? EndingTimestamp;
         public Regex[] ExclusiveTextRegexList = [];
         public bool HasLogProcessId;
         public bool HasLogTextPropertyGetter;
@@ -33,6 +35,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         public IList<Func<DisplayableLog, IStringSource?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, IStringSource?>>();
         public int? ProcessId;
         public int? ThreadId;
+        public Func<DisplayableLog, DateTime?>? TimestampPropertyGetter;
     }
 
 
@@ -42,7 +45,9 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
 
     // Fields.
+    DateTime? beginningTimestamp;
     FilterCombinationMode combinationMode = FilterCombinationMode.Auto;
+    DateTime? endingTimestamp;
     IList<Regex> exclusiveTextRegexList = Array.Empty<Regex>();
     readonly SortedObservableList<DisplayableLog> filteredLogs;
     IList<DisplayableLogProperty> filteringLogProperties = Array.Empty<DisplayableLogProperty>();
@@ -51,6 +56,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     LogLevel level = LogLevel.Undefined;
     int? processId;
     int? threadId;
+    string? timestampLogProperty;
     
 
     /// <summary>
@@ -63,6 +69,25 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     {
         this.filteredLogs = new SortedObservableList<DisplayableLog>(comparer);
         this.FilteredLogs = new Collections.SafeReadOnlyList<DisplayableLog>(this.filteredLogs);
+    }
+
+
+    /// <summary>
+    /// Get or set the inclusive beginning timestamp to filter logs.
+    /// </summary>
+    public DateTime? BeginningTimestamp
+    {
+        get => this.beginningTimestamp;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.beginningTimestamp == value)
+                return;
+            this.beginningTimestamp = value;
+            this.InvalidateProcessing();
+            this.OnPropertyChanged(nameof(BeginningTimestamp));
+        }
     }
 
 
@@ -130,6 +155,8 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                 isProcessingNeeded = false;
         }
         if (!isProcessingNeeded)
+            isProcessingNeeded = (this.timestampLogProperty is not null && (this.beginningTimestamp.HasValue || this.endingTimestamp.HasValue));
+        if (!isProcessingNeeded)
             isProcessingNeeded = (this.level != LogLevel.Undefined);
         if (!isProcessingNeeded)
             isProcessingNeeded = (this.processId != null);
@@ -144,6 +171,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         }
         
         // setup token
+        filteringToken.BeginningTimestamp = this.beginningTimestamp;
         filteringToken.CombinationMode = this.combinationMode.Let(it =>
         {
             if (it != FilterCombinationMode.Auto)
@@ -154,6 +182,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                 return FilterCombinationMode.Union;
             return FilterCombinationMode.Intersection;
         });
+        filteringToken.EndingTimestamp = this.endingTimestamp;
         filteringToken.HasLogTextPropertyGetter = textPropertyGetters.IsNotEmpty();
         filteringToken.HasTextRegex = this.inclusiveTextRegexList.IsNotEmpty() || this.exclusiveTextRegexList.IsNotEmpty();
         filteringToken.IncludeMarkedLogs = this.includeMarkedLogs;
@@ -163,7 +192,29 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         filteringToken.InclusiveTextRegexList = this.inclusiveTextRegexList.ToArray();
         filteringToken.ExclusiveTextRegexList = this.exclusiveTextRegexList.ToArray();
         filteringToken.ThreadId = this.threadId;
+        filteringToken.TimestampPropertyGetter = this.timestampLogProperty is not null && (this.beginningTimestamp.HasValue || this.endingTimestamp.HasValue)
+            ? DisplayableLog.CreateLogPropertyGetter<DateTime?>(this.timestampLogProperty)
+            : null;
         return filteringToken;
+    }
+    
+    
+    /// <summary>
+    /// Get or set the inclusive ending timestamp to filter logs.
+    /// </summary>
+    public DateTime? EndTimestamp
+    {
+        get => this.endingTimestamp;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.endingTimestamp == value)
+                return;
+            this.endingTimestamp = value;
+            this.InvalidateProcessing();
+            this.OnPropertyChanged(nameof(EndTimestamp));
+        }
     }
     
     
@@ -325,6 +376,22 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         result = 0; // not used
         if (token.IncludeMarkedLogs && log.MarkedColor != MarkColor.None)
             return true;
+        
+        // check timestamp
+        var timestampGetter = token.TimestampPropertyGetter;
+        if (timestampGetter is not null)
+        {
+            var beginningTimestamp = token.BeginningTimestamp;
+            var endingTimestamp = token.EndingTimestamp;
+            var timestamp = timestampGetter(log);
+            if (timestamp.HasValue)
+            {
+                if (beginningTimestamp.HasValue && timestamp.Value < beginningTimestamp.Value)
+                    return false;
+                if (endingTimestamp.HasValue && timestamp.Value > endingTimestamp.Value)
+                    return false;
+            }
+        }
 
         // Text filtering is needed if there are any regexes defined to test against.
         // There are now two types of text regex to test against
@@ -502,6 +569,25 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.threadId = value;
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(ThreadId));
+        }
+    }
+
+
+    /// <summary>
+    /// Get of set name of log property to get timestamp.
+    /// </summary>
+    public string? TimestampLogProperty
+    {
+        get => this.timestampLogProperty;
+        set
+        {
+            this.VerifyAccess();
+            this.VerifyDisposed();
+            if (this.timestampLogProperty == value)
+                return;
+            this.timestampLogProperty = value;
+            this.InvalidateProcessing();
+            this.OnPropertyChanged(nameof(EndTimestamp));
         }
     }
 }

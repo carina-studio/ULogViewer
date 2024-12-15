@@ -519,6 +519,8 @@
 			<MenuItem Command="{Binding #root.TestCommand}" CommandParameter="RestartRootWindows" Header="Restart root windows"/>
 			<Separator/>
 			<MenuItem Command="{Binding #root.TestCommand}" CommandParameter="ExportImageResource" Header="Export image resource"/>
+			<Separator/>
+			<MenuItem Command="{Binding #root.TestCommand}" CommandParameter="Test" Header="Test"/>
 		</ContextMenu>
 
 		<!-- Working directory menu -->
