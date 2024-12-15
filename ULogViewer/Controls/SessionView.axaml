@@ -773,16 +773,23 @@
 						          ItemsSource="{Binding #root.ValidLogLevels}" 
 						          SelectedItem="{Binding LogFiltering.LevelFilter, FallbackValue={x:Static appLogs:LogLevel.Undefined}, Mode=TwoWay}" 
 						          ToolTip.Tip="{asXaml:StringResource SessionView.LogLevelFilter.Description}" 
-						          VerticalAlignment="Center"
-						          Width="{StaticResource Double/SessionView.ToolBar.LogLevelFilter.Width}">
+						          VerticalAlignment="Center">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
-									<StackPanel Orientation="Horizontal">
-										<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-										<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
-									</StackPanel>
+									<Panel>
+										<TextBlock Classes="ComboBoxItem_TextBlock" Opacity="0" Text=" "/>
+										<StackPanel Orientation="Horizontal">
+											<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+											<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+										</StackPanel>
+									</Panel>
 								</DataTemplate>
 							</ComboBox.ItemTemplate>
+							<ComboBox.Styles>
+								<Style Selector="ComboBox /template/ ContentControl#ContentPresenter > Panel > StackPanel > TextBlock:nth-child(2)">
+									<Setter Property="IsVisible" Value="False"/>
+								</Style>
+							</ComboBox.Styles>
 						</ComboBox>
 
 						<!-- PID filter -->
