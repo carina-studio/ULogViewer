@@ -74,12 +74,6 @@ class LogSelectionViewModel : SessionComponent
     readonly MutableObservableBoolean canSelectLogsDurationEndingLog = new();
     readonly MutableObservableBoolean canSelectLogsDurationStartingLog = new();
     readonly ScheduledAction commitPendingSelectedLogsAction;
-    readonly IDisposable displayableLogPropertiesObserverToken;
-    readonly IDisposable earliestLogTimestampObserverToken;
-    readonly IDisposable latestLogTimestampObserverToken;
-    readonly IDisposable logsObserverToken;
-    readonly IDisposable maxLogTimeSpanObserverToken;
-    readonly IDisposable minLogTimeSpanObserverToken;
     readonly ScheduledAction notifySelectedLogsChangedAction;
     readonly HashSet<DisplayableLog> pendingSelectedLogs = new();
     readonly ScheduledAction reportSelectedLogsTimeInfoAction;
@@ -164,29 +158,31 @@ class LogSelectionViewModel : SessionComponent
         });
         
         // attach to session
-        this.displayableLogPropertiesObserverToken = session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
-        {
-            var selectedProperty = this.GetValue(SelectedLogPropertyProperty);
-            if (selectedProperty is not null && !properties.Contains(selectedProperty))
-                this.ResetValue(SelectedLogPropertyProperty);
-        });
-        this.earliestLogTimestampObserverToken = session.GetValueAsObservable(Session.EarliestLogTimestampProperty).Subscribe(_ =>
-            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
-        this.latestLogTimestampObserverToken = session.GetValueAsObservable(Session.LatestLogTimestampProperty).Subscribe(_ =>
-            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
-        this.logsObserverToken = session.GetValueAsObservable(Session.LogsProperty).Subscribe(logs =>
-        {
-            if (this.attachedLogs is not null)
-                this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
-            this.ClearSelectedLogs();
-            this.attachedLogs = logs as INotifyCollectionChanged;
-            if (this.attachedLogs is not null)
-                this.attachedLogs.CollectionChanged += this.OnLogsChanged;
-        });
-        this.maxLogTimeSpanObserverToken = session.GetValueAsObservable(Session.MaxLogTimeSpanProperty).Subscribe(_ =>
-            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
-        this.minLogTimeSpanObserverToken = session.GetValueAsObservable(Session.MinLogTimeSpanProperty).Subscribe(_ =>
-            this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule());
+        this.AddResources(
+            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
+            {
+                var selectedProperty = this.GetValue(SelectedLogPropertyProperty);
+                if (selectedProperty is not null && !properties.Contains(selectedProperty))
+                    this.ResetValue(SelectedLogPropertyProperty);
+            }),
+            session.GetValueAsObservable(Session.EarliestLogTimestampProperty).Subscribe(_ =>
+                this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule()),
+            session.GetValueAsObservable(Session.LatestLogTimestampProperty).Subscribe(_ =>
+                this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule()),
+            session.GetValueAsObservable(Session.LogsProperty).Subscribe(logs =>
+            {
+                if (this.attachedLogs is not null)
+                    this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
+                this.ClearSelectedLogs();
+                this.attachedLogs = logs as INotifyCollectionChanged;
+                if (this.attachedLogs is not null)
+                    this.attachedLogs.CollectionChanged += this.OnLogsChanged;
+            }),
+            session.GetValueAsObservable(Session.MaxLogTimeSpanProperty).Subscribe(_ =>
+                this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule()),
+            session.GetValueAsObservable(Session.MinLogTimeSpanProperty).Subscribe(_ =>
+                this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule())
+        );
         
         // attach to self
         this.GetValueAsObservable(IsAllLogsSelectionRequestedProperty).Subscribe(requested =>
@@ -256,12 +252,6 @@ class LogSelectionViewModel : SessionComponent
             this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
             this.attachedLogs = null;
         }
-        this.displayableLogPropertiesObserverToken.Dispose();
-        this.earliestLogTimestampObserverToken.Dispose();
-        this.latestLogTimestampObserverToken.Dispose();
-        this.logsObserverToken.Dispose();
-        this.maxLogTimeSpanObserverToken.Dispose();
-        this.minLogTimeSpanObserverToken.Dispose();
 
         // call base
         base.Dispose(disposing);
@@ -525,10 +515,7 @@ class LogSelectionViewModel : SessionComponent
         if (!session.MaxLogTimeSpan.HasValue && !session.LatestLogTimestamp.HasValue)
             return;
         this.selectedLogs.Clear();
-        if (profile.SortDirection == SortDirection.Ascending)
-            this.selectedLogs.Add(logs[^1]);
-        else
-            this.selectedLogs.Add(logs[0]);
+        this.selectedLogs.Add(profile.SortDirection == SortDirection.Ascending ? logs[^1] : logs[0]);
     }
 
 
@@ -552,10 +539,7 @@ class LogSelectionViewModel : SessionComponent
         if (!session.MinLogTimeSpan.HasValue && !session.EarliestLogTimestamp.HasValue)
             return;
         this.selectedLogs.Clear();
-        if (profile.SortDirection == SortDirection.Ascending)
-            this.selectedLogs.Add(logs[0]);
-        else
-            this.selectedLogs.Add(logs[^1]);
+        this.selectedLogs.Add(profile.SortDirection == SortDirection.Ascending ? logs[0] : logs[^1]);
     }
 
 

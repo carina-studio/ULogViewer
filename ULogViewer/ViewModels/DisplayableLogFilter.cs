@@ -376,22 +376,6 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         result = 0; // not used
         if (token.IncludeMarkedLogs && log.MarkedColor != MarkColor.None)
             return true;
-        
-        // check timestamp
-        var timestampGetter = token.TimestampPropertyGetter;
-        if (timestampGetter is not null)
-        {
-            var beginningTimestamp = token.BeginningTimestamp;
-            var endingTimestamp = token.EndingTimestamp;
-            var timestamp = timestampGetter(log);
-            if (timestamp.HasValue)
-            {
-                if (beginningTimestamp.HasValue && timestamp.Value < beginningTimestamp.Value)
-                    return false;
-                if (endingTimestamp.HasValue && timestamp.Value > endingTimestamp.Value)
-                    return false;
-            }
-        }
 
         // Text filtering is needed if there are any regexes defined to test against.
         // There are now two types of text regex to test against

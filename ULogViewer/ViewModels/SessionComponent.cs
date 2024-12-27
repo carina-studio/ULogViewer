@@ -17,7 +17,6 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     // Fields.
     LogProfile? attachedLogProfile;
     readonly ISessionInternalAccessor internalAccessor;
-    readonly IDisposable logProfileObserverToken;
 
 
     /// <summary>
@@ -33,20 +32,29 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.Owner = session;
 
         // attach to session
+        var isAttachingToSession = true;
         session.AllComponentsCreated += this.OnAllComponentsCreated;
         (session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnAllLogsChanged);
         internalAccessor.DisplayableLogGroupCreated += this.OnDisplayableLogGroupCreated;
-        this.logProfileObserverToken = session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
-        {
-            var prevLogProfile = this.attachedLogProfile;
-            if (ReferenceEquals(prevLogProfile, logProfile))
-                return;
-            this.attachedLogProfile = logProfile;
-            this.OnLogProfileChanged(prevLogProfile, logProfile);
-        });
+        this.AddResources(
+            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
+            {
+                if (!isAttachingToSession)
+                    this.OnProVersionActivationChanged(isActivated);
+            }),
+            session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
+            {
+                var prevLogProfile = this.attachedLogProfile;
+                if (ReferenceEquals(prevLogProfile, logProfile))
+                    return;
+                this.attachedLogProfile = logProfile;
+                this.OnLogProfileChanged(prevLogProfile, logProfile);
+            })
+        );
         session.RestoringState += this.OnRestoreState;
         session.SavingState += this.OnSaveState;
+        isAttachingToSession = false;
     }
 
 
@@ -93,7 +101,6 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         (this.Session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnAllLogsChanged);
         this.internalAccessor.DisplayableLogGroupCreated -= this.OnDisplayableLogGroupCreated;
-        this.logProfileObserverToken.Dispose();
         this.Session.RestoringState -= this.OnRestoreState;
         this.Session.SavingState -= this.OnSaveState;
 
@@ -130,6 +137,12 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         if (!this.IsDisposed)
             this.ErrorMessageGenerated?.Invoke(this, new(message));
     }
+
+
+    /// <summary>
+    /// Check whether Pro-version of ULogViewer is activated or not.
+    /// </summary>
+    protected bool IsProVersionActivated => this.Session.IsProVersionActivated;
 
 
     /// <summary>
@@ -216,6 +229,14 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         if (newOwner != null && newOwner != this.Session)
             throw new InvalidOperationException("Cannot change owner of SessionComponent.");
     }
+    
+    
+    /// <summary>
+    /// Called when activation state of Pro-version of ULogViewer changed.
+    /// </summary>
+    /// <param name="isActivated">Whether the Pro-version of ULogViewer is activated or not.</param>
+    protected virtual void OnProVersionActivationChanged(bool isActivated)
+    { }
 
 
     /// <summary>

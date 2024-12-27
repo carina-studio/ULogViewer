@@ -113,7 +113,6 @@ class LogChartViewModel : SessionComponent
     readonly MutableObservableBoolean canSetChartType = new();
     DisplayableLogChartSeriesGenerator? emptySeriesGenerator;
     DisplayableLogChartSeriesGenerator? filteredLogsSeriesGenerator;
-    readonly List<IDisposable> observerTokens = new();
     readonly DisplayableLogChartSeriesGenerator markedLogsSeriesGenerator;
     readonly ScheduledAction reportMaxSeriesValueAction;
     readonly ScheduledAction reportMinSeriesValueAction;
@@ -204,32 +203,19 @@ class LogChartViewModel : SessionComponent
         // restore panel state
         this.SetValue(PanelSizeProperty, this.PersistentState.GetValueOrDefault(LatestPanelSizeKey));
         
-        // attach to self properties
-        var isInit = true;
-        this.GetValueAsObservable(IsChartDefinedProperty).Subscribe(isDefined =>
-        {
-            if (isInit)
-                return;
-            if (!isDefined)
-                this.ResetValue(IsPanelVisibleProperty);
-            this.UpdateCanSetChartType();
-        });
-        this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
-        {
-            if (!isInit)
-                this.PersistentState.SetValue<int>(LatestPanelSizeKey, (int)(size + 0.5));
-        });
-        
         // attach to session
-        this.observerTokens.Add(session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(_ =>
-        {
-            if (!isInit)
+        var isAttachingToSession = true;
+        this.AddResources(
+            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(_ =>
             {
-                this.ApplyLogChartSeriesSources();
-                this.UpdateCanSetChartType();
-            }
-        }));
-        isInit = false;
+                if (!isAttachingToSession)
+                {
+                    this.ApplyLogChartSeriesSources();
+                    this.UpdateCanSetChartType();
+                }
+            })
+        );
+        isAttachingToSession = false;
     }
     
     
@@ -339,11 +325,6 @@ class LogChartViewModel : SessionComponent
     {
         // collect sources to dispose
         var sourcesToDispose = this.allLogsSeriesGenerator.LogChartSeriesSources;
-        
-        // remove observers
-        foreach (var token in this.observerTokens)
-            token.Dispose();
-        this.observerTokens.Clear();
         
         // detach from series
         foreach (var (generator, handler) in this.seriesPropertyChangedHandlers)
@@ -513,12 +494,14 @@ class LogChartViewModel : SessionComponent
         this.filteredLogsSeriesGenerator = new DisplayableLogChartSeriesGenerator(this.Application, session.LogFiltering.FilteredLogs, new DisplayableLogComparer(this.CompareLogs, default)).Also(this.AttachToSeriesGenerator);
         
         // attach to session
-        this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
-        this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
-        this.observerTokens.Add(session.GetValueAsObservable(Session.IsShowingRawLogLinesTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
+        this.AddResources(
+            session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()),
+            session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()),
+            session.GetValueAsObservable(Session.IsShowingRawLogLinesTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule())
+        );
         
         // attach to components
-        this.observerTokens.Add(session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
+        this.AddResource(session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
         
         // setup initial series
         this.reportSeriesAction.Execute();
@@ -649,6 +632,21 @@ class LogChartViewModel : SessionComponent
                 });
                 break;
         }
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
+    {
+        base.OnPropertyChanged(property, oldValue, newValue);
+        if (property == IsChartDefinedProperty)
+        {
+            if (!(bool)newValue!)
+                this.ResetValue(IsPanelVisibleProperty);
+            this.UpdateCanSetChartType();
+        }
+        else if (property == PanelSizeProperty)
+            this.PersistentState.SetValue<int>(LatestPanelSizeKey, (int)((double)newValue! + 0.5));
     }
 
 

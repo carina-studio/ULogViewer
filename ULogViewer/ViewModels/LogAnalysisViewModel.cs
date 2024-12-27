@@ -111,11 +111,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedAnalyzers = new();
     DisplayableLogProcessingPriority baseScriptLogAnalysisPriority;
     readonly ScriptDisplayableLogAnalyzer coopScriptLogAnalyzer;
-    readonly IDisposable displayLogPropertiesObserverToken;
-    readonly IDisposable isProVersionActivatedObserverToken;
-    readonly IDisposable isReadingLogsContinuouslyObserverToken;
-    readonly IDisposable isReadingLogsObserverToken;
-    readonly IDisposable isRemovingLogFilesObserverToken;
     bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
@@ -143,9 +138,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <param name="internalAccessor">Accessor to internal state of session.</param>
     public LogAnalysisViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     { 
-        // start initialization
-        bool isInit = true;
-
         // create commands
         this.ClearSelectedAnalysisResultsCommand = new Command(() => this.selectedAnalysisResults?.Clear(), this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
         this.CopySelectedAnalysisResultsCommand = new Command(this.CopySelectedAnalysisResults, this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
@@ -220,7 +212,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             var byteSizeCount = 0;
             var totalByteSize = 0L;
             var durationResultCount = 0;
-            var totalDuration = new TimeSpan();
+            var totalDuration = TimeSpan.Zero;
             var quantityCount = 0;
             var totalQuantity = 0L;
             for (var i = this.selectedAnalysisResults.Count - 1; i >= 0; --i)
@@ -379,57 +371,39 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             else
                 this.scriptLogAnalyzer.ProcessingPriority = this.baseScriptLogAnalysisPriority;
         });
-
-        // attach to self properties
-        this.GetValueAsObservable(IsCooperativeLogAnalysisScriptSetEnabledProperty).Subscribe(isEnabled =>
-        {
-            if (isInit)
-                return;
-            if (isEnabled)
-                this.updateCoopScriptLogAnalysisAction.Schedule();
-            else
-                this.updateCoopScriptLogAnalysisAction.Execute();
-        });
-        this.GetValueAsObservable(IsPanelVisibleProperty).Subscribe(isVisible =>
-        {
-            if (!isInit && isVisible)
-                this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
-        });
-        this.GetValueAsObservable(PanelSizeProperty).Subscribe(size =>
-        {
-            if (!isInit && !this.isRestoringState)
-                this.PersistentState.SetValue<double>(latestPanelSizeKey, size);
-        });
         
         // attach to session
+        var isAttachingToSession = true;
         session.AllLogReadersDisposed += this.OnAllLogReadersDisposed;
-        this.displayLogPropertiesObserverToken = session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
-        {
-            this.coopScriptLogAnalyzer.LogProperties.Clear();
-            this.coopScriptLogAnalyzer.LogProperties.AddAll(properties);
-            this.keyLogAnalyzer.LogProperties.Clear();
-            this.keyLogAnalyzer.LogProperties.AddAll(properties);
-            this.operationCountingAnalyzer.LogProperties.Clear();
-            this.operationCountingAnalyzer.LogProperties.AddAll(properties);
-            this.operationDurationAnalyzer.LogProperties.Clear();
-            this.operationDurationAnalyzer.LogProperties.AddAll(properties);
-            this.scriptLogAnalyzer.LogProperties.Clear();
-            this.scriptLogAnalyzer.LogProperties.AddAll(properties);
-        });
-        this.isProVersionActivatedObserverToken = session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
-        {
-            if (!isInit && isActivated)
+        this.AddResources(session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
             {
-                this.updateCoopScriptLogAnalysisAction.Schedule();
-                this.updateScriptLogAnalysisAction.Schedule();
-            }
-        });
-        this.isReadingLogsContinuouslyObserverToken = session.GetValueAsObservable(Session.IsReadingLogsContinuouslyProperty).Subscribe(_ =>
-            updateScriptLogAnalysisPriorityAction.Schedule());
-        this.isReadingLogsObserverToken = session.GetValueAsObservable(Session.IsReadingLogsProperty).Subscribe(_ =>
-            updateScriptLogAnalysisPriorityAction.Schedule());
-        this.isRemovingLogFilesObserverToken = session.GetValueAsObservable(Session.IsRemovingLogFilesProperty).Subscribe(_ =>
-            updateScriptLogAnalysisPriorityAction.Schedule());
+                this.coopScriptLogAnalyzer.LogProperties.Clear();
+                this.coopScriptLogAnalyzer.LogProperties.AddAll(properties);
+                this.keyLogAnalyzer.LogProperties.Clear();
+                this.keyLogAnalyzer.LogProperties.AddAll(properties);
+                this.operationCountingAnalyzer.LogProperties.Clear();
+                this.operationCountingAnalyzer.LogProperties.AddAll(properties);
+                this.operationDurationAnalyzer.LogProperties.Clear();
+                this.operationDurationAnalyzer.LogProperties.AddAll(properties);
+                this.scriptLogAnalyzer.LogProperties.Clear();
+                this.scriptLogAnalyzer.LogProperties.AddAll(properties);
+            }),
+            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
+            {
+                if (!isAttachingToSession && isActivated)
+                {
+                    this.updateCoopScriptLogAnalysisAction.Schedule();
+                    this.updateScriptLogAnalysisAction.Schedule();
+                }
+            }),
+            session.GetValueAsObservable(Session.IsReadingLogsContinuouslyProperty).Subscribe(_ =>
+                updateScriptLogAnalysisPriorityAction.Schedule()),
+            session.GetValueAsObservable(Session.IsReadingLogsProperty).Subscribe(_ =>
+                updateScriptLogAnalysisPriorityAction.Schedule()),
+            session.GetValueAsObservable(Session.IsRemovingLogFilesProperty).Subscribe(_ =>
+                updateScriptLogAnalysisPriorityAction.Schedule())
+        );
+        isAttachingToSession = false;
 
         // restore state
 #pragma warning disable CS0612
@@ -438,9 +412,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         else
             this.SetValue(PanelSizeProperty, this.PersistentState.GetValueOrDefault(latestPanelSizeKey));
 #pragma warning restore CS0612
-
-        // complete initialization
-        isInit = false;
     }
 
 
@@ -629,11 +600,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     {
         // detach from session
         this.Session.AllLogReadersDisposed -= this.OnAllLogReadersDisposed;
-        this.displayLogPropertiesObserverToken.Dispose();
-        this.isProVersionActivatedObserverToken.Dispose();
-        this.isReadingLogsContinuouslyObserverToken.Dispose();
-        this.isReadingLogsObserverToken.Dispose();
-        this.isRemovingLogFilesObserverToken.Dispose();
 
         // detach from analyzers
         this.DetachFromAnalyzer(this.coopScriptLogAnalyzer, true);
@@ -934,6 +900,30 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 }
                 break;
             }
+        }
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
+    {
+        base.OnPropertyChanged(property, oldValue, newValue);
+        if (property == IsCooperativeLogAnalysisScriptSetEnabledProperty)
+        {
+            if ((bool)newValue!)
+                this.updateCoopScriptLogAnalysisAction.Schedule();
+            else
+                this.updateCoopScriptLogAnalysisAction.Execute();
+        }
+        else if (property == IsPanelVisibleProperty)
+        {
+            if ((bool)newValue!)
+                this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
+        }
+        else if (property == PanelSizeProperty)
+        {
+            if (!this.isRestoringState)
+                this.PersistentState.SetValue<double>(latestPanelSizeKey, (double)newValue!);
         }
     }
 

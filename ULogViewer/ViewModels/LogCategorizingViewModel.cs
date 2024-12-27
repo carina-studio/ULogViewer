@@ -46,12 +46,8 @@ class LogCategorizingViewModel : SessionComponent
     
     // Fields.
     readonly TimestampDisplayableLogCategorizer allLogsTimestampCategorizer;
-    readonly IDisposable displayLogPropertiesObserverToken;
     TimestampDisplayableLogCategorizer? filteredLogsTimestampCategorizer;
-    IDisposable isFilteringNeededObserverToken = EmptyDisposable.Default;
     bool isRestoringState;
-    readonly IDisposable isShowingAllLogsObserverToken;
-    readonly IDisposable isShowingMarkedLogsObserverToken;
     readonly TimestampDisplayableLogCategorizer markedLogsTimestampCategorizer;
     readonly ScheduledAction reportTimestampCategoriesAction;
 
@@ -63,9 +59,6 @@ class LogCategorizingViewModel : SessionComponent
     /// <param name="internalAccessor">Accessor to internal state of session.</param>
     public LogCategorizingViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
-        // start initialization
-        var isInit = true;
-
         // create categorizers
         var logComparer = new DisplayableLogComparer(this.CompareLogs, default);
         this.allLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.AllLogs, logComparer);
@@ -94,22 +87,19 @@ class LogCategorizingViewModel : SessionComponent
         });
 
         // attach to session
-        this.displayLogPropertiesObserverToken = session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(_ =>
-        {
-            if (!isInit)
-                this.UpdateTimestampLogPropertyName();
-        });
-        this.isShowingAllLogsObserverToken = session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ =>
-            this.reportTimestampCategoriesAction.Schedule());
-        this.isShowingMarkedLogsObserverToken = session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ =>
-            this.reportTimestampCategoriesAction.Schedule());
-        
-        // attach to self properties
-        this.GetValueAsObservable(TimestampCategoriesPanelSizeProperty).Subscribe(size =>
-        {
-            if (!isInit && !this.isRestoringState)
-                this.PersistentState.SetValue<double>(latestTimestampCategoriesPanelSizeKey, size);
-        });
+        var isAttachingToSession = true;
+        this.AddResources(
+            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(_ =>
+            {
+                if (!isAttachingToSession)
+                    this.UpdateTimestampLogPropertyName();
+            }),
+            session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ =>
+                this.reportTimestampCategoriesAction.Schedule()),
+            session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ =>
+                this.reportTimestampCategoriesAction.Schedule())
+        );
+        isAttachingToSession = false;
         
         // restore state
 #pragma warning disable CS0612
@@ -118,23 +108,12 @@ class LogCategorizingViewModel : SessionComponent
         else
             this.SetValue(TimestampCategoriesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestTimestampCategoriesPanelSizeKey));
 #pragma warning restore CS0612
-
-        // complete
-        isInit = false;
     }
 
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        // detach from components
-        this.isFilteringNeededObserverToken.Dispose();
-
-        // detach from session
-        this.displayLogPropertiesObserverToken.Dispose();
-        this.isShowingAllLogsObserverToken.Dispose();
-        this.isShowingMarkedLogsObserverToken.Dispose();
-
         // release log categorizers
         this.allLogsTimestampCategorizer.Dispose();
         this.filteredLogsTimestampCategorizer?.Dispose();
@@ -167,8 +146,9 @@ class LogCategorizingViewModel : SessionComponent
     {
         base.OnAllComponentsCreated();
         this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.Session.LogFiltering.FilteredLogs, new DisplayableLogComparer(this.CompareLogs, default));
-        this.isFilteringNeededObserverToken = this.Session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
-            this.reportTimestampCategoriesAction.Schedule());
+        this.AddResource(this.Session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
+            this.reportTimestampCategoriesAction.Schedule())
+        );
     }
 
 
@@ -227,6 +207,18 @@ class LogCategorizingViewModel : SessionComponent
                     this.markedLogsTimestampCategorizer.Granularity = it;
                 });
                 break;
+        }
+    }
+
+
+    /// <inheritdoc/>
+    protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
+    {
+        base.OnPropertyChanged(property, oldValue, newValue);
+        if (property == TimestampCategoriesPanelSizeProperty)
+        {
+            if (!this.isRestoringState)
+                this.PersistentState.SetValue<double>(latestTimestampCategoriesPanelSizeKey, (double)newValue!);
         }
     }
 
