@@ -83,15 +83,18 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 								this.Logger.LogWarning("Use temp file '{tempFilePath}'", tempFilePath);
 							return new FileStream(tempFilePath ?? fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite).Let(stream =>
 							{
-								var reader = Path.GetExtension(fileName)?.ToLower() switch
+								TextReader reader;
+								if (options.FormatJsonData)
+									reader = new FormattedJsonTextReader(new StreamReader(stream, encoding));
+								else
 								{
-									".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
-										new StreamReader(gzipStream, encoding)),
-									".json" => options.FormatJsonData
-										? new FormattedJsonTextReader(new StreamReader(stream, encoding))
-										: new StreamReader(stream, encoding),
-									_ => (TextReader)new StreamReader(stream, encoding),
-								};
+									reader = Path.GetExtension(fileName).ToLower() switch
+									{
+										".gz" => new GZipStream(stream, CompressionMode.Decompress).Let(gzipStream =>
+											new StreamReader(gzipStream, encoding)),
+										_ => (TextReader)new StreamReader(stream, encoding),
+									};	
+								}
 								this.tempFilePath = tempFilePath;
 								result = LogDataSourceState.ReaderOpened;
 								return reader;

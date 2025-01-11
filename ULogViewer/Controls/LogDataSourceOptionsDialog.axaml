@@ -241,9 +241,6 @@
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<TextBlock Classes="Dialog_TextBlock_Description" 
-									           IsVisible="{Binding #window.IsFileNameSupported}" 
-									           Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData.Description}"/>
 								</StackPanel>
 								<ToggleSwitch Name="formatJsonDataSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 							</asControls:DialogItemGrid>
@@ -264,9 +261,6 @@
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
-									<TextBlock Classes="Dialog_TextBlock_Description" 
-									           IsVisible="{Binding #window.IsFileNameSupported}" 
-									           Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData.Description}"/>
 								</StackPanel>
 								<ToggleSwitch Name="formatXmlDataSwitch" Classes="Dialog_Item_ToggleSwitch" Grid.Column="1"/>
 							</asControls:DialogItemGrid>
