@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<AssemblyVersion>4.1.2.1110</AssemblyVersion>
-		<Version>4.1.2.1110</Version>
+		<AssemblyVersion>4.1.3.111</AssemblyVersion>
+		<Version>4.1.3.111</Version>
 		<OutputType>WinExe</OutputType>
 		<DebugType>embedded</DebugType>
 		<RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
@@ -14,7 +14,7 @@
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
 		<Authors>Carina Studio</Authors>
 		<Company>Carina Studio</Company>
-		<Copyright>©2021-2024 Carina Studio</Copyright>
+		<Copyright>©2021-2025 Carina Studio</Copyright>
 		<StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
 		<ApplicationIcon>ULogViewer.ico</ApplicationIcon>
 		<NoWin32Manifest>true</NoWin32Manifest>
