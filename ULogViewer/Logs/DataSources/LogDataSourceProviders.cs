@@ -194,7 +194,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 				}
 				return fileNames;
 			});
-			logger!.LogDebug("{scriptProviderFiles.Count} script log data source provider file(s) found", scriptProvidersDirectory);
+			logger!.LogDebug("{count} script log data source provider file(s) found", scriptProviderFiles.Count);
 
 			// load script log data source providers
 			foreach (var fileName in scriptProviderFiles)
@@ -204,7 +204,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					var provider = await ScriptLogDataSourceProvider.LoadAsync(app, fileName);
 					if (providersByName.ContainsKey(provider.Name))
 					{
-						logger!.LogDebug("Skip adding loaded script log data source provuder '{providerDisplayName}' ({providerName})", provider.DisplayName, provider.Name);
+						logger!.LogDebug("Skip adding loaded script log data source provider '{providerDisplayName}' ({providerName})", provider.DisplayName, provider.Name);
 						continue;
 					}
 					AddScriptProvider(provider, false);
