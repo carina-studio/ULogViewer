@@ -26,6 +26,13 @@ fi
 echo "Version: $VERSION"
 
 # Create output directory
+if [[ ! -d "./Packages" ]]; then
+    echo "Create directory 'Packages'"
+    mkdir ./Packages
+    if [ "$?" != "0" ]; then
+        exit
+    fi
+fi
 if [[ ! -d "./Packages/$VERSION" ]]; then
     echo "Create directory 'Packages/$VERSION'"
     mkdir ./Packages/$VERSION
@@ -89,6 +96,7 @@ for i in "${!RID_LIST[@]}"; do
                 echo "Signing $FILE_NAME"
                 codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "$FILE_NAME"
                 if [ "$?" != "0" ]; then
+                    echo "Failed to sign $FILE_NAME"
                     exit
                 fi
             fi

@@ -26,6 +26,13 @@ if [ ! -z "$PREV_VERSION" ]; then
 fi
 
 # Create output directory
+if [[ ! -d "./Packages" ]]; then
+    echo "Create directory 'Packages'"
+    mkdir ./Packages
+    if [ "$?" != "0" ]; then
+        exit
+    fi
+fi
 if [[ ! -d "./Packages/$VERSION" ]]; then
     echo "Create directory 'Packages/$VERSION'"
     mkdir ./Packages/$VERSION
