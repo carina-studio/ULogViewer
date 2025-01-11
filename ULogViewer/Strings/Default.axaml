@@ -490,11 +490,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">The environment variables '{0}' is already added before.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">File path</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">Format CLEF data when reading</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData.Description">Available only for file with .clef extension.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">Format JSON data when reading</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData.Description">Available only for file with .json extension.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">Format XML data when reading</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData.Description">Available only for file with .xml extension.</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">Include Standard Error (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP address</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">This is the resource on Azure</sys:String>

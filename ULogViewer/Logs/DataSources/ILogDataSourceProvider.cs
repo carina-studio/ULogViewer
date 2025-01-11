@@ -467,6 +467,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							break;
 					}
 				}
+				if (options.FormatClefData)
+				{
+					options.FormatJsonData = false;
+					options.FormatXmlData = false;
+				}
+				else if (options.FormatJsonData)
+					options.FormatXmlData = false;
 				return options;
 			}
 			finally
