@@ -25,6 +25,8 @@
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
 		<AppSuiteVersion>3.0.1.129-dev</AppSuiteVersion>
 		<AvaloniaVersion>11.2.3</AvaloniaVersion>
+		<DotNetLibVersion>9.0.1</DotNetLibVersion>
+		<SkiaSharpVersion>3.116.1</SkiaSharpVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -99,18 +101,19 @@
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.2.0" />
 		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
 		<PackageReference Include="MySqlConnector" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="SkiaSharp" Version="2.88.9" />
-		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="SkiaSharp" Version="$(SkiaSharpVersion)" />
+		<PackageReference Include="SkiaSharp.HarfBuzz" Version="$(SkiaSharpVersion)" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118">
 			<ExcludeAssets Condition="$(RuntimeIdentifier.Contains('win'))">native</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.1" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="$(DotNetLibVersion)" />
+		<PackageReference Include="System.Drawing.Common" Version="$(DotNetLibVersion)" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.1" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="$(DotNetLibVersion)" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 	
