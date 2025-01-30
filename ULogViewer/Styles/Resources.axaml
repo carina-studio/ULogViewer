@@ -240,6 +240,7 @@
 	<sys:Double x:Key="Double/SessionView.LogChart.Axis.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Button.Size">24</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.Legend.FontSize">12</sys:Double>
+	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Border.Width">1</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Point.Size">7</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.LineSeries.Width">2</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogChart.ToolTip.FontSize">12</sys:Double>

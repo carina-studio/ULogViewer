@@ -237,7 +237,7 @@ class DisplayableLogChartSeries : INotifyPropertyChanged
     public DisplayableLogChartSeries(DisplayableLogChartSeriesSource? source, IList<DisplayableLogChartSeriesValue?> values)
     {
         this.Source = source;
-        this.Values = (IReadOnlyList<DisplayableLogChartSeriesValue>)ListExtensions.AsReadOnly(values);
+        this.Values = ListExtensions.AsReadOnly(values);
         if (values is INotifyCollectionChanged notifyCollectionChanged)
             notifyCollectionChanged.CollectionChanged += this.OnValuesChanged;
         this.UpdateMinMaxValues();
@@ -245,34 +245,18 @@ class DisplayableLogChartSeries : INotifyPropertyChanged
 
 
     // Get maximum value from values.
-    static DisplayableLogChartSeriesValue? GetMaxValue(ICollection<DisplayableLogChartSeriesValue?> values)
+    static DisplayableLogChartSeriesValue? GetMaxValue(IList<DisplayableLogChartSeriesValue?> values)
     {
         var maxValue = default(DisplayableLogChartSeriesValue);
-        if (values is IList<DisplayableLogChartSeriesValue?> list)
+        for (var i = values.Count - 1; i >= 0; --i)
         {
-            for (var i = list.Count - 1; i >= 0; --i)
+            var value = values[i];
+            if (value is null)
+                continue;
+            if (double.IsFinite(value.Value))
             {
-                var value = list[i];
-                if (value is null)
-                    continue;
-                if (double.IsFinite(value.Value))
-                {
-                    if (maxValue is null || maxValue.Value < value.Value)
-                        maxValue = value;
-                }
-            }
-        }
-        else
-        {
-            foreach (var value in values)
-            {
-                if (value is null)
-                    continue;
-                if (double.IsFinite(value.Value))
-                {
-                    if (maxValue is null || maxValue.Value < value.Value)
-                        maxValue = value;
-                }
+                if (maxValue is null || maxValue.Value < value.Value)
+                    maxValue = value;
             }
         }
         return maxValue;
@@ -280,34 +264,18 @@ class DisplayableLogChartSeries : INotifyPropertyChanged
     
     
     // Get minimum value from values.
-    static DisplayableLogChartSeriesValue? GetMinValue(ICollection<DisplayableLogChartSeriesValue?> values)
+    static DisplayableLogChartSeriesValue? GetMinValue(IList<DisplayableLogChartSeriesValue?> values)
     {
         var minValue = default(DisplayableLogChartSeriesValue);
-        if (values is IList<DisplayableLogChartSeriesValue?> list)
+        for (var i = values.Count - 1; i >= 0; --i)
         {
-            for (var i = list.Count - 1; i >= 0; --i)
+            var value = values[i];
+            if (value is null)
+                continue;
+            if (double.IsFinite(value.Value))
             {
-                var value = list[i];
-                if (value is null)
-                    continue;
-                if (double.IsFinite(value.Value))
-                {
-                    if (minValue is null || minValue.Value > value.Value)
-                        minValue = value;
-                }
-            }
-        }
-        else
-        {
-            foreach (var value in values)
-            {
-                if (value is null)
-                    continue;
-                if (double.IsFinite(value.Value))
-                {
-                    if (minValue is null || minValue.Value > value.Value)
-                        minValue = value;
-                }
+                if (minValue is null || minValue.Value > value.Value)
+                    minValue = value;
             }
         }
         return minValue;
@@ -380,12 +348,12 @@ class DisplayableLogChartSeries : INotifyPropertyChanged
     // Update min/max values.
     void UpdateMinMaxValues() =>
         this.UpdateMinMaxValues(Array.Empty<DisplayableLogChartSeriesValue?>());
-    void UpdateMinMaxValues(ICollection<DisplayableLogChartSeriesValue?> newValues)
+    void UpdateMinMaxValues(IList<DisplayableLogChartSeriesValue?> newValues)
     {
         // minimum
         if (this.minValue is null)
         {
-            this.minValue = GetMinValue((ICollection<DisplayableLogChartSeriesValue?>)this.Values);
+            this.minValue = GetMinValue(this.Values);
             if (this.minValue is not null)
                 this.PropertyChanged?.Invoke(this, new(nameof(MinValue)));
         }
@@ -404,7 +372,7 @@ class DisplayableLogChartSeries : INotifyPropertyChanged
         // maximum
         if (this.maxValue is null)
         {
-            this.maxValue = GetMaxValue((ICollection<DisplayableLogChartSeriesValue?>)this.Values);
+            this.maxValue = GetMaxValue(this.Values);
             if (this.maxValue is not null)
                 this.PropertyChanged?.Invoke(this, new(nameof(MaxValue)));
         }
@@ -425,7 +393,7 @@ class DisplayableLogChartSeries : INotifyPropertyChanged
     /// <summary>
     /// List of values in series.
     /// </summary>
-    public IReadOnlyList<DisplayableLogChartSeriesValue?> Values { get; }
+    public IList<DisplayableLogChartSeriesValue?> Values { get; }
 }
 
 

@@ -68,6 +68,14 @@ partial class SessionView
     /// </summary>
     public static readonly StyledProperty<Paint> LogChartToolTipBackgroundPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartToolTipBackgroundPaint), new SolidColorPaint());
     /// <summary>
+    /// Define <see cref="LogChartToolTipBorderPaint"/> property.
+    /// </summary>
+    public static readonly StyledProperty<Paint> LogChartToolTipBorderPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartToolTipBorderPaint), new SolidColorPaint());
+    /// <summary>
+    /// Define <see cref="LogChartToolTipBorderThickness"/> property.
+    /// </summary>
+    public static readonly StyledProperty<double> LogChartToolTipBorderThicknessProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogChartToolTipBorderThickness), 0.0);
+    /// <summary>
     /// Define <see cref="LogChartToolTipForegroundPaint"/> property.
     /// </summary>
     public static readonly StyledProperty<Paint> LogChartToolTipForegroundPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartToolTipForegroundPaint), new SolidColorPaint());
@@ -189,8 +197,11 @@ partial class SessionView
             var container = this.container ?? new Container<RoundedRectangleGeometry>().Also(container =>
             {
                 var cornerRadius = sessionView.FindResourceOrDefault<CornerRadius>("CornerRadius/ToolTip");
-                container.Geometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
-                container.Geometry.Fill = logChart.TooltipBackgroundPaint;
+                var geometry = container.Geometry;
+                geometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
+                geometry.Fill = logChart.TooltipBackgroundPaint;
+                geometry.Stroke = sessionView.LogChartToolTipBorderPaint;
+                geometry.Width = (float)sessionView.LogChartToolTipBorderThickness;
                 this.container = container;
             });
             var itemsContainer = this.itemsContainer ?? new StackLayout().Also(itemsContainer =>
@@ -450,6 +461,7 @@ partial class SessionView
             return new SKColor(color.R, color.G, color.B, (byte)(color.A * it.Opacity + 0.5));
         });
         var geometrySize = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Size", 5.0);
+        var geometryBorderWidth = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Point.Border.Width", 1.0);
         var lineWidth = (float)this.Application.FindResourceOrDefault("Double/SessionView.LogChart.LineSeries.Width", 1.0);
         var colorBlendingMode = this.Application.EffectiveThemeMode switch
         {
@@ -475,7 +487,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
+                    Values = (IReadOnlyList<DisplayableLogChartSeriesValue?>)(isInverted ? series.Values.Reverse() : series.Values),
                     XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -494,7 +506,7 @@ partial class SessionView
                     GeometrySize = geometrySize,
                     GeometryStroke = chartType switch
                     {
-                        LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
+                        LogChartType.ValueStackedAreasWithDataPoints => new SolidColorPaint(backgroundColor, geometryBorderWidth)
                         {
                             IsAntialias = true,
                         },
@@ -508,7 +520,7 @@ partial class SessionView
                         IsAntialias = true,
                     },
                     Tag = series,
-                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
+                    Values = (IReadOnlyList<DisplayableLogChartSeriesValue?>)(isInverted ? series.Values.Reverse() : series.Values),
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -524,7 +536,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
+                    Values = (IReadOnlyList<DisplayableLogChartSeriesValue?>)(isInverted ? series.Values.Reverse() : series.Values),
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -554,7 +566,7 @@ partial class SessionView
                     {
                         LogChartType.ValueAreasWithDataPoints
                             or LogChartType.ValueCurvesWithDataPoints
-                            or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(backgroundColor, lineWidth)
+                            or LogChartType.ValueLinesWithDataPoints => new SolidColorPaint(backgroundColor, geometryBorderWidth)
                             {
                                 IsAntialias = true,
                             },
@@ -581,7 +593,7 @@ partial class SessionView
                         },
                     },
                     Tag = series,
-                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
+                    Values = (IReadOnlyList<DisplayableLogChartSeriesValue?>)(isInverted ? series.Values.Reverse() : series.Values),
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -830,6 +842,18 @@ partial class SessionView
     /// Get background paint for tool tip of log chart.
     /// </summary>
     public Paint LogChartToolTipBackgroundPaint => this.GetValue(LogChartToolTipBackgroundPaintProperty);
+    
+    
+    /// <summary>
+    /// Get border paint for tool tip of log chart.
+    /// </summary>
+    public Paint LogChartToolTipBorderPaint => this.GetValue(LogChartToolTipBorderPaintProperty);
+    
+    
+    /// <summary>
+    /// Get border thickness for tool tip of log chart.
+    /// </summary>
+    public double LogChartToolTipBorderThickness => this.GetValue(LogChartToolTipBorderThicknessProperty);
 
 
     /// <summary>
@@ -1763,15 +1787,25 @@ partial class SessionView
         this.Application.FindResourceOrDefault<ISolidColorBrush?>("ToolTipBackground")?.Let(brush =>
         {
             var color = brush.Color;
-            var skColor = new SKColor(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5));
+            var skColor = new SKColor(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5));
             this.SetValue(LogChartLegendBackgroundPaintProperty, new SolidColorPaint(skColor) { ZIndex = LogChartLegendZIndex });
             this.SetValue(LogChartToolTipBackgroundPaintProperty, new SolidColorPaint(skColor) { ZIndex = LogChartToolTipZIndex});
+        });
+        this.Application.FindResourceOrDefault<ISolidColorBrush?>("ToolTipBorderBrush")?.Let(brush =>
+        {
+            var color = brush.Color;
+            var skColor = new SKColor(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5));
+            this.SetValue(LogChartToolTipBorderPaintProperty, new SolidColorPaint(skColor) { ZIndex = LogChartToolTipZIndex});
+        });
+        this.Application.FindResourceOrDefault<Thickness>("ToolTipBorderThemeThickness").Let(thickness =>
+        {
+            this.SetValue(LogChartToolTipBorderThicknessProperty, (thickness.Left + thickness.Right) * 0.5);
         });
         this.Application.FindResourceOrDefault<ISolidColorBrush?>("ToolTipForeground")?.Let(brush =>
         {
             var typeface = this.SelectSKTypeface();
             var color = brush.Color;
-            var skColor = new SKColor(color.R, color.G, color.B, (byte) (color.A * brush.Opacity + 0.5));
+            var skColor = new SKColor(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5));
             this.SetValue(LogChartLegendForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface, ZIndex = LogChartLegendZIndex + 1 });
             this.SetValue(LogChartToolTipForegroundPaintProperty, new SolidColorPaint(skColor) { SKTypeface = typeface, ZIndex = LogChartToolTipZIndex + 1 });
         });
