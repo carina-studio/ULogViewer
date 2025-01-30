@@ -27,8 +27,6 @@ using LiveChartsCore.SkiaSharpView.Drawing;
 using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
-using LiveChartsCore.SkiaSharpView.VisualElements;
-using LiveChartsCore.VisualElements;
 using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using System;
@@ -39,7 +37,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using CarinaStudio.AppSuite.Media;
+using LiveChartsCore.Painting;
+using LiveChartsCore.SkiaSharpView.Drawing.Layouts;
 using System.Globalization;
+using System.Threading.Tasks;
+using DrawingContext = LiveChartsCore.Drawing.DrawingContext;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -52,11 +54,11 @@ partial class SessionView
     /// <summary>
     /// Define <see cref="LogChartLegendBackgroundPaint"/> property.
     /// </summary>
-    public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartLegendBackgroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartLegendBackgroundPaint), new SolidColorPaint());
+    public static readonly StyledProperty<Paint> LogChartLegendBackgroundPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartLegendBackgroundPaint), new SolidColorPaint());
     /// <summary>
     /// Define <see cref="LogChartLegendForegroundPaint"/> property.
     /// </summary>
-    public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartLegendForegroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartLegendForegroundPaint), new SolidColorPaint());
+    public static readonly StyledProperty<Paint> LogChartLegendForegroundPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartLegendForegroundPaint), new SolidColorPaint());
     /// <summary>
     /// <see cref="IValueConverter"/> to convert <see cref="LogChartType"/> to readable name.
     /// </summary>
@@ -64,21 +66,22 @@ partial class SessionView
     /// <summary>
     /// Define <see cref="LogChartToolTipBackgroundPaint"/> property.
     /// </summary>
-    public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartToolTipBackgroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartToolTipBackgroundPaint), new SolidColorPaint());
+    public static readonly StyledProperty<Paint> LogChartToolTipBackgroundPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartToolTipBackgroundPaint), new SolidColorPaint());
     /// <summary>
     /// Define <see cref="LogChartToolTipForegroundPaint"/> property.
     /// </summary>
-    public static readonly StyledProperty<IPaint<SkiaSharpDrawingContext>> LogChartToolTipForegroundPaintProperty = AvaloniaProperty.Register<SessionView, IPaint<SkiaSharpDrawingContext>>(nameof(LogChartToolTipForegroundPaint), new SolidColorPaint());
+    public static readonly StyledProperty<Paint> LogChartToolTipForegroundPaintProperty = AvaloniaProperty.Register<SessionView, Paint>(nameof(LogChartToolTipForegroundPaint), new SolidColorPaint());
     
     
     // Legend of log chart.
-    class LogChartLegend(SessionView view) : IChartLegend<SkiaSharpDrawingContext>
+    class LogChartLegend(SessionView view) : IChartLegend
     {
         // Fields.
-        StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
+        StackLayout? container;
+        DrawablesTask? containerDrawableTask;
         
         // Draw.
-        public void Draw(Chart<SkiaSharpDrawingContext> chart)
+        public void Draw(Chart chart)
         {
             var container = this.container;
             if (container is null)
@@ -86,16 +89,30 @@ partial class SessionView
             var position = chart.GetLegendPosition();
             container.X = position.X;
             container.Y = position.Y;
-            chart.AddVisual(container);
+            if (this.containerDrawableTask is null)
+            {
+                this.containerDrawableTask = chart.Canvas.AddGeometry(container);
+                this.containerDrawableTask.ZIndex = LogChartLegendZIndex;
+            }
+        }
+        
+        // Hide.
+        public void Hide(Chart chart)
+        {
+            if (this.containerDrawableTask is not null)
+            {
+                chart.Canvas.RemovePaintTask(this.containerDrawableTask);
+                this.containerDrawableTask = null;
+            }
         }
 
         // Measure.
-        public LvcSize Measure(Chart<SkiaSharpDrawingContext> chart)
+        public LvcSize Measure(Chart chart)
         {
             // create container
             var sessionView = view;
             var logChart = sessionView.logChart;
-            var container = this.container ?? new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(it =>
+            var container = this.container ?? new StackLayout().Also(it =>
             {
                 var padding = sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Legend.Padding");
                 it.HorizontalAlignment = Align.Start;
@@ -107,24 +124,20 @@ partial class SessionView
             
             // remove old visuals
             var containerChildViews = container.Children;
-            for (var i = containerChildViews.Count - 1; i >= 0; --i)
-            {
-                chart.RemoveVisual(containerChildViews[i]);
-                containerChildViews.RemoveAt(i);
-            }
+            containerChildViews.Clear();
             
             // add visuals
             var itemMargin = sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.Legend.Item.Margin").Let(it =>
                 new Padding(it.Left, it.Top, it.Right, it.Bottom));
             foreach (var series in chart.Series.Where(it => it.IsVisible && it.IsVisibleAtLegend))
             {
-                var sketch = series.GetMiniature(null, LogChartLegendZIndex + 1);
-                containerChildViews.Add(new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(it =>
+                var sketch = series.GetMiniatureGeometry(null);
+                containerChildViews.Add(new StackLayout().Also(it =>
                 {
-                    it.Children.Add(sketch);
-                    it.Children.Add(new LabelVisual().Also(it =>
+                    it.Children.Add((IDrawnElement<SkiaSharpDrawingContext>)sketch);
+                    it.Children.Add(new LabelGeometry().Also(it =>
                     {
-                        it.HorizontalAlignment = Align.Start;
+                        it.HorizontalAlign = Align.Start;
                         it.Padding = itemMargin;
                         it.Paint = logChart.LegendTextPaint;
                         if (series.Tag is DisplayableLogChartSeries displayableLogChartSeries
@@ -132,108 +145,107 @@ partial class SessionView
                         {
                             it.Text = sessionView.GetLogChartSeriesDisplayName(displayableLogChartSeries.Source);
                         }
-                        it.TextSize = logChart.LegendTextSize ?? 12.0;
-                        it.VerticalAlignment = Align.Start;
+                        it.TextSize = (float)logChart.LegendTextSize;
+                        it.VerticalAlign = Align.Start;
                     }));
                     it.Orientation = ContainerOrientation.Horizontal;
                 }));
             }
             
             // measure
-            return container.Measure(chart);
+            return container.Measure();
         }
     }
     
     
     // Tool tip of log chart.
-    class LogChartToolTip(SessionView view, bool isXAxisInverted) : IChartTooltip<SkiaSharpDrawingContext>
+    class LogChartToolTip(SessionView view, bool isXAxisInverted) : IChartTooltip
     {
         // Fields.
-        StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>? container;
+        Container<RoundedRectangleGeometry>? container;
+        DrawablesTask? containerDrawableTask;
+        StackLayout? itemsContainer;
 
         // Hide.
-        public void Hide(Chart<SkiaSharpDrawingContext> chart)
+        public void Hide(Chart chart)
         {
-            if (this.container is not null)
+            if (this.containerDrawableTask is not null)
             {
-                chart.RemoveVisual(this.container);
-                var containerChildViews = this.container.Children;
-                for (var i = containerChildViews.Count - 1; i >= 0; --i)
-                {
-                    chart.RemoveVisual(containerChildViews[i]);
-                    containerChildViews.RemoveAt(i);
-                }
+                chart.Canvas.RemovePaintTask(this.containerDrawableTask);
+                this.containerDrawableTask = null;
             }
+            this.itemsContainer?.Children.Clear();
         }
         
         // Whether X-axis is inverted or not.
         public bool IsXAxisInverted { get; } = isXAxisInverted;
         
         // Show
-        public void Show(IEnumerable<ChartPoint> foundPoints, Chart<SkiaSharpDrawingContext> chart)
+        public void Show(IEnumerable<ChartPoint> foundPoints, Chart chart)
         {
             // creat container
             var sessionView = view;
             var logChart = sessionView.logChart;
-            var container = this.container ?? new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(container =>
+            var container = this.container ?? new Container<RoundedRectangleGeometry>().Also(container =>
             {
                 var cornerRadius = sessionView.FindResourceOrDefault<CornerRadius>("CornerRadius/ToolTip");
-                var padding = view.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Padding");
-                container.BackgroundGeometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
-                container.BackgroundPaint = logChart.TooltipBackgroundPaint;
-                container.ClippingMode = ClipMode.None;
-                container.HorizontalAlignment = Align.Start;
-                container.Orientation = ContainerOrientation.Vertical;
-                container.Padding = new(padding.Left, padding.Top, padding.Right, padding.Bottom);
-                container.VerticalAlignment = Align.Middle;
+                container.Geometry.BorderRadius = new(cornerRadius.TopLeft, cornerRadius.BottomLeft);
+                container.Geometry.Fill = logChart.TooltipBackgroundPaint;
                 this.container = container;
+            });
+            var itemsContainer = this.itemsContainer ?? new StackLayout().Also(itemsContainer =>
+            {
+                var padding = view.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Padding");
+                //container.ClippingMode = ClipMode.None;
+                itemsContainer.HorizontalAlignment = Align.Start;
+                itemsContainer.Orientation = ContainerOrientation.Vertical;
+                itemsContainer.Padding = new(padding.Left, padding.Top, padding.Right, padding.Bottom);
+                itemsContainer.VerticalAlignment = Align.Middle;
+                container.Content = itemsContainer;
+                this.itemsContainer = itemsContainer;
             });
             
             // remove unneeded child views
-            var containerChildViews = container.Children;
-            for (var i = containerChildViews.Count - 1; i >= 0; --i)
-            {
-                chart.RemoveVisual(containerChildViews[i]);
-                containerChildViews.RemoveAt(i);
-            }
+            var containerChildViews = itemsContainer.Children;
+            containerChildViews.Clear();
             
             // show information of data points
             var isFirstPoint = true;
             var itemMargin = sessionView.FindResourceOrDefault<Thickness>("Thickness/SessionView.LogChart.ToolTip.Item.Margin");
             foreach (var point in foundPoints)
             {
-                var series = (ICartesianSeries<SkiaSharpDrawingContext>)point.Context.Series;
-                var sketch = series.GetMiniature(null, LogChartToolTipZIndex + 1);
+                var series = (ICartesianSeries)point.Context.Series;
+                var sketch = series.GetMiniatureGeometry(null);
                 if (isFirstPoint)
                 {
                     isFirstPoint = false;
                     if ((sessionView.DataContext as Session)?.LogChart.ChartType != LogChartType.ValueStatisticBars)
                     {
-                        containerChildViews.Add(new LabelVisual().Also(it =>
+                        containerChildViews.Add(new LabelGeometry().Also(it =>
                         {
-                            it.ClippingMode = ClipMode.None;
-                            it.HorizontalAlignment = Align.Start;
+                            //it.ClippingMode = ClipMode.None;
+                            it.HorizontalAlign = Align.Start;
                             it.Paint = logChart.TooltipTextPaint;
                             it.Text = sessionView.GetLogChartXToolTipLabel(point, this.IsXAxisInverted);
-                            it.TextSize = logChart.TooltipTextSize ?? 12.0;
-                            it.VerticalAlignment = Align.Start;
+                            it.TextSize = (float)logChart.TooltipTextSize;
+                            it.VerticalAlign = Align.Start;
                         }));
                     }
                 }
-                containerChildViews.Add(new StackPanel<RoundedRectangleGeometry, SkiaSharpDrawingContext>().Also(pointContainer =>
+                containerChildViews.Add(new StackLayout().Also(pointContainer =>
                 {
-                    pointContainer.Children.Add(sketch);
-                    pointContainer.Children.Add(new LabelVisual().Also(it =>
+                    pointContainer.Children.Add((IDrawnElement<SkiaSharpDrawingContext>)sketch);
+                    pointContainer.Children.Add(new LabelGeometry().Also(it =>
                     {
-                        it.ClippingMode = ClipMode.None;
-                        it.HorizontalAlignment = Align.Start;
+                        //it.ClippingMode = ClipMode.None;
+                        it.HorizontalAlign = Align.Start;
                         it.Padding = new(itemMargin.Left, itemMargin.Top, itemMargin.Right, itemMargin.Bottom);
                         it.Paint = logChart.TooltipTextPaint;
                         it.Text = (series.Tag as DisplayableLogChartSeries)?.Let(it => 
                             sessionView.GetLogChartYToolTipLabel(it, point, true)) 
                                   ?? point.Coordinate.PrimaryValue.ToString(CultureInfo.InvariantCulture);
-                        it.TextSize = logChart.TooltipTextSize ?? 12.0;
-                        it.VerticalAlignment = Align.Start;
+                        it.TextSize = (float)logChart.TooltipTextSize;
+                        it.VerticalAlign = Align.Start;
                     }));
                     pointContainer.HorizontalAlignment = Align.Middle;
                     pointContainer.Orientation = ContainerOrientation.Horizontal;
@@ -244,7 +256,7 @@ partial class SessionView
             // show container
             var chartSize = chart.View.ControlSize;
             var offset = (float)sessionView.FindResourceOrDefault<double>("Double/SessionView.LogChart.ToolTip.Offset");
-            var containerSize = container.Measure(chart);
+            var containerSize = container.Measure();
             var containerPosition = foundPoints.GetTooltipLocation(new(containerSize.Width, containerSize.Height + offset + offset), chart);
             if (containerPosition.Y < -offset)
             {
@@ -256,8 +268,11 @@ partial class SessionView
                 containerPosition.Y = chartSize.Height + offset - containerSize.Height;
             container.X = containerPosition.X;
             container.Y = containerPosition.Y + offset;
-            chart.RemoveVisual(container);
-            chart.AddVisual(container);
+            if (this.containerDrawableTask is null)
+            {
+                this.containerDrawableTask = chart.Canvas.AddGeometry(container);
+                this.containerDrawableTask.ZIndex = LogChartToolTipZIndex;
+            }
         }
     }
 
@@ -269,10 +284,11 @@ partial class SessionView
         public SKBlendMode BlendMode { get; init; } = SKBlendMode.Overlay;
 
         /// <inheritdoc/>
-        public override void InitializeTask(SkiaSharpDrawingContext drawingContext)
+        public override void InitializeTask(DrawingContext drawingContext)
         {
             base.InitializeTask(drawingContext);
-            drawingContext.Paint.BlendMode = this.BlendMode;
+            if (drawingContext is SkiaSharpDrawingContext skiaDrawingContext && skiaDrawingContext.ActiveSkiaPaint is { } skPaint)
+                skPaint.BlendMode = this.BlendMode;
         }
     }
     
@@ -357,7 +373,7 @@ partial class SessionView
     {
         CrosshairSnapEnabled = true,
     };
-    IPaint<SkiaSharpDrawingContext>? logChartYAxisCrosshairPaint;
+    Paint? logChartYAxisCrosshairPaint;
     readonly ScheduledAction startLogChartAnimationsAction;
     readonly ScheduledAction updateLogChartXAxisLimitAction;
     readonly ScheduledAction updateLogChartYAxisLimitAction;
@@ -379,7 +395,7 @@ partial class SessionView
         
         // check data count
         if (viewModel.IsMaxTotalSeriesValueCountReached)
-            this.PromptForMaxLogChartSeriesValueCountReached();
+            _ = this.PromptForMaxLogChartSeriesValueCountReached();
         
         // update log chart
         this.areLogChartAxesReady = false;
@@ -459,7 +475,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = isInverted ? series.Values.Reverse() : series.Values,
+                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = chartType == LogChartType.ValueStatisticBars ? null : this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -492,7 +508,7 @@ partial class SessionView
                         IsAntialias = true,
                     },
                     Tag = series,
-                    Values = isInverted ? series.Values.Reverse() : series.Values,
+                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -508,7 +524,7 @@ partial class SessionView
                     Rx = 0,
                     Ry = 0,
                     Tag = series,
-                    Values = isInverted ? series.Values.Reverse() : series.Values,
+                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -565,7 +581,7 @@ partial class SessionView
                         },
                     },
                     Tag = series,
-                    Values = isInverted ? series.Values.Reverse() : series.Values,
+                    Values = isInverted ? (IReadOnlyList<DisplayableLogChartSeriesValue?>)series.Values.Reverse() : series.Values,
                     XToolTipLabelFormatter = this.GetLogChartXToolTipLabel,
                     YToolTipLabelFormatter = p => this.GetLogChartYToolTipLabel(series, p, false),
                 };
@@ -684,7 +700,7 @@ partial class SessionView
         this.GetLogChartXToolTipLabel(point.Model);
     string GetLogChartXToolTipLabel(ChartPoint point, bool isInverted)
     {
-        if (point.Context.Series is not ICartesianSeries<SkiaSharpDrawingContext> cartesianSeries
+        if (point.Context.Series is not ICartesianSeries cartesianSeries
             || cartesianSeries.Tag is not DisplayableLogChartSeries series)
         {
             return "";
@@ -801,25 +817,25 @@ partial class SessionView
     /// <summary>
     /// Get background paint for legend of log chart.
     /// </summary>
-    public IPaint<SkiaSharpDrawingContext> LogChartLegendBackgroundPaint => this.GetValue(LogChartLegendBackgroundPaintProperty);
+    public Paint LogChartLegendBackgroundPaint => this.GetValue(LogChartLegendBackgroundPaintProperty);
     
     
     /// <summary>
     /// Get foreground paint for legend of log chart.
     /// </summary>
-    public IPaint<SkiaSharpDrawingContext> LogChartLegendForegroundPaint => this.GetValue(LogChartLegendForegroundPaintProperty);
+    public Paint LogChartLegendForegroundPaint => this.GetValue(LogChartLegendForegroundPaintProperty);
 
 
     /// <summary>
     /// Get background paint for tool tip of log chart.
     /// </summary>
-    public IPaint<SkiaSharpDrawingContext> LogChartToolTipBackgroundPaint => this.GetValue(LogChartToolTipBackgroundPaintProperty);
+    public Paint LogChartToolTipBackgroundPaint => this.GetValue(LogChartToolTipBackgroundPaintProperty);
 
 
     /// <summary>
     /// Get foreground paint for tool tip of log chart.
     /// </summary>
-    public IPaint<SkiaSharpDrawingContext> LogChartToolTipForegroundPaint => this.GetValue(LogChartToolTipForegroundPaintProperty);
+    public Paint LogChartToolTipForegroundPaint => this.GetValue(LogChartToolTipForegroundPaintProperty);
 
 
     /// <summary>
@@ -956,7 +972,7 @@ partial class SessionView
         var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
         if (this.logChart.Series.FirstOrDefault() is not { } series)
             return;
-        if (series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is not { } point)
+        if (series.FindHitPoints(this.logChart.CoreChart, position, FindingStrategy.CompareOnlyXTakeClosest, FindPointFor.HoverEvent).FirstOrDefault() is not { } point)
             return;
         this.ZoomLogChartWithSteps(point, steps);
     }
@@ -990,7 +1006,7 @@ partial class SessionView
                         {
                             var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
                             if (this.logChart.Series.FirstOrDefault() is { } series
-                                && series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is { } point)
+                                && series.FindHitPoints(this.logChart.CoreChart, position, FindingStrategy.CompareOnlyXTakeClosest, FindPointFor.PointerDownEvent).FirstOrDefault() is { } point)
                             {
                                 this.ZoomLogChartTo(point, LogChartXRangeWhenDoubleClick);
                             }
@@ -1035,7 +1051,7 @@ partial class SessionView
         var position = e.GetPosition(this.logChart).Let(it => new LvcPoint(it.X, it.Y));
         if (this.logChart.Series.FirstOrDefault() is not { } series)
             return;
-        if (series.FindHitPoints(this.logChart.CoreChart, position, TooltipFindingStrategy.CompareOnlyXTakeClosest).FirstOrDefault() is not { } point)
+        if (series.FindHitPoints(this.logChart.CoreChart, position, FindingStrategy.CompareOnlyXTakeClosest, FindPointFor.HoverEvent).FirstOrDefault() is not { } point)
             return;
         this.ZoomLogChartWithSteps(point, Math.Sign(delta.X) * steps);
     }
@@ -1118,7 +1134,7 @@ partial class SessionView
                 break;
             case nameof(LogChartViewModel.IsMaxTotalSeriesValueCountReached):
                 if (viewModel.IsMaxTotalSeriesValueCountReached)
-                    this.PromptForMaxLogChartSeriesValueCountReached();
+                    _ = this.PromptForMaxLogChartSeriesValueCountReached();
                 break;
             case nameof(LogChartViewModel.IsPanelVisible):
                 this.UpdateLogChartPanelVisibility();
@@ -1301,7 +1317,7 @@ partial class SessionView
 
 
     // Show message dialog to notify user that the total number of values reaches the limitation.
-    async void PromptForMaxLogChartSeriesValueCountReached()
+    async Task PromptForMaxLogChartSeriesValueCountReached()
     {
         if (!this.PersistentState.GetValueOrDefault(PromptWhenMaxTotalLogSeriesValueCountReachedKey))
             return;
@@ -1715,7 +1731,7 @@ partial class SessionView
                 {
                     Color = new(color.R, color.G, color.B, (byte)(color.A * brush.Opacity + 0.5)),
                     StrokeThickness = (float)this.FindResourceOrDefault("Double/DisplayableLogChartSeriesGenerator.Axis.Separator.Width", 1.0),
-                    PathEffect = new DashEffect(new float[] { 3, 3 }),
+                    PathEffect = new DashEffect([ 3, 3 ]),
                 };
             });
             axis.TextSize = (float)axisFontSize;

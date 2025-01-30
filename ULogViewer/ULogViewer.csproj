@@ -14,7 +14,7 @@
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
 		<Authors>Carina Studio</Authors>
 		<Company>Carina Studio</Company>
-		<Copyright>©2021-2024 Carina Studio</Copyright>
+		<Copyright>©2021-2025 Carina Studio</Copyright>
 		<StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
 		<ApplicationIcon>ULogViewer.ico</ApplicationIcon>
 		<NoWin32Manifest>true</NoWin32Manifest>
@@ -23,7 +23,7 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-		<AppSuiteVersion>3.0.0.1221-dev</AppSuiteVersion>
+		<AppSuiteVersion>3.0.1.129-dev</AppSuiteVersion>
 		<AvaloniaVersion>11.2.3</AvaloniaVersion>
 	</PropertyGroup>
 
@@ -44,7 +44,7 @@
 		<CFBundlePackageType>APPL</CFBundlePackageType>
 		<NSPrincipalClass>NSApplication</NSPrincipalClass>
 		<NSHighResolutionCapable>True</NSHighResolutionCapable>
-		<NSHumanReadableCopyright>©2021-2024 Carina Studio</NSHumanReadableCopyright>
+		<NSHumanReadableCopyright>©2021-2025 Carina Studio</NSHumanReadableCopyright>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -98,19 +98,19 @@
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.2.0" />
-		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc4.5" />
-		<PackageReference Include="MySqlConnector" Version="2.3.7" />
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.1" />
+		<PackageReference Include="MySqlConnector" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SkiaSharp" Version="2.88.9" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118">
 			<ExcludeAssets Condition="$(RuntimeIdentifier.Contains('win'))">native</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.0" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+		<PackageReference Include="System.Diagnostics.EventLog" Version="9.0.1" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.1" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" />
 		<PackageReference Include="System.Private.Uri" Version="4.3.2" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.1" />
 		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
 	</ItemGroup>
 	
