@@ -32,17 +32,12 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         this.Owner = session;
 
         // attach to session
-        var isAttachingToSession = true;
         session.AllComponentsCreated += this.OnAllComponentsCreated;
         (session.AllLogs as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnAllLogsChanged);
         internalAccessor.DisplayableLogGroupCreated += this.OnDisplayableLogGroupCreated;
         this.AddResources(
-            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
-            {
-                if (!isAttachingToSession)
-                    this.OnProVersionActivationChanged(isActivated);
-            }),
+            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(this.OnProVersionActivationChanged, true),
             session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
             {
                 var prevLogProfile = this.attachedLogProfile;
@@ -54,7 +49,6 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
         );
         session.RestoringState += this.OnRestoreState;
         session.SavingState += this.OnSaveState;
-        isAttachingToSession = false;
     }
 
 

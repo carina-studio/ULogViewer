@@ -18,12 +18,8 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication, PredefinedLogTextFilter>
 {
     // Actual implementation of filter group.
-    class PredefinedLogTextFilterGroupImpl : PredefinedLogTextFilterGroup
+    class PredefinedLogTextFilterGroupImpl(PredefinedLogTextFilterManager manager, string? name) : PredefinedLogTextFilterGroup(manager.Application, name)
     {
-        // Constructor.
-        public PredefinedLogTextFilterGroupImpl(PredefinedLogTextFilterManager manager, string? name) : base(manager.Application, name)
-        { }
-        
         // Add filter.
         public new void AddFilter(PredefinedLogTextFilter filter) =>
             base.AddFilter(filter);
@@ -59,11 +55,11 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     {
         // check state
         this.VerifyAccess();
-        if (filter.Manager != null)
+        if (filter.Manager is not null)
             throw new InvalidOperationException();
         
         // change ID if needed
-        if (this.GetProfileOrDefault(filter.Id) != null)
+        if (this.GetProfileOrDefault(filter.Id) is not null)
             filter.ChangeId();
         
         // add profile
@@ -138,7 +134,7 @@ class PredefinedLogTextFilterManager : BaseProfileManager<IULogViewerApplication
     public static async Task InitializeAsync(IULogViewerApplication app)
     {
         // check state
-        if (defaultInstance != null)
+        if (defaultInstance is not null)
             throw new InvalidOperationException();
         
         // initialize

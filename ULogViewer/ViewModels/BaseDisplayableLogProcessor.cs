@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,19 +20,14 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> : BaseDisposableApplicationObject<IULogViewerApplication>, IDisplayableLogProcessor where TProcessingToken : class
 {
     // Processing parameters.
-    class ProcessingParams
+    class ProcessingParams(TProcessingToken token)
     {
-        // Fields.
         public volatile int CompletedChunkId;
         public int ConcurrencyLevel;
         public int MaxConcurrencyLevel = 1;
         public int NextChunkId = 1;
         public readonly object ProcessingChunkLock = new();
-        public readonly TProcessingToken Token;
-
-        // Constructor.
-        public ProcessingParams(TProcessingToken token) =>
-            this.Token = token;
+        public readonly TProcessingToken Token = token;
     }
 
 
@@ -81,7 +75,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // create schedule actions
         this.processNextChunkAction = new ScheduledAction(() =>
         {
-            if (this.currentProcessingParams != null)
+            if (this.currentProcessingParams is not null)
                 this.ProcessNextChunk(this.currentProcessingParams);
         });
         this.startProcessingLogsAction = new ScheduledAction(this.StartProcessingLogs);
@@ -105,7 +99,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // check state
         this.startProcessingLogsAction.Cancel();
         var processingParams = this.currentProcessingParams;
-        if (processingParams == null)
+        if (processingParams is null)
             return;
         
         // log
@@ -183,14 +177,14 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             it.CollectionChanged -= this.OnSourceLogsChanged);
         
         // detach from log profile
-        if (this.attachedLogProfile != null)
+        if (this.attachedLogProfile is not null)
         {
             this.OnDetachFromLogProfile(this.attachedLogProfile);
             this.attachedLogProfile = null;
         }
 
         // detach from log group
-        if (this.attachedLogGroup != null)
+        if (this.attachedLogGroup is not null)
         {
             this.OnDetachFromLogGroup(this.attachedLogGroup);
             this.attachedLogGroup = null;
@@ -249,7 +243,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.VerifyAccess();
 #endif
         this.VerifyDisposed();
-        if (this.currentProcessingParams == null)
+        if (this.currentProcessingParams is null)
             return;
         if (this.unprocessedLogs.Contains(log))
             return;
@@ -285,7 +279,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         this.VerifyAccess();
 #endif
         this.VerifyDisposed();
-        if (this.currentProcessingParams == null)
+        if (this.currentProcessingParams is null)
             return;
 
         // enqueue logs to unprocessed logs
@@ -352,7 +346,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 #endif
         if (this.IsDisposed)
             return;
-        if (this.Application.IsDebugMode && this.currentProcessingParams != null)
+        if (this.Application.IsDebugMode && this.currentProcessingParams is not null)
         {
             this.Logger.LogTrace("Invalidate current processing");
             this.CancelProcessing(true);
@@ -631,8 +625,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             case NotifyCollectionChangedAction.Add:
                 this.sourceLogVersions.InsertRange(e.NewStartingIndex, new byte[e.NewItems?.Count ?? 0]);
-                if (this.currentProcessingParams != null)
+                if (this.currentProcessingParams is not null)
                 {
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (this.sourceLogComparer.SortDirection == SortDirection.Ascending)
                         this.unprocessedLogs.AddAll(e.NewItems.AsNonNull().Cast<DisplayableLog>().Reverse(), true);
                     else
@@ -646,6 +641,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                 {
                     var removedLogs = e.OldItems.AsNonNull().Cast<DisplayableLog>();
                     this.sourceLogVersions.RemoveRange(e.OldStartingIndex, e.OldItems?.Count ?? 0);
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (this.sourceLogComparer.SortDirection == SortDirection.Ascending)
                         this.unprocessedLogs.RemoveAll(removedLogs.Reverse(), true);
                     else
@@ -659,7 +655,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
                     this.sourceLogVersions.AddRange(new byte[this.sourceLogs.Count]);
                 else if (this.memoryUsagePolicy != MemoryUsagePolicy.BetterPerformance)
                     this.sourceLogVersions.TrimExcess();
-                if (this.currentProcessingParams != null)
+                if (this.currentProcessingParams is not null)
                 {
                     this.CancelProcessing(true);
                     this.startProcessingLogsAction.Reschedule();
@@ -671,12 +667,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
         if (this.sourceLogs.IsEmpty())
         {
-            if (this.attachedLogProfile != null)
+            if (this.attachedLogProfile is not null)
             {
                 this.OnDetachFromLogProfile(this.attachedLogProfile);
                 this.attachedLogProfile = null;
             }
-            if (this.attachedLogGroup != null)
+            if (this.attachedLogGroup is not null)
             {
                 this.OnDetachFromLogGroup(this.attachedLogGroup);
                 this.attachedLogGroup = null;
@@ -686,7 +682,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     
 
     // Process chunk of logs.
-    async void ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions, SortDirection sortDirection)
+    async Task ProcessChunk(ProcessingParams processingParams, int chunkId, List<DisplayableLog> logs, List<byte> logVersions, SortDirection sortDirection)
     {
         // check state
         if (this.currentProcessingParams != processingParams)
@@ -806,7 +802,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         var profile = group?.LogProfile;
         if (group != this.attachedLogGroup)
         {
-            if (this.attachedLogGroup != null)
+            if (this.attachedLogGroup is not null)
                 this.OnDetachFromLogGroup(this.attachedLogGroup);
             this.attachedLogGroup = group;
             if (group is not null)
@@ -814,7 +810,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         }
         if (!ReferenceEquals(profile, this.attachedLogProfile))
         {
-            if (this.attachedLogProfile != null)
+            if (this.attachedLogProfile is not null)
                 this.OnDetachFromLogProfile(this.attachedLogProfile);
             this.attachedLogProfile = profile;
             if (profile is not null)
@@ -960,7 +956,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             this.VerifyAccess();
             this.VerifyDisposed();
-            if (this.sourceLogs == value)
+            if (ReferenceEquals(this.sourceLogs, value))
                 return;
             (this.sourceLogs as INotifyCollectionChanged)?.Let(it =>
                 it.CollectionChanged -= this.OnSourceLogsChanged);
@@ -1020,6 +1016,7 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         {
             it.MaxConcurrencyLevel = Math.Min(BaseDisplayableLogProcessors.GetMaxConcurrencyLevel(this.processingPriority), Math.Max(1, this.MaxConcurrencyLevel));
         });
+        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
         if (this.sourceLogComparer.SortDirection == SortDirection.Ascending)
             this.unprocessedLogs.AddAll(this.sourceLogs.Reverse(), true);
         else
@@ -1102,7 +1099,7 @@ static class BaseDisplayableLogProcessors
             DisplayableLogProcessingPriority.Realtime => ProcessingTaskFactoryRealtime,
             _ => ProcessingTaskFactoryBackground,
         };
-        if (taskFactory != null)
+        if (taskFactory is not null)
             return taskFactory;
         // ReSharper disable NonAtomicCompoundOperator
         return ProcessingTaskFactorySyncLock.Lock(_ => 
@@ -1139,15 +1136,15 @@ static class BaseDisplayableLogProcessors
             it.TryPop(out var list);
             return list;
         });
-        if (list != null)
+        if (list is not null)
         {
-            if (elements != null)
+            if (elements is not null)
                 list.AddRange(elements);
             return list;
         }
-        if (elements != null)
-            return new List<DisplayableLog>(elements);
-        return new List<DisplayableLog>();
+        if (elements is not null)
+            return [..elements];
+        return [];
     }
 
 
@@ -1166,15 +1163,15 @@ static class BaseDisplayableLogProcessors
             it.TryPop(out var list);
             return list;
         });
-        if (list != null)
+        if (list is not null)
         {
-            if (elements != null)
+            if (elements is not null)
                 list.AddRange(elements);
             return list;
         }
-        if (elements != null)
-            return new List<byte>(elements);
-        return new List<byte>();
+        if (elements is not null)
+            return [..elements];
+        return [];
     }
     
 

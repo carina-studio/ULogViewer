@@ -104,7 +104,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	readonly int maxDisplayLineCount = 1;
 	long memorySize = BaseMemorySize 
 	                  + (Memory.EstimateCollectionInstanceSize(LogReaderInfoKeyValuePairMemorySize, 0) << 1);
-	readonly object memorySizeLock = new();
+	readonly Lock memorySizeLock = new();
 	readonly Random random = new();
 	readonly Queue<Color> recentlyUsedColorIndicatorColors = new(RecentlyUsedColorIndicatorColorCount);
 	readonly List<ProgressiveLogsRemovingToken> scheduledProgressiveLogsRemovingTokens = new();
@@ -154,7 +154,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		// setup actions
 		this.triggerProgressiveLogsRemovingAction = new(() =>
 		{
-			if (this.activeProgressiveLogsRemovingToken != null)
+			if (this.activeProgressiveLogsRemovingToken is not null)
 				return;
 			while (this.scheduledProgressiveLogsRemovingTokens.IsNotEmpty())
 			{
@@ -167,7 +167,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 					break;
 				}
 			}
-			if (this.activeProgressiveLogsRemovingToken == null && this.scheduledProgressiveLogsRemovingTokens.IsEmpty())
+			if (this.activeProgressiveLogsRemovingToken is null && this.scheduledProgressiveLogsRemovingTokens.IsEmpty())
 				this.logger.LogDebug("All progressive logs removing completed");
 		});
 		this.updateTextHighlightingDefSetAction = new(() =>
@@ -463,7 +463,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		if (this.analysisResultIndicatorIcons.TryGetValue(type, out var icon))
 			return icon;
 		icon = DisplayableLogAnalysisResultIconConverter.Default.Convert<IImage?>(type);
-		if (icon != null)
+		if (icon is not null)
 			this.analysisResultIndicatorIcons[type] = icon;
 		return icon;
 	}
@@ -476,7 +476,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	/// <returns><see cref="IBrush"/> of color indicator.</returns>
 	internal IBrush? GetColorIndicatorBrush(DisplayableLog log)
 	{
-		if (this.colorIndicatorKeyGetter == null)
+		if (this.colorIndicatorKeyGetter is null)
 			return null;
 		return this.GetColorIndicatorBrushInternal(this.colorIndicatorKeyGetter(log));
 	}
@@ -683,7 +683,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 				this.UpdateLevelBrushes();
 				this.updateTextHighlightingDefSetAction.Execute();
 				var log = this.displayableLogsHead;
-				while (log != null)
+				while (log is not null)
 				{
 					log.OnStyleResourcesUpdated();
 					log = log.Next;
@@ -697,7 +697,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	void OnApplicationStringsUpdated(object? sender, EventArgs e)
 	{
 		var log = this.displayableLogsHead;
-		while (log != null)
+		while (log is not null)
 		{
 			log.OnApplicationStringsUpdated();
 			log = log.Next;
@@ -714,7 +714,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	internal void OnDisplayableLogCreated(DisplayableLog log, LogReader reader, out byte readerLocalId)
 	{
 		// add to list
-		if (this.displayableLogsHead != null)
+		if (this.displayableLogsHead is not null)
 		{
 			log.Next = this.displayableLogsHead;
 			this.displayableLogsHead.Previous = log;
@@ -768,9 +768,9 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	internal void OnDisplayableLogDisposed(DisplayableLog log)
 	{
 		// remove from list
-		if (log.Previous != null)
+		if (log.Previous is not null)
 			log.Previous.Next = log.Next;
-		if (log.Next != null)
+		if (log.Next is not null)
 			log.Next.Previous = log.Previous;
 		if (this.displayableLogsHead == log)
 			this.displayableLogsHead = log.Next;
@@ -812,7 +812,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 				{
 					this.UpdateColorIndicatorBrushes();
 					var log = this.displayableLogsHead;
-					while (log != null)
+					while (log is not null)
 					{
 						log.OnStyleResourcesUpdated();
 						log = log.Next;
@@ -829,7 +829,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			case nameof(LogProfile.TimeSpanFormatForDisplaying):
 				{
 					var log = this.displayableLogsHead;
-					while (log != null)
+					while (log is not null)
 					{
 						log.OnTimeSpanFormatChanged();
 						log = log.Next;
@@ -839,7 +839,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			case nameof(LogProfile.TimestampFormatForDisplaying):
 				{
 					var log = this.displayableLogsHead;
-					while (log != null)
+					while (log is not null)
 					{
 						log.OnTimestampFormatChanged();
 						log = log.Next;
@@ -858,7 +858,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		{
 			this.maxDisplayLineCount = (int)e.Value;
 			var log = this.displayableLogsHead;
-			while (log != null)
+			while (log is not null)
 			{
 				log.OnMaxDisplayLineCountChanged();
 				log = log.Next;
@@ -879,7 +879,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 #endif
 		this.VerifyDisposed();
 		var log = this.displayableLogsHead;
-		while (log != null)
+		while (log is not null)
 		{
 			log.RemoveAnalysisResults(analyzer);
 			log = log.Next;
@@ -923,7 +923,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			this.selectedProcessId = value;
 			var time = this.Application.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
 			var log = this.displayableLogsHead;
-			while (log != null)
+			while (log is not null)
 			{
 				log.OnSelectedProcessIdChanged();
 				log = log.Next;
@@ -948,7 +948,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			this.selectedThreadId = value;
 			var time = this.Application.IsDebugMode ? this.stopwatch.ElapsedMilliseconds : 0L;
 			var log = this.displayableLogsHead;
-			while (log != null)
+			while (log is not null)
 			{
 				log.OnSelectedThreadIdChanged();
 				log = log.Next;
@@ -1058,7 +1058,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 				it[level] = s;
 		});
 		var log = this.displayableLogsHead;
-		while (log != null)
+		while (log is not null)
 		{
 			log.OnLevelMapForDisplayingChanged();
 			log = log.Next;

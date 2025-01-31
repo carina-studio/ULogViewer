@@ -87,19 +87,13 @@ class LogCategorizingViewModel : SessionComponent
         });
 
         // attach to session
-        var isAttachingToSession = true;
         this.AddResources(
-            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(_ =>
-            {
-                if (!isAttachingToSession)
-                    this.UpdateTimestampLogPropertyName();
-            }),
+            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(this.UpdateTimestampLogPropertyName, true),
             session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ =>
                 this.reportTimestampCategoriesAction.Schedule()),
             session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ =>
                 this.reportTimestampCategoriesAction.Schedule())
         );
-        isAttachingToSession = false;
         
         // restore state
 #pragma warning disable CS0612

@@ -64,13 +64,13 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		if (ReferenceEquals(x, y))
 			return 0;
-		if (x == null)
+		if (x is null)
 			return -1;
-		if (y == null)
+		if (y is null)
 			return 1;
-		if (x == LogProfileManager.Default.EmptyProfile)
+		if (ReferenceEquals(x, LogProfileManager.Default.EmptyProfile))
 			return -1;
-		if (y == LogProfileManager.Default.EmptyProfile)
+		if (ReferenceEquals(y, LogProfileManager.Default.EmptyProfile))
 			return 1;
 		var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
 		if (result != 0)
@@ -186,7 +186,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 		});
 		set
 		{
-			if (value is null || value == LogProfileManager.Default.EmptyProfile)
+			if (value is null || ReferenceEquals(value, LogProfileManager.Default.EmptyProfile))
 				this.Settings.ResetValue(SettingKeys.InitialLogProfile);
 			else
 				this.Settings.SetValue<string>(SettingKeys.InitialLogProfile, value.Id);

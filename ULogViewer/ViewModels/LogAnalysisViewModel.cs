@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -373,7 +374,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         });
         
         // attach to session
-        var isAttachingToSession = true;
         session.AllLogReadersDisposed += this.OnAllLogReadersDisposed;
         this.AddResources(session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
             {
@@ -390,7 +390,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             }),
             session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
             {
-                if (!isAttachingToSession && isActivated)
+                if (isActivated)
                 {
                     this.updateCoopScriptLogAnalysisAction.Schedule();
                     this.updateScriptLogAnalysisAction.Schedule();
@@ -403,7 +403,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             session.GetValueAsObservable(Session.IsRemovingLogFilesProperty).Subscribe(_ =>
                 updateScriptLogAnalysisPriorityAction.Schedule())
         );
-        isAttachingToSession = false;
 
         // restore state
 #pragma warning disable CS0612
@@ -529,7 +528,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
 
     // Copy selected log analysis results to clipboard.
-    async void CopySelectedAnalysisResults()
+    async Task CopySelectedAnalysisResults()
     {
         // check state
         var count = this.selectedAnalysisResults.Count;
@@ -760,7 +759,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             case NotifyCollectionChangedAction.Reset:
                 foreach (var analyzer in this.attachedAnalyzers)
                 {
-                    if (analyzer.AnalysisResults == sender)
+                    if (ReferenceEquals(analyzer.AnalysisResults, sender))
                     {
                         this.analysisResults.RemoveAll(it => it.Analyzer == analyzer);
                         this.analysisResults.AddAll(analyzer.AnalysisResults);

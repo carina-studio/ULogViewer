@@ -214,21 +214,28 @@ class LogFilteringViewModel : SessionComponent
         LogTextFilterPhrasesDatabase.Clearing += this.OnLogTextFilterPhrasesDatabaseClearing;
 
         // attach to session
-        var isAttachingToSession = true;
         session.AllLogReadersDisposed += this.OnAllLogReaderDisposed;
         this.AddResources(
-            session.GetValueAsObservable(Session.AreLogsSortedByTimestampProperty).Subscribe(hasProperty =>
-            {
-                if (!isAttachingToSession && !hasProperty)
-                    this.ResetTimestampRange();
-            }),
+            session.GetValueAsObservable(Session.AreLogsSortedByTimestampProperty).Subscribe(this.ResetTimestampRange, true),
             session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
             {
-                if (!isAttachingToSession)
-                    this.logFilter.FilteringLogProperties = properties;
-            })
+                this.logFilter.FilteringLogProperties = properties;
+            }, true),
+            session.GetValueAsObservable(Session.EarliestLogTimestampProperty).Subscribe(timestamp =>
+            {
+                if (timestamp.HasValue)
+                    this.BeginningTimestamp = this.GetValue(BeginningTimestampProperty); // to correct value
+                else
+                    this.ResetTimestampRange();
+            }, true),
+            session.GetValueAsObservable(Session.LatestLogTimestampProperty).Subscribe(timestamp =>
+            {
+                if (timestamp.HasValue)
+                    this.EndingTimestamp = this.GetValue(EndingTimestampProperty); // to correct value
+                else
+                    this.ResetTimestampRange();
+            }, true)
         );
-        isAttachingToSession = false;
     }
     
     
@@ -258,6 +265,11 @@ class LogFilteringViewModel : SessionComponent
             {
                 if (!this.Session.AreLogsSortedByTimestamp)
                     return;
+                var earliestTimestamp = this.Session.EarliestLogTimestamp;
+                if (!earliestTimestamp.HasValue)
+                    return;
+                if (earliestTimestamp.Value > value.Value)
+                    value = earliestTimestamp;
                 var endingTimestamp = this.GetValue(EndingTimestampProperty);
                 if (endingTimestamp.HasValue && endingTimestamp.Value < value.Value)
                     value = endingTimestamp;
@@ -476,12 +488,16 @@ class LogFilteringViewModel : SessionComponent
             {
                 if (!this.Session.AreLogsSortedByTimestamp)
                     return;
+                var latestTimestamp = this.Session.LatestLogTimestamp;
+                if (!latestTimestamp.HasValue)
+                    return;
+                if (latestTimestamp.Value < value.Value)
+                    value = latestTimestamp;
                 var beginningTimestamp = this.GetValue(BeginningTimestampProperty);
                 if (beginningTimestamp.HasValue && beginningTimestamp.Value > value.Value)
                     value = beginningTimestamp;
             }
             this.SetValue(EndingTimestampProperty, value); 
-            
         }
     }
 
