@@ -60,6 +60,18 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
 	/// <summary>
+	/// Property of <see cref="AllLogsDuration"/>.
+	/// </summary>
+	public static readonly ObservableProperty<TimeSpan?> AllLogsDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(AllLogsDuration));
+	/// <summary>
+	/// Property of <see cref="AllLogsDurationEndingString"/>.
+	/// </summary>
+	public static readonly ObservableProperty<string?> AllLogsDurationEndingStringProperty = ObservableProperty.Register<Session, string?>(nameof(AllLogsDurationEndingString));
+	/// <summary>
+	/// Property of <see cref="AllLogsDurationStartingString"/>.
+	/// </summary>
+	public static readonly ObservableProperty<string?> AllLogsDurationStartingStringProperty = ObservableProperty.Register<Session, string?>(nameof(AllLogsDurationStartingString));
+	/// <summary>
 	/// Property of <see cref="AreDisplayLogPropertiesDefinedByLogProfile"/>.
 	/// </summary>
 	public static readonly ObservableProperty<bool> AreDisplayLogPropertiesDefinedByLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(AreDisplayLogPropertiesDefinedByLogProfile));
@@ -112,6 +124,10 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), Array.Empty<DisplayableLogProperty>());
 	/// <summary>
+	/// Property of <see cref="EarliestAllLogTimestamp"/>.
+	/// </summary>
+	public static readonly ObservableProperty<DateTime?> EarliestAllLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestAllLogTimestamp));
+	/// <summary>
 	/// Property of <see cref="EarliestLogTimestamp"/>.
 	/// </summary>
 	public static readonly ObservableProperty<DateTime?> EarliestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestLogTimestamp));
@@ -123,6 +139,10 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Property of <see cref="HasAllDataSourceErrors"/>.
 	/// </summary>
 	public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
+	/// <summary>
+	/// Property of <see cref="HasAllLogsDuration"/>.
+	/// </summary>
+	public static readonly ObservableProperty<bool> HasAllLogsDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllLogsDuration));
 	/// <summary>
 	/// Property of <see cref="HasCustomTitle"/>.
 	/// </summary>
@@ -347,6 +367,10 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Property of <see cref="LastLogsReadingDuration"/>.
 	/// </summary>
 	public static readonly ObservableProperty<TimeSpan?> LastLogsReadingDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LastLogsReadingDuration));
+	/// <summary>
+	/// Property of <see cref="LatestAllLogTimestamp"/>.
+	/// </summary>
+	public static readonly ObservableProperty<DateTime?> LatestAllLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(LatestAllLogTimestamp));
 	/// <summary>
 	/// Property of <see cref="LatestLogTimestamp"/>.
 	/// </summary>
@@ -1032,318 +1056,21 @@ class Session : ViewModel<IULogViewerApplication>
 		this.AllComponentsCreated?.Invoke();
 
 		// create scheduled actions
-		this.checkAreAllPanelsHiddenAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			this.PersistentState.SetValue<bool>(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProperty)
-			                                                           && !this.GetValue(IsMarkedLogsPanelVisibleProperty)
-			                                                           && !this.LogCategorizing.IsTimestampCategoriesPanelVisible
-			                                                           && !this.LogAnalysis.IsPanelVisible);
-		});
-		this.checkDataSourceErrorsAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			var dataSourceCount = this.logReaders.Count;
-			var errorCount = 0;
-			if (dataSourceCount == 0)
-			{
-				this.SetValue(HasAllDataSourceErrorsProperty, this.hasLogDataSourceCreationFailure);
-				this.SetValue(HasPartialDataSourceErrorsProperty, false);
-				this.checkIsWaitingForDataSourcesAction?.Schedule();
-				return;
-			}
-			foreach (var logReader in this.logReaders)
-			{
-				if (logReader.DataSource.IsErrorState())
-					++errorCount;
-			}
-			if (errorCount == 0)
-			{
-				this.SetValue(HasAllDataSourceErrorsProperty, false);
-				this.SetValue(HasPartialDataSourceErrorsProperty, false);
-			}
-			else
-			{
-				this.SetValue(HasAllDataSourceErrorsProperty, errorCount >= dataSourceCount);
-				this.SetValue(HasPartialDataSourceErrorsProperty, errorCount < dataSourceCount);
-			}
-			this.checkIsWaitingForDataSourcesAction?.Schedule();
-		});
-		this.checkIsWaitingForDataSourcesAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			var profile = this.LogProfile;
-			if (profile is null || this.logReaders.IsEmpty() || this.HasAllDataSourceErrors)
-				this.SetValue(IsWaitingForDataSourcesProperty, false);
-			else
-			{
-				var isWaiting = false;
-				foreach (var logReader in this.logReaders)
-				{
-					if (logReader.IsWaitingForDataSource && !logReader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-					{
-						isWaiting = true;
-						break;
-					}
-				}
-				this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
-			}
-		});
-		this.checkLogsMemoryUsageAction = new(() =>
-		{
-			// check state
-			if (this.IsDisposed)
-				return;
-
-			// report memory usage
-			var prevLogsMemoryUsage = this.LogsMemoryUsage;
-			var logsMemoryUsage = (this.displayableLogGroup?.MemorySize).GetValueOrDefault()
-				+ Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.allLogs.Count + this.markedLogs.Count);
-			foreach (var component in this.attachedComponents)
-			{
-				var componentMemoryUsage = component.MemorySize;
-				if (componentMemoryUsage < 0)
-				{
-#if DEBUG
-					throw new InternalStateCorruptedException($"Memory usage of component becomes negative: {componentMemoryUsage}, component: {component.GetType().Name}");
-#endif
-					this.Logger.LogError("Memory usage of component becomes negative: {size}, component: {c}", componentMemoryUsage, component.GetType().Name);
-					componentMemoryUsage = 0;
-					this.GenerateDebugMessage("Memory usage of component becomes negative.");
-				}
-				logsMemoryUsage += componentMemoryUsage;
-			}
-			foreach (var reader in this.logReaders)
-				logsMemoryUsage += reader.MemorySize;
-			if (logsMemoryUsage < 0)
-			{
-#if DEBUG
-				throw new InternalStateCorruptedException($"Memory usage of logs becomes negative: {logsMemoryUsage}");
-#endif
-				this.Logger.LogError("Memory usage of logs becomes negative: {size}", logsMemoryUsage);
-				logsMemoryUsage = 0;
-				this.GenerateDebugMessage("Memory usage of logs becomes negative.");
-			}
-			this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
-			totalLogsMemoryUsage += (logsMemoryUsage - prevLogsMemoryUsage);
-			this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage + LogBuilder.SharedCachesMemorySize);
-
-			// hibernate sessions if needed
-			hibernateSessionsAction.Schedule();
-
-			// schedule next checking
-			this.checkLogsMemoryUsageAction?.Schedule(LogsMemoryUsageCheckInterval);
-		});
+		this.checkAreAllPanelsHiddenAction = new(this.CheckAreAllPanelsHidden);
+		this.checkDataSourceErrorsAction = new(this.CheckDataSourceErrors);
+		this.checkIsWaitingForDataSourcesAction = new(this.CheckIsWaitingForDataSources);
+		this.checkLogsMemoryUsageAction = new(this.CheckLogsMemoryUsage);
 		this.reloadLogsAction = new(() => this.ReloadLogs(false, false));
 		this.reloadLogsFullyAction= new(() => this.ReloadLogs(true, true));
 		this.reloadLogsWithRecreatingLogReadersAction = new(() => this.ReloadLogs(true, false));
 		this.reloadLogsWithUpdatingVisPropAction = new(() => this.ReloadLogs(false, true));
-		this.reportLogsTimeInfoAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			var logs = this.Logs;
-			var profile = this.LogProfile;
-			if (logs.IsNotEmpty() && profile is not null && this.logReaders.IsNotEmpty())
-			{
-				var firstLog = logs[0];
-				var lastLog = logs.Last();
-				var duration = profile.SortDirection == SortDirection.Ascending
-					? CalculateDurationBetweenLogs(firstLog, lastLog, out var minTimeSpan, out var maxTimeSpan, out var earliestTimestamp, out var latestTimestamp)
-					: CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
-				this.SetValue(LogsDurationProperty, duration);
-				this.SetValue(MinLogTimeSpanProperty, minTimeSpan);
-				this.SetValue(MaxLogTimeSpanProperty, maxTimeSpan);
-				this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
-				this.SetValue(LatestLogTimestampProperty, latestTimestamp);
-				try
-				{
-					if (earliestTimestamp is not null && latestTimestamp is not null)
-					{
-						var format = profile.TimestampFormatForDisplaying;
-						if (format is not null)
-						{
-							this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
-							this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
-						}
-						else
-						{
-							this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(Application.CultureInfo));
-							this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(Application.CultureInfo));
-						}
-					}
-					else if (minTimeSpan is not null && maxTimeSpan is not null)
-					{
-						var format = profile.TimeSpanFormatForDisplaying;
-						if (format is not null)
-						{
-							this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString(format));
-							this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString(format));
-						}
-						else
-						{
-							this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString());
-							this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString());
-						}
-					}
-					else
-					{
-						this.SetValue(LogsDurationStartingStringProperty, null);
-						this.SetValue(LogsDurationEndingStringProperty, null);
-					}
-				}
-				catch
-				{
-					this.SetValue(LogsDurationStartingStringProperty, null);
-					this.SetValue(LogsDurationEndingStringProperty, null);
-				}
-			}
-			else
-			{
-				this.SetValue(LogsDurationProperty, null);
-				this.SetValue(EarliestLogTimestampProperty, null);
-				this.SetValue(LatestLogTimestampProperty, null);
-				this.SetValue(LogsDurationStartingStringProperty, null);
-				this.SetValue(LogsDurationEndingStringProperty, null);
-			}
-		});
-		this.saveMarkedLogsAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			this.SaveMarkedLogs();
-		});
-		this.selectLogsToReportActions = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			if (!this.IsShowingAllLogsTemporarily)
-			{
-				if (this.IsShowingMarkedLogsTemporarily)
-				{
-					if (this.Application.IsDebugMode)
-						this.Logger.LogTrace("Show marked logs");
-					this.SetValue(LogsProperty, this.MarkedLogs);
-					this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
-					return;
-				}
-				if (this.LogFiltering.IsFilteringNeeded)
-				{
-					if (this.Application.IsDebugMode)
-						this.Logger.LogTrace("Show filtered logs");
-					this.SetValue(LogsProperty, this.LogFiltering.FilteredLogs);
-					this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
-					return;
-				}
-			}
-			if (this.Application.IsDebugMode)
-				this.Logger.LogTrace("Show all logs");
-			this.SetValue(LogsProperty, this.AllLogs);
-			this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
-			if (!this.LogFiltering.IsFilteringNeeded)
-			{
-				this.Logger.LogDebug("Trigger GC after clearing log filters");
-				TriggerGC();
-			}
-		});
-		this.updateCanStopReadingLogsAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			foreach (var reader in this.logReaders)
-			{
-				switch (reader.State)
-				{
-					case LogReaderState.Starting: 
-					case LogReaderState.ReadingLogs:
-					case LogReaderState.Paused:
-						this.SetValue(CanStopReadingLogsProperty, true);
-						return;
-				}
-			}
-			this.ResetValue(CanStopReadingLogsProperty);
-		});
-		this.updateIsReadingLogsAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			if (this.logReaders.IsEmpty())
-			{
-				this.SetValue(IsReadingLogsProperty, false);
-				this.SetValue(LastLogsReadingDurationProperty, null);
-				this.logsReadingWatch.Reset();
-			}
-			else
-			{
-				foreach (var logReader in this.logReaders)
-				{
-					switch (logReader.State)
-					{
-						case LogReaderState.Starting:
-						case LogReaderState.ReadingLogs:
-							if (!this.logsReadingWatch.IsRunning)
-								this.logsReadingWatch.Restart();
-							this.SetValue(IsReadingLogsProperty, true);
-							return;
-					}
-				}
-				bool wasReadingLogs = this.IsReadingLogs;
-				this.SetValue(IsReadingLogsProperty, false);
-				if (this.logsReadingWatch.IsRunning)
-				{
-					this.logsReadingWatch.Stop();
-					if (this.LogProfile?.IsContinuousReading != true)
-						this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
-				}
-				if (wasReadingLogs)
-				{
-					this.Logger.LogDebug("Trigger GC after reading logs");
-					TriggerGC();
-				}
-			}
-		});
-		this.updateIsRemovingLogFilesAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			if (this.logReaders.IsEmpty())
-				this.ResetValue(IsRemovingLogFilesProperty);
-			else
-			{
-				var isRemovingLogFiles = false;
-				foreach (var logReader in this.logReaders)
-				{
-					if (!logReader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-						continue;
-					if (logReader.State == LogReaderState.ClearingLogs)
-					{
-						isRemovingLogFiles = true;
-						break;
-					}
-				}
-				this.SetValue(IsRemovingLogFilesProperty, isRemovingLogFiles);
-			}
-		});
-		this.updateIsProcessingLogsAction = new(() =>
-		{
-			if (this.IsDisposed)
-				return;
-			if (this.IsSavingLogs)
-			{
-				this.SetValue(IsProcessingLogsProperty, true);
-				return;
-			}
-			var logProfile = this.LogProfile;
-			if (logProfile is null)
-				this.SetValue(IsProcessingLogsProperty, false);
-			else if (this.LogFiltering.IsFiltering || this.IsReadingLogs || this.IsRemovingLogFiles)
-				this.SetValue(IsProcessingLogsProperty, true);
-			else
-				this.SetValue(IsProcessingLogsProperty, false);
-		});
+		this.reportLogsTimeInfoAction = new(this.ReportLogsTimeInfo);
+		this.saveMarkedLogsAction = new(this.SaveMarkedLogs);
+		this.selectLogsToReportActions = new(this.SelectLogsToReport);
+		this.updateCanStopReadingLogsAction = new(this.UpdateCanStopReadingLogs);
+		this.updateIsReadingLogsAction = new(this.UpdateIsReadingLogs);
+		this.updateIsRemovingLogFilesAction = new(this.UpdateIsRemovingLogFiles);
+		this.updateIsProcessingLogsAction = new(this.UpdateIsProcessingLogs);
 		this.updateTitleAndIconAction = new(this.UpdateTitleAndIcon);
 		this.checkLogsMemoryUsageAction.Schedule();
 		this.updateTitleAndIconAction.Execute();
@@ -1503,8 +1230,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get number of all read logs.
 	/// </summary>
-	public int AllLogCount => 
-		this.GetValue(AllLogCountProperty);
+	public int AllLogCount => this.GetValue(AllLogCountProperty);
 
 
 	/// <summary>
@@ -1517,6 +1243,24 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get all logs without filtering.
 	/// </summary>
 	public IList<DisplayableLog> AllLogs { get; }
+	
+	
+	/// <summary>
+	/// Get duration of <see cref="AllLogs"/>.
+	/// </summary>
+	public TimeSpan? AllLogsDuration => this.GetValue(AllLogsDurationProperty);
+	
+	
+	/// <summary>
+	/// Get string to describe ending point of <see cref="AllLogsDuration"/>.
+	/// </summary>
+	public string? AllLogsDurationEndingString => this.GetValue(AllLogsDurationEndingStringProperty);
+
+
+	/// <summary>
+	/// Get string to describe starting point of <see cref="AllLogsDuration"/>.
+	/// </summary>
+	public string? AllLogsDurationStartingString => this.GetValue(AllLogsDurationStartingStringProperty);
 	
 	
 	/// <summary>
@@ -1691,6 +1435,123 @@ class Session : ViewModel<IULogViewerApplication>
 				this.ResetValue(IsHighMemoryUsageToStopReadingLogsProperty);
 			}
 		}
+	}
+
+
+	// Check visibilities of panels.
+	void CheckAreAllPanelsHidden()
+	{
+		if (this.IsDisposed)
+			return;
+		this.PersistentState.SetValue<bool>(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProperty)
+		                                                           && !this.GetValue(IsMarkedLogsPanelVisibleProperty)
+		                                                           && !this.LogCategorizing.IsTimestampCategoriesPanelVisible
+		                                                           && !this.LogAnalysis.IsPanelVisible);
+	}
+
+
+	// Check errors from log data source.
+	void CheckDataSourceErrors()
+	{
+		if (this.IsDisposed)
+			return;
+		var dataSourceCount = this.logReaders.Count;
+		var errorCount = 0;
+		if (dataSourceCount == 0)
+		{
+			this.SetValue(HasAllDataSourceErrorsProperty, this.hasLogDataSourceCreationFailure);
+			this.SetValue(HasPartialDataSourceErrorsProperty, false);
+			this.checkIsWaitingForDataSourcesAction?.Schedule();
+			return;
+		}
+		foreach (var logReader in this.logReaders)
+		{
+			if (logReader.DataSource.IsErrorState())
+				++errorCount;
+		}
+		if (errorCount == 0)
+		{
+			this.SetValue(HasAllDataSourceErrorsProperty, false);
+			this.SetValue(HasPartialDataSourceErrorsProperty, false);
+		}
+		else
+		{
+			this.SetValue(HasAllDataSourceErrorsProperty, errorCount >= dataSourceCount);
+			this.SetValue(HasPartialDataSourceErrorsProperty, errorCount < dataSourceCount);
+		}
+		this.checkIsWaitingForDataSourcesAction.Schedule();
+	}
+
+
+	// Check whether at least one log reader is waiting for log data source or not.
+	void CheckIsWaitingForDataSources()
+	{
+		if (this.IsDisposed)
+			return;
+		var profile = this.LogProfile;
+		if (profile is null || this.logReaders.IsEmpty() || this.HasAllDataSourceErrors)
+			this.SetValue(IsWaitingForDataSourcesProperty, false);
+		else
+		{
+			var isWaiting = false;
+			foreach (var logReader in this.logReaders)
+			{
+				if (logReader.IsWaitingForDataSource && !logReader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+				{
+					isWaiting = true;
+					break;
+				}
+			}
+			this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
+		}
+	}
+	
+	
+	// Check memory usage of logs.
+	void CheckLogsMemoryUsage()
+	{
+		// check state
+		if (this.IsDisposed)
+			return;
+
+		// report memory usage
+		var prevLogsMemoryUsage = this.LogsMemoryUsage;
+		var logsMemoryUsage = (this.displayableLogGroup?.MemorySize).GetValueOrDefault()
+		                      + Memory.EstimateCollectionInstanceSize(IntPtr.Size, this.allLogs.Count + this.markedLogs.Count);
+		foreach (var component in this.attachedComponents)
+		{
+			var componentMemoryUsage = component.MemorySize;
+			if (componentMemoryUsage < 0)
+			{
+#if DEBUG
+				throw new InternalStateCorruptedException($"Memory usage of component becomes negative: {componentMemoryUsage}, component: {component.GetType().Name}");
+#endif
+				this.Logger.LogError("Memory usage of component becomes negative: {size}, component: {c}", componentMemoryUsage, component.GetType().Name);
+				componentMemoryUsage = 0;
+				this.GenerateDebugMessage("Memory usage of component becomes negative.");
+			}
+			logsMemoryUsage += componentMemoryUsage;
+		}
+		foreach (var reader in this.logReaders)
+			logsMemoryUsage += reader.MemorySize;
+		if (logsMemoryUsage < 0)
+		{
+#if DEBUG
+			throw new InternalStateCorruptedException($"Memory usage of logs becomes negative: {logsMemoryUsage}");
+#endif
+			this.Logger.LogError("Memory usage of logs becomes negative: {size}", logsMemoryUsage);
+			logsMemoryUsage = 0;
+			this.GenerateDebugMessage("Memory usage of logs becomes negative.");
+		}
+		this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
+		totalLogsMemoryUsage += logsMemoryUsage - prevLogsMemoryUsage;
+		this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage + LogBuilder.SharedCachesMemorySize);
+
+		// hibernate sessions if needed
+		hibernateSessionsAction.Schedule();
+
+		// schedule next checking
+		this.checkLogsMemoryUsageAction.Schedule(LogsMemoryUsageCheckInterval);
 	}
 
 
@@ -2469,13 +2330,18 @@ class Session : ViewModel<IULogViewerApplication>
 		if (!this.IsDisposed)
 			this.checkLogsMemoryUsageAction.Schedule();
 	}
+	
+	
+	/// <summary>
+	/// Get the earliest timestamp of log in <see cref="AllLogs"/>.
+	/// </summary>
+	public DateTime? EarliestAllLogTimestamp => this.GetValue(EarliestAllLogTimestampProperty);
 
 
 	/// <summary>
-	/// Get earliest timestamp of log in <see cref="Logs"/>.
+	/// Get the earliest timestamp of log in <see cref="Logs"/>.
 	/// </summary>
-	public DateTime? EarliestLogTimestamp => 
-		this.GetValue(EarliestLogTimestampProperty);
+	public DateTime? EarliestLogTimestamp => this.GetValue(EarliestLogTimestampProperty);
 
 
 	/// <summary>
@@ -2589,6 +2455,12 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Check whether errors are found in all data sources or not.
 	/// </summary>
 	public bool HasAllDataSourceErrors => this.GetValue(HasAllDataSourceErrorsProperty);
+	
+	
+	/// <summary>
+	/// Check whether <see cref="AllLogsDuration"/> is valid or not.
+	/// </summary>
+	public bool HasAllLogsDuration => this.GetValue(HasAllLogsDurationProperty);
 
 
 	/// <summary>
@@ -2969,10 +2841,16 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get the duration of last logs reading.
 	/// </summary>
 	public TimeSpan? LastLogsReadingDuration => this.GetValue(LastLogsReadingDurationProperty);
+	
+	
+	/// <summary>
+	/// Get the latest timestamp of log in <see cref="AllLogs"/>.
+	/// </summary>
+	public DateTime? LatestAllLogTimestamp => this.GetValue(LatestAllLogTimestampProperty);
 
 
 	/// <summary>
-	/// Get latest timestamp of log in <see cref="Logs"/>.
+	/// Get the latest timestamp of log in <see cref="Logs"/>.
 	/// </summary>
 	public DateTime? LatestLogTimestamp => this.GetValue(LatestLogTimestampProperty);
 
@@ -3146,29 +3024,25 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get duration of <see cref="Logs"/>.
 	/// </summary>
-	public TimeSpan? LogsDuration => 
-		this.GetValue(LogsDurationProperty);
+	public TimeSpan? LogsDuration => this.GetValue(LogsDurationProperty);
 
 
 	/// <summary>
 	/// Get string to describe ending point of <see cref="LogsDuration"/>.
 	/// </summary>
-	public string? LogsDurationEndingString => 
-		this.GetValue(LogsDurationEndingStringProperty);
+	public string? LogsDurationEndingString => this.GetValue(LogsDurationEndingStringProperty);
 
 
 	/// <summary>
 	/// Get string to describe starting point of <see cref="LogsDuration"/>.
 	/// </summary>
-	public string? LogsDurationStartingString => 
-		this.GetValue(LogsDurationStartingStringProperty);
+	public string? LogsDurationStartingString => this.GetValue(LogsDurationStartingStringProperty);
 
 
 	/// <summary>
 	/// Get size of memory usage of logs by the <see cref="Session"/> instance in bytes.
 	/// </summary>
-	public long LogsMemoryUsage => 
-		this.GetValue(LogsMemoryUsageProperty);
+	public long LogsMemoryUsage => this.GetValue(LogsMemoryUsageProperty);
 
 
 	/// <summary>
@@ -3794,7 +3668,13 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		base.OnPropertyChanged(property, oldValue, newValue);
 		if (property == AllLogCountProperty)
+		{
 			this.UpdateIsLogsWritingAvailable(this.LogProfile);
+			if ((int)newValue! <= 0)
+				this.reportLogsTimeInfoAction.Execute();
+		}
+		else if (property == AllLogsDurationProperty)
+			this.SetValue(HasAllLogsDurationProperty, newValue is not null);
 		else if (property == CanAddLogFileProperty)
 			this.Logger.LogTrace("Can add log file: {canAdd}", newValue);
 		else if (property == CustomTitleProperty)
@@ -3872,7 +3752,10 @@ class Session : ViewModel<IULogViewerApplication>
 		else if (property == LogsProperty)
 		{
 			// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-			this.reportLogsTimeInfoAction?.Reschedule();
+			if ((newValue as IList<DisplayableLog>).IsNullOrEmpty())
+				this.reportLogsTimeInfoAction?.Execute();
+			else
+				this.reportLogsTimeInfoAction?.Reschedule();
 			// ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 		}
 		else if (property == MarkedLogsPanelSizeProperty)
@@ -4130,6 +4013,126 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
 	public ICommand RemoveLogFileCommand { get; }
+	
+	
+	// Report time information of logs.
+	void ReportLogsTimeInfo()
+	{
+		if (this.IsDisposed)
+			return;
+		var profile = this.LogProfile;
+		if (profile is not null && this.allLogs.IsNotEmpty())
+		{
+			var firstLog = this.allLogs[0];
+			var lastLog = this.allLogs.Last();
+			var duration = profile.SortDirection == SortDirection.Ascending
+				? CalculateDurationBetweenLogs(firstLog, lastLog, out _, out _, out var earliestTimestamp, out var latestTimestamp)
+				: CalculateDurationBetweenLogs(lastLog, firstLog, out _, out _, out earliestTimestamp, out latestTimestamp);
+			this.SetValue(AllLogsDurationProperty, duration);
+			this.SetValue(EarliestAllLogTimestampProperty, earliestTimestamp);
+			this.SetValue(LatestAllLogTimestampProperty, latestTimestamp);
+			try
+			{
+				if (earliestTimestamp.HasValue && latestTimestamp.HasValue)
+				{
+					var format = profile.TimestampFormatForDisplaying;
+					if (format is not null)
+					{
+						this.SetValue(AllLogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
+						this.SetValue(AllLogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
+					}
+					else
+					{
+						this.SetValue(AllLogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(Application.CultureInfo));
+						this.SetValue(AllLogsDurationEndingStringProperty, latestTimestamp.Value.ToString(Application.CultureInfo));
+					}
+				}
+				else
+				{
+					this.ResetValue(AllLogsDurationEndingStringProperty);
+					this.ResetValue(AllLogsDurationStartingStringProperty);
+				}
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Error occurred while formatting logs time information");
+				this.ResetValue(AllLogsDurationEndingStringProperty);
+				this.ResetValue(AllLogsDurationStartingStringProperty);
+			}
+		}
+		else
+		{
+			this.ResetValue(AllLogsDurationProperty);
+			this.ResetValue(EarliestAllLogTimestampProperty);
+			this.ResetValue(LatestAllLogTimestampProperty);
+			this.ResetValue(AllLogsDurationEndingStringProperty);
+			this.ResetValue(AllLogsDurationStartingStringProperty);
+		}
+		var logs = this.Logs;
+		if (logs.IsNotEmpty() && profile is not null && this.logReaders.IsNotEmpty())
+		{
+			var firstLog = logs[0];
+			var lastLog = logs.Last();
+			var duration = profile.SortDirection == SortDirection.Ascending
+				? CalculateDurationBetweenLogs(firstLog, lastLog, out var minTimeSpan, out var maxTimeSpan, out var earliestTimestamp, out var latestTimestamp)
+				: CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
+			this.SetValue(LogsDurationProperty, duration);
+			this.SetValue(MinLogTimeSpanProperty, minTimeSpan);
+			this.SetValue(MaxLogTimeSpanProperty, maxTimeSpan);
+			this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
+			this.SetValue(LatestLogTimestampProperty, latestTimestamp);
+			try
+			{
+				if (earliestTimestamp.HasValue && latestTimestamp.HasValue)
+				{
+					var format = profile.TimestampFormatForDisplaying;
+					if (format is not null)
+					{
+						this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
+						this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
+					}
+					else
+					{
+						this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(Application.CultureInfo));
+						this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(Application.CultureInfo));
+					}
+				}
+				else if (minTimeSpan.HasValue && maxTimeSpan.HasValue)
+				{
+					var format = profile.TimeSpanFormatForDisplaying;
+					if (format is not null)
+					{
+						this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString(format));
+						this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString(format));
+					}
+					else
+					{
+						this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString());
+						this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString());
+					}
+				}
+				else
+				{
+					this.SetValue(LogsDurationStartingStringProperty, null);
+					this.SetValue(LogsDurationEndingStringProperty, null);
+				}
+			}
+			catch (Exception ex)
+			{
+				this.Logger.LogError(ex, "Error occurred while formatting logs time information");
+				this.SetValue(LogsDurationStartingStringProperty, null);
+				this.SetValue(LogsDurationEndingStringProperty, null);
+			}
+		}
+		else
+		{
+			this.SetValue(LogsDurationProperty, null);
+			this.SetValue(EarliestLogTimestampProperty, null);
+			this.SetValue(LatestLogTimestampProperty, null);
+			this.SetValue(LogsDurationStartingStringProperty, null);
+			this.SetValue(LogsDurationEndingStringProperty, null);
+		}
+	}
 
 
 	// Reset log profile.
@@ -4544,6 +4547,8 @@ class Session : ViewModel<IULogViewerApplication>
 	// Save marked logs.
 	void SaveMarkedLogs()
 	{
+		if (this.IsDisposed)
+			return;
 		foreach (var fileName in this.markedLogsChangedFilePaths)
 			this.SaveMarkedLogs(fileName);
 		this.markedLogsChangedFilePaths.Clear();
@@ -4704,6 +4709,42 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	/// <remarks>The type of parameter is <see cref="Net.SearchProvider"/>.</remarks>
 	public ICommand SearchLogPropertyOnInternetCommand { get; }
+
+
+	// Select proper list of logs to report.
+	void SelectLogsToReport()
+	{
+		if (this.IsDisposed)
+			return;
+		if (!this.IsShowingAllLogsTemporarily)
+		{
+			if (this.IsShowingMarkedLogsTemporarily)
+			{
+				if (this.Application.IsDebugMode)
+					this.Logger.LogTrace("Show marked logs");
+				this.SetValue(LogsProperty, this.MarkedLogs);
+				this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
+				return;
+			}
+			if (this.LogFiltering.IsFilteringNeeded)
+			{
+				if (this.Application.IsDebugMode)
+					this.Logger.LogTrace("Show filtered logs");
+				this.SetValue(LogsProperty, this.LogFiltering.FilteredLogs);
+				this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
+				return;
+			}
+		}
+		if (this.Application.IsDebugMode)
+			this.Logger.LogTrace("Show all logs");
+		this.SetValue(LogsProperty, this.AllLogs);
+		this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+		if (!this.LogFiltering.IsFilteringNeeded)
+		{
+			this.Logger.LogDebug("Trigger GC after clearing log filters");
+			TriggerGC();
+		}
+	}
 	
 	
 	// Set command.
@@ -5877,6 +5918,26 @@ class Session : ViewModel<IULogViewerApplication>
 	}
 
 
+	// Check whether command of stopping reading logs can be executed or not.
+	void UpdateCanStopReadingLogs()
+	{
+		if (this.IsDisposed)
+			return;
+		foreach (var reader in this.logReaders)
+		{
+			switch (reader.State)
+			{
+				case LogReaderState.Starting: 
+				case LogReaderState.ReadingLogs:
+				case LogReaderState.Paused:
+					this.SetValue(CanStopReadingLogsProperty, true);
+					return;
+			}
+		}
+		this.ResetValue(CanStopReadingLogsProperty);
+	}
+
+
 	// Update comparison for displayable logs.
 	void UpdateDisplayableLogComparison()
 	{
@@ -5957,6 +6018,93 @@ class Session : ViewModel<IULogViewerApplication>
 			this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)));
 			this.canSaveLogs.Update(this.Application is App && !this.IsSavingLogs && this.AllLogCount > 0);
 		}
+	}
+	
+	
+	// Check and update logs reading state.
+	void UpdateIsReadingLogs()
+	{
+		if (this.IsDisposed)
+			return;
+		if (this.logReaders.IsEmpty())
+		{
+			this.SetValue(IsReadingLogsProperty, false);
+			this.SetValue(LastLogsReadingDurationProperty, null);
+			this.logsReadingWatch.Reset();
+		}
+		else
+		{
+			foreach (var logReader in this.logReaders)
+			{
+				switch (logReader.State)
+				{
+					case LogReaderState.Starting:
+					case LogReaderState.ReadingLogs:
+						if (!this.logsReadingWatch.IsRunning)
+							this.logsReadingWatch.Restart();
+						this.SetValue(IsReadingLogsProperty, true);
+						return;
+				}
+			}
+			bool wasReadingLogs = this.IsReadingLogs;
+			this.SetValue(IsReadingLogsProperty, false);
+			if (this.logsReadingWatch.IsRunning)
+			{
+				this.logsReadingWatch.Stop();
+				if (this.LogProfile?.IsContinuousReading != true)
+					this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
+			}
+			if (wasReadingLogs)
+			{
+				this.Logger.LogDebug("Trigger GC after reading logs");
+				TriggerGC();
+			}
+		}
+	}
+	
+	
+	// Check and update log files removing state.
+	void UpdateIsRemovingLogFiles()
+	{
+		if (this.IsDisposed)
+			return;
+		if (this.logReaders.IsEmpty())
+			this.ResetValue(IsRemovingLogFilesProperty);
+		else
+		{
+			var isRemovingLogFiles = false;
+			foreach (var logReader in this.logReaders)
+			{
+				if (!logReader.DataSource.CreationOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+					continue;
+				if (logReader.State == LogReaderState.ClearingLogs)
+				{
+					isRemovingLogFiles = true;
+					break;
+				}
+			}
+			this.SetValue(IsRemovingLogFilesProperty, isRemovingLogFiles);
+		}
+	}
+	
+	
+	// Check and update logs processing state.
+	void UpdateIsProcessingLogs()
+	{
+		if (this.IsDisposed)
+			return;
+		if (this.IsSavingLogs)
+		{
+			this.SetValue(IsProcessingLogsProperty, true);
+			return;
+		}
+		var logProfile = this.LogProfile;
+		if (logProfile is null)
+			this.SetValue(IsProcessingLogsProperty, false);
+		else if (this.LogFiltering.IsFiltering || this.IsReadingLogs || this.IsRemovingLogFiles)
+			this.SetValue(IsProcessingLogsProperty, true);
+		else
+			this.SetValue(IsProcessingLogsProperty, false);
 	}
 
 
