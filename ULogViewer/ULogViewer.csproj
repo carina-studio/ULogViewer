@@ -23,9 +23,9 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-		<AppSuiteVersion>3.0.1.129-dev</AppSuiteVersion>
-		<AvaloniaVersion>11.2.3</AvaloniaVersion>
-		<DotNetLibVersion>9.0.1</DotNetLibVersion>
+		<AppSuiteVersion>3.0.1.414-dev</AppSuiteVersion>
+		<AvaloniaVersion>11.2.7</AvaloniaVersion>
+		<DotNetLibVersion>9.0.4</DotNetLibVersion>
 		<SkiaSharpVersion>3.116.1</SkiaSharpVersion>
 	</PropertyGroup>
 
@@ -95,12 +95,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.2.6" />
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.2.0" />
-		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.1" />
+		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
 		<PackageReference Include="MySqlConnector" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

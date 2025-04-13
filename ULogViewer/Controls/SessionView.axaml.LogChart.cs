@@ -86,7 +86,7 @@ partial class SessionView
     {
         // Fields.
         StackLayout? container;
-        DrawablesTask? containerDrawableTask;
+        DrawnTask? containerDrawableTask;
         
         // Draw.
         public void Draw(Chart chart)
@@ -171,7 +171,7 @@ partial class SessionView
     {
         // Fields.
         Container<RoundedRectangleGeometry>? container;
-        DrawablesTask? containerDrawableTask;
+        DrawnTask? containerDrawableTask;
         StackLayout? itemsContainer;
 
         // Hide.
@@ -1469,19 +1469,17 @@ partial class SessionView
         var cultureName = this.Application.CultureInfo.Name;
         if (cultureName.StartsWith("zh"))
         {
-            if (this.Application.UseEmbeddedFontsForChinese)
+            switch (this.Application.ChineseVariant)
             {
-                if (cultureName.EndsWith("TW"))
-                {
+                case ChineseVariant.Default:
+                    NotoSansSCSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.NotoSansSC)).Use(stream => fontManager.CreateTypeface(stream));
+                    return NotoSansSCSKTypeFace;
+                case ChineseVariant.Taiwan:
                     NotoSansTCSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.NotoSansTC)).Use(stream => fontManager.CreateTypeface(stream));
                     return NotoSansTCSKTypeFace;
-                }
-                NotoSansSCSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.NotoSansSC)).Use(stream => fontManager.CreateTypeface(stream));
-                return NotoSansSCSKTypeFace;
+                default:
+                    throw new NotImplementedException();
             }
-            if (cultureName.EndsWith("TW"))
-                return fontManager.MatchCharacter('繁');
-            return fontManager.MatchCharacter('简');
         }
         InterSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.Inter)).Use(stream => fontManager.CreateTypeface(stream));
         return InterSKTypeFace;

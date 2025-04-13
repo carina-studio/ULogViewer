@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using CarinaStudio.AppSuite;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -30,7 +31,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	/// <summary>
 	/// Converter to convert from <see cref="TextShell"/> to string.
 	/// </summary>
-	public static readonly IValueConverter TextShellConverter = new AppSuite.Converters.EnumConverter(App.CurrentOrNull, typeof(TextShell));
+	public static readonly IValueConverter TextShellConverter = new AppSuite.Converters.EnumConverter(IAppSuiteApplication.CurrentOrNull, typeof(TextShell));
 
 
 	// Static fields.
