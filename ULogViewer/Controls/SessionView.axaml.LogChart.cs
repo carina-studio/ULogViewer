@@ -86,7 +86,7 @@ partial class SessionView
     {
         // Fields.
         StackLayout? container;
-        DrawnTask? containerDrawableTask;
+        DrawablesTask? containerDrawableTask;
         
         // Draw.
         public void Draw(Chart chart)
@@ -171,7 +171,7 @@ partial class SessionView
     {
         // Fields.
         Container<RoundedRectangleGeometry>? container;
-        DrawnTask? containerDrawableTask;
+        DrawablesTask? containerDrawableTask;
         StackLayout? itemsContainer;
 
         // Hide.
