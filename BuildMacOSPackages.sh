@@ -90,20 +90,8 @@ for i in "${!RID_LIST[@]}"; do
     rm ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.pdb
 
     # sign application
-    find "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/" | while read FILE_NAME; do
-        if [[ -f $FILE_NAME ]]; then
-            if [[ "$FILE_NAME" != "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS//$APP_NAME" ]]; then
-                echo "Signing $FILE_NAME"
-                codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "$FILE_NAME"
-                if [ "$?" != "0" ]; then
-                    echo "Failed to sign $FILE_NAME"
-                    exit
-                fi
-            fi
-        fi
-    done
-    codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/$APP_NAME"
-    codesign -f -o runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app"
+    echo "Sign package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
+    codesign --deep --force --options=runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app"
 
     # zip .app directory
     ditto -c -k --sequesterRsrc --keepParent "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app" "./Packages/$VERSION/$APP_NAME-$VERSION-$PUB_PLATFORM.zip"
