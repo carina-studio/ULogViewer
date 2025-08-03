@@ -23,7 +23,7 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-		<AppSuiteVersion>2.3.91.831</AppSuiteVersion>
+		<AppSuiteVersion>2.3.93.803</AppSuiteVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -43,7 +43,7 @@
 		<CFBundlePackageType>APPL</CFBundlePackageType>
 		<NSPrincipalClass>NSApplication</NSPrincipalClass>
 		<NSHighResolutionCapable>True</NSHighResolutionCapable>
-		<NSHumanReadableCopyright>©2021-2024 Carina Studio</NSHumanReadableCopyright>
+		<NSHumanReadableCopyright>©2021-2025 Carina Studio</NSHumanReadableCopyright>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -85,7 +85,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CarinaStudio.AppBase.Application.Avalonia" Version="2.1.36.1027" />
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />
