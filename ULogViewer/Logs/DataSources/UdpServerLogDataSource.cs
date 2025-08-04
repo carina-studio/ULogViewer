@@ -55,7 +55,7 @@ class UdpServerLogDataSource : BaseLogDataSource
 
 		// Data received.
 		void OnDataReceived(IAsyncResult result)
-        {
+		{
 			// get data
 			var data = (byte[]?)null;
 			var endPoint = this.serverEndPoint;
@@ -87,17 +87,23 @@ class UdpServerLogDataSource : BaseLogDataSource
 			}
 
 			// read next data
-			if (!this.isDisposed)
+			ThreadPool.QueueUserWorkItem(_ =>
 			{
-				try
+				lock (this.readingLock)
 				{
-					this.udpClient.BeginReceive(this.OnDataReceived, null);
+					if (!this.isDisposed)
+					{
+						try
+						{
+							this.udpClient.BeginReceive(this.OnDataReceived, null);
+						}
+						catch (Exception ex)
+						{
+							this.source.Logger.LogError(ex, "Failed to start receiving data from {serverEndPoint}", this.serverEndPoint);
+						}
+					}
 				}
-				catch (Exception ex)
-				{
-					this.source.Logger.LogError(ex, "Failed to start receiving data from {serverEndPoint}", this.serverEndPoint);
-				}
-			}
+			});
 		}
 
 		// Implementations.
