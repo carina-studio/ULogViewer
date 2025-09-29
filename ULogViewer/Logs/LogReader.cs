@@ -64,7 +64,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	bool isContinuousReading;
 	bool isRestarting;
 	bool isWaitingForDataSource;
-	readonly Dictionary<string, LogLevel> logLevelMap = new();
+	readonly Dictionary<string, LogLevel> logLevelMap = new(StringComparer.InvariantCultureIgnoreCase);
 	LogPatternMatchingMode logPatternMatchingMode = LogPatternMatchingMode.Sequential;
 	IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
 	readonly ObservableList<Log> logs = new();

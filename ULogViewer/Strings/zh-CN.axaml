@@ -529,6 +529,7 @@ return False</sys:String>
 	<!-- LogLevelMapEntryEditor -->
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">对应的日志等级</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text.Description">文字将不区分大小写。</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">日志等级对照</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日志等级</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">对应的文字</sys:String>

@@ -546,6 +546,7 @@ return False</sys:String>
 	<!-- LogLevelMapEntryEditor -->
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped Log Level</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text.Description">Text will be treated as case-insensitive.</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">Log Level Mapping</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log Level</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped Text</sys:String>
