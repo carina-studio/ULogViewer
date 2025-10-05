@@ -1810,11 +1810,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 					// define property column
 					var logProperty = logProperties[logPropertyIndex];
+					var isLastLogProperty = logPropertyIndex == logPropertyCount - 1;
 					var width = logProperty.Width;
 					var isAutoWidth = width is null;
 					var propertyColumn = new ColumnDefinition(new GridLength()).Also(it =>
 					{
-						if (isAutoWidth && logPropertyIndex == logPropertyCount - 1)
+						if (isAutoWidth && isLastLogProperty)
 							it.Width = new GridLength(1, GridUnitType.Star);
 					});
 					propertyColumns[logPropertyIndex] = propertyColumn;
@@ -1837,7 +1838,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							it.Padding = propertyPadding;
 							it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding { Path = logProperty.Name });
 							it.TextAlignment = TextAlignment.Center;
-							it.TextTrimming = isAutoWidth ? TextTrimming.None : TextTrimming.CharacterEllipsis;
+							it.TextTrimming = isAutoWidth && isLastLogProperty ? TextTrimming.None : TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
 							it.VerticalAlignment = VerticalAlignment.Center;
@@ -1884,7 +1885,7 @@ namespace CarinaStudio.ULogViewer.Controls
 									Path = logProperty.Name,
 								});
 							}
-							it.TextTrimming = isAutoWidth || !trimLogPropertyText ? TextTrimming.None : TextTrimming.CharacterEllipsis;
+							it.TextTrimming = (isAutoWidth && isLastLogProperty) || !trimLogPropertyText ? TextTrimming.None : TextTrimming.CharacterEllipsis;
 							it.TextWrapping = TextWrapping.NoWrap;
 							it.ToolTipTemplate = toolTipTemplate;
 							it.VerticalAlignment = VerticalAlignment.Center;
@@ -3254,10 +3255,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				// define header column
 				var logProperty = logProperties[logPropertyIndex];
 				var width = logProperty.Width;
-				if (width == null)
+				if (width is not null)
+					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel)));
+				else if (logPropertyIndex == logPropertyCount - 1)
 					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(1, GridUnitType.Star)));
 				else
-					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(width.Value, GridUnitType.Pixel)));
+					this.logHeaderWidths.Add(new MutableObservableValue<GridLength>(new GridLength(0, GridUnitType.Auto)));
 				var headerColumn = new ColumnDefinition(this.logHeaderWidths[logPropertyIndex].Value).Also(it =>
 				{
 					it.MinWidth = minHeaderWidth;
