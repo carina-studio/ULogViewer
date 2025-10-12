@@ -653,8 +653,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">日志读取设定</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">从每个资料来源的特定位置读取日志。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">日志文字读取编码方式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日志文字输出编码方式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">日志文字读取格式</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日志文字输出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日志输出设定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日志输出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式将用于日志复制与存储。对于每笔日志，将从列表中选出第一个包含所有有效日志属性的格式使用，否则使用列表中的第一个格式。</sys:String>

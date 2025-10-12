@@ -685,8 +685,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">The position to read logs from each data source.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Encoding of text in log for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Encoding of text in log for output</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Format of text in log for reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Format of text in log for output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">Log Output</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log output formats</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
@@ -932,7 +932,7 @@ return False</sys:String>
 
 	<!-- LogStringEncoding -->
 	<sys:String x:Key="String/LogStringEncoding.Json">JSON</sys:String>
-	<sys:String x:Key="String/LogStringEncoding.Plane">Plane text</sys:String>
+	<sys:String x:Key="String/LogStringEncoding.Plane">Plain text</sys:String>
 	<sys:String x:Key="String/LogStringEncoding.Xml">XML/HTML</sys:String>
 
 	<!-- LogStringPropertyDialog -->
