@@ -1,5 +1,6 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataSources;
@@ -18,7 +19,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using CarinaStudio.Diagnostics;
 
 namespace CarinaStudio.ULogViewer.Logs;
 
@@ -867,7 +867,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 
 	// Read single line of log.
-	unsafe void ReadLog(LogBuilder logBuilder, Match match, string[]? timeSpanFormats, string[]? timestampFormats)
+	unsafe void ReadLog(LogBuilder logBuilder, Match match, CultureInfo timeSpanCultureInfo, string[]? timeSpanFormats, CultureInfo timestampCultureInfo, string[]? timestampFormats)
 	{
 #pragma warning disable IDE0220
 		foreach (Group group in match.Groups)
@@ -919,7 +919,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							var parsed = false;
 							for (var i = timestampFormats.Length - 1; i >= 0; --i)
 							{
-								if (DateTime.TryParseExact(value, timestampFormats[i], this.timestampCultureInfo, DateTimeStyles.None, out var timestamp))
+								if (DateTime.TryParseExact(value, timestampFormats[i], timestampCultureInfo, DateTimeStyles.None, out var timestamp))
 								{
 									parsed = true;
 									logBuilder.Set(name, timestamp.ToBinary().ToString());
@@ -933,16 +933,43 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							logBuilder.Set(name, value);
 						break;
 					case LogTimestampEncoding.Unix:
-						if (double.TryParse(value, out var sec))
-							logBuilder.Set(name, CreateDateTimeFromUnixTimestamp(sec).ToBinary().ToString());
+						if (double.TryParse(value, timestampCultureInfo, out var sec))
+						{
+							try
+							{
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestamp(sec).ToBinary().ToString());
+							}
+							catch (Exception ex)
+							{
+								this.Logger.LogError(ex, $"Unable to convert '{value}' to Unix timestamp");
+							}
+						}
 						break;
 					case LogTimestampEncoding.UnixMicroseconds:
-						if (double.TryParse(value, out var us))
-							logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(us / 1000).ToBinary().ToString());
+						if (double.TryParse(value, timestampCultureInfo, out var us))
+						{
+							try
+							{
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(us / 1000).ToBinary().ToString());
+							}
+							catch (Exception ex)
+							{
+								this.Logger.LogError(ex, $"Unable to convert '{value}' to Unix timestamp");
+							}
+						}
 						break;
 					case LogTimestampEncoding.UnixMilliseconds:
-						if (double.TryParse(value, out var ms))
-							logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(ms).ToBinary().ToString());
+						if (double.TryParse(value, timestampCultureInfo, out var ms))
+						{
+							try
+							{
+								logBuilder.Set(name, CreateDateTimeFromUnixTimestampMillis(ms).ToBinary().ToString());
+							}
+							catch (Exception ex)
+							{
+								this.Logger.LogError(ex, $"Unable to convert '{value}' to Unix timestamp");
+							}
+						}
 						break;
 				}
 			}
@@ -956,56 +983,56 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							{
 								for (var i = timeSpanFormats.Length - 1; i >= 0; --i)
 								{
-									if (TimeSpan.TryParseExact(value, timeSpanFormats[i], this.timeSpanCultureInfo, TimeSpanStyles.None, out var timeSpan))
+									if (TimeSpan.TryParseExact(value, timeSpanFormats[i], timeSpanCultureInfo, TimeSpanStyles.None, out var timeSpan))
 									{
 										logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 										break;
 									}
 								}
 							}
-							else if (TimeSpan.TryParse(value, out var timeSpan))
+							else if (TimeSpan.TryParse(value, timeSpanCultureInfo, out var timeSpan))
 								logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 						}
 						break;
 					case LogTimeSpanEncoding.TotalDays:
 						{
-							if (double.TryParse(value, out var days) && double.IsFinite(days))
+							if (double.TryParse(value, timeSpanCultureInfo, out var days) && double.IsFinite(days))
 								logBuilder.Set(name, TimeSpan.FromDays(days).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							break;
 						}
 					case LogTimeSpanEncoding.TotalHours:
 						{
-							if (double.TryParse(value, out var hours) && double.IsFinite(hours))
+							if (double.TryParse(value, timeSpanCultureInfo, out var hours) && double.IsFinite(hours))
 								logBuilder.Set(name, TimeSpan.FromHours(hours).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							break;
 						}
 					case LogTimeSpanEncoding.TotalMicroseconds:
 						{
-							if (double.TryParse(value, out var us))
+							if (double.TryParse(value, timeSpanCultureInfo, out var us))
 								logBuilder.Set(name, TimeSpan.FromMilliseconds(us / 1000).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							break;
 						}
 					case LogTimeSpanEncoding.TotalMilliseconds:
 						{
-							if (double.TryParse(value, out var ms))
+							if (double.TryParse(value, timeSpanCultureInfo, out var ms))
 								logBuilder.Set(name, TimeSpan.FromMilliseconds(ms).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							break;
 						}
 					case LogTimeSpanEncoding.TotalMinutes:
 						{
-							if (double.TryParse(value, out var mins) && double.IsFinite(mins))
+							if (double.TryParse(value, timeSpanCultureInfo, out var mins) && double.IsFinite(mins))
 								logBuilder.Set(name, TimeSpan.FromMinutes(mins).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							break;
 						}
 					case LogTimeSpanEncoding.TotalSeconds:
 						{
-							if (double.TryParse(value, out var sec) && double.IsFinite(sec))
+							if (double.TryParse(value, timeSpanCultureInfo, out var sec) && double.IsFinite(sec))
 								logBuilder.Set(name, TimeSpan.FromSeconds(sec).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 							break;
 						}
 					default:
 						{
-							if (TimeSpan.TryParse(value, out var timeSpan))
+							if (TimeSpan.TryParse(value, timeSpanCultureInfo, out var timeSpan))
 								logBuilder.Set(name, timeSpan.TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
 						}
 						break;
@@ -1085,7 +1112,9 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			StringCache = stringSourceCache,
 		};
 		var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
+		var timeSpanCultureInfo = this.timeSpanCultureInfo;
 		var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
+		var timestampCultureInfo = this.timestampCultureInfo;
 		var exception = (Exception?)null;
 		var defaultNonContinuousUpdateInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateInterval);
 		var nonContinuousChunkSize = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateChunkSize);
@@ -1236,7 +1265,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 						if (match.Success)
 						{
 							// read log
-							this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
+							this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
 
 							// set file name and line number
 							if (isReadingFromFile)
@@ -1304,7 +1333,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 						{
 							// read log
 							numberOfSkippedLogPatterns = 0;
-							this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
+							this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
 
 							// set file name and line number
 							if (logPatternIndex == 0 && isReadingFromFile)
@@ -1581,7 +1610,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 								if (match.Success)
 								{
 									// read log
-									this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
+									this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
 									unmatchedPatterns.Remove(logPattern);
 
 									// set file name and line number
@@ -1606,7 +1635,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							if (match.Success)
 							{
 								// read log
-								this.ReadLog(logBuilder, match, timeSpanFormats, timestampFormats);
+								this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
 								unmatchedPatterns.Remove(logPattern);
 								isFirstPatternMatched = true;
 								

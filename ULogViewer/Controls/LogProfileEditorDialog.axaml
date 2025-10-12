@@ -455,6 +455,13 @@
 									<asControls:EnumComboBox Name="timestampEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimestampEncoding}" HorizontalAlignment="Right"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Timestamp culture info for reading -->
+								<asControls:DialogItem>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCultureInfoForReading}"/>
+									<appControls:CultureInfoComboBox Name="timestampCultureInfoForReadingComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right"/>
+								</asControls:DialogItem>
+								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for reading -->
 								<asControls:DialogItem>
@@ -509,6 +516,13 @@
 										<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description}"/>
 									</StackPanel>
 									<asControls:EnumComboBox Name="timeSpanEncodingForReadingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogTimeSpanEncoding}"/>
+								</asControls:DialogItem>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Time span culture info for reading -->
+								<asControls:DialogItem>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanCultureInfoForReading}"/>
+									<appControls:CultureInfoComboBox Name="timeSpanCultureInfoForReadingComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
@@ -781,6 +795,13 @@
 									<asControls:EnumComboBox Name="logStringEncodingForWritingComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogStringEncoding}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Timestamp culture info for writing -->
+								<asControls:DialogItem>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampCultureInfoForWriting}"/>
+									<appControls:CultureInfoComboBox Name="timestampCultureInfoForWritingComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right"/>
+								</asControls:DialogItem>
+								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for writing -->
 								<asControls:DialogItem>
@@ -791,6 +812,13 @@
 										</Button>
 									</WrapPanel>
 									<asControls:SyntaxHighlightingTextBox Name="timestampFormatForWritingTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding #window.DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLength="256" Watermark="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark}"/>
+								</asControls:DialogItem>
+								<Separator Classes="Dialog_Item_Separator"/>
+								
+								<!-- Time span culture info for writing -->
+								<asControls:DialogItem>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanCultureInfoForWriting}"/>
+									<appControls:CultureInfoComboBox Name="timeSpanCultureInfoForWritingComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 

@@ -26,6 +26,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -104,12 +105,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly IntegerTextBox restartReadingDelayTextBox;
 		readonly ComboBox sortDirectionComboBox;
 		readonly ComboBox sortKeyComboBox;
+		readonly ComboBox timeSpanCultureInfoForReadingComboBox;
+		readonly ComboBox timeSpanCultureInfoForWritingComboBox;
 		readonly ComboBox timeSpanEncodingForReadingComboBox;
 		readonly TextBox timeSpanFormatForDisplayingTextBox;
 		readonly TextBox timeSpanFormatForWritingTextBox;
 		readonly ObservableList<string> timeSpanFormatsForReading = new();
 		readonly AppSuite.Controls.ListBox timeSpanFormatsForReadingListBox;
 		readonly ComboBox timestampCategoryGranularityComboBox;
+		readonly ComboBox timestampCultureInfoForReadingComboBox;
+		readonly ComboBox timestampCultureInfoForWritingComboBox;
 		readonly ComboBox timestampEncodingForReadingComboBox;
 		readonly TextBox timestampFormatForDisplayingTextBox;
 		readonly TextBox timestampFormatForWritingTextBox;
@@ -240,11 +245,29 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.restartReadingDelayTextBox = this.Get<IntegerTextBox>(nameof(restartReadingDelayTextBox));
 			this.sortDirectionComboBox = this.Get<ComboBox>("sortDirectionComboBox");
 			this.sortKeyComboBox = this.Get<ComboBox>("sortKeyComboBox");
+			this.timeSpanCultureInfoForReadingComboBox = this.Get<ComboBox>(nameof(timeSpanCultureInfoForReadingComboBox)).Also(it =>
+			{
+				it.SelectionChanged += (_, e) =>
+				{
+					if (this.IsOpened && e.RemovedItems.Count > 0 && e.RemovedItems[0]?.Equals(this.timeSpanCultureInfoForWritingComboBox?.SelectedItem) == true)
+						this.timeSpanCultureInfoForWritingComboBox!.SelectedItem = it.SelectedItem;
+				};
+			});
+			this.timeSpanCultureInfoForWritingComboBox = this.Get<ComboBox>(nameof(timeSpanCultureInfoForWritingComboBox));
 			this.timeSpanEncodingForReadingComboBox = this.Get<ComboBox>(nameof(timeSpanEncodingForReadingComboBox));
 			this.timeSpanFormatForDisplayingTextBox = this.Get<TextBox>(nameof(timeSpanFormatForDisplayingTextBox));
 			this.timeSpanFormatForWritingTextBox = this.Get<TextBox>(nameof(timeSpanFormatForWritingTextBox));
 			this.timeSpanFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timeSpanFormatsForReadingListBox));
 			this.timestampCategoryGranularityComboBox = this.Get<ComboBox>(nameof(timestampCategoryGranularityComboBox));
+			this.timestampCultureInfoForReadingComboBox = this.Get<ComboBox>(nameof(timestampCultureInfoForReadingComboBox)).Also(it =>
+			{
+				it.SelectionChanged += (_, e) =>
+				{
+					if (this.IsOpened && e.RemovedItems.Count > 0 && e.RemovedItems[0]?.Equals(this.timestampCultureInfoForWritingComboBox?.SelectedItem) == true)
+						this.timestampCultureInfoForWritingComboBox!.SelectedItem = it.SelectedItem;
+				};
+			});
+			this.timestampCultureInfoForWritingComboBox = this.Get<ComboBox>(nameof(timestampCultureInfoForWritingComboBox));
 			this.timestampEncodingForReadingComboBox = this.Get<ComboBox>(nameof(timestampEncodingForReadingComboBox));
 			this.timestampFormatForDisplayingTextBox = this.Get<TextBox>("timestampFormatForDisplayingTextBox");
 			this.timestampFormatForWritingTextBox = this.Get<TextBox>("timestampFormatForWritingTextBox");
@@ -939,11 +962,15 @@ namespace CarinaStudio.ULogViewer.Controls
 			logProfile.RestartReadingDelay = this.restartReadingDelayTextBox.Value.GetValueOrDefault();
 			logProfile.SortDirection = (SortDirection)this.sortDirectionComboBox.SelectedItem.AsNonNull();
 			logProfile.SortKey = (LogSortKey)this.sortKeyComboBox.SelectedItem.AsNonNull();
+			logProfile.TimeSpanCultureInfoForReading = (CultureInfo)this.timeSpanCultureInfoForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.TimeSpanCultureInfoForWriting = (CultureInfo)this.timeSpanCultureInfoForWritingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimeSpanEncodingForReading = (LogTimeSpanEncoding)this.timeSpanEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimeSpanFormatForDisplaying = this.timeSpanFormatForDisplayingTextBox.Text;
 			logProfile.TimeSpanFormatForWriting = this.timeSpanFormatForWritingTextBox.Text;
 			logProfile.TimeSpanFormatsForReading = this.timeSpanFormatsForReading;
 			logProfile.TimestampCategoryGranularity = (TimestampDisplayableLogCategoryGranularity)this.timestampCategoryGranularityComboBox.SelectedItem.AsNonNull();
+			logProfile.TimestampCultureInfoForReading = (CultureInfo)this.timestampCultureInfoForReadingComboBox.SelectedItem.AsNonNull();
+			logProfile.TimestampCultureInfoForWriting = (CultureInfo)this.timestampCultureInfoForWritingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampEncodingForReading = (LogTimestampEncoding)this.timestampEncodingForReadingComboBox.SelectedItem.AsNonNull();
 			logProfile.TimestampFormatForDisplaying = this.timestampFormatForDisplayingTextBox.Text;
 			logProfile.TimestampFormatForWriting = this.timestampFormatForWritingTextBox.Text;
@@ -1322,8 +1349,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.rawLogLevelPropertyComboBox.SelectedItem = nameof(Log.Level);
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;
+				this.timeSpanCultureInfoForReadingComboBox.SelectedItem = LogProfile.DefaultTimeSpanCultureInfo;
+				this.timeSpanCultureInfoForWritingComboBox.SelectedItem = LogProfile.DefaultTimeSpanCultureInfo;
 				this.timeSpanEncodingForReadingComboBox.SelectedItem = LogTimeSpanEncoding.Custom;
 				this.timestampCategoryGranularityComboBox.SelectedItem = TimestampDisplayableLogCategoryGranularity.Day;
+				this.timestampCultureInfoForReadingComboBox.SelectedItem = LogProfile.DefaultTimestampCultureInfo;
+				this.timestampCultureInfoForWritingComboBox.SelectedItem = LogProfile.DefaultTimestampCultureInfo;
 				this.timestampEncodingForReadingComboBox.SelectedItem = LogTimestampEncoding.Custom;
 				this.workingDirPriorityComboBox.SelectedItem = LogProfilePropertyRequirement.Optional;
 			}
@@ -1357,11 +1388,19 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.restartReadingDelayTextBox.Value = profile.RestartReadingDelay;
 				this.sortDirectionComboBox.SelectedItem = profile.SortDirection;
 				this.sortKeyComboBox.SelectedItem = profile.SortKey;
+				this.timeSpanCultureInfoForReadingComboBox.SelectedItem = profile.TimeSpanCultureInfoForReading.Let(it =>
+					CultureInfoComboBox.CultureInfos.Contains(it) ? it : LogProfile.DefaultTimeSpanCultureInfo);
+				this.timeSpanCultureInfoForWritingComboBox.SelectedItem = profile.TimeSpanCultureInfoForWriting.Let(it =>
+					CultureInfoComboBox.CultureInfos.Contains(it) ? it : LogProfile.DefaultTimeSpanCultureInfo);
 				this.timeSpanEncodingForReadingComboBox.SelectedItem = profile.TimeSpanEncodingForReading;
 				this.timeSpanFormatForDisplayingTextBox.Text = profile.TimeSpanFormatForDisplaying;
 				this.timeSpanFormatForWritingTextBox.Text = profile.TimeSpanFormatForWriting;
 				this.timeSpanFormatsForReading.AddRange(profile.TimeSpanFormatsForReading);
 				this.timestampCategoryGranularityComboBox.SelectedItem = profile.TimestampCategoryGranularity;
+				this.timestampCultureInfoForReadingComboBox.SelectedItem = profile.TimestampCultureInfoForReading.Let(it =>
+					CultureInfoComboBox.CultureInfos.Contains(it) ? it : LogProfile.DefaultTimestampCultureInfo);
+				this.timestampCultureInfoForWritingComboBox.SelectedItem = profile.TimestampCultureInfoForWriting.Let(it =>
+					CultureInfoComboBox.CultureInfos.Contains(it) ? it : LogProfile.DefaultTimestampCultureInfo);
 				this.timestampEncodingForReadingComboBox.SelectedItem = profile.TimestampEncodingForReading;
 				this.timestampFormatForDisplayingTextBox.Text = profile.TimestampFormatForDisplaying;
 				this.timestampFormatForWritingTextBox.Text = profile.TimestampFormatForWriting;

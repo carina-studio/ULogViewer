@@ -670,6 +670,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">管理日志资料来源脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日志排序方向</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日志排序依据</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForReading">日志时距读取的文化特性</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForWriting">日志时距输出的文化特性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading">日志时距读取类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description">「时距」标识两个时间点的差值，您也可以将其视为相对时间。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForDisplaying">日志时距显示格式</sys:String>
@@ -677,6 +679,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">留白表示使用与读取相同的格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">自定义日志时距读取格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">日志时间戳及分组时距</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCultureInfoForReading">日志时间读取的文化特性</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCultureInfoForWriting">日志时间输出的文化特性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">日志时间读取类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">日志时间显示格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">日期时间输出格式</sys:String>
