@@ -315,6 +315,18 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles
 
 
 		/// <summary>
+		/// Default culture info for time span reading and writing.
+		/// </summary>
+		public static CultureInfo DefaultTimeSpanCultureInfo => defaultTimestampCultureInfoForReading;
+		
+		
+		/// <summary>
+		/// Default culture info for timestamp reading and writing.
+		/// </summary>
+		public static CultureInfo DefaultTimestampCultureInfo => defaultTimestampCultureInfoForReading;
+
+
+		/// <summary>
 		/// Get or set description of profile.
 		/// </summary>
 		public string? Description
