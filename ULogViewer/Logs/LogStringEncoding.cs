@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CarinaStudio.ULogViewer.Logs;
+﻿namespace CarinaStudio.ULogViewer.Logs;
 
 /// <summary>
 /// Encoding of string in log data.
@@ -8,9 +6,9 @@ namespace CarinaStudio.ULogViewer.Logs;
 enum LogStringEncoding
 {
 	/// <summary>
-	/// Plane text.
+	/// Plain text.
 	/// </summary>
-	Plane,
+	Plain,
 	/// <summary>
 	/// XML string encoding.
 	/// </summary>

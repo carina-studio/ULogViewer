@@ -12,8 +12,8 @@
       "IgnoreCase": true
     }
   ],
-  "LogStringEncodingForReading": "Plane",
-  "LogStringEncodingForWriting": "Plane",
+  "LogStringEncodingForReading": "Plain",
+  "LogStringEncodingForWriting": "Plain",
   "LogWritingFormats": [
 		"{SourceName} {UserId} {UserName} [{Timestamp}] \"{Extra1}\" {Extra2} {Extra3} \"{Extra4}\" \"{Extra5}\""
 	],

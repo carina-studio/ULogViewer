@@ -22,8 +22,8 @@
       "IgnoreCase": true
     }
   ],
-  "LogStringEncodingForReading": "Plane",
-  "LogStringEncodingForWriting": "Plane",
+  "LogStringEncodingForReading": "Plain",
+  "LogStringEncodingForWriting": "Plain",
   "LogWritingFormats": [
 		"[{Timestamp}] [{Extra1}] [client {SourceName}] {Message}",
     "[{Timestamp}] [{Extra1}] {Message}"

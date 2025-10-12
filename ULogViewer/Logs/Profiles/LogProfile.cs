@@ -67,8 +67,8 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	LogPatternMatchingMode logPatternMatchingMode = LogPatternMatchingMode.Sequential;
 	IList<LogPattern> logPatterns = Array.Empty<LogPattern>();
 	LogReadingWindow logReadingWindow = LogReadingWindow.StartOfDataSource;
-	LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plane;
-	LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plane;
+	LogStringEncoding logStringEncodingForReading = LogStringEncoding.Plain;
+	LogStringEncoding logStringEncodingForWriting = LogStringEncoding.Plain;
 	IList<string> logWritingFormats = Array.Empty<string>();
 	int? maxLogReadingCount;
 	string rawLogLevelPropertyName = nameof(Log.Level);
@@ -1181,12 +1181,22 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 						this.logReadingWindow = window;
 					break;
 				case nameof(LogStringEncodingForReading):
-					if (Enum.TryParse<LogStringEncoding>(jsonProperty.Value.GetString(), out var encoding))
-						this.logStringEncodingForReading = encoding;
+					jsonProperty.Value.GetString().Let(s =>
+					{
+						if (s == "Plane")
+							this.logStringEncodingForReading = LogStringEncoding.Plain;
+						else if (Enum.TryParse<LogStringEncoding>(s, out var encoding))
+							this.logStringEncodingForReading = encoding;
+					});
 					break;
 				case nameof(LogStringEncodingForWriting):
-					if (Enum.TryParse(jsonProperty.Value.GetString(), out encoding))
-						this.logStringEncodingForWriting = encoding;
+					jsonProperty.Value.GetString().Let(s =>
+					{
+						if (s == "Plane")
+							this.logStringEncodingForWriting = LogStringEncoding.Plain;
+						else if (Enum.TryParse<LogStringEncoding>(s, out var encoding))
+							this.logStringEncodingForWriting = encoding;
+					});
 					break;
 				case "LogWritingFormat":
 					this.logWritingFormats = [ jsonProperty.Value.GetString().AsNonNull() ];

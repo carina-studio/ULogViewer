@@ -24,8 +24,8 @@
       "IsSkippable": true
     }
   ],
-  "LogStringEncodingForReading": "Plane",
-  "LogStringEncodingForWriting": "Plane",
+  "LogStringEncodingForReading": "Plain",
+  "LogStringEncodingForWriting": "Plain",
   "LogWritingFormats": [
     "{Timestamp} [{Level}] {SourceName}: {Message}",
     "{Level}: {Timestamp} {Message}"

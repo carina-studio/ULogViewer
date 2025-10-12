@@ -48,7 +48,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	long logsReadingCacheMemorySize;
 	CancellationTokenSource? logsReadingCancellationTokenSource;
 	object logsReadingToken = new();
-	LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
+	LogStringEncoding logStringEncoding = LogStringEncoding.Plain;
 	int maxLogCount = -1;
 	CancellationTokenSource? openingReaderCancellationSource;
 	readonly List<Log> pendingLogs = new ();

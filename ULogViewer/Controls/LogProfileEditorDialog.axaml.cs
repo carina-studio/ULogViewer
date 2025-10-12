@@ -1344,8 +1344,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.defaultLogLevelComboBox.SelectedItem = Logs.LogLevel.Undefined;
 				this.iconComboBox.SelectedItem = LogProfileIcon.File;
 				this.logPatternMatchingModeComboBox.SelectedItem = LogPatternMatchingMode.Sequential;
-				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plane;
-				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plane;
+				this.logStringEncodingForReadingComboBox.SelectedItem = LogStringEncoding.Plain;
+				this.logStringEncodingForWritingComboBox.SelectedItem = LogStringEncoding.Plain;
 				this.rawLogLevelPropertyComboBox.SelectedItem = nameof(Log.Level);
 				this.sortDirectionComboBox.SelectedItem = SortDirection.Ascending;
 				this.sortKeyComboBox.SelectedItem = LogSortKey.Timestamp;

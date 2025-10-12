@@ -22,8 +22,8 @@
       "Regex": "^\\s*(?<ThreadName>.*)\\-(?<ThreadId>\\d+)\\s+\\(\\s*(?<ProcessId>[\\d\\-]+)\\)\\s+\\[(?<Extra1>\\d+)]*\\]\\s+(?<Extra2>[\\d\\w\\.])(?<Extra3>[\\d\\w\\.])(?<Extra4>[\\d\\w\\.])(?<Extra5>[\\d\\w\\.])[\\D]+(?<TimeSpan>\\d+\\.\\d+)\\s*\\:\\s*(?<SourceName>[^\\:]*)\\:\\s(?<Message>.*)$"
     }
   ],
-  "LogStringEncodingForReading": "Plane",
-  "LogStringEncodingForWriting": "Plane",
+  "LogStringEncodingForReading": "Plain",
+  "LogStringEncodingForWriting": "Plain",
   "LogWritingFormats": [
     "{ThreadName,16}-{ThreadId,-5} ({ProcessId,5}) [{Extra1}] {Extra2}{Extra3}{Extra4}{Extra5} {TimeSpan}: {SourceName}: {Message}"
   ],

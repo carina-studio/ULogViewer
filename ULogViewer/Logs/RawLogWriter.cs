@@ -25,7 +25,7 @@ class RawLogWriter : BaseLogWriter
 	readonly Dictionary<Log, int> lineNumbers = new();
 	readonly HashSet<Log> logsToGetLineNumber = new();
 	readonly Dictionary<LogLevel, string> logLevelMap = new();
-	LogStringEncoding logStringEncoding = LogStringEncoding.Plane;
+	LogStringEncoding logStringEncoding = LogStringEncoding.Plain;
 	readonly IDictionary<LogLevel, string> readOnlyLogLevelMap;
 	readonly ISet<Log> readOnlyLogsToGetLineNumbers;
 	CultureInfo timeSpanCultureInfo = CultureInfo.GetCultureInfo("en-US");
