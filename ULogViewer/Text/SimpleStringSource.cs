@@ -50,8 +50,13 @@ public class SimpleStringSource : IStringSource
     
     /// <inheritdoc/>
     public override string ToString() => this.@string;
-    
-    
+
+
     /// <inheritdoc/>
-    public bool TryCopyTo(Span<char> buffer) => this.@string.AsSpan().TryCopyTo(buffer);
+    public bool TryCopyTo(Span<char> buffer)
+    {
+        if (buffer.Length >= this.@string.Length)
+            return this.@string.AsSpan().TryCopyTo(buffer);
+        return this.@string.AsSpan().Slice(0, buffer.Length).TryCopyTo(buffer);
+    }
 }

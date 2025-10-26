@@ -30,6 +30,7 @@ using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
+using CarinaStudio.ULogViewer.Text;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
@@ -1889,23 +1890,30 @@ namespace CarinaStudio.ULogViewer.Controls
 									if (it.DataContext is DisplayableLog log
 									    && log.TryGetProperty<object?>(logProperty.Name, out var value))
 									{
-										it.Text = value?.ToString()?.Let(s =>
+										if (value is IStringSource stringSource)
 										{
-											if (s.Length <= MaxLogPropertyStringLengthToDisplay)
-												return s;
-											var charArray = LogPropertyCharArrayPool.Rent(MaxLogPropertyStringLengthToDisplay);
-											try
+											if (stringSource.Length <= MaxLogPropertyStringLengthToDisplay)
+												it.Text = stringSource.ToString();
+											else
 											{
-												var charSpan = charArray.AsSpan();
-												s.AsSpan().Slice(0, MaxLogPropertyStringLengthToDisplay - 1).CopyTo(charSpan);
-												charSpan[MaxLogPropertyStringLengthToDisplay - 1] = '…';
-												return new string(charArray);
+												var charArray = LogPropertyCharArrayPool.Rent(MaxLogPropertyStringLengthToDisplay);
+												try
+												{
+													var charSpan = charArray.AsSpan();
+													if (stringSource.TryCopyTo(charSpan.Slice(0, MaxLogPropertyStringLengthToDisplay - 1)))
+													{
+														charSpan[MaxLogPropertyStringLengthToDisplay - 1] = '…';
+														it.Text = new string(charArray);
+													}
+												}
+												finally
+												{
+													LogPropertyCharArrayPool.Return(charArray);
+												}
 											}
-											finally
-											{
-												LogPropertyCharArrayPool.Return(charArray);
-											}
-										});
+										}
+										else
+											it.Text = value?.ToString();
 									}
 									else
 										it.Text = null;

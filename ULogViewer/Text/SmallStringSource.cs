@@ -1,5 +1,7 @@
 using CarinaStudio.Diagnostics;
 using System;
+using System.Buffers;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Text;
 
@@ -12,6 +14,11 @@ public class SmallStringSource : IStringSource
     /// Maximum number of characters supported to be stored in <see cref="SmallStringSource"/>.
     /// </summary>
     public const int MaxLength = 8;
+    
+    
+    // Static fields.
+    static readonly ArrayPool<char> CharArrayPool = ArrayPool<char>.Create();
+    static readonly Lock CharArrayPoolLock = new();
     
     
     // Static fields.
@@ -87,7 +94,7 @@ public class SmallStringSource : IStringSource
 
 
     // Copy string with 1 character.
-    static unsafe void Copy1Char(SmallStringSource source, Span<char> buffer)
+    static void Copy1Char(SmallStringSource source, Span<char> buffer)
     {
         buffer[0] = (char)source.c01;
     }
@@ -182,7 +189,7 @@ public class SmallStringSource : IStringSource
 
 
     // Initialize with 1 character.
-    static unsafe void InitWith1Char(SmallStringSource source, ReadOnlySpan<char> s)
+    static void InitWith1Char(SmallStringSource source, ReadOnlySpan<char> s)
     {
         source.c01 = s[0];
     }
@@ -285,9 +292,17 @@ public class SmallStringSource : IStringSource
     {
         if (this.Length == 0)
             return "";
-        var buffer = new char[this.Length];
+        using var _ = CharArrayPoolLock.EnterScope();
+        var buffer = CharArrayPool.Rent(MaxLength);
         this.TryCopyTo(buffer.AsSpan());
-        return new string(buffer);
+        try
+        {
+            return new string(buffer, 0, this.Length);
+        }
+        finally
+        {
+            CharArrayPool.Return(buffer);
+        }
     }
 
 
@@ -297,9 +312,9 @@ public class SmallStringSource : IStringSource
         var length = this.Length;
         if (length == 0)
             return true;
-        if (buffer.Length <length)
+        if (buffer.IsEmpty)
             return false;
-        CopyCharsFuncs[length](this, buffer);
+        CopyCharsFuncs[Math.Min(length, buffer.Length)](this, buffer);
         return true;
     }
 }

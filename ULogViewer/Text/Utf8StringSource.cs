@@ -70,7 +70,7 @@ public class Utf8StringSource : IStringSource
     {
         if (this.utf8 is null)
             return true;
-        if (buffer.Length < this.Length)
+        if (buffer.IsEmpty)
             return false;
         Utf8.ToUtf16(this.utf8.AsSpan(), buffer, out _, out _);
         return true;
