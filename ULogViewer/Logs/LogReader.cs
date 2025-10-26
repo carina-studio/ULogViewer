@@ -27,10 +27,33 @@ namespace CarinaStudio.ULogViewer.Logs;
 /// </summary>
 class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 {
+	// Constants.
+	const int MaxLogLineLengthToPrintToLog = 512;
+	const int StateLockTimeout = 1000;
+	
+	
 	// Static fields.
 	static readonly long baseMemorySize = Memory.EstimateInstanceSize<LogReader>();
-	static readonly CultureInfo defaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
-	static long nextId = 1;
+	static readonly IDictionary<string, LogLevel> DefaultLogLevelMap = new Dictionary<string, LogLevel> 
+	{
+		{ "d", LogLevel.Debug },
+		{ "debug", LogLevel.Debug },
+		{ "e", LogLevel.Error },
+		{ "error", LogLevel.Error },
+		{ "f", LogLevel.Fatal },
+		{ "fatal", LogLevel.Fatal },
+		{ "i", LogLevel.Info },
+		{ "info", LogLevel.Info },
+		{ "information", LogLevel.Info },
+		{ "t", LogLevel.Trace },
+		{ "trace", LogLevel.Trace },
+		{ "v", LogLevel.Verbose },
+		{ "verbose", LogLevel.Verbose },
+		{ "w", LogLevel.Warn },
+		{ "warn", LogLevel.Warn },
+	};
+	static readonly CultureInfo DefaultTimestampCultureInfo = CultureInfo.GetCultureInfo("en-US");
+	static long NextId = 1;
 
 
 	// Fields.
@@ -51,8 +74,11 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	LogStringEncoding logStringEncoding = LogStringEncoding.Plain;
 	int maxLogCount = -1;
 	CancellationTokenSource? openingReaderCancellationSource;
-	readonly List<Log> pendingLogs = new ();
+	[UsedOnBackgroundThread]
+	readonly List<Log> pendingLogs = new();
+	[UsedOnBackgroundThread]
 	object? pendingLogsReadingToken;
+	[ThreadSafe]
 	readonly SingleThreadSynchronizationContext pendingLogsSyncContext = new();
 	LogReadingPrecondition precondition;
 	bool printTraceLogs;
@@ -61,13 +87,15 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 	LogReadingWindow readingWindow = LogReadingWindow.StartOfDataSource;
 	TimeSpan restartReadingDelay;
+	[ThreadSafe]
+	readonly ReaderWriterLock stateLock = new();
 	readonly ScheduledAction startReadingLogsAction;
 	LogReaderState state = LogReaderState.Preparing;
 	LogReaderState stateBeforeClearingLogs;
-	CultureInfo timeSpanCultureInfo = defaultTimestampCultureInfo;
+	CultureInfo timeSpanCultureInfo = DefaultTimestampCultureInfo;
 	LogTimeSpanEncoding timeSpanEncoding = LogTimeSpanEncoding.Custom;
 	IList<string> timeSpanFormats = Array.Empty<string>();
-	CultureInfo timestampCultureInfo = defaultTimestampCultureInfo;
+	CultureInfo timestampCultureInfo = DefaultTimestampCultureInfo;
 	LogTimestampEncoding timestampEncoding = LogTimestampEncoding.Custom;
 	IList<string> timestampFormats = Array.Empty<string>();
 	int? updateInterval;
@@ -86,7 +114,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 		// setup properties
 		this.Application = (IULogViewerApplication)dataSource.Application;
 		this.DataSource = dataSource;
-		this.Id = nextId++;
+		this.Id = NextId++;
 		this.Logger = dataSource.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}");
 		this.LogGroup = group;
 		this.Logs = new ReadOnlyObservableList<Log>(this.logs);
@@ -141,6 +169,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	/// <summary>
 	/// Get <see cref="IULogViewerApplication"/> instance.
 	/// </summary>
+	[ThreadSafe]
 	public IULogViewerApplication Application { get; }
 
 
@@ -286,7 +315,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(DefaultLogLevel)} when state is {this.state}.");
 			if (this.defaultLogLevel == value)
 				return;
-			this.defaultLogLevel = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.defaultLogLevel = value;
 			this.OnPropertyChanged(nameof(DefaultLogLevel));
 		}
 	}
@@ -363,7 +393,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new ArgumentOutOfRangeException(nameof(value));
 			if (this.dropLogCount == value)
 				return;
-			this.dropLogCount = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.dropLogCount = value;
 			this.OnPropertyChanged(nameof(DropLogCount));
 		}
 	}
@@ -413,7 +444,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(IsContinuousReading)} when state is {this.state}.");
 			if (this.isContinuousReading == value)
 				return;
-			this.isContinuousReading = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.isContinuousReading = value;
 			this.OnPropertyChanged(nameof(IsContinuousReading));
 		}
 	}
@@ -471,7 +503,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogPatternMatchingMode)} when state is {this.state}.");
 			if (this.logPatternMatchingMode == value)
 				return;
-			this.logPatternMatchingMode = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.logPatternMatchingMode = value;
 			this.OnPropertyChanged(nameof(LogPatternMatchingMode));
 		}
 	}
@@ -491,7 +524,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogPatterns)} when state is {this.state}.");
 			if (this.logPatterns.SequenceEqual(value))
 				return;
-			this.logPatterns = value.ToList().AsReadOnly();
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.logPatterns = value.ToList().AsReadOnly();
 			this.OnPropertyChanged(nameof(LogPatterns));
 		}
 	}
@@ -524,7 +558,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogStringEncoding)} when state is {this.state}.");
 			if (this.logStringEncoding == value)
 				return;
-			this.logStringEncoding = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.logStringEncoding = value;
 			this.OnPropertyChanged(nameof(LogStringEncoding));
 		}
 	}
@@ -549,9 +584,11 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogLevelMap)} when state is {this.state}.");
 			if (this.logLevelMap.Equals(value))
 				return;
-			this.logLevelMap.Clear();
-			foreach (var pair in value)
-				this.logLevelMap.Add(pair.Key, pair.Value);
+			using (var _ = this.stateLock.EnterWriteScope())
+			{
+				this.logLevelMap.Clear();
+				this.logLevelMap.AddAll(value);
+			}
 			this.OnPropertyChanged(nameof(LogLevelMap));
 		}
 	}
@@ -572,7 +609,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new ArgumentOutOfRangeException(nameof(value));
 			if (this.maxLogCount == value)
 				return;
-			this.maxLogCount = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.maxLogCount = value;
 			this.DropLogs(0);
 			this.OnPropertyChanged(nameof(MaxLogCount));
 		}
@@ -823,7 +861,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.precondition == value)
 				return;
-			this.precondition = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.precondition = value;
 			this.OnPropertyChanged(nameof(Precondition));
 		}
 	}
@@ -842,7 +881,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(RawLogLevelPropertyName)} when state is {this.state}.");
 			if (this.rawLogLevelPropertyName == value)
 				return;
-			this.rawLogLevelPropertyName = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.rawLogLevelPropertyName = value;
 			this.OnPropertyChanged(nameof(RawLogLevelPropertyName));
 		}
 	}
@@ -860,14 +900,16 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.readingWindow == value)
 				return;
-			this.readingWindow = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.readingWindow = value;
 			this.OnPropertyChanged(nameof(ReadingWindow));
 		}
 	}
 
 
 	// Read single line of log.
-	unsafe void ReadLog(LogBuilder logBuilder, Match match, CultureInfo timeSpanCultureInfo, string[]? timeSpanFormats, CultureInfo timestampCultureInfo, string[]? timestampFormats)
+	[CalledOnBackgroundThread]
+	unsafe void ReadLog(LogBuilder logBuilder, Match match, LogStringEncoding logStringEncoding, string? rawLogLevelPropertyName, IDictionary<string, LogLevel> logLevelMap, LogTimeSpanEncoding timeSpanEncoding, CultureInfo timeSpanCultureInfo, string[]? timeSpanFormats, LogTimestampEncoding timestampEncoding, CultureInfo timestampCultureInfo, string[]? timestampFormats)
 	{
 #pragma warning disable IDE0220
 		foreach (Group group in match.Groups)
@@ -895,7 +937,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			{
 				if (it.Length == 0)
 					return it;
-				return this.logStringEncoding switch
+				return logStringEncoding switch
 				{
 					LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(it.TrimEnd()),
 					LogStringEncoding.Xml => WebUtility.HtmlDecode(it.TrimEnd()),
@@ -911,7 +953,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				logBuilder.Set(name, value);
 			else if (Log.HasDateTimeProperty(name))
 			{
-				switch (this.timestampEncoding)
+				switch (timestampEncoding)
 				{
 					case LogTimestampEncoding.Custom:
 						if (timestampFormats != null)
@@ -975,7 +1017,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			}
 			else if (Log.HasTimeSpanProperty(name))
 			{
-				switch (this.timeSpanEncoding)
+				switch (timeSpanEncoding)
 				{
 					case LogTimeSpanEncoding.Custom:
 						{
@@ -1040,10 +1082,9 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			}
 			else
 				logBuilder.Set(name, value);
-			if ((this.rawLogLevelPropertyName == null && name == nameof(Log.Level))
-				|| this.rawLogLevelPropertyName == name)
+			if ((rawLogLevelPropertyName is null && name == nameof(Log.Level)) || rawLogLevelPropertyName == name)
 			{
-				if (this.logLevelMap.TryGetValue(value, out var level))
+				if (logLevelMap.TryGetValue(value, out var level))
 					logBuilder.Set(nameof(Log.Level), level.ToString());
 			}
 		}
@@ -1051,6 +1092,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 
 	// Read logs.
+	[CalledOnBackgroundThread]
 	void ReadLogs(object readingToken, TextReader reader, CancellationToken cancellationToken)
 	{
 		// check state
@@ -1065,6 +1107,18 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 		this.Logger.LogDebug("Start reading logs in background");
 		
 		// get state
+		ReaderLockScope stateReadingScope;
+		try
+		{
+			stateReadingScope = this.stateLock.EnterReadScope(StateLockTimeout);
+		}
+		catch (Exception ex)
+		{
+			this.Logger.LogError(ex, "Failed to acquire state lock after start reading logs in background");
+			Global.RunWithoutError(reader.Close);
+			this.SynchronizationContext.Post(() => this.OnLogsReadingCompleted(null, 0L));
+			return;
+		}
 		var configuration = this.Application.Configuration;
 		var readLogs = new List<Log>();
 		var readLog = (Log?)null;
@@ -1111,15 +1165,22 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			MemoryUsagePolicy = this.Application.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy),
 			StringCache = stringSourceCache,
 		};
+		var logStringEncoding = this.logStringEncoding;
+		var rawLogLevelPropertyName = this.rawLogLevelPropertyName;
+		var logLevelMap = this.logLevelMap.IsNotEmpty() ? this.logLevelMap : DefaultLogLevelMap;
+		var timeSpanEncoding = this.timeSpanEncoding;
 		var timeSpanFormats = this.timeSpanFormats.IsNotEmpty() ? this.timeSpanFormats.ToArray() : null;
 		var timeSpanCultureInfo = this.timeSpanCultureInfo;
+		var timestampEncoding = this.timestampEncoding;
 		var timestampFormats = this.timestampFormats.IsNotEmpty() ? this.timestampFormats.ToArray() : null;
 		var timestampCultureInfo = this.timestampCultureInfo;
 		var exception = (Exception?)null;
 		var defaultNonContinuousUpdateInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateInterval);
 		var nonContinuousChunkSize = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingUpdateChunkSize);
 		var nonContinuousPaddingInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingPaddingInterval);
+		var updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 		var printTraceLogs = this.printTraceLogs;
+		stateReadingScope.Dispose();
 
 		// read logs
 		var stopWatch = new Stopwatch().Also(it => it.Start());
@@ -1138,7 +1199,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			var lastLogPatternIndex = (logPatterns.Length - 1);
 			var lineNumber = 0;
 			var startReadingTime = stopWatch.ElapsedMilliseconds;
-			int updateInterval;
 			string? logLine;
 			
 			// prepare local functions
@@ -1248,7 +1308,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			}
 			if (printTraceLogs)
 				this.Logger.LogTrace("Start with matching mode {mode}, pattern 0/{t}: '{pattern}'", logPatternMatchingMode, lastLogPatternIndex, logPatterns[0].Regex);
-			this.SynchronizationContext.Post(() => this.OnFirstRawLogDataRead(readingToken));
+			syncContext.Post(() => this.OnFirstRawLogDataRead(readingToken));
 			
 			// read logs
 			if (logPatterns.Length == 1 && !logPattern.IsRepeatable && !logPattern.IsSkippable) // special case for single pattern
@@ -1258,14 +1318,13 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				{
 					if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
 						break;
-					updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 					try
 					{
 						var match = logPatternRegex.Match(logLine);
 						if (match.Success)
 						{
 							// read log
-							this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
+							this.ReadLog(logBuilder, match, logStringEncoding, rawLogLevelPropertyName, logLevelMap, timeSpanEncoding, timeSpanCultureInfo, timeSpanFormats, timestampEncoding, timestampCultureInfo, timestampFormats);
 
 							// set file name and line number
 							if (isReadingFromFile)
@@ -1292,7 +1351,10 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							}
 						}
 						else if (printTraceLogs)
-							this.Logger.LogTrace("'{logLine}' Cannot be matched by pattern {index}/{t}: '{logPattern}'", logLine, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
+						{
+							var logLineToPrint = logLine.Length <= MaxLogLineLengthToPrintToLog ? logLine : logLine[..MaxLogLineLengthToPrintToLog];
+							this.Logger.LogTrace("'{logLine}' Cannot be matched by pattern {index}/{t}: '{logPattern}'", logLineToPrint, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
+						}
 						logLine = ReadNextLine(reader, ref lineNumber);
 					}
 					finally
@@ -1325,7 +1387,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				{
 					if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
 						break;
-					updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 					try
 					{
 						var match = logPattern.Regex.Match(logLine);
@@ -1333,7 +1394,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 						{
 							// read log
 							numberOfSkippedLogPatterns = 0;
-							this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
+							this.ReadLog(logBuilder, match, logStringEncoding, rawLogLevelPropertyName, logLevelMap, timeSpanEncoding, timeSpanCultureInfo, timeSpanFormats, timestampEncoding, timestampCultureInfo, timestampFormats);
 
 							// set file name and line number
 							if (logPatternIndex == 0 && isReadingFromFile)
@@ -1363,13 +1424,13 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 										}
 									}
 									logPatternIndex = 0;
-									if (this.printTraceLogs)
+									if (printTraceLogs)
 										this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 								}
 								else
 								{
 									++logPatternIndex;
-									if (this.printTraceLogs)
+									if (printTraceLogs)
 										this.Logger.LogTrace("Move to pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 								}
 							}
@@ -1384,7 +1445,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							if (numberOfSkippedLogPatterns > lastLogPatternIndex)
 							{
 								// log
-								if (this.printTraceLogs)
+								if (printTraceLogs)
 									this.Logger.LogTrace("All patterns were skipped");
 								
 								// read next log line
@@ -1393,7 +1454,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 								
 								// move to first pattern
 								logPatternIndex = 0;
-								if (this.printTraceLogs)
+								if (printTraceLogs)
 									this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 								continue;
 							}
@@ -1402,7 +1463,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							if (logPatternIndex < lastLogPatternIndex)
 							{
 								++logPatternIndex;
-								if (this.printTraceLogs)
+								if (printTraceLogs)
 									this.Logger.LogTrace("Move to pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 								continue;
 							}
@@ -1430,7 +1491,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 							// move to first pattern
 							logPatternIndex = 0;
-							if (this.printTraceLogs)
+							if (printTraceLogs)
 								this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 						}
 						else if (logPattern.IsRepeatable)
@@ -1440,8 +1501,11 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							{
 								// print log
 								if (printTraceLogs)
-									this.Logger.LogTrace("'{logLine}' Cannot be matched as 1st line of repeatable pattern {index}/{t}: '{logPattern}'", logLine, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
-
+								{
+									var logLineToPrint = logLine.Length <= MaxLogLineLengthToPrintToLog ? logLine : logLine[..MaxLogLineLengthToPrintToLog];
+									this.Logger.LogTrace("'{logLine}' Cannot be matched as 1st line of repeatable pattern {index}/{t}: '{logPattern}'", logLineToPrint, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
+								}
+								
 								// drop log
 								logBuilder.Reset();
 
@@ -1451,7 +1515,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 								// move to first pattern
 								logPatternIndex = 0;
-								if (this.printTraceLogs)
+								if (printTraceLogs)
 									this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 								continue;
 							}
@@ -1460,7 +1524,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							if (logPatternIndex != lastLogPatternIndex)
 							{
 								++logPatternIndex;
-								if (this.printTraceLogs)
+								if (printTraceLogs)
 									this.Logger.LogTrace("Move to pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
 								continue;
 							}
@@ -1488,15 +1552,18 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 							// move to first pattern
 							logPatternIndex = 0;
-							if (this.printTraceLogs)
+							if (printTraceLogs)
 								this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 						}
 						else
 						{
 							// print log
 							if (printTraceLogs)
-								this.Logger.LogTrace("'{logLine}' cannot be matched by pattern {index}/{t}: '{logPattern}'", logLine, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
-
+							{
+								var logLineToPrint = logLine.Length <= MaxLogLineLengthToPrintToLog ? logLine : logLine[..MaxLogLineLengthToPrintToLog];
+								this.Logger.LogTrace("'{logLine}' cannot be matched by pattern {index}/{t}: '{logPattern}'", logLineToPrint, logPatternIndex, lastLogPatternIndex, logPattern.Regex);
+							}
+							
 							// drop log
 							logBuilder.Reset();
 
@@ -1506,7 +1573,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 							// move to first pattern
 							logPatternIndex = 0;
-							if (this.printTraceLogs)
+							if (printTraceLogs)
 								this.Logger.LogTrace("Reset to pattern 0/{t}: '{pattern}'", lastLogPatternIndex, logPatterns[0].Regex);
 						}
 					}
@@ -1596,7 +1663,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				{
 					if (hasMaxLogCount && readingWindow == LogReadingWindow.StartOfDataSource && logCount >= maxLogCount)
 						break;
-					updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 					try
 					{
 						// match pattern
@@ -1610,7 +1676,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 								if (match.Success)
 								{
 									// read log
-									this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
+									this.ReadLog(logBuilder, match, logStringEncoding, rawLogLevelPropertyName, logLevelMap, timeSpanEncoding, timeSpanCultureInfo, timeSpanFormats, timestampEncoding, timestampCultureInfo, timestampFormats);
 									unmatchedPatterns.Remove(logPattern);
 
 									// set file name and line number
@@ -1635,7 +1701,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							if (match.Success)
 							{
 								// read log
-								this.ReadLog(logBuilder, match, timeSpanCultureInfo, timeSpanFormats, timestampCultureInfo, timestampFormats);
+								this.ReadLog(logBuilder, match, logStringEncoding, rawLogLevelPropertyName, logLevelMap, timeSpanEncoding, timeSpanCultureInfo, timeSpanFormats, timestampEncoding, timestampCultureInfo, timestampFormats);
 								unmatchedPatterns.Remove(logPattern);
 								isFirstPatternMatched = true;
 								
@@ -1765,6 +1831,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	
 	
 	// Read next raw log line.
+	[CalledOnBackgroundThread]
 	string? ReadNextLine(TextReader reader, ref int lineNumber)
 	{
 		++lineNumber;
@@ -2050,7 +2117,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanCultureInfo.Equals(value))
 				return;
-			this.timeSpanCultureInfo = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.timeSpanCultureInfo = value;
 			this.OnPropertyChanged(nameof(TimeSpanCultureInfo));
 		}
 	}
@@ -2068,7 +2136,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanEncoding == value)
 				return;
-			this.timeSpanEncoding = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.timeSpanEncoding = value;
 			this.OnPropertyChanged(nameof(TimeSpanEncoding));
 		}
 	}
@@ -2086,7 +2155,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanFormats.SequenceEqual(value))
 				return;
-			this.timeSpanFormats = ListExtensions.AsReadOnly(value.ToArray());
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.timeSpanFormats = ListExtensions.AsReadOnly(value.ToArray());
 			this.OnPropertyChanged(nameof(TimeSpanFormats));
 		}
 	}
@@ -2104,7 +2174,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampCultureInfo.Equals(value))
 				return;
-			this.timestampCultureInfo = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.timestampCultureInfo = value;
 			this.OnPropertyChanged(nameof(TimestampCultureInfo));
 		}
 	}
@@ -2122,7 +2193,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampEncoding == value)
 				return;
-			this.timestampEncoding = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.timestampEncoding = value;
 			this.OnPropertyChanged(nameof(TimestampEncoding));
 		}
 	}
@@ -2140,7 +2212,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampFormats.SequenceEqual(value))
 				return;
-			this.timestampFormats = ListExtensions.AsReadOnly(value.ToArray());
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.timestampFormats = ListExtensions.AsReadOnly(value.ToArray());
 			this.OnPropertyChanged(nameof(TimestampFormats));
 		}
 	}
@@ -2160,17 +2233,22 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new ArgumentOutOfRangeException(nameof(value));
 			if (this.updateInterval == value)
 				return;
-			this.updateInterval = value;
+			using (var _ = this.stateLock.EnterWriteScope())
+				this.updateInterval = value;
 			this.OnPropertyChanged(nameof(UpdateInterval));
 		}
 	}
 
 
 	// Implementations.
+	[ThreadSafe]
 	public bool CheckAccess() => this.Application.CheckAccess();
+	[ThreadSafe]
 	IApplication IApplicationObject.Application => this.Application;
 	public event PropertyChangedEventHandler? PropertyChanged;
+	[ThreadSafe]
 	public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
+	[ThreadSafe]
 	public override string ToString() => $"{this.GetType().Name}-{this.Id}";
 }
 

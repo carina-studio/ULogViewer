@@ -9,10 +9,10 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Input;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
-using CarinaStudio.Input;
 using CarinaStudio.Threading;
 using CarinaStudio.VisualTree;
 using CarinaStudio.ULogViewer.Controls;
@@ -26,6 +26,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TabItem = CarinaStudio.AppSuite.Controls.TabItem;
@@ -37,11 +38,8 @@ namespace CarinaStudio.ULogViewer
 	/// </summary>
 	class MainWindow : MainWindow<IULogViewerApplication, Workspace>, INotificationPresenter
 	{
-		// Constants.
-		const string DraggingSessionKey = "DraggingSettion";
-
-
 		// Static fields.
+		static readonly DataFormat<byte[]> DraggingSessionFormat = DataFormat.CreateBytesApplicationFormat("DraggingSession");
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>(nameof(HasMultipleSessions));
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
@@ -745,7 +743,7 @@ namespace CarinaStudio.ULogViewer
 			e.Handled = true;
 
 			// handle file dragging
-			if(Global.RunOrDefault(() => e.Data.HasFileNames())) // [Workaround] Prevent NRE when dragging without files on macOS
+			if(e.DataTransfer.HasFiles()) // [Workaround] Prevent NRE when dragging without files on macOS
 			{
 				// select tab item
 				if (e.ItemIndex < this.tabItems.Count - 1)
@@ -757,7 +755,8 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// handle session dragging
-			if (e.Data.TryGetData<Session>(DraggingSessionKey, out var session) 
+			if (e.DataTransfer.TryGetGCHandle(DraggingSessionFormat, out var sessionHandle) 
+			    && sessionHandle.Target is Session session
 				&& e.ItemIndex < this.tabItems.Count - 1)
 			{
 				// find source position
@@ -804,7 +803,7 @@ namespace CarinaStudio.ULogViewer
 			ItemInsertionIndicator.SetInsertingItemBefore(tabItem, false);
 			
 			// drop files
-			if (Global.RunOrDefault(() => e.Data.HasFileNames())) // [Workaround] Prevent NRE when dragging without files on macOS
+			if (e.DataTransfer.HasFiles()) // [Workaround] Prevent NRE when dragging without files on macOS
 			{
 				// find tab and session view
 				var sessionView = Global.Run(() =>
@@ -821,7 +820,7 @@ namespace CarinaStudio.ULogViewer
 					return;
 
 				// drop to session view
-				await sessionView.DropAsync(e.KeyModifiers, e.Data);
+				await sessionView.DropAsync(e.KeyModifiers, e.DataTransfer);
 
 				// complete
 				e.Handled = true;
@@ -829,7 +828,8 @@ namespace CarinaStudio.ULogViewer
 			}
 
 			// drop session
-			if (e.Data.TryGetData<Session>(DraggingSessionKey, out var session) 
+			if (e.DataTransfer.TryGetGCHandle(DraggingSessionFormat, out var sessionHandle)
+			    && sessionHandle.Target is Session session
 				&& e.ItemIndex < this.tabItems.Count - 1)
 			{
 				// find source position
@@ -1141,11 +1141,12 @@ namespace CarinaStudio.ULogViewer
 			this.Logger.LogTrace("Start dragging session");
 			
 			// prepare dragging data
-			var data = new DataObject();
-			data.Set(DraggingSessionKey, session);
+			var data = new DataTransfer();
+			var sessionHandle = GCHandle.Alloc(session, GCHandleType.Weak);
+			data.Add(DraggingSessionFormat, sessionHandle);
 
 			// start dragging session
-			DragDrop.DoDragDrop(e.PointerEventArgs, data, DragDropEffects.Move);
+			DragDrop.DoDragDropAsync(e.PointerEventArgs, data, DragDropEffects.Move).GetAwaiter().UnsafeOnCompleted(() => sessionHandle.Free());
 		}
 
 

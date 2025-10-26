@@ -19,6 +19,7 @@ using Avalonia.VisualTree;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
+using CarinaStudio.AppSuite.Input;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -39,6 +40,7 @@ using CarinaStudio.Windows.Input;
 using LiveChartsCore.SkiaSharpView.Avalonia;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -156,6 +158,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		const int InitScrollingToLatestLogDelay = 800;
 		const int LogUpdateIntervalStatisticCount = 4;
 		const int LogUpdateIntervalToResetStatistic = 1000;
+		const int MaxLogPropertyStringLengthToDisplay = 512;
 		const double MaxSmoothScrollingToLatestLogDistance = 200;
 		const int ScrollingToLatestLogInterval = 200;
 		const int ScrollingToTargetLogRangeInterval = 200;
@@ -192,6 +195,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
 		static Regex? LeadingTimestampPattern;
 		static readonly StyledProperty<double> LogItemHeightProperty = AvaloniaProperty.Register<SessionView, double>(nameof(LogItemHeight));
+		static readonly ArrayPool<char> LogPropertyCharArrayPool = ArrayPool<char>.Create();
 		static readonly StyledProperty<int> MaxDisplayLineCountForEachLogProperty = AvaloniaProperty.Register<SessionView, int>(nameof(MaxDisplayLineCountForEachLog), 1);
 		static readonly StyledProperty<SessionViewStatusBarState> StatusBarStateProperty = AvaloniaProperty.Register<SessionView, SessionViewStatusBarState>(nameof(StatusBarState), SessionViewStatusBarState.None);
 
@@ -538,6 +542,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Get<Expander>("logAnalysisScriptSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.logChart = this.Get<CartesianChart>(nameof(logChart)).Also(it =>
 			{
+				it.Bind(CartesianChart.LegendBackgroundPaintProperty, new Binding { Source = this, Path = nameof(LogChartLegendBackgroundPaint) });
+				it.Bind(CartesianChart.LegendTextPaintProperty, new Binding { Source = this, Path = nameof(LogChartLegendForegroundPaint) });
+				it.Bind(CartesianChart.TooltipBackgroundPaintProperty, new Binding { Source = this, Path = nameof(LogChartToolTipBackgroundPaint) });
+				it.Bind(CartesianChart.TooltipTextPaintProperty, new Binding { Source = this, Path = nameof(LogChartToolTipForegroundPaint) });
 				it.DataPointerDown += (_, e) => this.OnLogChartDataPointerDown(e);
 				it.DoubleTapped += (_, e) =>
 				{
@@ -1451,7 +1459,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return true;
 			if (this.attachedWindow == null)
 				return false;
-			await new MessageDialog()
+			await new MessageDialog
 			{
 				Icon = MessageDialogIcon.Information,
 				Message = new FormattedString().Also(it =>
@@ -1476,7 +1484,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			if (this.attachedWindow == null)
 				return false;
-			var result = await new MessageDialog()
+			var result = await new MessageDialog
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				DefaultResult = MessageDialogResult.No,
@@ -1530,7 +1538,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 
 			// show dialog
-			var result = await new MessageDialog()
+			var result = await new MessageDialog
 			{
 				Buttons = MessageDialogButtons.YesNo,
 				Icon = MessageDialogIcon.Question,
@@ -1671,7 +1679,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				&& this.attachedWindow != null)
 			{
 				this.PersistentState.SetValue<bool>(IsCopyLogTextTutorialShownKey, true);
-				_ = new MessageDialog()
+				_ = new MessageDialog
 				{
 					Icon = MessageDialogIcon.Information,
 					Message = this.Application.GetObservableString("SessionView.Tutorial.CopyLogText"),
@@ -1881,7 +1889,23 @@ namespace CarinaStudio.ULogViewer.Controls
 									if (it.DataContext is DisplayableLog log
 									    && log.TryGetProperty<object?>(logProperty.Name, out var value))
 									{
-										it.Text = value?.ToString();
+										it.Text = value?.ToString()?.Let(s =>
+										{
+											if (s.Length <= MaxLogPropertyStringLengthToDisplay)
+												return s;
+											var charArray = LogPropertyCharArrayPool.Rent(MaxLogPropertyStringLengthToDisplay);
+											try
+											{
+												var charSpan = charArray.AsSpan();
+												s.AsSpan().Slice(0, MaxLogPropertyStringLengthToDisplay - 1).CopyTo(charSpan);
+												charSpan[MaxLogPropertyStringLengthToDisplay - 1] = '…';
+												return new string(charArray);
+											}
+											finally
+											{
+												LogPropertyCharArrayPool.Return(charArray);
+											}
+										});
 									}
 									else
 										it.Text = null;
@@ -2495,11 +2519,22 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <param name="keyModifiers">Key modifiers.</param>
 		/// <param name="data">Data to be dropped.</param>
 		/// <returns>True if dragged data is accepted by this view.</returns>
-		public async Task<bool> DropAsync(KeyModifiers keyModifiers, IDataObject data)
+		public Task<bool> DropAsync(KeyModifiers keyModifiers, IDataTransfer data)
+		{
+			if (!data.HasFiles() || this.IsHandlingDragAndDrop)
+				return Task.FromResult(false);
+			var dropFilePaths = data.TryGetLocalFilePaths();
+			if (dropFilePaths.IsNotEmpty())
+				return this.DropAsync(keyModifiers, dropFilePaths);
+			return Task.FromResult(false);
+		}
+
+
+		// Drop dragged data to this view asynchronously.
+		async Task<bool> DropAsync(KeyModifiers keyModifiers, IList<string> dropFilePaths)
 		{
 			// check data
-			var hasFileNames = data.HasFileNames();
-			if (!hasFileNames || this.IsHandlingDragAndDrop)
+			if (dropFilePaths.IsEmpty() || this.IsHandlingDragAndDrop)
 				return false;
 
 			// bring window to front
@@ -2513,32 +2548,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// handling drag-and-drop
 			try
 			{
-				// [Workaround] clone data to prevent underlying resource being released later
-				if (data is not DataObject)
-				{
-					if (data.TryClone(out var cloneData, out var ex))
-						data = cloneData;
-					else
-					{
-						Logger.LogError(ex, "Failed to clone data object while dropping data");
-						return false;
-					}
-				}
-
 				// collect files
-				var dropFilePaths = data.GetFiles().Let(it =>
-				{
-					if (it is null)
-						return (IList<string>)Array.Empty<string>();
-					var list = new List<string>();
-					foreach (var file in it)
-					{
-						var fileName = file.TryGetLocalPath();
-						if (!string.IsNullOrEmpty(fileName))
-							list.Add(fileName);
-					}
-					return list;
-				});
 				var dirPaths = new List<string>();
 				var filePaths = new List<string>();
 				await Task.Run(() =>
@@ -2559,7 +2569,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				{
 					if (dirPaths.IsEmpty())
 					{
-						_ = new MessageDialog()
+						_ = new MessageDialog
 						{
 							Icon = MessageDialogIcon.Information,
 							Message = this.Application.GetObservableString("SessionView.NoFilePathDropped")
@@ -2570,7 +2580,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						return false;
 					if (dirPaths.Count > 1)
 					{
-						_ = new MessageDialog()
+						_ = new MessageDialog
 						{
 							Icon = MessageDialogIcon.Information,
 							Message = this.Application.GetObservableString("SessionView.TooManyDirectoryPathsDropped")
@@ -2625,7 +2635,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					return false;
 				if (warningMessage != null)
 				{
-					await new MessageDialog()
+					await new MessageDialog
 					{
 						Icon = MessageDialogIcon.Warning,
 						Message = warningMessage,
@@ -2657,7 +2667,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}).ShowDialog<LogProfile>(this.attachedWindow);
 
 				// set log profile or create new session
-				if (newLogProfile != null)
+				if (newLogProfile is not null)
 				{
 					var workspace = (Workspace)session.Owner.AsNonNull();
 					var newIndex = workspace.Sessions.IndexOf(session).Let(it =>
@@ -2681,7 +2691,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 							// drop files to new session
 							mainWindow.FindSessionView(newSession)?.Let(view => 
-								view.DropAsync(keyModifiers, data));
+								view.DropAsync(keyModifiers, dropFilePaths));
 						}
 						else
 						{
@@ -3399,13 +3409,13 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when drop data on view.
-		async void OnDrop(object? sender, DragEventArgs e)
+		void OnDrop(object? sender, DragEventArgs e)
 		{
 			this.dragDropReceiverBorder.IsVisible = false;
 			if ((this.attachedWindow as AppSuite.Controls.Window)?.HasDialogs == true)
 				return;
 			e.Handled = true;
-			await this.DropAsync(e.KeyModifiers, e.Data);
+			_ = this.DropAsync(e.KeyModifiers, e.DataTransfer);
 		}
 
 
@@ -3984,7 +3994,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								{
 									if (this.attachedWindow != null)
 									{
-										var result = await new MessageDialog()
+										var result = await new MessageDialog
 										{
 											Buttons = MessageDialogButtons.YesNo,
 											Icon = MessageDialogIcon.Question,
@@ -4841,7 +4851,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				if (this.attachedWindow == null)
 					return;
-				if (await new JsonLogsSavingOptionsDialog()
+				if (await new JsonLogsSavingOptionsDialog
 				{
 					LogsSavingOptions = jsonLogsSavingOptions,
 				}.ShowDialog<JsonLogsSavingOptions?>(this.attachedWindow) == null)
@@ -5377,7 +5387,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return new();
 			
 			// select precondition
-			var precondition = await new LogReadingPreconditionDialog()
+			var precondition = await new LogReadingPreconditionDialog
 			{
 				IsCancellationAllowed = isCancellable,
 				IsReadingFromFiles = (sourceType & LogDataSourceType.File) != 0,

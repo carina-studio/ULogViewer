@@ -1301,13 +1301,9 @@
 					                        {Binding !LogChart.IsMaxTotalSeriesValueCountReached},
 					                        {Binding !IsShowingRawLogLinesTemporarily}
 					                    }"
-					                    LegendBackgroundPaint="{Binding #root.LogChartLegendBackgroundPaint}"
 					                    LegendPosition="Right"
-					                    LegendTextPaint="{Binding #root.LogChartLegendForegroundPaint}"
 					                    LegendTextSize="{StaticResource Double/SessionView.LogChart.Legend.FontSize}"
 					                    Series="{Binding #root.LogChartSeries}" 
-					                    TooltipBackgroundPaint="{Binding #root.LogChartToolTipBackgroundPaint}" 
-					                    TooltipTextPaint="{Binding #root.LogChartToolTipForegroundPaint}" 
 					                    TooltipTextSize="{StaticResource Double/SessionView.LogChart.ToolTip.FontSize}"
 					                    XAxes="{Binding #root.LogChartXAxes}"
 					                    YAxes="{Binding #root.LogChartYAxes}"/>

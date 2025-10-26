@@ -107,27 +107,6 @@
 									</ComboBox>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
-
-								<!-- Compact UI -->
-								<asControls:DialogItem>
-									<StackPanel Classes="Dialog_Item_Text_Container">
-										<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ApplicationOptions.UseCompactUserInterface}"/>
-										<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#compactUIWarningDescriptionGrid.IsVisible}" Text="{asXaml:StringResource ApplicationOptions.UseCompactUserInterface.Description}"/>
-										<Grid Name="compactUIWarningDescriptionGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-											<Grid.IsVisible>
-												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
-													<Binding Path="IsRestartingRootWindowsNeeded"/>
-													<Binding Path="IsUseCompactUserInterfaceChanged"/>
-												</MultiBinding>
-											</Grid.IsVisible>
-											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{asXaml:StringResource ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{asXaml:StringResource ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
-										</Grid>
-									</StackPanel>
-									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding UseCompactUserInterface, Mode=TwoWay}"/>
-								</asControls:DialogItem>
-								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Culture -->
 								<asControls:DialogItem>

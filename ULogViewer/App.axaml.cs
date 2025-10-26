@@ -139,8 +139,6 @@ namespace CarinaStudio.ULogViewer
 
 		// Fields.
 		AppOptionsDialog? appOptionsDialog;
-		IResourceProvider? compactResources;
-		IDisposable? compactResourcesToken;
 		ExternalDependency[] externalDependencies = [];
 		readonly Dictionary<CarinaStudio.Controls.Window, MainWindowInfo> mainWindowInfoMap = new();
 		DocumentViewerWindow? quickStartGuideWindow;
@@ -346,21 +344,8 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Load theme.
-		protected override IStyle OnLoadTheme(ThemeMode themeMode, bool useCompactUI)
+		protected override IStyle OnLoadTheme(ThemeMode themeMode)
 		{
-			// load resources
-			if (!useCompactUI)
-				this.compactResourcesToken = this.compactResourcesToken.DisposeAndReturnNull();
-			else
-			{
-				this.compactResources ??= new ResourceInclude(new Uri("avares://ULogViewer/"))
-				{
-					Source = new Uri("/Styles/Resources-Compact.axaml", UriKind.Relative)
-				};
-				this.compactResourcesToken ??= this.AddCustomResource(this.compactResources);
-			}
-
-			// load styles
 			var uri = themeMode switch
 			{
 				ThemeMode.Light => new Uri("/Styles/Light.axaml", UriKind.Relative),
@@ -481,7 +466,7 @@ namespace CarinaStudio.ULogViewer
 			LogToConsole("Prepare starting (App)");
 			
 			// setup log output rules
-			NLog.LogManager.Configuration.AddTarget(new NLog.Targets.MethodCallTarget("methodCall").Also(it =>
+			NLog.LogManager.Configuration!.AddTarget(new NLog.Targets.MethodCallTarget("methodCall").Also(it =>
 			{
 				it.ClassName = "CarinaStudio.ULogViewer.MemoryLogger, ULogViewer";
 				it.MethodName = "Log";
