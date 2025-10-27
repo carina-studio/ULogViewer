@@ -401,7 +401,7 @@ partial class SessionView
     
 #if DEBUG
     // Edit given log analysis script set file.
-    internal void EditLogAnalysisScriptSetFile()
+    internal void EditLogAnalysisScriptSetFileAsync()
     { }
 #endif
 

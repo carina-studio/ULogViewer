@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -183,7 +184,7 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	
 	
 	// Complete editing.
-	async void CompleteEditing()
+	async Task CompleteEditing()
 	{
 		var provider = await this.ApplyAsync(true);
 		if (provider is not null)
@@ -229,7 +230,7 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	public bool IsEmbeddedProvider
 	{
 		get => this.GetValue(IsEmbeddedProviderProperty);
-		set => this.SetValue(IsEmbeddedProviderProperty, value);
+		init => this.SetValue(IsEmbeddedProviderProperty, value);
 	}
 
 
@@ -263,18 +264,26 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
 			var sysDecorSize = this.GetSystemDecorationSizes();
 			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
-			this.Width = (workingArea.Width * widthRatio) / scaling;
-			this.Height = ((workingArea.Height * heightRatio) / scaling) - sysDecorSize.Top - sysDecorSize.Bottom;
+			this.SynchronizationContext.Post(() =>
+			{
+				this.Width = (workingArea.Width * widthRatio) / scaling;
+				this.Height = ((workingArea.Height * heightRatio) / scaling) - sysDecorSize.Top - sysDecorSize.Bottom;
+			}, DispatcherPriority.Send);
 		});
 	}
 
 
 	/// <inheritdoc/>
-	protected override async void OnOpened(EventArgs e)
+	protected override void OnOpened(EventArgs e)
 	{
-		// call base
 		base.OnOpened(e);
-		
+		_ = this.OnOpenedAsync();
+	}
+	
+	
+	// Handle dialog opened asynchronously.
+	async Task OnOpenedAsync()
+	{
 		// request running script
 		await this.RequestEnablingRunningScriptAsync();
 
@@ -372,7 +381,7 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	/// <summary>
 	/// Get or set script log data source provider to edit.
 	/// </summary>
-	public ScriptLogDataSourceProvider? Provider { get; set; }
+	public ScriptLogDataSourceProvider? Provider { get; init; }
 	
 	
 	/// <summary>

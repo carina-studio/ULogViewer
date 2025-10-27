@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
@@ -179,7 +180,7 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 	public bool IsEmbeddedScriptSet
 	{
 		get => this.GetValue(IsEmbeddedScriptSetProperty);
-		set => this.SetValue(IsEmbeddedScriptSetProperty, value);
+		init => this.SetValue(IsEmbeddedScriptSetProperty, value);
 	}
 
 
@@ -219,18 +220,26 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
 			var sysDecorSize = this.GetSystemDecorationSizes();
 			this.Position = new((int)(left + 0.5), (int)(top + 0.5));
-			this.Width = (workingArea.Width * widthRatio) / scaling;
-			this.Height = ((workingArea.Height * heightRatio) / scaling) - sysDecorSize.Top - sysDecorSize.Bottom;
+			this.SynchronizationContext.Post(() =>
+			{
+				this.Width = (workingArea.Width * widthRatio) / scaling;
+				this.Height = ((workingArea.Height * heightRatio) / scaling) - sysDecorSize.Top - sysDecorSize.Bottom;
+			}, DispatcherPriority.Send);
 		});
 	}
 
 
 	/// <inheritdoc/>
-	protected override async void OnOpened(EventArgs e)
+	protected override void OnOpened(EventArgs e)
 	{
-		// call base
 		base.OnOpened(e);
-		
+		_ = this.OnOpenedAsync();
+	}
+	
+	
+	// Handle dialog opened asynchronously.
+	async Task OnOpenedAsync()
+	{
 		// check number of script
 		if (this.scriptSetToEdit == null
 		    && !this.Application.ProductManager.IsProductActivated(Products.Professional))
@@ -365,11 +374,12 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 	
 #if DEBUG
 	/// <summary>
-	/// Show dialog to edit script set stored in file.
+	/// Show dialog asynchronously to edit script set stored in file.
 	/// </summary>
 	/// <param name="parent">Parent window.</param>
 	/// <param name="fileName">Name of file which stored the script set.</param>
-	public static async void Show(Avalonia.Controls.Window parent, string fileName)
+	/// <returns>True if dialog has been shown as expected.</returns>
+	public static async Task<bool> ShowAsync(Avalonia.Controls.Window parent, string fileName)
 	{
 		// load script set
 		var scriptSet = await Global.RunOrDefaultAsync(async () => await LogAnalysisScriptSet.LoadAsync(App.Current, fileName));
@@ -380,16 +390,17 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 				Icon = MessageDialogIcon.Error,
 				Message = $"Unable to load script set from '{fileName}'.",
 			}.ShowDialog(parent);
-			return;
+			return false;
 		}
 		
 		// edit
-		var dialog = new LogAnalysisScriptSetEditorDialog()
+		var dialog = new LogAnalysisScriptSetEditorDialog
 		{
 			fileNameToSave = fileName,
 			scriptSetToEdit = scriptSet,
 		};
 		dialog.Show(parent);
+		return true;
 	}
 #endif
 
