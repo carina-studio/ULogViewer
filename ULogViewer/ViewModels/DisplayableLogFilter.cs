@@ -2,13 +2,13 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Text;
+using LogLevel = CarinaStudio.ULogViewer.Logs.LogLevel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CarinaStudio.ULogViewer.Logs;
-using CarinaStudio.ULogViewer.Text;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -454,9 +454,10 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                     continue;
                 while (true)
                 {
-                    if (textPropertyValue.TryCopyTo(textSpanToMatch.Slice(textBufferLength)))
+                    if (textPropertyValue.Length <= textBufferCapacity - textBufferLength)
                     {
-                        textBufferLength += textPropertyValue.Length;
+                        if (textPropertyValue.TryCopyTo(textSpanToMatch.Slice(textBufferLength)))
+                            textBufferLength += textPropertyValue.Length;
                         break;
                     }
                     IncreaseTextBuffer(ref textBufferToMatch);

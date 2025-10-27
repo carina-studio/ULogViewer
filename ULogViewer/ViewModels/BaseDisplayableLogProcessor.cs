@@ -693,18 +693,25 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         var processedLogs = new List<DisplayableLog>();
         var processingResults = new List<TProcessingResult>(logCount);
         var token = processingParams.Token;
-        for (var i = logCount - 1; i >= 0 && this.currentProcessingParams == processingParams; --i) // Need to process in reverse order to make sure the processing order is same as source list
+        try
         {
-            var log = logs[i];
-            if (this.OnProcessLog(token, log, out var result))
+            for (var i = logCount - 1; i >= 0 && this.currentProcessingParams == processingParams; --i) // Need to process in reverse order to make sure the processing order is same as source list
             {
-                processedLogs.Add(log);
-                processingResults.Add(result);
+                var log = logs[i];
+                if (this.OnProcessLog(token, log, out var result))
+                {
+                    processedLogs.Add(log);
+                    processingResults.Add(result);
+                }
+                else
+                    logVersions.RemoveAt(i);
             }
-            else
-                logVersions.RemoveAt(i);
         }
-        
+        catch (Exception ex)
+        {
+            this.Logger.LogError(ex, "Unhandled error occurred while processing log chunk [{chunkId}].", chunkId);
+        }
+
         // Reverse back to same order as source list
         if (sortDirection == SortDirection.Ascending)
             logVersions.Reverse(); 
