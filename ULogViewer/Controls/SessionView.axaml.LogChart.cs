@@ -86,7 +86,7 @@ partial class SessionView
     {
         // Fields.
         StackLayout? container;
-        DrawablesTask? containerDrawableTask;
+        DrawnTask? containerDrawableTask;
         
         // Draw.
         public void Draw(Chart chart)
@@ -171,7 +171,7 @@ partial class SessionView
     {
         // Fields.
         Container<RoundedRectangleGeometry>? container;
-        DrawablesTask? containerDrawableTask;
+        DrawnTask? containerDrawableTask;
         StackLayout? itemsContainer;
 
         // Hide.
@@ -295,9 +295,9 @@ partial class SessionView
         public SKBlendMode BlendMode { get; init; } = SKBlendMode.Overlay;
 
         /// <inheritdoc/>
-        public override void InitializeTask(DrawingContext drawingContext)
+        protected override void OnPaintStarted(DrawingContext drawingContext, IDrawnElement? drawnElement)
         {
-            base.InitializeTask(drawingContext);
+            base.OnPaintStarted(drawingContext, drawnElement);
             if (drawingContext is SkiaSharpDrawingContext skiaDrawingContext && skiaDrawingContext.ActiveSkiaPaint is { } skPaint)
                 skPaint.BlendMode = this.BlendMode;
         }
@@ -2008,7 +2008,7 @@ partial class SessionView
     void UpdateLogChartZoomMode()
     {
         this.logChart.ZoomMode = this.GetValue(IsLogChartHorizontallyZoomedProperty)
-            ? ZoomAndPanMode.PanX 
+            ? ZoomAndPanMode.X 
             : ZoomAndPanMode.None;
     }
     

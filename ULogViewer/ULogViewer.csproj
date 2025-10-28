@@ -26,7 +26,7 @@
         <AppSuiteVersion>3.0.1.1026-dev</AppSuiteVersion>
 		<AvaloniaVersion>11.3.8</AvaloniaVersion>
 		<DotNetLibVersion>9.0.4</DotNetLibVersion>
-		<SkiaSharpVersion>3.116.1</SkiaSharpVersion>
+		<SkiaSharpVersion>3.119.1</SkiaSharpVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -99,10 +99,10 @@
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />
+        <PackageReference Include="CarinaStudio.LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0.1028-rc6.1" />
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.2.0" />
-		<PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.1" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
 		<PackageReference Include="MySqlConnector" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SkiaSharp" Version="$(SkiaSharpVersion)" />
