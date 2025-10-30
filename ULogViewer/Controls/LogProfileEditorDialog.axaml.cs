@@ -52,7 +52,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		
 
 		// Static fields.
-		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
+		static readonly SettingKey<bool> DoNotShowDialogForLogPatternsWithoutLogLevelMapKey = new("LogProfileEditorDialog.DoNotShowDialogForLogPatternsWithoutLogLevelMap", false);
 		static readonly StyledProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasCooperativeLogAnalysisScriptSet");
 		static readonly StyledProperty<bool> HasEmbeddedScriptLogDataSourceProviderProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasEmbeddedScriptLogDataSourceProvider");
 		static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(HasDataSourceOptions));
@@ -60,6 +60,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsProVersionActivated));
 		static readonly StyledProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
 		static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
+		static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
 		
 
 		// Fields.
@@ -847,37 +848,19 @@ namespace CarinaStudio.ULogViewer.Controls
 			// check log level map for reading
 			if (this.rawLogLevelPropertyComboBox.SelectedItem is string rawLogLevelProperty 
 			    && this.logPropertyNamesInLogPatterns.Contains(rawLogLevelProperty) 
-			    && this.logLevelMapEntriesForReading.IsEmpty())
+			    && this.logLevelMapEntriesForReading.IsEmpty()
+			    && !this.Application.Configuration.GetValueOrDefault(DoNotShowDialogForLogPatternsWithoutLogLevelMapKey))
 			{
-				var result = await new MessageDialog
+				var dialog = new MessageDialog
 				{
-					Buttons = MessageDialogButtons.YesNo,
-					DefaultResult = MessageDialogResult.Yes,
-					Icon = MessageDialogIcon.Warning,
-					Message = new FormattedString().Also(it =>
-					{
-						it.Bind(FormattedString.Arg1Property, new Binding
-						{
-							Converter = LogPropertyNameConverter.Default,
-							Path = nameof(ComboBox.SelectedItem), 
-							Source = this.rawLogLevelPropertyComboBox,
-						});
-						it.Bind(FormattedString.FormatProperty, this.GetResourceObservable("String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap"));
-					}),
-				}.ShowDialog(this);
-				if (result == MessageDialogResult.Yes)
-				{
-					this.SynchronizationContext.PostDelayed(() =>
-					{
-						this.Get<Control>("logLevelMapForReadingContainer").Let(it =>
-						{
-							this.baseScrollViewer.ScrollIntoView(it, true);
-							this.AnimateItem(it);
-						});
-						this.Get<Button>("addLogLevelMapEntryForReadingButton").Focus();
-					}, 100);
-					return null;
-				}
+					Buttons = MessageDialogButtons.OK,
+					DoNotAskOrShowAgain = false,
+					Icon = MessageDialogIcon.Information,
+					Message = this.GetResourceObservable("String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap"),
+				};
+				await dialog.ShowDialog(this);
+				if (dialog.DoNotAskOrShowAgain == true)
+					this.Application.Configuration.SetValue<bool>(DoNotShowDialogForLogPatternsWithoutLogLevelMapKey, true);
 				await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
 			}
 			
@@ -1272,15 +1255,21 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
 				it.ProductStateChanged += this.OnProductStateChanged;
 			});
-
-			// close if profile is built-in
-			var profile = this.LogProfile;
-			if (profile?.IsBuiltIn == true)
-				this.SynchronizationContext.Post(this.Close);
-
+			
 			// call base
 			base.OnOpened(e);
 
+			// continue opening dialog
+			if (this.LogProfile?.IsBuiltIn != true)
+				_ = this.OnOpenedAsync();
+			else
+				this.SynchronizationContext.Post(this.Close);
+		}
+		
+		
+		// Handle dialog opened asynchronously.
+		async Task OnOpenedAsync()
+		{
 			// show hint of 'learn about logs reading and parsing'
 			if (!this.PersistentState.GetValueOrDefault(HasLearnAboutLogsReadingAndParsingHintShown))
 			{
@@ -1313,7 +1302,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					Icon = MessageDialogIcon.Error,
 					Message = new FormattedString().Also(it =>
 					{
-						it.Arg1 = profile?.Name;
+						it.Arg1 = this.LogProfile?.Name;
 						it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams"));
 					}),
 				}.ShowDialog(this);
