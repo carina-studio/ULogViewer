@@ -30,7 +30,6 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -627,7 +626,7 @@ class Session : ViewModel<IULogViewerApplication>
 		/// <summary>
 		/// Get or set logs to be marked.
 		/// </summary>
-		public IEnumerable<DisplayableLog> Logs { get; init; } = Array.Empty<DisplayableLog>();
+		public IEnumerable<DisplayableLog> Logs { get; init; } = [];
     }
 
 
@@ -1461,6 +1460,7 @@ class Session : ViewModel<IULogViewerApplication>
 		{
 			this.SetValue(HasAllDataSourceErrorsProperty, this.hasLogDataSourceCreationFailure);
 			this.SetValue(HasPartialDataSourceErrorsProperty, false);
+			// ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 			this.checkIsWaitingForDataSourcesAction?.Schedule();
 			return;
 		}
@@ -1525,10 +1525,11 @@ class Session : ViewModel<IULogViewerApplication>
 			{
 #if DEBUG
 				throw new InternalStateCorruptedException($"Memory usage of component becomes negative: {componentMemoryUsage}, component: {component.GetType().Name}");
-#endif
+#else
 				this.Logger.LogError("Memory usage of component becomes negative: {size}, component: {c}", componentMemoryUsage, component.GetType().Name);
 				componentMemoryUsage = 0;
 				this.GenerateDebugMessage("Memory usage of component becomes negative.");
+#endif
 			}
 			logsMemoryUsage += componentMemoryUsage;
 		}
@@ -1538,10 +1539,11 @@ class Session : ViewModel<IULogViewerApplication>
 		{
 #if DEBUG
 			throw new InternalStateCorruptedException($"Memory usage of logs becomes negative: {logsMemoryUsage}");
-#endif
+#else
 			this.Logger.LogError("Memory usage of logs becomes negative: {size}", logsMemoryUsage);
 			logsMemoryUsage = 0;
 			this.GenerateDebugMessage("Memory usage of logs becomes negative.");
+#endif
 		}
 		this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
 		totalLogsMemoryUsage += logsMemoryUsage - prevLogsMemoryUsage;
@@ -1800,8 +1802,7 @@ class Session : ViewModel<IULogViewerApplication>
 		// prepare log writer
 		using var dataOutput = new StringLogDataOutput(app);
 		using var logWriter = this.CreateRawLogWriter(dataOutput);
-		var syncLock = new object();
-		var isCopyingCompleted = false;
+		var writingLogsTaskCompletionSource = new TaskCompletionSource();
 		logWriter.Logs = new Log[logs.Count].Also(it =>
 		{
 			for (var i = it.Length - 1; i >= 0; --i)
@@ -1812,20 +1813,14 @@ class Session : ViewModel<IULogViewerApplication>
 		{
 			if (e.PropertyName == nameof(RawLogWriter.State))
 			{
-				// ReSharper disable AccessToDisposedClosure
 				switch (logWriter.State)
 				{
 					case LogWriterState.DataOutputError:
 					case LogWriterState.Stopped:
 					case LogWriterState.UnclassifiedError:
-						lock (syncLock)
-						{
-							isCopyingCompleted = true;
-							Monitor.Pulse(syncLock);
-						}
+						writingLogsTaskCompletionSource.TrySetResult();
 						break;
 				}
-				// ReSharper restore AccessToDisposedClosure
 			}
 		};
 
@@ -1833,18 +1828,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Start copying logs");
 		this.SetValue(IsCopyingLogsProperty, true);
 		logWriter.Start();
-		await this.WaitForNecessaryTaskAsync(Task.Run(() =>
-		{
-			lock (syncLock)
-			{
-				while (!isCopyingCompleted)
-				{
-					if (Monitor.Wait(syncLock, 500))
-						break;
-					Task.Yield();
-				}
-			}
-		}));
+		await this.WaitForNecessaryTaskAsync(writingLogsTaskCompletionSource.Task);
 
 		// complete
 		if (logWriter.State == LogWriterState.Stopped)
@@ -4463,45 +4447,27 @@ class Session : ViewModel<IULogViewerApplication>
 		});
 
 		// prepare saving
-		var syncLock = new object();
-		var isCompleted = false;
+		var writingLogsTaskCompletionSource = new TaskCompletionSource();
 		logWriter.PropertyChanged += (_, e) =>
 		{
 			if (e.PropertyName == nameof(RawLogWriter.State))
 			{
-				// ReSharper disable AccessToDisposedClosure
 				switch (logWriter.State)
 				{
 					case LogWriterState.DataOutputError:
 					case LogWriterState.Stopped:
 					case LogWriterState.UnclassifiedError:
-						lock (syncLock)
-						{
-							isCompleted = true;
-							Monitor.Pulse(syncLock);
-						}
+						writingLogsTaskCompletionSource.TrySetResult();
 						break;
 				}
-				// ReSharper restore AccessToDisposedClosure
 			}
 		};
 
 		// start saving
-		this.Logger.LogDebug($"Start saving logs");
+		this.Logger.LogDebug("Start saving logs");
 		this.SetValue(IsSavingLogsProperty, true);
 		logWriter.Start();
-		await this.WaitForNecessaryTaskAsync(Task.Run(() =>
-		{
-			lock (syncLock)
-			{
-				while (!isCompleted)
-				{
-					if (Monitor.Wait(syncLock, 500))
-						break;
-					Task.Yield();
-				}
-			}
-		}));
+		await this.WaitForNecessaryTaskAsync(writingLogsTaskCompletionSource.Task);
 
 		// complete
 		if (this.IsDisposed)
@@ -6231,8 +6197,10 @@ class Session : ViewModel<IULogViewerApplication>
 			this.SetValue(ValidLogLevelsProperty, Array.Empty<Logs.LogLevel>());
 		else
 		{
-			var logLevels = new HashSet<Logs.LogLevel>(profile.LogLevelMapForReading.Values).Also(it => it.Add(ULogViewer.Logs.LogLevel.Undefined));
-			this.SetValue(ValidLogLevelsProperty, new SafeReadOnlyList<Logs.LogLevel>(logLevels.ToList()));
+			IList<Logs.LogLevel> logLevels = profile.LogLevelMapForReading.IsNotEmpty()
+				? new HashSet<Logs.LogLevel>(profile.LogLevelMapForReading.Values).Also(it => it.Add(ULogViewer.Logs.LogLevel.Undefined)).ToList()
+				: Enum.GetValues<Logs.LogLevel>();
+			this.SetValue(ValidLogLevelsProperty, new SafeReadOnlyList<Logs.LogLevel>(logLevels));
 		}
 	}
 

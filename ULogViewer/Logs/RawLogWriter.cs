@@ -3,6 +3,7 @@ using CarinaStudio.IO;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
+using CarinaStudio.ULogViewer.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -219,9 +220,9 @@ class RawLogWriter : BaseLogWriter
 
 
 	// Write logs.
-	void WriteLogs(TextWriter writer, List<StringFormatter> formatters, Dictionary<string, Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
+	[CalledOnBackgroundThread]
+	void WriteLogs(IList<Log> logs, TextWriter writer, List<StringFormatter> formatters, Dictionary<string, Func<Log, object?>> logPropertyGetters, CancellationToken cancellationToken)
 	{
-		var logs = this.Logs;
 		var logCount = logs.Count;
 		var logsToGetLineNumber = this.logsToGetLineNumber;
 		var logStringBuilder = new StringBuilder();
@@ -232,8 +233,11 @@ class RawLogWriter : BaseLogWriter
 		var lineNumbers = new Dictionary<Log, int>();
 		try
 		{
-			for (var i = 0; i < logCount && !cancellationToken.IsCancellationRequested; ++i)
+			for (var i = 0; i < logCount; ++i)
 			{
+				// cancellation check
+				cancellationToken.ThrowIfCancellationRequested();
+				
 				// select format
 				var log = logs[i];
 				var formatter = (StringFormatter?)null;
@@ -302,12 +306,19 @@ class RawLogWriter : BaseLogWriter
 
 
 	// Write logs.
-	protected override async Task WriteLogsAsync(TextWriter writer, CancellationToken cancellationToken)
+	protected override async Task WriteLogsAsync(IList<Log> logs, TextWriter writer, CancellationToken cancellationToken)
 	{
+		// copy state to local
+		var logLevelMap = this.logLevelMap;
+		var logStringEncoding = this.logStringEncoding;
+		var timeSpanFormat = this.timeSpanFormat;
+		var timeSpanCultureInfo = this.timeSpanCultureInfo;
+		var timestampFormat = this.timestampFormat;
+		var timestampCultureInfo = this.timestampCultureInfo;
+		
 		// prepare output format and log property getters
 		var logPropertyGetters = new Dictionary<string, Func<Log, object?>>();
 		var formatters = new List<StringFormatter>();
-		var cultureInfo = this.Application.CultureInfo;
 		foreach (var logFormat in this.logFormats)
 		{
 			var formatter = new StringFormatter(logFormat, (obj, propertyName) =>
@@ -331,11 +342,11 @@ class RawLogWriter : BaseLogWriter
 									var timeSpan = getter(log);
 									if (timeSpan is null)
 										return "";
-									if (this.timeSpanFormat is not null)
+									if (timeSpanFormat is not null)
 									{
 										try
 										{
-											return timeSpan.Value.ToString(this.timeSpanFormat, this.timeSpanCultureInfo);
+											return timeSpan.Value.ToString(timeSpanFormat, timeSpanCultureInfo);
 										}
 										// ReSharper disable once EmptyGeneralCatchClause
 										catch
@@ -353,11 +364,11 @@ class RawLogWriter : BaseLogWriter
 									var timestamp = getter(log);
 									if (timestamp is null)
 										return "";
-									if (this.timestampFormat is not null)
+									if (timestampFormat is not null)
 									{
 										try
 										{
-											return timestamp.Value.ToString(this.timestampFormat, this.timestampCultureInfo);
+											return timestamp.Value.ToString(timestampFormat, timestampCultureInfo);
 										}
 										// ReSharper disable once EmptyGeneralCatchClause
 										catch
@@ -368,22 +379,35 @@ class RawLogWriter : BaseLogWriter
 							}),
 							nameof(Log.Level) => log =>
 							{
-								if (this.logLevelMap.TryGetValue(log.Level, out var str))
+								if (logLevelMap.TryGetValue(log.Level, out var str))
 									return str;
-								return Converters.EnumConverters.LogLevel.Convert(log.Level, typeof(string), null, cultureInfo);
+								return log.Level.ToString().ToUpperInvariant();
 							},
 							_ => Log.CreatePropertyGetter<object?>(propertyName).Let(getter =>
 							{
 								return (Func<Log, object?>)(log =>
 								{
 									var value = getter(log);
-									if (value is not string str || str.Length == 0)
+									string s;
+									if (value is IStringSource stringSource)
+									{
+										if (stringSource.Length <= 0)
+											return value;
+										s = stringSource.ToString() ?? "";
+									}
+									else if (value is string str)
+									{
+										if (str.Length <= 0)
+											return value;
+										s = str;
+									}
+									else
 										return value;
 									return logStringEncoding switch
 									{
-										LogStringEncoding.Json => JsonUtility.EncodeToJsonString(str),
-										LogStringEncoding.Xml => WebUtility.HtmlEncode(str),
-										_ => str,
+										LogStringEncoding.Json => JsonUtility.EncodeToJsonString(s),
+										LogStringEncoding.Xml => WebUtility.HtmlEncode(s),
+										_ => s,
 									};
 								});
 							}),
@@ -398,6 +422,6 @@ class RawLogWriter : BaseLogWriter
 		}
 
 		// start writing
-		await Task.Run(() => this.WriteLogs(writer, formatters, logPropertyGetters, cancellationToken), CancellationToken.None);
+		await Task.Run(() => this.WriteLogs(logs, writer, formatters, logPropertyGetters, cancellationToken), CancellationToken.None);
 	}
 }

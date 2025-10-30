@@ -149,7 +149,7 @@ class JsonLogWriter : BaseLogWriter
 
 
 	// Write logs.
-	protected override async Task WriteLogsAsync(TextWriter writer, CancellationToken cancellationToken)
+	protected override async Task WriteLogsAsync(IList<Log> logs, TextWriter writer, CancellationToken cancellationToken)
 	{
 		// prepare property getters
 		var propertyGetters = new SortedList<string, Func<Log, object?>>();
@@ -162,15 +162,15 @@ class JsonLogWriter : BaseLogWriter
 			throw new ArgumentException("No log property to write.");
 
 		// write logs
+		var logLevelMap = this.logLevelMap;
+		var timeSpanCultureInfo = this.timeSpanCultureInfo;
+		var timestampCultureInfo = this.timestampCultureInfo;
+		var timeSpanFormat = this.timeSpanFormat;
+		var timestampFormat = this.timestampFormat;
 		await Task.Run(() =>
 		{
 			var tempFilePath = "";
 			var tempFileStream = (Stream?)null;
-			var logLevelMap = this.logLevelMap;
-			var timeSpanCultureInfo = this.timeSpanCultureInfo;
-			var timestampCultureInfo = this.timestampCultureInfo;
-			var timeSpanFormat = this.timeSpanFormat;
-			var timestampFormat = this.timestampFormat;
 			var hasTimeSpanFormat = !string.IsNullOrWhiteSpace(timeSpanFormat);
 			var hasTimestampFormat = !string.IsNullOrWhiteSpace(timestampFormat);
 			try
@@ -180,11 +180,11 @@ class JsonLogWriter : BaseLogWriter
 
 				// create JSON writer
 				tempFileStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite);
-				var jsonWriter = new Utf8JsonWriter(tempFileStream, new JsonWriterOptions() { Indented = true });
+				var jsonWriter = new Utf8JsonWriter(tempFileStream, new JsonWriterOptions { Indented = true });
 
 				// write logs
 				jsonWriter.WriteStartArray();
-				foreach (var log in this.Logs)
+				foreach (var log in logs)
 				{
 					jsonWriter.WriteStartObject();
 					foreach (var propertyName in propertyGetters.Keys)
@@ -221,16 +221,16 @@ class JsonLogWriter : BaseLogWriter
 				jsonWriter.WriteEndArray();
 
 				// cancellation check
-				if (cancellationToken.IsCancellationRequested)
-					throw new TaskCanceledException();
+				cancellationToken.ThrowIfCancellationRequested();
 
 				// copy data to output writer
 				jsonWriter.Dispose();
 				tempFileStream.Position = 0;
 				using var reader = new StreamReader(tempFileStream, Encoding.UTF8);
 				var line = reader.ReadLine();
-				while (line != null && !cancellationToken.IsCancellationRequested)
+				while (line is not null)
 				{
+					cancellationToken.ThrowIfCancellationRequested();
 					writer.WriteLine(line);
 					line = reader.ReadLine();
 				}

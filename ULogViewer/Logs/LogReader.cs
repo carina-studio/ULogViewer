@@ -29,12 +29,11 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 {
 	// Constants.
 	const int MaxLogLineLengthToPrintToLog = 512;
-	const int StateLockTimeout = 1000;
 	
 	
 	// Static fields.
 	static readonly long baseMemorySize = Memory.EstimateInstanceSize<LogReader>();
-	static readonly IDictionary<string, LogLevel> DefaultLogLevelMap = new Dictionary<string, LogLevel> 
+	static readonly IDictionary<string, LogLevel> DefaultLogLevelMap = new Dictionary<string, LogLevel>(StringComparer.InvariantCultureIgnoreCase)
 	{
 		{ "d", LogLevel.Debug },
 		{ "debug", LogLevel.Debug },
@@ -87,8 +86,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 	LogReadingWindow readingWindow = LogReadingWindow.StartOfDataSource;
 	TimeSpan restartReadingDelay;
-	[ThreadSafe]
-	readonly ReaderWriterLock stateLock = new();
 	readonly ScheduledAction startReadingLogsAction;
 	LogReaderState state = LogReaderState.Preparing;
 	LogReaderState stateBeforeClearingLogs;
@@ -315,8 +312,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(DefaultLogLevel)} when state is {this.state}.");
 			if (this.defaultLogLevel == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.defaultLogLevel = value;
+			this.defaultLogLevel = value;
 			this.OnPropertyChanged(nameof(DefaultLogLevel));
 		}
 	}
@@ -393,8 +389,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new ArgumentOutOfRangeException(nameof(value));
 			if (this.dropLogCount == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.dropLogCount = value;
+			this.dropLogCount = value;
 			this.OnPropertyChanged(nameof(DropLogCount));
 		}
 	}
@@ -444,8 +439,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(IsContinuousReading)} when state is {this.state}.");
 			if (this.isContinuousReading == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.isContinuousReading = value;
+			this.isContinuousReading = value;
 			this.OnPropertyChanged(nameof(IsContinuousReading));
 		}
 	}
@@ -503,8 +497,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogPatternMatchingMode)} when state is {this.state}.");
 			if (this.logPatternMatchingMode == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.logPatternMatchingMode = value;
+			this.logPatternMatchingMode = value;
 			this.OnPropertyChanged(nameof(LogPatternMatchingMode));
 		}
 	}
@@ -524,8 +517,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogPatterns)} when state is {this.state}.");
 			if (this.logPatterns.SequenceEqual(value))
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.logPatterns = value.ToList().AsReadOnly();
+			this.logPatterns = value.ToList().AsReadOnly();
 			this.OnPropertyChanged(nameof(LogPatterns));
 		}
 	}
@@ -558,8 +550,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogStringEncoding)} when state is {this.state}.");
 			if (this.logStringEncoding == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.logStringEncoding = value;
+			this.logStringEncoding = value;
 			this.OnPropertyChanged(nameof(LogStringEncoding));
 		}
 	}
@@ -584,11 +575,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogLevelMap)} when state is {this.state}.");
 			if (this.logLevelMap.Equals(value))
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-			{
-				this.logLevelMap.Clear();
-				this.logLevelMap.AddAll(value);
-			}
+			this.logLevelMap.Clear();
+			this.logLevelMap.AddAll(value);
 			this.OnPropertyChanged(nameof(LogLevelMap));
 		}
 	}
@@ -609,8 +597,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new ArgumentOutOfRangeException(nameof(value));
 			if (this.maxLogCount == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.maxLogCount = value;
+			this.maxLogCount = value;
 			this.DropLogs(0);
 			this.OnPropertyChanged(nameof(MaxLogCount));
 		}
@@ -861,8 +848,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.precondition == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.precondition = value;
+			this.precondition = value;
 			this.OnPropertyChanged(nameof(Precondition));
 		}
 	}
@@ -881,8 +867,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(RawLogLevelPropertyName)} when state is {this.state}.");
 			if (this.rawLogLevelPropertyName == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.rawLogLevelPropertyName = value;
+			this.rawLogLevelPropertyName = value;
 			this.OnPropertyChanged(nameof(RawLogLevelPropertyName));
 		}
 	}
@@ -900,8 +885,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.readingWindow == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.readingWindow = value;
+			this.readingWindow = value;
 			this.OnPropertyChanged(nameof(ReadingWindow));
 		}
 	}
@@ -1107,18 +1091,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 		this.Logger.LogDebug("Start reading logs in background");
 		
 		// get state
-		ReaderLockScope stateReadingScope;
-		try
-		{
-			stateReadingScope = this.stateLock.EnterReadScope(StateLockTimeout);
-		}
-		catch (Exception ex)
-		{
-			this.Logger.LogError(ex, "Failed to acquire state lock after start reading logs in background");
-			Global.RunWithoutError(reader.Close);
-			this.SynchronizationContext.Post(() => this.OnLogsReadingCompleted(null, 0L));
-			return;
-		}
 		var configuration = this.Application.Configuration;
 		var readLogs = new List<Log>();
 		var readLog = (Log?)null;
@@ -1180,7 +1152,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 		var nonContinuousPaddingInterval = configuration.GetValueOrDefault(ConfigurationKeys.NonContinuousLogsReadingPaddingInterval);
 		var updateInterval = this.updateInterval ?? (isContinuousReading ? configuration.GetValueOrDefault(ConfigurationKeys.ContinuousLogsReadingUpdateInterval) : defaultNonContinuousUpdateInterval);
 		var printTraceLogs = this.printTraceLogs;
-		stateReadingScope.Dispose();
 
 		// read logs
 		var stopWatch = new Stopwatch().Also(it => it.Start());
@@ -2117,8 +2088,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanCultureInfo.Equals(value))
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.timeSpanCultureInfo = value;
+			this.timeSpanCultureInfo = value;
 			this.OnPropertyChanged(nameof(TimeSpanCultureInfo));
 		}
 	}
@@ -2136,8 +2106,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanEncoding == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.timeSpanEncoding = value;
+			this.timeSpanEncoding = value;
 			this.OnPropertyChanged(nameof(TimeSpanEncoding));
 		}
 	}
@@ -2155,8 +2124,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanFormats.SequenceEqual(value))
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.timeSpanFormats = ListExtensions.AsReadOnly(value.ToArray());
+			this.timeSpanFormats = ListExtensions.AsReadOnly(value.ToArray());
 			this.OnPropertyChanged(nameof(TimeSpanFormats));
 		}
 	}
@@ -2174,8 +2142,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampCultureInfo.Equals(value))
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.timestampCultureInfo = value;
+			this.timestampCultureInfo = value;
 			this.OnPropertyChanged(nameof(TimestampCultureInfo));
 		}
 	}
@@ -2193,8 +2160,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampEncoding == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.timestampEncoding = value;
+			this.timestampEncoding = value;
 			this.OnPropertyChanged(nameof(TimestampEncoding));
 		}
 	}
@@ -2212,8 +2178,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampFormats.SequenceEqual(value))
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.timestampFormats = ListExtensions.AsReadOnly(value.ToArray());
+			this.timestampFormats = ListExtensions.AsReadOnly(value.ToArray());
 			this.OnPropertyChanged(nameof(TimestampFormats));
 		}
 	}
@@ -2233,8 +2198,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new ArgumentOutOfRangeException(nameof(value));
 			if (this.updateInterval == value)
 				return;
-			using (var _ = this.stateLock.EnterWriteScope())
-				this.updateInterval = value;
+			this.updateInterval = value;
 			this.OnPropertyChanged(nameof(UpdateInterval));
 		}
 	}

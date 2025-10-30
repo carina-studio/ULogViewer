@@ -44,8 +44,8 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPr
         this.list.CopyTo(array, arrayIndex);
 
 
-    /// <inheritdoc/>
-    public int Count { get => this.list.Count; }
+    /// <inheritdoc cref="ICollection{T}"/>
+    public int Count => this.list.Count;
 
 
     /// <inheritdoc/>
@@ -56,10 +56,10 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPr
     /// <inheritdoc/>
     public int IndexOf(T item) => 
         this.list.IndexOf(item);
-    
 
-    /// <inheritdoc/>
-    public bool IsReadOnly { get => true; }
+
+    /// <inheritdoc cref="ICollection{T}" />
+    public bool IsReadOnly => true;
 
 
     /// <inheritdoc/>
@@ -106,8 +106,8 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPr
         throw new InvalidOperationException();
     void IList<T>.Insert(int index, T item) =>
         throw new InvalidOperationException();
-    bool IList.IsFixedSize { get => false; }
-    bool ICollection.IsSynchronized { get => false; }
+    bool IList.IsFixedSize => false;
+    bool ICollection.IsSynchronized => false;
     void IList.Remove(object? item) =>
         throw new InvalidOperationException();
     bool ICollection<T>.Remove(T item) =>
@@ -116,7 +116,7 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPr
         throw new InvalidOperationException();
     void IList<T>.RemoveAt(int index) =>
         throw new InvalidOperationException();
-    object ICollection.SyncRoot { get => this; }
+    object ICollection.SyncRoot => this;
     object? IList.this[int index]
     {
         get => this[index];
@@ -130,9 +130,6 @@ class SafeReadOnlyList<T> : IList, IList<T>, INotifyCollectionChanged, INotifyPr
     }
 #pragma warning restore CS8768
 #pragma warning disable CS8603
-    T IReadOnlyList<T>.this[int index]
-    {
-        get => this[index];
-    }
+    T IReadOnlyList<T>.this[int index] => this[index];
 #pragma warning restore CS8603
 }

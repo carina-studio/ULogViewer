@@ -95,8 +95,9 @@ public class CompressedStringSource : IStringSource
         var buffer = CharArrayPool.Rent(this.Length);
         try
         {
-            if (this.TryCopyTo(buffer.AsSpan()))
-                return new string(buffer);
+            var span = buffer.AsSpan().Slice(0, this.Length);
+            if (this.TryCopyTo(span))
+                return new string(span);
             return "";
         }
         finally

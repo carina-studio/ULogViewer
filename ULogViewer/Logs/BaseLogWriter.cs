@@ -86,6 +86,9 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 
 		// detach from data source
 		this.DataOutput.PropertyChanged -= this.OnDataOutputPropertyChanged;
+		
+		// change state
+		this.ChangeState(LogWriterState.Disposed);
 	}
 
 
@@ -207,7 +210,7 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 		Task? writingTask;
 		try
 		{
-			writingTask = this.WriteLogsAsync(writer, this.writingLogsCancellationTokenSource.Token);
+			writingTask = this.WriteLogsAsync(this.logs, writer, this.writingLogsCancellationTokenSource.Token);
 		}
 		catch (Exception ex)
 		{
@@ -273,10 +276,11 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 	/// <summary>
 	/// Called when write logs
 	/// </summary>
+	/// <param name="logs">List of logs to be written.</param>
 	/// <param name="writer"><see cref="TextWriter"/> to write log data.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>Task of writing logs.</returns>
-	protected abstract Task WriteLogsAsync(TextWriter writer, CancellationToken cancellationToken);
+	protected abstract Task WriteLogsAsync(IList<Log> logs, TextWriter writer, CancellationToken cancellationToken);
 
 
 	// Interface implementations.
