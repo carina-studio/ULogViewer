@@ -6,6 +6,7 @@ using CarinaStudio.ULogViewer.Text;
 using LogLevel = CarinaStudio.ULogViewer.Logs.LogLevel;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -31,8 +32,8 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         public bool IncludeMarkedLogs;
         public Regex[] InclusiveTextRegexList = [];
         public volatile bool IsTextRegexListReady;
-        public LogLevel Level;
-        public IList<Func<DisplayableLog, IStringSource?>> LogTextPropertyGetters = Array.Empty<Func<DisplayableLog, IStringSource?>>();
+        public ImmutableHashSet<LogLevel> Levels = ImmutableHashSet<LogLevel>.Empty;
+        public Func<DisplayableLog, IStringSource?>[] LogTextPropertyGetters = [];
         public int? ProcessId;
         public int? ThreadId;
         public Func<DisplayableLog, DateTime?>? TimestampPropertyGetter;
@@ -53,7 +54,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
     IList<DisplayableLogProperty> filteringLogProperties = Array.Empty<DisplayableLogProperty>();
     bool includeMarkedLogs = true;
     IList<Regex> inclusiveTextRegexList = Array.Empty<Regex>();
-    LogLevel level = LogLevel.Undefined;
+    ImmutableHashSet<LogLevel> levels = ImmutableHashSet<LogLevel>.Empty;
     int? processId;
     int? threadId;
     string? timestampLogProperty;
@@ -155,13 +156,13 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                 isProcessingNeeded = false;
         }
         if (!isProcessingNeeded)
-            isProcessingNeeded = (this.timestampLogProperty is not null && (this.beginningTimestamp.HasValue || this.endingTimestamp.HasValue));
+            isProcessingNeeded = this.timestampLogProperty is not null && (this.beginningTimestamp.HasValue || this.endingTimestamp.HasValue);
         if (!isProcessingNeeded)
-            isProcessingNeeded = (this.level != LogLevel.Undefined);
+            isProcessingNeeded = this.levels.IsNotEmpty();
         if (!isProcessingNeeded)
-            isProcessingNeeded = (this.processId != null);
+            isProcessingNeeded = this.processId is not null;
         if (!isProcessingNeeded)
-            isProcessingNeeded = (this.threadId != null);
+            isProcessingNeeded = this.threadId is not null;
         
         // no need to filter
         if (!isProcessingNeeded)
@@ -186,8 +187,8 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         filteringToken.HasLogTextPropertyGetter = textPropertyGetters.IsNotEmpty();
         filteringToken.HasTextRegex = this.inclusiveTextRegexList.IsNotEmpty() || this.exclusiveTextRegexList.IsNotEmpty();
         filteringToken.IncludeMarkedLogs = this.includeMarkedLogs;
-        filteringToken.Level = this.level;
-        filteringToken.LogTextPropertyGetters = textPropertyGetters;
+        filteringToken.Levels = this.levels;
+        filteringToken.LogTextPropertyGetters = textPropertyGetters.ToArray();
         filteringToken.ProcessId = this.processId;
         filteringToken.InclusiveTextRegexList = this.inclusiveTextRegexList.ToArray();
         filteringToken.ExclusiveTextRegexList = this.exclusiveTextRegexList.ToArray();
@@ -313,20 +314,32 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
 
 
     /// <summary>
-    /// Get or set level of log to be filtered.
+    /// Get or set levels of log to be filtered.
     /// </summary>
-    public LogLevel Level
+    public ICollection<LogLevel> Levels
     {
-        get => this.level;
+        get => this.levels;
         set
         {
             this.VerifyAccess();
             this.VerifyDisposed();
-            if (this.level == value)
+            if (this.levels.Equals(value))
                 return;
-            this.level = value;
+            var newLevels = value.IsNotEmpty() && value.First() != LogLevel.Undefined
+                ? ImmutableHashSet.CreateBuilder<LogLevel>().Also(builder =>
+                {
+                    foreach (var level in value)
+                    {
+                        if (level != LogLevel.Undefined)
+                            builder.Add(level);
+                    }
+                }).ToImmutable()
+                : ImmutableHashSet<LogLevel>.Empty;
+            if (this.levels.Equals(newLevels))
+                return;
+            this.levels = newLevels;
             this.InvalidateProcessing();
-            this.OnPropertyChanged(nameof(Level));
+            this.OnPropertyChanged(nameof(Levels));
         }
     }
 
@@ -430,7 +443,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             }
             
             // Build the log text to match against
-            var textPropertyCount = token.LogTextPropertyGetters.Count;
+            var textPropertyCount = token.LogTextPropertyGetters.Length;
             ref var textBufferToMatch = ref logTextBufferToMatch;
             var textBufferLength = 0;
             textBufferToMatch ??= new char[512];
@@ -495,7 +508,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             return true;
 
         // check level
-        bool areOtherConditionsMatched = (level == LogLevel.Undefined || log.Level == level);
+        bool areOtherConditionsMatched = token.Levels.IsEmpty() || token.Levels.Contains(log.Level);
         if (areOtherConditionsMatched && token.ProcessId.HasValue && token.HasLogProcessId)
             areOtherConditionsMatched = (token.ProcessId == log.ProcessId);
         if (areOtherConditionsMatched && token.ThreadId.HasValue && token.HasLogThreadId)

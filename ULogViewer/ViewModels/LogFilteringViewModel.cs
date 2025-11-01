@@ -350,7 +350,7 @@ class LogFilteringViewModel : SessionComponent
         }
 
         // setup level
-        this.logFilter.Level = this.GetValue(LevelFilterProperty);
+        this.logFilter.Levels = [ this.GetValue(LevelFilterProperty) ];
 
         // setup PID and TID
         this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProperty) 
@@ -415,7 +415,7 @@ class LogFilteringViewModel : SessionComponent
         {
             this.Logger.LogDebug("Update log filter:");
             this.Logger.LogDebug("  Timestamp: {beginning} - {ending}", this.logFilter.BeginningTimestamp, this.logFilter.EndTimestamp);
-            this.Logger.LogDebug("  Level: {level}", this.logFilter.Level);
+            this.Logger.LogDebug("  Levels: {level}", this.logFilter.Levels.ContentToString());
             this.Logger.LogDebug("  PID: {pid}", this.logFilter.ProcessId.Let(pid => pid.HasValue ? pid.ToString() : "Null"));
             this.Logger.LogDebug("  TID: {tid}", this.logFilter.ThreadId.Let(tid => tid.HasValue ? tid.ToString() : "Null"));
             this.Logger.LogDebug("  Text inclusion filters: {textRegexListCount}", inclusionTextRegexList.Count);
