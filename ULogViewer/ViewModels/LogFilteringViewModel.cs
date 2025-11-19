@@ -48,6 +48,10 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public static readonly ObservableProperty<bool> HasGlobalTextFilterHistoryProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasGlobalTextFilterHistory), false);
     /// <summary>
+    /// Property of <see cref="HasLevelFilters"/>.
+    /// </summary>
+    public static readonly ObservableProperty<bool> HasLevelFiltersProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasLevelFilters), false);
+    /// <summary>
     /// Property of <see cref="HasTimestampRange"/>.
     /// </summary>
     public static readonly ObservableProperty<bool> HasTimestampRangeProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasTimestampRange), false);
@@ -87,10 +91,6 @@ class LogFilteringViewModel : SessionComponent
     /// Property of <see cref="LastFilteringDuration"/>.
     /// </summary>
     public static readonly ObservableProperty<TimeSpan?> LastFilteringDurationProperty = ObservableProperty.Register<LogFilteringViewModel, TimeSpan?>(nameof(LastFilteringDuration));
-    /// <summary>
-    /// Property of <see cref="LevelFilter"/>.
-    /// </summary>
-    public static readonly ObservableProperty<Logs.LogLevel> LevelFilterProperty = ObservableProperty.Register<LogFilteringViewModel, Logs.LogLevel>(nameof(LevelFilter), Logs.LogLevel.Undefined);
     /// <summary>
     /// Property of <see cref="ProcessIdFilter"/>.
     /// </summary>
@@ -148,6 +148,7 @@ class LogFilteringViewModel : SessionComponent
     readonly MutableObservableBoolean canUsePreviousTextFilterInHistory = new();
     readonly MutableObservableBoolean canUseTextFilterInHistory = new();
     readonly ScheduledAction commitFiltersAction;
+    readonly HashSet<Logs.LogLevel> levelFilters = new();
     readonly DisplayableLogFilter logFilter;
     readonly Stopwatch logFilteringWatch = new();
     readonly ObservableList<PredefinedLogTextFilter> predefinedTextFilters;
@@ -164,14 +165,19 @@ class LogFilteringViewModel : SessionComponent
     public LogFilteringViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // create command
+        var hasLevelFiltersObservable = this.GetValueAsObservable(HasLevelFiltersProperty);
+        this.AddLevelFilterCommand = new Command<Logs.LogLevel>(level => this.AddLevelFilter(level));
         this.ClearGlobalTextFilterHistoryCommand = new Command(this.ClearGlobalTextFilterHistory, this.canClearGlobalTextFilterHistory);
+        this.ClearLevelFiltersCommand = new Command(this.ClearLevelFilters, hasLevelFiltersObservable);
         this.ClearPredefinedTextFiltersCommand = new Command(() => this.predefinedTextFilters?.Clear(), this.canClearPredefinedTextFilters);
         this.FilterBySelectedProcessIdCommand = new Command<bool>(this.FilterBySelectedProcessId, this.canFilterBySelectedPid);
         this.FilterBySelectedPropertyCommand = new Command<Accuracy>(this.FilterBySelectedProperty, this.canFilterBySelectedProperty);
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
+        this.RemoveLevelFilterCommand = new Command<Logs.LogLevel>(level => this.RemoveLevelFilter(level), hasLevelFiltersObservable);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
         this.ResetTimestampRangeCommand = new Command(this.ResetTimestampRange, this.GetValueAsObservable(HasTimestampRangeProperty));
         this.SetFilterCombinationModeCommand = new Command<FilterCombinationMode>(mode => this.FiltersCombinationMode = mode);
+        this.ToggleLevelFilterCommand = new Command<Logs.LogLevel>(this.ToggleLevelFilter);
         this.UseNextTextFilterInHistoryCommand = new Command(this.UseNextTextFilterInHistory, this.canUseNextTextFilterInHistory);
         this.UsePreviousTextFilterInHistoryCommand = new Command(this.UsePreviousTextFilterInHistory, this.canUsePreviousTextFilterInHistory);
         this.UseTextFilterInHistoryCommand = new Command<int>(this.UseTextFilterInHistory, this.canUseTextFilterInHistory);
@@ -237,6 +243,32 @@ class LogFilteringViewModel : SessionComponent
             }, true)
         );
     }
+    
+    
+    /// <summary>
+    /// Add a log level filter.
+    /// </summary>
+    /// <param name="level">Log level.</param>
+    /// <returns>True if the log level filter has been added.</returns>
+    public bool AddLevelFilter(Logs.LogLevel level)
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        if (level == Logs.LogLevel.Undefined)
+            return false;
+        if (this.levelFilters.Contains(level))
+            return true;
+        this.levelFilters.Clear();
+        this.levelFilters.Add(level);
+        this.OnLevelFiltersChanged();
+        return true;
+    }
+    
+    
+    /// <summary>
+    /// Command to add a log level filter. The type of parameter is <see cref="Logs.LogLevel"/>.
+    /// </summary>
+    public ICommand AddLevelFilterCommand { get; }
     
     
     // Add text filter to global history.
@@ -320,6 +352,26 @@ class LogFilteringViewModel : SessionComponent
     /// Command to clear <see cref="GlobalTextFilterHistory"/>.
     /// </summary>
     public ICommand ClearGlobalTextFilterHistoryCommand { get; }
+    
+    
+    /// <summary>
+    /// Clear all log level filters.
+    /// </summary>
+    public void ClearLevelFilters()
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        if (this.levelFilters.IsEmpty())
+            return;
+        this.levelFilters.Clear();
+        this.OnLevelFiltersChanged();
+    }
+    
+    
+    /// <summary>
+    /// Command to clear all log level filters.
+    /// </summary>
+    public ICommand ClearLevelFiltersCommand { get; }
 
 
     /// <summary>
@@ -350,7 +402,7 @@ class LogFilteringViewModel : SessionComponent
         }
 
         // setup level
-        this.logFilter.Levels = [ this.GetValue(LevelFilterProperty) ];
+        this.logFilter.Levels = this.levelFilters;
 
         // setup PID and TID
         this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProperty) 
@@ -715,6 +767,24 @@ class LogFilteringViewModel : SessionComponent
     /// Check whether <see cref="GlobalTextFilterHistory"/> is empty or not.
     /// </summary>
     public bool HasGlobalTextFilterHistory => this.GetValue(HasGlobalTextFilterHistoryProperty);
+
+
+    /// <summary>
+    /// Check whether the specific log level filter has been added or not.
+    /// </summary>
+    /// <param name="level">Log level.</param>
+    /// <returns>True if the log level filter has been added.</returns>
+    public bool HasLevelFilter(Logs.LogLevel level)
+    {
+        this.VerifyAccess();
+        return this.levelFilters.Contains(level);
+    }
+    
+    
+    /// <summary>
+    /// Check whether at least one log level filter has been added or not.
+    /// </summary>
+    public bool HasLevelFilters => this.GetValue(HasLevelFiltersProperty);
     
     
     /// <summary>
@@ -794,13 +864,9 @@ class LogFilteringViewModel : SessionComponent
 
 
     /// <summary>
-    /// Get or set level to filter logs.
+    /// Raised when log level filters changed.
     /// </summary>
-    public Logs.LogLevel LevelFilter 
-    { 
-        get => this.GetValue(LevelFilterProperty);
-        set => this.SetValue(LevelFilterProperty, value);
-    }
+    public event EventHandler? LevelFiltersChanged;
 
 
     /// <inheritdoc/>
@@ -862,6 +928,23 @@ class LogFilteringViewModel : SessionComponent
     // Called when global text filter history changed.
     void OnGlobalTextFilterHistoryChanged(object? sender, NotifyCollectionChangedEventArgs e)
     { }
+    
+    
+    // Called when log level filters changed.
+    void OnLevelFiltersChanged()
+    {
+        if (this.levelFilters.IsNotEmpty())
+            this.Logger.LogTrace("Change level filters to {levels}", this.levelFilters.ContentToString());
+        else
+            this.Logger.LogTrace("Clear level filters");
+        this.commitFiltersAction.Schedule();
+        if (this.levelFilters.IsNotEmpty())
+            this.canResetFilters.Update(true);
+        else
+            this.UpdateCanResetFilters();
+        this.SetValue(HasLevelFiltersProperty, this.levelFilters.IsNotEmpty());
+        this.LevelFiltersChanged?.Invoke(this, EventArgs.Empty);
+    }
 
 
     // Called when property of log filter changed.
@@ -1034,16 +1117,6 @@ class LogFilteringViewModel : SessionComponent
             else
                 this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
         }
-        else if (property == LevelFilterProperty)
-        {
-            var level = (Logs.LogLevel)newValue!;
-            this.Logger.LogTrace("Change level filter to {level}", level);
-            this.commitFiltersAction.Schedule();
-            if (level != Logs.LogLevel.Undefined)
-                this.canResetFilters.Update(true);
-            else
-                this.UpdateCanResetFilters();
-        }
         else if (property == ProcessIdFilterProperty)
         {
             var pid = (int?)newValue;
@@ -1129,12 +1202,24 @@ class LogFilteringViewModel : SessionComponent
         }
         if (element.TryGetProperty($"LogFiltering.{nameof(IgnoreTextFilterCase)}", out jsonValue))
             this.SetValue(IgnoreTextFilterCaseProperty, jsonValue.ValueKind != JsonValueKind.False);
-        if ((element.TryGetProperty("LogLevelFilter", out jsonValue) // Upgrade case
-            || element.TryGetProperty($"LogFiltering.{nameof(LevelFilter)}", out jsonValue))
-                && jsonValue.ValueKind == JsonValueKind.String
-                && Enum.TryParse<Logs.LogLevel>(jsonValue.GetString(), out var level))
+        if (element.TryGetProperty("LogFiltering.LevelFilters", out jsonValue)
+            && jsonValue.ValueKind == JsonValueKind.Array)
         {
-            this.SetValue(LevelFilterProperty, level);
+            this.levelFilters.Clear();
+            foreach (var jsonElement in jsonValue.EnumerateArray())
+            {
+                if (jsonElement.ValueKind == JsonValueKind.String && Enum.TryParse<Logs.LogLevel>(jsonElement.GetString(), out var level))
+                    this.levelFilters.Add(level);
+            }
+            this.OnLevelFiltersChanged();
+        } else if ((element.TryGetProperty("LogLevelFilter", out jsonValue) // Upgrade case
+                    || element.TryGetProperty("LogFiltering.LevelFilter", out jsonValue)) // Upgrade case
+                   && jsonValue.ValueKind == JsonValueKind.String
+                   && Enum.TryParse<Logs.LogLevel>(jsonValue.GetString(), out var level))
+        {
+            this.levelFilters.Clear();
+            this.levelFilters.Add(level);
+            this.OnLevelFiltersChanged();
         }
         if ((element.TryGetProperty("LogProcessIdFilter", out jsonValue) // Upgrade case
             || element.TryGetProperty($"LogFiltering.{nameof(ProcessIdFilter)}", out jsonValue))
@@ -1209,7 +1294,14 @@ class LogFilteringViewModel : SessionComponent
         writer.WriteString($"LogFiltering.{nameof(FiltersCombinationMode)}", this.FiltersCombinationMode.ToString());
         if (!this.GetValue(IgnoreTextFilterCaseProperty))
             writer.WriteBoolean($"LogFiltering.{nameof(IgnoreTextFilterCase)}", false);
-        writer.WriteString($"LogFiltering.{nameof(LevelFilter)}", this.LevelFilter.ToString());
+        if (this.levelFilters.IsNotEmpty())
+        {
+            writer.WritePropertyName("LogFiltering.LevelFilters");
+            writer.WriteStartArray();
+            foreach (var level in this.levelFilters)
+                writer.WriteStringValue(level.ToString());
+            writer.WriteEndArray();
+        }
         this.GetValue(ProcessIdFilterProperty)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ProcessIdFilter)}", it));
         this.GetValue(TextFilterProperty)?.Let(it =>
         {
@@ -1258,6 +1350,28 @@ class LogFilteringViewModel : SessionComponent
         get => this.GetValue(ProcessIdFilterProperty);
         set => this.SetValue(ProcessIdFilterProperty, value);
     }
+    
+    
+    /// <summary>
+    /// Remove a log level filter.
+    /// </summary>
+    /// <param name="level">Log level.</param>
+    /// <returns>True if the log level has been removed.</returns>
+    public bool RemoveLevelFilter(Logs.LogLevel level)
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        if (!this.levelFilters.Remove(level))
+            return false;
+        this.OnLevelFiltersChanged();
+        return true;
+    }
+    
+    
+    /// <summary>
+    /// Command to remove a log level filter. The type of parameter is <see cref="Logs.LogLevel"/>.
+    /// </summary>
+    public ICommand RemoveLevelFilterCommand { get; }
 
 
     // Reset all filters.
@@ -1267,7 +1381,11 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyDisposed();
         this.ResetValue(BeginningTimestampProperty);
         this.ResetValue(EndingTimestampProperty);
-        this.ResetValue(LevelFilterProperty);
+        if (this.levelFilters.IsNotEmpty())
+        {
+            this.levelFilters.Clear();
+            this.OnLevelFiltersChanged();
+        }
         this.ResetValue(ProcessIdFilterProperty);
         this.ResetValue(ThreadIdFilterProperty);
         this.TextFilter = null; // Need to use setter to update history of text filter
@@ -1378,12 +1496,38 @@ class LogFilteringViewModel : SessionComponent
         get => this.GetValue(ThreadIdFilterProperty);
         set => this.SetValue(ThreadIdFilterProperty, value);
     }
+    
+    
+    /// <summary>
+    /// Add a log level filter.
+    /// </summary>
+    /// <param name="level">Log level.</param>
+    /// <returns>True if the log level filter has been added.</returns>
+    public void ToggleLevelFilter(Logs.LogLevel level)
+    {
+        this.VerifyAccess();
+        this.VerifyDisposed();
+        if (level == Logs.LogLevel.Undefined)
+            return;
+        if (!this.levelFilters.Remove(level))
+        {
+            this.levelFilters.Clear();
+            this.levelFilters.Add(level);
+        }
+        this.OnLevelFiltersChanged();
+    }
+    
+    
+    /// <summary>
+    /// Command to toggle a log level filter. The type of parameter is <see cref="Logs.LogLevel"/>.
+    /// </summary>
+    public ICommand ToggleLevelFilterCommand { get; }
 
 
     // Update can reset filters state.
     void UpdateCanResetFilters()
     {
-        this.canResetFilters.Update(this.GetValue(LevelFilterProperty) != Logs.LogLevel.Undefined
+        this.canResetFilters.Update(this.levelFilters.IsNotEmpty()
             || this.GetValue(HasTimestampRangeProperty)
             || this.GetValue(ProcessIdFilterProperty).HasValue
             || this.GetValue(ThreadIdFilterProperty).HasValue

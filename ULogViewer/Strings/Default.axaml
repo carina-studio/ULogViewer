@@ -1333,7 +1333,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">Login to Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">Login to Azure (Pro)</sys:String>
-	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">Use level filter logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogLevelFilters.Description">Use levels to filter logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogLevelFilters.Description.ProVersion">Upgrade to Pro version to filter&#x0a;by multiple log levels.</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure">Logout from Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">Logout from Azure (Pro)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>

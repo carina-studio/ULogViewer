@@ -321,6 +321,61 @@
 				</abControls:TextBlock>
 			</Border>
 		</DataTemplate>
+		
+		<!-- Log level filter menu -->
+		<ContextMenu x:Key="logLevelFiltersMenu" Placement="Bottom">
+			<ContextMenu.Styles>
+				<Style Selector="Border.LogLevelIcon">
+					<Setter Property="Background" Value="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}"/>
+					<Setter Property="BorderBrush" Value="{DynamicResource ComboBoxItemForeground}"/>
+					<Setter Property="BorderThickness" Value="1"/>
+					<Setter Property="Height" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
+					<Setter Property="Margin" Value="{DynamicResource MenuIconPresenterMargin}"/>
+					<Setter Property="VerticalAlignment" Value="Center"/>
+					<Setter Property="Width" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
+				</Style>
+				<Style Selector="MenuItem.LogLevel">
+					<Setter Property="Header">
+						<Template>
+							<StackPanel Orientation="Horizontal">
+								<Border Classes="LogLevelIcon"/>
+								<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
+							</StackPanel>
+						</Template>
+					</Setter>
+					<Setter Property="Icon">
+						<Template>
+							<Image Source="{DynamicResource Image/Icon.Checked.Thin}"/>
+						</Template>
+					</Setter>
+					<Setter Property="StaysOpenOnClick" Value="True"/>
+				</Style>
+				<Style Selector="MenuItem.ToggleLogLevel">
+					<Setter Property="Command" Value="{Binding #root.ToggleLogLevelFilterCommand}"/>
+					<Setter Property="CommandParameter" Value="{Binding $self.DataContext}"/>
+				</Style>
+			</ContextMenu.Styles>
+			<MenuItem Classes="LogLevel" Command="{Binding #root.ClearLogLevelFilters}" DataContext="{x:Static appLogs:LogLevel.Undefined}"/>
+			<Separator/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Verbose}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Trace}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Debug}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Info}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Success}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Warn}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Failure}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Error}"/>
+			<MenuItem Classes="LogLevel ToggleLogLevel" DataContext="{x:Static appLogs:LogLevel.Fatal}"/>
+			<Separator/>
+			<MenuItem Name="proVersionDescription" IsEnabled="False">
+				<MenuItem.Icon>
+					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Information.Outline}"/>
+				</MenuItem.Icon>
+				<MenuItem.Header>
+					<TextBlock FontSize="{StaticResource Double/Dialog.TextBlock.FontSize.Description}" Text="{asXaml:StringResource SessionView.LogLevelFilters.Description.ProVersion}"/>
+				</MenuItem.Header>
+			</MenuItem>
+		</ContextMenu>
 
 		<!-- Log marking menu -->
 		<ContextMenu x:Key="logMarkingMenu">
@@ -767,32 +822,28 @@
 					<!-- Other log filters -->
 					<StackPanel Name="toolBarOtherLogFilterItemsPanel" Orientation="Horizontal">
 
-						<!-- Level filter -->
-						<ComboBox Name="logLevelFilterComboBox" 
-						          Classes="ToolBar_ComboBox"
-						          IsEnabled="{Binding #root.HasLogProfile}"
-						          IsVisible="{Binding $self.ItemCount}" 
-						          ItemsSource="{Binding #root.ValidLogLevels}" 
-						          SelectedItem="{Binding LogFiltering.LevelFilter, FallbackValue={x:Static appLogs:LogLevel.Undefined}, Mode=TwoWay}" 
-						          ToolTip.Tip="{asXaml:StringResource SessionView.LogLevelFilter.Description}" 
-						          VerticalAlignment="Center">
-							<ComboBox.ItemTemplate>
-								<DataTemplate>
-									<Panel>
-										<TextBlock Classes="ComboBoxItem_TextBlock" Opacity="0" Text=" "/>
-										<StackPanel Orientation="Horizontal">
-											<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-											<TextBlock Classes="ComboBoxItem_TextBlock" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
-										</StackPanel>
-									</Panel>
-								</DataTemplate>
-							</ComboBox.ItemTemplate>
-							<ComboBox.Styles>
-								<Style Selector="ComboBox /template/ ContentControl#ContentPresenter > Panel > StackPanel > TextBlock:nth-child(2)">
-									<Setter Property="IsVisible" Value="False"/>
-								</Style>
-							</ComboBox.Styles>
-						</ComboBox>
+						<!-- Level filters -->
+						<ToggleButton Name="logLevelFiltersButton" 
+						              Classes="ToolBar_ToggleButton_WithDropDownIcon"
+						              Command="{Binding #root.ShowLogLevelFiltersMenu}"
+						              IsEnabled="{Binding #root.HasLogProfile}"
+						              IsVisible="{Binding $self.ItemCount}" 
+						              ToolTip.Tip="{asXaml:StringResource SessionView.LogLevelFilters.Description}">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="{StaticResource GridLength/ToolBar.Button.DropDownIcon.Margin}"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
+								<Border Classes="Icon" 
+								        Background="{Binding #root.LogLevelFiltersIconBrush}"
+								        BorderBrush="{DynamicResource ComboBoxItemForeground}"
+								        BorderThickness="1"
+								        Height="{StaticResource Double/ToolBar.Button.Icon.Size}"
+								        Width="{StaticResource Double/ToolBar.Button.Icon.Size}"/>
+								<Image Classes="ToolBar_DropDownButtonIcon" Grid.Column="2" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+							</Grid>
+						</ToggleButton>
 
 						<!-- PID filter -->
 						<abControls:IntegerTextBox Name="logProcessIdFilterTextBox" 

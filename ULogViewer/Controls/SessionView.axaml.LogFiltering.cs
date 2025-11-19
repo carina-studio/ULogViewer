@@ -14,10 +14,13 @@ using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
+using CarinaStudio.Data.Converters;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Converters;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -29,6 +32,12 @@ namespace CarinaStudio.ULogViewer.Controls;
 
 partial class SessionView
 {
+    /// <summary>
+    /// Property of <see cref="LogLevelFiltersIconBrush"/>.
+    /// </summary>
+    public static readonly DirectProperty<SessionView, IBrush?> LogLevelFiltersIconBrushProperty = AvaloniaProperty.RegisterDirect<SessionView, IBrush?>(nameof(LogLevelFiltersIconBrush), v => v.logLevelFiltersIconBrush);
+    
+    
     /// <summary>
     /// <see cref="IValueConverter"/> to convert from <see cref="FilterCombinationMode"/> to <see cref="Geometry"/> for toolbar icon.
     /// </summary>
@@ -98,7 +107,9 @@ partial class SessionView
     readonly ToggleButton logFilterCombinationModeButton;
     readonly ContextMenu logFilterCombinationModeMenu;
     readonly Button logFilteringHelpButton;
-    readonly ComboBox logLevelFilterComboBox;
+    readonly ToggleButton logLevelFiltersButton;
+    IBrush? logLevelFiltersIconBrush;
+    readonly ContextMenu logLevelFiltersMenu;
     readonly IntegerTextBox logProcessIdFilterTextBox;
     readonly RegexTextBox logTextFilterTextBox;
 	readonly IntegerTextBox logThreadIdFilterTextBox;
@@ -115,10 +126,12 @@ partial class SessionView
     {
         // attach to events
         logFiltering.FiltersApplied += this.OnLogFiltersApplied;
+        logFiltering.LevelFiltersChanged += this.OnLogLevelFiltersChanged;
         (logFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged += this.OnSelectedPredefinedLogTextFiltersChanged);
         
         // sync log filters to UI
+        this.UpdateLogLevelFiltersIconBrush();
         this.SyncLogTextFiltersBack();
         this.commitLogFiltersAction.Cancel();
     }
@@ -150,6 +163,13 @@ partial class SessionView
     // Clear global log text filter history.
     void ClearGlobalLogTextFilterHistory()
     { }
+    
+
+    /// <summary>
+    /// Clear all log level filters.
+    /// </summary>
+    public void ClearLogLevelFilters() =>
+        (this.DataContext as Session)?.LogFiltering.ClearLevelFilters();
     
 
     /// <summary>
@@ -279,6 +299,7 @@ partial class SessionView
     {
         // detach from events
         logFiltering.FiltersApplied -= this.OnLogFiltersApplied;
+        logFiltering.LevelFiltersChanged -= this.OnLogLevelFiltersChanged;
         (logFiltering.PredefinedTextFilters as INotifyCollectionChanged)?.Let(it =>
             it.CollectionChanged -= this.OnSelectedPredefinedLogTextFiltersChanged);
         
@@ -347,12 +368,26 @@ partial class SessionView
     public bool HasSelectedPredefinedLogTextFilters => this.GetValue(HasSelectedPredefinedLogTextFiltersProperty);
 
 
+    /// <summary>
+    /// Get <see cref="IBrush"/> to fill icon of log level filters.
+    /// </summary>
+    public IBrush? LogLevelFiltersIconBrush => this.logLevelFiltersIconBrush;
+
+
     // Called when all log filters applied for filtering.
     void OnLogFiltersApplied(object? sender, EventArgs e)
     {
         // start scrolling to log around current position
         if ((sender as LogFilteringViewModel)?.IsFilteringNeeded == true)
             this.StartKeepingCurrentDisplayedLogRange();
+    }
+    
+    
+    // Called when log level filters changed.
+    void OnLogLevelFiltersChanged(object? sender, EventArgs e)
+    {
+        this.UpdateLogLevelFiltersIconBrush();
+        this.UpdateLogLevelFiltersMenu();
     }
     
     
@@ -531,6 +566,14 @@ partial class SessionView
     // Called when setting 'UpdateLogFilterDelay' changed.
     void OnUpdateLogFilterDelaySettingChanged() =>
         this.logTextFilterTextBox.ValidationDelay = this.CommitLogFilterParamsDelay;
+    
+    
+    // Called when valid log levels of session changed.
+    void OnValidLogLevelsChanged()
+    {
+        this.UpdateCanFilterLogsByNonTextFilters();
+        this.UpdateLogLevelFiltersMenu();
+    }
 
 
     /// <summary>
@@ -624,6 +667,16 @@ partial class SessionView
     /// </summary>
     public void ShowLogFiltersCombinationModeMenu() =>
         this.logFilterCombinationModeMenu.Open(this.logFilterCombinationModeButton);
+    
+    
+    /// <summary>
+    /// Open menu for log level filters.
+    /// </summary>
+    public void ShowLogLevelFiltersMenu()
+    {
+        this.logLevelFiltersMenu.Open(this.logLevelFiltersButton);
+        this.UpdateLogLevelFiltersMenu();
+    }
 
 
     /// <summary>
@@ -651,6 +704,17 @@ partial class SessionView
             });
         }
     }
+    
+    
+    // Toggle log level filter.
+    void ToggleLogLevelFilter(Logs.LogLevel level) =>
+        (this.DataContext as Session)?.LogFiltering.AddLevelFilter(level);
+    
+    
+    /// <summary>
+    /// Command to toggle specific log level filter.
+    /// </summary>
+    public ICommand ToggleLogLevelFilterCommand { get; }
 
 
     // Update CanFilterLogsByNonTextFilters property.
@@ -658,7 +722,7 @@ partial class SessionView
     {
         if (this.DataContext is Session session)
         {
-            this.SetValue(CanFilterLogsByNonTextFiltersProperty, this.validLogLevels.Count > 1 
+            this.SetValue(CanFilterLogsByNonTextFiltersProperty, session.ValidLogLevels.Count > 1 
                 || session.LogFiltering.IsProcessIdFilterEnabled 
                 || session.LogFiltering.IsThreadIdFilterEnabled);
         }
@@ -666,18 +730,59 @@ partial class SessionView
             this.SetValue(CanFilterLogsByNonTextFiltersProperty, false);
     }
     
-
-    // [Workaround] Force update content shown in combobox.
-    void UpdateLogLevelFilterComboBoxStrings()
+    
+    // Update brush to fill log level filters icon.
+    void UpdateLogLevelFiltersIconBrush()
     {
-        var isScheduled = this.commitLogFiltersAction.IsScheduled;
-        var selectedIndex = this.logLevelFilterComboBox.SelectedIndex;
-        if (selectedIndex > 0)
-            this.logLevelFilterComboBox.SelectedIndex = 0;
-        else
-            this.logLevelFilterComboBox.SelectedIndex = 1;
-        this.logLevelFilterComboBox.SelectedIndex = selectedIndex;
-        if (!isScheduled)
-            this.commitLogFiltersAction.Cancel();
+        if ((this.DataContext as Session)?.LogFiltering is not { } viewModel)
+            return;
+        var levels = viewModel.HasLevelFilters
+            ? ImmutableArray.CreateBuilder<Logs.LogLevel>().Also(builder =>
+            {
+                foreach (var level in Enum.GetValues<Logs.LogLevel>())
+                {
+                    if (viewModel.HasLevelFilter(level))
+                        builder.Add(level);
+                }
+            }).ToImmutable()
+            : ImmutableArray<Logs.LogLevel>.Empty;
+        var brush = levels.IsNotEmpty()
+            ? LogLevelBrushConverter.Background.Convert<IBrush?>(levels[0])
+            : LogLevelBrushConverter.Background.Convert<IBrush?>(Logs.LogLevel.Undefined);
+        this.SetAndRaise(LogLevelFiltersIconBrushProperty, ref this.logLevelFiltersIconBrush, brush);
+    }
+    
+    
+    // Update menu of log level filters.
+    void UpdateLogLevelFiltersMenu()
+    {
+        if (!this.logLevelFiltersMenu.IsOpen)
+            return;
+        if (this.DataContext is not Session session)
+            return;
+        var viewModel = session.LogFiltering;
+        var validLevels = session.ValidLogLevels;
+        var items = this.logLevelFiltersMenu.Items;
+        for (var i = items.Count - 1; i >= 0; --i)
+        {
+            if (items[i] is not MenuItem menuItem)
+                continue;
+            if (menuItem.Name == "proVersionDescription")
+            {
+                menuItem.IsVisible = false;
+                if (i > 0 && items[i - 1] is Separator separator)
+                    separator.IsVisible = false;
+            }
+            else if (menuItem.DataContext is Logs.LogLevel level && menuItem.Icon is Control icon)
+            {
+                if (level != Logs.LogLevel.Undefined)
+                {
+                    menuItem.IsVisible = validLevels.Contains(level);
+                    icon.IsVisible = viewModel.HasLevelFilter(level);
+                }
+                else
+                    icon.IsVisible = !viewModel.HasLevelFilters;
+            }
+        }
     }
 }

@@ -324,7 +324,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction updateLogHeaderContainerMarginAction;
 		readonly ScheduledAction updateLogItemHeightAction;
 		readonly ScheduledAction updateStatusBarStateAction;
-		readonly SortedObservableList<Logs.LogLevel> validLogLevels = new((x, y) => (int)x - (int)y);
 		readonly ToggleButton workingDirectoryActionsButton;
 		readonly ContextMenu workingDirectoryActionsMenu;
 
@@ -436,13 +435,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
 			this.TestCommand = new Command<string>(this.Test);
+			this.ToggleLogLevelFilterCommand = new Command<Logs.LogLevel>(this.ToggleLogLevelFilter);
 			this.UnmarkSelectedLogsCommand = new Command(this.UnmarkSelectedLogs, this.canUnmarkSelectedLogs);
 
 			// setup properties
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.LogChartXAxes = ListExtensions.AsReadOnly([ this.logChartXAxis ]);
 			this.LogChartYAxes = ListExtensions.AsReadOnly([ this.logChartYAxis ]);
-			this.ValidLogLevels = ListExtensions.AsReadOnly(this.validLogLevels);
 
 			// create value converters
 			this.selectableValueLogItemBackgroundConverter = new FuncMultiValueConverter<bool, IBrush?>(values =>
@@ -588,10 +587,15 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.GetObservable(BoundsProperty).Subscribe(_ => this.ReportLogHeaderColumnWidths());
 			});
 			this.logFilterCombinationModeButton = toolBarContainer.FindControl<ToggleButton>(nameof(logFilterCombinationModeButton)).AsNonNull();
-			this.logLevelFilterComboBox = this.Get<ComboBox>(nameof(logLevelFilterComboBox)).Also(it =>
+			this.logLevelFiltersButton = this.Get<ToggleButton>(nameof(logLevelFiltersButton));
+			this.logLevelFiltersMenu = ((ContextMenu)this.Resources[nameof(logLevelFiltersMenu)].AsNonNull()).Also(it =>
 			{
-				if (Platform.IsMacOS)
-					(this.Application as AppSuiteApplication)?.EnsureClosingToolTipIfWindowIsInactive(it);
+				it.Closed += (_, _) => this.logLevelFiltersButton.IsChecked = false;
+				it.Opened += (_, _) =>
+				{
+					ToolTip.SetIsOpen(this.logLevelFiltersButton, false);
+					this.logLevelFiltersButton.IsChecked = true;
+				};
 			});
 			this.logListBox = this.logListBoxContainer.FindControl<Avalonia.Controls.ListBox>(nameof(logListBox))!.Also(it =>
 			{
@@ -1378,8 +1382,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update properties
 			this.updateCanEditCurrentScriptLogDataSourceProviderAction.Schedule();
-			this.validLogLevels.AddAll(session.ValidLogLevels);
 			this.logProfileSelectionMenu.CurrentLogProfile = session.LogProfile;
+			this.OnValidLogLevelsChanged();
 
 			// update UI
 			this.handleDisplayLogPropertiesChangedAction.Execute();
@@ -2499,8 +2503,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.canEditLogProfile.Update(false);
 			this.SetValue(HasLogProfileProperty, false);
 			this.updateCanEditCurrentScriptLogDataSourceProviderAction.Execute();
-			this.validLogLevels.Clear();
 			this.logProfileSelectionMenu.CurrentLogProfile = null;
+			this.OnValidLogLevelsChanged();
 
 			// clear target range of log to scroll to
 			this.ClearTargetLogRangeToScrollTo();
@@ -2991,7 +2995,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.areLogChartAxesReady = false;
 				this.UpdateLogChartSeries();
 			});
-			this.UpdateLogLevelFilterComboBoxStrings();
 			
 			// invalidate menu of visible series of log chart
 			if (this.visibleLogChartSeriesMenu is not null)
@@ -4182,6 +4185,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 					}
 				}
+				else if (this.logLevelFiltersMenu.IsOpen)
+					this.logLevelFiltersMenu.RaiseEvent(e);
 				else
 				{
 					switch (e.Key)
@@ -4631,11 +4636,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.attachedLogs.CollectionChanged += this.OnLogsChanged;
 					break;
 				case nameof(Session.ValidLogLevels):
-					this.validLogLevels.Clear();
-					this.validLogLevels.AddAll(session.ValidLogLevels);
-					this.UpdateCanFilterLogsByNonTextFilters();
-					if (this.validLogLevels.IsNotEmpty() && this.logLevelFilterComboBox.SelectedIndex < 0)
-						this.logLevelFilterComboBox.SelectedIndex = 0;
+					this.OnValidLogLevelsChanged();
 					break;
 			}
 		}
@@ -6158,11 +6159,5 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Update menu items of tools.
 		void UpdateToolsMenuItems()
 		{ }
-
-
-		/// <summary>
-		/// List of log levels defined by log profile.
-		/// </summary>
-		public IList<Logs.LogLevel> ValidLogLevels { get; }
 	}
 }

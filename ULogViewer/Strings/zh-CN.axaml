@@ -1295,7 +1295,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">筛选条件组合方式</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure">登录 Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">登录 Azure (专业版)</sys:String>
-	<sys:String x:Key="String/SessionView.LogLevelFilter.Description">使用等级筛选日志</sys:String>
+	<sys:String x:Key="String/SessionView.LogLevelFilters.Description">使用等级筛选日志</sys:String>
+	<sys:String x:Key="String/SessionView.LogLevelFilters.Description.ProVersion">升级至专业版以使用&#x0a;多个等级筛选。</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure">登出 Azure</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">登出 Azure (专业版)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">使用 进程ID (Process ID) 筛选日志</sys:String>
