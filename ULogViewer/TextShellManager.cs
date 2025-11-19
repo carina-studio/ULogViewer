@@ -1,6 +1,7 @@
 using Avalonia;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;

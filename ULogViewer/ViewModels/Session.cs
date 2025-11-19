@@ -8,6 +8,7 @@ using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.IO;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Collections;

@@ -3,6 +3,7 @@ using CarinaStudio.AppSuite;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ViewModels;
@@ -15,7 +16,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Input;
-using Microsoft.Extensions.Logging;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 

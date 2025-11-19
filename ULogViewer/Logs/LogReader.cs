@@ -1,6 +1,7 @@
 ﻿using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Json;
 using CarinaStudio.ULogViewer.Logs.DataSources;

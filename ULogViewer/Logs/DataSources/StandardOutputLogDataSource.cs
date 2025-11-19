@@ -1,8 +1,8 @@
 ﻿using CarinaStudio.AppSuite.IO;
 using CarinaStudio.Collections;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.IO;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

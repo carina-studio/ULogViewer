@@ -2,12 +2,12 @@
 using CarinaStudio.Collections;
 using CarinaStudio.ComponentModel;
 using CarinaStudio.Configuration;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Cryptography;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
@@ -70,6 +71,7 @@ abstract class BaseLogDataSource : BaseDisposable, ILogDataSource
 	/// <summary>
 	/// Get <see cref="IULogViewerApplication"/> instance.
 	/// </summary>
+	[ThreadSafe]
 	public IULogViewerApplication Application => (IULogViewerApplication)this.Provider.Application;
 
 
@@ -148,12 +150,14 @@ abstract class BaseLogDataSource : BaseDisposable, ILogDataSource
 	/// <summary>
 	/// Get unique ID of this <see cref="BaseLogDataSource"/> instance.
 	/// </summary>
+	[ThreadSafe]
 	protected int Id { get; }
 
 
 	/// <summary>
 	/// Get logger.
 	/// </summary>
+	[ThreadSafe]
 	protected ILogger Logger { get; }
 
 
@@ -377,11 +381,14 @@ abstract class BaseLogDataSource : BaseDisposable, ILogDataSource
 
 
 	// Interface implementations.
+	[ThreadSafe]
 	public bool CheckAccess() => this.Provider.CheckAccess();
 	public LogDataSourceOptions CreationOptions { get; }
+	[ThreadSafe]
 	IApplication IApplicationObject.Application => this.Application;
 	public event PropertyChangedEventHandler? PropertyChanged;
 	public ILogDataSourceProvider Provider { get; }
+	[ThreadSafe]
 	public SynchronizationContext SynchronizationContext => this.Provider.SynchronizationContext;
 	public LogDataSourceState State => this.state;
 }

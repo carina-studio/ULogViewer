@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.AppSuite;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
@@ -42,6 +43,7 @@ abstract class BaseLogDataSourceProvider : ILogDataSourceProvider
 	/// <summary>
 	/// Get <see cref="IULogViewerApplication"/> instance.
 	/// </summary>
+	[ThreadSafe]
 	public IULogViewerApplication Application { get; }
 
 
@@ -77,6 +79,7 @@ abstract class BaseLogDataSourceProvider : ILogDataSourceProvider
 	/// <summary>
 	/// Get logger.
 	/// </summary>
+	[ThreadSafe]
 	protected ILogger Logger { get; }
 
 
@@ -209,9 +212,13 @@ abstract class BaseLogDataSourceProvider : ILogDataSourceProvider
 	// Interface implementations.
 	public int ActiveSourceCount => this.activeSources.Count;
 	public virtual bool AllowMultipleSources => true;
+	[ThreadSafe]
 	public bool CheckAccess() => this.Application.CheckAccess();
+	[ThreadSafe]
 	IApplication IApplicationObject.Application => this.Application;
+	[ThreadSafe]
 	public abstract string Name { get; }
 	public event PropertyChangedEventHandler? PropertyChanged;
+	[ThreadSafe]
 	public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
 }

@@ -1,5 +1,6 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.Text;

@@ -1,4 +1,5 @@
 ﻿using CarinaStudio.Collections;
+using CarinaStudio.Logging;
 using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
@@ -51,6 +52,7 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 	/// <summary>
 	/// Get <see cref="IULogViewerApplication"/> instance.
 	/// </summary>
+	[ThreadSafe]
 	public IULogViewerApplication Application { get; }
 
 
@@ -95,12 +97,14 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 	/// <summary>
 	/// Get unique ID of this <see cref="LogReader"/> instance.
 	/// </summary>
+	[ThreadSafe]
 	public int Id { get; }
 
 
 	/// <summary>
 	/// Get logger.
 	/// </summary>
+	[ThreadSafe]
 	protected ILogger Logger { get; }
 
 
@@ -284,9 +288,13 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 
 
 	// Interface implementations.
+	[ThreadSafe]
 	public bool CheckAccess() => this.Application.CheckAccess();
+	[ThreadSafe]
 	IApplication IApplicationObject.Application => this.Application;
 	public event PropertyChangedEventHandler? PropertyChanged;
+	[ThreadSafe]
 	public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
+	[ThreadSafe]
 	public override string ToString() => $"{this.GetType().Name}-{this.Id}";
 }
