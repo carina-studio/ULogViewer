@@ -4,6 +4,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.Diagnostics;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Converters;
@@ -11,7 +12,6 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +27,7 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 /// <summary>
 /// Group of <see cref="DisplayableLog"/>.
 /// </summary>
-partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGroup
+partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerApplication>, ILogGroup
 {
 	/// <summary>
 	/// Maximum number of log reader can be added to each group.
@@ -98,7 +98,6 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	bool isShowingRawLogLinesTemporarily;
 	readonly Dictionary<string, IBrush> levelBackgroundBrushes = new();
 	readonly Dictionary<string, IBrush> levelForegroundBrushes = new();
-	readonly ILogger logger;
 	readonly SortedList<byte, LogReaderInfo> logReaderInfosByLocalId = new();
 	readonly Dictionary<LogReader, LogReaderInfo> logReaderInfosByLogReader = new();
 	readonly int maxDisplayLineCount = 1;
@@ -122,7 +121,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	/// Initialize new <see cref="DisplayableLogGroup"/> instance.
 	/// </summary>
 	/// <param name="profile">Log profile.</param>
-	public DisplayableLogGroup(LogProfile profile)
+	public DisplayableLogGroup(LogProfile profile) : base(App.Current)
 	{
 		// get ID
 		uint id;
@@ -140,11 +139,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		if (app.IsDebugMode)
 			this.stopwatch.Start();
 		
-		// create logger
-		this.logger = app.LoggerFactory.CreateLogger($"{nameof(DisplayableLogGroup)}-{this.Id}");
-		
 		// setup properties
-		this.Application = app;
 		this.LogProfile = profile;
 		this.MemoryUsagePolicy = app.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
 		this.TextHighlightingDefinitionSet = new($"Text Highlighting of {this}");
@@ -163,12 +158,12 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 				if (token.Trigger())
 				{
 					this.activeProgressiveLogsRemovingToken = token;
-					this.logger.LogDebug("Progressive logs removing triggered, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
+					this.Logger.LogDebug("Progressive logs removing triggered, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
 					break;
 				}
 			}
 			if (this.activeProgressiveLogsRemovingToken is null && this.scheduledProgressiveLogsRemovingTokens.IsEmpty())
-				this.logger.LogDebug("All progressive logs removing completed");
+				this.Logger.LogDebug("All progressive logs removing completed");
 		});
 		this.updateTextHighlightingDefSetAction = new(() =>
 		{
@@ -318,12 +313,6 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	/// Raised when a set of analysis result has been removed from a log.
 	/// </summary>
 	public event DirectDisplayableLogEventHandler? AnalysisResultRemoved;
-
-
-	/// <summary>
-	/// Get <see cref="IULogViewerApplication"/> instance.
-	/// </summary>
-	public IULogViewerApplication Application { get; }
 	
 	
 	// Cancel scheduled or on going progressive logs removing.
@@ -332,12 +321,12 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		this.VerifyAccess();
 		if (this.activeProgressiveLogsRemovingToken == token)
 		{
-			this.logger.LogDebug("Complete current progressive logs removing");
+			this.Logger.LogDebug("Complete current progressive logs removing");
 			this.activeProgressiveLogsRemovingToken = null;
 			this.triggerProgressiveLogsRemovingAction.Schedule();
 		}
 		else if (this.scheduledProgressiveLogsRemovingTokens.Remove(token))
-			this.logger.LogDebug("Cancel scheduled progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
+			this.Logger.LogDebug("Cancel scheduled progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
 	}
 
 
@@ -563,7 +552,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			return brush.AsNonNull();
 		if (this.levelBackgroundBrushes.TryGetValue(log.Level.ToString(), out brush))
 			return brush.AsNonNull();
-		if (this.levelBackgroundBrushes.TryGetValue(nameof(Logs.LogLevel.Undefined), out brush))
+		if (this.levelBackgroundBrushes.TryGetValue(nameof(LogLevel.Undefined), out brush))
 			return brush.AsNonNull();
 		throw new ArgumentException($"Cannot get background brush for log level {log.Level}.");
 	}
@@ -583,7 +572,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			return brush.AsNonNull();
 		if (this.levelForegroundBrushes.TryGetValue(log.Level.ToString(), out brush))
 			return brush.AsNonNull();
-		if (this.levelForegroundBrushes.TryGetValue(nameof(Logs.LogLevel.Undefined), out brush))
+		if (this.levelForegroundBrushes.TryGetValue(nameof(LogLevel.Undefined), out brush))
 			return brush.AsNonNull();
 		throw new ArgumentException($"Cannot get foreground brush for log level {log.Level}.");
 	}
@@ -615,7 +604,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	/// <summary>
 	/// Get map of converting from <see cref="Logs.LogLevel"/> to string.
 	/// </summary>
-	public IDictionary<Logs.LogLevel, string> LevelMapForDisplaying { get; private set; }
+	public IDictionary<LogLevel, string> LevelMapForDisplaying { get; private set; }
 	
 	
 	/// <summary>
@@ -628,6 +617,10 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	/// Get list of numbers of Extra* log properties.
 	/// </summary>
 	public IList<int> LogExtraNumbers { get; private set; }
+
+
+	/// <inheritdoc/>
+	protected override string LoggerCategoryName => $"{nameof(DisplayableLogGroup)}-{this.Id}";
 
 
 	/// <summary>
@@ -747,7 +740,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			}
 			if (!isReaderLocalIdFound)
 				throw new NotSupportedException($"Too many log readers in the displayable log group '{this.Id}'.");
-			this.logger.LogTrace("Add log reader '{readerId}' with local ID '{localId}'", reader.Id, candidateReaderLocalId);
+			this.Logger.LogTrace("Add log reader '{readerId}' with local ID '{localId}'", reader.Id, candidateReaderLocalId);
 			readerInfo = new LogReaderInfo(reader, candidateReaderLocalId);
 			readerLocalId = candidateReaderLocalId;
 			this.logReaderInfosByLocalId.Add(candidateReaderLocalId, readerInfo);
@@ -783,7 +776,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 			--readerInfo.DisplayableLogCount;
 			if (readerInfo.DisplayableLogCount <= 0)
 			{
-				this.logger.LogTrace("Remove log reader '{readerId}' with local ID '{localId}'", readerInfo.LogReader.Id, readerInfo.LocalId);
+				this.Logger.LogTrace("Remove log reader '{readerId}' with local ID '{localId}'", readerInfo.LogReader.Id, readerInfo.LocalId);
 				this.logReaderInfosByLocalId.Remove(readerInfo.LocalId);
 				this.logReaderInfosByLogReader.Remove(readerInfo.LogReader);
 				this.UpdateMemorySize(-((LogReaderInfoKeyValuePairMemorySize << 1) + LogReaderInfoMemorySize));
@@ -893,7 +886,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		this.VerifyAccess();
 		var token = new ProgressiveLogsRemovingToken(this, triggerAction);
 		this.scheduledProgressiveLogsRemovingTokens.Add(token);
-		this.logger.LogDebug("Schedule progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
+		this.Logger.LogDebug("Schedule progressive logs removing, pending: {count}", this.scheduledProgressiveLogsRemovingTokens.Count);
 		this.triggerProgressiveLogsRemovingAction.Schedule();
 		return token;
 	}
@@ -929,7 +922,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 				log = log.Next;
 			}
 			if (time > 0)
-				this.logger.LogTrace("[Performance] Took {duration} ms to update selected PID", this.stopwatch.ElapsedMilliseconds - time);
+				this.Logger.LogTrace("[Performance] Took {duration} ms to update selected PID", this.stopwatch.ElapsedMilliseconds - time);
 		}
 	}
 
@@ -954,7 +947,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 				log = log.Next;
 			}
 			if (time > 0)
-				this.logger.LogTrace("[Performance] Took {duration} ms to update selected TID", this.stopwatch.ElapsedMilliseconds - time);
+				this.Logger.LogTrace("[Performance] Took {duration} ms to update selected TID", this.stopwatch.ElapsedMilliseconds - time);
 		}
 	}
 
@@ -1035,7 +1028,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 		this.levelForegroundBrushes.Clear();
 		var bgConverter = LogLevelBrushConverter.Background;
 		var fgConverter = LogLevelBrushConverter.Foreground;
-		foreach (var level in (Logs.LogLevel[])Enum.GetValues(typeof(Logs.LogLevel)))
+		foreach (var level in (Logs.LogLevel[])Enum.GetValues(typeof(LogLevel)))
 		{
 			if (bgConverter.Convert(level, typeof(IBrush), null, this.Application.CultureInfo) is IBrush bgBrush)
 				this.levelBackgroundBrushes[level.ToString()] = bgBrush;
@@ -1050,7 +1043,7 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 	[MemberNotNull(nameof(LevelMapForDisplaying))]
 	void UpdateLevelMapForDisplaying()
 	{
-		this.LevelMapForDisplaying = new Dictionary<Logs.LogLevel, string>().Also(it =>
+		this.LevelMapForDisplaying = new Dictionary<LogLevel, string>().Also(it =>
 		{
 			foreach (var (s, level) in this.LogProfile.LogLevelMapForReading)
 				it.TryAdd(level, s);
@@ -1077,16 +1070,10 @@ partial class DisplayableLogGroup : BaseDisposable, IApplicationObject, ILogGrou
 #if DEBUG
 				throw new InternalStateCorruptedException($"Memory size becomes negative: {this.memorySize}, diff: {diff}.");
 #endif
-				this.logger.LogError("Memory size becomes negative: {size}, diff: {diff}, stack trace: {st}", this.memorySize, diff, Environment.StackTrace);
+				this.Logger.LogError("Memory size becomes negative: {size}, diff: {diff}, stack trace: {st}", this.memorySize, diff, Environment.StackTrace);
 				this.memorySize = 0;
 				this.DebugMessageGenerated?.Invoke(this, new("Memory size becomes negative."));
 			}
 		}
 	}
-
-
-	// Interface implementations.
-	public bool CheckAccess() => this.Application.CheckAccess();
-	IApplication IApplicationObject.Application => this.Application;
-	public SynchronizationContext SynchronizationContext => this.Application.SynchronizationContext;
 }

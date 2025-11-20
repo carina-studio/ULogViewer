@@ -3,7 +3,6 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
-using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace CarinaStudio.ULogViewer;
 /// <summary>
 /// Manager for installed text shell.
 /// </summary>
-class TextShellManager
+class TextShellManager : BaseApplicationObject<IULogViewerApplication>
 {
     // Constants.
     const int RefreshInstalledTextShellsDelay = 1000;
@@ -32,23 +31,20 @@ class TextShellManager
     Avalonia.Controls.Window? attachedActiveWindow;
     readonly Task initTask;
     readonly SortedObservableList<TextShell> installedTextShells = new((l, r) => (int)l - (int)r);
-    readonly IObserver<bool> isWindowActiveObserver;
     IDisposable? isWindowActiveObserverToken;
-    readonly ILogger logger;
     readonly ScheduledAction refreshInstalledTextShellsAction;
     IDictionary<TextShell, string> textShellExePaths = new Dictionary<TextShell, string>();
 
 
     // Constructor.
-    TextShellManager(IULogViewerApplication app)
+    TextShellManager(IULogViewerApplication app) : base(app)
     {
         // setup fields and properties
         this.app = app;
         this.InstalledTextShells = ListExtensions.AsReadOnly(this.installedTextShells);
-        this.logger = app.LoggerFactory.CreateLogger(nameof(TextShellManager));
 
         // setup actions
-        this.isWindowActiveObserver = new Observer<bool>(isActive =>
+        var isWindowActiveObserver = new Observer<bool>(isActive =>
         {
             if (isActive)
                 this.refreshInstalledTextShellsAction!.Cancel();
@@ -62,7 +58,7 @@ class TextShellManager
         });
 
         // attach to application
-        app.PropertyChanged += (sender, e) =>
+        app.PropertyChanged += (_, e) =>
         {
             switch (e.PropertyName)
             {
@@ -75,7 +71,7 @@ class TextShellManager
                         this.isWindowActiveObserverToken = this.isWindowActiveObserverToken.DisposeAndReturnNull();
                     this.attachedActiveWindow = this.app.LatestActiveWindow;
                     if (this.attachedActiveWindow != null)
-                        this.isWindowActiveObserverToken = this.attachedActiveWindow.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(this.isWindowActiveObserver);
+                        this.isWindowActiveObserverToken = this.attachedActiveWindow.GetObservable(Avalonia.Controls.Window.IsActiveProperty).Subscribe(isWindowActiveObserver);
                     else
                         this.refreshInstalledTextShellsAction.Schedule(RefreshInstalledTextShellsDelay);
                     break;
@@ -90,7 +86,7 @@ class TextShellManager
     /// <summary>
     /// Get default instance.
     /// </summary>
-    public static TextShellManager Default { get => DefaultInstance ?? throw new InvalidOperationException(); }
+    public static TextShellManager Default => DefaultInstance ?? throw new InvalidOperationException();
 
 
     // Get all installed text shells and its path.
@@ -117,7 +113,7 @@ class TextShellManager
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error occurred while checking existence of PowerShell");
+                this.Logger.LogError(ex, "Error occurred while checking existence of PowerShell");
             }
 #pragma warning restore CA1416
         }
@@ -133,7 +129,7 @@ class TextShellManager
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error occurred while checking existence of sh");
+                this.Logger.LogError(ex, "Error occurred while checking existence of sh");
             }
 
             // bash
@@ -146,7 +142,7 @@ class TextShellManager
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error occurred while checking existence of bash");
+                this.Logger.LogError(ex, "Error occurred while checking existence of bash");
             }
 
             // csh
@@ -159,7 +155,7 @@ class TextShellManager
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error occurred while checking existence of csh");
+                this.Logger.LogError(ex, "Error occurred while checking existence of csh");
             }
 
             // fish
@@ -177,7 +173,7 @@ class TextShellManager
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error occurred while checking existence of fish");
+                this.Logger.LogError(ex, "Error occurred while checking existence of fish");
             }
 
             // zsh
@@ -192,7 +188,7 @@ class TextShellManager
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error occurred while checking existence of zsh");
+                this.Logger.LogError(ex, "Error occurred while checking existence of zsh");
             }
 
             // PowerShell
@@ -219,7 +215,7 @@ class TextShellManager
         // wait for initialization
         await defaultInstance.initTask;
         foreach (var shell in defaultInstance.installedTextShells)
-            defaultInstance.logger.LogDebug("'{shell}' found on system", shell);
+            defaultInstance.Logger.LogDebug("'{shell}' found on system", shell);
 
         // complete
         DefaultInstance = defaultInstance;
@@ -230,6 +226,10 @@ class TextShellManager
     /// Get list of text shells installed on system.
     /// </summary>
     public IList<TextShell> InstalledTextShells { get; }
+
+
+    /// <inheritdoc/>
+    protected override string LoggerCategoryName => nameof(TextShellManager);
 
 
     /// <summary>
@@ -268,17 +268,17 @@ class TextShellManager
     // Update list of text shells installed on system.
     async Task UpdateInstalledTextShells(bool isInit)
     {
-        this.logger.LogTrace("Update installed text shells [start]");
+        this.Logger.LogTrace("Update installed text shells [start]");
 
         // update installed shells
-        var shellMap = await Task.Run(() => this.GetInstalledTextShells());
+        var shellMap = await Task.Run(this.GetInstalledTextShells);
         var installedTextShells = this.installedTextShells;
         for (var i = installedTextShells.Count - 1; i >= 0; --i)
         {
             var shell = installedTextShells[i];
             if (!shellMap.ContainsKey(shell))
             {
-                this.logger.LogWarning("'{shell}' was removed from system", shell);
+                this.Logger.LogWarning("'{shell}' was removed from system", shell);
                 installedTextShells.RemoveAt(i);
             }
         }
@@ -287,13 +287,13 @@ class TextShellManager
             if (!installedTextShells.Contains(shell))
             {
                 if (!isInit)
-                    this.logger.LogDebug("'{shell}' was added to system", shell);
+                    this.Logger.LogDebug("'{shell}' was added to system", shell);
                 installedTextShells.Add(shell);
             }
         }
         this.textShellExePaths = shellMap;
         if (installedTextShells.IsEmpty())
-            this.logger.LogError("No text shell installed on system");
+            this.Logger.LogError("No text shell installed on system");
 
         // update settings
         var settings = this.app.Settings;
@@ -301,9 +301,9 @@ class TextShellManager
         if (shellMap.ContainsKey(defaultTextShell))
         {
             if (isInit)
-                this.logger.LogDebug("Default text shell is '{shell}'", defaultTextShell);
+                this.Logger.LogDebug("Default text shell is '{shell}'", defaultTextShell);
             else
-                this.logger.LogTrace("Default text shell is '{shell}'", defaultTextShell);
+                this.Logger.LogTrace("Default text shell is '{shell}'", defaultTextShell);
         }
         else
         {
@@ -316,10 +316,10 @@ class TextShellManager
             }
 
             // update settings
-            this.logger.LogWarning("Set default shell to '{newShell}'", newShell);
+            this.Logger.LogWarning("Set default shell to '{newShell}'", newShell);
             settings.SetValue<TextShell>(SettingKeys.DefaultTextShell, newShell);
         }
 
-        this.logger.LogTrace("Update installed text shells [end]");
+        this.Logger.LogTrace("Update installed text shells [end]");
     }
 }

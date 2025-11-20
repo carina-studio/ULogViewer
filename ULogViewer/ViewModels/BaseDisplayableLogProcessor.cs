@@ -1,10 +1,10 @@
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.Threading.Tasks;
 using CarinaStudio.ULogViewer.Logs.Profiles;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -36,7 +36,6 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     LogProfile? attachedLogProfile; // currently only supports attaching to single profile
     readonly long baseMemorySize;
     ProcessingParams? currentProcessingParams;
-    volatile ILogger? logger;
     MemoryUsagePolicy memoryUsagePolicy;
     DisplayableLogProcessingPriority processingPriority;
     readonly ScheduledAction processNextChunkAction;
@@ -385,14 +384,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     public bool IsProcessingNeeded { get; private set; }
 
 
-    /// <summary>
-    /// Get logger.
-    /// </summary>
-    protected ILogger Logger =>
-        this.logger ?? this.Application.LoggerFactory.CreateLogger($"{this.GetType().Name}-{this.Id}").Also(it =>
-        {
-            this.logger = it;
-        });
+    /// <inheritdoc/>
+    protected override string LoggerCategoryName => $"{this.GetType().Name}-{this.Id}";
 
 
     /// <summary>
