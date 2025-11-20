@@ -730,7 +730,7 @@ class LogProfileSelectionContextMenu : ContextMenu
                 if (logProfile.IsTemplate)
                 {
                     this.items.RemoveAll(it =>
-                        it is MenuItem menuItem && menuItem.DataContext == logProfile);
+                        it is MenuItem menuItem && menuItem.DataContext as LogProfile == logProfile);
                     if (this.pinnedLogProfiles.Remove(logProfile)
                         && this.pinnedLogProfiles.IsEmpty())
                     {
@@ -817,7 +817,7 @@ class LogProfileSelectionContextMenu : ContextMenu
                         token.Dispose();
                         this.logProfilePropertyChangedHandlerTokens.Remove(logProfile);
                     }
-                    this.items.RemoveAll(it => it is MenuItem menuItem && menuItem.DataContext == logProfile);
+                    this.items.RemoveAll(it => it is MenuItem menuItem && menuItem.DataContext as LogProfile == logProfile);
                     this.pinnedLogProfiles.Remove(logProfile);
                     this.recentlyUsedLogProfiles.Remove(logProfile);
                 }
@@ -948,7 +948,7 @@ class LogProfileSelectionContextMenu : ContextMenu
     // Try find menu item for given log profile.
     bool TryFindMenuItem(LogProfile logProfile, [NotNullWhen(true)] out MenuItem? menuItem)
     {
-        menuItem = this.items.FirstOrDefault(it => it is MenuItem menuItem && menuItem.DataContext == logProfile) as MenuItem;
+        menuItem = this.items.FirstOrDefault(it => it is MenuItem menuItem && menuItem.DataContext as LogProfile == logProfile) as MenuItem;
         return menuItem != null;
     }
     
