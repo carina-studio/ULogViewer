@@ -3,6 +3,7 @@
 
 ## 新功能
 + 支援在已定義[日誌行格式](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns)後暫時顯示原始日誌行。
++ 支援使用多個日誌等級篩選日誌。
 + 當日誌類型中沒有定義日誌等級對照表時，將改為使用預設之日誌等級對照。
 
 ## 改善
