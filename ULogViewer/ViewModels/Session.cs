@@ -637,6 +637,9 @@ class Session : ViewModel<IULogViewerApplication>
 	const int DelaySaveMarkedLogs = 1000;
 	const int DisposeDisplayableLogsInterval = 100;
 	const int LogsTimeInfoReportingInterval = 500;
+	const bool SimulateDelayedProVersionActivation = false;
+	const bool SimulateProVersionActivated = false;
+	const bool SimulateProVersionDeactivated = false;
 
 
 	// Static fields.
@@ -933,6 +936,8 @@ class Session : ViewModel<IULogViewerApplication>
 	readonly SortedObservableList<DisplayableLog> markedLogs;
 	readonly HashSet<string> markedLogsChangedFilePaths = new(PathEqualityComparer.Default);
 	MemoryUsagePolicy memoryUsagePolicy;
+	readonly Action<IProductManager, string, bool> productActivationChangedHandler;
+	readonly ScheduledAction proVersionActivatedAction;
 	readonly ScheduledAction reloadLogsAction;
 	readonly ScheduledAction reloadLogsFullyAction;
 	readonly ScheduledAction reloadLogsWithRecreatingLogReadersAction;
@@ -1016,6 +1021,25 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// setup delegates
 		this.compareDisplayableLogsDelegate = CompareDisplayableLogsById;
+		this.productActivationChangedHandler = (productManager, productId, isActivated) =>
+		{
+			if (productId == Products.Professional)
+			{
+				if (isActivated || SimulateProVersionActivated)
+				{
+					if (SimulateProVersionDeactivated)
+						return;
+					if (SimulateDelayedProVersionActivation)
+					{
+						this.proVersionActivatedAction!.Reschedule(10000);
+						return;
+					}
+				}
+				else if (this.proVersionActivatedAction!.Cancel())
+					return;
+			}
+			this.OnProductActivationChanged(productManager, productId, isActivated);
+		};
 
 		// create components
 		var internalAccessor = new InternalAccessorImpl(this);
@@ -1060,6 +1084,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.checkDataSourceErrorsAction = new(this.CheckDataSourceErrors);
 		this.checkIsWaitingForDataSourcesAction = new(this.CheckIsWaitingForDataSources);
 		this.checkLogsMemoryUsageAction = new(this.CheckLogsMemoryUsage);
+		this.proVersionActivatedAction = new(() => this.OnProductActivationChanged(this.Application.ProductManager, Products.Professional, true));
 		this.reloadLogsAction = new(() => this.ReloadLogs(false, false));
 		this.reloadLogsFullyAction= new(() => this.ReloadLogs(true, true));
 		this.reloadLogsWithRecreatingLogReadersAction = new(() => this.ReloadLogs(true, false));
@@ -1086,8 +1111,14 @@ class Session : ViewModel<IULogViewerApplication>
 			it.CollectionChanged += this.OnLogProfilesChanged);
 		
 		// attach to product manager
-		this.SetValue(IsProVersionActivatedProperty, app.ProductManager.IsProductActivated(Products.Professional));
-		app.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
+		if (!SimulateProVersionDeactivated && (app.ProductManager.IsProductActivated(Products.Professional) || SimulateProVersionActivated))
+		{
+			if (SimulateDelayedProVersionActivation)
+				this.proVersionActivatedAction.Schedule(10000);
+			else
+				this.SetValue(IsProVersionActivatedProperty, true);
+		}
+		app.ProductManager.ProductActivationChanged += this.productActivationChangedHandler;
 		
 		// attach to process info
 		app.ProcessInfo.PropertyChanged += this.OnProcessInfoPropertyChanged;
@@ -2183,7 +2214,8 @@ class Session : ViewModel<IULogViewerApplication>
 			it.CollectionChanged -= this.OnLogProfilesChanged);
 		
 		// detach from product manager
-		this.Application.ProductManager.ProductActivationChanged -= this.OnProductActivationChanged;
+		this.Application.ProductManager.ProductActivationChanged -= this.productActivationChangedHandler;
+		this.proVersionActivatedAction.Cancel();
 		
 		// detach from process info
 		this.Application.ProcessInfo.PropertyChanged -= this.OnProcessInfoPropertyChanged;
