@@ -35,13 +35,23 @@ class LogProperty : IEquatable<LogProperty>
 	
 	/// <inheritdoc/>
 	public bool Equals(LogProperty? property) =>
+		this.Equals(property, true);
+	
+	
+	/// <summary>
+	/// Check equality.
+	/// </summary>
+	/// <param name="property"><see cref="LogProperty"/> to check.</param>
+	/// <param name="includeWidth">True to take <see cref="Width"/> into account.</param>
+	/// <returns>True if the log property equals <paramref name="property"/>.</returns>
+	public bool Equals(LogProperty? property, bool includeWidth) =>
 		property is not null
 		&& this.Name == property.Name
 		&& this.DisplayName == property.DisplayName
 		&& this.ForegroundColor == property.ForegroundColor
 		&& this.Quantifier == property.Quantifier
 		&& this.SecondaryDisplayName == property.SecondaryDisplayName
-		&& this.Width == property.Width; 
+		&& (!includeWidth || this.Width == property.Width); 
 
 
 	/// <inheritdoc/>

@@ -92,6 +92,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	string? timestampFormatForWriting;
 	IList<string> timestampFormatsForReading = Array.Empty<string>();
 	IList<LogProperty> visibleLogProperties = Array.Empty<LogProperty>();
+	readonly SettingKey<string>? visibleLogPropertyWidthsSettingKey;
 	LogProfilePropertyRequirement workingDirectoryRequirement = LogProfilePropertyRequirement.Optional;
 
 
@@ -103,6 +104,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		this.isPinnedSettingKey = isBuiltIn ? new($"BuiltInProfile.{id}.IsPinned") : null;
 		this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 		this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
+		this.visibleLogPropertyWidthsSettingKey = isBuiltIn ? new SettingKey<string>($"BuiltInProfile.{id}.VisibleLogPropertyWidths", "") : null;
 		if (isBuiltIn)
 			this.UpdateBuiltInNameAndDescription();
 	}
@@ -587,8 +589,46 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 
 		// load profile
 		var profile = new LogProfile(app, id, true);
+		var persistentState = app.PersistentState;
 		profile.Load(jsonDocument.RootElement);
-		profile.isPinned = app.PersistentState.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
+		profile.isPinned = persistentState.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
+		persistentState.GetValueOrDefault(profile.visibleLogPropertyWidthsSettingKey.AsNonNull()).Let(settingValue =>
+		{
+			if (string.IsNullOrEmpty(settingValue))
+				return;
+			try
+			{
+				using var stream = new MemoryStream(Convert.FromBase64String(settingValue));
+				using var jsonDocument = JsonDocument.Parse(stream);
+				var jsonArray = jsonDocument.RootElement;
+				if (jsonArray.ValueKind != JsonValueKind.Array
+				    || jsonArray.GetArrayLength() != profile.visibleLogProperties.Count)
+				{
+					app.LoggerFactory.CreateLogger(nameof(LogProfile)).LogError("Invalid persistent state of built-in log profile '{name}'", profile.Name);
+					persistentState.ResetValue(profile.visibleLogPropertyWidthsSettingKey);
+				}
+				else
+				{
+					var visibleLogProperties = new List<LogProperty>(profile.visibleLogProperties);
+					var index = 0;
+					foreach (var jsonValue in jsonArray.EnumerateArray())
+					{
+						if (jsonValue.TryGetInt32(out var width))
+						{
+							var logProperty = visibleLogProperties[index];
+							visibleLogProperties[index] = new LogProperty(logProperty.Name, logProperty.DisplayName, logProperty.SecondaryDisplayName, logProperty.Quantifier, logProperty.ForegroundColor, width >= 0 ? width : null);
+						}
+						++index;
+					}
+					profile.visibleLogProperties = ImmutableList.CreateRange(visibleLogProperties);
+				}
+			}
+			catch (Exception ex)
+			{
+				app.LoggerFactory.CreateLogger(nameof(LogProfile)).LogError(ex, "Error occurred while loading built-in log profile '{name}'", profile.Name);
+				persistentState.ResetValue(profile.visibleLogPropertyWidthsSettingKey);
+			}
+		});
 
 		// validate
 		profile.Validate();
@@ -1917,9 +1957,30 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		set
 		{
 			this.VerifyAccess();
-			this.VerifyBuiltIn();
 			if (this.visibleLogProperties.SequenceEqual(value))
 				return;
+			if (this.IsBuiltIn)
+			{
+				if (this.visibleLogProperties.Count != value.Count)
+					throw new ArgumentException("Cannot change number of visible log properties of built-in log profile.");
+				for (var i = value.Count - 1; i >= 0; i--)
+				{
+					if (!this.visibleLogProperties[i].Equals(value[i], false))
+						throw new ArgumentException("Only width of visible log property can be changed on built-in log profile.");
+				}
+				var settingValue = Convert.ToBase64String(new MemoryStream().Use(stream =>
+				{
+					using (var jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = false }))
+					{
+						jsonWriter.WriteStartArray();
+						foreach (var logProperty in value)
+							jsonWriter.WriteNumberValue(logProperty.Width.GetValueOrDefault(-1));
+						jsonWriter.WriteEndArray();
+					}
+					return stream.ToArray();
+				}));
+				this.PersistentState.SetValue<string>(this.visibleLogPropertyWidthsSettingKey!, settingValue);
+			}
 			this.visibleLogProperties = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(VisibleLogProperties));
 			this.Validate();

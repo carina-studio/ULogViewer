@@ -4,6 +4,7 @@
 ## New Features
 + Support showing raw log lines temporarily even when [log patterns](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns) were defined.
 + Support filtering logs with multiple log levels.
++ Change of width of log property column in log viewer will be saved back to log profile, even for built-in log profiles.
 + Pre-defined log level mapping will be used if no log level mapping defined in log profile.
 
 ## Improvement

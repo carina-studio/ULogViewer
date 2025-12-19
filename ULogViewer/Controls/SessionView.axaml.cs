@@ -258,6 +258,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isProcessNameNeededAfterLogProfileSet;
 		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
+		bool isSettingDisplayLogPropertyWidth;
 		bool isSmoothScrollingToLatestLog;
 		bool isUriNeededAfterLogProfileSet;
 		bool isWorkingDirNeededAfterLogProfileSet;
@@ -3350,6 +3351,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					});
 					var splitter = new GridSplitter().Also(it =>
 					{
+						it.DragCompleted += (_, _) => this.ReportLogHeaderColumnWidths(true);
 						it.DragDelta += (_, _) => this.ReportLogHeaderColumnWidths();
 						it.IsEnabled = this.logHeaderColumns[logPropertyIndex - 1].Width.GridUnitType == GridUnitType.Pixel
 							|| headerColumn.Width.GridUnitType == GridUnitType.Pixel;
@@ -4471,7 +4473,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				case nameof(Session.AreDisplayLogPropertiesDefinedByLogProfile):
 				case nameof(Session.DisplayLogProperties):
-					this.handleDisplayLogPropertiesChangedAction.Schedule();
+					if (!this.isSettingDisplayLogPropertyWidth)
+						this.handleDisplayLogPropertiesChangedAction.Schedule();
 					break;
 				case nameof(Session.HasAllDataSourceErrors):
 				case nameof(Session.HasLogReaders):
@@ -4563,7 +4566,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.ShowLogChartTutorial();
 					this.UpdateToolsMenuItems();
 					if (session.LogChart.IsMaxTotalSeriesValueCountReached)
-						this.PromptForMaxLogChartSeriesValueCountReached();
+						_ = this.PromptForMaxLogChartSeriesValueCountReached();
 					this.updateCanEditCurrentScriptLogDataSourceProviderAction.Execute();
 					break;
 				case nameof(Session.IsReadingLogs):
@@ -4778,17 +4781,38 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Report width of each log header so that items in log list box can change width of each column.
-		void ReportLogHeaderColumnWidths()
+		void ReportLogHeaderColumnWidths(bool setDisplayLogPropertyWidths = false)
 		{
 			var lastLogPropertyIndex = this.logHeaderColumns.Count - 1;
+			var session = this.DataContext as Session;
+			var displayLogProperties = session?.DisplayLogProperties;
 			for (var columnIndex = 0; columnIndex <= lastLogPropertyIndex; ++columnIndex)
 			{
 				var headerColumn = this.logHeaderColumns[columnIndex];
 				var headerColumnWidth = this.logHeaderWidths[columnIndex];
 				if (headerColumnWidth.Value.GridUnitType == GridUnitType.Pixel || columnIndex < lastLogPropertyIndex)
 				{
-					if (Math.Abs(headerColumnWidth.Value.Value - headerColumn.ActualWidth) > 0.5)
-						headerColumnWidth.Update(new GridLength(headerColumn.ActualWidth, GridUnitType.Pixel));
+					var columnWidth = (int)(headerColumn.ActualWidth + 0.5);
+					if (Math.Abs(headerColumnWidth.Value.Value - columnWidth) > 0.5)
+						headerColumnWidth.Update(new GridLength(columnWidth, GridUnitType.Pixel));
+					if (setDisplayLogPropertyWidths && displayLogProperties?[columnIndex] is { } logProperty)
+					{
+						if (logProperty.Width.HasValue 
+						    && logProperty.Width != columnWidth
+						    && !this.isSettingDisplayLogPropertyWidth
+						    && !this.handleDisplayLogPropertiesChangedAction.IsScheduled)
+						{
+							this.isSettingDisplayLogPropertyWidth = true;
+							try
+							{
+								session?.SetDisplayLogPropertyWidth(columnIndex, columnWidth);
+							}
+							finally
+							{
+								this.isSettingDisplayLogPropertyWidth = false;
+							}
+						}
+					}
 				}
 			}
 		}

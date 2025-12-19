@@ -4,6 +4,7 @@
 ## 新功能
 + 支持在已定义[日志行格式](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns)后暂时显示原始日志行。
 + 支持使用多个日志等级过滤日志。
++ 在日志查看器中修改的日志属性列宽度将储存回日志类型，内建日志类型亦支持。
 + 当日志类型中没有定义日志等级对照表时，将改为使用默认日志等级对照。
 
 ## 优化

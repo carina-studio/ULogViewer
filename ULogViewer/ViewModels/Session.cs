@@ -927,6 +927,7 @@ class Session : ViewModel<IULogViewerApplication>
 	bool hasLogDataSourceCreationFailure;
 	bool isInitLogProfile;
 	bool isRestoringState;
+	bool isSettingDisplayLogPropertyWidth;
 	readonly IDisposable isSpecifyingMaxLogReadingCountAllowedObserverToken;
 	readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 	readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
@@ -2160,7 +2161,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 
 	/// <summary>
-	/// Get list of property of <see cref="DisplayableLog"/> needed to be shown on UI.
+	/// Get list of <see cref="DisplayableLog"/> needed to be shown on UI.
 	/// </summary>
 	public IList<DisplayableLogProperty> DisplayLogProperties => 
 		this.GetValue(DisplayLogPropertiesProperty);
@@ -3506,7 +3507,8 @@ class Session : ViewModel<IULogViewerApplication>
 					this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(logProfile.RestartReadingDelay);
 				break;
 			case nameof(LogProfile.VisibleLogProperties):
-				this.ScheduleReloadingLogs(false, true);
+				if (!this.isSettingDisplayLogPropertyWidth)
+					this.ScheduleReloadingLogs(false, true);
 				break;
 		}
 	}
@@ -4794,6 +4796,62 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	/// <remarks>Type of command parameter is <see cref="CommandParams"/>.</remarks>
 	public ICommand SetCommandCommand { get; }
+
+
+	/// <summary>
+	/// Set width of specific <see cref="DisplayableLog"/>.
+	/// </summary>
+	/// <param name="index">Index of <see cref="DisplayableLog"/> in <see cref="DisplayLogProperties"/>.</param>
+	/// <param name="width">New width.</param>
+	/// <returns>True if the width of <see cref="DisplayableLog"/> has been set successfully.</returns>
+	public bool SetDisplayLogPropertyWidth(int index, int width)
+	{
+		this.VerifyAccess();
+		this.VerifyDisposed();
+		if (this.GetValue(LogProfileProperty) is not { } logProfile)
+		{
+			this.Logger.LogError("No log profile to set width of displayed log property");
+			return false;
+		}
+		var visibleLogProperties = logProfile.VisibleLogProperties;
+		if (index < 0 || index >= visibleLogProperties.Count)
+		{
+			this.Logger.LogError("Invalid index of display log property to set width: {index}", index);
+			return false;
+		}
+		var logProperty = visibleLogProperties[index];
+		if (!logProperty.Width.HasValue)
+		{
+			this.Logger.LogError("Cannot set width of auto-sized display log property at {index}", index);
+			return false;
+		}
+		if (width <= 0)
+		{
+			this.Logger.LogError("Invalid width to set to display log property: {width}", width);
+			return false;
+		}
+		if (this.isSettingDisplayLogPropertyWidth)
+		{
+			this.Logger.LogError("Nested width of display log property setting");
+			return false;
+		}
+		if (logProperty.Width != width)
+		{
+			this.isSettingDisplayLogPropertyWidth = true;
+			try
+			{
+				logProfile.VisibleLogProperties = new List<LogProperty>(visibleLogProperties)
+				{
+					[index] = new(logProperty.Name, logProperty.DisplayName, logProperty.SecondaryDisplayName, logProperty.Quantifier, logProperty.ForegroundColor, width)
+				};
+			}
+			finally
+			{
+				this.isSettingDisplayLogPropertyWidth = false;
+			}
+		}
+		return true;
+	}
 
 
 	// Set IP endpoint.
