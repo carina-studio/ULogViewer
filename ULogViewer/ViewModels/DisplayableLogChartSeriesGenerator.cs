@@ -5,6 +5,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -62,7 +63,7 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
     
     // Fields.
     bool isMaxTotalSeriesValueCountReached;
-    IList<DisplayableLogChartSeriesSource> logChartSeriesSources = Array.Empty<DisplayableLogChartSeriesSource>();
+    ImmutableList<DisplayableLogChartSeriesSource> logChartSeriesSources = ImmutableList<DisplayableLogChartSeriesSource>.Empty;
     LogChartType logChartType = LogChartType.None;
     int maxSeriesValueCount;
     readonly ObservableList<DisplayableLogChartSeries> series = new();
@@ -111,12 +112,13 @@ class DisplayableLogChartSeriesGenerator : BaseDisplayableLogProcessor<Displayab
             this.VerifyDisposed();
             if (this.logChartSeriesSources.SequenceEqual(value))
                 return;
-            this.logChartSeriesSources = new List<DisplayableLogChartSeriesSource>(value).Also(it =>
+            this.logChartSeriesSources = ImmutableList.CreateRange(value).Let(it =>
             {
                 var maxCount = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.MaxSeriesCountInLogChart);
-                if (it.Count > maxCount)
-                    it.RemoveRange(maxCount, it.Count - maxCount);
-            }).AsReadOnly();
+                if (it.Count <= maxCount)
+                    return it;
+                return it.RemoveRange(maxCount, it.Count - maxCount);
+            });
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(LogChartSeriesSources));
         }

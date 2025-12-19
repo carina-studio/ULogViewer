@@ -1,5 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -11,6 +11,6 @@ class EmptyLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSource
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new EmptyLogDataSource(this, options);
 	public override string Name => "Empty";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>().AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>().AsReadOnly();
+	public override ISet<string> RequiredSourceOptions => ImmutableHashSet<string>.Empty;
+	public override ISet<string> SupportedSourceOptions => ImmutableHashSet<string>.Empty;
 }

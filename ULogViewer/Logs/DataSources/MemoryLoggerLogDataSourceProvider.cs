@@ -1,6 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -11,6 +10,6 @@ class MemoryLoggerLogDataSourceProvider(IULogViewerApplication app) : BaseLogDat
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new MemoryLoggerLogDataSource(this);
 	public override string Name => "MemoryLogger";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>().AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>().AsReadOnly();
+	public override ISet<string> RequiredSourceOptions => ImmutableHashSet<string>.Empty;
+	public override ISet<string> SupportedSourceOptions => ImmutableHashSet<string>.Empty;
 }

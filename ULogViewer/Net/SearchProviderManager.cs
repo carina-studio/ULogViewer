@@ -1,8 +1,8 @@
-using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -21,8 +21,7 @@ class SearchProviderManager : BaseApplicationObject<IULogViewerApplication>, INo
     // Constructor.
     SearchProviderManager(IULogViewerApplication app) : base(app)
     {
-        this.Providers = ListExtensions.AsReadOnly(new SearchProvider[]
-        {
+        this.Providers = ImmutableList.Create<SearchProvider>(
             new AppleDeveloperSearchProvider(app),
             new AppleDeveloperForumsSearchProvider(app),
             new BaiduSearchProvider(app),
@@ -34,8 +33,8 @@ class SearchProviderManager : BaseApplicationObject<IULogViewerApplication>, INo
             new MicrosoftLearnSearchProvider(app),
             new StackExchangeSearchProvider(app),
             new StackOverflowSearchProvider(app),
-            new ZhihuSearchProvider(app),
-        });
+            new ZhihuSearchProvider(app)
+        );
         this.UpdateDefaultProvider(this.Settings.GetValueOrDefault(SettingKeys.DefaultSearchProvider), false);
         this.Settings.SettingChanged += (_, e) =>
         {

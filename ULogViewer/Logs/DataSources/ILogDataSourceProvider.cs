@@ -3,6 +3,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Cryptography;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
@@ -98,15 +99,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 	{
 		// Static fields.
 		static Regex? commandArgPattern;
-		static readonly IList<string> emptyCommands = Array.Empty<string>();
-		static readonly IDictionary<string, string> emptyEnvVars = DictionaryExtensions.AsReadOnly(new Dictionary<string, string>());
 		static volatile bool isOptionPropertyInfoMapReady;
 		static volatile IList<string> optionNames = Array.Empty<string>();
 		static readonly Dictionary<string, PropertyInfo> optionPropertyInfoMap = new();
 
 
 		// Fields.
-		IDictionary<string, string>? environmentVars;
+		ImmutableDictionary<string, string>? environmentVars;
 		IList<string>? setupCommands;
 		IList<string>? teardownCommands;
 
@@ -187,8 +186,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		public IDictionary<string, string> EnvironmentVariables
 		{
-			get => this.environmentVars ?? emptyEnvVars;
-			set => this.environmentVars = value.IsNotEmpty() ? DictionaryExtensions.AsReadOnly(new Dictionary<string, string>(value)) : null;
+			get => this.environmentVars ?? ImmutableDictionary<string, string>.Empty;
+			set => this.environmentVars = value.IsNotEmpty() ? ImmutableDictionary.CreateRange(value) : null;
 		}
 
 
@@ -376,14 +375,14 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(EnvironmentVariables):
 							if (jsonProperty.Value.ValueKind == JsonValueKind.Object)
 							{
-								var envVars = new Dictionary<string, string>();
+								var envVars = ImmutableDictionary.CreateBuilder<string, string>();
 								foreach (var jsonInnerProperty in jsonProperty.Value.EnumerateObject())
 								{
 									if (jsonInnerProperty.Value.ValueKind == JsonValueKind.String)
 										envVars[jsonInnerProperty.Name] = jsonInnerProperty.Value.GetString() ?? "";
 								}
 								if (envVars.IsNotEmpty())
-									options.environmentVars = DictionaryExtensions.AsReadOnly(envVars);
+									options.environmentVars = envVars.ToImmutable();
 							}
 							break;
 						case nameof(FileName):
@@ -433,10 +432,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(SetupCommands):
 							if (jsonProperty.Value.ValueKind == JsonValueKind.Array)
 							{
-								var commands = new List<string>();
+								var commands = ImmutableList.CreateBuilder<string>();
 								foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
 									commands.Add(jsonValue.GetString().AsNonNull());
-								options.setupCommands = commands.AsReadOnly();
+								options.setupCommands = commands.ToImmutable();
 							}
 							else
 								throw new JsonException($"JSON element of {nameof(SetupCommands)} is not an array.");
@@ -444,10 +443,10 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 						case nameof(TeardownCommands):
 							if (jsonProperty.Value.ValueKind == JsonValueKind.Array)
 							{
-								var commands = new List<string>();
+								var commands = ImmutableList.CreateBuilder<string>();
 								foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
 									commands.Add(jsonValue.GetString().AsNonNull());
-								options.teardownCommands = commands.AsReadOnly();
+								options.teardownCommands = commands.ToImmutable();
 							}
 							else
 								throw new JsonException($"JSON element of {nameof(TeardownCommands)} is not an array.");
@@ -626,8 +625,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		public IList<string> SetupCommands
 		{
-			get => this.setupCommands ?? emptyCommands;
-			set => this.setupCommands = value.IsNotEmpty() ? new List<string>(value).AsReadOnly() : emptyCommands;
+			get => this.setupCommands ?? ImmutableList<string>.Empty;
+			set => this.setupCommands = value.IsNotEmpty() ? ImmutableList.CreateRange(value) : null;
 		}
 
 
@@ -642,7 +641,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					return;
 				foreach (var propertyInfo in typeof(LogDataSourceOptions).GetProperties(BindingFlags.Instance | BindingFlags.Public))
 					optionPropertyInfoMap[propertyInfo.Name] = propertyInfo;
-				optionNames = ListExtensions.AsReadOnly(optionPropertyInfoMap.Keys.ToArray());
+				optionNames = ImmutableList.CreateRange(optionPropertyInfoMap.Keys);
 				isOptionPropertyInfoMapReady = true;
 			}
 		}
@@ -653,8 +652,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// </summary>
 		public IList<string> TeardownCommands
 		{
-			get => this.teardownCommands ?? emptyCommands;
-			set => this.teardownCommands = value.IsNotEmpty() ? new List<string>(value).AsReadOnly() : emptyCommands;
+			get => this.teardownCommands ?? ImmutableList<string>.Empty;
+			set => this.teardownCommands = value.IsNotEmpty() ? ImmutableList.CreateRange(value) : null;
 		}
 
 

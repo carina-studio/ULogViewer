@@ -1,12 +1,13 @@
-﻿using System;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.ULogViewer.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -197,7 +198,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	/// <summary>
 	/// Get all installed font families.
 	/// </summary>
-	public IList<FontFamilyInfo> InstalledFontFamilies { get; } = new List<FontFamilyInfo>().Also(it =>
+	public IList<FontFamilyInfo> InstalledFontFamilies { get; } = ImmutableList.CreateBuilder<FontFamilyInfo>().Also(it =>
 	{
 		// get installed fonts
 		foreach (var font in FontManager.Current.SystemFonts)
@@ -223,7 +224,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			else
 				it[index] = fontFamilyInfo;
 		}
-	}).AsReadOnly();
+	}).ToImmutable();
 
 
 	/// <summary>

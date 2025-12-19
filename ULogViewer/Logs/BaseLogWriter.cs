@@ -5,6 +5,7 @@ using CarinaStudio.Threading;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -118,7 +119,7 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 		{
 			this.VerifyAccess();
 			this.VerifyPreparing();
-			this.logs = value.IsNotEmpty() ? new List<Log>(value).AsReadOnly() : Array.Empty<Log>();
+			this.logs = value.IsNotEmpty() ? ImmutableList.CreateRange(value) : ImmutableList<Log>.Empty;
 			this.OnPropertyChanged(nameof(Logs));
 		}
 	}
@@ -136,7 +137,7 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 	protected virtual void OnDataOutputPropertyChanged(PropertyChangedEventArgs e)
 	{
 		if (e.PropertyName == nameof(ILogDataOutput.State) && this.state == LogWriterState.Starting)
-			this.StartWritingLogs();
+			_ = this.StartWritingLogs();
 	}
 
 
@@ -170,12 +171,12 @@ abstract class BaseLogWriter : BaseDisposable, ILogWriter
 			throw new InternalStateCorruptedException();
 
 		// start writing logs
-		this.StartWritingLogs();
+		_ = this.StartWritingLogs();
 	}
 
 
 	// Start writing logs.
-	async void StartWritingLogs()
+	async Task StartWritingLogs()
 	{
 		// check state
 		if (this.state != LogWriterState.Starting)

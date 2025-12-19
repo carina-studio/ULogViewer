@@ -1,5 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -11,12 +11,10 @@ class WindowsEventLogDataSourceProvider(IULogViewerApplication app) : BaseLogDat
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new WindowsEventLogDataSource(this, options);
 	public override string Name => "WindowsEventLogs";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-	{
-		nameof(LogDataSourceOptions.Category),
-	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-	{
-		nameof(LogDataSourceOptions.Category),
-	}.AsReadOnly();
+	public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
+		nameof(LogDataSourceOptions.Category)
+	);
+	public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
+		nameof(LogDataSourceOptions.Category)
+	);
 }

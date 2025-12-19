@@ -6,6 +6,7 @@ using CarinaStudio.ULogViewer.Logs.DataOutputs;
 using CarinaStudio.ULogViewer.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -67,7 +68,7 @@ class RawLogWriter : BaseLogWriter
 			this.VerifyPreparing();
 			if (this.logFormats.SequenceEqual(value))
 				return;
-			this.logFormats = ListExtensions.AsReadOnly(value.ToArray());
+			this.logFormats = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(LogFormats));
 		}
 	}

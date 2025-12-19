@@ -15,6 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using CarinaStudio.ULogViewer.Text;
+using System.Collections.Immutable;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
@@ -40,7 +41,6 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 
 
 	// Static fields.
-	static readonly DisplayableLogAnalysisResult[] emptyAnalysisResults = [];
 	static readonly Func<Log, IStringSource?>[] extraGetters = new Func<Log, IStringSource?>[Log.ExtraCapacity].Also(it =>
 	{
 		for (var i = it.Length - 1; i >= 0; --i)
@@ -57,7 +57,7 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 
 
 	// Fields.
-	IList<DisplayableLogAnalysisResult> analysisResults = emptyAnalysisResults;
+	ImmutableList<DisplayableLogAnalysisResult> analysisResults = ImmutableList<DisplayableLogAnalysisResult>.Empty;
 	readonly byte[] data;
 	
 	
@@ -129,7 +129,7 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 		var currentResultCount = this.analysisResults.Count;
 		if (currentResultCount == 0)
 		{
-			this.analysisResults = ListExtensions.AsReadOnly([ result ]);
+			this.analysisResults = ImmutableList.CreateRange([ result ]);
 			memorySizeDiff = Memory.EstimateArrayInstanceSize(IntPtr.Size, 1) + Memory.EstimateCollectionInstanceSize(IntPtr.Size, 0);
 		}
 		else
@@ -137,7 +137,7 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 			var newList = new DisplayableLogAnalysisResult[currentResultCount + 1];
 			this.analysisResults.CopyTo(newList, 0);
 			newList[currentResultCount] = result;
-			this.analysisResults = ListExtensions.AsReadOnly(newList);
+			this.analysisResults = ImmutableList.CreateRange(newList);
 			memorySizeDiff += IntPtr.Size;
 		}
 
@@ -1291,31 +1291,12 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 			{
 				if (currentResultCount == 1)
 				{
-					this.analysisResults = emptyAnalysisResults;
+					this.analysisResults = ImmutableList<DisplayableLogAnalysisResult>.Empty;
 					memorySizeDiff -= Memory.EstimateArrayInstanceSize(IntPtr.Size, 1) + Memory.EstimateCollectionInstanceSize(IntPtr.Size, 0);
 				}
 				else
 				{
-					var oldList = this.analysisResults;
-					var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-					if (i == 0)
-					{
-						for (var j = currentResultCount - 1; j > 0; --j)
-							newList[j - 1] = oldList[j];
-					}
-					else if (i == currentResultCount - 1)
-					{
-						for (var j = currentResultCount - 2; j >= 0; --j)
-							newList[j] = oldList[j];
-					}
-					else
-					{
-						for (var j = 0; j < i; ++j)
-							newList[j] = oldList[j];
-						for (var j = currentResultCount - 1; j > i; --j)
-							newList[j - 1] = oldList[j];
-					}
-					this.analysisResults = newList;
+					this.analysisResults = this.analysisResults.RemoveAt(i);
 					memorySizeDiff -= IntPtr.Size;
 				}
 				break;
@@ -1377,33 +1358,14 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 			{
 				if (currentResultCount == 1)
 				{
-					this.analysisResults = emptyAnalysisResults;
+					this.analysisResults = ImmutableList<DisplayableLogAnalysisResult>.Empty;
 					memorySizeDiff -= Memory.EstimateArrayInstanceSize(IntPtr.Size, 1) + Memory.EstimateCollectionInstanceSize(IntPtr.Size, 0);
 					currentResultCount = 0;
 					break;
 				}
 				else
 				{
-					var oldList = this.analysisResults;
-					var newList = new DisplayableLogAnalysisResult[currentResultCount - 1];
-					if (i == 0)
-					{
-						for (var j = currentResultCount - 1; j > 0; --j)
-							newList[j - 1] = oldList[j];
-					}
-					else if (i == currentResultCount - 1)
-					{
-						for (var j = currentResultCount - 2; j >= 0; --j)
-							newList[j] = oldList[j];
-					}
-					else
-					{
-						for (var j = 0; j < i; ++j)
-							newList[j] = oldList[j];
-						for (var j = currentResultCount - 1; j > i; --j)
-							newList[j - 1] = oldList[j];
-					}
-					this.analysisResults = newList;
+					this.analysisResults = this.analysisResults.RemoveAt(i);
 					memorySizeDiff -= IntPtr.Size;
 				}
 				--currentResultCount;

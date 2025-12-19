@@ -3,6 +3,7 @@ using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ class ScriptLogDataSourceProvider : BaseLogDataSourceProvider, IDisposable, ILog
 
 
     // Static fields.
-    static readonly ISet<string> EmptyStringSet = new HashSet<string>().AsReadOnly();
+    static readonly ISet<string> EmptyStringSet = ImmutableHashSet<string>.Empty;
 
 
     // Fields.

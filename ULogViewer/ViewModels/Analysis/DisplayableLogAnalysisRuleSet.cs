@@ -1,9 +1,9 @@
 using CarinaStudio.AppSuite.Data;
-using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.ViewModels.Analysis;
@@ -16,7 +16,7 @@ abstract class DisplayableLogAnalysisRuleSet<TRule> : BaseProfile<IULogViewerApp
     // Fields.
     LogProfileIcon icon = LogProfileIcon.Analysis;
     LogProfileIconColor iconColor = LogProfileIconColor.Default;
-    IList<TRule> rules = new TRule[0];
+    IList<TRule> rules = Array.Empty<TRule>();
 
 
     /// <summary>
@@ -114,7 +114,7 @@ abstract class DisplayableLogAnalysisRuleSet<TRule> : BaseProfile<IULogViewerApp
             this.VerifyBuiltIn();
             if (this.rules.SequenceEqual(value))
                 return;
-            this.rules = ListExtensions.AsReadOnly(value);
+            this.rules = ImmutableList.CreateRange(value);
             this.OnPropertyChanged(nameof(Rules));
         }
     }

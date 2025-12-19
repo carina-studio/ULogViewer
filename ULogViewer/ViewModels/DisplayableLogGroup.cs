@@ -14,6 +14,7 @@ using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -89,7 +90,7 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 
 	// Fields.
 	ProgressiveLogsRemovingToken? activeProgressiveLogsRemovingToken;
-	IList<Regex> activeInclusiveTextFilters = Array.Empty<Regex>();
+	ImmutableList<Regex> activeInclusiveTextFilters = ImmutableList<Regex>.Empty;
 	readonly Dictionary<DisplayableLogAnalysisResultType, IImage> analysisResultIndicatorIcons = new();
 	readonly Dictionary<string, IBrush> colorIndicatorBrushes = new();
 	Func<DisplayableLog, string>? colorIndicatorKeyGetter;
@@ -296,8 +297,8 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 			this.VerifyAccess();
 			this.VerifyDisposed();
 			this.activeInclusiveTextFilters = value.IsNullOrEmpty() 
-				? Array.Empty<Regex>() 
-				: new List<Regex>(value).AsReadOnly();
+				? ImmutableList<Regex>.Empty
+				: ImmutableList.CreateRange(value);
 			this.updateTextHighlightingDefSetAction.Schedule();
 		}
 	}
@@ -346,7 +347,7 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 				match = match.NextMatch();
 			}
 		}
-		this.LogExtraNumbers = ListExtensions.AsReadOnly(extraNumbers);
+		this.LogExtraNumbers = ImmutableList.CreateRange(extraNumbers);
 		this.LogExtraNumberCount = extraNumbers.Count;
 	}
 

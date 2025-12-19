@@ -1,6 +1,6 @@
-﻿using CarinaStudio.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -21,15 +21,13 @@ class SQLiteLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourc
 	// Implementations.
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new SQLiteLogDataSource(this, options);
 	public override string Name => "SQLite";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-	{
+	public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
 		nameof(LogDataSourceOptions.FileName),
-		nameof(LogDataSourceOptions.QueryString),
-	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-	{
+		nameof(LogDataSourceOptions.QueryString)
+	);
+	public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
 		nameof(LogDataSourceOptions.FileName),
 		nameof(LogDataSourceOptions.Password),
-		nameof(LogDataSourceOptions.QueryString),
-	}.AsReadOnly();
+		nameof(LogDataSourceOptions.QueryString)
+	);
 }

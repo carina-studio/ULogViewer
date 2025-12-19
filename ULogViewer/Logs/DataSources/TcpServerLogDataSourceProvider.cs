@@ -1,5 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -11,13 +11,11 @@ class TcpServerLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSo
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new TcpServerLogDataSource(this, options);
 	public override string Name => "TCP Server";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-	{
-		nameof(LogDataSourceOptions.IPEndPoint),
-	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-	{
+	public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
+		nameof(LogDataSourceOptions.IPEndPoint)
+	);
+	public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
 		nameof(LogDataSourceOptions.Encoding),
-		nameof(LogDataSourceOptions.IPEndPoint),
-	}.AsReadOnly();
+		nameof(LogDataSourceOptions.IPEndPoint)
+	);
 }

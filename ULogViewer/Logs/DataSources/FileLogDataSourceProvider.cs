@@ -1,5 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -11,15 +11,13 @@ class FileLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSourceP
 {
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new FileLogDataSource(this, options);
 	public override string Name => "File";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-	{
-		nameof(LogDataSourceOptions.FileName),
-	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-	{
+	public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
+		nameof(LogDataSourceOptions.FileName)
+	);
+	public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
 		nameof(LogDataSourceOptions.Encoding),
 		nameof(LogDataSourceOptions.FileName),
-		nameof(LogDataSourceOptions.FormatJsonData),
-		//nameof(LogDataSourceOptions.FormatXmlData),
-	}.AsReadOnly();
+		nameof(LogDataSourceOptions.FormatJsonData)
+		//nameof(LogDataSourceOptions.FormatXmlData)
+	);
 }

@@ -9,6 +9,7 @@ using CarinaStudio.ULogViewer.Text;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -518,7 +519,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				throw new InvalidOperationException($"Cannot change {nameof(LogPatterns)} when state is {this.state}.");
 			if (this.logPatterns.SequenceEqual(value))
 				return;
-			this.logPatterns = value.ToList().AsReadOnly();
+			this.logPatterns = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(LogPatterns));
 		}
 	}
@@ -2125,7 +2126,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timeSpanFormats.SequenceEqual(value))
 				return;
-			this.timeSpanFormats = ListExtensions.AsReadOnly(value.ToArray());
+			this.timeSpanFormats = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(TimeSpanFormats));
 		}
 	}
@@ -2179,7 +2180,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.VerifyDisposed();
 			if (this.timestampFormats.SequenceEqual(value))
 				return;
-			this.timestampFormats = ListExtensions.AsReadOnly(value.ToArray());
+			this.timestampFormats = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(TimestampFormats));
 		}
 	}

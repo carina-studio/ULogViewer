@@ -1,9 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.ViewModels
 {
@@ -18,7 +14,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <param name="logs">Logs to save.</param>
 		public LogsSavingOptions(IEnumerable<DisplayableLog> logs)
 		{
-			this.Logs = new List<DisplayableLog>(logs).AsReadOnly();
+			this.Logs = ImmutableList.CreateRange(logs);
 		}
 
 
@@ -31,7 +27,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 		/// <summary>
 		/// Check whether <see cref="FileName"/> has been set or not.
 		/// </summary>
-		public bool HasFileName { get => !string.IsNullOrWhiteSpace(this.FileName); }
+		public bool HasFileName => !string.IsNullOrWhiteSpace(this.FileName);
 
 
 		/// <summary>
@@ -46,14 +42,6 @@ namespace CarinaStudio.ULogViewer.ViewModels
 	/// </summary>
 	class JsonLogsSavingOptions : LogsSavingOptions
 	{
-		// Static fields.
-		static readonly IDictionary<string, string> EmptyLogPropertyMap = DictionaryExtensions.AsReadOnly(new Dictionary<string, string>());
-
-
-		// Fields.
-		IDictionary<string, string> logPropertyMap = EmptyLogPropertyMap;
-
-
 		/// <summary>
 		/// Initialize new <see cref="JsonLogsSavingOptions"/> instance.
 		/// </summary>
@@ -63,12 +51,12 @@ namespace CarinaStudio.ULogViewer.ViewModels
 
 
 		/// <summary>
-		/// Get or set map to convert name of property of <see cref="Log"/> to name of JSON property.
+		/// Get or set map to convert name of property of <see cref="Logs.Log"/> to name of JSON property.
 		/// </summary>
 		public IDictionary<string, string> LogPropertyMap
 		{
-			get => this.logPropertyMap;
-			set => this.logPropertyMap = DictionaryExtensions.AsReadOnly(new Dictionary<string, string>(value));
-		}
+			get;
+			set => field = ImmutableDictionary.CreateRange(value);
+		} = ImmutableDictionary<string, string>.Empty;
 	}
 }

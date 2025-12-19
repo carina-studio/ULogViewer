@@ -5,6 +5,7 @@ using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -39,9 +40,7 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
         {
             this.ByteSizeUnit = byteSizeUnit;
             this.ByteSizeVariableName = string.IsNullOrWhiteSpace(byteSizeVarName) ? null : byteSizeVarName;
-            this.Conditions = conditions is IList<DisplayableLogAnalysisCondition> list
-                ? ListExtensions.AsReadOnly(list)
-                : ListExtensions.AsReadOnly(conditions.ToArray());
+            this.Conditions = ImmutableList.CreateRange(conditions);
             this.DurationUnit = durationUnit;
             this.DurationVariableName = string.IsNullOrWhiteSpace(durationVarName) ? null : durationVarName;
             this.Level = level;
@@ -237,15 +236,15 @@ class KeyLogAnalysisRuleSet : DisplayableLogAnalysisRuleSet<KeyLogAnalysisRuleSe
                                     ? candLevel
                                     : Logs.LogLevel.Undefined;
                             var conditions = jsonValue.TryGetProperty(nameof(Rule.Conditions), out var conditionsProperty) && conditionsProperty.ValueKind == JsonValueKind.Array
-                                ? new List<DisplayableLogAnalysisCondition>().Also(it =>
+                                ? ImmutableList.CreateBuilder<DisplayableLogAnalysisCondition>().Also(it =>
                                 {
                                     foreach (var conditionElement in conditionsProperty.EnumerateArray())
                                     {
                                         if (DisplayableLogAnalysisCondition.TryLoad(conditionElement, out var condition))
                                             it.Add(condition);
                                     }
-                                }).AsReadOnly()
-                                : (IList<DisplayableLogAnalysisCondition>)new DisplayableLogAnalysisCondition[0];
+                                }).ToImmutable()
+                                : ImmutableList<DisplayableLogAnalysisCondition>.Empty;
                             var formattedMessage = jsonValue.GetProperty(nameof(Rule.Message)).GetString().AsNonNull();
                             var resultType = jsonValue.TryGetProperty(nameof(Rule.ResultType), out var resultTypeValue) 
                                 && resultTypeValue.ValueKind == JsonValueKind.String

@@ -1,7 +1,7 @@
 using CarinaStudio.AppSuite;
-using CarinaStudio.Collections;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
@@ -17,7 +17,7 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
     /// <param name="app">Application.</param>
     public AzureCliLogDataSourceProvider(IULogViewerApplication app) : base(app)
     { 
-        this.ExternalDependencies = ListExtensions.AsReadOnly(app.ExternalDependencies.Where(it => it.Id == "AzureCLI").ToArray());
+        this.ExternalDependencies = ImmutableList.CreateRange(app.ExternalDependencies.Where(it => it.Id == "AzureCLI"));
     }
 
 
@@ -47,15 +47,13 @@ class AzureCliLogDataSourceProvider : BaseLogDataSourceProvider
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-    {
-        nameof(LogDataSourceOptions.Command),
-    }.AsReadOnly(); 
+    public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
+        nameof(LogDataSourceOptions.Command)
+    );
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-    {
-        nameof(LogDataSourceOptions.Command),
-    }.AsReadOnly(); 
+    public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
+        nameof(LogDataSourceOptions.Command)
+    );
 }

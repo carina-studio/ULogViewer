@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -56,7 +57,7 @@ public class LogPattern
 	{
 		get
 		{
-			this.definedLogPropertyNames ??= new List<string>().Also(it =>
+			this.definedLogPropertyNames ??= ImmutableList.CreateBuilder<string>().Also(it =>
 			{
 				LogPropertyNamePattern ??= new(@"(^|[^\\])(\\\\)*\(\?\<(?<PropertyName>\w+)\>", RegexOptions.Compiled);
 				var propertyNameSet = new HashSet<string>();
@@ -67,7 +68,7 @@ public class LogPattern
 					match = match.NextMatch();
 				}
 				it.AddRange(propertyNameSet);
-			}).AsReadOnly();
+			}).ToImmutable();
 			return this.definedLogPropertyNames;
 		}
 	}

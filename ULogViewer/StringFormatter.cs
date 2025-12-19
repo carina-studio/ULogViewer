@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -39,7 +40,7 @@ class StringFormatter
         // convert format
         var formatStart = 0;
         var formatBuilder = new StringBuilder();
-        var parameterNames = new List<string>();
+        var parameterNames = ImmutableList.CreateBuilder<string>();
         var match = ParamRegex.Match(format);
         while (match.Success)
         {
@@ -77,7 +78,7 @@ class StringFormatter
         }
         formatBuilder.Append(format.Substring(formatStart));
         this.format = formatBuilder.ToString();
-        this.ParameterNames = parameterNames.AsReadOnly();
+        this.ParameterNames = parameterNames.ToImmutable();
     }
 
 

@@ -231,7 +231,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.VerifyDisposed();
             if (this.exclusiveTextRegexList.SequenceEqual(value))
                 return;
-            this.exclusiveTextRegexList = new List<Regex>(value).AsReadOnly();
+            this.exclusiveTextRegexList = ImmutableList.CreateRange(value);
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(ExclusiveTextRegexList));
         }
@@ -257,7 +257,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.VerifyDisposed();
             if (this.filteringLogProperties.SequenceEqual(value))
                 return;
-            this.filteringLogProperties = new List<DisplayableLogProperty>(value).AsReadOnly();
+            this.filteringLogProperties = ImmutableList.CreateRange(value);
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(FilteringLogProperties));
         }
@@ -295,7 +295,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
             this.VerifyDisposed();
             if (this.inclusiveTextRegexList.SequenceEqual(value))
                 return;
-            this.inclusiveTextRegexList = new List<Regex>(value).AsReadOnly();
+            this.inclusiveTextRegexList = ImmutableList.CreateRange(value);
             this.InvalidateProcessing();
             this.OnPropertyChanged(nameof(this.InclusiveTextRegexList));
         }

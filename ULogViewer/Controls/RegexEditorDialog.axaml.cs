@@ -10,6 +10,7 @@ using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -25,7 +26,7 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	/// <summary>
 	/// List of property names of log.
 	/// </summary>
-	public static readonly IList<string> LogPropertyNames = Log.PropertyNames.Where(it =>
+	public static readonly IList<string> LogPropertyNames = ImmutableList.CreateRange(Log.PropertyNames.Where(it =>
 	{
 		return it switch
 		{
@@ -33,22 +34,15 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 			nameof(Log.LineNumber) => false,
 			_ => true,
 		};
-	}).ToList().AsReadOnly();
+	}));
 
 
 	// Provider for assistance of phrase input.
-	class PhraseInputAssistanceProvider : IPhraseInputAssistanceProvider
+	class PhraseInputAssistanceProvider(RegexTextBox regexTextBox) : IPhraseInputAssistanceProvider
 	{
-		// Fields.
-		readonly RegexTextBox regexTextBox;
-		
-		// Constructor.
-		public PhraseInputAssistanceProvider(RegexTextBox regexTextBox) =>
-			this.regexTextBox = regexTextBox;
-		
 		/// <inheritdoc/>
 		public Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken) =>
-			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, this.regexTextBox.IgnoreCase, cancellationToken);
+			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, regexTextBox.IgnoreCase, cancellationToken);
 	}
 
 
@@ -86,7 +80,7 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 				else if (this.isPhraseInputAssistanceEnabled)
 					this.updatePhrasesDatabaseAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
 			});
-			it.GetObservable(RegexTextBox.IsTextValidProperty).Subscribe(_ =>
+			it.GetObservable(CarinaStudio.Controls.ObjectTextBox.IsTextValidProperty).Subscribe(_ =>
 			{
 				this.InvalidateInput();
 				this.testAction?.Schedule();

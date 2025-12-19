@@ -4,6 +4,7 @@ using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -35,9 +36,7 @@ class OperationCountingAnalysisRuleSet : DisplayableLogAnalysisRuleSet<Operation
         {
             if (interval.Ticks <= 0)
                 throw new ArgumentOutOfRangeException(nameof(interval));
-            this.Conditions = conditions is IList<DisplayableLogAnalysisCondition> list
-                ? ListExtensions.AsReadOnly(list)
-                : ListExtensions.AsReadOnly(conditions.ToArray());
+            this.Conditions = ImmutableList.CreateRange(conditions);
             this.Interval = interval;
             this.Level = level;
             this.OperationName = operationName;

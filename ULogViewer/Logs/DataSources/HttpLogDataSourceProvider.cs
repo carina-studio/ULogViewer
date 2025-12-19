@@ -1,5 +1,5 @@
-﻿using CarinaStudio.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -23,16 +23,14 @@ class HttpLogDataSourceProvider : BaseLogDataSourceProvider
 	// Implementations.
 	protected override ILogDataSource CreateSourceCore(LogDataSourceOptions options) => new HttpLogDataSource(this, options);
 	public override string Name => "Http";
-	public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-	{
-		nameof(LogDataSourceOptions.Uri),
-	}.AsReadOnly();
-	public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-	{
+	public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
+		nameof(LogDataSourceOptions.Uri)
+	);
+	public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
 		nameof(LogDataSourceOptions.FormatJsonData),
 		//nameof(LogDataSourceOptions.FormatXmlData),
 		nameof(LogDataSourceOptions.Password),
 		nameof(LogDataSourceOptions.Uri),
-		nameof(LogDataSourceOptions.UserName),
-	}.AsReadOnly();
+		nameof(LogDataSourceOptions.UserName)
+	);
 }

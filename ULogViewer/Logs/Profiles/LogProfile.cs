@@ -10,6 +10,7 @@ using CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -689,13 +690,13 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	// Load sources of log chart series from JSON.
 	void LoadLogChartSeriesSourcesFromJson(JsonElement logChartPropertiesElement)
 	{
-		var sources = new List<LogChartSeriesSource>();
+		var builder = ImmutableList.CreateBuilder<LogChartSeriesSource>();
 		foreach (var propertyElement in logChartPropertiesElement.EnumerateArray())
 		{
 			if (LogChartSeriesSource.TryLoad(propertyElement, out var source))
-				sources.Add(source);
+				builder.Add(source);
 		}
-		this.logChartSeriesSources = sources.AsReadOnly();
+		this.logChartSeriesSources = builder.ToImmutable();
 	}
 
 
@@ -727,7 +728,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	// Load log patterns from JSON.
 	void LoadLogPatternsFromJson(JsonElement logPatternsElement)
 	{
-		var logPatterns = new List<LogPattern>();
+		var builder = ImmutableList.CreateBuilder<LogPattern>();
 		var useCompiledRegex = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.UseCompiledRegex);
 		foreach (var logPatternElement in logPatternsElement.EnumerateArray())
 		{
@@ -745,16 +746,16 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 				isRepeatable = jsonProperty.GetBoolean();
 			if (logPatternElement.TryGetProperty(nameof(LogPattern.IsSkippable), out jsonProperty))
 				isSkippable = jsonProperty.GetBoolean();
-			logPatterns.Add(new LogPattern(regex, isRepeatable, isSkippable, description));
+			builder.Add(new LogPattern(regex, isRepeatable, isSkippable, description));
 		}
-		this.logPatterns = logPatterns.AsReadOnly();
+		this.logPatterns = builder.ToImmutable();
 	}
 
 
 	// Load visible log properties from JSON.
 	void LoadVisibleLogPropertiesFromJson(JsonElement visibleLogPropertiesElement)
 	{
-		var logProperties = new List<LogProperty>();
+		var builder = ImmutableList.CreateBuilder<LogProperty>();
 		foreach (var logPropertyElement in visibleLogPropertiesElement.EnumerateArray())
 		{
 			var name = logPropertyElement.GetProperty(nameof(LogProperty.Name)).GetString().AsNonNull();
@@ -789,9 +790,9 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			{
 				width = jsonElement.GetInt32();
 			}
-			logProperties.Add(new LogProperty(name, displayName, secondaryDisplayName, quantifier, foregroundColor, width));
+			builder.Add(new LogProperty(name, displayName, secondaryDisplayName, quantifier, foregroundColor, width));
 		}
-		this.visibleLogProperties = logProperties.AsReadOnly();
+		this.visibleLogProperties = builder.ToImmutable();
 	}
 	
 	
@@ -807,7 +808,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.VerifyBuiltIn();
 			if (this.logChartSeriesSources.SequenceEqual(value))
 				return;
-			this.logChartSeriesSources = new List<LogChartSeriesSource>(value).AsReadOnly();
+			this.logChartSeriesSources = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(LogChartSeriesSources));
 			this.Validate();
 		}
@@ -936,7 +937,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.VerifyBuiltIn();
 			if (this.logPatterns.SequenceEqual(value))
 				return;
-			this.logPatterns = new List<LogPattern>(value).AsReadOnly();
+			this.logPatterns = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(LogPatterns));
 			this.Validate();
 		}
@@ -1009,7 +1010,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.VerifyBuiltIn();
 			if (this.logWritingFormats.SequenceEqual(value))
 				return;
-			this.logWritingFormats = ListExtensions.AsReadOnly(value.ToArray());
+			this.logWritingFormats = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(LogWritingFormats));
 		}
 	}
@@ -1203,11 +1204,11 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 					this.IsDataUpgraded = true;
 					break;
 				case nameof(LogWritingFormats):
-					this.logWritingFormats = new List<string>().Also(list =>
+					this.logWritingFormats = ImmutableList.CreateBuilder<string>().Also(builder =>
 					{
 						foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
-							list.Add(jsonValue.GetString().AsNonNull());
-					}).AsReadOnly();
+							builder.Add(jsonValue.GetString().AsNonNull());
+					}).ToImmutable();
 					break;
 				case nameof(MaxLogReadingCount):
 					if (jsonProperty.Value.ValueKind == JsonValueKind.Number && jsonProperty.Value.TryGetInt32(out var count))
@@ -1250,11 +1251,11 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 					this.timeSpanFormatForWriting = jsonProperty.Value.GetString();
 					break;
 				case nameof(TimeSpanFormatsForReading):
-					this.timeSpanFormatsForReading = new List<string>().Also(list =>
+					this.timeSpanFormatsForReading = ImmutableList.CreateBuilder<string>().Also(builder =>
 					{
 						foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
-							list.Add(jsonValue.GetString().AsNonNull());
-					}).AsReadOnly();
+							builder.Add(jsonValue.GetString().AsNonNull());
+					}).ToImmutable();
 					break;
 				case nameof(TimestampCategoryGranularity):
 					if (Enum.TryParse<TimestampDisplayableLogCategoryGranularity>(jsonProperty.Value.GetString(), out var timestampCategoryGranularity))
@@ -1281,11 +1282,11 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 					this.timestampFormatForWriting = jsonProperty.Value.GetString();
 					break;
 				case nameof(TimestampFormatsForReading):
-					this.timestampFormatsForReading = new List<string>().Also(list =>
+					this.timestampFormatsForReading = ImmutableList.CreateBuilder<string>().Also(builder =>
 					{
 						foreach (var jsonValue in jsonProperty.Value.EnumerateArray())
-							list.Add(jsonValue.GetString().AsNonNull());
-					}).AsReadOnly();
+							builder.Add(jsonValue.GetString().AsNonNull());
+					}).ToImmutable();
 					break;
 				case nameof(VisibleLogProperties):
 					this.LoadVisibleLogPropertiesFromJson(jsonProperty.Value);
@@ -1716,7 +1717,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.VerifyBuiltIn();
 			if (this.timeSpanFormatsForReading.SequenceEqual(value))
 				return;
-			this.timeSpanFormatsForReading = ListExtensions.AsReadOnly(value.ToArray());
+			this.timeSpanFormatsForReading = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(TimeSpanFormatsForReading));
 		}
 	}
@@ -1842,7 +1843,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.VerifyBuiltIn();
 			if (this.timestampFormatsForReading.SequenceEqual(value))
 				return;
-			this.timestampFormatsForReading = ListExtensions.AsReadOnly(value.ToArray());
+			this.timestampFormatsForReading = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(TimestampFormatsForReading));
 		}
 	}
@@ -1919,7 +1920,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.VerifyBuiltIn();
 			if (this.visibleLogProperties.SequenceEqual(value))
 				return;
-			this.visibleLogProperties = new List<LogProperty>(value).AsReadOnly();
+			this.visibleLogProperties = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(VisibleLogProperties));
 			this.Validate();
 		}

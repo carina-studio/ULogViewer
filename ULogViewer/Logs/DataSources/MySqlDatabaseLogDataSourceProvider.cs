@@ -1,6 +1,6 @@
-using CarinaStudio.Collections;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -32,18 +32,16 @@ class MySqlDatabaseLogDataSourceProvider(IULogViewerApplication app) : BaseLogDa
 
 
     /// <inheritdoc/>
-    public override ISet<string> RequiredSourceOptions { get; } = new HashSet<string>
-    {
+    public override ISet<string> RequiredSourceOptions { get; } = ImmutableHashSet.Create(
         nameof(LogDataSourceOptions.ConnectionString),
-        nameof(LogDataSourceOptions.QueryString),
-    }.AsReadOnly();
+        nameof(LogDataSourceOptions.QueryString)
+    );
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-    {
+    public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
         nameof(LogDataSourceOptions.ConnectionString),
         nameof(LogDataSourceOptions.IsResourceOnAzure),
-        nameof(LogDataSourceOptions.QueryString),
-    }.AsReadOnly();
+        nameof(LogDataSourceOptions.QueryString)
+    );
 }

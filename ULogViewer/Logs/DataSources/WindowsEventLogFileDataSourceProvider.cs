@@ -1,5 +1,5 @@
-using CarinaStudio.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs.DataSources;
 
@@ -19,8 +19,7 @@ class WindowsEventLogFileDataSourceProvider(IULogViewerApplication app) : BaseLo
 
 
     /// <inheritdoc/>
-    public override ISet<string> SupportedSourceOptions { get; } = new HashSet<string>
-    {
-        nameof(LogDataSourceOptions.FileName),
-    }.AsReadOnly();
+    public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
+        nameof(LogDataSourceOptions.FileName)
+    );
 }

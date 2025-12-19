@@ -6,6 +6,7 @@ using System.Threading;
 using System.Reflection;
 using CarinaStudio.ULogViewer.Text;
 using System.Buffers.Binary;
+using System.Collections.Immutable;
 
 namespace CarinaStudio.ULogViewer.Logs;
 
@@ -96,7 +97,7 @@ unsafe class Log
 	static readonly IList<string> allPropertyNames = Enum.GetValues<PropertyName>().Let(propertyNames =>
 	{
 		var propertyCount = propertyNames.Length;
-		return new List<string>(propertyCount).Also(it =>
+		return ImmutableList.CreateBuilder<string>().Also(it =>
 		{
 			for (var i = 0; i < propertyCount; ++i)
 			{
@@ -106,7 +107,7 @@ unsafe class Log
 			}
 			it.Add(nameof(Level));
 			it.Add(nameof(ReadTime));
-		}).AsReadOnly();
+		}).ToImmutable();
 	});
 	static readonly long baseMemorySize = Memory.EstimateInstanceSize<Log>();
 	static readonly HashSet<string> dateTimePropertyNameSet = new();

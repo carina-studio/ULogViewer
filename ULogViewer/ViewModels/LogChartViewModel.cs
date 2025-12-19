@@ -548,7 +548,7 @@ class LogChartViewModel : SessionComponent
             var array = new DisplayableLogChartSeriesSource[it.Count];
             for (var i = it.Count - 1; i >= 0; --i)
                 array[i] = new DisplayableLogChartSeriesSource(this.Application, it[i]);
-            return ListExtensions.AsReadOnly(array);
+            return array;
         }) ?? Array.Empty<DisplayableLogChartSeriesSource>();
         this.visibleSeriesSources.Clear();
         this.seriesSources.Clear();
@@ -588,7 +588,7 @@ class LogChartViewModel : SessionComponent
                     var array = new DisplayableLogChartSeriesSource[it.Count];
                     for (var i = it.Count - 1; i >= 0; --i)
                         array[i] = new DisplayableLogChartSeriesSource(this.Application, it[i]);
-                    return ListExtensions.AsReadOnly(array);
+                    return array;
                 });
                 this.visibleSeriesSources.Clear();
                 this.seriesSources.Clear();
