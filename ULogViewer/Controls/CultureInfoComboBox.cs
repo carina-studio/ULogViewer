@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
@@ -24,7 +23,7 @@ public class CultureInfoComboBox : ComboBox
     
     
     // Static fields.
-    static readonly IValueConverter Converter = new FuncValueConverter<CultureInfo, string>(cultureInfo => $"{cultureInfo!.Name} ({cultureInfo.DisplayName})");
+    static readonly IValueConverter Converter = new FuncValueConverter<CultureInfo, string>(cultureInfo => cultureInfo is not null ? $"{cultureInfo.Name} ({cultureInfo.DisplayName})" : "");
     
     
     // Fields.
