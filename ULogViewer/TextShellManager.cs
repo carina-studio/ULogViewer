@@ -317,7 +317,7 @@ class TextShellManager : BaseApplicationObject<IULogViewerApplication>
 
             // update settings
             this.Logger.LogWarning("Set default shell to '{newShell}'", newShell);
-            settings.SetValue<TextShell>(SettingKeys.DefaultTextShell, newShell);
+            settings.SetValue(SettingKeys.DefaultTextShell, newShell);
         }
 
         this.Logger.LogTrace("Update installed text shells [end]");

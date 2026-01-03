@@ -133,7 +133,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		public bool SelectPreconditionForFiles
 		{
 			get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles);
-			set => this.Settings.SetValue<bool>(SettingKeys.SelectLogReadingPreconditionForFiles, value);
+			set => this.Settings.SetValue(SettingKeys.SelectLogReadingPreconditionForFiles, value);
 		}
     }
 }

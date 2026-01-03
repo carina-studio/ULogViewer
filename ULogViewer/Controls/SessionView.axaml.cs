@@ -835,7 +835,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								})
 							];
 						}
-						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored.Gradient");
 						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
 						{
 							it.Arg1 = fileName;
@@ -850,7 +850,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						return false;
 					mainWindow.AddNotification(new Notification().Also(it =>
 					{
-						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored.Gradient");
 						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
 						{
 							it.Arg1 = fileName;
@@ -1684,7 +1684,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!this.PersistentState.GetValueOrDefault(IsCopyLogTextTutorialShownKey)
 				&& this.attachedWindow != null)
 			{
-				this.PersistentState.SetValue<bool>(IsCopyLogTextTutorialShownKey, true);
+				this.PersistentState.SetValue(IsCopyLogTextTutorialShownKey, true);
 				_ = new MessageDialog
 				{
 					Icon = MessageDialogIcon.Information,
@@ -3159,7 +3159,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				notificationPresenter.AddNotification(new Notification
 				{
-					Icon = this.Application.FindResourceOrDefault<IImage>("Image/Icon.Debug.Colored"),
+					Icon = this.Application.FindResourceOrDefault<IImage>("Image/Icon.Debug.Colored.Gradient"),
 					Message = e.Message,
 					Timeout = null,
 				});
@@ -3169,7 +3169,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				_ = new MessageDialog
 				{
 					Buttons = MessageDialogButtons.OK,
-					CustomIcon = this.Application.FindResourceOrDefault<IImage>("Image/Icon.Debug.Colored"),
+					CustomIcon = this.Application.FindResourceOrDefault<IImage>("Image/Icon.Debug.Colored.Gradient"),
 					Icon = MessageDialogIcon.Custom,
 					Message = e.Message,
 				}.ShowDialog(this.attachedWindow);
@@ -3849,7 +3849,7 @@ namespace CarinaStudio.ULogViewer.Controls
 								})
 							];
 						}
-						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored.Gradient");
 						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
 						{
 							it.Arg1 = fileName;
@@ -3858,7 +3858,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					}
 					else
 					{
-						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+						it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored.Gradient");
 						it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
 						{
 							it.Arg1 = fileName;
@@ -5663,7 +5663,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (IAppSuiteApplication.CurrentOrNull?.IsFirstLaunch == false)
 				{
 					// no need to show this tutorial for upgrade case
-					persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
+					persistentState.SetValue(IsSelectingLogProfileToStartTutorialShownKey, true);
 				}
 				else
 				{
@@ -5673,10 +5673,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SelectLogProfileToStart"));
 						it.Dismissed += (_, _) => 
 						{
-							persistentState.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
+							persistentState.SetValue(IsSelectingLogProfileToStartTutorialShownKey, true);
 							this.ShowNextTutorial();
 						};
-						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 						it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 					}));
 				}
@@ -5695,10 +5695,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SwitchSidePanels"));
 					it.Dismissed += (_, _) => 
 					{
-						persistentState.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
+						persistentState.SetValue(IsSwitchingSidePanelsTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
 			}
@@ -5712,10 +5712,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.MarkedLogsPanel"));
 					it.Dismissed += (_, _) => 
 					{
-						persistentState.SetValue<bool>(IsMarkedLogsPanelTutorialShownKey, true);
+						persistentState.SetValue(IsMarkedLogsPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
 			}
@@ -5727,10 +5727,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.TimestampCategoriesPanel"));
 					it.Dismissed += (_, _) => 
 					{
-						persistentState.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
+						persistentState.SetValue(IsTimestampCategoriesPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
 			}
@@ -5742,10 +5742,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogAnalysisPanel"));
 					it.Dismissed += (_, _) => 
 					{
-						persistentState.SetValue<bool>(IsLogAnalysisPanelTutorialShownKey, true);
+						persistentState.SetValue(IsLogAnalysisPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
 			}
@@ -5757,10 +5757,10 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogFilesPanel"));
 					it.Dismissed += (_, _) => 
 					{
-						persistentState.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
+						persistentState.SetValue(IsLogFilesPanelTutorialShownKey, true);
 						this.ShowNextTutorial();
 					};
-					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
 			}
@@ -5844,12 +5844,12 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			this.PersistentState.Let(it =>
 			{
-				it.SetValue<bool>(IsLogAnalysisPanelTutorialShownKey, true);
-				it.SetValue<bool>(IsLogFilesPanelTutorialShownKey, true);
-				it.SetValue<bool>(IsMarkedLogsPanelTutorialShownKey, true);
-				it.SetValue<bool>(IsSelectingLogProfileToStartTutorialShownKey, true);
-				it.SetValue<bool>(IsSwitchingSidePanelsTutorialShownKey, true);
-				it.SetValue<bool>(IsTimestampCategoriesPanelTutorialShownKey, true);
+				it.SetValue(IsLogAnalysisPanelTutorialShownKey, true);
+				it.SetValue(IsLogFilesPanelTutorialShownKey, true);
+				it.SetValue(IsMarkedLogsPanelTutorialShownKey, true);
+				it.SetValue(IsSelectingLogProfileToStartTutorialShownKey, true);
+				it.SetValue(IsSwitchingSidePanelsTutorialShownKey, true);
+				it.SetValue(IsTimestampCategoriesPanelTutorialShownKey, true);
 			});
 			this.SetAndRaise(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
 		}

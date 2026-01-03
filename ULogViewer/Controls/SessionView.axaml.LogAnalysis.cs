@@ -701,7 +701,7 @@ partial class SessionView
             {
                 mainWindow.AddNotification(new Notification().Also(it =>
                 {
-                    it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+                    it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored.Gradient");
                     it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
                     {
                         it.Arg1 = fileName;
@@ -751,7 +751,7 @@ partial class SessionView
         {
             mainWindow.AddNotification(new Notification().Also(it =>
             {
-                it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored");
+                it.BindToResource(Notification.IconProperty, this, "Image/Icon.Error.Colored.Gradient");
                 it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
                 {
                     it.Arg1 = ruleSetName;
@@ -794,7 +794,7 @@ partial class SessionView
                         })
                     };
                 }
-                it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored");
+                it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored.Gradient");
                 it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
                 {
                     it.Arg1 = ruleSetName;
@@ -970,8 +970,8 @@ partial class SessionView
                                             it.Anchor = this.Get<Control>("showMarkedLogsOnlyButton");
                                             it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult"));
                                             it.Dismissed += (_, _) =>
-                                                this.PersistentState.SetValue<bool>(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
-                                            it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored");
+                                                this.PersistentState.SetValue(IsCancelShowingMarkedLogsForLogAnalysisResultTutorialShownKey, true);
+                                            it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored.Gradient");
                                             it.IsSkippingAllTutorialsAllowed = false;
                                         }));
                                     }
@@ -1006,8 +1006,8 @@ partial class SessionView
                                             it.Anchor = this.Get<Control>("showAllLogsTemporarilyButton");
                                             it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult"));
                                             it.Dismissed += (_, _) =>
-                                                this.PersistentState.SetValue<bool>(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
-                                            it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored");
+                                                this.PersistentState.SetValue(IsShowAllLogsForLogAnalysisResultTutorialShownKey, true);
+                                            it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored.Gradient");
                                             it.IsSkippingAllTutorialsAllowed = false;
                                         }));
                                     }
@@ -1536,8 +1536,8 @@ partial class SessionView
             it.Anchor = this.logAnalysisRuleSetsButton;
             it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.SelectLogAnalysisRuleSets"));
             it.Dismissed += (_, _) => 
-                this.PersistentState.SetValue<bool>(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
-            it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+                this.PersistentState.SetValue(IsSelectLogAnalysisRuleSetsTutorialShownKey, true);
+            it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
             it.IsSkippingAllTutorialsAllowed = false;
         }));
     }

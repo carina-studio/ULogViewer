@@ -835,12 +835,11 @@
 									<ColumnDefinition Width="{StaticResource GridLength/ToolBar.Button.DropDownIcon.Margin}"/>
 									<ColumnDefinition Width="Auto"/>
 								</Grid.ColumnDefinitions>
+								<Image Opacity="0" Source="{StaticResource Image/Icon.Information}"/> <!-- To reserve space -->
 								<Border Classes="Icon" 
 								        Background="{Binding #root.LogLevelFiltersIconBrush}"
 								        BorderBrush="{DynamicResource ComboBoxItemForeground}"
-								        BorderThickness="1"
-								        Height="{StaticResource Double/ToolBar.Button.Icon.Size}"
-								        Width="{StaticResource Double/ToolBar.Button.Icon.Size}"/>
+								        BorderThickness="1"/>
 								<Image Classes="ToolBar_DropDownButtonIcon" Grid.Column="2" Source="{StaticResource Image/Icon.DropDown.Down}"/>
 							</Grid>
 						</ToggleButton>

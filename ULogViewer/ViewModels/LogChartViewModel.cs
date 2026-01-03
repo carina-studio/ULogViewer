@@ -646,7 +646,7 @@ class LogChartViewModel : SessionComponent
             this.UpdateCanSetChartType();
         }
         else if (property == PanelSizeProperty)
-            this.PersistentState.SetValue<int>(LatestPanelSizeKey, (int)((double)newValue! + 0.5));
+            this.PersistentState.SetValue(LatestPanelSizeKey, (int)((double)newValue! + 0.5));
     }
 
 

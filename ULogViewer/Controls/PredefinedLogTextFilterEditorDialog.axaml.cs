@@ -216,7 +216,7 @@ class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewer
 			{
 				if (!this.PersistentState.GetValueOrDefault(IsGroupNameTutorialShownKey))
 				{
-					this.PersistentState.SetValue<bool>(IsGroupNameTutorialShownKey, true);
+					this.PersistentState.SetValue(IsGroupNameTutorialShownKey, true);
 					if (PredefinedLogTextFilterManager.Default.Groups.IsEmpty())
 					{
 						presenter.ShowTutorial(new Tutorial().Also(it =>
@@ -230,7 +230,7 @@ class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewer
 								if (!this.patternEditor.ShowTutorialIfNeeded(presenter, this.nameTextBox))
 									this.nameTextBox.Focus();
 							};
-							it.Icon = this.FindResourceOrDefault<IImage>("Image/Icon.Lightbulb.Colored");
+							it.Icon = this.FindResourceOrDefault<IImage>("Image/Icon.Lightbulb.Colored.Gradient");
 							it.IsSkippingAllTutorialsAllowed = false;
 						}));
 						return;

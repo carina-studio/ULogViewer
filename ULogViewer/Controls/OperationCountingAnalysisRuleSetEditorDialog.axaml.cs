@@ -245,7 +245,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							};
 							await messageDialog.ShowDialog(this);
 							if (messageDialog.DoNotAskOrShowAgain == true)
-								this.PersistentState.SetValue<bool>(DonotShowRestrictionsWithNonProVersionKey, true);
+								this.PersistentState.SetValue(DonotShowRestrictionsWithNonProVersionKey, true);
 						}
 					});
 				}

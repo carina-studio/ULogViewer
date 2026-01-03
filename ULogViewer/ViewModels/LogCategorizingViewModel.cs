@@ -212,7 +212,7 @@ class LogCategorizingViewModel : SessionComponent
         if (property == TimestampCategoriesPanelSizeProperty)
         {
             if (!this.isRestoringState)
-                this.PersistentState.SetValue<double>(latestTimestampCategoriesPanelSizeKey, (double)newValue!);
+                this.PersistentState.SetValue(latestTimestampCategoriesPanelSizeKey, (double)newValue!);
         }
     }
 

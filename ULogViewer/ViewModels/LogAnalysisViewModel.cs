@@ -922,7 +922,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         else if (property == PanelSizeProperty)
         {
             if (!this.isRestoringState)
-                this.PersistentState.SetValue<double>(latestPanelSizeKey, (double)newValue!);
+                this.PersistentState.SetValue(latestPanelSizeKey, (double)newValue!);
         }
     }
 

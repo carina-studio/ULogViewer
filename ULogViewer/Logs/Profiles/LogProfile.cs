@@ -499,7 +499,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 				return;
 			this.isPinned = value;
 			if (this.IsBuiltIn)
-				this.Application.PersistentState.SetValue<bool>(this.isPinnedSettingKey.AsNonNull(), value);
+				this.Application.PersistentState.SetValue(this.isPinnedSettingKey.AsNonNull(), value);
 			this.OnPropertyChanged(nameof(IsPinned));
 		}
 	}
@@ -1979,7 +1979,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 					}
 					return stream.ToArray();
 				}));
-				this.PersistentState.SetValue<string>(this.visibleLogPropertyWidthsSettingKey!, settingValue);
+				this.PersistentState.SetValue(this.visibleLogPropertyWidthsSettingKey!, settingValue);
 			}
 			this.visibleLogProperties = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(VisibleLogProperties));

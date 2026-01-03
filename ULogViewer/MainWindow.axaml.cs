@@ -216,7 +216,7 @@ namespace CarinaStudio.ULogViewer
 		public void AddNotification(Notification notification)
 		{
 			if (notification.Icon is null)
-				notification.BindToResource(Notification.IconProperty, this, "Image/Icon.Information.Colored");
+				notification.BindToResource(Notification.IconProperty, this, "Image/Icon.Information.Colored.Gradient");
 			this.notificationPresenter.AddNotification(notification);
 		}
 
@@ -1298,10 +1298,10 @@ namespace CarinaStudio.ULogViewer
 				it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile"));
 				it.Dismissed += (_, _) => 
 				{
-					this.PersistentState.SetValue<bool>(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
+					this.PersistentState.SetValue(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
 					dismissed?.Invoke();
 				};
-				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+				it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 				it.SkippingAllTutorialRequested += (_, _) => 
 				{
 					this.SkipAllTutorials();
@@ -1352,7 +1352,7 @@ namespace CarinaStudio.ULogViewer
 			// suggestion of using built-in font
 			if (!this.PersistentState.GetValueOrDefault(IsBuiltInFontSuggestionShownKey))
 			{
-				this.PersistentState.SetValue<bool>(IsBuiltInFontSuggestionShownKey, true);
+				this.PersistentState.SetValue(IsBuiltInFontSuggestionShownKey, true);
 				var logFontFamily = this.Settings.GetValueOrDefault(SettingKeys.LogFontFamily);
 				if (!this.Application.IsFirstLaunch 
 					&& logFontFamily != SettingKeys.LogFontFamily.DefaultValue
@@ -1387,7 +1387,7 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public void SkipAllTutorials()
 		{
-			this.PersistentState.SetValue<bool>(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
+			this.PersistentState.SetValue(IsUsingAddTabButtonToSelectLogProfileTutorialShownKey, true);
 		}
 
 

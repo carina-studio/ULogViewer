@@ -1357,7 +1357,7 @@ partial class SessionView
         };
         await dialog.ShowDialog(this.attachedWindow);
         if (dialog.DoNotAskOrShowAgain == true)
-            this.PersistentState.SetValue<bool>(PromptWhenMaxTotalLogSeriesValueCountReachedKey, false);
+            this.PersistentState.SetValue(PromptWhenMaxTotalLogSeriesValueCountReachedKey, false);
     }
 
 
@@ -1556,8 +1556,8 @@ partial class SessionView
             it.Anchor = this.logChart;
             it.Bind(Tutorial.DescriptionProperty, this.GetResourceObservable("String/SessionView.Tutorial.LogChart"));
             it.Dismissed += (_, _) => 
-                this.PersistentState.SetValue<bool>(IsLogChartTutorialShownKey, true);
-            it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored");
+                this.PersistentState.SetValue(IsLogChartTutorialShownKey, true);
+            it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
             it.IsSkippingAllTutorialsAllowed = false;
         }));
     }

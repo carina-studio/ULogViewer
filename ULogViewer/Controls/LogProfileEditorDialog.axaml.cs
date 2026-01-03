@@ -859,7 +859,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				};
 				await dialog.ShowDialog(this);
 				if (dialog.DoNotAskOrShowAgain == true)
-					this.Application.Configuration.SetValue<bool>(DoNotShowDialogForLogPatternsWithoutLogLevelMapKey, true);
+					this.Application.Configuration.SetValue(DoNotShowDialogForLogPatternsWithoutLogLevelMapKey, true);
 				await Task.Delay(300, CancellationToken.None); // [Workaround] Prevent crashing when closing two windows immediately on macOS.
 			}
 			
@@ -1281,7 +1281,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}.ShowDialog(this);
 				if (this.IsOpened)
 				{
-					this.PersistentState.SetValue<bool>(HasLearnAboutLogsReadingAndParsingHintShown, true);
+					this.PersistentState.SetValue(HasLearnAboutLogsReadingAndParsingHintShown, true);
 					if (result == MessageDialogResult.Yes)
 						Platform.OpenLink(Uris.LogsReadingAndParsingDocument);
 					else

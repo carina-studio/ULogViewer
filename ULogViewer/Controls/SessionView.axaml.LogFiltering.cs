@@ -223,8 +223,8 @@ partial class SessionView
             Message = this.Application.GetObservableString("SessionView.ConfirmShowingHelpButtonOnLogTextFilter"),
         };
         var result = await dialog.ShowDialog(this.attachedWindow);
-        this.Settings.SetValue<bool>(SettingKeys.ShowHelpButtonOnLogTextFilter, result == MessageDialogResult.Yes);
-        this.PersistentState.SetValue<bool>(IsShowingHelpButtonOnLogTextFilterConfirmedKey, dialog.DoNotAskOrShowAgain.GetValueOrDefault());
+        this.Settings.SetValue(SettingKeys.ShowHelpButtonOnLogTextFilter, result == MessageDialogResult.Yes);
+        this.PersistentState.SetValue(IsShowingHelpButtonOnLogTextFilterConfirmedKey, dialog.DoNotAskOrShowAgain.GetValueOrDefault());
     }
 
 
@@ -558,7 +558,7 @@ partial class SessionView
         {
             this.SetValue(ShowHelpButtonOnLogTextFilterProperty, false);
             this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
-            this.PersistentState.SetValue<bool>(IsShowingHelpButtonOnLogTextFilterConfirmedKey, true);
+            this.PersistentState.SetValue(IsShowingHelpButtonOnLogTextFilterConfirmedKey, true);
         }
     }
 

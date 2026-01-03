@@ -44,7 +44,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
 		this.Application.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
 		this.Settings.SettingChanged += this.OnSettingChanged;
-		this.GetObservable(ConfirmMaxLogReadingCountForLargeFilesProperty).Subscribe(confirm => this.Settings.SetValue<bool>(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles, confirm));
+		this.GetObservable(ConfirmMaxLogReadingCountForLargeFilesProperty).Subscribe(confirm => this.Settings.SetValue(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles, confirm));
 	}
 
 

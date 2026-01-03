@@ -91,7 +91,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
     public bool ConfirmMaxLogReadingCountForLargeFiles
     {
         get => this.Settings.GetValueOrDefault(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles);
-        set => this.Settings.SetValue<bool>(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles, value);
+        set => this.Settings.SetValue(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles, value);
     }
 
 
@@ -101,7 +101,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public int ContinuousLogReadingUpdateInterval
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ContinuousLogReadingUpdateInterval);
-		set => this.Settings.SetValue<int>(SettingKeys.ContinuousLogReadingUpdateInterval, value);
+		set => this.Settings.SetValue(SettingKeys.ContinuousLogReadingUpdateInterval, value);
 	}
 
 
@@ -111,7 +111,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public TextShell DefaultTextShell
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.DefaultTextShell);
-		set => this.Settings.SetValue<TextShell>(SettingKeys.DefaultTextShell, value);
+		set => this.Settings.SetValue(SettingKeys.DefaultTextShell, value);
 	}
 
 
@@ -139,7 +139,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool EnableLogTextFilterPhraseInputAssistance
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.EnableLogTextFilterPhraseInputAssistance);
-		set => this.Settings.SetValue<bool>(SettingKeys.EnableLogTextFilterPhraseInputAssistance, value);
+		set => this.Settings.SetValue(SettingKeys.EnableLogTextFilterPhraseInputAssistance, value);
 	}
 
 
@@ -149,7 +149,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool EnableScrollingToLatestLogAfterReloadingLogs
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs);
-		set => this.Settings.SetValue<bool>(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs, value);
+		set => this.Settings.SetValue(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs, value);
 	}
 
 
@@ -159,7 +159,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
     public long FileSizeInMBToConfirmMaxLogReadingCount
     {
         get => this.Settings.GetValueOrDefault(SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount);
-        set => this.Settings.SetValue<long>(SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount, Math.Max(1, value));
+        set => this.Settings.SetValue(SettingKeys.FileSizeInMBToConfirmMaxLogReadingCount, Math.Max(1, value));
     }
 
 
@@ -169,7 +169,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool IgnoreCaseOfLogTextFilter
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter);
-		set => this.Settings.SetValue<bool>(SettingKeys.IgnoreCaseOfLogTextFilter, value);
+		set => this.Settings.SetValue(SettingKeys.IgnoreCaseOfLogTextFilter, value);
 	}
 
 
@@ -190,7 +190,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			if (value is null || ReferenceEquals(value, LogProfileManager.Default.EmptyProfile))
 				this.Settings.ResetValue(SettingKeys.InitialLogProfile);
 			else
-				this.Settings.SetValue<string>(SettingKeys.InitialLogProfile, value.Id);
+				this.Settings.SetValue(SettingKeys.InitialLogProfile, value.Id);
 		}
 	}
 
@@ -244,7 +244,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			if (value.Name == SettingKeys.DefaultLogFontFamily)
 				this.Settings.ResetValue(SettingKeys.LogFontFamily);
 			else
-				this.Settings.SetValue<string>(SettingKeys.LogFontFamily, value.Name);
+				this.Settings.SetValue(SettingKeys.LogFontFamily, value.Name);
 		}
 	}
 
@@ -255,7 +255,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public int LogFontSize
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.LogFontSize);
-		set => this.Settings.SetValue<int>(SettingKeys.LogFontSize, value);
+		set => this.Settings.SetValue(SettingKeys.LogFontSize, value);
 	}
 
 
@@ -271,7 +271,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public LogSeparatorType LogSeparators
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.LogSeparators);
-		set => this.Settings.SetValue<LogSeparatorType>(SettingKeys.LogSeparators, value);
+		set => this.Settings.SetValue(SettingKeys.LogSeparators, value);
 	}
 
 
@@ -281,7 +281,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public int MaxContinuousLogCount
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.MaxContinuousLogCount);
-		set => this.Settings.SetValue<int>(SettingKeys.MaxContinuousLogCount, value);
+		set => this.Settings.SetValue(SettingKeys.MaxContinuousLogCount, value);
 	}
 
 
@@ -292,7 +292,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public int MaxDisplayLineCountForEachLog
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.MaxDisplayLineCountForEachLog);
-		set => this.Settings.SetValue<int>(SettingKeys.MaxDisplayLineCountForEachLog, value);
+		set => this.Settings.SetValue(SettingKeys.MaxDisplayLineCountForEachLog, value);
 	}
 
 
@@ -308,7 +308,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public MemoryUsagePolicy MemoryUsagePolicy
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy);
-		set => this.Settings.SetValue<MemoryUsagePolicy>(SettingKeys.MemoryUsagePolicy, value);
+		set => this.Settings.SetValue(SettingKeys.MemoryUsagePolicy, value);
 	}
 	
 	
@@ -463,7 +463,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			if (value.Name == SettingKeys.DefaultPatternFontFamily)
 				this.Settings.ResetValue(SettingKeys.PatternFontFamily);
 			else
-				this.Settings.SetValue<string>(SettingKeys.PatternFontFamily, value.Name);
+				this.Settings.SetValue(SettingKeys.PatternFontFamily, value.Name);
 		}
 	}
 
@@ -480,7 +480,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 				value = SettingKeys.MinPhysicalMemoryUsagePercentageToStopReadingLogs;
 			else if (value > SettingKeys.MaxPhysicalMemoryUsagePercentageToStopReadingLogs)
 				value = SettingKeys.MaxPhysicalMemoryUsagePercentageToStopReadingLogs;
-			this.Settings.SetValue<long>(SettingKeys.PhysicalMemoryUsagePercentageToStopReadingLogs, value);
+			this.Settings.SetValue(SettingKeys.PhysicalMemoryUsagePercentageToStopReadingLogs, value);
 		}
 	}
 	
@@ -497,7 +497,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool ResetLogAnalysisRuleSetsAfterSettingLogProfile
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile);
-		set => this.Settings.SetValue<bool>(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile, value);
+		set => this.Settings.SetValue(SettingKeys.ResetLogAnalysisRuleSetsAfterSettingLogProfile, value);
 	}
 
 
@@ -536,7 +536,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			if (value.Name == SettingKeys.DefaultScriptEditorFontFamily)
 				this.Settings.ResetValue(SettingKeys.ScriptEditorFontFamily);
 			else
-				this.Settings.SetValue<string>(SettingKeys.ScriptEditorFontFamily, value.Name);
+				this.Settings.SetValue(SettingKeys.ScriptEditorFontFamily, value.Name);
 		}
 	}
 
@@ -547,7 +547,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public int ScriptEditorFontSize
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ScriptEditorFontSize);
-		set => this.Settings.SetValue<int>(SettingKeys.ScriptEditorFontSize, value);
+		set => this.Settings.SetValue(SettingKeys.ScriptEditorFontSize, value);
 	}
 	
 	
@@ -557,7 +557,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectCommandWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectCommandWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectCommandWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectCommandWhenNeeded, value);
 	}
 
 
@@ -567,7 +567,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectIPEndPointWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectIPEndPointWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectIPEndPointWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectIPEndPointWhenNeeded, value);
 	}
 
 
@@ -577,7 +577,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectLogFilesWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogFilesWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectLogFilesWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectLogFilesWhenNeeded, value);
 	}
 
 
@@ -587,7 +587,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectLogProfileForNewSession
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectLogProfileForNewSession, value);
+		set => this.Settings.SetValue(SettingKeys.SelectLogProfileForNewSession, value);
 	}
 
 
@@ -597,7 +597,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectLogReadingPreconditionForFiles
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogReadingPreconditionForFiles);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectLogReadingPreconditionForFiles, value);
+		set => this.Settings.SetValue(SettingKeys.SelectLogReadingPreconditionForFiles, value);
 	}
 	
 	
@@ -607,7 +607,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectProcessIdWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectProcessIdWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectProcessIdWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectProcessIdWhenNeeded, value);
 	}
 	
 	
@@ -617,7 +617,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectProcessNameWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectProcessNameWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectProcessNameWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectProcessNameWhenNeeded, value);
 	}
 
 
@@ -627,7 +627,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectUriWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectUriWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectUriWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectUriWhenNeeded, value);
 	}
 
 
@@ -637,7 +637,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SelectWorkingDirectoryWhenNeeded
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
-		set => this.Settings.SetValue<bool>(SettingKeys.SelectWorkingDirectoryWhenNeeded, value);
+		set => this.Settings.SetValue(SettingKeys.SelectWorkingDirectoryWhenNeeded, value);
 	}
 
 
@@ -647,7 +647,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool ShowHelpButtonOnLogTextFilter
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ShowHelpButtonOnLogTextFilter);
-		set => this.Settings.SetValue<bool>(SettingKeys.ShowHelpButtonOnLogTextFilter, value);
+		set => this.Settings.SetValue(SettingKeys.ShowHelpButtonOnLogTextFilter, value);
 	}
 	
 	
@@ -657,7 +657,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool ShowLogChartPanelIfDefined
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined);
-		set => this.Settings.SetValue<bool>(SettingKeys.ShowLogChartPanelIfDefined, value);
+		set => this.Settings.SetValue(SettingKeys.ShowLogChartPanelIfDefined, value);
 	}
 
 
@@ -667,7 +667,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool ShowProcessInfo
 	{
 		get => this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo);
-		set => this.Settings.SetValue<bool>(AppSuite.SettingKeys.ShowProcessInfo, value);
+		set => this.Settings.SetValue(AppSuite.SettingKeys.ShowProcessInfo, value);
 	}
 	
 	
@@ -677,7 +677,7 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public bool SwitchToMarkedLogsPanelAfterMarkingLogs
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs);
-		set => this.Settings.SetValue<bool>(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs, value);
+		set => this.Settings.SetValue(SettingKeys.SwitchToMarkedLogsPanelAfterMarkingLogs, value);
 	}
 
 
@@ -687,6 +687,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	public int UpdateLogFilterDelay
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.UpdateLogFilterDelay);
-		set => this.Settings.SetValue<int>(SettingKeys.UpdateLogFilterDelay, value);
+		set => this.Settings.SetValue(SettingKeys.UpdateLogFilterDelay, value);
 	}
 }

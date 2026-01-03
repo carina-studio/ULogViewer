@@ -1475,7 +1475,7 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		if (this.IsDisposed)
 			return;
-		this.PersistentState.SetValue<bool>(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProperty)
+		this.PersistentState.SetValue(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProperty)
 		                                                           && !this.GetValue(IsMarkedLogsPanelVisibleProperty)
 		                                                           && !this.LogCategorizing.IsTimestampCategoriesPanelVisible
 		                                                           && !this.LogAnalysis.IsPanelVisible);
@@ -3758,7 +3758,7 @@ class Session : ViewModel<IULogViewerApplication>
 		else if (property == LogFilesPanelSizeProperty)
 		{
 			if (!this.isRestoringState)
-				this.PersistentState.SetValue<double>(latestLogFilesPanelSizeKey, (double)newValue.AsNonNull());
+				this.PersistentState.SetValue(latestLogFilesPanelSizeKey, (double)newValue.AsNonNull());
 		}
 		else if (property == LogsDurationProperty)
 			this.SetValue(HasLogsDurationProperty, newValue is not null);
@@ -3780,7 +3780,7 @@ class Session : ViewModel<IULogViewerApplication>
 		else if (property == MarkedLogsPanelSizeProperty)
 		{
 			if (!this.isRestoringState)
-				this.PersistentState.SetValue<double>(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
+				this.PersistentState.SetValue(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
 		}
 		else if (property == MaxLogFileCountProperty)
 			this.UpdateCanAddLogFile();

@@ -208,7 +208,7 @@ namespace CarinaStudio.ULogViewer
 		// Program entry.
 		[STAThread]
 		static void Main(string[] args) => 
-			BuildApplicationAndStart<App>(args);
+			BuildApplicationAndStart<App>(args, argsParser: ParseArguments);
 
 
 		// Create main window.
@@ -422,23 +422,6 @@ namespace CarinaStudio.ULogViewer
 			// show main window
 			_ = this.ShowMainWindowAsync();
 		}
-
-
-		// Parse arguments.
-        protected override int OnParseArguments(string[] args, int index, IDictionary<string, object> launchOptions)
-        {
-			switch (args[index])
-			{
-				case "-profile":
-					if (index < args.Length - 1)
-						launchOptions[InitialLogProfileKey] = args[++index];
-					else
-						this.Logger.LogError("ID of initial log profile is not specified");
-					return ++index;
-				default:
-					return base.OnParseArguments(args, index, launchOptions);
-			}
-        }
 
 
         /// <inheritdoc/>
@@ -666,7 +649,7 @@ namespace CarinaStudio.ULogViewer
 				{
 					settings.ResetValue(LegacyCultureSettingKey);
 					if (Enum.TryParse<ApplicationCulture>(oldValue, out var culture))
-						settings.SetValue<ApplicationCulture>(AppSuite.SettingKeys.Culture, culture);
+						settings.SetValue(AppSuite.SettingKeys.Culture, culture);
 				});
 			}
 
@@ -677,31 +660,31 @@ namespace CarinaStudio.ULogViewer
 				{
 					settings.ResetValue(LegacyThemeModeSettingKey);
 					if (Enum.TryParse<ThemeMode>(oldValue, out var themeMode))
-						settings.SetValue<ThemeMode>(AppSuite.SettingKeys.ThemeMode, themeMode);
+						settings.SetValue(AppSuite.SettingKeys.ThemeMode, themeMode);
 				});
 			}
 			if (oldVersion < 3)
 			{
 				if (Platform.IsMacOS && settings.GetValueOrDefault(AppSuite.SettingKeys.ThemeMode) == ThemeMode.Light)
-					settings.SetValue<ThemeMode>(AppSuite.SettingKeys.ThemeMode, ThemeMode.System);
+					settings.SetValue(AppSuite.SettingKeys.ThemeMode, ThemeMode.System);
 			}
 
 			// upgrade memory usage policy
 			if (oldVersion < 4)
 			{
 				if (settings.GetValueOrDefault(LegacySaveMemoryAggressivelySettingKey))
-					settings.SetValue<MemoryUsagePolicy>(SettingKeys.MemoryUsagePolicy, MemoryUsagePolicy.LessMemoryUsage);
+					settings.SetValue(SettingKeys.MemoryUsagePolicy, MemoryUsagePolicy.LessMemoryUsage);
 			}
 			
 			// determine whether tutorials are needed to be shown or not
 			if (oldVersion == 4)
-				this.PersistentState.SetValue<bool>(PredefinedLogTextFilterEditorDialog.IsGroupNameTutorialShownKey, false);
+				this.PersistentState.SetValue(PredefinedLogTextFilterEditorDialog.IsGroupNameTutorialShownKey, false);
 			
 			// log property separators
 			if (oldVersion == 5)
 			{
 				if (settings.GetValueOrDefault(LegacyShowLogPropertySeparators))
-					settings.SetValue<LogSeparatorType>(SettingKeys.LogSeparators, LogSeparatorType.Vertical);
+					settings.SetValue(SettingKeys.LogSeparators, LogSeparatorType.Vertical);
 			}
         }
         
@@ -726,6 +709,25 @@ namespace CarinaStudio.ULogViewer
 					Uris.PreviewAppPackageManifest,
 					Uris.AppPackageManifest,
 				];
+		
+		
+		// Parse arguments.
+		static int ParseArguments(string[] args, int index, IDictionary<string, object> launchOptions)
+		{
+			switch (args[index])
+			{
+				case "-profile":
+					if (index < args.Length - 1)
+					{
+						launchOptions[InitialLogProfileKey] = args[++index];
+						return 2;
+					}
+					LogToConsole("ID of initial log profile is not specified");
+					return 1;
+				default:
+					return 0;
+			}
+		}
 
 
 		/// <inheritdoc/>

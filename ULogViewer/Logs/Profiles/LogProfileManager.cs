@@ -328,7 +328,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
             this.PersistentState.ResetValue(recentlyUsedProfilesKey);
         else
         {
-            this.PersistentState.SetValue<string>(recentlyUsedProfilesKey, new MemoryStream().Use(stream =>
+            this.PersistentState.SetValue(recentlyUsedProfilesKey, new MemoryStream().Use(stream =>
             {
                 using (var jsonWriter = new Utf8JsonWriter(stream))
                 {
