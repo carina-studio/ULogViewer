@@ -6,7 +6,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.Windows.Input;

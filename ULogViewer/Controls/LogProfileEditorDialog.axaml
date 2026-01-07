@@ -106,14 +106,14 @@
 							<StackPanel>
 						
 								<!-- Name -->
-								<asControls:DialogItem Name="nameItem">
+								<asControls:DialogItem Name="nameItem" ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Name}"/>
 									<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.Required}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Description -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.Description}"/>
 									<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" MaxLength="1024" Watermark="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItem>
@@ -222,7 +222,7 @@
 
 								<!-- Allow multiple files -->
 								<StackPanel Name="allowMultipleFilesPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
-									<asControls:DialogItem>
+									<asControls:DialogItem ItemSize="Small">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.AllowMultipleFiles}"/>
 										<ToggleSwitch Name="allowMultipleFilesSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 									</asControls:DialogItem>
@@ -240,7 +240,7 @@
 
 								<!-- Is administrator needed -->
 								<StackPanel Name="isAdminNeededPanel" HorizontalAlignment="Stretch" Orientation="Vertical">
-									<asControls:DialogItem>
+									<asControls:DialogItem ItemSize="Small">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.IsAdministratorNeeded}"/>
 										<ToggleSwitch Name="adminNeededSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 									</asControls:DialogItem>
@@ -268,7 +268,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Restart reading delay -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.RestartReadingDelay}"/>
 									<abControls:IntegerTextBox Name="restartReadingDelayTextBox" Classes="Dialog_Item_TextBox" IsEnabled="{Binding #continuousReadingSwitch.IsChecked}" IsNullValueAllowed="False" Maximum="3600000" Minimum="0"/>
 								</asControls:DialogItem>
@@ -464,7 +464,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for reading -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatsForReading}"/>
 									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#timestampFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItem>
@@ -527,7 +527,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for reading -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatsForReading}"/>
 									<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#timeSpanFormatsForReadingListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
 								</asControls:DialogItem>
@@ -639,7 +639,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for displaying -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForDisplaying}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.DateTimeFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
@@ -651,7 +651,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for displaying -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForDisplaying}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.TimeSpanFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
@@ -804,7 +804,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Timestamp format for writing -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimestampFormatForWriting}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.DateTimeFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">
@@ -823,7 +823,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Time span format for writing -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<WrapPanel VerticalAlignment="Center">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogProfileEditorDialog.TimeSpanFormatForWriting}"/>
 										<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.TimeSpanFormatReference}" ToolTip.Tip="{DynamicResource String/LogProfileEditorDialog.FormatDescription}">

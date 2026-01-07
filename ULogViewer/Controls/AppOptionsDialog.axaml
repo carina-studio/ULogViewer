@@ -146,9 +146,21 @@
 									</asControls:DialogItem>
 									<Separator Classes="Dialog_Item_Separator"/>
 								</StackPanel>
+								
+								<!-- Apply system text scale factor -->
+								<StackPanel IsVisible="{Binding IsApplyingSystemTextScaleFactorSupported}">
+									<asControls:DialogItem>
+										<StackPanel Classes="Dialog_Item_Text_Container">
+											<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ApplicationOptions.ApplySystemTextScaleFactor}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource ApplicationOptions.ApplySystemTextScaleFactor.Description}"/>
+										</StackPanel>
+										<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding ApplySystemTextScaleFactor, Mode=TwoWay}"/>
+									</asControls:DialogItem>
+									<Separator Classes="Dialog_Item_Separator"/>
+								</StackPanel>
 
 								<!-- Log font -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.LogFont}"/>
 								</asControls:DialogItem>
 								<Line Classes="Dialog_Item_Separator_Inner"/>
@@ -268,70 +280,70 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Select log profile for new session -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectLogProfileForNewSession}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Select files when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectLogFilesWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectLogFilesWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Select command when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectCommandWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectCommandWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Select IP endpoint when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectIPEndPointWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectIPEndPointWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Set URI when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectUriWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectUriWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Select working directory when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectWorkingDirectoryWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectWorkingDirectoryWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Select PID when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectProcessIdWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectProcessIdWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Select process name when needed -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectProcessNameWhenNeeded}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectProcessNameWhenNeeded, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Select reading precondition for files -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SelectLogReadingPreconditionForFiles, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 								
 								<!-- Switch to marked logs panel -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding SwitchToMarkedLogsPanelAfterMarkingLogs, Mode=TwoWay}"/>
 								</asControls:DialogItem>
@@ -348,14 +360,14 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Max log count -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.MaxContinuousLogCount}"/>
 									<abControls:IntegerTextBox Name="maxContinuousLogCountTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="False" Maximum="10000000" Minimum="10000" Value="{Binding MaxContinuousLogCount, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Update interval -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.ContinuousLogReadingUpdateInterval}"/>
 									<abControls:IntegerTextBox Name="continuousReadingUpdateIntervalTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="False" Maximum="1000" Minimum="50" Value="{Binding ContinuousLogReadingUpdateInterval, Mode=TwoWay}"/>
 								</asControls:DialogItem>
@@ -374,21 +386,21 @@
 							<StackPanel>
 
 								<!-- Ignore case -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.IgnoreCaseOfLogTextFilter}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding IgnoreCaseOfLogTextFilter, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Show help button -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.ShowHelpButtonOnLogTextFilter}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding ShowHelpButtonOnLogTextFilter, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Log filter update delay -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.UpdateLogFilterDelay}"/>
 									<abControls:IntegerTextBox Name="updateLogFilterDelayTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="False" Maximum="1500" Minimum="300" Value="{Binding UpdateLogFilterDelay, Mode=TwoWay}"/>
 								</asControls:DialogItem>
@@ -420,7 +432,7 @@
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Show process info -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.ShowProcessInfo}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding ShowProcessInfo, Mode=TwoWay}"/>
 								</asControls:DialogItem>
@@ -444,14 +456,14 @@
 								<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}"/>
 
 								<!-- Notify application update -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ApplicationOptions.NotifyApplicationUpdate}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding NotifyApplicationUpdate, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator Classes="Dialog_Item_Separator"/>
 
 								<!-- Accept non-stable update -->
-								<asControls:DialogItem>
+								<asControls:DialogItem ItemSize="Small">
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ApplicationOptions.AcceptNonStableApplicationUpdate}"/>
 									<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}"/>
 								</asControls:DialogItem>

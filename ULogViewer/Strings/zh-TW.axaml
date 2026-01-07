@@ -471,6 +471,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">讀取時格式化 XML 資料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">包含標準錯誤輸出 (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP 位址</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Address">IPv4/IPv6 位址</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Port">連接埠</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">這是 Azure 上的資源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">密碼</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.ProcessId">處理程序識別碼 (PID)</sys:String>

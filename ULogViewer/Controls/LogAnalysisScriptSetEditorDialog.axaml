@@ -6,6 +6,7 @@
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogAnalysisScriptSetEditorDialog"
 		Name="window"
@@ -16,7 +17,7 @@
         MinHeight="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.MinHeight}"
         MinWidth="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.MinWidth}"
 		SizeToContent="Manual"
-        Title="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Title}"
+        Title="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.Title}"
         Width="{DynamicResource Double/LogAnalysisScriptSetEditorDialog.Width}"
 		WindowStartupLocation="Manual">
 
@@ -30,7 +31,7 @@
 					<Separator Classes="Dialog_Separator_Small"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.ApplyCommand}" Content="{DynamicResource String/Common.Apply}" IsVisible="{Binding !#window.IsNewScriptSet}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #window.ApplyCommand}" Content="{asXaml:StringResource Common.Apply}" IsVisible="{Binding !#window.IsNewScriptSet}"/>
 					<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditingCommand}" Content="{Binding #window.OKButtonText}"/>
 					<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 				</StackPanel>
@@ -49,22 +50,22 @@
 						<StackPanel IsVisible="{Binding !#window.IsEmbeddedScriptSet}">
 							
 							<!-- Name -->
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Name}"/>
-								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.Name}"/>
+								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Icon -->
 							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.Icon}"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.Icon}"/>
 								<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Icon color -->
 							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IconColor}"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.IconColor}"/>
 								<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -74,8 +75,8 @@
 						<!-- Contextual-based -->
 						<asControls:DialogItem>
 							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description}"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.IsContextualBased}"/>
+								<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.IsContextualBased.Description}"/>
 							</StackPanel>
 							<ToggleSwitch Name="contextBasedToggleSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 						</asControls:DialogItem>
@@ -91,30 +92,29 @@
 						<!-- Setup script -->
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding #window.SetupScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.SetupScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding #window.SetupScriptDocumentUri}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.SetupScript.Description}"/>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Analysis script -->
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding #window.AnalysisScriptDocumentUri}" ToolTip.Tip="{DynamicResource String/Common.Help}">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.AnalysisScript}"/>
+								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{Binding #window.AnalysisScriptDocumentUri}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
 							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
-
+						<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}"/>
 					</StackPanel>
 				</Border>
 			</StackPanel>

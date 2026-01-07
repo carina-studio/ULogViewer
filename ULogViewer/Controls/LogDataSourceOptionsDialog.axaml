@@ -9,11 +9,12 @@
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogDataSourceOptionsDialog"
         Name="window"
         Classes="Dialog"
-        Title="{DynamicResource String/LogDataSourceOptionsDialog.Title}"
+        Title="{asXaml:StringResource LogDataSourceOptionsDialog.Title}"
         Width="{DynamicResource Double/LogDataSourceOptionsDialog.Width}">
 
 	<!-- Styles -->
@@ -27,14 +28,14 @@
 							<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 							<Border Classes="InPlaceAction_Reserved"/>
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveSetupTeardownCommandCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveSetupTeardownCommandCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditSetupTeardownCommandCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditSetupTeardownCommandCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -72,24 +73,24 @@
 					<StackPanel Name="itemsPanel">
 
 						<!-- Category -->
-						<asControls:DialogItem Name="categoryItem" IsVisible="{Binding #window.IsCategorySupported}">
+						<asControls:DialogItem Name="categoryItem" IsVisible="{Binding #window.IsCategorySupported}" ItemSize="Small">
 							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Category}"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Category}"/>
 								<Button Classes="Dialog_Info_Button" 
 								        Command="{x:Static cs:PlatformCommands.OpenLinkCommand}" 
 								        CommandParameter="{Binding #window.CategoryReferenceUri}" 
 								        IsVisible="{Binding #window.CategoryReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" 
-								        ToolTip.Tip="{DynamicResource String/Common.References}">
+								        ToolTip.Tip="{asXaml:StringResource Common.References}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+							<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsCategoryRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsCategoryRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</TextBox>
@@ -98,80 +99,74 @@
 
 						<!-- Command -->
 						<StackPanel IsVisible="{Binding #window.IsCommandSupported}">
-							<asControls:DialogItem Name="commandItemGrid">
+							<asControls:DialogItem Name="commandItemGrid" ItemSize="Small">
 								<WrapPanel VerticalAlignment="Center">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Command}"/>
 									<Button Classes="Dialog_Info_Button" 
 									        Command="{x:Static cs:PlatformCommands.OpenLinkCommand}" 
 									        CommandParameter="{Binding #window.CommandReferenceUri}" 
 									        IsVisible="{Binding #window.CommandReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" 
-									        ToolTip.Tip="{DynamicResource String/Common.References}">
+									        ToolTip.Tip="{asXaml:StringResource Common.References}">
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{asXaml:StringResource Common.None}"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}"/>
-							<Button Name="selectAzureResourcesButton" Classes="Dialog_Item_Button" Command="{Binding #window.SelectAzureResources}" Content="{DynamicResource String/LogDataSourceOptionsDialog.SelectAzureResources}" HorizontalAlignment="Right" IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}"/>
+							<Button Name="selectAzureResourcesButton" Classes="Dialog_Item_Button" Command="{Binding #window.SelectAzureResources}" Content="{asXaml:StringResource LogDataSourceOptionsDialog.SelectAzureResources}" HorizontalAlignment="Right" IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Include standard error -->
-						<asControls:DialogItem Name="includeStderrItemGrid" IsVisible="{Binding #window.IsIncludeStandardErrorSupported}">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.IncludeStandardError}"/>
+						<asControls:DialogItem Name="includeStderrItemGrid" IsVisible="{Binding #window.IsIncludeStandardErrorSupported}" ItemSize="Small">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.IncludeStandardError}"/>
 							<ToggleSwitch Name="includeStderrSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 						</asControls:DialogItem>
 						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #includeStderrItemGrid.IsVisible}"/>
 
 						<!-- Use text shell -->
 						<StackPanel IsVisible="{Binding #window.IsUseTextShellSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UseTextShell}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.UseTextShell}"/>
 								<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 							</asControls:DialogItem>
-							<Separator Classes="Dialog_Separator_Small"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{DynamicResource String/Common.Options.WithDialog}" HorizontalAlignment="Right"/>
+							<Separator Classes="Dialog_Separator"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{asXaml:StringResource Common.Options.WithDialog}" HorizontalAlignment="Right"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 						
 						<!-- File name -->
 						<StackPanel IsVisible="{Binding #window.IsFileNameSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.FileName}"/>
-								<TextBox Name="fileNameTextBox" Classes="Dialog_Item_TextBox" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.FileName}"/>
+								<TextBox Name="fileNameTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
-							<Separator Classes="Dialog_Separator_Small"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding #window.SelectFileName}" Content="{DynamicResource String/LogDataSourceOptions.SelectFileName}" HorizontalAlignment="Right" IsEnabled="{Binding !#window.IsSelectingFileName}"/>
+							<Separator Classes="Dialog_Separator"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.SelectFileName}" Content="{asXaml:StringResource LogDataSourceOptions.SelectFileName}" HorizontalAlignment="Right" IsEnabled="{Binding !#window.IsSelectingFileName}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Working directory -->
 						<StackPanel IsVisible="{Binding #window.IsWorkingDirectorySupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.WorkingDirectory}"/>
-								<TextBox Name="workingDirectoryTextBox" Classes="Dialog_Item_TextBox" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.WorkingDirectory}"/>
+								<TextBox Name="workingDirectoryTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
-							<Separator Classes="Dialog_Separator_Small"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding #window.SelectWorkingDirectory}" Content="{DynamicResource String/LogDataSourceOptions.SelectWorkingDirectory}" HorizontalAlignment="Right" IsEnabled="{Binding !#window.IsSelectingWorkingDirectory}"/>
+							<Separator Classes="Dialog_Separator"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.SelectWorkingDirectory}" Content="{asXaml:StringResource LogDataSourceOptions.SelectWorkingDirectory}" HorizontalAlignment="Right" IsEnabled="{Binding !#window.IsSelectingWorkingDirectory}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- IP endpoint -->
 						<StackPanel IsVisible="{Binding #window.IsIPEndPointSupported}">
-							<asControls:DialogItem Name="ipAddressItem">
-								<StackPanel Classes="Dialog_Item_Text_Container">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Address}"/>
-									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#ipAddressTextBox.IsTextValid}">
-										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-										<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{DynamicResource String/Common.InvalidFormat}"/>
-									</Grid>
-								</StackPanel>
-								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem Name="ipAddressItem" ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.IPEndPoint.Address}"/>
+								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/IPEndPointInputDialog.Port}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.IPEndPoint.Port}"/>
 								<abControls:IntegerTextBox Name="portTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="False" Maximum="65535" Minimum="1" Value="32678"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -179,27 +174,27 @@
 
 						<!-- URI -->
 						<StackPanel IsVisible="{Binding #window.IsUriSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Uri}"/>
-								<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Uri}"/>
+								<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 						
 						<!-- Process ID -->
 						<StackPanel IsVisible="{Binding #window.IsProcessIdSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ProcessId}"/>
-								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.ProcessId}"/>
+								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 						
 						<!-- Process name -->
 						<StackPanel IsVisible="{Binding #window.IsProcessNameSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ProcessName}"/>
-								<TextBox Name="processNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="128" Watermark="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.ProcessName}"/>
+								<TextBox Name="processNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="128" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
@@ -207,7 +202,7 @@
 						<!-- Encoding -->
 						<StackPanel IsVisible="{Binding #window.IsEncodingSupported}">
 							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Encoding}"/>
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Encoding}"/>
 								<ComboBox Name="encodingComboBox" Classes="Dialog_Item_ComboBox" ItemsSource="{Binding #window.Encodings}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
@@ -221,15 +216,15 @@
 
 						<!-- Format JSON data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatJsonDataSupported}">
-							<asControls:DialogItem>
+							<asControls:DialogItem ItemSize="Small">
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<WrapPanel>
 										<TextBlock Classes="Dialog_TextBlock_Label" 
-										           Text="{DynamicResource String/LogDataSourceOptions.FormatJsonData}"/>
+										           Text="{asXaml:StringResource LogDataSourceOptions.FormatJsonData}"/>
 										<Button Classes="Dialog_Info_Button" 
 										        Command="{x:Static cs:PlatformCommands.OpenLinkCommand}" 
 										        CommandParameter="{x:Static app:Uris.FormattingJsonDataDocument}" 
-										        ToolTip.Tip="{DynamicResource String/Common.Help}">
+										        ToolTip.Tip="{asXaml:StringResource Common.Help}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
@@ -241,15 +236,15 @@
 
 						<!-- Format XML data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatXmlDataSupported}">
-							<asControls:DialogItem>
+							<asControls:DialogItem ItemSize="Small">
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<WrapPanel>
 										<TextBlock Classes="Dialog_TextBlock_Label" 
-										           Text="{DynamicResource String/LogDataSourceOptions.FormatXmlData}"/>
+										           Text="{asXaml:StringResource LogDataSourceOptions.FormatXmlData}"/>
 										<Button Classes="Dialog_Info_Button" 
 										        Command="{x:Static cs:PlatformCommands.OpenLinkCommand}" 
 										        CommandParameter="{x:Static app:Uris.FormattingXmlDataDocument}" 
-										        ToolTip.Tip="{DynamicResource String/Common.Help}">
+										        ToolTip.Tip="{asXaml:StringResource Common.Help}">
 											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 										</Button>
 									</WrapPanel>
@@ -261,26 +256,26 @@
 
 						<!-- Connection string -->
 						<StackPanel Name="connectionStringContainer" IsVisible="{Binding #window.IsConnectionStringSupported}">
-							<asControls:DialogItem>
+							<asControls:DialogItem ItemSize="Small">
 								<WrapPanel VerticalAlignment="Center">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.ConnectionString}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.ConnectionString}"/>
 									<Button Classes="Dialog_Info_Button" 
 									        Command="{x:Static cs:PlatformCommands.OpenLinkCommand}" 
 									        CommandParameter="{Binding #window.ConnectionStringReferenceUri}" 
 									        IsVisible="{Binding #window.ConnectionStringReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" 
-									        ToolTip.Tip="{DynamicResource String/Common.References}">
+									        ToolTip.Tip="{asXaml:StringResource Common.References}">
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<TextBox Name="connectionStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+							<TextBox Name="connectionStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsConnectionStringRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsConnectionStringRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</TextBox>
@@ -291,8 +286,8 @@
 						<StackPanel IsVisible="{Binding #window.IsResourceOnAzureSupported}">
 							<asControls:DialogItem>
 								<StackPanel Classes="Dialog_Item_Text_Container">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.IsResourceOnAzure}"/>
-									<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.IsResourceOnAzure}"/>
+									<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogDataSourceOptionsDialog.IsResourceOnAzure.Description}"/>
 								</StackPanel>
 								<ToggleSwitch Name="isResourceOnAzureSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 							</asControls:DialogItem>
@@ -301,43 +296,43 @@
 
 						<!-- Query string -->
 						<StackPanel Name="queryStringContainer" IsVisible="{Binding #window.IsQueryStringSupported}">
-							<asControls:DialogItem>
+							<asControls:DialogItem ItemSize="Small">
 								<WrapPanel VerticalAlignment="Center">
-									<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.QueryString}"/>
+									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.QueryString}"/>
 									<Button Classes="Dialog_Info_Button" 
 									        Command="{x:Static cs:PlatformCommands.OpenLinkCommand}" 
 									        CommandParameter="{Binding #window.QueryStringReferenceUri}" 
 									        IsVisible="{Binding #window.QueryStringReferenceUri, Converter={x:Static ObjectConverters.IsNotNull}}" 
-									        ToolTip.Tip="{DynamicResource String/Common.References}">
+									        ToolTip.Tip="{asXaml:StringResource Common.References}">
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding #window.SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{DynamicResource String/Common.None}">
+							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding #window.SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsQueryStringRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsQueryStringRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</asControls:SyntaxHighlightingTextBox>
 						</StackPanel>
 						<Separator Classes="Dialog_Item_Separator" IsVisible="{Binding #queryStringContainer.IsVisible}"/>
 
-						<!-- User name -->
+						<!-- Username -->
 						<StackPanel IsVisible="{Binding #window.IsUserNameSupported}">
-							<asControls:DialogItem Name="userNameItem">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UserName}"/>
-								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+							<asControls:DialogItem Name="userNameItem" ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.UserName}"/>
+								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsUserNameRequired}" ComparisonCondition="Equal" Value="True">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
 										</iaCore:DataTriggerBehavior>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsUserNameRequired}" ComparisonCondition="Equal" Value="False">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</TextBox>
@@ -347,15 +342,15 @@
 
 						<!-- Password -->
 						<StackPanel IsVisible="{Binding #window.IsPasswordSupported}">
-							<asControls:DialogItem Name="passwordItem">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.Password}"/>
-								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}">
+							<asControls:DialogItem Name="passwordItem" ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Password}"/>
+								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsPasswordRequired}" ComparisonCondition="Equal" Value="True">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.Required}"/>
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
 										</iaCore:DataTriggerBehavior>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsPasswordRequired}" ComparisonCondition="Equal" Value="False">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{DynamicResource String/Common.None}"/>
+											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</TextBox>
@@ -365,35 +360,35 @@
 
 						<!-- Setup commands -->
 						<StackPanel IsVisible="{Binding #window.IsSetupCommandsSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.SetupCommands}"/>
-								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.SetupCommands}"/>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#setupCommandsListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="setupCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #window.SetupCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #setupCommandsListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding #window.AddSetupCommand}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.AddSetupCommand}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 
 						<!-- Teardown commands -->
 						<StackPanel IsVisible="{Binding #window.IsTeardownCommandsSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.TeardownCommands}"/>
-								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.TeardownCommands}"/>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#teardownCommandsListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="teardownCommandsListBox" Classes="Dialog_Item_ListBox Commands" DoubleClickOnItem="OnListBoxDoubleClickOnItem" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #window.TeardownCommands}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #teardownCommandsListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding #window.AddTeardownCommand}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.AddTeardownCommand}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 						
 						<!-- Environment variables -->
 						<StackPanel IsVisible="{Binding #window.IsEnvironmentVariablesSupported}">
-							<asControls:DialogItem>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.EnvironmentVariables}"/>
-								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.EnvironmentVariables}"/>
+								<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#environmentVariablesListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:ListBox Name="environmentVariablesListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding #window.EnvironmentVariables}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
@@ -403,14 +398,14 @@
 											<abControls:FormattedTextBlock Arg1="{Binding Item1}" Arg2="{Binding Item2}" Format="{}{0} = {1}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 											<Border Classes="InPlaceAction_Reserved"/>
 											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveEnvironmentVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+												<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveEnvironmentVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 													<asControls:Image Classes="InPlaceAction_Icon">
 														<DrawingImage>
 															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 														</DrawingImage>
 													</asControls:Image>
 												</Button>
-												<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditEnvironmentVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+												<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditEnvironmentVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 													<asControls:Image Classes="InPlaceAction_Icon">
 														<DrawingImage>
 															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -423,7 +418,7 @@
 								</asControls:ListBox.ItemTemplate>
 							</asControls:ListBox>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #environmentVariablesListBox.IsVisible}"/>
-							<Button Classes="Dialog_Item_Button" Command="{Binding #window.AddEnvironmentVariable}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+							<Button Classes="Dialog_Item_Button" Command="{Binding #window.AddEnvironmentVariable}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
 

@@ -8,12 +8,13 @@
 		xmlns:appProfiles="using:CarinaStudio.ULogViewer.Logs.Profiles"
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.VisibleLogPropertyEditorDialog"
         Name="window"
         Classes="Dialog"
 		SizeToContent="Height"
-        Title="{DynamicResource String/VisibleLogPropertyEditorDialog.Title}"
+        Title="{asXaml:StringResource VisibleLogPropertyEditorDialog.Title}"
         Width="{DynamicResource Double/VisibleLogPropertyEditorDialog.Width}">
 	
 	<Window.Styles>
@@ -41,7 +42,7 @@
 
 					<!-- Name -->
 					<asControls:DialogItem>
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Name}"/>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.Name}"/>
 						<ComboBox Name="nameComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.LogPropertyNames}">
 							<ComboBox.ItemTemplate>
 								<DataTemplate>
@@ -57,14 +58,14 @@
 					
 					<!-- Show defined log properties only -->
 					<asControls:DialogItem ItemSize="Small">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly}"/>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly}"/>
 						<ToggleSwitch Name="showDefinedLogPropertiesOnlySwitch" Classes="Dialog_Item_ToggleSwitch" IsChecked="True"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Display name -->
 					<asControls:DialogItem>
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.DisplayName}"/>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.DisplayName}"/>
 						<Panel HorizontalAlignment="Stretch">
 							<ComboBox Name="displayNameComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" IsVisible="{Binding !#customDisplayNameSwitch.IsChecked}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{x:Static appViewModels:DisplayableLogProperty.DisplayNames}">
 								<ComboBox.ItemTemplate>
@@ -76,52 +77,52 @@
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
-							<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{DynamicResource String/Common.None}"/>
+							<TextBox Name="customDisplayNameTextBox" Classes="Dialog_Item_TextBox" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
 						</Panel>
 					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 
 					<!-- Custom display name -->
 					<asControls:DialogItem ItemSize="Small">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.CustomDisplayName}"/>
 						<ToggleSwitch Name="customDisplayNameSwitch" Classes="Dialog_Item_ToggleSwitch" PropertyChanged="OnEditorControlPropertyChanged"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Secondary display name -->
-					<asControls:DialogItem>
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.SecondaryDisplayName}"/>
-						<TextBox Name="secondaryDisplayNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{DynamicResource String/Common.None}"/>
+					<asControls:DialogItem ItemSize="Small">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.SecondaryDisplayName}"/>
+						<TextBox Name="secondaryDisplayNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 					
 					<!-- Quantifier -->
 					<asControls:DialogItem>
 						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Quantifier}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Quantifier.Description}"/>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.Quantifier}"/>
+							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.Quantifier.Description}"/>
 						</StackPanel>
-						<TextBox Name="quantifierTextBox" Classes="Dialog_Item_TextBox" MaxLength="32" Watermark="{DynamicResource String/Common.None}"/>
+						<TextBox Name="quantifierTextBox" Classes="Dialog_Item_TextBox" MaxLength="32" Watermark="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Foreground color -->
 					<StackPanel IsVisible="{Binding #nameComboBox.SelectedItem, Converter={x:Static abConverters:ObjectConverters.IsNotEquivalentTo}, ConverterParameter=Level}">
 						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.ForegroundColor}"/>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.ForegroundColor}"/>
 							<asControls:EnumComboBox Name="foregroundColorComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appProfiles:LogPropertyForegroundColor}"/>
 						</asControls:DialogItem>
 						<Separator Classes="Dialog_Item_Separator"/>
 					</StackPanel>
 
 					<!-- Width -->
-					<asControls:DialogItem>
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.SpecifyWidth}"/>
+					<asControls:DialogItem ItemSize="Small">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.SpecifyWidth}"/>
 						<ToggleSwitch Name="specifyWidthSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 					</asControls:DialogItem>
 					<Separator Classes="Dialog_Item_Separator"/>
-					<asControls:DialogItem>
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/VisibleLogPropertyEditorDialog.Width}"/>
+					<asControls:DialogItem ItemSize="Small">
+						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.Width}"/>
 						<abControls:IntegerTextBox Name="widthTextBox" Classes="Dialog_Item_TextBox" IsEnabled="{Binding #specifyWidthSwitch.IsChecked}" IsNullValueAllowed="False"/>
 					</asControls:DialogItem>
 

@@ -5,6 +5,7 @@
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.OperationDurationAnalysisRuleSetEditorDialog"
         Name="dialog"
@@ -16,7 +17,7 @@
 		Icon="/ULogViewer.ico"
 		ShowInTaskbar="True"
         SizeToContent="Manual"
-        Title="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.Title}"
+        Title="{asXaml:StringResource OperationDurationAnalysisRuleSetEditorDialog.Title}"
         Width="{StaticResource Double/OperationDurationAnalysisRuleSetEditorDialog.Width}">
 
 	<DockPanel>
@@ -43,22 +44,22 @@
 					<StackPanel>
 				
 						<!-- Name -->
-						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
-							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{DynamicResource String/Common.Required}"/>
+						<asControls:DialogItem ItemSize="Small">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
+							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 						</asControls:DialogItem>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Icon -->
 						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Icon}"/>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Icon}"/>
 							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
 						</asControls:DialogItem>
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Icon color -->
 						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor}"/>
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.IconColor}"/>
 							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
 						</asControls:DialogItem>
 
@@ -69,9 +70,9 @@
 				<!-- Rules -->
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>
-						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{DynamicResource String/Common.None}"/>
+						<asControls:DialogItem ItemSize="Small">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
+							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
 						</asControls:DialogItem>
 						<Line Classes="Dialog_Item_Separator_Inner"/>
 						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding #dialog.Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #dialog.Rules}">
@@ -103,35 +104,35 @@
 											TextTrimming="None"/>
 										<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 										<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.AddRuleBeforeCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.AddRuleBeforeCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/EndTo}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.AddRuleAfterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.AddRuleAfterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/BeginFrom}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
 														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -144,7 +145,7 @@
 							</asControls:ListBox.ItemTemplate>
 						</asControls:ListBox>
 						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #ruleListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.AddRule}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+						<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
 					</StackPanel>
 				</Border>
 

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
@@ -34,6 +35,10 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// Property of <see cref="DataSourceProvider"/>.
 	/// </summary>
 	public static readonly StyledProperty<ILogDataSourceProvider?> DataSourceProviderProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, ILogDataSourceProvider?>(nameof(DataSourceProvider));
+	/// <summary>
+	/// <see cref="IValueConverter"/> to convert from True to <see cref="DialogItemSize.Small"/>, <see cref="DialogItemSize.Default"/> otherwise.
+	/// </summary>
+	public static readonly IValueConverter TrueToSmallDialogItemSizeConverter = new FuncValueConverter<bool, DialogItemSize>(value => value ? DialogItemSize.Small : DialogItemSize.Default);
 
 
 	// Static fields.
@@ -404,7 +409,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			return Task.FromResult<object?>(null);
 		}
 		
-		// check user name
+		// check username
 		if (this.IsUserNameRequired && string.IsNullOrWhiteSpace(this.userNameTextBox.Text))
 		{
 			this.Get<Control>("userNameItem").Let(it =>

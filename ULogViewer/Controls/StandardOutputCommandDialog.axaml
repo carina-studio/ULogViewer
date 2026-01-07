@@ -4,11 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.StandardOutputCommandDialog"
         Classes="Dialog"
         Name="window"
-        Title="{DynamicResource String/StandardOutputCommandDialog.Title}"
+        Title="{asXaml:StringResource StandardOutputCommandDialog.Title}"
         Width="{DynamicResource Double/LogDataSourceOptionsDialog.Width}">
 
 	<DockPanel>
@@ -27,9 +28,9 @@
 				<StackPanel>
 					
 					<!-- Command -->
-					<asControls:DialogItem>
+					<asControls:DialogItem ItemSize="Small">
 						<TextBlock Classes="Dialog_TextBlock_Label" 
-						           Text="{DynamicResource String/LogDataSourceOptions.Command}"/>
+						           Text="{asXaml:StringResource LogDataSourceOptions.Command}"/>
 					</asControls:DialogItem>
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 					<asControls:SyntaxHighlightingTextBox Name="commandTextBox" 
@@ -39,17 +40,17 @@
 					                                      Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}"
 					                                      HorizontalAlignment="Stretch"
 					                                      TextAlignment="Left"
-					                                      Watermark="{DynamicResource String/Common.None}"/>
+					                                      Watermark="{asXaml:StringResource Common.None}"/>
 					
 					<!-- Use text shell -->
 					<StackPanel IsVisible="{Binding #window.UseTextShell, Converter={x:Static ObjectConverters.IsNotNull}}">
 						<Separator Classes="Dialog_Item_Separator"/>
-						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogDataSourceOptions.UseTextShell}"/>
+						<asControls:DialogItem ItemSize="Small">
+							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.UseTextShell}"/>
 							<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 						</asControls:DialogItem>
-						<Separator Classes="Dialog_Separator_Small"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{DynamicResource String/Common.Options.WithDialog}"/>
+						<Separator Classes="Dialog_Separator"/>
+						<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{asXaml:StringResource Common.Options.WithDialog}"/>
 					</StackPanel>
 					
 				</StackPanel>
