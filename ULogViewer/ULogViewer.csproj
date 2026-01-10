@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<AssemblyVersion>5.0.0.921</AssemblyVersion>
-		<Version>5.0.0.921</Version>
+		<Version>2026.0</Version>
 		<OutputType>WinExe</OutputType>
 		<DebugType>embedded</DebugType>
 		<RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
@@ -23,7 +23,7 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-        <AppSuiteVersion>3.0.2.104-dev</AppSuiteVersion>
+        <AppSuiteVersion>3.0.2.109-dev</AppSuiteVersion>
 		<AvaloniaVersion>11.3.10</AvaloniaVersion>
 		<DotNetLibVersion>10.0.1</DotNetLibVersion>
 		<SkiaSharpVersion>3.119.1</SkiaSharpVersion>
