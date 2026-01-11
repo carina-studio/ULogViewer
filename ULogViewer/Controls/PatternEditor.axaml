@@ -5,8 +5,10 @@
 		xmlns:aConverters="using:Avalonia.Data.Converters"
 		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.PatternEditor"
+        Focusable="True"
 		Height="{StaticResource Double/PatternEditor.MinHeight}"
 		MinHeight="{StaticResource Double/PatternEditor.MinHeight}"
 		VerticalContentAlignment="Stretch">
@@ -15,11 +17,11 @@
 		<asControls:RegexTextBox Name="patternTextBox" Classes="Dialog_Item_TextBox" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Stretch" Watermark="{Binding $parent[UserControl].Watermark}"/>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
 		<StackPanel HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
-			<Button Name="editPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].EditPattern}" Content="{DynamicResource String/PatternEditor.EditDetailedly}"/>
+			<Button Name="editPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].EditPatternAsync}" Content="{asXaml:StringResource PatternEditor.EditDetailedly}"/>
 			<Separator Classes="Dialog_Separator_Small"/>
-			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].CopyPattern}" IsEnabled="{Binding #patternTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" Content="{DynamicResource String/Common.Copy}"/>
+			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].CopyPattern}" IsEnabled="{Binding #patternTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" Content="{asXaml:StringResource Common.Copy}"/>
 			<Separator Classes="Dialog_Separator_Small"/>
-			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].PastePattern}" Content="{DynamicResource String/Common.Paste}"/>
+			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].PastePatternAsync}" Content="{asXaml:StringResource Common.Paste}"/>
 		</StackPanel>
 	</Grid>
 	

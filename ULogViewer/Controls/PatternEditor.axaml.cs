@@ -5,8 +5,7 @@ using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Configuration;
-using CarinaStudio.Input.Platform;
+using CarinaStudio.AppSuite.Input;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
@@ -49,23 +48,16 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	
 	
 	// Provider for assistance of phrase input.
-	class PhraseInputAssistanceProvider : IPhraseInputAssistanceProvider
+	class PhraseInputAssistanceProvider(RegexTextBox regexTextBox) : IPhraseInputAssistanceProvider
 	{
-		// Fields.
-		readonly RegexTextBox regexTextBox;
-		
-		// Constructor.
-		public PhraseInputAssistanceProvider(RegexTextBox regexTextBox) =>
-			this.regexTextBox = regexTextBox;
-		
 		/// <inheritdoc/>
 		public Task<IList<string>> SelectCandidatePhrasesAsync(string prefix, string? postfix, CancellationToken cancellationToken) =>
-			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, this.regexTextBox.IgnoreCase, cancellationToken);
+			LogTextFilterPhrasesDatabase.SelectCandidatePhrasesAsync(prefix, postfix, regexTextBox.IgnoreCase, cancellationToken);
 	}
 
 
-	// Constants.
-    const string RegexOptionsFormat = "PatternEditor.RegexOptions";
+	// Static fields.
+    static readonly DataFormat<byte[]> RegexOptionsFormat = DataFormat.CreateBytesApplicationFormat("PatternEditor.RegexOptions");
 
 
 	// Fields.
@@ -97,7 +89,7 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 				else if (this.isPhraseInputAssistanceEnabled)
 					this.updatePhrasesDatabaseAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
 			});
-			it.GetObservable(RegexTextBox.IsTextValidProperty).Subscribe(isValid =>
+			it.GetObservable(CarinaStudio.Controls.ObjectTextBox.IsTextValidProperty).Subscribe(isValid =>
 			{
 				this.SetAndRaise(IsPatternTextValidProperty, ref this.isPatternTextValid, isValid);
 				this.SetAndRaise(PatternProperty, ref this.pattern, isValid ? it.Object : null);
@@ -166,7 +158,12 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 				? RegexOptions.IgnoreCase
 				: RegexOptions.None;
 			var data = BitConverter.GetBytes((int)options);
-			_ = TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAndDataAsync(patternText, RegexOptionsFormat, data);
+			var dataTransfer = new DataTransfer().Also(it =>
+			{
+				it.Add(DataFormat.Text, patternText);
+				it.Add(RegexOptionsFormat, data);
+			});
+			_ = TopLevel.GetTopLevel(this)?.Clipboard?.SetDataAsync(dataTransfer);
 		}
 		// ReSharper disable once EmptyGeneralCatchClause
 		catch
@@ -177,7 +174,7 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	/// <summary>
 	/// Start editing pattern.
 	/// </summary>
-	public async void EditPattern()
+	public async Task EditPatternAsync()
 	{
 		// check state
 		this.VerifyAccess();
@@ -295,7 +292,7 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	/// <summary>
 	/// Paste pattern from clipboard if available.
 	/// </summary>
-	public async void PastePattern()
+	public async Task PastePatternAsync()
 	{
 		// check state
 		this.VerifyAccess();
@@ -303,10 +300,11 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 			return;
 		
 		// get data from clipboard
-		var clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
-		if (clipboard is null)
+		if (TopLevel.GetTopLevel(this)?.Clipboard is not { } clipboard)
 			return;
-        var text = await clipboard.GetTextAsync();
+		if (await clipboard.TryGetDataAsync() is not { } dataTransfer)
+			return;
+		var text = await dataTransfer.TryGetTextAsync();
         if (string.IsNullOrEmpty(text))
             return;
 		var options = this.patternTextBox.IgnoreCase
@@ -314,8 +312,8 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 			: RegexOptions.None;
         try
         {
-            (await clipboard.GetDataAsync(RegexOptionsFormat))?.Let(it => 
-                options = (RegexOptions)BitConverter.ToInt32((byte[])it));
+            (await dataTransfer.TryGetValueAsync(RegexOptionsFormat))?.Let(it => 
+                options = (RegexOptions)BitConverter.ToInt32(it));
         }
         // ReSharper disable once EmptyGeneralCatchClause
         catch
