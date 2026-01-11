@@ -19,7 +19,7 @@
         MinHeight="{StaticResource Double/LogProfileSelectionDialog.MinHeight}"
         MinWidth="{StaticResource Double/LogProfileSelectionDialog.Width}"
         SizeToContent="Manual"
-        Title="{DynamicResource String/LogProfileSelectionDialog.Title}"
+        Title="{asXaml:StringResource LogProfileSelectionDialog.Title}"
         Width="{StaticResource Double/LogProfileSelectionDialog.Width}">
 
 	<!-- Styles -->
@@ -81,7 +81,7 @@
 									       IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding IsProVersionOnly}}"
 									       Grid.Column="1" 
 									       Margin="{StaticResource Thickness/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Margin}" 
-									       ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ProVersionOnly}"
+									       ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.ProVersionOnly}"
 									       VerticalAlignment="Center" Width="{StaticResource Double/LogProfileSelectionDialog.LogProfile.ProVersionIcon.Size}">
 										<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Icon.Professional.Colored}"/>
 										<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Icon.Professional}"/>
@@ -96,7 +96,7 @@
 								       Grid.Row="1" 
 								       Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}">
 									<abControls:TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
-									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding !HasDescription}" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{DynamicResource String/LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
+									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding !HasDescription}" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{asXaml:StringResource LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
 								</Panel>
 
 								<!-- Labels -->
@@ -112,22 +112,22 @@
 										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{Binding DataSourceProvider.DisplayName}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label_Pro" IsVisible="{Binding LogChartType, Converter={x:Static abConverters:ObjectConverters.IsNotEquivalentTo}, ConverterParameter={x:Static appProfiles:LogChartType.None}}">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.HasLogChart}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{asXaml:StringResource LogProfileSelectionDialog.HasLogChart}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label_Pro" IsVisible="{Binding CooperativeLogAnalysisScriptSet, Converter={x:Static ObjectConverters.IsNotNull}}">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{asXaml:StringResource LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsBuiltIn}">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.BuiltInLogProfile}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{asXaml:StringResource LogProfileSelectionDialog.BuiltInLogProfile}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsContinuousReading}">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.IsContinuousReading}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{asXaml:StringResource LogProfileSelectionDialog.IsContinuousReading}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding WorkingDirectoryRequirement, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static appProfiles:LogProfilePropertyRequirement.Required}}">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{asXaml:StringResource LogProfileSelectionDialog.IsWorkingDirectoryNeeded}"/>
 									</Border>
 									<Border Classes="LogProfileSelectionDialog_LogProfile_Label" IsVisible="{Binding IsAdministratorNeeded}">
-										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{DynamicResource String/LogProfileSelectionDialog.IsAdministratorNeeded}"/>
+										<TextBlock Classes="LogProfileSelectionDialog_LogProfile_Label" Text="{asXaml:StringResource LogProfileSelectionDialog.IsAdministratorNeeded}"/>
 									</Border>
 								</WrapPanel>
 
@@ -145,14 +145,14 @@
 											</MultiBinding>
 										</MultiBinding>
 									</StackPanel.IsVisible>
-									<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RemoveLogProfile}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RemoveLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 											</DrawingImage>
 										</asControls:Image>
 									</Button>
-									<Button Classes="InPlaceAction_Button" Command="{Binding #window.ExportLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.ExportLogProfile}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding #window.ExportLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.ExportLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Export}"/>
@@ -160,14 +160,14 @@
 										</asControls:Image>
 									</Button>
 									<StackPanel IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}" Orientation="Horizontal">
-										<Button Classes="InPlaceAction_Button" Command="{Binding #window.CopyLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{DynamicResource String/Common.Copy}">
+										<Button Classes="InPlaceAction_Button" Command="{Binding #window.CopyLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
 													<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
 										</Button>
-										<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.EditLogProfile}">
+										<Button Classes="InPlaceAction_Button" Command="{Binding #window.EditLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsBuiltIn}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.EditLogProfile}">
 											<asControls:Image Classes="InPlaceAction_Icon">
 												<DrawingImage>
 													<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -175,7 +175,7 @@
 											</asControls:Image>
 										</Button>
 									</StackPanel>
-									<Button Classes="InPlaceAction_Button" Command="{Binding #window.PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsTemplate}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.PinUnpinLogProfile}">
+									<Button Classes="InPlaceAction_Button" Command="{Binding #window.PinUnpinLogProfileCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" IsVisible="{Binding !IsTemplate}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.PinUnpinLogProfile}">
 										<asControls:Image Classes="InPlaceAction_Icon">
 											<DrawingImage>
 												<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Pin.Outline}"/>
@@ -206,8 +206,8 @@
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.AddLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.ImportLogProfile}" Content="{DynamicResource String/LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #window.AddLogProfile}" Content="{asXaml:StringResource LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #window.ImportLogProfile}" Content="{asXaml:StringResource LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
 					<Separator Classes="Dialog_Separator_Small"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
@@ -233,7 +233,7 @@
 				<StackPanel>
 					
 					<!-- Pinned profiles -->
-					<ToggleButton Name="pinnedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
+					<ToggleButton Name="pinnedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline}"/>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline.Light}"/>
@@ -241,7 +241,7 @@
 					</ToggleButton>
 					
 					<!-- Recently used profiles -->
-					<ToggleButton Name="recentlyUsedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
+					<ToggleButton Name="recentlyUsedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History}"/>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History.Light}"/>
@@ -257,7 +257,7 @@
 					</ToggleButton>
 					
 					<!-- Template profiles -->
-					<ToggleButton Name="templateLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" ToolTip.Tip="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}">
+					<ToggleButton Name="templateLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}">
 						<Panel>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline}"/>
 							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline.Light}"/>
@@ -276,7 +276,7 @@
 					<!-- Pinned profiles -->
 					<StackPanel Name="pinnedLogProfilesPanel" IsVisible="{Binding #window.PinnedLogProfiles.Count}">
 						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.PinnedLogProfiles}"/>
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.PinnedLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged"/>
@@ -292,13 +292,13 @@
 					<!-- Recently used profiles -->
 					<StackPanel Name="recentlyUsedLogProfilesPanel" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}">
 						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.RecentlyUsedLogProfiles}"/>
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<StackPanel>
 								<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged"/>
 								<Separator Classes="Dialog_Separator_Small"/>
-								<Button Classes="Dialog_Item_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{DynamicResource String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right"/>
+								<Button Classes="Dialog_Item_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{asXaml:StringResource LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right"/>
 							</StackPanel>
 						</Border>
 					</StackPanel>
@@ -334,7 +334,7 @@
 					<!-- Template profiles -->
 					<StackPanel Name="templateLogProfilesPanel" IsVisible="{Binding #window.TemplateLogProfiles.Count}">
 						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{DynamicResource String/LogProfileSelectionDialog.TemplateLogProfiles}"/>
+							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged"/>
