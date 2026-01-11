@@ -201,8 +201,6 @@
 									</asControls:DialogItem>
 									<Separator Classes="Dialog_Separator_Small"/>
 									<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-										<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowScriptLogDataSourceProvidersDialog}" Content="{DynamicResource String/LogProfileEditorDialog.ScriptLogDataSourceProviders}"/>
-										<Separator Classes="Dialog_Separator_Small"/>
 										<Button Classes="Dialog_Item_Button" 
 										        Command="{Binding #window.SetDataSourceOptions}" 
 										        Content="{DynamicResource String/Common.Options.WithDialog}">
