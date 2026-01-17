@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
@@ -12,6 +11,7 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -23,7 +23,6 @@ namespace CarinaStudio.ULogViewer.Controls;
 class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 {
 	// Static fields.
-	static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<KeyLogAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 	static readonly Dictionary<KeyLogAnalysisRuleSet, KeyLogAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("KeyLogAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 
@@ -35,7 +34,6 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 	readonly TextBox nameTextBox;
 	readonly Avalonia.Controls.ListBox ruleListBox;
 	readonly ObservableList<KeyLogAnalysisRuleSet.Rule> rules = new();
-	readonly ScheduledAction validateParametersAction;
 
 
 	/// <summary>
@@ -51,13 +49,10 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 		AvaloniaXamlLoader.Load(this);
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
-		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
-		});
+		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox));
 		this.ruleListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
-			it.DoubleClickOnItem += (_, e) => this.EditRule((KeyLogAnalysisRuleSet.Rule)e.Item);
+			it.DoubleClickOnItem += (sender, e) => _ = this.EditRule((KeyLogAnalysisRuleSet.Rule)e.Item);
 			it.SelectionChanged += (_, _) =>
 			{
 				this.SynchronizationContext.Post(() =>
@@ -66,26 +61,13 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 				});
 			};
 		});
-		this.rules.CollectionChanged += (_, _) => this.validateParametersAction?.Schedule();
-		this.validateParametersAction = new(() =>
-		{
-			if (this.IsClosed)
-				return;
-			if (string.IsNullOrWhiteSpace(this.nameTextBox.Text)
-				|| this.rules.IsEmpty())
-			{
-				this.SetValue(AreValidParametersProperty, false);
-			}
-			else
-				this.SetValue(AreValidParametersProperty, true);
-		});
 	}
 
 
 	/// <summary>
 	/// Add rule.
 	/// </summary>
-	public async void AddRule()
+	public async Task AddRule()
 	{
 		var rule = await new KeyLogAnalysisRuleEditorDialog().ShowDialog<KeyLogAnalysisRuleSet.Rule?>(this);
 		if (rule != null)
@@ -111,12 +93,29 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 	/// <summary>
 	/// Complete editing.
 	/// </summary>
-	public async void CompleteEditing()
+	public async Task CompleteEditing()
 	{
-		// validate parameters
-		this.validateParametersAction.ExecuteIfScheduled();
-		if (!this.GetValue(AreValidParametersProperty))
+		// check name
+		if (string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+		{
+			this.HintForInput(
+				this.Get<ScrollViewer>("baseScrollViewer"),
+				this.Get<Control>("nameItem"),
+				this.nameTextBox
+			);
 			return;
+		}
+		
+		// check rules
+		if (this.rules.IsEmpty())
+		{
+			this.HintForInput(
+				this.Get<ScrollViewer>("baseScrollViewer"),
+				this.Get<Control>("rulesItem"),
+				null
+			);
+			return;
+		}
 		
 		// setup rule set
 		var ruleSet = this.editingRuleSet ?? new KeyLogAnalysisRuleSet(this.Application);
@@ -147,7 +146,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 
 
 	// Copy rule.
-	async void CopyRule(ListBoxItem item)
+	async Task CopyRule(ListBoxItem item)
 	{
 		// get rule
 		var rule = (KeyLogAnalysisRuleSet.Rule)item.DataContext.AsNonNull();
@@ -182,9 +181,9 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 	{
 		if (item.DataContext is not KeyLogAnalysisRuleSet.Rule rule)
 			return;
-		this.EditRule(rule);
+		_ = this.EditRule(rule);
 	}
-	async void EditRule(KeyLogAnalysisRuleSet.Rule rule)
+	async Task EditRule(KeyLogAnalysisRuleSet.Rule rule)
 	{
 		var newRule = await new KeyLogAnalysisRuleEditorDialog()
 		{
@@ -252,7 +251,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 				{
 					if (!KeyLogAnalysisRuleSetManager.Default.CanAddRuleSet)
 					{
-						await new MessageDialog()
+						await new MessageDialog
 						{
 							Icon = MessageDialogIcon.Warning,
 							Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
@@ -262,7 +261,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 					}
 					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
 					{
-						var messageDialog = new MessageDialog()
+						var messageDialog = new MessageDialog
 						{
 							DoNotAskOrShowAgain = false,
 							Icon = MessageDialogIcon.Information,
@@ -275,7 +274,6 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 				});
 			}
 		}
-		this.validateParametersAction.Execute();
 	}
 	
 

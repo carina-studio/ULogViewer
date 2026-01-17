@@ -78,8 +78,26 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		if (this.patternEditor.Pattern is null)
+		{
+			this.HintForInput(
+				this.Get<ScrollViewer>("baseScrollViewer"), 
+				this.Get<Control>("patternItem"),
+				this.patternEditor
+			);
+			return Task.FromResult<object?>(null);
+		}
+		if (string.IsNullOrEmpty(this.messageTextBox.Text))
+		{
+			this.HintForInput(
+				this.Get<ScrollViewer>("baseScrollViewer"), 
+				this.Get<Control>("messageItem"),
+				this.messageTextBox
+			);
+			return Task.FromResult<object?>(null);
+		}
 		var rule = new KeyLogAnalysisRuleSet.Rule(this.patternEditor.Pattern.AsNonNull(), 
-			(Logs.LogLevel)this.levelComboBox.SelectedItem!,
+			(LogLevel)this.levelComboBox.SelectedItem!,
 			this.conditions,
 			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem!, 
 			this.messageTextBox.Text.AsNonNull(),
@@ -116,7 +134,7 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 		{
 			this.byteSizeUnitComboBox.SelectedItem = default(IO.FileSizeUnit);
 			this.durationUnitComboBox.SelectedItem = default(TimeSpanUnit);
-			this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
+			this.levelComboBox.SelectedItem = LogLevel.Undefined;
 			this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Information;
 		}
 		else
@@ -133,11 +151,6 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 			this.resultTypeComboBox.SelectedItem = rule.ResultType;
 		}
 	}
-
-
-	/// <inheritdoc/>
-    protected override bool OnValidateInput() =>
-		base.OnValidateInput() && this.patternEditor.Pattern != null && !string.IsNullOrEmpty(this.messageTextBox.Text);
 	
 	
 	/// <summary>
@@ -152,5 +165,5 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 	/// <summary>
 	/// Get of set rule to be edited.
 	/// </summary>
-	public KeyLogAnalysisRuleSet.Rule? Rule { get; set; }
+	public KeyLogAnalysisRuleSet.Rule? Rule { get; init; }
 }

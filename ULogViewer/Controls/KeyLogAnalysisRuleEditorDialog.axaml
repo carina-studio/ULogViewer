@@ -40,7 +40,7 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer>
+		<ScrollViewer Name="baseScrollViewer">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 				<!-- Common -->
@@ -48,7 +48,7 @@
 					<StackPanel>
 
 						<!-- Pattern -->
-						<asControls:DialogItem>
+						<asControls:DialogItem Name="patternItem">
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<WrapPanel>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
@@ -127,7 +127,7 @@
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Message -->
-						<asControls:DialogItem ItemSize="Small">
+						<asControls:DialogItem Name="messageItem" ItemSize="Small">
 							<WrapPanel VerticalAlignment="Center">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Message}"/>
 								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.StringInterpolationReference}" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.FormatDescription}">
