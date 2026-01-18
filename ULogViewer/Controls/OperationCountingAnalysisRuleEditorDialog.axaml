@@ -43,7 +43,7 @@
 			</Border>
 
 			<!-- Content -->
-			<ScrollViewer>
+			<ScrollViewer Name="contentScrollViewer">
 				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 					<!-- Common -->
@@ -51,14 +51,14 @@
 						<StackPanel>
 					
 							<!-- Operation name -->
-							<asControls:DialogItem ItemSize="Small">
+							<asControls:DialogItem Name="operationNameItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource OperationCountingAnalysisRuleEditorDialog.OperationName}"/>
 								<TextBox Name="operationNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Pattern -->
-							<asControls:DialogItem>
+							<asControls:DialogItem Name="patternItem">
 								<StackPanel Classes="Dialog_Item_Text_Container">
 									<WrapPanel>
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern}"/>
@@ -111,7 +111,7 @@
 							<Separator Classes="Dialog_Item_Separator"/>
 
 							<!-- Interval -->
-							<asControls:DialogItem ItemSize="Small">
+							<asControls:DialogItem Name="intervalItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource OperationCountingAnalysisRuleEditorDialog.Interval}"/>
 								<abControls:TimeSpanTextBox Name="intervalTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>

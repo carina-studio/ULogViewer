@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
@@ -12,299 +11,295 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace CarinaStudio.ULogViewer.Controls
+namespace CarinaStudio.ULogViewer.Controls;
+
+/// <summary>
+/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet"/>.
+/// </summary>
+class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 {
 	/// <summary>
-	/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet"/>.
+	/// Definition set of patterns of rule.
 	/// </summary>
-	class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
+	public static readonly SyntaxHighlightingDefinitionSet PatternDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(IAvaloniaApplication.Current);
+	
+	
+	// Static fields.
+	static readonly Dictionary<OperationCountingAnalysisRuleSet, OperationCountingAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
+	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationCountingAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
+
+	
+	// Fields.
+	readonly LogProfileIconColorComboBox iconColorComboBox;
+	readonly LogProfileIconComboBox iconComboBox;
+	readonly TextBox nameTextBox;
+	readonly ObservableList<OperationCountingAnalysisRuleSet.Rule> rules = new();
+	readonly Avalonia.Controls.ListBox ruleListBox;
+	OperationCountingAnalysisRuleSet? ruleSet;
+
+
+	/// <summary>
+	/// Initialize new <see cref="OperationCountingAnalysisRuleSetEditorDialog"/> instance.
+	/// </summary>
+	public OperationCountingAnalysisRuleSetEditorDialog()
 	{
-		/// <summary>
-		/// Definition set of patterns of rule.
-		/// </summary>
-		public static readonly SyntaxHighlightingDefinitionSet PatternDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(IAvaloniaApplication.Current);
-		
-		
-		// Static fields.
-		static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationCountingAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
-		static readonly Dictionary<OperationCountingAnalysisRuleSet, OperationCountingAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
-		static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationCountingAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
-
-		
-		// Fields.
-		readonly LogProfileIconColorComboBox iconColorComboBox;
-		readonly LogProfileIconComboBox iconComboBox;
-		readonly TextBox nameTextBox;
-		readonly ObservableList<OperationCountingAnalysisRuleSet.Rule> rules = new();
-		readonly Avalonia.Controls.ListBox ruleListBox;
-		OperationCountingAnalysisRuleSet? ruleSet;
-		readonly ScheduledAction validateParametersAction;
-
-
-		/// <summary>
-		/// Initialize new <see cref="OperationCountingAnalysisRuleSetEditorDialog"/> instance.
-		/// </summary>
-		public OperationCountingAnalysisRuleSetEditorDialog()
+		this.CopyRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.CopyRule);
+		this.EditRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.EditRule);
+		this.RemoveRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.RemoveRule);
+		AvaloniaXamlLoader.Load(this);
+		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
+		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
+		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox));
+		this.ruleListBox = this.Get<AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
-			this.CopyRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.CopyRule);
-			this.EditRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.EditRule);
-			this.RemoveRuleCommand = new Command<OperationCountingAnalysisRuleSet.Rule>(this.RemoveRule);
-			AvaloniaXamlLoader.Load(this);
-			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
-			this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
-			this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
-			{
-				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
-			});
-			this.ruleListBox = this.Get<AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
-			{
-				it.DoubleClickOnItem += (_, e) => this.EditRule((OperationCountingAnalysisRuleSet.Rule)e.Item);
-			});
-			this.rules.CollectionChanged += (_, _) => this.validateParametersAction!.Schedule();
-			this.validateParametersAction = new(() =>
-			{
-				this.SetValue(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
-			});
+			it.DoubleClickOnItem += (sender, e) => _ = this.EditRule((OperationCountingAnalysisRuleSet.Rule)e.Item);
+		});
+	}
+
+
+	/// <summary>
+	/// Add rule.
+	/// </summary>
+	public async Task AddRule()
+	{
+		var rule = await new OperationCountingAnalysisRuleEditorDialog().ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
+		if (rule == null)
+			return;
+		this.rules.Add(rule);
+		this.ruleListBox.SelectedItem = rule;
+		this.ruleListBox.Focus();
+	}
+
+
+	/// <summary>
+	/// Class all dialogs which are editing the given rule set.
+	/// </summary>
+	/// <param name="ruleSet">Rule set.</param>
+	public static void CloseAll(OperationCountingAnalysisRuleSet ruleSet)
+	{
+		if (DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
+			dialog.Close();
+	}
+
+
+	/// <summary>
+	/// Complete editing.
+	/// </summary>
+	public async Task CompleteEditing()
+	{
+		// validate parameters
+		if (string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("nameItem"), this.nameTextBox);
+			return;
 		}
-
-
-		/// <summary>
-		/// Add rule.
-		/// </summary>
-		public async void AddRule()
+		if (this.rules.IsEmpty())
 		{
-			var rule = await new OperationCountingAnalysisRuleEditorDialog().ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
-			if (rule == null)
-				return;
-			this.rules.Add(rule);
-			this.ruleListBox.SelectedItem = rule;
-			this.ruleListBox.Focus();
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("rulesItem"), null);
+			return;
 		}
+		
+		// create rule set
+		var ruleSet = this.ruleSet ?? new OperationCountingAnalysisRuleSet(this.Application);
+		ruleSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
+		ruleSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
+		ruleSet.Name = this.nameTextBox.Text.AsNonNull();
+		ruleSet.Rules = this.rules;
 
-
-		/// <summary>
-		/// Class all dialogs which are editing the given rule set.
-		/// </summary>
-		/// <param name="ruleSet">Rule set.</param>
-		public static void CloseAll(OperationCountingAnalysisRuleSet ruleSet)
+		// add rule set
+		if (!OperationCountingAnalysisRuleSetManager.Default.RuleSets.Contains(ruleSet))
 		{
-			if (DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
-				dialog.Close();
-		}
-
-
-		/// <summary>
-		/// Complete editing.
-		/// </summary>
-		public async void CompleteEditing()
-		{
-			// validate parameters
-			this.validateParametersAction.ExecuteIfScheduled();
-			if (!this.GetValue(AreValidParametersProperty))
-				return;
-			
-			// create rule set
-			var ruleSet = this.ruleSet ?? new OperationCountingAnalysisRuleSet(this.Application);
-			ruleSet.Icon = this.iconComboBox.SelectedItem.GetValueOrDefault();
-			ruleSet.IconColor = this.iconColorComboBox.SelectedItem.GetValueOrDefault();
-			ruleSet.Name = this.nameTextBox.Text.AsNonNull();
-			ruleSet.Rules = this.rules;
-
-			// add rule set
-			if (!OperationCountingAnalysisRuleSetManager.Default.RuleSets.Contains(ruleSet))
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+				&& !OperationCountingAnalysisRuleSetManager.Default.CanAddRuleSet)
 			{
-				if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
-					&& !OperationCountingAnalysisRuleSetManager.Default.CanAddRuleSet)
+				await new MessageDialog()
 				{
-					await new MessageDialog()
-					{
-						Icon = MessageDialogIcon.Warning,
-						Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
-					}.ShowDialog(this);
-					return;
-				}
-				OperationCountingAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
+					Icon = MessageDialogIcon.Warning,
+					Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+				}.ShowDialog(this);
+				return;
 			}
-
-			// close window
-			this.Close();
+			OperationCountingAnalysisRuleSetManager.Default.AddRuleSet(ruleSet);
 		}
 
+		// close window
+		this.Close();
+	}
 
-		// Copy rule.
-		async void CopyRule(OperationCountingAnalysisRuleSet.Rule rule)
+
+	// Copy rule.
+	async Task CopyRule(OperationCountingAnalysisRuleSet.Rule rule)
+	{
+		// get rule
+		var index = this.rules.IndexOf(rule);
+		if (index < 0)
+			return;
+		
+		// edit rule
+		var selectedOperationName = Utility.GenerateName(rule.OperationName, name => 
+			this.rules.FirstOrDefault(it => it.OperationName == name) != null);
+		var newRule = await new OperationCountingAnalysisRuleEditorDialog()
 		{
-			// get rule
-			var index = this.rules.IndexOf(rule);
-			if (index < 0)
-				return;
-			
-			// edit rule
-			var selectedOperationName = Utility.GenerateName(rule.OperationName, name => 
-				this.rules.FirstOrDefault(it => it.OperationName == name) != null);
-			var newRule = await new OperationCountingAnalysisRuleEditorDialog()
-			{
-				Rule = new OperationCountingAnalysisRuleSet.Rule(rule, selectedOperationName),
-			}.ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
-			
-			// add rule
-			if (newRule != null)
-			{
-				this.rules.Add(newRule);
-				this.ruleListBox.SelectedItem = newRule;
-				this.ruleListBox.Focus();
-			}
-		}
-
-
-		/// <summary>
-		/// Command to copy rule.
-		/// </summary>
-		public ICommand CopyRuleCommand { get; }
-
-
-		// Edit rule.
-		async void EditRule(OperationCountingAnalysisRuleSet.Rule rule)
+			Rule = new OperationCountingAnalysisRuleSet.Rule(rule, selectedOperationName),
+		}.ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
+		
+		// add rule
+		if (newRule != null)
 		{
-			var index = this.rules.IndexOf(rule);
-			if (index < 0)
-				return;
-			var newRule = await new OperationCountingAnalysisRuleEditorDialog()
-			{
-				Rule = rule,
-			}.ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
-			if (newRule == null || newRule == rule)
-				return;
-			this.rules[index] = newRule;
+			this.rules.Add(newRule);
 			this.ruleListBox.SelectedItem = newRule;
 			this.ruleListBox.Focus();
 		}
+	}
 
 
-		/// <summary>
-		/// Command to edit rule.
-		/// </summary>
-		public ICommand EditRuleCommand { get; }
+	/// <summary>
+	/// Command to copy rule.
+	/// </summary>
+	public ICommand CopyRuleCommand { get; }
 
 
-		/// <inheritdoc/>
-		protected override void OnClosed(EventArgs e)
+	// Edit rule.
+	async Task EditRule(OperationCountingAnalysisRuleSet.Rule rule)
+	{
+		var index = this.rules.IndexOf(rule);
+		if (index < 0)
+			return;
+		var newRule = await new OperationCountingAnalysisRuleEditorDialog()
 		{
-			if (this.ruleSet != null)
-				DialogWithEditingRuleSets.Remove(this.ruleSet);
-			base.OnClosed(e);
+			Rule = rule,
+		}.ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
+		if (newRule == null || newRule == rule)
+			return;
+		this.rules[index] = newRule;
+		this.ruleListBox.SelectedItem = newRule;
+		this.ruleListBox.Focus();
+	}
+
+
+	/// <summary>
+	/// Command to edit rule.
+	/// </summary>
+	public ICommand EditRuleCommand { get; }
+
+
+	/// <inheritdoc/>
+	protected override void OnClosed(EventArgs e)
+	{
+		if (this.ruleSet != null)
+			DialogWithEditingRuleSets.Remove(this.ruleSet);
+		base.OnClosed(e);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpened(EventArgs e)
+	{
+		base.OnOpened(e);
+		this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
+		var ruleSet = this.ruleSet;
+		if (ruleSet is not null)
+		{
+			this.iconColorComboBox.SelectedItem = ruleSet.IconColor;
+			this.iconComboBox.SelectedItem = ruleSet.Icon;
+			this.nameTextBox.Text = ruleSet.Name;
+			this.rules.AddAll(ruleSet.Rules);
 		}
-
-
-		/// <inheritdoc/>
-		protected override void OnOpened(EventArgs e)
+		else
 		{
-			base.OnOpened(e);
-			this.SynchronizationContext.Post(() => this.nameTextBox.Focus());
-		}
-
-
-		/// <inheritdoc/>
-		protected override void OnOpening(EventArgs e)
-		{
-			base.OnOpening(e);
-			var ruleSet = this.ruleSet;
-			if (ruleSet is not null)
+			this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
+			if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
 			{
-				this.iconColorComboBox.SelectedItem = ruleSet.IconColor;
-				this.iconComboBox.SelectedItem = ruleSet.Icon;
-				this.nameTextBox.Text = ruleSet.Name;
-				this.rules.AddAll(ruleSet.Rules);
-			}
-			else
-			{
-				this.iconComboBox.SelectedItem = LogProfileIcon.Analysis;
-				if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+				this.SynchronizationContext.Post(async () =>
 				{
-					this.SynchronizationContext.Post(async () =>
+					if (!OperationCountingAnalysisRuleSetManager.Default.CanAddRuleSet)
 					{
-						if (!OperationCountingAnalysisRuleSetManager.Default.CanAddRuleSet)
+						await new MessageDialog()
 						{
-							await new MessageDialog()
-							{
-								Icon = MessageDialogIcon.Warning,
-								Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
-							}.ShowDialog(this);
-							this.IsEnabled = false;
-							this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
-						}
-						else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+							Icon = MessageDialogIcon.Warning,
+							Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
+						}.ShowDialog(this);
+						this.IsEnabled = false;
+						this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
+					}
+					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+					{
+						var messageDialog = new MessageDialog()
 						{
-							var messageDialog = new MessageDialog()
-							{
-								DoNotAskOrShowAgain = false,
-								Icon = MessageDialogIcon.Information,
-								Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
-							};
-							await messageDialog.ShowDialog(this);
-							if (messageDialog.DoNotAskOrShowAgain == true)
-								this.PersistentState.SetValue(DonotShowRestrictionsWithNonProVersionKey, true);
-						}
-					});
-				}
+							DoNotAskOrShowAgain = false,
+							Icon = MessageDialogIcon.Information,
+							Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion"),
+						};
+						await messageDialog.ShowDialog(this);
+						if (messageDialog.DoNotAskOrShowAgain == true)
+							this.PersistentState.SetValue(DonotShowRestrictionsWithNonProVersionKey, true);
+					}
+				});
 			}
-			this.validateParametersAction.Schedule();
 		}
-		
+	}
+	
 
-		/// <summary>
-		/// Open online documentation.
-		/// </summary>
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
 #pragma warning disable CA1822
-		public void OpenDocumentation() =>
-			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationCountingAnalysis");
+	public void OpenDocumentation() =>
+		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationCountingAnalysis");
 #pragma warning restore CA1822
-		
+	
 
-		// Remove rule.
-		void RemoveRule(OperationCountingAnalysisRuleSet.Rule rule)
+	// Remove rule.
+	void RemoveRule(OperationCountingAnalysisRuleSet.Rule rule)
+	{
+		this.rules.Remove(rule);
+		this.ruleListBox.Focus();
+	}
+
+
+	/// <summary>
+	/// Command to remove rule.
+	/// </summary>
+	public ICommand RemoveRuleCommand { get; }
+	
+
+	/// <summary>
+	/// Rules.
+	/// </summary>
+	public IList<OperationCountingAnalysisRuleSet.Rule> Rules => this.rules;
+
+
+	/// <summary>
+	/// Show dialog to edit given rule set.
+	/// </summary>
+	/// <param name="parent">Parent window.</param>
+	/// <param name="ruleSet">Rule set to edit.</param>
+	public static void Show(Avalonia.Controls.Window parent, OperationCountingAnalysisRuleSet? ruleSet)
+	{
+		// show existing dialog
+		if (ruleSet != null && DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
 		{
-			this.rules.Remove(rule);
-			this.ruleListBox.Focus();
+			dialog.ActivateAndBringToFront();
+			return;
 		}
 
-
-		/// <summary>
-		/// Command to remove rule.
-		/// </summary>
-		public ICommand RemoveRuleCommand { get; }
-		
-
-		/// <summary>
-		/// Rules.
-		/// </summary>
-		public IList<OperationCountingAnalysisRuleSet.Rule> Rules => this.rules;
-
-
-		/// <summary>
-		/// Show dialog to edit given rule set.
-		/// </summary>
-		/// <param name="parent">Parent window.</param>
-		/// <param name="ruleSet">Rule set to edit.</param>
-		public static void Show(Avalonia.Controls.Window parent, OperationCountingAnalysisRuleSet? ruleSet)
+		// show dialog
+		dialog = new()
 		{
-			// show existing dialog
-			if (ruleSet != null && DialogWithEditingRuleSets.TryGetValue(ruleSet, out var dialog))
-			{
-				dialog.ActivateAndBringToFront();
-				return;
-			}
-
-			// show dialog
-			dialog = new()
-			{
-				ruleSet = ruleSet
-			};
-			if (ruleSet != null)
-				DialogWithEditingRuleSets[ruleSet] = dialog;
-			dialog.Show(parent);
-		}
+			ruleSet = ruleSet
+		};
+		if (ruleSet != null)
+			DialogWithEditingRuleSets[ruleSet] = dialog;
+		dialog.Show(parent);
 	}
 }

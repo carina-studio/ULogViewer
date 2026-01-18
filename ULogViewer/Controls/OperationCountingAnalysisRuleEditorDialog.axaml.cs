@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
@@ -10,124 +11,132 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace CarinaStudio.ULogViewer.Controls
+namespace CarinaStudio.ULogViewer.Controls;
+
+/// <summary>
+/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet.Rule"/>.
+/// </summary>
+class OperationCountingAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
+	// Fields.
+	readonly ObservableList<DisplayableLogAnalysisCondition> conditions = new();
+	readonly TimeSpanTextBox intervalTextBox;
+	readonly ComboBox levelComboBox;
+	readonly TextBox operationNameTextBox;
+	readonly PatternEditor patternEditor;
+	readonly ComboBox resultTypeComboBox;
+
+
 	/// <summary>
-	/// Dialog to edit <see cref="OperationCountingAnalysisRuleSet.Rule"/>.
+	/// Initialize new <see cref="OperationCountingAnalysisRuleEditorDialog"/> instance.
 	/// </summary>
-	class OperationCountingAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	public OperationCountingAnalysisRuleEditorDialog()
 	{
-		// Fields.
-		readonly ObservableList<DisplayableLogAnalysisCondition> conditions = new();
-		readonly TimeSpanTextBox intervalTextBox;
-		readonly ComboBox levelComboBox;
-		readonly TextBox operationNameTextBox;
-		readonly PatternEditor patternEditor;
-		readonly ComboBox resultTypeComboBox;
-
-
-		/// <summary>
-		/// Initialize new <see cref="OperationCountingAnalysisRuleEditorDialog"/> instance.
-		/// </summary>
-		public OperationCountingAnalysisRuleEditorDialog()
+		AvaloniaXamlLoader.Load(this);
+		this.intervalTextBox = this.Get<TimeSpanTextBox>(nameof(intervalTextBox)).Also(it =>
 		{
-			AvaloniaXamlLoader.Load(this);
-			this.intervalTextBox = this.Get<TimeSpanTextBox>(nameof(intervalTextBox)).Also(it =>
-			{
-				it.GetObservable(TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
-			});
-			this.levelComboBox = this.Get<ComboBox>(nameof(levelComboBox));
-			this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
-			{
-				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
-			});
-			this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
-			{
-				it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
-			});
-			this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
-		}
-
-
-		// Conditions.
-		public IList<DisplayableLogAnalysisCondition> Conditions => this.conditions;
-
-
-		// Generate result.
-		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+			it.GetObservable(TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
+		});
+		this.levelComboBox = this.Get<ComboBox>(nameof(levelComboBox));
+		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
 		{
-			var rule = this.Rule;
-			var newRule = new OperationCountingAnalysisRuleSet.Rule(
-				this.operationNameTextBox.Text.AsNonNull(),
-				this.intervalTextBox.Value.GetValueOrDefault(),
-				this.patternEditor.Pattern.AsNonNull(),
-				(Logs.LogLevel)this.levelComboBox.SelectedItem.AsNonNull(),
-				this.conditions,
-				(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem.AsNonNull()
-			);
-			if (newRule.Equals(rule))
-				return Task.FromResult<object?>(rule);
-			return Task.FromResult<object?>(newRule);
-		}
-
-
-		/// <inheritdoc/>
-		protected override void OnOpened(EventArgs e)
+			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
+		});
+		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
 		{
-			base.OnOpened(e);
-			this.SynchronizationContext.Post(() =>
-			{
-				var presenter = this.TutorialPresenter;
-				if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
-					this.operationNameTextBox.Focus();
-			});
-		}
-
-
-		/// <inheritdoc/>
-		protected override void OnOpening(EventArgs e)
-		{
-			base.OnOpening(e);
-			var rule = this.Rule;
-			if (rule is not null)
-			{
-				this.conditions.AddAll(rule.Conditions);
-				this.intervalTextBox.Value = rule.Interval;
-				this.levelComboBox.SelectedItem = rule.Level;
-				this.operationNameTextBox.Text = rule.OperationName;
-				this.patternEditor.Pattern = rule.Pattern;
-				this.resultTypeComboBox.SelectedItem = rule.ResultType;
-			}
-			else
-			{
-				this.intervalTextBox.Value = TimeSpan.FromSeconds(1);
-				this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
-				this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Frequency;
-			}
-		}
-
-
-		// Validate input.
-		protected override bool OnValidateInput() =>
-			base.OnValidateInput() 
-			&& this.intervalTextBox.Value.GetValueOrDefault().Ticks > 0
-			&& this.intervalTextBox.IsTextValid
-			&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text)
-			&& this.patternEditor.Pattern != null;
-		
-		
-		/// <summary>
-		/// Open online documentation.
-		/// </summary>
-#pragma warning disable CA1822
-		public void OpenDocumentation() =>
-			Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationCountingAnalysis");
-#pragma warning restore CA1822
-		
-
-		/// <summary>
-		/// Get or set rule to be edited.
-		/// </summary>
-		public OperationCountingAnalysisRuleSet.Rule? Rule { get; set; }
+			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
+		});
+		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 	}
+
+
+	// Conditions.
+	public IList<DisplayableLogAnalysisCondition> Conditions => this.conditions;
+
+
+	// Generate result.
+	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+	{
+		// check input
+		if (string.IsNullOrWhiteSpace(this.operationNameTextBox.Text))
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("operationNameItem"), this.operationNameTextBox);
+			return Task.FromResult<object?>(null);
+		}
+		if (this.patternEditor.Pattern is null)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("patternItem"), this.patternEditor);
+			return Task.FromResult<object?>(null);
+		}
+		if (this.intervalTextBox.Value.GetValueOrDefault().Ticks <= 0 || !this.intervalTextBox.IsTextValid)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("intervalItem"), this.intervalTextBox);
+			return Task.FromResult<object?>(null);
+		}
+		
+		// generate rule
+		var rule = this.Rule;
+		var newRule = new OperationCountingAnalysisRuleSet.Rule(
+			this.operationNameTextBox.Text.AsNonNull(),
+			this.intervalTextBox.Value.GetValueOrDefault(),
+			this.patternEditor.Pattern.AsNonNull(),
+			(Logs.LogLevel)this.levelComboBox.SelectedItem.AsNonNull(),
+			this.conditions,
+			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem.AsNonNull()
+		);
+		if (newRule.Equals(rule))
+			return Task.FromResult<object?>(rule);
+		return Task.FromResult<object?>(newRule);
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpened(EventArgs e)
+	{
+		base.OnOpened(e);
+		this.SynchronizationContext.Post(() =>
+		{
+			var presenter = this.TutorialPresenter;
+			if (presenter is null || !this.patternEditor.ShowTutorialIfNeeded(presenter, this.operationNameTextBox))
+				this.operationNameTextBox.Focus();
+		});
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
+		var rule = this.Rule;
+		if (rule is not null)
+		{
+			this.conditions.AddAll(rule.Conditions);
+			this.intervalTextBox.Value = rule.Interval;
+			this.levelComboBox.SelectedItem = rule.Level;
+			this.operationNameTextBox.Text = rule.OperationName;
+			this.patternEditor.Pattern = rule.Pattern;
+			this.resultTypeComboBox.SelectedItem = rule.ResultType;
+		}
+		else
+		{
+			this.intervalTextBox.Value = TimeSpan.FromSeconds(1);
+			this.levelComboBox.SelectedItem = Logs.LogLevel.Undefined;
+			this.resultTypeComboBox.SelectedItem = DisplayableLogAnalysisResultType.Frequency;
+		}
+	}
+	
+	
+	/// <summary>
+	/// Open online documentation.
+	/// </summary>
+#pragma warning disable CA1822
+	public void OpenDocumentation() =>
+		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationCountingAnalysis");
+#pragma warning restore CA1822
+	
+
+	/// <summary>
+	/// Get or set rule to be edited.
+	/// </summary>
+	public OperationCountingAnalysisRuleSet.Rule? Rule { get; init; }
 }

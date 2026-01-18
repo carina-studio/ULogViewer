@@ -50,7 +50,7 @@
 						<StackPanel IsVisible="{Binding !#window.IsEmbeddedScriptSet}">
 							
 							<!-- Name -->
-							<asControls:DialogItem ItemSize="Small">
+							<asControls:DialogItem Name="nameItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.Name}"/>
 								<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>

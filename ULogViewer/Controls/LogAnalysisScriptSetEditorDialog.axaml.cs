@@ -25,7 +25,6 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, Uri?> AnalysisScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, Uri?>(nameof(AnalysisScriptDocumentUri), d => d.analysisScriptDocumentUri);
-	static readonly DirectProperty<LogAnalysisScriptSetEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<LogAnalysisScriptSetEditorDialog, bool>(nameof(AreValidParameters), d => d.areValidParameters);
 	static readonly Dictionary<LogAnalysisScriptSet, LogAnalysisScriptSetEditorDialog> Dialogs = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("LogAnalysisScriptSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 	static readonly StyledProperty<bool> IsEmbeddedScriptSetProperty = AvaloniaProperty.Register<LogAnalysisScriptSetEditorDialog, bool>(nameof(IsEmbeddedScriptSet));
@@ -35,7 +34,6 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 
 	// Fields.
 	Uri? analysisScriptDocumentUri;
-	bool areValidParameters;
 	readonly ToggleSwitch contextBasedToggleSwitch;
 	string? fileNameToSave;
 	readonly LogProfileIconColorComboBox iconColorComboBox;
@@ -45,7 +43,6 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 	readonly TextBox nameTextBox;
 	LogAnalysisScriptSet? scriptSetToEdit;
 	Uri? setupScriptDocumentUri;
-	readonly ScheduledAction validateParametersAction;
 
 
 	/// <summary>
@@ -54,23 +51,15 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 	public LogAnalysisScriptSetEditorDialog()
 	{
 		var isInit = true;
-		this.ApplyCommand = new Command(async() => await this.ApplyAsync(false), this.GetObservable(AreValidParametersProperty));
-		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
+		this.ApplyCommand = new Command(async() => await this.ApplyAsync(false));
+		this.CompleteEditingCommand = new Command(this.CompleteEditing);
 		AvaloniaXamlLoader.Load(this);
 		if (Platform.IsLinux)
 			this.WindowStartupLocation = WindowStartupLocation.Manual;
 		this.contextBasedToggleSwitch = this.Get<ToggleSwitch>(nameof(contextBasedToggleSwitch));
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
-		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
-		});
-		this.validateParametersAction = new(() =>
-		{
-			this.SetAndRaise(AreValidParametersProperty, ref this.areValidParameters, this.IsEmbeddedScriptSet || !string.IsNullOrWhiteSpace(this.nameTextBox.Text));
-		});
-		this.GetObservable(IsEmbeddedScriptSetProperty).Subscribe(_ => this.validateParametersAction.Schedule());
+		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox));
 		this.UpdateDocumentUris();
 		isInit = false;
 	}
@@ -87,6 +76,17 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 	// Apply current script set.
 	async Task<LogAnalysisScriptSet?> ApplyAsync(bool willClose)
 	{
+		// check name
+		if (!this.IsEmbeddedScriptSet && string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+		{
+			this.HintForInput(
+				this.Get<ScrollViewer>("contentScrollViewer"),
+				this.Get<Control>("nameItem"),
+				this.nameTextBox
+			);
+			return null;
+		}
+		
 		// check compilation error
 		//
 		
@@ -142,10 +142,6 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 		// complete
 		return scriptSet;
 	}
-
-
-	// Whether all parameters are valid or not.
-	public bool AreValidParameters => this.GetValue(AreValidParametersProperty);
 
 
 	/// <summary>

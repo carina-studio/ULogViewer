@@ -30,7 +30,7 @@
 				<StackPanel>
 
 					<!-- Pattern -->
-					<asControls:DialogItem>
+					<asControls:DialogItem Name="patternItem">
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogPatternEditorDialog.Regex}"/>

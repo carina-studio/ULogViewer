@@ -30,21 +30,21 @@
 					<Separator Classes="Dialog_Separator_Small"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}" IsEnabled="{Binding #dialog.AreValidParameters}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}"/>
 					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 				</StackPanel>
 			</Grid>
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer>
+		<ScrollViewer Name="contentScrollViewer">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 				
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>
 
 						<!-- Name -->
-						<asControls:DialogItem ItemSize="Small">
+						<asControls:DialogItem Name="nameItem" ItemSize="Small">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
 							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 						</asControls:DialogItem>
@@ -71,7 +71,7 @@
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>
 
-						<asControls:DialogItem ItemSize="Small">
+						<asControls:DialogItem Name="rulesItem" ItemSize="Small">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
 							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
 						</asControls:DialogItem>
