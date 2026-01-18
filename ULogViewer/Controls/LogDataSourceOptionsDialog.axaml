@@ -84,7 +84,7 @@
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}">
+							<TextBox Name="categoryTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsCategoryRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
@@ -112,7 +112,7 @@
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" PropertyChanged="OnEditorControlPropertyChanged" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{asXaml:StringResource Common.None}"/>
+							<asControls:SyntaxHighlightingTextBox Name="commandTextBox" Classes="Dialog_Item_TextBox" DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Watermark="{asXaml:StringResource Common.None}"/>
 							<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}"/>
 							<Button Name="selectAzureResourcesButton" Classes="Dialog_Item_Button" Command="{Binding #window.SelectAzureResources}" Content="{asXaml:StringResource LogDataSourceOptionsDialog.SelectAzureResources}" HorizontalAlignment="Right" IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}"/>
 							<Separator Classes="Dialog_Item_Separator"/>
@@ -162,7 +162,7 @@
 						<StackPanel IsVisible="{Binding #window.IsIPEndPointSupported}">
 							<asControls:DialogItem Name="ipAddressItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.IPEndPoint.Address}"/>
-								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
+								<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
 							<asControls:DialogItem ItemSize="Small">
@@ -176,7 +176,7 @@
 						<StackPanel IsVisible="{Binding #window.IsUriSupported}">
 							<asControls:DialogItem ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Uri}"/>
-								<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
+								<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
@@ -185,7 +185,7 @@
 						<StackPanel IsVisible="{Binding #window.IsProcessIdSupported}">
 							<asControls:DialogItem ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.ProcessId}"/>
-								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
+								<abControls:IntegerTextBox Name="processIdTextBox" Classes="Dialog_Item_TextBox" IsNullValueAllowed="True" Maximum="2147483647" Minimum="0" Watermark="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>
@@ -269,7 +269,7 @@
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<TextBox Name="connectionStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{asXaml:StringResource Common.None}">
+							<TextBox Name="connectionStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.ConnectionStringTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsConnectionStringRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
@@ -309,7 +309,7 @@
 								</WrapPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>
-							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding #window.SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" PropertyChanged="OnEditorControlPropertyChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{asXaml:StringResource Common.None}">
+							<asControls:SyntaxHighlightingTextBox Name="queryStringTextBox" Classes="Dialog_Item_TextBox" AcceptsReturn="True" AcceptsTab="True" DefinitionSet="{Binding #window.SqlSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{StaticResource Double/LogDataSourceOptionsDialog.QueryStringTextBox.Height}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" Watermark="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsQueryStringRequired}" ComparisonCondition="Equal" Value="True">
 										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
@@ -326,7 +326,7 @@
 						<StackPanel IsVisible="{Binding #window.IsUserNameSupported}">
 							<asControls:DialogItem Name="userNameItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.UserName}"/>
-								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}">
+								<TextBox Name="userNameTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsUserNameRequired}" ComparisonCondition="Equal" Value="True">
 											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
@@ -344,7 +344,7 @@
 						<StackPanel IsVisible="{Binding #window.IsPasswordSupported}">
 							<asControls:DialogItem Name="passwordItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.Password}"/>
-								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" PasswordChar="●" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}">
+								<TextBox Name="passwordTextBox" Classes="Dialog_Item_TextBox" PasswordChar="●" Watermark="{asXaml:StringResource Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsPasswordRequired}" ComparisonCondition="Equal" Value="True">
 											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>

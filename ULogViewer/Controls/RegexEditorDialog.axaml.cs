@@ -81,12 +81,10 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 			});
 			it.GetObservable(CarinaStudio.Controls.ObjectTextBox.IsTextValidProperty).Subscribe(_ =>
 			{
-				this.InvalidateInput();
 				this.testAction?.Schedule();
 			});
 			it.GetObservable(RegexTextBox.ObjectProperty).Subscribe(_ =>
 			{
-				this.InvalidateInput();
 				this.testAction?.Schedule();
 				if (this.isPhraseInputAssistanceEnabled)
 					this.updatePhrasesDatabaseAction?.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));

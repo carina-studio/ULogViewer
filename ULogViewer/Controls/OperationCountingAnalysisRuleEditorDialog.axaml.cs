@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
@@ -33,19 +32,10 @@ class OperationCountingAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<
 	public OperationCountingAnalysisRuleEditorDialog()
 	{
 		AvaloniaXamlLoader.Load(this);
-		this.intervalTextBox = this.Get<TimeSpanTextBox>(nameof(intervalTextBox)).Also(it =>
-		{
-			it.GetObservable(TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
-		});
+		this.intervalTextBox = this.Get<TimeSpanTextBox>(nameof(intervalTextBox));
 		this.levelComboBox = this.Get<ComboBox>(nameof(levelComboBox));
-		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
-		});
-		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
-		{
-			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
-		});
+		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox));
+		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor));
 		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 	}
 
@@ -68,7 +58,7 @@ class OperationCountingAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<
 			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("patternItem"), this.patternEditor);
 			return Task.FromResult<object?>(null);
 		}
-		if (this.intervalTextBox.Value.GetValueOrDefault().Ticks <= 0 || !this.intervalTextBox.IsTextValid)
+		if (!this.intervalTextBox.Validate() || this.intervalTextBox.Value.GetValueOrDefault().Ticks <= 0)
 		{
 			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("intervalItem"), this.intervalTextBox);
 			return Task.FromResult<object?>(null);

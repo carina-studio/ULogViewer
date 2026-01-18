@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -38,7 +39,6 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		this.maxLogReadingCountTextBox = this.Get<IntegerTextBox>(nameof(maxLogReadingCountTextBox)).Also(it =>
 		{
 			it.Minimum = 1;
-			it.GetObservable(ValueTextBox.IsTextValidProperty).Subscribe(this.InvalidateInput);
 		});
 		this.SetValue(ConfirmMaxLogReadingCountForLargeFilesProperty, this.Settings.GetValueOrDefault(SettingKeys.ConfirmMaxLogReadingCountForLargeFiles));
 		this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
@@ -61,6 +61,11 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		if (!this.maxLogReadingCountTextBox.Validate())
+		{
+			this.HintForInput(null, this.Get<Control>("maxLogReadingCountItem"), this.maxLogReadingCountTextBox);
+			return Task.FromResult<object?>(default);
+		}
 		this.isResultGenerated = true;
 		this.LogReadingWindow = (LogReadingWindow)this.logReadingWindowComboBox.SelectedItem.AsNonNull();
 		this.MaxLogReadingCount = (int?)this.maxLogReadingCountTextBox.Value;
@@ -189,10 +194,4 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 		if (this.CanSpecifyMaxLogReadingCount)
 			this.maxLogReadingCountTextBox.Value = this.InitialMaxLogReadingCount?.Let(c => Math.Max(Math.Min(c, maximum), 1));
 	}
-
-
-	// Validate input.
-	protected override bool OnValidateInput() =>
-		base.OnValidateInput()
-		&& this.maxLogReadingCountTextBox.IsTextValid;
 }

@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -165,7 +164,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			if (this.commandTextBox.IsFocused)
 				this.commandTextBoxSelection = new(this.commandTextBox.SelectionStart, this.commandTextBox.SelectionEnd);
 		});
-		this.setupCommands.CollectionChanged += (_, _) => this.InvalidateInput();
 		this.setupCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(setupCommandsListBox)).Also(it =>
 		{
 			ListBoxItemDragging.SetItemDraggingEnabled(it, true);
@@ -180,7 +178,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 					this.OnSetupTeardownCommandsListBoxItemDropped(listBox, e);
 			});
 		});
-		this.teardownCommands.CollectionChanged += (_, _) => this.InvalidateInput();
 		this.teardownCommandsListBox = this.Get<AppSuite.Controls.ListBox>(nameof(teardownCommandsListBox)).Also(it =>
 		{
 			ListBoxItemDragging.SetItemDraggingEnabled(it, true);
@@ -205,7 +202,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// <summary>
 	/// Add environment variable.
 	/// </summary>
-	public async void AddEnvironmentVariable()
+	public async Task AddEnvironmentVariable()
 	{
 		// create environment variable
 		var envVar = default(Tuple<string, string>);
@@ -239,7 +236,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// <summary>
 	/// Add setup command.
 	/// </summary>
-	public async void AddSetupCommand()
+	public async Task AddSetupCommand()
 	{
 		var command = (await new TextShellCommandInputDialog().ShowDialog<string?>(this))?.Trim();
 		if (!string.IsNullOrWhiteSpace(command))
@@ -253,7 +250,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// <summary>
 	/// Add teardown command.
 	/// </summary>
-	public async void AddTeardownCommand()
+	public async Task AddTeardownCommand()
 	{
 		var command = (await new TextShellCommandInputDialog().ShowDialog<string?>(this))?.Trim();
 		if (!string.IsNullOrWhiteSpace(command))
@@ -299,7 +296,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	
 	
 	// Edit environment variable.
-	async void EditEnvironmentVariable(Tuple<string, string> envVar)
+	async Task EditEnvironmentVariable(Tuple<string, string> envVar)
 	{
 		// edit environment variable
 		Tuple<string, string>? newEnvVar = envVar;
@@ -338,7 +335,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// Edit given setup or teardown command.
-	async void EditSetupTeardownCommand(ListBoxItem item)
+	async Task EditSetupTeardownCommand(ListBoxItem item)
 	{
 		// find index of command
 		var listBox = (ListBox)item.Parent.AsNonNull();
@@ -566,53 +563,6 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		}
 		this.SelectListBoxItem(listBox, index);
 	}
-
-
-	/// <summary>
-	/// Command to move given setup or teardown command down.
-	/// </summary>
-	public ICommand MoveSetupTeardownCommandDownCommand { get; }
-
-
-	// Move given setup or teardown command up.
-	void MoveSetupTeardownCommandUp(ListBoxItem item)
-	{
-		// find index of command
-		var listBox = (Avalonia.Controls.ListBox)item.Parent.AsNonNull();
-		var index = listBox == this.setupCommandsListBox ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
-		if (index < 0)
-			return;
-
-		// move command
-		var commands = (item.Parent == this.setupCommandsListBox ? this.setupCommands : this.teardownCommands);
-		if (index > 0)
-		{
-			commands.Move(index, index - 1);
-			--index;
-		}
-		this.SelectListBoxItem(listBox, index);
-	}
-
-
-	/// <summary>
-	/// Command to move given setup or teardown command up.
-	/// </summary>
-	public ICommand MoveSetupTeardownCommandUpCommand { get; }
-
-
-	// Called when property of editor control changed.
-	void OnEditorControlPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
-	{
-		var property = e.Property;
-		if (property == ObjectTextBox.IsTextValidProperty
-			|| property == ObjectTextBox.IsTextValidProperty
-			|| property == SelectingItemsControl.SelectedItemProperty
-			|| (property == TextBox.TextProperty && sender is not UriTextBox)
-			|| property == UriTextBox.ObjectProperty)
-		{
-			this.InvalidateInput();
-		}
-	}
 	
 	
 	// Called when check state of one of switch for formatting data changed.
@@ -646,9 +596,9 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem == null)
 			return;
 		if (listBox == this.setupCommandsListBox || listBox == this.teardownCommandsListBox)
-			this.EditSetupTeardownCommand(listBoxItem);
+			_ = this.EditSetupTeardownCommand(listBoxItem);
 		else if (listBox == this.environmentVariablesListBox)
-			this.EditEnvironmentVariable((Tuple<string, string>)listBoxItem.DataContext!);
+			_ = this.EditEnvironmentVariable((Tuple<string, string>)listBoxItem.DataContext!);
 	}
 
 
@@ -984,7 +934,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// <summary>
 	/// Select file name.
 	/// </summary>
-	public async void SelectFileName()
+	public async Task SelectFileName()
 	{
 		if (this.IsSelectingFileName)
 			return;
@@ -1023,7 +973,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	/// <summary>
 	/// Select working directory.
 	/// </summary>
-	public async void SelectWorkingDirectory()
+	public async Task SelectWorkingDirectory()
 	{
 		if (this.IsSelectingWorkingDirectory)
 			return;

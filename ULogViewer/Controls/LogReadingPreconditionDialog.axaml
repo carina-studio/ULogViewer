@@ -37,7 +37,7 @@
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Timestamps -->
-					<asControls:DialogItem>
+					<asControls:DialogItem Name="timestampsItem">
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps.Description}">

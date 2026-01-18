@@ -70,7 +70,7 @@
 					<Line Classes="Dialog_Item_Separator_Inner"/>
 
 					<!-- Max log reading count -->
-					<asControls:DialogItem>
+					<asControls:DialogItem Name="maxLogReadingCountItem">
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount}"/>
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description}">

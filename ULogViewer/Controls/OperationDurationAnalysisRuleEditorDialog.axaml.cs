@@ -59,28 +59,14 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 		this.byteSizeVarNameTextBox = this.Get<TextBox>(nameof(byteSizeVarNameTextBox));
 		this.customMessageTextBox = this.Get<TextBox>(nameof(customMessageTextBox));
 		this.endingModeComboBox = this.Get<ComboBox>(nameof(endingModeComboBox));
-		this.endingPatternEditor = this.Get<PatternEditor>(nameof(endingPatternEditor)).Also(it =>
-		{
-			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
-		});
+		this.endingPatternEditor = this.Get<PatternEditor>(nameof(endingPatternEditor));
 		this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (sender, e) => _ = this.EditEndingVariable((string)e.Item);
 		});
-		this.maxDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(maxDurationTextBox)).Also(it =>
-		{
-			it.GetObservable(CarinaStudio.Controls.ValueTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
-			it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
-		});
-		this.minDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(minDurationTextBox)).Also(it =>
-		{
-			it.GetObservable(CarinaStudio.Controls.ValueTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
-			it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
-		});
-		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
-		});
+		this.maxDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(maxDurationTextBox));
+		this.minDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(minDurationTextBox));
+		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox));
 		this.quantityVarNameTextBox = this.Get<TextBox>(nameof(quantityVarNameTextBox));
 		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 	}
@@ -245,12 +231,12 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("endingPatternItem"), this.endingPatternEditor);
 			return Task.FromResult<object?>(null);
 		}
-		if (!this.minDurationTextBox.IsTextValid)
+		if (!this.minDurationTextBox.Validate())
 		{
 			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("durationItem"), this.minDurationTextBox);
 			return Task.FromResult<object?>(null);
 		}
-		if (!this.maxDurationTextBox.IsTextValid)
+		if (!this.maxDurationTextBox.Validate())
 		{
 			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("durationItem"), this.maxDurationTextBox);
 			return Task.FromResult<object?>(null);

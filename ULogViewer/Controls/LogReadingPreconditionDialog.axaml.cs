@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Controls;
 using System;
 using System.Threading;
@@ -32,17 +34,17 @@ class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
         AvaloniaXamlLoader.Load(this);
         this.beginningTimestampTextBox = this.Get<DateTimeTextBox>(nameof(beginningTimestampTextBox)).Also(it =>
         {
-            it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
+            it.GetObservable(ValueTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
             it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
         });
         this.endingTimestampTextBox = this.Get<DateTimeTextBox>(nameof(endingTimestampTextBox)).Also(it =>
         {
-            it.GetObservable(DateTimeTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
+            it.GetObservable(ValueTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
             it.GetObservable(DateTimeTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
         });
         this.timestampsSwitch = this.Get<ToggleSwitch>(nameof(timestampsSwitch)).Also(it =>
         {
-            it.GetObservable(ToggleSwitch.IsCheckedProperty).Subscribe(_ => 
+            it.GetObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => 
             {
                 this.InvalidateInput();
             });
@@ -51,8 +53,14 @@ class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
 
 
     // Generate result.
-    protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-        Task.FromResult((object?)Global.Run(() =>
+    protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+    {
+        if (!this.GetValue(IsTimestampRangeValidProperty) && this.timestampsSwitch.IsChecked == true)
+        {
+            this.HintForInput(null, this.Get<Control>("timestampsItem"), this.endingTimestampTextBox);
+            return Task.FromResult<object?>(null);
+        }
+        return Task.FromResult((object?)Global.Run(() =>
         {
             var precondition = new Logs.LogReadingPrecondition();
             this.isResultGenerated = true;
@@ -60,7 +68,8 @@ class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
                 precondition.TimestampRange = (this.beginningTimestampTextBox.Value, this.endingTimestampTextBox.Value);
             return precondition;
         }));
-    
+    }
+
 
     // Whether cancellation is allowed or not.
     public bool IsCancellationAllowed
@@ -117,8 +126,6 @@ class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
             && this.beginningTimestampTextBox.Value.Value >= this.endingTimestampTextBox.Value.Value)
         {
             this.SetValue(IsTimestampRangeValidProperty, false);
-            if (this.timestampsSwitch.IsChecked == true)
-                return false;
         }
         else
             this.SetValue(IsTimestampRangeValidProperty, true);
@@ -127,7 +134,7 @@ class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
     
 
     // Precondition.
-    public Logs.LogReadingPrecondition Precondition { get; set; }
+    public Logs.LogReadingPrecondition Precondition { get; init; }
 
 
     /// <summary>

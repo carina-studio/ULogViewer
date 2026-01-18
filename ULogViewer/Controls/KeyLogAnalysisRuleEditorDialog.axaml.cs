@@ -58,12 +58,8 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 					variable.Name = propertyName;
 				}));
 			}
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
 		});
-		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
-		{
-			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ => this.InvalidateInput());
-		});
+		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor));
 		this.quantityVarNameTextBox = this.Get<TextBox>(nameof(quantityVarNameTextBox));
 		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
 	}
