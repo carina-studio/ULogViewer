@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
@@ -14,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -29,7 +29,6 @@ class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewer
 	
 	
 	// Static fields.
-	static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<PredefinedLogTextFilterEditorDialog, bool>("AreValidParameters");
 	static readonly Dictionary<PredefinedLogTextFilter, PredefinedLogTextFilterEditorDialog> DialogWithEditingRuleSets = new();
 
 
@@ -43,7 +42,6 @@ class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewer
 	readonly TextBox nameTextBox;
 	readonly PatternEditor patternEditor;
 	readonly ToggleButton selectGroupNameButton;
-	readonly ScheduledAction validateParametersAction;
 
 
 	// Constructor.
@@ -61,41 +59,28 @@ class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewer
 		{
 			it.LostFocus += (_, _) => it.Text = PredefinedLogTextFilter.CorrectGroupName(it.Text);
 		});
-		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ =>
-				this.validateParametersAction?.Schedule());
-		});
-		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor)).Also(it =>
-		{
-			it.GetObservable(PatternEditor.PatternProperty).Subscribe(_ =>
-				this.validateParametersAction?.Schedule());
-		});
+		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox));
+		this.patternEditor = this.Get<PatternEditor>(nameof(patternEditor));
 		this.selectGroupNameButton = this.Get<ToggleButton>(nameof(selectGroupNameButton));
-		this.validateParametersAction = new(() =>
-		{
-			if (this.IsClosed)
-				return;
-			if (string.IsNullOrWhiteSpace(this.nameTextBox.Text)
-				|| this.patternEditor.Pattern == null)
-			{
-				this.SetValue(AreValidParametersProperty, false);
-			}
-			else
-				this.SetValue(AreValidParametersProperty, true);
-		});
 	}
 
 
 	/// <summary>
 	/// Complete editing.
 	/// </summary>
-	public async void CompleteEditing()
+	public async Task CompleteEditing()
 	{
 		// validate parameters
-		this.validateParametersAction.ExecuteIfScheduled();
-		if (!this.GetValue(AreValidParametersProperty))
+		if (string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+		{
+			this.HintForInput(null, this.Get<Control>("nameItem"), this.nameTextBox);
 			return;
+		}
+		if (this.patternEditor.Pattern is null)
+		{
+			this.HintForInput(null, this.Get<Control>("patternItem"), this.patternEditor);
+			return;
+		}
 		
 		// check group name
 		var textFilterManager = PredefinedLogTextFilterManager.Default;

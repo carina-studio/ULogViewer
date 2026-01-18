@@ -112,7 +112,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 			this.HintForInput(
 				this.Get<ScrollViewer>("baseScrollViewer"),
 				this.Get<Control>("rulesItem"),
-				null
+				this.Get<Control>("addRuleButton")
 			);
 			return;
 		}

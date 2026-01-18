@@ -70,7 +70,6 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 
 
 	// Static fields.
-	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, bool> AreValidParametersProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(AreValidParameters), d => d.areValidParameters);
 	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, Uri?> ClosingReaderScriptDocumentUriProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, Uri?>(nameof(ClosingReaderScriptDocumentUri), d => d.closingReaderScriptDocumentUri);
 	static readonly Dictionary<ScriptLogDataSourceProvider, ScriptLogDataSourceProviderEditorDialog> Dialogs = new();
 	static readonly DirectProperty<ScriptLogDataSourceProviderEditorDialog, bool> IsNewProviderProperty = AvaloniaProperty.RegisterDirect<ScriptLogDataSourceProviderEditorDialog, bool>(nameof(IsNewProvider), d => d.isNewProvider);
@@ -82,7 +81,6 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	// Fields.
 	readonly ToggleButton addSupportedSourceOptionButton;
 	readonly ContextMenu addSupportedSourceOptionMenu;
-	bool areValidParameters;
 	Uri? closingReaderScriptDocumentUri;
 	readonly TextBox displayNameTextBox;
 	bool isNewProvider;
@@ -93,7 +91,6 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	readonly SortedObservableList<SupportedSourceOption> supportedSourceOptions = new((lhs, rhs) => string.Compare(lhs.Name, rhs.Name, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<MenuItem> unsupportedSourceOptionMenuItems = new((lhs, rhs) => string.Compare(lhs.DataContext as string, rhs.DataContext as string, true, CultureInfo.InvariantCulture));
 	readonly SortedObservableList<string> unsupportedSourceOptions = new((lhs, rhs) => string.Compare(lhs, rhs, true, CultureInfo.InvariantCulture), LogDataSourceOptions.OptionNames);
-	readonly ScheduledAction validateParametersAction;
 
 
 	/// <summary>
@@ -102,8 +99,8 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	public ScriptLogDataSourceProviderEditorDialog()
 	{
 		var isInit = true;
-		this.ApplyCommand = new Command(async () => await this.ApplyAsync(false), this.GetObservable(AreValidParametersProperty));
-		this.CompleteEditingCommand = new Command(this.CompleteEditing, this.GetObservable(AreValidParametersProperty));
+		this.ApplyCommand = new Command(async () => await this.ApplyAsync(false));
+		this.CompleteEditingCommand = new Command(this.CompleteEditing);
 		this.RemoveSupportedSourceOptionCommand = new Command<SupportedSourceOption>(this.RemoveSupportedSourceOption);
 		this.SupportedSourceOptions = ListExtensions.AsReadOnly(this.supportedSourceOptions);
 		this.UnsupportedSourceOptions = ListExtensions.AsReadOnly(this.unsupportedSourceOptions);
@@ -121,15 +118,8 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 				this.SynchronizationContext.Post(() => this.addSupportedSourceOptionButton.IsChecked = true);
 			};
 		});
-		this.displayNameTextBox = this.Get<TextBox>(nameof(displayNameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
-		});
+		this.displayNameTextBox = this.Get<TextBox>(nameof(displayNameTextBox));
 		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox));
-		this.validateParametersAction = new(() =>
-		{
-			this.SetAndRaise(AreValidParametersProperty, ref this.areValidParameters, this.IsEmbeddedProvider || !string.IsNullOrWhiteSpace(this.displayNameTextBox.Text));
-		});
 		isInit = false;
 		this.UpdateDocumentUris();
 	}
@@ -152,6 +142,13 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 	// Apply current script set.
 	async Task<ScriptLogDataSourceProvider?> ApplyAsync(bool willClose)
 	{
+		// check input
+		if (!this.IsEmbeddedProvider && string.IsNullOrWhiteSpace(this.displayNameTextBox.Text))
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("displayNameItem"), this.displayNameTextBox);
+			return null;
+		}
+		
 		// check compilation error
 		//
 		
@@ -172,10 +169,6 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 		// complete
 		return provider;
 	}
-	
-	
-	// Whether all parameters are valid or not.
-	public bool AreValidParameters => this.GetValue(AreValidParametersProperty);
 
 
 	// URI of document of closing reader script.
@@ -322,9 +315,6 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 		foreach (var option in this.unsupportedSourceOptions)
 			this.unsupportedSourceOptionMenuItems.Add(this.CreateUnsupportedSourceOptionMenuItem(option));
 		this.isProviderShown = true;
-		
-		// validate
-		this.validateParametersAction.Schedule();
 	}
 
 

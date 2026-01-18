@@ -51,9 +51,9 @@
 
 						<!-- Display Name -->
 						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
-							<asControls:DialogItem ItemSize="Small">
+							<asControls:DialogItem Name="displayNameItem" ItemSize="Small">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
-								<TextBox Name="displayNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256"/>
+								<TextBox Name="displayNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
 							<Separator Classes="Dialog_Item_Separator"/>
 						</StackPanel>

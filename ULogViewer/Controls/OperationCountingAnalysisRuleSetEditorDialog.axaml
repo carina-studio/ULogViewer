@@ -123,7 +123,7 @@
 							</asControls:ListBox.ItemTemplate>
 						</asControls:ListBox>
 						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #ruleListBox.IsVisible}"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
+						<Button Name="addRuleButton" Classes="Dialog_Item_Button" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
 
 					</StackPanel>
 				</Border>

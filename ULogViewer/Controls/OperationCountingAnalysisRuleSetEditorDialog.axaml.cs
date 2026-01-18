@@ -98,7 +98,7 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		}
 		if (this.rules.IsEmpty())
 		{
-			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("rulesItem"), null);
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("rulesItem"), this.Get<Control>("addRuleButton"));
 			return;
 		}
 		
@@ -224,7 +224,7 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 				{
 					if (!OperationCountingAnalysisRuleSetManager.Default.CanAddRuleSet)
 					{
-						await new MessageDialog()
+						await new MessageDialog
 						{
 							Icon = MessageDialogIcon.Warning,
 							Message = this.GetResourceObservable("String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion"),
@@ -234,7 +234,7 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 					}
 					else if (!this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
 					{
-						var messageDialog = new MessageDialog()
+						var messageDialog = new MessageDialog
 						{
 							DoNotAskOrShowAgain = false,
 							Icon = MessageDialogIcon.Information,

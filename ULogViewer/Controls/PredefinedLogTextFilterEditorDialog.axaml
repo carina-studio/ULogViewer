@@ -27,7 +27,7 @@
 				<StackPanel>
 
 					<!-- Name -->
-					<asControls:DialogItem ItemSize="Small">
+					<asControls:DialogItem Name="nameItem" ItemSize="Small">
 						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource PredefinedLogTextFilterEditorDialog.Name}"/>
 						<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 					</asControls:DialogItem>
@@ -49,7 +49,7 @@
 					<Separator Classes="Dialog_Item_Separator"/>
 
 					<!-- Pattern -->
-					<asControls:DialogItem>
+					<asControls:DialogItem Name="patternItem">
 						<StackPanel Classes="Dialog_Item_Text_Container">
 							<WrapPanel>
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource PredefinedLogTextFilterEditorDialog.Regex}"/>
@@ -86,7 +86,7 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" Grid.Row="1">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditing}" Content="{Binding #window.OKButtonText}" IsEnabled="{Binding #window.AreValidParameters}"/>
+				<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditing}" Content="{Binding #window.OKButtonText}"/>
 				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 			</StackPanel>
 		</Border>

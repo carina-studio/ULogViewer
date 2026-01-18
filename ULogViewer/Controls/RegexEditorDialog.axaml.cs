@@ -4,7 +4,6 @@ using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
 using CarinaStudio.ULogViewer.ViewModels;
@@ -142,6 +141,11 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		if (!this.regexTextBox.Validate() || this.regexTextBox.Object is null)
+		{
+			this.HintForInput(null, this.Get<Control>("regexItem"), this.regexTextBox);
+			return Task.FromResult<object?>(null);
+		}
 		this.updatePhrasesDatabaseAction.ExecuteIfScheduled();
 		return Task.FromResult<object?>(this.regexTextBox.Object);
 	}
@@ -273,9 +277,4 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 		if (change.Property == TestLogLineProperty)
 			this.testAction.Schedule();
     }
-
-
-	// Validate input.
-	protected override bool OnValidateInput() =>
-		base.OnValidateInput() && this.regexTextBox.IsTextValid && this.regexTextBox.Object != null;
 }

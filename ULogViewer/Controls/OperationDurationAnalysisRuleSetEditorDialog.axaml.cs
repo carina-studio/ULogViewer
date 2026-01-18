@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
@@ -12,6 +11,7 @@ using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -28,7 +28,6 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 	
 	
 	// Static fields.
-	static readonly StyledProperty<bool> AreValidParametersProperty = AvaloniaProperty.Register<OperationDurationAnalysisRuleSetEditorDialog, bool>("AreValidParameters");
 	static readonly Dictionary<OperationDurationAnalysisRuleSet, OperationDurationAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
 	static readonly SettingKey<bool> DonotShowRestrictionsWithNonProVersionKey = new("OperationDurationAnalysisRuleSetEditorDialog.DonotShowRestrictionsWithNonProVersion");
 
@@ -40,7 +39,6 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 	readonly ObservableList<OperationDurationAnalysisRuleSet.Rule> rules = new();
 	readonly Avalonia.Controls.ListBox ruleListBox;
 	OperationDurationAnalysisRuleSet? ruleSet;
-	readonly ScheduledAction validateParametersAction;
 
 
 	/// <summary>
@@ -56,18 +54,10 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		AvaloniaXamlLoader.Load(this);
 		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
 		this.iconComboBox = this.Get<LogProfileIconComboBox>(nameof(iconComboBox));
-		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox)).Also(it =>
-		{
-			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.validateParametersAction?.Schedule());
-		});
+		this.nameTextBox = this.Get<TextBox>(nameof(nameTextBox));
 		this.ruleListBox = this.Get<AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
-			it.DoubleClickOnItem += (_, e) => this.EditRule((OperationDurationAnalysisRuleSet.Rule)e.Item);
-		});
-		this.rules.CollectionChanged += (_, _) => this.validateParametersAction!.Schedule();
-		this.validateParametersAction = new(() =>
-		{
-			this.SetValue(AreValidParametersProperty, !string.IsNullOrWhiteSpace(this.nameTextBox.Text) && this.rules.IsNotEmpty());
+			it.DoubleClickOnItem += (sender, e) => _ = this.EditRule((OperationDurationAnalysisRuleSet.Rule)e.Item);
 		});
 	}
 
@@ -75,7 +65,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 	/// <summary>
 	/// Add rule.
 	/// </summary>
-	public async void AddRule()
+	public async Task AddRule()
 	{
 		if (await new OperationDurationAnalysisRuleEditorDialog().ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this) is not { } rule)
 			return;
@@ -86,7 +76,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 
 
 	// Add new rule after given rule.
-	async void AddRuleAfter(OperationDurationAnalysisRuleSet.Rule rule)
+	async Task AddRuleAfter(OperationDurationAnalysisRuleSet.Rule rule)
 	{
 		// edit rule
 		var newRule = await new OperationDurationAnalysisRuleEditorDialog
@@ -118,7 +108,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 
 
 	// Add new rule before given rule.
-	async void AddRuleBefore(OperationDurationAnalysisRuleSet.Rule rule)
+	async Task AddRuleBefore(OperationDurationAnalysisRuleSet.Rule rule)
 	{
 		// edit rule
 		var newRule = await new OperationDurationAnalysisRuleEditorDialog
@@ -163,12 +153,19 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 	/// <summary>
 	/// Complete editing.
 	/// </summary>
-	public async void CompleteEditing()
+	public async Task CompleteEditing()
 	{
 		// validate parameters
-		this.validateParametersAction.ExecuteIfScheduled();
-		if (!this.GetValue(AreValidParametersProperty))
+		if (string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("nameItem"), this.nameTextBox);
 			return;
+		}
+		if (this.rules.IsEmpty())
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("rulesItem"), this.Get<Control>("addRuleButton"));
+			return;
+		}
 		
 		// create rule set
 		var ruleSet = this.ruleSet ?? new OperationDurationAnalysisRuleSet(this.Application, "");
@@ -199,7 +196,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 
 
 	// Copy rule.
-	async void CopyRule(OperationDurationAnalysisRuleSet.Rule rule)
+	async Task CopyRule(OperationDurationAnalysisRuleSet.Rule rule)
 	{
 		// get rule
 		var index = this.rules.IndexOf(rule);
@@ -231,7 +228,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 
 
 	// Edit rule.
-	async void EditRule(OperationDurationAnalysisRuleSet.Rule rule)
+	async Task EditRule(OperationDurationAnalysisRuleSet.Rule rule)
 	{
 		var index = this.rules.IndexOf(rule);
 		if (index < 0)
@@ -315,7 +312,6 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 				});
 			}
 		}
-		this.validateParametersAction.Schedule();
 	}
 	
 

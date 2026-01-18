@@ -51,7 +51,7 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer>
+		<ScrollViewer Name="contentScrollViewer">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 				<!-- Common -->
@@ -59,7 +59,7 @@
 					<StackPanel>
 				
 						<!-- Operation name -->
-						<asControls:DialogItem ItemSize="Small">
+						<asControls:DialogItem Name="operationNameItem" ItemSize="Small">
 							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource OperationDurationAnalysisRuleEditorDialog.OperationName}"/>
 							<TextBox Name="operationNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 						</asControls:DialogItem>
@@ -73,7 +73,7 @@
 					<StackPanel>
 
 						<!-- Beginning pattern -->
-						<asControls:DialogItem>
+						<asControls:DialogItem Name="beginningPatternItem">
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<WrapPanel>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern}"/>
@@ -136,7 +136,7 @@
 					<StackPanel>
 
 						<!-- Ending pattern -->
-						<asControls:DialogItem>
+						<asControls:DialogItem Name="endingPatternItem">
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<WrapPanel>
 									<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern}"/>
@@ -250,7 +250,7 @@
 						<Separator Classes="Dialog_Item_Separator"/>
 
 						<!-- Min/Max duration -->
-						<asControls:DialogItem>
+						<asControls:DialogItem Name="durationItem">
 							<StackPanel Classes="Dialog_Item_Text_Container">
 								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource OperationDurationAnalysisRuleEditorDialog.MinMaxDuration}"/>
 								<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#invalidMinMaxDurationDescGrid.IsVisible}" Text="{asXaml:StringResource OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description}"/>

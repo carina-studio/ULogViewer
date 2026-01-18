@@ -65,16 +65,16 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 		});
 		this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
 		{
-			it.DoubleClickOnItem += (_, e) => this.EditEndingVariable((string)e.Item);
+			it.DoubleClickOnItem += (sender, e) => _ = this.EditEndingVariable((string)e.Item);
 		});
 		this.maxDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(maxDurationTextBox)).Also(it =>
 		{
-			it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
+			it.GetObservable(CarinaStudio.Controls.ValueTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
 			it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
 		});
 		this.minDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(minDurationTextBox)).Also(it =>
 		{
-			it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
+			it.GetObservable(CarinaStudio.Controls.ValueTextBox.IsTextValidProperty).Subscribe(_ => this.InvalidateInput());
 			it.GetObservable(CarinaStudio.Controls.TimeSpanTextBox.ValueProperty).Subscribe(_ => this.InvalidateInput());
 		});
 		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox)).Also(it =>
@@ -89,7 +89,7 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 	/// <summary>
 	/// Add ending variable.
 	/// </summary>
-	public async void AddEndingVariable()
+	public async Task AddEndingVariable()
 	{
 		var variable = await new TextInputDialog()
 		{
@@ -173,8 +173,8 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 
 	// Edit ending variable.
 	void EditEndingVariable(ListBoxItem item) =>
-		this.EditEndingVariable((string)item.DataContext.AsNonNull());
-	async void EditEndingVariable(string variable)
+		_ = this.EditEndingVariable((string)item.DataContext.AsNonNull());
+	async Task EditEndingVariable(string variable)
 	{
 		var index = this.endingVariables.IndexOf(variable);
 		if (index < 0)
@@ -229,6 +229,49 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
 	{
+		// check input
+		if (string.IsNullOrWhiteSpace(this.operationNameTextBox.Text))
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("operationNameItem"), this.operationNameTextBox);
+			return Task.FromResult<object?>(null);
+		}
+		if (this.beginningPatternEditor.Pattern is null)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("beginningPatternItem"), this.beginningPatternEditor);
+			return Task.FromResult<object?>(null);
+		}
+		if (this.endingPatternEditor.Pattern is null)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("endingPatternItem"), this.endingPatternEditor);
+			return Task.FromResult<object?>(null);
+		}
+		if (!this.minDurationTextBox.IsTextValid)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("durationItem"), this.minDurationTextBox);
+			return Task.FromResult<object?>(null);
+		}
+		if (!this.maxDurationTextBox.IsTextValid)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("durationItem"), this.maxDurationTextBox);
+			return Task.FromResult<object?>(null);
+		}
+		var areDurationsValid = this.minDurationTextBox.Value.Let(minDuration =>
+		{
+			return this.maxDurationTextBox.Value.Let(maxDuration =>
+			{
+				if (!minDuration.HasValue || !maxDuration.HasValue)
+					return true;
+				return minDuration <= maxDuration;
+			});
+		});
+		if (!areDurationsValid)
+		{
+			this.HintForInput(this.Get<ScrollViewer>("contentScrollViewer"), this.Get<Control>("durationItem"), this.maxDurationTextBox);
+			return Task.FromResult<object?>(null);
+		}
+		
+		
+		// generate rule
 		var rule = this.Rule;
 		var newRule = new OperationDurationAnalysisRuleSet.Rule(this.operationNameTextBox.Text.AsNonNull(),
 			(DisplayableLogAnalysisResultType)this.resultTypeComboBox.SelectedItem.AsNonNull(),
@@ -314,25 +357,6 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 				this.endingPostActions.AddAll(this.DefaultEndingPostActions);
 		}
 	}
-
-
-	// Validate input.
-	protected override bool OnValidateInput() =>
-		base.OnValidateInput() 
-		&& !string.IsNullOrWhiteSpace(this.operationNameTextBox.Text) 
-		&& this.beginningPatternEditor.Pattern is not null
-		&& this.endingPatternEditor.Pattern is not null
-		&& this.minDurationTextBox.IsTextValid
-		&& this.maxDurationTextBox.IsTextValid
-		&& this.minDurationTextBox.Value.Let(minDuration =>
-		{
-			return this.maxDurationTextBox.Value.Let(maxDuration =>
-			{
-				if (!minDuration.HasValue || !maxDuration.HasValue)
-					return true;
-				return minDuration <= maxDuration;
-			});
-		});
 	
 	
 	/// <summary>
