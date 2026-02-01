@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:appAnalysis="using:CarinaStudio.ULogViewer.ViewModels.Analysis"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.VarAndConstComparisonEditorDialog"
         Name="dialog"
@@ -25,17 +26,17 @@
 		<Grid Classes="Dialog_ContentPanel" ColumnDefinitions="*,Auto,Auto,Auto,*" RowDefinitions="Auto,*">
 			
 			<!-- Variable -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Grid.Column="0" Text="{DynamicResource String/VarAndConstComparisonEditorDialog.Variable}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Grid.Column="0" Text="{asXaml:StringResource VarAndConstComparisonEditorDialog.Variable}"/>
 			<TextBox Name="varTextBox" Classes="Dialog_TextBox" Grid.Column="0" Grid.Row="1" MaxLength="256"/>
 			<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
 
 			<!-- Comparison type -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Grid.Column="2" Text="{DynamicResource String/VarAndConstComparisonEditorDialog.ComparisonType}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Grid.Column="2" Text="{asXaml:StringResource VarAndConstComparisonEditorDialog.ComparisonType}"/>
 			<asControls:EnumComboBox Name="comparisonTypeComboBox" EnumType="{x:Type appAnalysis:ComparisonType}" Grid.Column="2" Grid.Row="1" MinWidth="{StaticResource Double/VarAndConstComparisonEditorDialog.ComparisonType.MinWidth}"/>
 			<Separator Classes="Dialog_Separator_Small" Grid.Column="3"/>
 
 			<!-- Constant -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Grid.Column="4" Text="{DynamicResource String/VarAndConstComparisonEditorDialog.Constant}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Grid.Column="4" Text="{asXaml:StringResource VarAndConstComparisonEditorDialog.Constant}"/>
 			<TextBox Name="constantTextBox" Classes="Dialog_TextBox" Grid.Column="4" Grid.Row="1" MaxLength="256"/>
 			
 		</Grid>

@@ -41,10 +41,8 @@ enum ComparisonType
 /// <summary>
 /// Condition of log analysis.
 /// </summary>
-#pragma warning disable CS0659
 #pragma warning disable CS0661
 abstract class DisplayableLogAnalysisCondition : IEquatable<DisplayableLogAnalysisCondition>
-#pragma warning restore CS0659
 #pragma warning restore CS0661
 {
     // Static fields.
@@ -55,10 +53,12 @@ abstract class DisplayableLogAnalysisCondition : IEquatable<DisplayableLogAnalys
     public abstract bool Equals(DisplayableLogAnalysisCondition? condition);
 
 
+#pragma warning disable CS0659
     /// <inheritdoc/>
     public override bool Equals(object? obj) =>
         obj is DisplayableLogAnalysisCondition condition
         && this.Equals(condition);
+#pragma warning restore CS0659
 
 
     /// <summary>
@@ -81,7 +81,7 @@ abstract class DisplayableLogAnalysisCondition : IEquatable<DisplayableLogAnalys
     /// Inequality operator.
     /// </summary>
     public static bool operator !=(DisplayableLogAnalysisCondition? lhs, DisplayableLogAnalysisCondition? rhs) =>
-        lhs is null ? rhs is not null : !lhs.Equals(rhs);
+        !lhs?.Equals(rhs) ?? rhs is not null;
     
 
     /// <summary>
@@ -92,7 +92,7 @@ abstract class DisplayableLogAnalysisCondition : IEquatable<DisplayableLogAnalys
 
 
     /// <summary>
-    /// Try loading JSON format data as <see cref="ContextualBasedAnalysisCondition"/>.
+    /// Try loading JSON format data as <see cref="DisplayableLogAnalysisCondition"/>.
     /// </summary>
     /// <param name="jsonElement">JSON element.</param>
     /// <param name="condition">Loaded condition.</param>
@@ -179,8 +179,7 @@ class VariableAndConstantComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override int GetHashCode() =>
-        ((int)(this.ComparisonType) & 0xf) | (this.Variable.GetHashCode() << 4);
+    public override int GetHashCode() => HashCode.Combine(this.Variable, this.ComparisonType);
     
 
     /// <summary>
@@ -201,7 +200,7 @@ class VariableAndConstantComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override string? ToString() => App.CurrentOrNull?.Let(app =>
+    public override string? ToString() => Application.CurrentOrNull?.Let(app =>
     {
         var c = app.GetStringNonNull($"ComparisonType.{this.ComparisonType}", this.ComparisonType.ToString());
         return app.GetFormattedString("VariableAndConstantComparisonCondition", this.Variable, c, this.Constant);
@@ -251,8 +250,7 @@ class VariablesComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override int GetHashCode() =>
-        ((int)(this.ComparisonType) & 0xf) | (this.LhsVariable.GetHashCode() << 4);
+    public override int GetHashCode() => HashCode.Combine(this.LhsVariable, this.ComparisonType);
 
 
     /// <summary>
@@ -285,7 +283,7 @@ class VariablesComparisonCondition : ValuesComparisonCondition
 
 
     /// <inheritdoc/>
-    public override string? ToString() => App.CurrentOrNull?.Let(app =>
+    public override string? ToString() => Application.CurrentOrNull?.Let(app =>
     {
         var c = app.GetStringNonNull($"ComparisonType.{this.ComparisonType}", this.ComparisonType.ToString());
         return app.GetFormattedString("VariablesComparisonCondition", this.LhsVariable, c, this.RhsVariable);

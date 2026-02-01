@@ -1,14 +1,18 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CarinaStudio.ULogViewer.Controls;
@@ -16,7 +20,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="DisplayableLogAnalysisCondition"/>s.
 /// </summary>
-class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
+class DisplayableLogAnalysisConditionsEditor : UserControl<IULogViewerApplication>
 {
 	/// <summary>
 	/// Property of <see cref="Conditions"/>.
@@ -35,7 +39,7 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 	readonly ContextMenu addConditionMenu;
 	readonly ListBox conditionListBox;
 	ScrollBarVisibility verticalScrollBarVisibility;
-	Window? window;
+	Avalonia.Controls.Window? window;
 
 
 	/// <summary>
@@ -66,12 +70,18 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 		});
 		this.conditionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(conditionListBox)).Also(it =>
 		{
-			it.DoubleClickOnItem += (_, e) => this.EditCondition((DisplayableLogAnalysisCondition)e.Item);
+			it.DoubleClickOnItem += (sender, e) => _ = this.EditCondition((DisplayableLogAnalysisCondition)e.Item);
 			it.GetObservable(ScrollViewer.VerticalScrollBarVisibilityProperty).Subscribe(visibility =>
 			{
 				this.SetAndRaise(VerticalScrollBarVisibilityProperty, ref this.verticalScrollBarVisibility, visibility);
 			});
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
+			});
 		});
+		this.AddHandler(KeyUpEvent, (_, e) => this.OnPreviewKeyUp(e), RoutingStrategies.Tunnel);
 	}
 
 
@@ -83,14 +93,14 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 			return;
 		conditions.Add(condition);
 		this.conditionListBox.SelectedItem = condition;
-		this.conditionListBox.Focus();
+		this.conditionListBox.FocusSelectedItem();
 	}
 
 
 	/// <summary>
 	/// Add condition.
 	/// </summary>
-	public async void AddVarAndConstComparisonCondition()
+	public async Task AddVarAndConstComparisonCondition()
 	{
 		if (this.window == null)
 			return;
@@ -101,7 +111,7 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 	/// <summary>
 	/// Add condition.
 	/// </summary>
-	public async void AddVarsComparisonCondition()
+	public async Task AddVarsComparisonCondition()
 	{
 		if (this.window == null)
 			return;
@@ -123,12 +133,12 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 	void EditCondition(ListBoxItem item)
 	{
 		if (item.DataContext is DisplayableLogAnalysisCondition condition)
-			this.EditCondition(condition);
+			_ = this.EditCondition(condition);
 	}
 
 
 	// Edit condition.
-	async void EditCondition(DisplayableLogAnalysisCondition condition)
+	async Task EditCondition(DisplayableLogAnalysisCondition condition)
 	{
 		// find position
 		if (this.window == null)
@@ -141,17 +151,20 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 		// edit
 		var newCondition = condition switch
 		{
-			VariableAndConstantComparisonCondition vaccCondition => await new VarAndConstComparisonEditorDialog() { Condition = vaccCondition }.ShowDialog<DisplayableLogAnalysisCondition?>(this.window),
-			VariablesComparisonCondition vcCondition => await new VarsComparisonEditorDialog() { Condition = vcCondition }.ShowDialog<DisplayableLogAnalysisCondition?>(this.window),
+			VariableAndConstantComparisonCondition vaccCondition => await new VarAndConstComparisonEditorDialog { Condition = vaccCondition }.ShowDialog<DisplayableLogAnalysisCondition?>(this.window),
+			VariablesComparisonCondition vcCondition => await new VarsComparisonEditorDialog { Condition = vcCondition }.ShowDialog<DisplayableLogAnalysisCondition?>(this.window),
 			_ => throw new NotImplementedException(),
 		};
-		if (newCondition is null || newCondition == condition)
-			return;
 		
 		// update
-		conditions[index] = newCondition;
-		this.conditionListBox.SelectedItem = newCondition;
-		this.conditionListBox.Focus();
+		if (newCondition is not null && newCondition != condition)
+		{
+			conditions[index] = newCondition;
+			this.conditionListBox.SelectedItem = newCondition;
+		}
+		else
+			this.conditionListBox.SelectedItem = condition;
+		this.conditionListBox.FocusSelectedItem();
 	}
 
 
@@ -165,7 +178,7 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 	protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
 	{
 		base.OnAttachedToLogicalTree(e);
-		this.window = this.FindLogicalAncestorOfType<Window>().AsNonNull();
+		this.window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>().AsNonNull();
 	}
 
 
@@ -175,6 +188,16 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 		this.window = null;
 		base.OnDetachedFromLogicalTree(e);
 	}
+	
+	
+	// Called before passing key up event to children.
+	void OnPreviewKeyUp(KeyEventArgs e)
+	{
+		if (!this.conditionListBox.IsSelectedItemFocused)
+			return;
+		if (e.Key == Key.Enter && this.conditionListBox.SelectedItem is DisplayableLogAnalysisCondition condition)
+			_ = this.EditCondition(condition);
+	}
 
 
 	// Remove condition.
@@ -183,17 +206,8 @@ class DisplayableLogAnalysisConditionsEditor : CarinaStudio.Controls.UserControl
 		var conditions = this.Conditions;
 		if (item.DataContext is not DisplayableLogAnalysisCondition condition)
 			return;
-		conditions.Remove(condition);
 		this.conditionListBox.SelectedItem = null;
-		this.conditionListBox.Focus();
-	}
-
-
-	/// <inheritdoc/>
-	protected override void OnLostFocus(RoutedEventArgs e)
-	{
-		this.conditionListBox.SelectedIndex = -1;
-		base.OnLostFocus(e);
+		conditions.Remove(condition);
 	}
 
 
