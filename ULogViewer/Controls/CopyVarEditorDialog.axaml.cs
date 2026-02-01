@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -39,13 +40,40 @@ class CopyVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication
 	/// <summary>
 	/// Get or set action to be edited.
 	/// </summary>
-	public CopyVariableAction? Action { get; set; }
+	public CopyVariableAction? Action { get; init; }
 
 
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
 		Task.FromResult<object?>(new CopyVariableAction(this.sourceVarTextBox.Text.AsNonNull().Trim(), this.targetVarTextBox.Text.AsNonNull().Trim()));
 
+	
+	/// <inheritdoc/>
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
+	{
+		base.OnEnterKeyClickedOnInputControl(control);
+		if (ReferenceEquals(control, this.sourceVarTextBox))
+		{
+			if (!string.IsNullOrWhiteSpace(this.sourceVarTextBox.Text))
+			{
+				if (!string.IsNullOrWhiteSpace(this.targetVarTextBox.Text))
+					this.GenerateResultCommand.TryExecute();
+				else
+					this.targetVarTextBox.Focus();
+			}
+		}
+		else if (ReferenceEquals(control, this.targetVarTextBox))
+		{
+			if (!string.IsNullOrWhiteSpace(this.targetVarTextBox.Text))
+			{
+				if (!string.IsNullOrWhiteSpace(this.sourceVarTextBox.Text))
+					this.GenerateResultCommand.TryExecute();
+				else
+					this.sourceVarTextBox.Focus();
+			}
+		}
+	}
+	
 
 	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)

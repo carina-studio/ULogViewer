@@ -6,34 +6,34 @@ namespace CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 /// <summary>
 /// Action for contextual-based log analysis.
 /// </summary>
-#pragma warning disable CS0659
 #pragma warning disable CS0661
 abstract class ContextualBasedAnalysisAction : IEquatable<ContextualBasedAnalysisAction>
-#pragma warning restore CS0659
 #pragma warning restore CS0661
 {
     /// <inheritdoc/>
     public abstract bool Equals(ContextualBasedAnalysisAction? action);
 
 
+#pragma warning disable CS0659
     /// <inheritdoc/>
     public override bool Equals(object? obj) =>
         obj is ContextualBasedAnalysisAction action
         && this.Equals(action);
+#pragma warning restore CS0659
     
 
     /// <summary>
     /// Equality operator.
     /// </summary>
     public static bool operator ==(ContextualBasedAnalysisAction? lhs, ContextualBasedAnalysisAction? rhs) =>
-        lhs?.Equals(rhs) ?? object.ReferenceEquals(rhs, null);
+        lhs?.Equals(rhs) ?? rhs is null;
     
 
     /// <summary>
     /// Inequality operator.
     /// </summary>
     public static bool operator !=(ContextualBasedAnalysisAction? lhs, ContextualBasedAnalysisAction? rhs) =>
-        object.ReferenceEquals(lhs, null) ? !object.ReferenceEquals(rhs, null) : !lhs.Equals(rhs);
+        !lhs?.Equals(rhs) ?? rhs is not null;
     
 
     /// <summary>
@@ -89,7 +89,11 @@ class CopyVariableAction : ContextualBasedAnalysisAction
         action is CopyVariableAction cvAction
         && this.SourceVariable == cvAction.SourceVariable
         && this.TargetVariable == cvAction.TargetVariable;
-    
+
+
+    /// <inheritdoc/>
+    public override int GetHashCode() => HashCode.Combine(this.SourceVariable, this.TargetVariable);
+
 
     /// <summary>
     /// Load action from JSON format data.
@@ -130,7 +134,7 @@ class CopyVariableAction : ContextualBasedAnalysisAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("CopyVariableAction", this.SourceVariable, this.TargetVariable) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("CopyVariableAction", this.SourceVariable, this.TargetVariable) ?? base.ToString();
 
 
     /// <summary>
@@ -196,7 +200,7 @@ class DequeueToVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("DequeueToVariableAction", this.Queue, this.Variable) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("DequeueToVariableAction", this.Queue, this.Variable) ?? base.ToString();
 }
 
 
@@ -256,7 +260,7 @@ class EnqueueVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("EnqueueVariableAction", this.Variable, this.Queue) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("EnqueueVariableAction", this.Variable, this.Queue) ?? base.ToString();
 }
 
 
@@ -278,9 +282,9 @@ class PeekQueueToVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override bool Equals(ContextualBasedAnalysisAction? action) =>
-        action is EnqueueVariableAction evAction
-        && this.Queue == evAction.Queue
-        && this.Variable == evAction.Variable;
+        action is PeekQueueToVariableAction pqAction
+        && this.Queue == pqAction.Queue
+        && this.Variable == pqAction.Variable;
     
 
     /// <summary>
@@ -322,7 +326,7 @@ class PeekQueueToVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("PeekQueueToVariableAction", this.Queue, this.Variable) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("PeekQueueToVariableAction", this.Queue, this.Variable) ?? base.ToString();
 }
 
 
@@ -344,9 +348,9 @@ class PeekStackToVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override bool Equals(ContextualBasedAnalysisAction? action) =>
-        action is PopToVariableAction ptvAction
-        && this.Stack == ptvAction.Stack
-        && this.Variable == ptvAction.Variable;
+        action is PeekStackToVariableAction psAction
+        && this.Stack == psAction.Stack
+        && this.Variable == psAction.Variable;
     
 
     /// <summary>
@@ -388,7 +392,7 @@ class PeekStackToVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("PeekStackToVariableAction", this.Stack, this.Variable) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("PeekStackToVariableAction", this.Stack, this.Variable) ?? base.ToString();
 }
 
 
@@ -448,7 +452,7 @@ class PopToVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("PopToVariableAction", this.Stack, this.Variable) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("PopToVariableAction", this.Stack, this.Variable) ?? base.ToString();
 }
 
 
@@ -508,7 +512,7 @@ class PushVariableAction : VariableAction
 
     /// <inheritdoc/>
     public override string? ToString() =>
-        App.CurrentOrNull?.GetFormattedString("PushVariableAction", this.Variable, this.Variable) ?? base.ToString();
+        Application.CurrentOrNull?.GetFormattedString("PushVariableAction", this.Variable, this.Variable) ?? base.ToString();
 }
 
 
@@ -528,8 +532,7 @@ abstract class VariableAction : ContextualBasedAnalysisAction
 
 
     /// <inheritdoc/>
-    public override int GetHashCode() =>
-        this.Variable.GetHashCode();
+    public override int GetHashCode() => this.Variable.GetHashCode();
 
     
     /// <summary>

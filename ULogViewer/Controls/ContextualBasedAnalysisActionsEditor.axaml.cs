@@ -1,17 +1,19 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
-using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
 using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ListBox = Avalonia.Controls.ListBox;
 using Window = Avalonia.Controls.Window;
@@ -49,11 +51,12 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 	public ContextualBasedAnalysisActionsEditor()
 	{
 		this.EditActionCommand = new Command<ListBoxItem>(this.EditAction);
+		this.Focusable = true;
 		this.RemoveActionCommand = new Command<ListBoxItem>(this.RemoveAction);
 		AvaloniaXamlLoader.Load(this);
 		this.actionListBox = this.Get<AppSuite.Controls.ListBox>(nameof(actionListBox)).Also(it =>
 		{
-			it.DoubleClickOnItem += (_, e) => this.EditAction((ContextualBasedAnalysisAction)e.Item);
+			it.DoubleClickOnItem += (sender, e) => _ = this.EditAction((ContextualBasedAnalysisAction)e.Item);
 			it.GetObservable(ScrollViewer.VerticalScrollBarVisibilityProperty).Subscribe(visibility =>
 			{
 				this.SetAndRaise(VerticalScrollBarVisibilityProperty, ref this.verticalScrollBarVisibility, visibility);
@@ -72,19 +75,19 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 				var index = e.ItemIndex;
 				if (startIndex >= 0 && startIndex < actionCount && index >= 0 && index < actionCount && startIndex != index)
 				{
-					if (actions is ObservableList<ContextualBasedAnalysisAction> observableList)
-						observableList.Move(startIndex, index);
-					else
+					if (it.TryMoveItem<ContextualBasedAnalysisAction>(startIndex, index))
 					{
-						var action = actions[index];
-						actions.RemoveAt(startIndex);
-						if (index > startIndex)
-							actions.Insert(index - 1, action);
-						else
-							actions.Insert(index, action);
+						it.SelectedIndex = index;
+						it.FocusSelectedItem();
 					}
-					it.SelectedIndex = index;
+					else
+						it.SelectedIndex = -1;
 				}
+			});
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
 			});
 		});
 		this.addActionButton = this.Get<ToggleButton>(nameof(addActionButton));
@@ -105,6 +108,7 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 				this.SynchronizationContext.Post(() => this.addActionButton.IsChecked = true);
 			};
 		});
+		this.AddHandler(KeyUpEvent, (_, e) => this.OnPreviewKeyUp(e), RoutingStrategies.Tunnel);
 	}
 
 
@@ -126,14 +130,14 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 			return;
 		actions.Add(action);
 		this.actionListBox.SelectedItem = action;
-		this.actionListBox.Focus();
+		this.actionListBox.FocusSelectedItem();
 	}
 
 
 	/// <summary>
 	/// Add action.
 	/// </summary>
-	public async void AddCopyVarAction()
+	public async Task AddCopyVarAction()
 	{
 		if (this.window is not null)
 			this.AddAction(await new CopyVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
@@ -143,7 +147,7 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 	/// <summary>
 	/// Add action.
 	/// </summary>
-	public async void AddDequeueToVarAction()
+	public async Task AddDequeueToVarAction()
 	{
 		if (this.window is not null)
 			this.AddAction(await new DequeueToVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
@@ -153,27 +157,27 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 	/// <summary>
 	/// Add action.
 	/// </summary>
-	public async void AddEnqueueVarAction()
+	public async Task AddEnqueueVarAction()
 	{
 		if (this.window is not null)
 			this.AddAction(await new EnqueueVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
 	}
 
 
-		/// <summary>
-		/// Add action.
-		/// </summary>
-		public async void AddPopToVarAction()
-		{
-			if (this.window != null)
-				this.AddAction(await new PopToVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
-		}
+	/// <summary>
+	/// Add action.
+	/// </summary>
+	public async Task AddPopToVarAction()
+	{
+		if (this.window is not null)
+			this.AddAction(await new PopToVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
+	}
 
 
 	/// <summary>
 	/// Add action.
 	/// </summary>
-	public async void AddPushVarAction()
+	public async Task AddPushVarAction()
 	{
 		if (this.window is not null)
 			this.AddAction(await new PushVarEditorDialog().ShowDialog<ContextualBasedAnalysisAction?>(this.window));
@@ -182,37 +186,40 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 
 	// Edit action.
 	void EditAction(ListBoxItem item) =>
-		this.EditAction((ContextualBasedAnalysisAction)item.DataContext.AsNonNull());
+		_ = this.EditAction((ContextualBasedAnalysisAction)item.DataContext.AsNonNull());
 	
 
-		// Edit action.
-		async void EditAction(ContextualBasedAnalysisAction action)
+	// Edit action.
+	async Task EditAction(ContextualBasedAnalysisAction action)
+	{
+		// find action
+		var actions = this.Actions;
+		var index = actions.IndexOf(action);
+		if (index < 0)
+			return;
+		
+		// edit
+		if (this.window is null)
+			return;
+		var newAction = action switch
 		{
-			// find action
-			var actions = this.Actions;
-			var index = actions.IndexOf(action);
-			if (index < 0)
-				return;
-			
-			// edit
-			if (this.window == null)
-				return;
-			var newAction = action switch
-			{
-				CopyVariableAction cvAction => await new CopyVarEditorDialog() { Action = cvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
-				DequeueToVariableAction dtvAction => await new DequeueToVarEditorDialog() { Action = dtvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
-				EnqueueVariableAction evAction => await new EnqueueVarEditorDialog() { Action = evAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
-				PopToVariableAction ptvAction => await new PopToVarEditorDialog() { Action = ptvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
-				PushVariableAction pvAction => await new PushVarEditorDialog() { Action = pvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
-				_ => throw new NotImplementedException(),
-			};
-			if (newAction == null || newAction == action)
-				return;
+			CopyVariableAction cvAction => await new CopyVarEditorDialog { Action = cvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
+			DequeueToVariableAction dtvAction => await new DequeueToVarEditorDialog { Action = dtvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
+			EnqueueVariableAction evAction => await new EnqueueVarEditorDialog { Action = evAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
+			PopToVariableAction ptvAction => await new PopToVarEditorDialog { Action = ptvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
+			PushVariableAction pvAction => await new PushVarEditorDialog { Action = pvAction }.ShowDialog<ContextualBasedAnalysisAction?>(this.window),
+			_ => throw new NotImplementedException(),
+		};
 
 		// update action
-		actions[index] = newAction;
-		this.actionListBox.SelectedItem = newAction;
-		this.actionListBox.Focus();
+		if (newAction is not null && newAction != action)
+		{
+			actions[index] = newAction;
+			this.actionListBox.SelectedItem = newAction;
+		}
+		else
+			this.actionListBox.SelectedItem = action;
+		this.actionListBox.FocusSelectedItem();
 	}
 
 
@@ -236,13 +243,15 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 		this.window = null;
 		base.OnDetachedFromLogicalTree(e);
 	}
-
-
-	/// <inheritdoc/>
-	protected override void OnLostFocus(RoutedEventArgs e)
+	
+	
+	// Called before passing key up event to children.
+	void OnPreviewKeyUp(KeyEventArgs e)
 	{
-		this.actionListBox.SelectedIndex = -1;
-		base.OnLostFocus(e);
+		if (!this.actionListBox.IsSelectedItemFocused)
+			return;
+		if (e.Key == Key.Enter && this.actionListBox.SelectedItem is ContextualBasedAnalysisAction action)
+			_ = this.EditAction(action);
 	}
 
 
@@ -255,7 +264,6 @@ class ContextualBasedAnalysisActionsEditor : UserControl<IULogViewerApplication>
 			return;
 		this.actionListBox.SelectedItem = null;
 		actions.RemoveAt(index);
-		this.actionListBox.Focus();
 	}
 
 

@@ -3,74 +3,101 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace CarinaStudio.ULogViewer.Controls
+namespace CarinaStudio.ULogViewer.Controls;
+
+/// <summary>
+/// Dialog to edit <see cref="PopToVariableAction"/>.
+/// </summary>
+class PopToVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
+	// Fields.
+	readonly TextBox stackTextBox;
+	readonly TextBox varTextBox;
+
+
 	/// <summary>
-	/// Dialog to edit <see cref="PopToVariableAction"/>.
+	/// Initialize new <see cref="PopToVarEditorDialog"/> instance.
 	/// </summary>
-	class PopToVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
+	public PopToVarEditorDialog()
 	{
-		// Fields.
-		readonly TextBox stackTextBox;
-		readonly TextBox varTextBox;
-
-
-		/// <summary>
-		/// Initialize new <see cref="PopToVarEditorDialog"/> instance.
-		/// </summary>
-		public PopToVarEditorDialog()
+		AvaloniaXamlLoader.Load(this);
+		this.stackTextBox = this.Get<TextBox>(nameof(stackTextBox)).Also(it =>
 		{
-			AvaloniaXamlLoader.Load(this);
-			this.stackTextBox = this.Get<TextBox>(nameof(stackTextBox)).Also(it =>
-			{
-				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
-			});
-			this.varTextBox = this.Get<TextBox>(nameof(varTextBox)).Also(it =>
-			{
-				it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
-			});
-		}
-
-
-		/// <summary>
-		/// Get or set action to be edited.
-		/// </summary>
-		public PopToVariableAction? Action { get; set; }
-
-
-		// Generate result.
-		protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
-			Task.FromResult<object?>(new PopToVariableAction(this.stackTextBox.Text.AsNonNull().Trim(), this.varTextBox.Text.AsNonNull().Trim()));
-
-
-		/// <inheritdoc/>
-		protected override void OnOpened(EventArgs e)
+			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
+		});
+		this.varTextBox = this.Get<TextBox>(nameof(varTextBox)).Also(it =>
 		{
-			base.OnOpened(e);
-			this.SynchronizationContext.Post(() => this.stackTextBox.Focus());
-		}
-
-
-		/// <inheritdoc/>
-		protected override void OnOpening(EventArgs e)
-		{
-			base.OnOpening(e);
-			this.Action?.Let(it =>
-			{
-				this.stackTextBox.Text = it.Stack;
-				this.varTextBox.Text = it.Variable;
-			});
-		}
-
-
-		// Validate input.
-		protected override bool OnValidateInput() =>
-			base.OnValidateInput() 
-			&& !string.IsNullOrWhiteSpace(this.stackTextBox.Text) 
-			&& !string.IsNullOrWhiteSpace(this.varTextBox.Text);
+			it.GetObservable(TextBox.TextProperty).Subscribe(_ => this.InvalidateInput());
+		});
 	}
+
+
+	/// <summary>
+	/// Get or set action to be edited.
+	/// </summary>
+	public PopToVariableAction? Action { get; init; }
+
+
+	// Generate result.
+	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
+		Task.FromResult<object?>(new PopToVariableAction(this.stackTextBox.Text.AsNonNull().Trim(), this.varTextBox.Text.AsNonNull().Trim()));
+	
+	
+	/// <inheritdoc/>
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
+	{
+		base.OnEnterKeyClickedOnInputControl(control);
+		if (ReferenceEquals(control, this.stackTextBox))
+		{
+			if (!string.IsNullOrWhiteSpace(this.stackTextBox.Text))
+			{
+				if (!string.IsNullOrWhiteSpace(this.varTextBox.Text))
+					this.GenerateResultCommand.TryExecute();
+				else
+					this.varTextBox.Focus();
+			}
+		}
+		else if (ReferenceEquals(control, this.varTextBox))
+		{
+			if (!string.IsNullOrWhiteSpace(this.varTextBox.Text))
+			{
+				if (!string.IsNullOrWhiteSpace(this.stackTextBox.Text))
+					this.GenerateResultCommand.TryExecute();
+				else
+					this.stackTextBox.Focus();
+			}
+		}
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpened(EventArgs e)
+	{
+		base.OnOpened(e);
+		this.SynchronizationContext.Post(() => this.stackTextBox.Focus());
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
+	{
+		base.OnOpening(e);
+		this.Action?.Let(it =>
+		{
+			this.stackTextBox.Text = it.Stack;
+			this.varTextBox.Text = it.Variable;
+		});
+	}
+
+
+	// Validate input.
+	protected override bool OnValidateInput() =>
+		base.OnValidateInput() 
+		&& !string.IsNullOrWhiteSpace(this.stackTextBox.Text) 
+		&& !string.IsNullOrWhiteSpace(this.varTextBox.Text);
 }
