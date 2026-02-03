@@ -229,14 +229,14 @@
 											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete}"/>
+														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>
 											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditEndingVariableCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 												<asControls:Image Classes="InPlaceAction_Icon">
 													<DrawingImage>
-														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit}"/>
+														<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
 													</DrawingImage>
 												</asControls:Image>
 											</Button>

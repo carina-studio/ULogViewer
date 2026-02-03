@@ -1,9 +1,13 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.Threading;
@@ -20,7 +24,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="KeyLogAnalysisRuleSet"/>.
 /// </summary>
-class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
+class KeyLogAnalysisRuleSetEditorDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 {
 	// Static fields.
 	static readonly Dictionary<KeyLogAnalysisRuleSet, KeyLogAnalysisRuleSetEditorDialog> DialogWithEditingRuleSets = new();
@@ -53,14 +57,26 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 		this.ruleListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (sender, e) => _ = this.EditRule((KeyLogAnalysisRuleSet.Rule)e.Item);
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
+			});
 			it.SelectionChanged += (_, _) =>
 			{
 				this.SynchronizationContext.Post(() =>
 				{
-					it.SelectedItem?.Let(it.ScrollIntoView);
+					var index = it.SelectedIndex;
+					if (index >= 0)
+						it.ScrollIntoView(index);
 				});
 			};
 		});
+		this.AddHandler(KeyUpEvent, (sender, e) =>
+		{
+			if (this.ruleListBox.IsSelectedItemFocused && e.Key == Key.Enter)
+				_ = this.EditRule((KeyLogAnalysisRuleSet.Rule)this.ruleListBox.SelectedItem!);
+		}, RoutingStrategies.Tunnel);
 	}
 
 
@@ -74,7 +90,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 		{
 			this.rules.Add(rule);
 			this.ruleListBox.SelectedItem = rule;
-			this.ruleListBox.Focus();
+			this.ruleListBox.FocusSelectedItem();
 		}
 	}
 
@@ -155,7 +171,7 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 			return;
 
 		// edit rule
-		var newRule = await new KeyLogAnalysisRuleEditorDialog()
+		var newRule = await new KeyLogAnalysisRuleEditorDialog
 		{
 			Rule = rule,
 		}.ShowDialog<KeyLogAnalysisRuleSet.Rule?>(this);
@@ -165,8 +181,10 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 		{
 			this.rules.Add(newRule);
 			this.ruleListBox.SelectedItem = newRule;
-			this.ruleListBox.Focus();
 		}
+		else
+			this.ruleListBox.SelectedItem = rule;
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -185,18 +203,22 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 	}
 	async Task EditRule(KeyLogAnalysisRuleSet.Rule rule)
 	{
-		var newRule = await new KeyLogAnalysisRuleEditorDialog()
+		var newRule = await new KeyLogAnalysisRuleEditorDialog
 		{
 			Rule = rule,
 		}.ShowDialog<KeyLogAnalysisRuleSet.Rule?>(this);
-		if (newRule == null || newRule.Equals(rule))
+		if (newRule is null || newRule.Equals(rule))
+		{
+			this.ruleListBox.SelectedItem = rule;
+			this.ruleListBox.FocusSelectedItem();
 			return;
+		}
 		var index = this.rules.IndexOf(rule);
 		if (index >= 0)
 		{
 			this.rules[index] = newRule;
 			this.ruleListBox.SelectedItem = newRule;
-			this.ruleListBox.Focus();
+			this.ruleListBox.FocusSelectedItem();
 		}
 	}
 
@@ -302,7 +324,6 @@ class KeyLogAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
 		{
 			this.rules.RemoveAt(index);
 			this.ruleListBox.SelectedItem = null;
-			this.ruleListBox.Focus();
 		}
 	}
 

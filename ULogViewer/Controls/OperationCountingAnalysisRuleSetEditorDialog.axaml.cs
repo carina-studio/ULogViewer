@@ -1,9 +1,13 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
@@ -19,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="OperationCountingAnalysisRuleSet"/>.
 /// </summary>
-class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
+class OperationCountingAnalysisRuleSetEditorDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 {
 	/// <summary>
 	/// Definition set of patterns of rule.
@@ -56,7 +60,26 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		this.ruleListBox = this.Get<AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (sender, e) => _ = this.EditRule((OperationCountingAnalysisRuleSet.Rule)e.Item);
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
+			});
+			it.SelectionChanged += (_, _) =>
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					var index = it.SelectedIndex;
+					if (index >= 0)
+						it.ScrollIntoView(index);
+				});
+			};
 		});
+		this.AddHandler(KeyUpEvent, (sender, e) =>
+		{
+			if (this.ruleListBox.IsSelectedItemFocused && e.Key == Key.Enter)
+				_ = this.EditRule((OperationCountingAnalysisRuleSet.Rule)this.ruleListBox.SelectedItem!);
+		}, RoutingStrategies.Tunnel);
 	}
 
 
@@ -70,7 +93,7 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 			return;
 		this.rules.Add(rule);
 		this.ruleListBox.SelectedItem = rule;
-		this.ruleListBox.Focus();
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -141,7 +164,7 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		// edit rule
 		var selectedOperationName = Utility.GenerateName(rule.OperationName, name => 
 			this.rules.FirstOrDefault(it => it.OperationName == name) != null);
-		var newRule = await new OperationCountingAnalysisRuleEditorDialog()
+		var newRule = await new OperationCountingAnalysisRuleEditorDialog
 		{
 			Rule = new OperationCountingAnalysisRuleSet.Rule(rule, selectedOperationName),
 		}.ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
@@ -151,8 +174,10 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		{
 			this.rules.Add(newRule);
 			this.ruleListBox.SelectedItem = newRule;
-			this.ruleListBox.Focus();
 		}
+		else
+			this.ruleListBox.SelectedItem = rule;
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -168,15 +193,19 @@ class OperationCountingAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		var index = this.rules.IndexOf(rule);
 		if (index < 0)
 			return;
-		var newRule = await new OperationCountingAnalysisRuleEditorDialog()
+		var newRule = await new OperationCountingAnalysisRuleEditorDialog
 		{
 			Rule = rule,
 		}.ShowDialog<OperationCountingAnalysisRuleSet.Rule?>(this);
-		if (newRule == null || newRule == rule)
-			return;
-		this.rules[index] = newRule;
-		this.ruleListBox.SelectedItem = newRule;
-		this.ruleListBox.Focus();
+		// ReSharper disable once PossibleUnintendedReferenceComparison
+		if (newRule is not null && newRule != rule)
+		{
+			this.rules[index] = newRule;
+			this.ruleListBox.SelectedItem = newRule;
+		}
+		else
+			this.ruleListBox.SelectedItem = rule;
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 

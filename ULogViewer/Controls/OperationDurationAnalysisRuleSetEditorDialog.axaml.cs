@@ -1,9 +1,13 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
@@ -19,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="OperationDurationAnalysisRuleSet"/>.
 /// </summary>
-class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplication>
+class OperationDurationAnalysisRuleSetEditorDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 {
 	/// <summary>
 	/// Definition set of patterns of rule.
@@ -58,7 +62,26 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		this.ruleListBox = this.Get<AppSuite.Controls.ListBox>(nameof(ruleListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (sender, e) => _ = this.EditRule((OperationDurationAnalysisRuleSet.Rule)e.Item);
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
+			});
+			it.SelectionChanged += (_, _) =>
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					var index = it.SelectedIndex;
+					if (index >= 0)
+						it.ScrollIntoView(index);
+				});
+			};
 		});
+		this.AddHandler(KeyUpEvent, (sender, e) =>
+		{
+			if (this.ruleListBox.IsSelectedItemFocused && e.Key == Key.Enter)
+				_ = this.EditRule((OperationDurationAnalysisRuleSet.Rule)this.ruleListBox.SelectedItem!);
+		}, RoutingStrategies.Tunnel);
 	}
 
 
@@ -71,7 +94,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 			return;
 		this.rules.Add(rule);
 		this.ruleListBox.SelectedItem = rule;
-		this.ruleListBox.Focus();
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -97,7 +120,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		else
 			this.rules.Add(newRule);
 		this.ruleListBox.SelectedItem = newRule;
-		this.ruleListBox.Focus();
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -129,7 +152,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		else
 			this.rules.Add(newRule);
 		this.ruleListBox.SelectedItem = newRule;
-		this.ruleListBox.Focus();
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -206,7 +229,7 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		// edit rule
 		var selectedOperationName = Utility.GenerateName(rule.OperationName, name =>
 			this.rules.FirstOrDefault(it => it.OperationName == name) is not null);
-		var newRule = await new OperationDurationAnalysisRuleEditorDialog()
+		var newRule = await new OperationDurationAnalysisRuleEditorDialog
 		{
 			Rule = new OperationDurationAnalysisRuleSet.Rule(rule, selectedOperationName),
 		}.ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this);
@@ -216,8 +239,10 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		{
 			this.rules.Add(newRule);
 			this.ruleListBox.SelectedItem = newRule;
-			this.ruleListBox.Focus();
 		}
+		else
+			this.ruleListBox.SelectedItem = rule;
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 
@@ -237,11 +262,14 @@ class OperationDurationAnalysisRuleSetEditorDialog : Dialog<IULogViewerApplicati
 		{
 			Rule = rule,
 		}.ShowDialog<OperationDurationAnalysisRuleSet.Rule?>(this);
-		if (newRule is null || newRule == rule)
-			return;
-		this.rules[index] = newRule;
-		this.ruleListBox.SelectedItem = newRule;
-		this.ruleListBox.Focus();
+		if (newRule is not null && newRule != rule)
+		{
+			this.rules[index] = newRule;
+			this.ruleListBox.SelectedItem = newRule;
+		}
+		else
+			this.ruleListBox.SelectedItem = rule;
+		this.ruleListBox.FocusSelectedItem();
 	}
 
 

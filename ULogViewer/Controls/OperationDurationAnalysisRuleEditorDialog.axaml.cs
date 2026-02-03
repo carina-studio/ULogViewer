@@ -1,9 +1,13 @@
 using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased;
@@ -19,7 +23,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="OperationDurationAnalysisRuleSet.Rule"/>.
 /// </summary>
-class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
+class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 {
 	// Fields.
 	readonly ObservableList<DisplayableLogAnalysisCondition> beginningConditions = new();
@@ -36,8 +40,8 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 	readonly ObservableList<ContextualBasedAnalysisAction> endingPreActions = new();
 	readonly Avalonia.Controls.ListBox endingVariableListBox;
 	readonly ObservableList<string> endingVariables = new();
-	readonly CarinaStudio.Controls.TimeSpanTextBox maxDurationTextBox;
-	readonly CarinaStudio.Controls.TimeSpanTextBox minDurationTextBox;
+	readonly TimeSpanTextBox maxDurationTextBox;
+	readonly TimeSpanTextBox minDurationTextBox;
 	readonly TextBox operationNameTextBox;
 	readonly TextBox quantityVarNameTextBox;
 	readonly ComboBox resultTypeComboBox;
@@ -63,12 +67,31 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 		this.endingVariableListBox = this.Get<AppSuite.Controls.ListBox>(nameof(endingVariableListBox)).Also(it =>
 		{
 			it.DoubleClickOnItem += (sender, e) => _ = this.EditEndingVariable((string)e.Item);
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
+			});
+			it.SelectionChanged += (_, _) =>
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					var index = it.SelectedIndex;
+					if (index >= 0)
+						it.ScrollIntoView(index);
+				});
+			};
 		});
-		this.maxDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(maxDurationTextBox));
-		this.minDurationTextBox = this.Get<CarinaStudio.Controls.TimeSpanTextBox>(nameof(minDurationTextBox));
+		this.maxDurationTextBox = this.Get<TimeSpanTextBox>(nameof(maxDurationTextBox));
+		this.minDurationTextBox = this.Get<TimeSpanTextBox>(nameof(minDurationTextBox));
 		this.operationNameTextBox = this.Get<TextBox>(nameof(operationNameTextBox));
 		this.quantityVarNameTextBox = this.Get<TextBox>(nameof(quantityVarNameTextBox));
 		this.resultTypeComboBox = this.Get<ComboBox>(nameof(resultTypeComboBox));
+		this.AddHandler(KeyUpEvent, (sender, e) =>
+		{
+			if (this.endingVariableListBox.IsSelectedItemFocused && e.Key == Key.Enter)
+				_ = this.EditEndingVariable((string)this.endingVariableListBox.SelectedItem!);
+		}, RoutingStrategies.Tunnel);
 	}
 
 
@@ -77,7 +100,7 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 	/// </summary>
 	public async Task AddEndingVariable()
 	{
-		var variable = await new TextInputDialog()
+		var variable = await new TextInputDialog
 		{
 			MaxTextLength = 256,
 			Message = this.Application.GetString("OperationDurationAnalysisRuleEditorDialog.EndingVariable"),
@@ -93,7 +116,7 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 		}
 		else
 			this.endingVariableListBox.SelectedIndex = index;
-		this.endingVariableListBox.Focus();
+		this.endingVariableListBox.FocusSelectedItem();
 	}
 
 
@@ -165,20 +188,16 @@ class OperationDurationAnalysisRuleEditorDialog : InputDialog<IULogViewerApplica
 		var index = this.endingVariables.IndexOf(variable);
 		if (index < 0)
 			return;
-		var newVariable = await new TextInputDialog()
+		var newVariable = (await new TextInputDialog
 		{
 			InitialText = variable,
 			MaxTextLength = 256,
 			Message = this.Application.GetString("OperationDurationAnalysisRuleEditorDialog.EndingVariable"),
-		}.ShowDialog(this);
-		if (string.IsNullOrWhiteSpace(newVariable))
-			return;
-		newVariable = newVariable.Trim();
-		if (newVariable == variable)
-			return;
-		this.endingVariables[index] = newVariable;
+		}.ShowDialog(this))?.Trim();
+		if (!string.IsNullOrEmpty(newVariable) && newVariable != variable)
+			this.endingVariables[index] = newVariable;
 		this.endingVariableListBox.SelectedIndex = index;
-		this.endingVariableListBox.Focus();
+		this.endingVariableListBox.FocusSelectedItem();
 	}
 
 
