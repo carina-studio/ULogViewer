@@ -27,6 +27,7 @@
 		<Style Selector="ListBox.LogProfiles">
 			<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
 			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Focusable" Value="True"/>
 			<Setter Property="ItemTemplate">
 				<Setter.Value>
 					<DataTemplate DataType="{x:Type appProfiles:LogProfile}">
@@ -270,6 +271,8 @@
 
 		<!-- Log profiles -->
 		<Panel>
+			
+			<!-- Log profiles -->
 			<ScrollViewer Name="scrollViewer">
 				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
@@ -279,7 +282,7 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.PinnedLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.PinnedLogProfiles}" SelectionChanged="OnPinnedLogProfilesSelectionChanged"/>
+							<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.PinnedLogProfiles}"/>
 						</Border>
 					</StackPanel>
 					
@@ -296,7 +299,7 @@
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<StackPanel>
-								<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.RecentlyUsedLogProfiles}" SelectionChanged="OnRecentlyUsedLogProfilesSelectionChanged"/>
+								<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.RecentlyUsedLogProfiles}"/>
 								<Separator Classes="Dialog_Separator_Small"/>
 								<Button Classes="Dialog_Item_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{asXaml:StringResource LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right"/>
 							</StackPanel>
@@ -306,7 +309,10 @@
 					<Separator Classes="Dialog_Separator_Large">
 						<Separator.IsVisible>
 							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="IsVisible" ElementName="recentlyUsedLogProfilesPanel"/>
+								<MultiBinding Converter="{x:Static BoolConverters.Or}">
+									<Binding Path="IsVisible" ElementName="pinnedLogProfilesPanel"/>
+									<Binding Path="IsVisible" ElementName="recentlyUsedLogProfilesPanel"/>
+								</MultiBinding>
 								<Binding Path="IsVisible" ElementName="otherLogProfilesPanel"/>
 							</MultiBinding>
 						</Separator.IsVisible>
@@ -318,14 +324,18 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{Binding #window.OtherLogProfilesPanelTitle}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.OtherLogProfiles}" SelectionChanged="OnOtherLogProfilesSelectionChanged"/>
+							<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.OtherLogProfiles}"/>
 						</Border>
 					</StackPanel>
 					
 					<Separator Classes="Dialog_Separator_Large">
 						<Separator.IsVisible>
 							<MultiBinding Converter="{x:Static BoolConverters.And}">
-								<Binding Path="IsVisible" ElementName="otherLogProfilesPanel"/>
+								<MultiBinding Converter="{x:Static BoolConverters.Or}">
+									<Binding Path="IsVisible" ElementName="pinnedLogProfilesPanel"/>
+									<Binding Path="IsVisible" ElementName="recentlyUsedLogProfilesPanel"/>
+									<Binding Path="IsVisible" ElementName="otherLogProfilesPanel"/>
+								</MultiBinding>
 								<Binding Path="IsVisible" ElementName="templateLogProfilesPanel"/>
 							</MultiBinding>
 						</Separator.IsVisible>
@@ -337,12 +347,18 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.TemplateLogProfiles}" SelectionChanged="OnTemplateLogProfilesSelectionChanged"/>
+							<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.TemplateLogProfiles}"/>
 						</Border>
 					</StackPanel>
 
 				</StackPanel>
 			</ScrollViewer>
+			
+			<!-- Hint -->
+			<Border Classes="Dialog_ContentPanel" IsVisible="{Binding !#window.HasLogProfiles}">
+				<TextBlock HorizontalAlignment="Center" Text="{asXaml:StringResource LogProfileSelectionDialog.NoLogProfiles}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+			</Border>
+			
 			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Margin="0,-100,-100,0">
 				<i:Interaction.Behaviors>
 					<iCore:DataTriggerBehavior Binding="{Binding #navigationBar.IsVisible}" Value="True">

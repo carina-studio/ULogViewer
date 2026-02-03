@@ -4,11 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.JsonLogsSavingOptionsDialog"
         Name="dialog"
         Classes="Dialog"
-        Title="{DynamicResource String/JsonLogsSavingOptionsDialog.Title}"
+        Title="{asXaml:StringResource JsonLogsSavingOptionsDialog.Title}"
         Width="{DynamicResource Double/JsonLogsSavingOptionsDialog.Width}">
 
 	<DockPanel>
@@ -17,7 +18,7 @@
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.AddLogPropertyMapEntry}" Content="{DynamicResource String/Common.Add.WithDialog}"/>
+					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.AddLogPropertyMapEntry}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
 					<Separator Classes="Dialog_Separator_Small"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
@@ -31,7 +32,7 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log properties -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties}"/>
+			<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties}"/>
 			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" ItemsSource="{Binding #dialog.LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
@@ -46,14 +47,14 @@
 							<abControls:FormattedTextBlock Arg1="{Binding Key}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" Format="({0})" Grid.Column="1" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Margin="{StaticResource Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							<abControls:FormattedTextBlock Arg1="{Binding Key}" Format="({0})" Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Margin="{StaticResource Thickness/JsonLogsSavingOptionsDialog.ListBox.Key.Margin}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 							<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 										</DrawingImage>
 									</asControls:Image>
 								</Button>
-								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+								<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditLogPropertyMapEntryCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 									<asControls:Image Classes="InPlaceAction_Icon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -72,7 +73,7 @@
 				</ListBox.Styles>
 			</ListBox>
 			<Separator Classes="Dialog_Separator_Small"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/JsonLogsSavingOptionsDialog.LogProperties.Description}"/>
+			<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties.Description}"/>
 			
 		</StackPanel>
 		

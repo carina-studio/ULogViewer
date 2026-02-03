@@ -2,10 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Data;
-using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;
@@ -38,32 +39,35 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	
 	
 	// Static fields.
-		static readonly StyledProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
+	static readonly StyledProperty<Predicate<LogProfile>?> FilterProperty = AvaloniaProperty.Register<LogProfileEditorDialog, Predicate<LogProfile>?>(nameof(Filter));
+	static readonly DirectProperty<LogProfileSelectionDialog, bool> HasLogProfilesProperty = AvaloniaProperty.RegisterDirect<LogProfileSelectionDialog, bool>(nameof(HasLogProfiles), d => d.hasLogProfiles);
 	static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, bool>(nameof(IsProVersionActivated));
 	static readonly StyledProperty<string?> OtherLogProfilesPanelTitleProperty = AvaloniaProperty.Register<LogProfileSelectionDialog, string?>(nameof(OtherLogProfilesPanelTitle));
 
 
-		// Fields.
-		readonly HashSet<LogProfile> attachedLogProfiles = new();
-		readonly LogProfileManager logProfileManager = LogProfileManager.Default;
-		readonly Avalonia.Controls.ListBox otherLogProfileListBox;
-		readonly SortedObservableList<LogProfile> otherLogProfiles = new(CompareLogProfiles);
-		readonly ToggleButton otherLogProfilesButton;
-		readonly Panel otherLogProfilesPanel;
-		readonly Avalonia.Controls.ListBox pinnedLogProfileListBox;
-		readonly SortedObservableList<LogProfile> pinnedLogProfiles = new(CompareLogProfiles);
-		readonly ToggleButton pinnedLogProfilesButton;
-		readonly Panel pinnedLogProfilesPanel;
-		readonly Avalonia.Controls.ListBox recentlyUsedLogProfileListBox;
-		readonly SortedObservableList<LogProfile> recentlyUsedLogProfiles;
-		readonly ToggleButton recentlyUsedLogProfilesButton;
-		readonly Panel recentlyUsedLogProfilesPanel;
-		readonly ScrollViewer scrollViewer;
-		readonly Avalonia.Controls.ListBox templateLogProfileListBox;
-		readonly SortedObservableList<LogProfile> templateLogProfiles = new(CompareLogProfiles);
-		readonly ToggleButton templateLogProfilesButton;
-		readonly Panel templateLogProfilesPanel;
-		readonly ScheduledAction updateOtherLogProfilesPanelTitleAction;
+	// Fields.
+	readonly HashSet<LogProfile> attachedLogProfiles = new();
+	bool hasLogProfiles;
+	readonly List<(Avalonia.Controls.ListBox, IList<LogProfile>)> logProfileListBoxes = new();
+	readonly LogProfileManager logProfileManager = LogProfileManager.Default;
+	readonly Avalonia.Controls.ListBox otherLogProfileListBox;
+	readonly SortedObservableList<LogProfile> otherLogProfiles = new(CompareLogProfiles);
+	readonly ToggleButton otherLogProfilesButton;
+	readonly Panel otherLogProfilesPanel;
+	readonly Avalonia.Controls.ListBox pinnedLogProfileListBox;
+	readonly SortedObservableList<LogProfile> pinnedLogProfiles = new(CompareLogProfiles);
+	readonly ToggleButton pinnedLogProfilesButton;
+	readonly Panel pinnedLogProfilesPanel;
+	readonly Avalonia.Controls.ListBox recentlyUsedLogProfileListBox;
+	readonly SortedObservableList<LogProfile> recentlyUsedLogProfiles;
+	readonly ToggleButton recentlyUsedLogProfilesButton;
+	readonly Panel recentlyUsedLogProfilesPanel;
+	readonly ScrollViewer scrollViewer;
+	readonly Avalonia.Controls.ListBox templateLogProfileListBox;
+	readonly SortedObservableList<LogProfile> templateLogProfiles = new(CompareLogProfiles);
+	readonly ToggleButton templateLogProfilesButton;
+	readonly Panel templateLogProfilesPanel;
+	readonly ScheduledAction updateOtherLogProfilesPanelTitleAction;
 
 
 	/// <summary>
@@ -94,20 +98,29 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 		// initialize
 		AvaloniaXamlLoader.Load(this);
 
-			// setup controls
-			this.otherLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(otherLogProfileListBox));
+		// setup controls
+		this.otherLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(otherLogProfileListBox)).Also(it =>
+		{
+			it.SelectionChanged += this.OnLogProfilesSelectionChanged;
+		});
 		this.otherLogProfilesButton = this.Get<ToggleButton>(nameof(otherLogProfilesButton)).Also(it =>
 		{
 			it.Click += (_, _) => this.ScrollToLogProfilesPanel(it);
 		});
 		this.otherLogProfilesPanel = this.Get<Panel>(nameof(otherLogProfilesPanel));
-		this.pinnedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(pinnedLogProfileListBox));
+		this.pinnedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(pinnedLogProfileListBox)).Also(it =>
+		{
+			it.SelectionChanged += this.OnLogProfilesSelectionChanged;
+		});
 		this.pinnedLogProfilesButton = this.Get<ToggleButton>(nameof(pinnedLogProfilesButton)).Also(it =>
 		{
 			it.Click += (_, _) => this.ScrollToLogProfilesPanel(it);
 		});
 		this.pinnedLogProfilesPanel = this.Get<Panel>(nameof(pinnedLogProfilesPanel));
-		this.recentlyUsedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(recentlyUsedLogProfileListBox));
+		this.recentlyUsedLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(recentlyUsedLogProfileListBox)).Also(it =>
+		{
+			it.SelectionChanged += this.OnLogProfilesSelectionChanged;
+		});
 		this.recentlyUsedLogProfilesButton = this.Get<ToggleButton>(nameof(recentlyUsedLogProfilesButton)).Also(it =>
 		{
 			it.Click += (_, _) => this.ScrollToLogProfilesPanel(it);
@@ -118,14 +131,23 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 			it.GetObservable(ScrollViewer.OffsetProperty).Subscribe(this.InvalidateNavigationBar);
 			it.GetObservable(ScrollViewer.ViewportProperty).Subscribe(this.InvalidateNavigationBar);
 		});
-		this.templateLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(templateLogProfileListBox));
-			this.templateLogProfilesButton = this.Get<ToggleButton>(nameof(templateLogProfilesButton)).Also(it =>
-			{
-				it.Click += (_, _) => this.ScrollToLogProfilesPanel(it);
-			});
-			this.templateLogProfilesPanel = this.Get<Panel>(nameof(templateLogProfilesPanel));
-			
-			// create actions
+		this.templateLogProfileListBox = this.Get<Avalonia.Controls.ListBox>(nameof(templateLogProfileListBox)).Also(it =>
+		{
+			it.SelectionChanged += this.OnLogProfilesSelectionChanged;
+		});
+		this.templateLogProfilesButton = this.Get<ToggleButton>(nameof(templateLogProfilesButton)).Also(it =>
+		{
+			it.Click += (_, _) => this.ScrollToLogProfilesPanel(it);
+		});
+		this.templateLogProfilesPanel = this.Get<Panel>(nameof(templateLogProfilesPanel));
+		
+		// setup log profiles list boxes
+		this.logProfileListBoxes.Add((pinnedLogProfileListBox, pinnedLogProfiles));
+		this.logProfileListBoxes.Add((recentlyUsedLogProfileListBox, recentlyUsedLogProfiles));
+		this.logProfileListBoxes.Add((otherLogProfileListBox, otherLogProfiles));
+		this.logProfileListBoxes.Add((templateLogProfileListBox, templateLogProfiles));
+		
+		// create actions
 		this.updateOtherLogProfilesPanelTitleAction = new(() =>
 		{
 			this.SetValue(OtherLogProfilesPanelTitleProperty, this.pinnedLogProfiles.IsEmpty() && this.recentlyUsedLogProfiles.IsEmpty()
@@ -139,12 +161,12 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 		// attach to log profiles
 		((INotifyCollectionChanged)this.logProfileManager.Profiles).CollectionChanged += this.OnAllLogProfilesChanged;
 		((INotifyCollectionChanged)this.logProfileManager.RecentlyUsedProfiles).CollectionChanged += this.OnRecentlyUsedLogProfilesChanged;
-		this.RefreshLogProfiles();
-			
-			// attach to self
-			this.pinnedLogProfiles.CollectionChanged += (_, _) => this.updateOtherLogProfilesPanelTitleAction.Schedule();
-			this.recentlyUsedLogProfiles.CollectionChanged += (_, _) => this.updateOtherLogProfilesPanelTitleAction.Schedule();
-		}
+		
+		// attach to self
+		this.pinnedLogProfiles.CollectionChanged += (_, _) => this.updateOtherLogProfilesPanelTitleAction.Schedule();
+		this.recentlyUsedLogProfiles.CollectionChanged += (_, _) => this.updateOtherLogProfilesPanelTitleAction.Schedule();
+		this.AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+	}
 
 
 	/// <summary>
@@ -154,13 +176,25 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	{
 		// create new profile
 		var profile = await new LogProfileEditorDialog().ShowDialog<LogProfile?>(this);
-		if (profile == null)
+		if (profile is null)
 			return;
 
-			// add profile
-			LogProfileManager.Default.AddProfile(profile);
-			this.otherLogProfileListBox.SelectedItem = profile;
-		}
+		// add profile
+		LogProfileManager.Default.AddProfile(profile);
+		
+		// select profile
+		this.SelectLogProfile(profile);
+	}
+	
+	
+	// Attach to given log profile.
+	void AttachToLogProfile(LogProfile logProfile)
+	{
+		if (!this.attachedLogProfiles.Add(logProfile))
+			return;
+		this.CategorizeLogProfile(logProfile);
+		logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
+	}
 
 
 	// Categorize log profile.
@@ -170,7 +204,7 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	{
 		if (logProfile.IsTemplate)
 		{
-			if (!ReferenceEquals(categoryToExclude, this.templateLogProfiles) && this.Filter == null)
+			if (!ReferenceEquals(categoryToExclude, this.templateLogProfiles) && this.Filter is null)
 				this.templateLogProfiles.Add(logProfile);
 			return;
 		}
@@ -199,7 +233,7 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	// Compare log profiles.
 	static int CompareLogProfiles(LogProfile? x, LogProfile? y)
 	{
-		if (x == null || y == null)
+		if (x is null || y is null)
 			return 0;
 		var result = string.Compare(x.Name, y.Name, true, CultureInfo.InvariantCulture);
 		if (result != 0)
@@ -215,7 +249,7 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	async Task CopyLogProfile(LogProfile? logProfile)
 	{
 		// check state
-		if (logProfile == null)
+		if (logProfile is null)
 			return;
 
 		// copy and edit log profile
@@ -224,10 +258,10 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 			LogProfile = new LogProfile(logProfile)
 			{
 				Name = Utility.GenerateName(logProfile.Name, name =>
-					LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
+					LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) is not null),
 			},
 		}.ShowDialog<LogProfile?>(this);
-		if (newProfile == null)
+		if (newProfile is null)
 			return;
 
 		// add log profile
@@ -240,19 +274,32 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	/// Command to copy log profile.
 	/// </summary>
 	public ICommand CopyLogProfileCommand { get; }
+	
+	
+	// Detach from given log profile.
+	void DetachFromLogProfile(LogProfile logProfile)
+	{
+		if (!this.attachedLogProfiles.Remove(logProfile))
+			return;
+		this.UncategorizeLogProfile(logProfile);
+		logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
+	}
 
 
 	// Edit log profile.
-		async Task EditLogProfile(LogProfile? logProfile)
-		{
-			if (logProfile == null)
+	async Task EditLogProfile(LogProfile? logProfile)
+	{
+		// edit log profile
+		if (logProfile is null)
 			return;
 		logProfile = await new LogProfileEditorDialog
 		{
 			LogProfile = logProfile
 		}.ShowDialog<LogProfile?>(this);
-		if (logProfile == null)
-				return;
+		if (logProfile is null)
+			return;
+		
+		// select log profile
 		this.SelectLogProfile(logProfile);
 	}
 
@@ -331,6 +378,12 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 
 
 	/// <summary>
+	/// Check whether at least one log profile is valid to be selected or not.
+	/// </summary>
+	public bool HasLogProfiles => this.hasLogProfiles;
+
+
+	/// <summary>
 	/// Import log profile.
 	/// </summary>
 	public async Task ImportLogProfile()
@@ -384,12 +437,14 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 		{
 			LogProfile = logProfile
 		}.ShowDialog<LogProfile?>(this);
-		if (logProfile == null)
+		if (logProfile is null)
 			return;
 
-			// add log profile
-			LogProfileManager.Default.AddProfile(logProfile);
-			this.otherLogProfileListBox.SelectedItem = logProfile;
+		// add log profile
+		LogProfileManager.Default.AddProfile(logProfile);
+		
+		// select log profile
+		this.SelectLogProfile(logProfile);
 	}
 
 
@@ -406,24 +461,17 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 		{
 			case NotifyCollectionChangedAction.Add:
 				var filter = this.Filter;
-				foreach (LogProfile logProfile in e.NewItems!)
+				foreach (LogProfile logProfile in e.NewItems.AsNonNull())
 				{
-					if (filter != null && !filter(logProfile))
-						continue;
-					if (!this.attachedLogProfiles.Add(logProfile))
-						continue;
-					this.CategorizeLogProfile(logProfile);
-					logProfile.PropertyChanged += this.OnLogProfilePropertyChanged;
+					if (filter is null || filter(logProfile))
+						this.AttachToLogProfile(logProfile);
 				}
+				this.SetAndRaise(HasLogProfilesProperty, ref this.hasLogProfiles, this.attachedLogProfiles.IsNotEmpty());
 				break;
 			case NotifyCollectionChangedAction.Remove:
 				foreach (LogProfile logProfile in e.OldItems.AsNonNull())
-				{
-					if (!this.attachedLogProfiles.Remove(logProfile))
-						continue;
-					logProfile.PropertyChanged -= this.OnLogProfilePropertyChanged;
-					this.UncategorizeLogProfile(logProfile);
-				}
+					this.DetachFromLogProfile(logProfile);
+				this.SetAndRaise(HasLogProfilesProperty, ref this.hasLogProfiles, this.attachedLogProfiles.IsNotEmpty());
 				break;
 		}
 	}
@@ -447,148 +495,214 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 			profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
 		this.attachedLogProfiles.Clear();
 
-		// detach from product manager
-		this.Application.ProductManager.ProductStateChanged -= this.OnProductStateChanged;
-
 		// call base
 		base.OnClosed(e);
 	}
 
 
 	// Called when double tapped on item of log profile.
-	void OnLogProfileItemDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e) => this.GenerateResultCommand.TryExecute();
+	void OnLogProfileItemDoubleTapped(object? sender, TappedEventArgs e) => this.GenerateResultCommand.TryExecute();
 
 
-		// Called when property of log profile has been changed.
-		void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	// Called when property of log profile has been changed.
+	void OnLogProfilePropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (sender is not LogProfile profile)
+			return;
+		switch (e.PropertyName)
 		{
-			if (sender is not LogProfile profile)
-				return;
-			switch (e.PropertyName)
-			{
-				case nameof(LogProfile.IconColor):
-					this.SelectLogProfileCategory(profile).Let(it =>
-					{
-						it.Remove(profile);
-						this.CategorizeLogProfile(profile);
-					});
-					break;
-				case nameof(LogProfile.IsPinned):
-					if (profile.IsPinned)
-					{
-						this.UncategorizeLogProfile(profile);
-						this.CategorizeLogProfile(profile);
-					}
-					else if (this.pinnedLogProfiles.Remove(profile))
-						this.CategorizeLogProfile(profile, this.pinnedLogProfiles);
-					break;
-				case nameof(LogProfile.IsTemplate):
-					if (profile.IsTemplate)
-						profile.IsPinned = false;
+			case nameof(LogProfile.IconColor):
+				this.SelectLogProfileCategory(profile).Let(it =>
+				{
+					it.Remove(profile);
+					this.CategorizeLogProfile(profile);
+				});
+				break;
+			case nameof(LogProfile.IsPinned):
+				if (profile.IsPinned)
+				{
 					this.UncategorizeLogProfile(profile);
 					this.CategorizeLogProfile(profile);
-					break;
-				case nameof(LogProfile.Name):
-					this.otherLogProfiles.Sort(profile);
-					this.pinnedLogProfiles.Sort(profile);
-					this.templateLogProfiles.Sort(profile);
-					break;
-			}
+				}
+				else if (this.pinnedLogProfiles.Remove(profile))
+					this.CategorizeLogProfile(profile, this.pinnedLogProfiles);
+				break;
+			case nameof(LogProfile.IsTemplate):
+				if (profile.IsTemplate)
+					profile.IsPinned = false;
+				this.UncategorizeLogProfile(profile);
+				this.CategorizeLogProfile(profile);
+				break;
+			case nameof(LogProfile.Name):
+				this.otherLogProfiles.Sort(profile);
+				this.pinnedLogProfiles.Sort(profile);
+				this.templateLogProfiles.Sort(profile);
+				break;
 		}
+	}
+	
+	
+	// Called when selection of list box of log profiles changed.
+	void OnLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
+	{
+		if (e.AddedItems.Count > 0)
+		{
+			foreach (var (listBox, _) in this.logProfileListBoxes)
+			{
+				if (!ReferenceEquals(listBox, sender))
+					listBox.SelectedIndex = -1;
+			}
+			this.ScrollToSelectedLogProfile();
+		}
+		this.InvalidateInput();
+	}
 
 
 	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
-		// attach to product manager
-		this.Application.ProductManager.Let(it =>
-		{
-			this.SetValue(IsProVersionActivatedProperty, it.IsProductActivated(Products.Professional));
-			it.ProductStateChanged += this.OnProductStateChanged;
-		});
-
 		// call base
 		base.OnOpened(e);
 
 		// setup focus
 		this.SynchronizationContext.Post(() =>
 		{
-			if (pinnedLogProfiles.IsNotEmpty())
-				this.pinnedLogProfileListBox.Focus();
-			else if (this.recentlyUsedLogProfiles.IsNotEmpty())
-				this.recentlyUsedLogProfileListBox.Focus();
-			else if (this.otherLogProfiles.IsNotEmpty())
-				this.otherLogProfileListBox.Focus();
-			else if (this.templateLogProfiles.IsNotEmpty())
-				this.templateLogProfileListBox.Focus();
-			else
-				this.Close();
+			foreach (var (listBox, logProfiles) in this.logProfileListBoxes)
+			{
+				if (logProfiles.IsNotEmpty())
+				{
+					listBox.Focus(); // to make sure focusing on the dialog
+					this.scrollViewer.ScrollToHome();
+					return;
+				}
+			}
+			this.Close();
 		});
 	}
 
 
-		/// <inheritdoc/>
-		protected override void OnOpening(EventArgs e)
-		{
-			this.Screens.Let(it =>
-			{
-				(it.ScreenFromWindow(this) ?? it.Primary)?.Let(it =>
-				{
-					this.CanResize = true;
-					this.Height = Math.Max(this.MinHeight, it.WorkingArea.Height / it.Scaling * 0.75);
-				});
-			});
-			base.OnOpening(e);
-			this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
-			this.updateOtherLogProfilesPanelTitleAction.Schedule();
-		}
-
-
-	// Called when selection in other log profiles changed.
-	void OnOtherLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			if (this.otherLogProfileListBox.SelectedIndex >= 0)
-			{
-				this.pinnedLogProfileListBox.SelectedIndex = -1;
-				this.recentlyUsedLogProfileListBox.SelectedIndex = -1;
-				this.templateLogProfileListBox.SelectedIndex = -1;
-			}
-			this.InvalidateInput();
-			this.ScrollToSelectedLogProfile();
-		}
-
-
-		// Called when selection in pinned log profiles changed.
-		void OnPinnedLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			if (this.pinnedLogProfileListBox.SelectedIndex >= 0)
-			{
-				this.otherLogProfileListBox.SelectedIndex = -1;
-				this.recentlyUsedLogProfileListBox.SelectedIndex = -1;
-				this.templateLogProfileListBox.SelectedIndex = -1;
-			}
-			this.InvalidateInput();
-			this.ScrollToSelectedLogProfile();
-	}
-
-
-	// Called when state of product changed.
-	void OnProductStateChanged(IProductManager? productManager, string productId)
+	/// <inheritdoc/>
+	protected override void OnOpening(EventArgs e)
 	{
-		if (productManager != null && productId == Products.Professional)
+		this.Screens.Let(it =>
 		{
-			this.SetValue(IsProVersionActivatedProperty, productManager.IsProductActivated(productId));
-			this.InvalidateInput();
+			(it.ScreenFromWindow(this) ?? it.Primary)?.Let(it =>
+			{
+				this.CanResize = true;
+				this.Height = Math.Max(this.MinHeight, it.WorkingArea.Height / it.Scaling * 0.75);
+			});
+		});
+		this.RefreshLogProfiles();
+		base.OnOpening(e);
+		this.SetValue(IsProVersionActivatedProperty, this.Application.ProductManager.IsProductActivated(Products.Professional));
+		this.updateOtherLogProfilesPanelTitleAction.Schedule();
+	}
+
+
+	// Called to preview key down event.
+	void OnPreviewKeyDown(object? sender, KeyEventArgs e)
+	{
+		switch (e.Key)
+		{
+			case Key.Down:
+			{
+				var hasSelectedListBox = false;
+				for (int i = 0, count = this.logProfileListBoxes.Count; i < count; ++i)
+				{
+					var (listBox, logProfiles) = this.logProfileListBoxes[i];
+					if (listBox.SelectedIndex >= 0)
+					{
+						hasSelectedListBox = true;
+						if (listBox.SelectedIndex >= logProfiles.Count - 1)
+						{
+							for (++i; i < count; ++i)
+							{
+								var (nextListBox, nextLogProfiles) = this.logProfileListBoxes[i];
+								if (nextLogProfiles.IsNotEmpty())
+								{
+									listBox.SelectedIndex = -1;
+									nextListBox.SelectedIndex = 0;
+									nextListBox.FocusSelectedItem();
+									break;
+								}
+							}
+							e.Handled = true;
+						}
+						break;
+					}
+				}
+				if (!hasSelectedListBox)
+				{
+					for (int i = 0, count = this.logProfileListBoxes.Count; i < count; ++i)
+					{
+						var (listBox, logProfiles) = this.logProfileListBoxes[i];
+						if (logProfiles.IsNotEmpty())
+						{
+							listBox.SelectedIndex = 0;
+							listBox.FocusSelectedItem();
+							e.Handled = true;
+							break;
+						}
+					}
+				}
+				break;
+			}
+			case Key.Up:
+			{
+				var hasSelectedListBox = false;
+				for (var i = this.logProfileListBoxes.Count - 1; i >= 0; --i)
+				{
+					var (listBox, _) = this.logProfileListBoxes[i];
+					if (listBox.SelectedIndex >= 0)
+					{
+						hasSelectedListBox = true;
+						if (listBox.SelectedIndex == 0)
+						{
+							for (--i; i >= 0; --i)
+							{
+								var (prevListBox, prevLogProfiles) = this.logProfileListBoxes[i];
+								if (prevLogProfiles.IsNotEmpty())
+								{
+									listBox.SelectedIndex = -1;
+									prevListBox.SelectedIndex = prevLogProfiles.Count - 1;
+									prevListBox.FocusSelectedItem();
+									break;
+								}
+							}
+							e.Handled = true;
+						}
+						break;
+					}
+				}
+				if (!hasSelectedListBox)
+				{
+					for (var i = this.logProfileListBoxes.Count - 1; i >= 0; --i)
+					{
+						var (listBox, logProfiles) = this.logProfileListBoxes[i];
+						if (logProfiles.IsNotEmpty())
+						{
+							listBox.SelectedIndex = logProfiles.Count - 1;
+							listBox.FocusSelectedItem();
+							e.Handled = true;
+							break;
+						}
+					}
+				}
+				break;
+			}
 		}
 	}
 
 
-		// Called when property changed.
-		protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+	// Called when property changed.
+	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+	{
+		base.OnPropertyChanged(change);
+		if (change.Property == FilterProperty)
 		{
-			base.OnPropertyChanged(change);
-			if (change.Property == FilterProperty)
+			if (this.IsOpened)
 				this.RefreshLogProfiles();
+		}
 	}
 
 
@@ -668,35 +782,7 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	}
 
 
-	// Called when selection in recently used log profiles changed.
-		void OnRecentlyUsedLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			if (this.recentlyUsedLogProfileListBox.SelectedIndex >= 0)
-			{
-				this.otherLogProfileListBox.SelectedIndex = -1;
-				this.pinnedLogProfileListBox.SelectedIndex = -1;
-				this.templateLogProfileListBox.SelectedIndex = -1;
-			}
-			this.InvalidateInput();
-			this.ScrollToSelectedLogProfile();
-		}
-
-
-		// Called when selection in template log profiles changed.
-		void OnTemplateLogProfilesSelectionChanged(object? sender, SelectionChangedEventArgs e)
-		{
-			if (this.templateLogProfileListBox.SelectedIndex >= 0)
-			{
-				this.otherLogProfileListBox.SelectedIndex = -1;
-				this.pinnedLogProfileListBox.SelectedIndex = -1;
-				this.recentlyUsedLogProfileListBox.SelectedIndex = -1;
-			}
-			this.InvalidateInput();
-			this.ScrollToSelectedLogProfile();
-		}
-
-
-		/// <inheritdoc/>
+	/// <inheritdoc/>
 	protected override void OnUpdateNavigationBar()
 	{
 		// call base
@@ -786,7 +872,7 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	// Pin/Unpin log profile.
 	void PinUnpinLogProfile(LogProfile? logProfile)
 	{
-		if (logProfile == null)
+		if (logProfile is null)
 			return;
 		logProfile.IsPinned = !logProfile.IsPinned;
 		this.SelectLogProfile(logProfile);
@@ -808,46 +894,32 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	// Refresh log profiles.
 	void RefreshLogProfiles()
 	{
+		// prepare filter
 		if (this.IsClosed)
 			return;
 		var filter = this.Filter;
+		
+		// clear selection
+		foreach (var (listBox, _) in this.logProfileListBoxes)
+			listBox.SelectedIndex = -1;
+		
+		// refresh log profiles
 		var logProfileManager = this.logProfileManager;
-		if (filter == null)
+		foreach (var profile in LogProfileManager.Default.Profiles)
 		{
-			foreach (var profile in logProfileManager.Profiles)
-			{
-				if (!this.attachedLogProfiles.Add(profile))
-					continue;
-				this.CategorizeLogProfile(profile);
-				profile.PropertyChanged += this.OnLogProfilePropertyChanged;
-			}
+			if (filter is null || (filter(profile) && !profile.IsTemplate))
+				this.AttachToLogProfile(profile);
+			else
+				this.DetachFromLogProfile(profile);
 		}
-		else
-		{
-			foreach (var profile in this.attachedLogProfiles)
-			{
-				if (!filter(profile) || profile.IsTemplate)
-				{
-					this.attachedLogProfiles.Remove(profile);
-					this.UncategorizeLogProfile(profile);
-					profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
-				}
-			}
-			foreach (var profile in LogProfileManager.Default.Profiles)
-			{
-				if (!this.attachedLogProfiles.Add(profile))
-					continue;
-				this.CategorizeLogProfile(profile);
-				profile.PropertyChanged += this.OnLogProfilePropertyChanged;
-			}
-		}
+		this.SetAndRaise(HasLogProfilesProperty, ref this.hasLogProfiles, this.attachedLogProfiles.IsNotEmpty());
 	}
 
 
 	// Remove log profile.
 	async Task RemoveLogProfile(LogProfile? logProfile)
 	{
-		if (logProfile == null)
+		if (logProfile is null)
 			return;
 		var result = await new MessageDialog
 		{
@@ -901,16 +973,19 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 		this.SynchronizationContext.PostDelayed(() =>
 		{
 			// find list box item
-			var listBoxItem = (ListBoxItem?)null;
-				if (this.pinnedLogProfileListBox.SelectedItem is LogProfile pinnedLogProfile)
-				this.pinnedLogProfileListBox.TryFindListBoxItem(pinnedLogProfile, out listBoxItem);
-				else if (this.recentlyUsedLogProfileListBox.SelectedItem is LogProfile recentlyUsedLogProfile)
-					this.recentlyUsedLogProfileListBox.TryFindListBoxItem(recentlyUsedLogProfile, out listBoxItem);
-				else if (this.otherLogProfileListBox.SelectedItem is LogProfile otherLogProfile)
-				this.otherLogProfileListBox.TryFindListBoxItem(otherLogProfile, out listBoxItem);
-				else if (this.templateLogProfileListBox.SelectedItem is LogProfile templateLogProfile)
-					this.templateLogProfileListBox.TryFindListBoxItem(templateLogProfile, out listBoxItem);
-			if (listBoxItem == null)
+			var listBoxItem = Global.Run(() =>
+			{
+				foreach (var (listBox, _) in this.logProfileListBoxes)
+				{
+					if (listBox.SelectedIndex >= 0)
+					{
+						this.templateLogProfileListBox.TryFindListBoxItem(listBox, out var listBoxItem);
+						return listBoxItem;
+					}
+				}
+				return null;
+			});
+			if (listBoxItem is null)
 				return;
 
 			// scroll to list box item
@@ -922,28 +997,28 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	// Select given log profile.
 	void SelectLogProfile(LogProfile profile)
 	{
-		if (profile.IsTemplate)
-			this.templateLogProfileListBox.SelectedItem = profile;
-		else if (profile.IsPinned)
-			this.pinnedLogProfileListBox.SelectedItem = profile;
-		else if (this.recentlyUsedLogProfiles.Contains(profile))
-			this.recentlyUsedLogProfileListBox.SelectedItem = profile;
-		else
-			this.otherLogProfileListBox.SelectedItem = profile;
-		this.ScrollToSelectedLogProfile();
+		foreach (var (listBox, logProfiles) in logProfileListBoxes)
+		{
+			var index = logProfiles.IndexOf(profile);
+			if (index >= 0)
+			{
+				listBox.SelectedIndex = index;
+				this.ScrollToSelectedLogProfile();
+				break;
+			}
+		}
 	}
 
 
 	// Select proper category for given log profile.
 	IList<LogProfile> SelectLogProfileCategory(LogProfile logProfile)
 	{
-		if (logProfile.IsTemplate)
-			return this.templateLogProfiles;
-		if (logProfile.IsPinned)
-			return this.pinnedLogProfiles;
-		if (this.logProfileManager.RecentlyUsedProfiles.Contains(logProfile))
-			return this.recentlyUsedLogProfiles;
-		return this.otherLogProfiles;
+		foreach (var (_, logProfiles) in logProfileListBoxes)
+		{
+			if (logProfiles.Contains(logProfile))
+				return logProfiles;
+		}
+		throw new InternalStateCorruptedException();
 	}
 
 

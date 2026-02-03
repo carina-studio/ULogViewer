@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -47,6 +48,15 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
         /// <inheritdoc/>
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
+	{
+		base.OnEnterKeyClickedOnInputControl(control);
+		if (ReferenceEquals(control, this.textBox) && !string.IsNullOrEmpty(this.textBox.Text))
+			this.GenerateResultCommand.TryExecute();
+	}
+
+
+	/// <inheritdoc/>
 		protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
@@ -80,7 +90,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Validate input.
 		protected override bool OnValidateInput()
 		{
-			return base.OnValidateInput() && !string.IsNullOrEmpty(this.textBox.Text);
+			return base.OnValidateInput() && !string.IsNullOrWhiteSpace(this.textBox.Text);
 		}
 	}
 }

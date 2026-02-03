@@ -2,8 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.AppSuite.Converters;
@@ -175,11 +178,11 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		AvaloniaXamlLoader.Load(this);
 		
 		// prepare function to setup item dragging
-		void SetupItemDragging<T>(CarinaStudio.AppSuite.Controls.ListBox listBox, ObservableList<T> items)
+		void SetupItemDragging<T>(CarinaStudio.AppSuite.Controls.ListBox listBox)
 		{
 			ListBoxItemDragging.SetItemDraggingEnabled(listBox, true);
 			listBox.AddHandler(ListBoxItemDragging.ItemDragStartedEvent, (_, e) => this.OnListBoxItemDragStarted(listBox, e));
-			listBox.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (_, e) => this.OnListBoxItemDropped(listBox, items, e));
+			listBox.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (_, e) => this.OnListBoxItemDropped<T>(listBox, e));
 		}
 
 		// setup controls
@@ -198,47 +201,41 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			it.Click += (_, _) => this.ScrollToPanel(it);
 		});
 		this.continuousReadingSwitch = this.Get<ToggleSwitch>("continuousReadingSwitch");
-			this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
-			{
-				it.GetObservable(SelectingItemsControl.SelectedItemProperty).Subscribe(this.OnSelectedDataSourceChanged);
-			});
-			this.defaultLogLevelComboBox = this.Get<ComboBox>(nameof(defaultLogLevelComboBox));
-			this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
-			this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
-			this.iconComboBox = this.Get<LogProfileIconComboBox>("iconComboBox");
-			if (Platform.IsNotWindows)
-				this.Get<Control>("isAdminNeededPanel").IsVisible = false;
-			this.isTemplateSwitch = this.Get<ToggleSwitch>(nameof(isTemplateSwitch)).Also(it =>
-			{
-				it.GetObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
-			});
-			this.logDisplayingPanel = this.Get<Panel>(nameof(logDisplayingPanel));
-			this.logDisplayingPanelButton = this.Get<ToggleButton>(nameof(logDisplayingPanelButton)).Also(it =>
-			{
-				it.Click += (_, _) => this.ScrollToPanel(it);
-			});
-			this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
-			this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
-			this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logPatternListBox)).Also(it =>
-			{
-				SetupItemDragging(it, this.logPatterns);
-			});
-			this.logPatternMatchingModeComboBox = this.Get<ComboBox>(nameof(logPatternMatchingModeComboBox));
-			this.logReadingPanel = this.Get<Panel>(nameof(logReadingPanel));
-			this.logReadingPanelButton = this.Get<ToggleButton>(nameof(logReadingPanelButton)).Also(it =>
-			{
-				it.Click += (_, _) => this.ScrollToPanel(it);
-			});
-			this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
-			this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
-			this.logWritingFormatListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(logWritingFormatListBox)).Also(it =>
-			{
-				SetupItemDragging(it, this.logWritingFormats);
-			});
-			this.logWritingPanel = this.Get<Panel>(nameof(logWritingPanel));
-			this.logWritingPanelButton = this.Get<ToggleButton>(nameof(logWritingPanelButton)).Also(it =>
-			{
-				it.Click += (_, _) => this.ScrollToPanel(it);
+		this.dataSourceProviderComboBox = this.Get<ComboBox>("dataSourceProviderComboBox").Also(it =>
+		{
+			it.GetObservable(SelectingItemsControl.SelectedItemProperty).Subscribe(this.OnSelectedDataSourceChanged);
+		});
+		this.defaultLogLevelComboBox = this.Get<ComboBox>(nameof(defaultLogLevelComboBox));
+		this.descriptionTextBox = this.Get<TextBox>(nameof(descriptionTextBox));
+		this.iconColorComboBox = this.Get<LogProfileIconColorComboBox>(nameof(iconColorComboBox));
+		this.iconComboBox = this.Get<LogProfileIconComboBox>("iconComboBox");
+		if (Platform.IsNotWindows)
+			this.Get<Control>("isAdminNeededPanel").IsVisible = false;
+		this.isTemplateSwitch = this.Get<ToggleSwitch>(nameof(isTemplateSwitch)).Also(it =>
+		{
+			it.GetObservable(ToggleButton.IsCheckedProperty).Subscribe(_ => this.InvalidateInput());
+		});
+		this.logDisplayingPanel = this.Get<Panel>(nameof(logDisplayingPanel));
+		this.logDisplayingPanelButton = this.Get<ToggleButton>(nameof(logDisplayingPanelButton)).Also(it =>
+		{
+			it.Click += (_, _) => this.ScrollToPanel(it);
+		});
+		this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
+		this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
+		this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logPatternListBox)).Also(SetupItemDragging<LogPattern>);
+		this.logPatternMatchingModeComboBox = this.Get<ComboBox>(nameof(logPatternMatchingModeComboBox));
+		this.logReadingPanel = this.Get<Panel>(nameof(logReadingPanel));
+		this.logReadingPanelButton = this.Get<ToggleButton>(nameof(logReadingPanelButton)).Also(it =>
+		{
+			it.Click += (_, _) => this.ScrollToPanel(it);
+		});
+		this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
+		this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
+		this.logWritingFormatListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(logWritingFormatListBox)).Also(SetupItemDragging<string>);
+		this.logWritingPanel = this.Get<Panel>(nameof(logWritingPanel));
+		this.logWritingPanelButton = this.Get<ToggleButton>(nameof(logWritingPanelButton)).Also(it =>
+		{
+			it.Click += (_, _) => this.ScrollToPanel(it);
 		});
 		this.nameTextBox = this.Get<TextBox>("nameTextBox");
 		this.rawLogLevelPropertyComboBox = this.Get<ComboBox>(nameof(rawLogLevelPropertyComboBox));
@@ -272,10 +269,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		this.timestampFormatForDisplayingTextBox = this.Get<TextBox>("timestampFormatForDisplayingTextBox");
 		this.timestampFormatForWritingTextBox = this.Get<TextBox>("timestampFormatForWritingTextBox");
 		this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
-		this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>(nameof(visibleLogPropertyListBox)).Also(it =>
-		{
-			SetupItemDragging(it, this.visibleLogProperties);
-		});
+		this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>(nameof(visibleLogPropertyListBox)).Also(SetupItemDragging<LogProperty>);
 		this.workingDirPriorityComboBox = this.Get<ComboBox>(nameof(workingDirPriorityComboBox));
 
 		// attach to log data source providers
@@ -284,6 +278,9 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			this.dataSourceProviders.AddAll(allProviders);
 			(allProviders as INotifyCollectionChanged)?.Let(it => it.CollectionChanged += this.OnAllLogDataSourceProvidersChanged);
 		});
+		
+		// add event handlers
+		this.AddHandler(KeyUpEvent, (_, e) => this.OnPreviewKeyUp(e), RoutingStrategies.Tunnel);
 	}
 	
 	
@@ -484,8 +481,29 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	public SyntaxHighlightingDefinitionSet DateTimeFormatSyntaxHighlightingDefinitionSet { get; }
 	
 	
+	// Edit item in specific list box.
+	Task EditListBoxItemAsync(Avalonia.Controls.ListBox listBox, ListBoxItem item)
+	{
+		if (ReferenceEquals(listBox, this.logLevelMapForReadingListBox))
+			return this.EditLogLevelMapEntryForReading((KeyValuePair<string, Logs.LogLevel>)item.DataContext!);
+		if (ReferenceEquals(listBox, this.logLevelMapForWritingListBox))
+			return this.EditLogLevelMapEntryForWriting((KeyValuePair<Logs.LogLevel, string>)item.DataContext!);
+		if (ReferenceEquals(listBox, this.logPatternListBox))
+			return this.EditLogPattern(item);
+		if (ReferenceEquals(listBox, this.logWritingFormatListBox))
+			return this.EditLogWritingFormat(item);
+		if (ReferenceEquals(listBox, this.timeSpanFormatsForReadingListBox))
+			return this.EditTimeSpanFormatForReading(item);
+		if (ReferenceEquals(listBox, this.timestampFormatsForReadingListBox))
+			return this.EditTimestampFormatForReading(item);
+		if (ReferenceEquals(listBox, this.visibleLogPropertyListBox))
+			return this.EditVisibleLogProperty(item);
+		return Task.CompletedTask;
+	}
+	
+	
 	// Edit source of log chart series.
-	void EditLogChartSeriesSource(ListBoxItem item)
+	async Task EditLogChartSeriesSource(ListBoxItem item)
 	{ }
 
 
@@ -505,9 +523,14 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			{
 				Entry = newEntry
 			}.ShowDialog<KeyValuePair<string, Logs.LogLevel>?>(this);
+			// ReSharper disable once UsageOfDefaultStructEquality
 			if (newEntry is null || newEntry.Value.Equals(entry))
+			{
+				this.SelectListBoxItem(this.logLevelMapForReadingListBox, entry);
 				return;
+			}
 			var checkingEntry = this.logLevelMapEntriesForReading.FirstOrDefault(it => it.Key == newEntry.Value.Key);
+			// ReSharper disable once UsageOfDefaultStructEquality
 			if (checkingEntry.Key is not null && !entry.Equals(checkingEntry))
 			{
 				await new MessageDialog
@@ -546,9 +569,14 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			{
 				Entry = newEntry
 			}.ShowDialog<KeyValuePair<Logs.LogLevel, string>?>(this);
+			// ReSharper disable once UsageOfDefaultStructEquality
 			if (newEntry is null || newEntry.Value.Equals(entry))
+			{
+				this.SelectListBoxItem(this.logLevelMapForWritingListBox, entry);
 				return;
+			}
 			var checkingEntry = this.logLevelMapEntriesForWriting.FirstOrDefault(it => it.Key == newEntry.Value.Key);
+			// ReSharper disable once UsageOfDefaultStructEquality
 			if (checkingEntry.Value is not null && !entry.Equals(checkingEntry))
 			{
 				await new MessageDialog
@@ -593,8 +621,8 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		{
 			this.logPatterns[index] = newLogPattern;
 			this.UpdateLogPropertyNamesInLogPatterns();
-			this.SelectListBoxItem(this.logPatternListBox, index);
 		}
+		this.SelectListBoxItem(this.logPatternListBox, index);
 	}
 
 
@@ -617,10 +645,8 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			Format = format
 		}.ShowDialog<string?>(this);
 		if (newFormat is not null && newFormat != format)
-		{
 			this.logWritingFormats[index] = newFormat;
-			this.SelectListBoxItem(this.logWritingFormatListBox, index);
-		}
+		this.SelectListBoxItem(this.logWritingFormatListBox, index);
 	}
 
 
@@ -643,10 +669,8 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			it.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.TimeSpanFormatsForReading"));
 		}).ShowDialog<string>(this);
 		if (!string.IsNullOrWhiteSpace(newFormat) && newFormat != format)
-		{
 			this.timeSpanFormatsForReading[index] = newFormat;
-			this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, index);
-		}
+		this.SelectListBoxItem(this.timeSpanFormatsForReadingListBox, index);
 	}
 
 
@@ -669,10 +693,8 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			it.Bind(TitleProperty, this.GetResourceObservable("String/LogProfileEditorDialog.TimestampFormatsForReading"));
 		}).ShowDialog<string>(this);
 		if (!string.IsNullOrWhiteSpace(newFormat) && newFormat != format)
-		{
 			this.timestampFormatsForReading[index] = newFormat;
-			this.SelectListBoxItem(this.timestampFormatsForReadingListBox, index);
-		}
+		this.SelectListBoxItem(this.timestampFormatsForReadingListBox, index);
 	}
 
 
@@ -696,10 +718,8 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			LogProperty = logProperty
 		}.ShowDialog<LogProperty?>(this);
 		if (newLogProperty is not null && newLogProperty != logProperty)
-		{
 			this.visibleLogProperties[index] = newLogProperty;
-			this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
-		}
+		this.SelectListBoxItem(this.visibleLogPropertyListBox, index);
 	}
 
 
@@ -1011,20 +1031,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			return;
 		if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem is null)
 			return;
-		if (listBox == this.logLevelMapForReadingListBox)
-			_ = this.EditLogLevelMapEntryForReading((KeyValuePair<string, Logs.LogLevel>)e.Item);
-		else if (listBox == this.logLevelMapForWritingListBox)
-			_ = this.EditLogLevelMapEntryForWriting((KeyValuePair<Logs.LogLevel, string>)e.Item);
-		else if (listBox == this.logPatternListBox)
-			_ = this.EditLogPattern(listBoxItem);
-		else if (listBox == this.logWritingFormatListBox)
-			_ = this.EditLogWritingFormat(listBoxItem);
-		else if (listBox == this.timeSpanFormatsForReadingListBox)
-			_ = this.EditTimeSpanFormatForReading(listBoxItem);
-		else if (listBox == this.timestampFormatsForReadingListBox)
-			_ = this.EditTimestampFormatForReading(listBoxItem);
-		else if (listBox == this.visibleLogPropertyListBox)
-			_ = this.EditVisibleLogProperty(listBoxItem);
+		_ = this.EditListBoxItemAsync(listBox, listBoxItem);
 	}
 	
 	
@@ -1037,12 +1044,12 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	
 	
 	// Called when user dropped item on list box.
-	void OnListBoxItemDropped<T>(ListBox listBox, ObservableList<T> items, ListBoxItemDragEventArgs e)
+	void OnListBoxItemDropped<T>(ListBox listBox, ListBoxItemDragEventArgs e)
 	{
-		if (e.ItemIndex != e.StartItemIndex)
+		if (e.ItemIndex != e.StartItemIndex && listBox.TryMoveItem<T>(e.StartItemIndex, e.ItemIndex))
 		{
-			items.Move(e.StartItemIndex, e.ItemIndex);
 			listBox.SelectedIndex = e.ItemIndex;
+			listBox.FocusSelectedItem();
 		}
 	}
 
@@ -1052,7 +1059,11 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	{
 		if (sender is not Avalonia.Controls.ListBox listBox)
 			return;
-		listBox.SelectedItems?.Clear();
+		Dispatcher.UIThread.Post(() =>
+		{
+			if (!listBox.IsSelectedItemFocused)
+				listBox.SelectedItems?.Clear();
+		});
 	}
 
 
@@ -1233,6 +1244,18 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 				this.Height = Math.Max(screen.WorkingArea.Height / screen.Scaling / 2, this.FindResourceOrDefault("Double/LogProfileEditorDialog.Height", 600.0));
 			});
 		});
+	}
+
+
+	// Called before dispatching key up event to children.
+	new void OnPreviewKeyUp(KeyEventArgs e)
+	{
+		if (e.Key == Key.Enter
+		    && (e.Source as Visual)?.FindAncestorOfType<ListBoxItem>(includeSelf: true) is { } listBoxItem
+		    && listBoxItem.FindAncestorOfType<Avalonia.Controls.ListBox>() is { } listBox)
+		{
+			_ = this.EditListBoxItemAsync(listBox, listBoxItem);
+		}
 	}
 
 
@@ -1499,6 +1522,16 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	// Select default log data source provider.
 	void SelectDefaultDataSource() =>
 		this.dataSourceProviderComboBox.SelectedItem = this.dataSourceProviders.FirstOrDefault(it => it is FileLogDataSourceProvider);
+	
+	
+	// Select given item in list box.
+	void SelectListBoxItem(Avalonia.Controls.ListBox listBox, object? item)
+	{
+		if (item is not null)
+			this.SelectListBoxItem(listBox, listBox.Items.IndexOf(item));
+		else
+			this.SelectListBoxItem(listBox, -1);
+	}
 
 
 	// Select given item in list box.
@@ -1509,9 +1542,9 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 			listBox.SelectedItems?.Clear();
 			if (index < 0 || index >= listBox.ItemCount)
 				return;
-			listBox.Focus();
 			listBox.SelectedIndex = index;
 			listBox.ScrollIntoView(index);
+			listBox.FocusSelectedItem();
 		});
 	}
 

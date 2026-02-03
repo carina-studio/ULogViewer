@@ -1,6 +1,8 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
@@ -35,7 +37,12 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 		this.RemoveLogPropertyMapEntryCommand = new Command<ListBoxItem>(this.RemoveLogPropertyMapEntry);
 		AvaloniaXamlLoader.Load(this);
 		this.logPropertyMap.CollectionChanged += (_, _) => this.InvalidateInput();
-		this.logPropertyMapListBox = this.FindControl<ListBox>(nameof(logPropertyMapListBox)).AsNonNull();
+		this.logPropertyMapListBox = this.Get<ListBox>(nameof(logPropertyMapListBox));
+		this.AddHandler(KeyUpEvent, (sender, e) =>
+		{
+			if (this.logPropertyMapListBox.IsSelectedItemFocused && e.Key == Key.Enter)
+				_ = this.EditLogPropertyMapEntry((KeyValuePair<string, string>)this.logPropertyMapListBox.SelectedItem!);
+		}, RoutingStrategies.Tunnel);
 	}
 
 
@@ -43,14 +50,15 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	/// Add log property map entry.
 	/// </summary>
 	public void AddLogPropertyMapEntry() => 
-		this.EditLogPropertyMapEntry(new KeyValuePair<string, string>("", ""));
+		_ = this.EditLogPropertyMapEntry(new KeyValuePair<string, string>("", ""));
 
 
 	// Edit log property map entry.
 	void EditLogPropertyMapEntry(ListBoxItem item) => 
-		this.EditLogPropertyMapEntry((KeyValuePair<string, string>)item.DataContext.AsNonNull());
-	async void EditLogPropertyMapEntry(KeyValuePair<string, string> entry)
+		_ = this.EditLogPropertyMapEntry((KeyValuePair<string, string>)item.DataContext.AsNonNull());
+	async Task EditLogPropertyMapEntry(KeyValuePair<string, string> entry)
 	{
+		// ReSharper disable once UsageOfDefaultStructEquality
 		var index = this.logPropertyMap.IndexOf(entry);
 		var newEntry = (KeyValuePair<string, string>?)entry;
 		while (true)
@@ -59,6 +67,7 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 			{
 				Entry = newEntry.Value
 			}.ShowDialog<KeyValuePair<string, string>?>(this);
+			// ReSharper disable once UsageOfDefaultStructEquality
 			if (newEntry is null || newEntry.Value.Equals(entry))
 			{
 				if (index >= 0)
@@ -142,11 +151,20 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	/// <summary>
 	/// Get or set <see cref="JsonLogsSavingOptions"/> to be edited.
 	/// </summary>
-	public JsonLogsSavingOptions? LogsSavingOptions { get; set; }
+	public JsonLogsSavingOptions? LogsSavingOptions { get; init; }
+
+
+	/// <inheritdoc/>
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
+	{
+		base.OnEnterKeyClickedOnInputControl(control);
+		if (!this.logPropertyMapListBox.IsSelectedItemFocused)
+			_ = this.EditLogPropertyMapEntry((KeyValuePair<string, string>)this.logPropertyMapListBox.SelectedItem!);
+	}
 
 
 	// Called when double-tapped on list box.
-	void OnListBoxDoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+	void OnListBoxDoubleTapped(object? sender, TappedEventArgs e)
 	{
 		if (sender is not ListBox listBox)
 			return;
@@ -168,7 +186,11 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	{
 		if (sender is not ListBox listBox)
 			return;
-		listBox.SelectedItems?.Clear();
+		Dispatcher.UIThread.Post(() =>
+		{
+			if (!listBox.IsSelectedItemFocused)
+				listBox.SelectedItem = null;
+		});
 	}
 
 
@@ -243,6 +265,7 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	// Remove log property map entry.
 	void RemoveLogPropertyMapEntry(ListBoxItem item)
 	{
+		// ReSharper disable once UsageOfDefaultStructEquality
 		var index = this.logPropertyMap.IndexOf((KeyValuePair<string, string>)item.DataContext.AsNonNull());
 		if (index >= 0)
 		{
@@ -261,6 +284,13 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	// Select given item in list box.
 	void SelectListBoxItem(ListBox listBox, int index)
 	{
+		listBox.SelectedIndex = index;
+		if (index >= 0)
+		{
+			listBox.ScrollIntoView(index);
+			listBox.FocusSelectedItem();
+		}
+		/*
 		this.SynchronizationContext.Post(() =>
 		{
 			listBox.SelectedItems?.Clear();
@@ -270,5 +300,6 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 			listBox.SelectedIndex = index;
 			listBox.ScrollIntoView(index);
 		});
+		*/
 	}
 }

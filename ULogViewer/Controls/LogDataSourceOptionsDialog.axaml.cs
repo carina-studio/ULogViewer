@@ -4,6 +4,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Controls.Highlighting;
 using CarinaStudio.Collections;
@@ -339,25 +340,28 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	{
 		// find index of command
 		var listBox = (ListBox)item.Parent.AsNonNull();
-		var isSetupCommand = (listBox == this.setupCommandsListBox);
+		var isSetupCommand = ReferenceEquals(listBox, this.setupCommandsListBox);
 		var index = isSetupCommand ? this.setupCommands.IndexOf((string)item.DataContext.AsNonNull()) : this.teardownCommands.IndexOf((string)item.DataContext.AsNonNull());
 		if (index < 0)
 			return;
 
 		// edit
-		var newCommand = (await new TextShellCommandInputDialog()
+		var newCommand = (await new TextShellCommandInputDialog
 		{
-			InitialCommand = (item.DataContext as string),
+			InitialCommand = item.DataContext as string,
 		}.ShowDialog<string?>(this))?.Trim();
 		if (string.IsNullOrEmpty(newCommand))
+		{
+			this.SelectListBoxItem(listBox, index);
 			return;
+		}
 
 		// update command
 		if (isSetupCommand)
 			this.setupCommands[index] = newCommand;
 		else
 			this.teardownCommands[index] = newCommand;
-		this.SelectListBoxItem((ListBox)item.Parent.AsNonNull(), index);
+		this.SelectListBoxItem(listBox, index);
 	}
 
 
@@ -607,7 +611,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	{
 		if (sender is not ListBox listBox)
 			return;
-		listBox.SelectedItems?.Clear();
+		Dispatcher.UIThread.Post(() =>
+		{
+			if (!listBox.IsSelectedItemFocused)
+				listBox.SelectedItems?.Clear();
+		});
 	}
 
 
@@ -798,8 +806,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		var index = e.ItemIndex;
 		if (startIndex >= 0 && startIndex < commands.Count && index >= 0 && index < commands.Count && startIndex != index)
 		{
-			commands.Move(startIndex, index);
-			listBox.SelectedIndex = index;
+			listBox.TryMoveItem<string>(startIndex, index);
+			this.SelectListBoxItem(listBox, index);
 		}
 	}
 
@@ -963,9 +971,9 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			listBox.SelectedItems?.Clear();
 			if (index < 0 || index >= listBox.ItemCount)
 				return;
-			listBox.Focus();
 			listBox.SelectedIndex = index;
 			listBox.ScrollIntoView(index);
+			listBox.FocusSelectedItem();
 		});
 	}
 

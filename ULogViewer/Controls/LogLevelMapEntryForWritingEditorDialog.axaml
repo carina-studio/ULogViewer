@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:appControls="clr-namespace:CarinaStudio.ULogViewer.Controls;assembly=ULogViewer"
-        xmlns:appConverters="clr-namespace:CarinaStudio.ULogViewer.Converters;assembly=ULogViewer"
-        xmlns:appLogs="clr-namespace:CarinaStudio.ULogViewer.Logs;assembly=ULogViewer"
+        xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
+        xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogLevelMapEntryForWritingEditorDialog"
         Name="dialog"
@@ -42,7 +42,7 @@
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*">
 							<Border Classes="ListBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
-							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.LogLevel}}"/>
 						</Grid>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
