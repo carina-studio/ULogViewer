@@ -155,7 +155,7 @@ partial class SessionView
     /// <summary>
     /// Create cooperative log analysis script set for current log profile.
     /// </summary>
-    public async void CreateCooperativeLogAnalysisScriptSet()
+    public async Task CreateCooperativeLogAnalysisScriptSet()
     {
         // check state
         if (this.DataContext is not Session session)
@@ -344,7 +344,7 @@ partial class SessionView
     /// <summary>
     /// Edit cooperative log analysis script set for current log profile.
     /// </summary>
-    public async void EditCooperativeLogAnalysisScriptSet()
+    public async Task EditCooperativeLogAnalysisScriptSet()
     {
         // check state
         if (this.DataContext is not Session session)
@@ -437,7 +437,7 @@ partial class SessionView
 
 
     // Export given key log analysis rule set.
-    async void ExportKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+    async Task ExportKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
     {
         // check state
         if (ruleSet == null || this.attachedWindow == null)
@@ -470,7 +470,7 @@ partial class SessionView
 
 
     // Export given log analysis script set.
-    async void ExportLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+    async Task ExportLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
     {
         // check state
         if (scriptSet == null || this.attachedWindow == null)
@@ -503,7 +503,7 @@ partial class SessionView
 
 
     // Export given operation counting analysis rule set.
-    async void ExportOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+    async Task ExportOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
     {
         // check state
         if (ruleSet == null || this.attachedWindow == null)
@@ -536,7 +536,7 @@ partial class SessionView
 
 
     // Export given operation duration analysis rule set.
-    async void ExportOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+    async Task ExportOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
     {
         // check state
         if (ruleSet == null || this.attachedWindow == null)
@@ -571,7 +571,7 @@ partial class SessionView
     /// <summary>
     /// Import cooperative log analysis script from file.
     /// </summary>
-    public async void ImportCooperativeLogAnalysisScriptFromFile()
+    public async Task ImportCooperativeLogAnalysisScriptFromFile()
     {
         // select file
         if (this.DataContext is not Session session
@@ -625,7 +625,7 @@ partial class SessionView
     /// <summary>
     /// Import existing cooperative log analysis script.
     /// </summary>
-    public async void ImportExistingCooperativeLogAnalysisScript()
+    public async Task ImportExistingCooperativeLogAnalysisScript()
     {
         // select script set
         if (this.attachedWindow is null 
@@ -668,7 +668,7 @@ partial class SessionView
     /// <summary>
     /// Import log analysis rule set.
     /// </summary>
-    public async void ImportLogAnalysisRuleSet()
+    public async Task ImportLogAnalysisRuleSet()
     {
         // check state
         if (this.attachedWindow is null)
@@ -785,14 +785,14 @@ partial class SessionView
             {
                 if (Platform.IsOpeningFileManagerSupported)
                 {
-                    it.Actions = new[]
-                    {
+                    it.Actions =
+                    [
                         new NotificationAction().Also(it =>
                         {
                             it.Command = new Command(() => Platform.OpenFileManager(fileName));
                             it.Bind(NotificationAction.NameProperty, this.Application.GetObservableString("SessionView.ShowFileInExplorer"));
                         })
-                    };
+                    ];
                 }
                 it.BindToResource(Notification.IconProperty, this, "Image/Icon.Success.Colored.Gradient");
                 it.Bind(Notification.MessageProperty, new FormattedString().Also(it =>
@@ -831,7 +831,7 @@ partial class SessionView
             firstResult ??= result;
             this.logAnalysisResultListBox.SelectedItems.Add(result);
         }
-        if (firstResult != null)
+        if (firstResult is not null)
         {
             session.LogAnalysis.IsPanelVisible = true;
             this.logAnalysisResultListBox.ScrollIntoView(firstResult);
@@ -1330,7 +1330,7 @@ partial class SessionView
     /// <summary>
     /// Remove cooperative log analysis script.
     /// </summary>
-    public async void RemoveCooperativeLogAnalysisScript()
+    public async Task RemoveCooperativeLogAnalysisScript()
     {
         if (this.attachedWindow == null
             || this.DataContext is not Session session)
@@ -1357,7 +1357,7 @@ partial class SessionView
 
 
     // Remove given key log analysis rule set.
-    async void RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
+    async Task RemoveKeyLogAnalysisRuleSet(KeyLogAnalysisRuleSet? ruleSet)
     {
         if (ruleSet == null || this.attachedWindow == null)
             return;
@@ -1376,7 +1376,7 @@ partial class SessionView
 
 
     // Remove given log analysis script set.
-    async void RemoveLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
+    async Task RemoveLogAnalysisScriptSet(LogAnalysisScriptSet? scriptSet)
     {
         if (scriptSet == null || this.attachedWindow == null)
             return;
@@ -1395,7 +1395,7 @@ partial class SessionView
 
 
     // Remove given operation counting analysis rule set.
-    async void RemoveOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
+    async Task RemoveOperationCountingAnalysisRuleSet(OperationCountingAnalysisRuleSet? ruleSet)
     {
         if (ruleSet == null || this.attachedWindow == null)
             return;
@@ -1414,7 +1414,7 @@ partial class SessionView
 
 
     // Remove given operation duration analysis rule set.
-    async void RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
+    async Task RemoveOperationDurationAnalysisRuleSet(OperationDurationAnalysisRuleSet? ruleSet)
     {
         if (ruleSet == null || this.attachedWindow == null)
             return;
@@ -1494,6 +1494,8 @@ partial class SessionView
     // Setup list box of log analysis rule sets.
     void SetupLogAnalysisRuleSetListBox(Avalonia.Controls.ListBox listBox)
     {
+        listBox.AddHandler(KeyDownEvent, (_, e) => e.Handled = true, RoutingStrategies.Tunnel);
+        listBox.AddHandler(KeyUpEvent, (_, e) => e.Handled = true, RoutingStrategies.Tunnel);
         listBox.AddHandler(PointerPressedEvent, this.OnLogAnalysisRuleSetListBoxPointerPressed, RoutingStrategies.Tunnel);
         listBox.SelectionChanged += this.OnLogAnalysisRuleSetListBoxSelectionChanged;
     }

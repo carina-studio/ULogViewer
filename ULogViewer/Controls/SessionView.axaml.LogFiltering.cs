@@ -161,7 +161,7 @@ partial class SessionView
 
 
     // Clear global log text filter history.
-    void ClearGlobalLogTextFilterHistory()
+    async Task ClearGlobalLogTextFilterHistory()
     { }
     
 
@@ -209,7 +209,7 @@ partial class SessionView
 
 
     // Confirm whether keep showing help button on log text filter or not.
-    async void ConfirmShowingHelpButtonOnLogTextFilter()
+    async Task ConfirmShowingHelpButtonOnLogTextFilter()
     {
         if (this.PersistentState.GetValueOrDefault(IsShowingHelpButtonOnLogTextFilterConfirmedKey))
             return;
@@ -588,7 +588,7 @@ partial class SessionView
             if (this.attachedWindow?.IsActive == true)
             {
                 this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
-                this.ConfirmShowingHelpButtonOnLogTextFilter();
+                _ = this.ConfirmShowingHelpButtonOnLogTextFilter();
             }
             else
                 this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = true;
@@ -629,7 +629,7 @@ partial class SessionView
 
 
     // Rename given group of predefined text filter.
-    async void RenamePredefinedLogTextFilterGroup(PredefinedLogTextFilterGroup group)
+    async Task RenamePredefinedLogTextFilterGroup(PredefinedLogTextFilterGroup group)
     {
         // check state
         this.VerifyAccess();

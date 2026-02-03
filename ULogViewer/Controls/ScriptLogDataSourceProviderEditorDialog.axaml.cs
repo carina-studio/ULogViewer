@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
+using CarinaStudio.Controls;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.Windows.Input;
@@ -21,7 +22,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// <summary>
 /// Dialog to edit <see cref="ScriptLogDataSourceProvider"/>s.
 /// </summary>
-class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
+class ScriptLogDataSourceProviderEditorDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 {
 	// Supported source option.
 	public class SupportedSourceOption
@@ -119,7 +120,23 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 			};
 		});
 		this.displayNameTextBox = this.Get<TextBox>(nameof(displayNameTextBox));
-		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox));
+		this.supportedSourceOptionListBox = this.Get<Avalonia.Controls.ListBox>(nameof(supportedSourceOptionListBox)).Also(it =>
+		{
+			it.LostFocus += (_, _) => Dispatcher.UIThread.Post(() =>
+			{
+				if (!it.IsSelectedItemFocused)
+					it.SelectedIndex = -1;
+			});
+			it.SelectionChanged += (_, _) =>
+			{
+				this.SynchronizationContext.Post(() =>
+				{
+					var index = it.SelectedIndex;
+					if (index >= 0)
+						it.ScrollIntoView(index);
+				});
+			};
+		});
 		isInit = false;
 		this.UpdateDocumentUris();
 	}
@@ -199,9 +216,9 @@ class ScriptLogDataSourceProviderEditorDialog : Dialog<IULogViewerApplication>
 			this.AddSupportedSourceOption(menuItem);
 		};
 		menuItem.DataContext = option;
-		menuItem.Header = new TextBlock().Also(it =>
+		menuItem.Header = new Avalonia.Controls.TextBlock().Also(it =>
 		{
-			it.Bind(TextBlock.TextProperty, new Binding()
+			it.Bind(Avalonia.Controls.TextBlock.TextProperty, new Binding()
 			{
 				Converter = Converters.LogDataSourceOptionConverter.Default,
 				Source = option,

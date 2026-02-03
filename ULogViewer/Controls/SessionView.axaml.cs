@@ -25,7 +25,6 @@ using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
-using CarinaStudio.Input;
 using CarinaStudio.IO;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
@@ -40,6 +39,7 @@ using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using CarinaStudio.ViewModels;
 using CarinaStudio.Windows.Input;
 using LiveChartsCore.SkiaSharpView.Avalonia;
+using LiveChartsGeneratedCode;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -433,7 +433,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectoryAsync, this.canSetWorkingDirectory);
 			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
 			this.ShowLogFileInExplorerCommand = new Command<string>(this.ShowLogFileInExplorer);
-			this.ShowLogStringPropertyCommand = new Command(() => this.ShowLogStringProperty(), this.canShowLogProperty);
+			this.ShowLogStringPropertyCommand = new Command(this.ShowLogStringProperty, this.canShowLogProperty);
 			this.ShowWorkingDirectoryInExplorerCommand = new Command(this.ShowWorkingDirectoryInExplorer, this.canShowWorkingDirectoryInExplorer);
 			this.TestCommand = new Command<string>(this.Test);
 			this.ToggleLogLevelFilterCommand = new Command<Logs.LogLevel>(this.ToggleLogLevelFilter);
@@ -465,7 +465,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.RegexSyntaxHighlightingDefinitionSet = RegexSyntaxHighlighting.CreateDefinitionSet(this.Application);
 
 			// initialize
-			this.IsToolsMenuItemVisible = this.Application.IsDebugMode || AppSuite.Controls.PathEnvVarEditorDialog.IsSupported;
+			this.IsToolsMenuItemVisible = this.Application.IsDebugMode || PathEnvVarEditorDialog.IsSupported;
 			AvaloniaXamlLoader.Load(this);
 
 			// load resources
@@ -543,10 +543,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.Get<Expander>("logAnalysisScriptSetsExpander").Also(this.SetupLogAnalysisRuleSetsExpander);
 			this.logChart = this.Get<CartesianChart>(nameof(logChart)).Also(it =>
 			{
-				it.Bind(CartesianChart.LegendBackgroundPaintProperty, new Binding { Source = this, Path = nameof(LogChartLegendBackgroundPaint) });
-				it.Bind(CartesianChart.LegendTextPaintProperty, new Binding { Source = this, Path = nameof(LogChartLegendForegroundPaint) });
-				it.Bind(CartesianChart.TooltipBackgroundPaintProperty, new Binding { Source = this, Path = nameof(LogChartToolTipBackgroundPaint) });
-				it.Bind(CartesianChart.TooltipTextPaintProperty, new Binding { Source = this, Path = nameof(LogChartToolTipForegroundPaint) });
+				it.Bind(SourceGenChart.LegendBackgroundPaintProperty, new Binding { Source = this, Path = nameof(LogChartLegendBackgroundPaint) });
+				it.Bind(SourceGenChart.LegendTextPaintProperty, new Binding { Source = this, Path = nameof(LogChartLegendForegroundPaint) });
+				it.Bind(SourceGenChart.TooltipBackgroundPaintProperty, new Binding { Source = this, Path = nameof(LogChartToolTipBackgroundPaint) });
+				it.Bind(SourceGenChart.TooltipTextPaintProperty, new Binding { Source = this, Path = nameof(LogChartToolTipForegroundPaint) });
 				it.DataPointerDown += (_, e) => this.OnLogChartDataPointerDown(e);
 				it.DoubleTapped += (_, e) =>
 				{
@@ -788,14 +788,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.logFileActionMenu = ((ContextMenu)this.Resources[nameof(logFileActionMenu)].AsNonNull()).Also(it =>
 			{
-				it.Closed += (_, _) =>
-				{
-					it.DataContext = null;
-				};
-				it.Opened += (_, _) =>
-				{
-					it.DataContext = this.logFileListBox.SelectedItem;
-				};
+				it.Closed += (_, _) => it.DataContext = null;
+				it.Opened += (_, _) => it.DataContext = this.logFileListBox.SelectedItem;
 			});
 			this.logFilterCombinationModeMenu = ((ContextMenu)this.Resources[nameof(logFilterCombinationModeMenu)].AsNonNull()).Also(it =>
 			{
@@ -816,8 +810,8 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logProfileSelectionMenu = ((LogProfileSelectionContextMenu)this.Resources[nameof(logProfileSelectionMenu)].AsNonNull()).Also(it =>
 			{
 				this.selectAndSetLogProfileButton.DropDownMenu = it;
-				it.LogProfileCreated += (_, logProfile) =>
-					this.OnLogProfileCreatedByLogProfileSelectionMenu(logProfile);
+				it.LogProfileCreated += (sender, logProfile) =>
+					_ = this.OnLogProfileCreatedByLogProfileSelectionMenu(logProfile);
 				it.LogProfileExported += (_, _, fileName) =>
 				{
 					if (this.attachedWindow is not MainWindow mainWindow)
@@ -2538,7 +2532,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				return Task.FromResult(false);
 			var dropFilePaths = data.TryGetLocalFilePaths();
 			if (dropFilePaths.IsNotEmpty())
-				return this.DropAsync(keyModifiers, dropFilePaths);
+				return this.DropAsync(keyModifiers, dropFilePaths!);
 			return Task.FromResult(false);
 		}
 
@@ -2763,7 +2757,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Enable script running.
-		public async void EnableRunningScript()
+		public async Task EnableRunningScript()
 		{
 			if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
 				return;
@@ -3043,7 +3037,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							if (this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded)
 							{
 								this.isShowingHelpButtonOnLogTextFilterConfirmationNeeded = false;
-								this.ConfirmShowingHelpButtonOnLogTextFilter();
+								_ = this.ConfirmShowingHelpButtonOnLogTextFilter();
 							}
 						});
 					}
@@ -3113,7 +3107,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UpdateLogChartPaints();
 
 			// show tutorial
-			this.SynchronizationContext.Post(() => this.ShowNextTutorial());
+			this.SynchronizationContext.Post(this.ShowNextTutorial);
 		}
 
 
@@ -3415,7 +3409,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// check data
-			e.DragEffects = Global.RunOrDefault(() => e.Data.HasFileNames()) // [Workaround] Prevent NRE when dragging without files on macOS
+			e.DragEffects = Global.RunOrDefault(() => e.DataTransfer.HasFiles()) // [Workaround] Prevent NRE when dragging without files on macOS
 				? DragDropEffects.Copy
 				: DragDropEffects.None;
 		}
@@ -3447,35 +3441,14 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when external dependency not found.
-		async void OnExternalDependencyNotFound(object? sender, EventArgs e)
+		void OnExternalDependencyNotFound(object? sender, EventArgs e) =>
+			_ = this.OnExternalDependencyNotFound();
+		async Task OnExternalDependencyNotFound()
 		{
-			// check state
-			if (this.attachedWindow == null)
-				return;
-			var session = sender as Session;
-			if (session != null && !session.IsActivated)
-				return;
-
-			// show external dependencies dialog
 			await Task.Delay(300);
 			if (this.attachedWindow is MainWindow mainWindow && mainWindow.HasDialogs)
-			{
-				var waitingTask = new TaskCompletionSource();
-				var observableToken = (IDisposable?)null;
-				observableToken = mainWindow.GetObservable(Window.HasDialogsProperty).Subscribe(_ =>
-				{
-					this.SynchronizationContext.Post(() =>
-					{
-						if (!mainWindow.HasDialogs)
-						{
-							observableToken?.Dispose();
-							waitingTask.SetResult();
-						}
-					});
-				});
-				await waitingTask.Task;
-			}
-			if (this.attachedWindow == null || (session != null && !session.IsActivated))
+				await mainWindow.WaitForPropertyChangeAsync(Window.HasDialogsProperty, false);
+			if (this.attachedWindow is null || this.DataContext is not Session session || !session.IsActivated)
 				return;
 			await new ExternalDependenciesDialog().ShowDialog(this.attachedWindow);
 		}
@@ -3747,7 +3720,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when new log profile created by log profile selection menu.
-		async void OnLogProfileCreatedByLogProfileSelectionMenu(LogProfile logProfile)
+		async Task OnLogProfileCreatedByLogProfileSelectionMenu(LogProfile logProfile)
 		{
 			// check state
 			if (this.attachedWindow == null)
@@ -3928,7 +3901,7 @@ namespace CarinaStudio.ULogViewer.Controls
         void OnMarkedLogListBoxSelectionChanged(object? sender, SelectionChangedEventArgs e)
 		{
 			if (this.markedLogListBox.SelectedItem is DisplayableLog log)
-				this.OnMarkedLogSelected(log, this.markedLogListBox.IsFocused);
+				this.OnMarkedLogSelected(log, this.markedLogListBox.IsSelectedItemFocused);
 		}
         // ReSharper restore UnusedParameter.Local
 
@@ -3964,7 +3937,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called to handle key-down before all children.
-		internal async void OnPreviewKeyDown(KeyEventArgs e)
+		internal async Task OnPreviewKeyDown(KeyEventArgs e)
 		{
 			// save key
 			this.pressedKeys.Add(e.Key);
@@ -4130,7 +4103,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							else if (!hasOpenedPopup)
 							{
-								this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
+								_ = this.SaveLogs((e.KeyModifiers & KeyModifiers.Shift) != 0);
 								e.Handled = true;
 							}
 							break;
@@ -4265,7 +4238,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							{
 								if (this.predefinedLogTextFiltersPopup.IsOpen)
 									this.predefinedLogTextFilterListBox.SelectPreviousItem();
-								else
+								else if (!hasOpenedPopup)
 								{
 									var selectedItems = this.logListBox.SelectedItems;
 									if (selectedItems!.Count > 1)
@@ -4707,10 +4680,8 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Reload log file.
-		bool ReloadLogFile(Session.LogFileInfo logFileInfo, Logs.LogReadingPrecondition precondition, Logs.LogReadingWindow? readingWindow, int? maxLogReadingCount)
-		{
-			return false;
-		}
+		void ReloadLogFile(Session.LogFileInfo logFileInfo, Logs.LogReadingPrecondition precondition, Logs.LogReadingWindow? readingWindow, int? maxLogReadingCount)
+		{ }
 
 
 		// Reload log file.
@@ -4839,7 +4810,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Save logs to file.
-		async void SaveLogs(bool saveAllLogs)
+		async Task SaveLogs(bool saveAllLogs)
 		{
 			// check state
 			this.VerifyAccess();
@@ -5433,7 +5404,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <summary>
 		/// Select log by timestamp.
 		/// </summary>
-		public async void SelectNearestLogByTimestamp()
+		public async Task SelectNearestLogByTimestamp()
         {
 			// check state
 			if (this.DataContext is not Session session)
@@ -5597,39 +5568,38 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Show full log string property.
-		bool ShowLogStringProperty()
+		void ShowLogStringProperty()
 		{
 			// check state
 			if (this.logListBox.SelectedItems!.Count != 1)
-				return false;
+				return;
 
 			// find property and log
 			var clickedPropertyView = this.lastClickedLogPropertyView;
-			if (clickedPropertyView == null || clickedPropertyView.Tag is not DisplayableLogProperty property)
-				return false;
+			if (clickedPropertyView?.Tag is not DisplayableLogProperty property)
+				return;
 			var listBoxItem = clickedPropertyView.FindLogicalAncestorOfType<ListBoxItem>();
-			if (listBoxItem == null)
-				return false;
+			if (listBoxItem is null)
+				return;
 			var log = (listBoxItem.DataContext as DisplayableLog);
 			if (log == null || this.logListBox.SelectedItems[0] != log)
-				return false;
+				return;
 			if (!DisplayableLog.HasStringProperty(property.Name))
-				return false;
+				return;
 
 			// show property
-			return this.ShowLogStringProperty(log, property);
+			this.ShowLogStringProperty(log, property);
 		}
-		bool ShowLogStringProperty(DisplayableLog log, DisplayableLogProperty property)
+		void ShowLogStringProperty(DisplayableLog log, DisplayableLogProperty property)
 		{
 			if (this.attachedWindow == null)
-				return false;
+				return;
 			new LogStringPropertyDialog
 			{
 				Log = log,
 				LogPropertyDisplayName = property.DisplayName,
 				LogPropertyName = property.Name,
 			}.ShowDialog(this.attachedWindow);
-			return true;
 		}
 
 
@@ -5640,21 +5610,21 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Show next tutorial is available.
-		bool ShowNextTutorial()
+		void ShowNextTutorial()
 		{
 			// check state
 			if (this.areAllTutorialsShown)
-				return false;
+				return;
 			if (this.attachedWindow is not AsControls.Window window)
-				return false;
+				return;
 			if ((window as MainWindow)?.AreInitialDialogsClosed == false
 				|| window.HasDialogs
 				|| window.CurrentTutorial != null)
 			{
-				return false;
+				return;
 			}
 			if ((this.DataContext as Session)?.IsActivated != true)
-				return false;
+				return;
 			
 			// show "select log profile to start"
 			var persistentState = this.PersistentState;
@@ -5667,7 +5637,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 				{
-					return window.ShowTutorial(new Tutorial().Also(it =>
+					window.ShowTutorial(new Tutorial().Also(it =>
 					{
 						it.Anchor = this.selectAndSetLogProfileButton;
 						it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SelectLogProfileToStart"));
@@ -5683,13 +5653,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// show "use add tab button to select log profile"
-			if ((window as MainWindow)?.ShowTutorialOfUsingAddTabButtonToSelectLogProfile(() => this.ShowNextTutorial(), this.SkipAllTutorials) == true)
-				return true;
+			if ((window as MainWindow)?.ShowTutorialOfUsingAddTabButtonToSelectLogProfile(this.ShowNextTutorial, this.SkipAllTutorials) == true)
+				return;
 
 			// show "switch side panels"
 			if (!persistentState.GetValueOrDefault(IsSwitchingSidePanelsTutorialShownKey))
 			{
-				return window.ShowTutorial(new Tutorial().Also(it =>
+				window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("sidePanelBoolBarItemsPanel");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SwitchSidePanels"));
@@ -5706,7 +5676,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show side panel tutorials
 			if (!persistentState.GetValueOrDefault(IsMarkedLogsPanelTutorialShownKey))
 			{
-				return window.ShowTutorial(new Tutorial().Also(it =>
+				window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("markedLogsPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.MarkedLogsPanel"));
@@ -5721,7 +5691,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (!persistentState.GetValueOrDefault(IsTimestampCategoriesPanelTutorialShownKey))
 			{
-				return window.ShowTutorial(new Tutorial().Also(it =>
+				window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("timestampCategoriesPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.TimestampCategoriesPanel"));
@@ -5736,7 +5706,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (!persistentState.GetValueOrDefault(IsLogAnalysisPanelTutorialShownKey))
 			{
-				return window.ShowTutorial(new Tutorial().Also(it =>
+				window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("logAnalysisPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogAnalysisPanel"));
@@ -5751,7 +5721,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			if (!persistentState.GetValueOrDefault(IsLogFilesPanelTutorialShownKey))
 			{
-				return window.ShowTutorial(new Tutorial().Also(it =>
+				window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("logFilesPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogFilesPanel"));
@@ -5767,7 +5737,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// all tutorials shown
 			this.SetAndRaise(AreAllTutorialsShownProperty, ref this.areAllTutorialsShown, true);
-			return false;
 		}
 
 

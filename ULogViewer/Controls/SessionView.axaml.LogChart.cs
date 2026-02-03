@@ -39,6 +39,7 @@ using System.Text;
 using CarinaStudio.AppSuite.Media;
 using LiveChartsCore.Painting;
 using LiveChartsCore.SkiaSharpView.Drawing.Layouts;
+using LiveChartsGeneratedCode;
 using System.Globalization;
 using System.Threading.Tasks;
 using DrawingContext = LiveChartsCore.Drawing.DrawingContext;
@@ -479,7 +480,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
                 return new ColumnSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(),
                     Fill = new SolidColorPaint(seriesColor),
                     Mapping = (value, index) => new(index * LogBarChartXCoordinateScaling, value!.Value),
                     Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
@@ -496,7 +497,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = 1.0;
                 return new StackedAreaSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(),
                     Fill = new SolidColorPaint(seriesColor),
                     GeometryFill = chartType switch
                     {
@@ -528,7 +529,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = LogBarChartXCoordinateScaling;
                 return new StackedColumnSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(),
                     Fill = new SolidColorPaint(seriesColor),
                     Mapping = (value, index) => new(index * LogBarChartXCoordinateScaling, value!.Value),
                     Name = series.Source?.Let(source => this.GetLogChartSeriesDisplayName(source)),
@@ -544,7 +545,7 @@ partial class SessionView
                 this.logChartXCoordinateScaling = 1.0;
                 return new LineSeries<DisplayableLogChartSeriesValue?>
                 {
-                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(viewModel),
+                    AnimationsSpeed = this.SelectLogChartSeriesAnimationSpeed(),
                     Fill = chartType switch
                     {
                         LogChartType.ValueAreas
@@ -1084,7 +1085,7 @@ partial class SessionView
     // Called when property of log chart has been changed.
     void OnLogChartPropertyChanged(AvaloniaPropertyChangedEventArgs e)
     {
-        if (e.Property == CartesianChart.ZoomModeProperty)
+        if (e.Property == SourceGenCartesianChart.ZoomModeProperty)
         {
             this.UpdateLogChartCursor();
             this.UpdateLogChartToolTip();
@@ -1419,14 +1420,12 @@ partial class SessionView
     // Select animation speed of log chart series.
     TimeSpan SelectLogChartSeriesAnimationSpeed()
     {
-        if (this.DataContext is not Session session)
+        if (this.DataContext is not Session)
             return default;
-        return this.SelectLogChartSeriesAnimationSpeed(session.LogChart);
-    }
-    TimeSpan SelectLogChartSeriesAnimationSpeed(LogChartViewModel viewModel) =>
-        this.startLogChartAnimationsAction.IsScheduled
+        return this.startLogChartAnimationsAction.IsScheduled
             ? TimeSpan.Zero
             : this.Application.FindResourceOrDefault("TimeSpan/Animation.Fast", TimeSpan.FromMilliseconds(200));
+    }
     
     
     // Select color for series.
