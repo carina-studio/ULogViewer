@@ -26,8 +26,9 @@
 
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/TimeSpanFormatInputDialog.Message}"/>
 			<asControls:TimeSpanFormatTextBox Name="formatTextBox" Classes="Dialog_TextBox" MaxLength="1024" PropertyChanged="OnFormatTextBoxPropertyChanged"/>
-			<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding #dialog.SampleResult}" Format="{DynamicResource String/TimeSpanFormatInputDialog.SampleResult}" IsVisible="{Binding #dialog.SampleResult, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 			<Separator Classes="Dialog_Separator_Small"/>
+			<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding #dialog.SampleResult}" Format="{DynamicResource String/TimeSpanFormatInputDialog.SampleResult}" IsVisible="{Binding #dialog.SampleResult, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+			<Separator Classes="Dialog_Separator"/>
 			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.TimeSpanFormatReference}"/>
 
 		</StackPanel>
