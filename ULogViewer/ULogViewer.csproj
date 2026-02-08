@@ -83,7 +83,8 @@
 		<AvaloniaResource Include="Resources/QuickStartGuide/Visibility_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/UserAgreement.md" />
 		<AvaloniaResource Include="Resources/UserAgreement-zh-TW.md" />
-		<AvaloniaResource Include="SplashWindowBackground.jpg" />
+		<AvaloniaResource Include="SplashWindowBackground-Dark.jpg" />
+		<AvaloniaResource Include="SplashWindowBackground-Light.jpg" />
 		<AvaloniaResource Include="ULogViewer.ico" />
 	</ItemGroup>
 

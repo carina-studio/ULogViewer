@@ -436,10 +436,16 @@ namespace CarinaStudio.ULogViewer
 
 
         /// <inheritdoc/>
-		protected override SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref SplashWindowParams param) =>
+		protected override SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref param) =>
 		{
+			var isDarkMode = this.EffectiveThemeMode == ThemeMode.Dark;
 			param.AccentColor = Avalonia.Media.Color.FromRgb(0x8a, 0x5c, 0xe6);
-			param.BackgroundImageOpacity = 0.5;
+			param.BackgroundImageOpacity = isDarkMode 
+				? 0.55
+				: 0.40;
+			param.BackgroundImageUri = isDarkMode
+				? new Uri($"avares://{this.Assembly.GetName().Name}/SplashWindowBackground-Dark.jpg")
+				: new Uri($"avares://{this.Assembly.GetName().Name}/SplashWindowBackground-Light.jpg");
 		});
 
 
