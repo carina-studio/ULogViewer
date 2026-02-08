@@ -19,24 +19,82 @@
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Slow" Color="#808080"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#45bfa5"/>
 			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" Color="#8f69d9"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#888888"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Automation" Color="#497dcc"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Battery" Color="#ccbb28"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Checklist" Color="#79b37a"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Cloud" Color="#a0a0a0"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Database" Color="#cca600"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Debug" Color="#007f7f"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Game" Color="#40b398"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Inspiration" Color="#d8b400"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Layers" Color="#9561cc"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Fedora" Color="#294072"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Linux_Mint" Color="#7ec539"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Login" Color="#43991e"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Logout" Color="#43991e"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Network" Color="#0077cc"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Power" Color="#d9c567"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Security" Color="#007f7f"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Tools" Color="#e6ce00"/>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Apple" EndPoint="75%,75%" StartPoint="25%,25%">
+				<GradientStop Color="#999999" Offset="0"/>
+				<GradientStop Color="#666666" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Automation" EndPoint="0%,100%" StartPoint="0%,0%">
+				<GradientStop Color="#5695f2" Offset="0"/>
+				<GradientStop Color="#406db3" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Battery" EndPoint="80%,0%" StartPoint="20%,0%">
+				<GradientStop Color="#d9c62a" Offset="0"/>
+				<GradientStop Color="#b3a623" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Checklist" EndPoint="100%,100%" StartPoint="0%,0%">
+				<GradientStop Color="#79b37a" Offset="0"/>
+				<GradientStop Color="#568057" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Cloud" EndPoint="0%,100%" StartPoint="0%,0%">
+				<GradientStop Color="#aaaaaa" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Database" EndPoint="70%,90%" StartPoint="30%,10%">
+				<GradientStop Color="#f2c500" Offset="0"/>
+				<GradientStop Color="#b39100" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Debug" EndPoint="90%,0%" StartPoint="10%,0%">
+				<GradientStop Color="#00b3b3" Offset="0"/>
+				<GradientStop Color="#006666" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Game" EndPoint="90%,70%" StartPoint="10%,30%">
+				<GradientStop Color="#4dd9b8" Offset="0"/>
+				<GradientStop Color="#328c76" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Inspiration" EndPoint="60%,60%" StartPoint="20%,20%">
+				<GradientStop Color="#ffd919" Offset="0"/>
+				<GradientStop Color="#b39500" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Layers" EndPoint="0%,95%" StartPoint="0%,5%">
+				<GradientStop Color="#b173f2" Offset="0"/>
+				<GradientStop Color="#704999" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Linux_Fedora" EndPoint="5%,95%" StartPoint="70%,30%">
+				<GradientStop Color="#375699" Offset="0"/>
+				<GradientStop Color="#203259" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Linux_Mint" EndPoint="95%,95%" StartPoint="5%,5%">
+				<GradientStop Color="#93e642" Offset="0"/>
+				<GradientStop Color="#62992c" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Login" EndPoint="95%,0%" StartPoint="5%,0%">
+				<GradientStop Color="#54bf25" Offset="0"/>
+				<GradientStop Color="#2d6614" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Logout" EndPoint="95%,0%" StartPoint="5%,0%">
+				<GradientStop Color="#2d6614" Offset="0"/>
+				<GradientStop Color="#54bf25" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Network" EndPoint="95%,95%" StartPoint="5%,5%">
+				<GradientStop Color="#199fff" Offset="0"/>
+				<GradientStop Color="#005a99" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Power" EndPoint="0%,95%" StartPoint="0%,5%">
+				<GradientStop Color="#f2dc73" Offset="0"/>
+				<GradientStop Color="#a69542" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Security" EndPoint="80%,0%" StartPoint="20%,0%">
+				<GradientStop Color="#009999" Offset="0"/>
+				<GradientStop Color="#006666" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Tools" EndPoint="0%,100%" StartPoint="0%,0%">
+				<GradientStop Color="#ffe400" Offset="0"/>
+				<GradientStop Color="#b3a000" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Website" EndPoint="75%,75%" StartPoint="25%,25%">
+				<GradientStop Color="#017fe6" Offset="0"/>
+				<GradientStop Color="#015499" Offset="1"/>
+			</LinearGradientBrush>
 
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Debug.Background">#5299cc</SolidColorBrush>
@@ -61,8 +119,14 @@
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Warn.Foreground">#e5772d</SolidColorBrush>
 
 			<!-- LogProfileIconColor -->
-			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Indigo" Color="#001ecc"/>
-			<SolidColorBrush x:Key="Brush/LogProfileIconColor.Yellow" Color="#ccbb00"/>
+			<LinearGradientBrush x:Key="Brush/LogProfileIconColor.Indigo" StartPoint="10%,10%">
+				<GradientStop Color="#2646ff" Offset="0"/>
+				<GradientStop Color="#001699" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/LogProfileIconColor.Yellow" StartPoint="10%,10%">
+				<GradientStop Color="#ffea00" Offset="0"/>
+				<GradientStop Color="#a69800" Offset="1"/>
+			</LinearGradientBrush>
 
 			<!-- LogProfileSelectionDialog -->
 			<SolidColorBrush x:Key="Brush/LogProfileSelectionDialog.Label.Background">#cccccc</SolidColorBrush>

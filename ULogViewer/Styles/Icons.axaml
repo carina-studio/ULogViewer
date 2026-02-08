@@ -660,7 +660,14 @@
 	<DrawingImage x:Key="Image/LogProfile.Empty" Drawing="{StaticResource Drawing/LogProfile.Empty}"/>
 	<DrawingImage x:Key="Image/LogProfile.Empty.Light" Drawing="{StaticResource Drawing/LogProfile.Empty.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Error">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Error}" Geometry="{DynamicResource Geometry/Icon.Error}"/>
+		<GeometryDrawing Geometry="{DynamicResource Geometry/Icon.Error}">
+			<GeometryDrawing.Brush>
+				<LinearGradientBrush EndPoint="70%,70%" StartPoint="30%,30%">
+					<GradientStop Color="{DynamicResource Color/Icon.Error.Light}" Offset="0"/>
+					<GradientStop Color="{DynamicResource Color/Icon.Error.Dark}" Offset="1"/>
+				</LinearGradientBrush>
+			</GeometryDrawing.Brush>
+		</GeometryDrawing>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Error.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Error}"/>
@@ -708,7 +715,14 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Image}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Information">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Information}" Geometry="{DynamicResource Geometry/Icon.Information}"/>
+		<GeometryDrawing Geometry="{DynamicResource Geometry/Icon.Information}">
+			<GeometryDrawing.Brush>
+				<LinearGradientBrush EndPoint="70%,70%" StartPoint="30%,30%">
+					<GradientStop Color="{DynamicResource Color/Icon.Information.Light}" Offset="0"/>
+					<GradientStop Color="{DynamicResource Color/Icon.Information.Dark}" Offset="1"/>
+				</LinearGradientBrush>
+			</GeometryDrawing.Brush>
+		</GeometryDrawing>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Information.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Information}"/>
@@ -798,7 +812,14 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Logout}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Mark">
-		<GeometryDrawing Brush="{DynamicResource Brush/Accent}" Geometry="{StaticResource Geometry/Mark}"/>
+		<GeometryDrawing Geometry="{StaticResource Geometry/Mark}">
+			<GeometryDrawing.Brush>
+				<LinearGradientBrush EndPoint="80%,95%" StartPoint="20%,5%">
+					<GradientStop Color="{DynamicResource SystemAccentColorLight2}" Offset="0"/>
+					<GradientStop Color="{DynamicResource SystemAccentColorDark2}" Offset="1"/>
+				</LinearGradientBrush>
+			</GeometryDrawing.Brush>
+		</GeometryDrawing>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Mark.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Mark}"/>
@@ -914,7 +935,14 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Video}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Warning">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Warning}" Geometry="{DynamicResource Geometry/Icon.Warning}"/>
+		<GeometryDrawing Geometry="{DynamicResource Geometry/Icon.Warning}">
+			<GeometryDrawing.Brush>
+				<LinearGradientBrush EndPoint="76.5%,91.8%" StartPoint="35.7%,25.5%">
+					<GradientStop Color="{DynamicResource Color/Icon.Warning.Light}" Offset="0"/>
+					<GradientStop Color="{DynamicResource Color/Icon.Warning.Dark}" Offset="1"/>
+				</LinearGradientBrush>
+			</GeometryDrawing.Brush>
+		</GeometryDrawing>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Warning.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Warning}"/>

@@ -110,10 +110,9 @@
 	<Thickness x:Key="Thickness/LogProfileIconColorComboBox.Icon.Border">1</Thickness>
 
 	<!-- LogProfileSelectionDialog -->
-	<CornerRadius x:Key="CornerRadius/LogProfileSelectionDialog.Label">2</CornerRadius>
+	<CornerRadius x:Key="CornerRadius/LogProfileSelectionDialog.Label">6</CornerRadius>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.Height">600</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Description.FontSize">12</sys:Double>
-	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Description.Opacity">0.8</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Icon.Size">28</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Label.FontSize">10</sys:Double>
 	<sys:Double x:Key="Double/LogProfileSelectionDialog.LogProfile.Name.FontSize">14</sys:Double>
@@ -124,7 +123,7 @@
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin">0,0,5,3</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Icon.Margin">0,5,15,0</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Label.Margin">0,3,3,0</Thickness>
-	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Label.Padding">2,1,2,1</Thickness>
+	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Label.Padding">6,1,6,1</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Margin">1</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Name.Margin">0,0,5,3</Thickness>
 	<Thickness x:Key="Thickness/LogProfileSelectionDialog.LogProfile.Padding">15,8,15,8</Thickness>

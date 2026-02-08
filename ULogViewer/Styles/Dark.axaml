@@ -9,16 +9,46 @@
 		<ResourceDictionary>
 
 			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Apple" Color="#aaaaaa"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Book" Color="#b24700"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Code" Color="#909090"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Experiment" Color="#00990f"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Json" Color="#0e9990"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.MobileDevices" Color="#909090"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Phone" Color="#909090"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Statistic" Color="#8332ff"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.TabletDevice" Color="#909090"/>
-			<SolidColorBrush x:Key="Brush/Icon.LogProfile.Terminal" Color="#909090"/>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Apple" EndPoint="75%,75%" StartPoint="25%,25%">
+				<GradientStop Color="#aaaaaa" Offset="0"/>
+				<GradientStop Color="#777777" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Book" EndPoint="100%,0%" StartPoint="0%,0%">
+				<GradientStop Color="#bf4c00" Offset="0"/>
+				<GradientStop Color="#8c3800" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Code" EndPoint="100%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#aaaaaa" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Experiment" EndPoint="0%,95%" StartPoint="0%,5%">
+				<GradientStop Color="#00bf13" Offset="0"/>
+				<GradientStop Color="#00730b" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Json" EndPoint="0%,95%" StartPoint="0%,5%">
+				<GradientStop Color="#0fa69c" Offset="0"/>
+				<GradientStop Color="#096660" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.MobileDevices" EndPoint="90%,90%" StartPoint="10%,10%">
+				<GradientStop Color="#a0a0a0" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Phone" EndPoint="70%,90%" StartPoint="30%,10%">
+				<GradientStop Color="#a0a0a0" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Statistic" EndPoint="0%,80%" StartPoint="0%,20%">
+				<GradientStop Color="#aa73ff" Offset="0"/>
+				<GradientStop Color="#762de6" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.TabletDevice" EndPoint="100%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#a0a0a0" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Terminal" EndPoint="90%,100%" StartPoint="10%,0%">
+				<GradientStop Color="#a0a0a0" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
 
 			<!-- LogLevel -->
 			<SolidColorBrush x:Key="Brush/ULogViewer.LogLevel.Debug.Background">#80bfff</SolidColorBrush>

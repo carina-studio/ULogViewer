@@ -26,7 +26,7 @@ class LogProfileIconComboBox : ComboBox
 
 
     // Static fields.
-    static readonly EnumConverter LogProfileIconNameConverter = new(App.CurrentOrNull, typeof(LogProfileIcon));
+    static readonly EnumConverter LogProfileIconNameConverter = new(Application.CurrentOrNull, typeof(LogProfileIcon));
 
 
     /// <summary>
@@ -34,7 +34,6 @@ class LogProfileIconComboBox : ComboBox
     /// </summary>
     public LogProfileIconComboBox()
     {
-        var isInitializing = true;
         var dataTemplate = new FuncDataTemplate(typeof(LogProfileIcon), (_, _) =>
         {
             var rootPanel = new Grid().Also(rootPanel =>
@@ -54,7 +53,7 @@ class LogProfileIconComboBox : ComboBox
                         var comboBoxItem = image.FindLogicalAncestorOfType<ComboBoxItem>();
                         if (comboBoxItem != null)
                         {
-                            isSelectedObserverToken = comboBoxItem.GetObservable(ComboBoxItem.IsSelectedProperty).Subscribe(isSelected =>
+                            isSelectedObserverToken = comboBoxItem.GetObservable(ListBoxItem.IsSelectedProperty).Subscribe(isSelected =>
                                 image.IsVisible = isSelected);
                         }
                         else
@@ -103,22 +102,21 @@ class LogProfileIconComboBox : ComboBox
             return rootPanel;
         });
         this.DataTemplates.Add(dataTemplate);
-        this.GetObservable(IconColorProperty).Subscribe(_ =>
+        this.GetObservable(IconColorProperty).Subscribe(() =>
         {
-            if (isInitializing)
-                return;
             this.DataTemplates.Remove(dataTemplate);
             this.DataTemplates.Add(dataTemplate);
             var selectedIndex = this.SelectedIndex;
+            base.ItemsSource = null;
+            base.ItemsSource = Enum.GetValues<LogProfileIcon>();
             if (selectedIndex >= 0)
             {
                 this.SelectedIndex = -1;
                 this.SelectedIndex = selectedIndex;
             }
-        });
+        }, skipOnNextDuringSubscription: true);
         base.ItemsSource = Enum.GetValues<LogProfileIcon>();
         this.SelectedIndex = 0;
-        isInitializing = false;
     }
 
 

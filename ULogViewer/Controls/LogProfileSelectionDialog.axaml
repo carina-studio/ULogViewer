@@ -96,8 +96,8 @@
 								       Grid.ColumnSpan="2" 
 								       Grid.Row="1" 
 								       Margin="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Description.Margin}">
-									<abControls:TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding HasDescription}" MaxLines="5" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
-									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" IsVisible="{Binding !HasDescription}" Opacity="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.Opacity}" Text="{asXaml:StringResource LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
+									<abControls:TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" IsVisible="{Binding HasDescription}" MaxLines="5" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="WrapWithOverflow"/>
+									<TextBlock FontSize="{DynamicResource Double/LogProfileSelectionDialog.LogProfile.Description.FontSize}" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Description}" IsVisible="{Binding !HasDescription}" Text="{asXaml:StringResource LogProfileSelectionDialog.NoDescription}" TextTrimming="CharacterEllipsis"/>
 								</Panel>
 
 								<!-- Labels -->
