@@ -148,7 +148,7 @@
 	<GeometryDrawing x:Key="Drawing/LogProfile.Cloud.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Cloud}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Code" Brush="{DynamicResource Brush/Icon.LogProfile.Code}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Code.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Computer" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Computer}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Computer" Brush="{DynamicResource Brush/Icon.Gradient.R2L}" Geometry="{StaticResource Geometry/LogProfile.Computer}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Computer.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Computer}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Database" Brush="{DynamicResource Brush/Icon.LogProfile.Database}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Database.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Database}"/>
@@ -156,7 +156,7 @@
 	<GeometryDrawing x:Key="Drawing/LogProfile.Debug.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Debug}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Empty" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Empty}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Empty.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Empty}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.File" Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.File}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.File" Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{DynamicResource Geometry/Icon.File}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.File.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.File}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Folder" Brush="{DynamicResource Brush/Icon.LogProfile.Folder}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Folder.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Folder}"/>
@@ -164,7 +164,7 @@
 	<GeometryDrawing x:Key="Drawing/LogProfile.Network.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Network}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Phone" Brush="{DynamicResource Brush/Icon.LogProfile.Phone}" Geometry="{StaticResource Geometry/LogProfile.Phone}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Phone.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Phone}"/>
-	<GeometryDrawing x:Key="Drawing/LogProfile.Usb" Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Usb}"/>
+	<GeometryDrawing x:Key="Drawing/LogProfile.Usb" Brush="{DynamicResource Brush/Icon.Gradient.T2B}" Geometry="{StaticResource Geometry/LogProfile.Usb}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.Usb.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Usb}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.VersionControl" Brush="{DynamicResource Brush/Icon.LogProfile.VersionControl}" Geometry="{StaticResource Geometry/LogProfile.VersionControl}"/>
 	<GeometryDrawing x:Key="Drawing/LogProfile.VersionControl.Light" Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.VersionControl}"/>
@@ -572,7 +572,7 @@
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile" Drawing="{StaticResource Drawing/LogProfile}"/>
 	<DrawingImage x:Key="Image/LogProfile.Analysis">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Analysis}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.T2B}" Geometry="{DynamicResource Geometry/Icon.Analysis}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Analysis.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Analysis}"/>
@@ -582,7 +582,7 @@
 	<DrawingImage x:Key="Image/LogProfile.Apple" Drawing="{StaticResource Drawing/LogProfile.Apple}"/>
 	<DrawingImage x:Key="Image/LogProfile.Apple.Light" Drawing="{StaticResource Drawing/LogProfile.Apple.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.ArtificialIntelligence">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/ArtificialIntelligence}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.T2B}" Geometry="{StaticResource Geometry/ArtificialIntelligence}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.ArtificialIntelligence.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/ArtificialIntelligence}"/>
@@ -630,15 +630,15 @@
 	<DrawingImage x:Key="Image/LogProfile.Code" Drawing="{StaticResource Drawing/LogProfile.Code}"/>
 	<DrawingImage x:Key="Image/LogProfile.Code.Light" Drawing="{StaticResource Drawing/LogProfile.Code.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Computer" Drawing="{StaticResource Drawing/LogProfile.Computer}"/>
+	<DrawingImage x:Key="Image/LogProfile.Computer.Light" Drawing="{StaticResource Drawing/LogProfile.Computer.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.Configuration">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Settings}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{DynamicResource Geometry/Icon.Settings}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Configuration.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Settings}"/>
 	</DrawingImage>
-	<DrawingImage x:Key="Image/LogProfile.Computer.Light" Drawing="{StaticResource Drawing/LogProfile.Computer.Light}"/>
 	<DrawingImage x:Key="Image/LogProfile.CPU">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Cpu}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{DynamicResource Geometry/Icon.Cpu}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.CPU.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Cpu}"/>
@@ -679,7 +679,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Lab}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.File">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.File}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{DynamicResource Geometry/Icon.File}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.File.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.File}"/>
@@ -703,7 +703,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Game}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.GCP">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/GCP}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.T2B}" Geometry="{StaticResource Geometry/GCP}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.GCP.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/GCP}"/>
@@ -752,7 +752,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Layers}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Linux">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Linux}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.L2R}" Geometry="{StaticResource Geometry/LogProfile.Linux}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Linux.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Linux}"/>
@@ -782,7 +782,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Linux_Mint}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Linux_MX">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/LogProfile.Linux_MX}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{StaticResource Geometry/LogProfile.Linux_MX}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Linux_MX.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/LogProfile.Linux_MX}"/>
@@ -853,7 +853,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Power}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.RAM">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{DynamicResource Geometry/Icon.Memory}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{DynamicResource Geometry/Icon.Memory}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.RAM.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Memory}"/>
@@ -865,7 +865,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Screen}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Script">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Icon.Script}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.T2B}" Geometry="{StaticResource Geometry/Icon.Script}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Script.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Script}"/>
@@ -877,7 +877,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Administrator}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Server">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Servers}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{StaticResource Geometry/Servers}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Server.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Servers}"/>
@@ -895,7 +895,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Chart.Bars}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Table">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Table}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.TL2BR}" Geometry="{StaticResource Geometry/Table}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Table.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Table}"/>
@@ -948,7 +948,7 @@
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{DynamicResource Geometry/Icon.Warning}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Watch">
-		<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{StaticResource Geometry/Watch}"/>
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.T2B}" Geometry="{StaticResource Geometry/Watch}"/>
 	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Watch.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Watch}"/>

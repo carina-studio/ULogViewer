@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CarinaStudio.ULogViewer.Logs.Profiles;
+﻿namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
 /// <summary>
 /// Icon of <see cref="LogProfile"/>.
