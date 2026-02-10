@@ -323,7 +323,7 @@
 	<sys:String x:Key="String/FileSystemItemSelection.ExportLogProfile">Export profile</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ExportLogs">Export logs</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ExportScriptLogDataSourceProvider">Export log data source script</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ImportLogAnalysisRuleSet">Export log analysis rule set or script</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportLogAnalysisRuleSet">Import log analysis rule set or script</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ImportLogProfile">Import profile</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ImportScriptLogDataSourceProvider">Import log data source script</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.SelectWorkingDirectory">Select working directory</sys:String>

@@ -299,7 +299,7 @@ namespace CarinaStudio.ULogViewer
 					return;
 				}
 			}
-			workspace.DetachAndCloseSession(session);
+			_ = workspace.DetachAndCloseSession(session);
         }
 
 
@@ -537,12 +537,15 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Move current session to new workspace.
 		/// </summary>
-		public void MoveCurrentSessionToNewWorkspace() =>
-			(this.tabControl.SelectedItem as TabItem)?.Let(this.MoveSessionToNewWorkspace);
+		public void MoveCurrentSessionToNewWorkspace()
+		{
+			if (this.tabControl.SelectedItem is TabItem tabItem)
+				_ = this.MoveSessionToNewWorkspace(tabItem);
+		}
 
 
 		// Move given session to new workspace.
-		async void MoveSessionToNewWorkspace(TabItem tabItem)
+		async Task MoveSessionToNewWorkspace(TabItem tabItem)
         {
 			// check state
 			if (tabItem.DataContext is not Session session)
@@ -574,7 +577,7 @@ namespace CarinaStudio.ULogViewer
 
 			// close empty session
 			if (emptySession != null)
-				newWorkspace.DetachAndCloseSession(emptySession);
+				_ = newWorkspace.DetachAndCloseSession(emptySession);
 		}
 
 
@@ -791,8 +794,10 @@ namespace CarinaStudio.ULogViewer
 		}
 
 
-		// Called when drop.
-		async void OnDropOnTabItem(object? sender, DragOnTabItemEventArgs e)
+		// Called when dropped.
+		void OnDropOnTabItem(object? sender, DragOnTabItemEventArgs e) =>
+			_ = this.OnDropOnTabItemAsync(e);
+		async Task OnDropOnTabItemAsync(DragOnTabItemEventArgs e)
 		{
 			// check state
 			if (e.Handled || e.Item is not TabItem tabItem)
@@ -868,7 +873,7 @@ namespace CarinaStudio.ULogViewer
 					targetWorkspace.ActiveSession = session;
 				}
 
-				// [Workaround] Sometimes the content of tab item will gone after moving tab item
+				// [Workaround] Sometimes the content of tab item will be gone after moving tab item
 				(this.Content as Control)?.Let(it =>
 				{
 					var margin = it.Margin;
@@ -886,7 +891,7 @@ namespace CarinaStudio.ULogViewer
         protected override void OnInitialDialogsClosed()
         {
             base.OnInitialDialogsClosed();
-			this.ShowULogViewerInitialDialogs();
+			_ = this.ShowULogViewerInitialDialogs();
         }
 
 
@@ -1232,12 +1237,15 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Set title of current session.
 		/// </summary>
-		public void SetCurrentCustomSessionTitle() =>
-			(this.tabControl.SelectedItem as TabItem)?.Let(this.SetCustomSessionTitle);
+		public void SetCurrentCustomSessionTitle()
+		{
+			if (this.tabControl.SelectedItem is TabItem tabItem)
+				_ = this.SetCustomSessionTitle(tabItem);
+		}
 
 
 		// Set title of session.
-		async void SetCustomSessionTitle(TabItem tabItem)
+		async Task SetCustomSessionTitle(TabItem tabItem)
 		{
 			// find index and session
 			if (tabItem.DataContext is not Session session)
@@ -1312,7 +1320,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Show ULogViewer specific initial dialogs.
-		async void ShowULogViewerInitialDialogs()
+		async Task ShowULogViewerInitialDialogs()
 		{
 			// check state
 			if (this.IsClosed || this.Application.IsShutdownStarted)

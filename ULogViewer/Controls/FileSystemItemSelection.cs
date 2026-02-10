@@ -50,13 +50,13 @@ public static class FileSystemItemSelection
         return (await window.StorageProvider.SaveFilePickerAsync(new()
         {
             DefaultExtension = ".txt",
-            FileTypeChoices = new FilePickerFileType[]
-            {
-                new(app?.GetString("FileFormat.Text", "Text")) { Patterns = new[] { "*.txt" } },
-                new(app?.GetString("FileFormat.Log", "Log")) { Patterns = new[] { "*.log" } },
-                new(app?.GetString("FileFormat.Json", "Json")) { Patterns = new[] { "*.json" } },
-                new(app?.GetString("FileFormat.All", "All files")) { Patterns = new[] { "*.*" } },
-            },
+            FileTypeChoices =
+            [
+                new(app?.GetString("FileFormat.Text", "Text")) { Patterns = [ "*.txt" ] },
+                new(app?.GetString("FileFormat.Log", "Log")) { Patterns = [ "*.log" ] },
+                new(app?.GetString("FileFormat.Json", "Json")) { Patterns = [ "*.json" ] },
+                new(app?.GetString("FileFormat.All", "All files")) { Patterns = [ "*.*" ] }
+            ],
             Title = title,
         }))?.Let(it => it.TryGetLocalPath());
     }
@@ -119,13 +119,10 @@ public static class FileSystemItemSelection
     {
         return (await window.StorageProvider.OpenFilePickerAsync(new()
         {
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetString("FileFormat.Json", "Json"))
-                {
-                    Patterns = new[] { "*.json" }
-                }
-            },
+            FileTypeFilter =
+            [
+                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetString("FileFormat.Json", "Json")) { Patterns = [ "*.json" ] }
+            ],
             Title = title,
         })).Let(it => it.Count == 1 ? it[0].TryGetLocalPath() : null);
     }
@@ -137,13 +134,10 @@ public static class FileSystemItemSelection
         return (await window.StorageProvider.SaveFilePickerAsync(new()
         {
             DefaultExtension = ".json",
-            FileTypeChoices = new[]
-            {
-                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetString("FileFormat.Json", "Json"))
-                {
-                    Patterns = new[] { "*.json" }
-                }
-            },
+            FileTypeChoices =
+            [
+                new FilePickerFileType(IAvaloniaApplication.CurrentOrNull?.GetString("FileFormat.Json", "Json")) { Patterns = [ "*.json" ] }
+            ],
             Title = title,
         }))?.Let(it =>
         {
