@@ -248,7 +248,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isAltKeyPressed;
 		bool isAttachedToLogicalTree;
 		bool isAutoSettingLogsReadingParameters;
-		readonly bool isInitializing = true;
 		bool isCommandNeededAfterLogProfileSet;
 		bool isIPEndPointNeededAfterLogProfileSet;
 		bool isLogFileNeededAfterLogProfileSet;
@@ -553,11 +552,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.isLogChartDoubleTapped = true;
 					e.Handled = true;
 				};
-				it.GetObservable(IsPointerOverProperty).Subscribe(isPointerOver =>
-				{
-					if (!this.isInitializing)
-						this.OnLogChartPointerOverChanged(isPointerOver);
-				});
+				it.GetObservable(IsPointerOverProperty).Subscribe(this.OnLogChartPointerOverChanged, skipOnNextDuringSubscription: true);
 				it.AddHandler(PointerMovedEvent, this.OnLogChartPointerMoved, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerPressedEvent, this.OnLogChartPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerReleasedEvent, this.OnLogChartPointerReleased, RoutingStrategies.Tunnel);
@@ -1124,11 +1119,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				}));
 			});
 			
+			// add event handlers
+			this.AddHandler(PointerPressedEvent, (_, e) => this.OnPreviewPointerPressed(e), RoutingStrategies.Tunnel);
+			
 			// setup axes of log chart
 			this.UpdateLogChartAxes();
-			
-			// complete
-			this.isInitializing = false;
 		}
 
 
@@ -3933,6 +3928,14 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.Focus();
 			});
 			this.IsScrollingToLatestLogNeeded = false;
+		}
+
+
+		// Called to handle pointer pressed before all children.
+		void OnPreviewPointerPressed(PointerPressedEventArgs e)
+		{
+			if (TopLevel.GetTopLevel(e.Source as Visual) is not PopupRoot)
+				this.logTextFilterTextBox.CloseAssistanceMenus();
 		}
 
 

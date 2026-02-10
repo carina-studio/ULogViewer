@@ -498,6 +498,22 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 		// call base
 		base.OnClosed(e);
 	}
+	
+	
+	/// <inheritdoc/>
+	protected override void OnFirstMeasurementCompleted(Size measuredSize)
+	{
+		// call base
+		base.OnFirstMeasurementCompleted(measuredSize);
+		
+		// [Workaround] force layout again to prevent insufficient space in scrollViewer
+		var margin = this.scrollViewer.Margin;
+		this.scrollViewer.Margin = new Thickness(margin.Left, margin.Top, margin.Right, margin.Bottom + 1);
+		this.scrollViewer.RequestLayoutCallback(() =>
+		{
+			this.scrollViewer.Margin = margin;
+		});
+	}
 
 
 	// Called when double tapped on item of log profile.

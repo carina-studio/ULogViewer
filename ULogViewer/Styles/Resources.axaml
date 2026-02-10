@@ -300,7 +300,7 @@
 	<Thickness x:Key="Thickness/SessionView.LogHeader.Separator.Margin">0,8,0,8</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.ColorIndicator.Border">0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Column.Border">1</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Padding">0,0,20,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Padding">0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.Item.Property.Padding">3,4,3,4</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.LogAnalysisResultIndicator.Margin">3,0,3,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogListBox.MarkIndicator.Border">1</Thickness>
