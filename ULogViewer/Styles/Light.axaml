@@ -9,16 +9,46 @@
 		<ResourceDictionary>
 
 			<!-- Icon -->
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" Color="#e65e53"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" Color="#cc0000"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Frequency" Color="#94bf00"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Increase" Color="#00cc00"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationEnd" Color="#cca600"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationStart" Color="#0092cc"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" Color="#808080"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Slow" Color="#808080"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" Color="#45bfa5"/>
-			<SolidColorBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" Color="#8f69d9"/>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Checkpoint" EndPoint="90%,0%" StartPoint="10%,0%">
+				<GradientStop Color="#ff7166" Offset="0"/>
+				<GradientStop Color="#b34940" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Decrease" EndPoint="90%,80%" StartPoint="10%,20%">
+				<GradientStop Color="#990000" Offset="0"/>
+				<GradientStop Color="#e00000" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Frequency" EndPoint="0%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#a8d900" Offset="0"/>
+				<GradientStop Color="#6c8c00" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Increase" EndPoint="90%,20%" StartPoint="10%,80%">
+				<GradientStop Color="#009900" Offset="0"/>
+				<GradientStop Color="#00d700" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationEnd" EndPoint="0%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#997d00" Offset="0"/>
+				<GradientStop Color="#e6bb00" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.OperationStart" EndPoint="0%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#0080b3" Offset="0"/>
+				<GradientStop Color="#00a4e6" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.SkippedOperation" EndPoint="0%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#707070" Offset="0"/>
+				<GradientStop Color="#a7a7a7" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Slow" EndPoint="90%,80%" StartPoint="10%,20%">
+				<GradientStop Color="#a7a7a7" Offset="0"/>
+				<GradientStop Color="#707070" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.TimeSpan" EndPoint="90%,90%" StartPoint="10%,10%">
+				<GradientStop Color="#53e6c6" Offset="0"/>
+				<GradientStop Color="#40b39a" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.DisplayableLogAnalysisResult.Trend" EndPoint="0%,90%" StartPoint="0%,10%">
+				<GradientStop Color="#a075f2" Offset="0"/>
+				<GradientStop Color="#654a99" Offset="1"/>
+			</LinearGradientBrush>
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Apple" EndPoint="75%,75%" StartPoint="25%,25%">
 				<GradientStop Color="#999999" Offset="0"/>
 				<GradientStop Color="#666666" Offset="1"/>
