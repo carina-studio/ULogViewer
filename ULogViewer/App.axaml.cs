@@ -182,6 +182,11 @@ namespace CarinaStudio.ULogViewer
         /// <inheritdoc/>
         public override AppSuite.ViewModels.ApplicationOptions CreateApplicationOptionsViewModel() =>
 			new AppOptions();
+        
+        
+        /// <inheritdoc/>
+        public override AppSuite.ViewModels.ApplicationUpdater CreateApplicationUpdaterViewModel() =>
+	        new AppUpdater();
 
 
 		/// <summary>
