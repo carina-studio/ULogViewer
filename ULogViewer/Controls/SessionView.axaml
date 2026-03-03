@@ -1677,7 +1677,7 @@
 								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding #root.Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.MemoryUsage}" VerticalAlignment="Center"/>
 							</StackPanel>
 							<Button Classes="StatusBar_Button" Command="{Binding #root.PerformGC}" IsVisible="{Binding #root.Application.IsDebugMode}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.PerformGC}">
-								<Image>
+								<Image Classes="StatusBar_Icon">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Broom}"/>
 									</DrawingImage>
