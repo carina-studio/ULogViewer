@@ -229,7 +229,7 @@
 			              {Binding #root.DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}
 			          }">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/CheckFilter.Outline}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding #root.ReloadLogFileWithoutLogReadingPreconditionCommand}" 
