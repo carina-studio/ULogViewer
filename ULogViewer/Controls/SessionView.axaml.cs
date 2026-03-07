@@ -3263,7 +3263,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					border.Child = new Avalonia.Controls.Image().Also(image =>
 					{
 						image.Classes.Add("Icon");
-						image.Source = app.FindResourceOrDefault<IImage>("Image/Mark.Outline");
+						image.Source = app.FindResourceOrDefault<IImage>("Image/Marked.Outline");
 					});
 					border.Height = markIndicatorSize;
 					border.Margin = markIndicatorMargin;

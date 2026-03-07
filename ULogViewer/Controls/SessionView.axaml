@@ -51,7 +51,7 @@
 			</MenuItem>
 			<MenuItem Command="{Binding #root.CreateLogAnalysisScriptSet}" Header="{asXaml:StringResource SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Code}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Code.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 		</ContextMenu>
@@ -121,7 +121,7 @@
 			</MenuItem>
 			<MenuItem Command="{Binding #root.UnmarkSelectedLogsCommand}" Header="{asXaml:StringResource SessionView.UnmarkLogs}" InputGesture="{x:Static appInput:KeyGestures.UnmarkLogs}">
 				<MenuItem.Icon>
-					<Image Classes="Icon" Source="{StaticResource Image/Unmark.Outline}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Unmark.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<MenuItem Command="{Binding LogSelection.SelectMarkedLogsCommand}" Header="{asXaml:StringResource SessionView.SelectMarkedLogs}" InputGesture="{x:Static appInput:KeyGestures.SelectMarkLogs}"/>
@@ -2259,10 +2259,10 @@
 														<Expander Name="logAnalysisScriptSetsExpander" Background="{x:Null}" IsVisible="{Binding ScriptSets.Count, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}">
 															<Expander.Header>
 																<Grid ColumnDefinitions="Auto,*">
-																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Code}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Code.Outline}"/>
 																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #logAnalysisScriptSetListBox.SelectedItems.Count, FallbackValue=False}">
 																		<DrawingImage>
-																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/LogProfile.Code}"/>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Code.Outline}"/>
 																		</DrawingImage>
 																	</Image>
 																	<Panel Grid.Column="1" VerticalAlignment="Center">
