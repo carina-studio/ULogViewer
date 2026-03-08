@@ -373,31 +373,30 @@
 										<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#logPatternListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
 									</asControls:DialogItem>
 									<Line Classes="Dialog_Item_Separator_Inner"/>
-									<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding #window.LogPatterns.Count}" ItemsSource="{Binding #window.LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+									<asControls:ListBox Name="logPatternListBox" Classes="Dialog_Item_ListBox" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Grid.IsSharedSizeScope="True" IsVisible="{Binding #window.LogPatterns.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.LogPatterns}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
                             			<asControls:ListBox.ItemTemplate>
                             				<DataTemplate DataType="{x:Type appLogs:LogPattern}">
                             					<Grid RowDefinitions="Auto,*">
 			                                        <Grid.ColumnDefinitions>
-				                                        <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
+				                                        <ColumnDefinition Width="Auto" SharedSizeGroup="Icon1"/>
+				                                        <ColumnDefinition Width="Auto" SharedSizeGroup="Icon2"/>
 				                                        <ColumnDefinition Width="*"/>
 				                                        <ColumnDefinition Width="Auto"/>
 			                                        </Grid.ColumnDefinitions>
-			                                        <StackPanel Orientation="Horizontal">
-				                                        <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsRepeatable}">
-					                                        <DrawingImage>
-						                                        <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Repeatable}"/>
-					                                        </DrawingImage>
-				                                        </Image>
-				                                        <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsSkippable}">
-					                                        <DrawingImage>
-						                                        <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Skippable}"/>
-					                                        </DrawingImage>
-				                                        </Image>
-			                                        </StackPanel>
-			                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Regex}" TextTrimming="None" VerticalAlignment="Center"/>
-			                                        <abControls:TextBlock FontSize="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.LogPattern.Description.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+						                            <Image Classes="ListBoxItem_Icon" IsVisible="{Binding IsRepeatable}">
+							                            <DrawingImage>
+								                            <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Repeatable}"/>
+							                            </DrawingImage>
+						                            </Image>
+						                            <Image Classes="ListBoxItem_Icon" Grid.Column="1" IsVisible="{Binding IsSkippable}">
+							                            <DrawingImage>
+								                            <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Skippable}"/>
+							                            </DrawingImage>
+						                            </Image>
+			                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="2" Text="{Binding Regex}" TextTrimming="None" VerticalAlignment="Center"/>
+			                                        <abControls:TextBlock FontSize="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.LogPattern.Description.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                             						<Border Classes="InPlaceAction_Reserved"/>
-		                                            <StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+		                                            <StackPanel Grid.Column="3" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
                             							<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveLogPatternCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
                             								<asControls:Image Classes="InPlaceAction_Icon">
                             									<DrawingImage>

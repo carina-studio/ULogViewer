@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 
 // Constants.
 const string IconsFilePath = "ULogViewer/Styles/Icons.axaml";
+const string IconPathInSvgPattern = "<path[\\s\\r\\n]+([\\w\\:]+=\"[^\"]*\"[\\s\\r\\n]+)*d=\"(?<Path>[^\"]+)\"";
+const string IconPathInXamlPattern = "^\\s*<(StreamGeometry|PathGeometry)\\s+x:Key=\"Geometry/(?<Key>[^\"]+)\"(\\s+[\\w\\:]+=\"[^\"]*\")*>(?<Path>[^\\<]+)";
 
 // check arguments
 if (args.Length == 0)
@@ -46,7 +48,7 @@ Console.WriteLine($"{svgFilePaths.Count} SVG file(s) found.");
 
 // extract icon paths
 var iconPaths = new Dictionary<string, string>();
-var iconPathPattern = new Regex("<path\\s+d=\"(?<Path>[^\"]+)\"", RegexOptions.IgnoreCase);
+var iconPathPattern = new Regex(IconPathInSvgPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 var utf8 = new UTF8Encoding(false);
 foreach (var svgFilePath in svgFilePaths)
 {
@@ -106,7 +108,7 @@ try
     Console.WriteLine($"{lines.Count} line(s) read from Icons.axaml.");
     
     // import and write lines
-    var geometryPattern = new Regex("^\\s*<StreamGeometry\\s+x:Key=\"Geometry/(?<Key>[^\"]+)\">(?<Path>[^\\<]+)");
+    var geometryPattern = new Regex(IconPathInXamlPattern);
     var importCount = 0;
     using (var writer = new StreamWriter(IconsFilePath, append: false, utf8))
     {
