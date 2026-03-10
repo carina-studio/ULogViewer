@@ -471,7 +471,7 @@
 			<MenuItem Command="{Binding #root.RestartAsAdministratorCommand}" 
 			          Header="{asXaml:StringResource SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Administrator}"/>
+					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Administrator.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
@@ -1657,7 +1657,7 @@
 							</StackPanel>
 							<Image Classes="StatusBar_IconWithText">
 								<DrawingImage>
-									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu}"/>
+									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu.Outline}"/>
 								</DrawingImage>
 							</Image>
 							<Panel VerticalAlignment="Center">

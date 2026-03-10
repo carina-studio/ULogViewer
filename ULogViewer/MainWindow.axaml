@@ -34,26 +34,20 @@
 					<ContextMenu Placement="Bottom">
 						<MenuItem Command="{Binding #window.SetCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource MainWindow.SetCustomSessionTitle}">
 							<MenuItem.Icon>
-								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Edit}"/>
-								</Border>
+								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Edit.Outline}"/>
 							</MenuItem.Icon>
 						</MenuItem>
 						<MenuItem Command="{Binding #window.ClearCustomSessionTitleCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding HasCustomTitle}"/>
 						<Separator/>
 						<MenuItem Command="{Binding #window.MoveSessionToNewWorkspaceCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}">
 							<MenuItem.Icon>
-								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
-								</Border>
+								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.ExternalLink}"/>
 							</MenuItem.Icon>
 						</MenuItem>
 						<Separator/>
 						<MenuItem Command="{Binding #window.CloseSessionTabItemCommand}" CommandParameter="{Binding $parent[TabItem]}" Header="{asXaml:StringResource Common.CloseTab}" InputGesture="{x:Static appInput:KeyGestures.CloseTab}">
 							<MenuItem.Icon>
-								<Border Classes="MenuItem_Icon">
-									<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
-								</Border>
+								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.CloseTab.Outline}"/>
 							</MenuItem.Icon>
 						</MenuItem>
 					</ContextMenu>

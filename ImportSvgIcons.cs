@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 // Constants.
 const string IconsFilePath = "ULogViewer/Styles/Icons.axaml";
 const string IconPathInSvgPattern = "<path[\\s\\r\\n]+([\\w\\:]+=\"[^\"]*\"[\\s\\r\\n]+)*d=\"(?<Path>[^\"]+)\"";
-const string IconPathInXamlPattern = "^\\s*<(StreamGeometry|PathGeometry)\\s+x:Key=\"Geometry/(?<Key>[^\"]+)\"(\\s+[\\w\\:]+=\"[^\"]*\")*>(?<Path>[^\\<]+)";
+const string IconPathInXamlPattern = "^\\s*<(StreamGeometry|PathGeometry)\\s+x:Key=\"Geometry/(?<Key>[^\"]+)\"(\\s+[\\w\\:]+=\"[^\"]*\")*>(?<Path>[^\\<]*)";
 
 // check arguments
 if (args.Length == 0)
