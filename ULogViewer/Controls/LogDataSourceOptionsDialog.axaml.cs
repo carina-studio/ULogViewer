@@ -806,7 +806,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		var index = e.ItemIndex;
 		if (startIndex >= 0 && startIndex < commands.Count && index >= 0 && index < commands.Count && startIndex != index)
 		{
-			listBox.TryMoveItem<string>(startIndex, index);
+			commands.Move(startIndex, index);
 			this.SelectListBoxItem(listBox, index);
 		}
 	}

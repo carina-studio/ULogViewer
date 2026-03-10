@@ -178,11 +178,11 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		AvaloniaXamlLoader.Load(this);
 		
 		// prepare function to setup item dragging
-		void SetupItemDragging<T>(CarinaStudio.AppSuite.Controls.ListBox listBox)
+		void SetupItemDragging<T>(CarinaStudio.AppSuite.Controls.ListBox listBox, ObservableList<T> items)
 		{
 			ListBoxItemDragging.SetItemDraggingEnabled(listBox, true);
 			listBox.AddHandler(ListBoxItemDragging.ItemDragStartedEvent, (_, e) => this.OnListBoxItemDragStarted(listBox, e));
-			listBox.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (_, e) => this.OnListBoxItemDropped<T>(listBox, e));
+			listBox.AddHandler(ListBoxItemDragging.ItemDroppedEvent, (_, e) => this.OnListBoxItemDropped(listBox, e, items));
 		}
 
 		// setup controls
@@ -222,7 +222,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		});
 		this.logLevelMapForReadingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForReadingListBox");
 		this.logLevelMapForWritingListBox = this.Get<AppSuite.Controls.ListBox>("logLevelMapForWritingListBox");
-		this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logPatternListBox)).Also(SetupItemDragging<LogPattern>);
+		this.logPatternListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logPatternListBox)).Also(it => SetupItemDragging(it, this.logPatterns));
 		this.logPatternMatchingModeComboBox = this.Get<ComboBox>(nameof(logPatternMatchingModeComboBox));
 		this.logReadingPanel = this.Get<Panel>(nameof(logReadingPanel));
 		this.logReadingPanelButton = this.Get<ToggleButton>(nameof(logReadingPanelButton)).Also(it =>
@@ -231,7 +231,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		});
 		this.logStringEncodingForReadingComboBox = this.Get<ComboBox>("logStringEncodingForReadingComboBox");
 		this.logStringEncodingForWritingComboBox = this.Get<ComboBox>("logStringEncodingForWritingComboBox");
-		this.logWritingFormatListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(logWritingFormatListBox)).Also(SetupItemDragging<string>);
+		this.logWritingFormatListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(logWritingFormatListBox)).Also(it => SetupItemDragging(it, this.logWritingFormats));
 		this.logWritingPanel = this.Get<Panel>(nameof(logWritingPanel));
 		this.logWritingPanelButton = this.Get<ToggleButton>(nameof(logWritingPanelButton)).Also(it =>
 		{
@@ -269,7 +269,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		this.timestampFormatForDisplayingTextBox = this.Get<TextBox>("timestampFormatForDisplayingTextBox");
 		this.timestampFormatForWritingTextBox = this.Get<TextBox>("timestampFormatForWritingTextBox");
 		this.timestampFormatsForReadingListBox = this.Get<AppSuite.Controls.ListBox>(nameof(timestampFormatsForReadingListBox));
-		this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>(nameof(visibleLogPropertyListBox)).Also(SetupItemDragging<LogProperty>);
+		this.visibleLogPropertyListBox = this.Get<AppSuite.Controls.ListBox>(nameof(visibleLogPropertyListBox)).Also(it => SetupItemDragging(it, this.visibleLogProperties));
 		this.workingDirPriorityComboBox = this.Get<ComboBox>(nameof(workingDirPriorityComboBox));
 
 		// attach to log data source providers
@@ -1044,10 +1044,11 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	
 	
 	// Called when user dropped item on list box.
-	void OnListBoxItemDropped<T>(ListBox listBox, ListBoxItemDragEventArgs e)
+	void OnListBoxItemDropped<T>(ListBox listBox, ListBoxItemDragEventArgs e, ObservableList<T> items)
 	{
-		if (e.ItemIndex != e.StartItemIndex && listBox.TryMoveItem<T>(e.StartItemIndex, e.ItemIndex))
+		if (e.ItemIndex != e.StartItemIndex)
 		{
+			items.Move(e.StartItemIndex, e.ItemIndex);
 			listBox.SelectedIndex = e.ItemIndex;
 			listBox.FocusSelectedItem();
 		}
