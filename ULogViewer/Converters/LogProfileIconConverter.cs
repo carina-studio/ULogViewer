@@ -17,7 +17,7 @@ namespace CarinaStudio.ULogViewer.Converters
 		/// <summary>
 		/// Default instance.
 		/// </summary>
-		public static readonly LogProfileIconConverter Default = new LogProfileIconConverter(App.Current);
+		public static readonly LogProfileIconConverter Default = new(App.Current);
 
 
 		// Fields.
@@ -87,9 +87,9 @@ namespace CarinaStudio.ULogViewer.Converters
 			if (image is null)
 			{
 				if (modeParam is not null)
-					app.Resources.TryGetResource($"Image/LogProfile.File.{modeParam}", out image);
+					app.Resources.TryGetResource($"Image/LogProfile.{modeParam}", out image);
 				if (image is null)
-					app.Resources.TryGetResource($"Image/LogProfile.File", out image);
+					app.Resources.TryGetResource($"Image/LogProfile", out image);
 			}
 			if (image is null)
 				return null;

@@ -19,6 +19,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -108,7 +109,7 @@ class LogProfileSelectionContextMenu : ContextMenu
     Separator? actionsOnCurrentLogProfileSeparator;
     MenuItem? copyCurrentLogProfileMenuItem;
     MenuItem? editCurrentLogProfileMenuItem;
-    private MenuItem? emptyLogProfileMenuItem;
+    MenuItem? emptyLogProfileMenuItem;
     MenuItem? exportCurrentLogProfileMenuItem;
     bool isReady;
     readonly SortedObservableList<object> items;
@@ -291,17 +292,17 @@ class LogProfileSelectionContextMenu : ContextMenu
 
 
     // Copy current log profile.
-    async void CopyCurrentLogProfile()
+    async Task CopyCurrentLogProfile()
     {
         // get state
         var logProfile = this.CurrentLogProfile;
         var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
-        var app = App.CurrentOrNull;
+        var app = Application.CurrentOrNull;
         if (logProfile == null || window == null || app == null)
             return;
         
         // copy log profile
-        var newProfile = await new LogProfileEditorDialog()
+        var newProfile = await new LogProfileEditorDialog
         {
             LogProfile = new LogProfile(logProfile)
             {
@@ -404,15 +405,26 @@ class LogProfileSelectionContextMenu : ContextMenu
         menuItem.Icon = new Avalonia.Controls.Image().Also(icon =>
         {
             icon.Classes.Add("MenuItem_Icon");
-            icon.Bind(Avalonia.Controls.Image.SourceProperty, new MultiBinding
+            if (!ReferenceEquals(logProfile, LogProfileManager.Default.EmptyProfile))
             {
-                Bindings = 
+                icon.Bind(Avalonia.Controls.Image.SourceProperty, new MultiBinding
                 {
-                    new Binding { Path = nameof(LogProfile.Icon) },
-                    new Binding { Path = nameof(LogProfile.IconColor) }
-                },
-                Converter = LogProfileIconConverter.Default,
-            });
+                    Bindings = 
+                    {
+                        new Binding { Path = nameof(LogProfile.Icon) },
+                        new Binding { Path = nameof(LogProfile.IconColor) }
+                    },
+                    Converter = LogProfileIconConverter.Default
+                });
+            }
+            else
+            {
+                icon.Bind(Avalonia.Controls.Image.SourceProperty, new MultiBinding
+                {
+                    Bindings = { new Binding() },
+                    Converter = LogProfileIconConverter.Default
+                });
+            }
         });
         menuItem.Header = new Grid().Also(grid =>
         {
@@ -510,7 +522,7 @@ class LogProfileSelectionContextMenu : ContextMenu
         // get state
         var logProfile = this.CurrentLogProfile;
         var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
-        var app = App.CurrentOrNull;
+        var app = Application.CurrentOrNull;
         if (logProfile == null || window == null || app == null || logProfile.IsBuiltIn)
             return;
         
@@ -530,7 +542,7 @@ class LogProfileSelectionContextMenu : ContextMenu
 
 
     // Export current log profile.
-    async void ExportCurrentLogProfile()
+    async Task ExportCurrentLogProfile()
     {
         // check state
         var logProfile = this.CurrentLogProfile;
@@ -901,17 +913,17 @@ class LogProfileSelectionContextMenu : ContextMenu
 
 
     // Remove current log profile.
-    async void RemoveCurrentLogProfile()
+    async Task RemoveCurrentLogProfile()
     {
         // get state
         var logProfile = this.CurrentLogProfile;
         var window = this.FindLogicalAncestorOfType<CarinaStudio.Controls.Window>();
-        var app = App.CurrentOrNull;
+        var app = Application.CurrentOrNull;
         if (logProfile == null || window == null || app == null || logProfile.IsBuiltIn)
             return;
         
         // confirm
-        var result = await new MessageDialog()
+        var result = await new MessageDialog
         {
             Buttons = MessageDialogButtons.YesNo,
             DefaultResult = MessageDialogResult.No,

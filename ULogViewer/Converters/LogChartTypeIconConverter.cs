@@ -60,7 +60,7 @@ class LogChartTypeIconConverter : BaseValueConverter<LogChartType, IImage?>
             LogChartType.ValueLines
                 or LogChartType.ValueLinesWithDataPoints => "Image/Chart.Lines"
                                                             + (string.IsNullOrWhiteSpace(state) ? "" : $".{state}"),
-            LogChartType.None => "Image/LogProfile.Empty",
+            LogChartType.None => "Image/Chart.Empty",
             _ => null,
         };
         return key is not null 

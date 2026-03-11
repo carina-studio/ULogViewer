@@ -1,9 +1,7 @@
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using CarinaStudio.Controls;
 using CarinaStudio.Data.Converters;
 using CarinaStudio.ULogViewer.Logs.DataSources;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace CarinaStudio.ULogViewer.Converters;
@@ -24,8 +22,8 @@ class LogDataSourceProviderIconConverter : BaseValueConverter<ILogDataSourceProv
     { }
 
 
-    [return: MaybeNull]
-    protected override IImage Convert(ILogDataSourceProvider? value, object? parameter, CultureInfo culture)
+    // Convert.
+    protected override IImage? Convert(ILogDataSourceProvider? value, object? parameter, CultureInfo culture)
     {
         if (value == null)
             return null;
@@ -34,14 +32,14 @@ class LogDataSourceProviderIconConverter : BaseValueConverter<ILogDataSourceProv
                 ? $"Image/LogDataSourceProvider.{value.Name}.Light"
                 : $"Image/LogDataSourceProvider.{value.Name}"
             : (parameter as string) == "Light"
-                ? "Image/Code.Light"
-                : "Image/Code";
+                ? "Image/Code.Outline.Light"
+                : "Image/Code.Outline";
         if (App.Current.TryFindResource<IImage>(resName, out var icon))
             return icon;
         resName = (parameter as string) == "Light"
-            ? $"Image/LogDataSourceProvider.Light"
-            : $"Image/LogDataSourceProvider";
-        App.Current.TryFindResource<IImage>(resName, out icon);
+            ? "Image/LogDataSourceProvider.Light"
+            : "Image/LogDataSourceProvider";
+        App.Current.TryFindResource(resName, out icon);
         return icon;
     }
 }
