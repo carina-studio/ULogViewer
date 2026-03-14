@@ -325,20 +325,26 @@
 		<!-- Log level filter menu -->
 		<ContextMenu x:Key="logLevelFiltersMenu" Placement="Bottom">
 			<ContextMenu.Styles>
-				<Style Selector="Border.LogLevelIcon">
-					<Setter Property="Background" Value="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}"/>
+				<Style Selector="Border.LogLevelIconContainer">
 					<Setter Property="BorderBrush" Value="{DynamicResource ComboBoxItemForeground}"/>
 					<Setter Property="BorderThickness" Value="1"/>
+					<Setter Property="CornerRadius" Value="1"/>
 					<Setter Property="Height" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
 					<Setter Property="Margin" Value="{DynamicResource MenuIconPresenterMargin}"/>
+					<Setter Property="Padding" Value="1"/>
 					<Setter Property="VerticalAlignment" Value="Center"/>
 					<Setter Property="Width" Value="{StaticResource Double/MenuItem.Icon.Size}"/>
+				</Style>
+				<Style Selector="Border.LogLevelIcon">
+					<Setter Property="Background" Value="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}"/>
 				</Style>
 				<Style Selector="MenuItem.LogLevel">
 					<Setter Property="Header">
 						<Template>
 							<StackPanel Orientation="Horizontal">
-								<Border Classes="LogLevelIcon"/>
+								<Border Classes="LogLevelIconContainer">
+									<Border Classes="LogLevelIcon"/>
+								</Border>
 								<TextBlock Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}" VerticalAlignment="Center"/>
 							</StackPanel>
 						</Template>
@@ -837,9 +843,12 @@
 								</Grid.ColumnDefinitions>
 								<Image Opacity="0" Source="{StaticResource Image/Icon.Information}"/> <!-- To reserve space -->
 								<Border Classes="Icon" 
-								        Background="{Binding #root.LogLevelFiltersIconBrush}"
 								        BorderBrush="{DynamicResource ComboBoxItemForeground}"
-								        BorderThickness="1"/>
+								        BorderThickness="1.2"
+								        CornerRadius="1"
+								        Padding="1">
+									<Border Background="{Binding #root.LogLevelFiltersIconBrush}"/>
+								</Border>
 								<Image Classes="ToolBar_DropDownButtonIcon" Grid.Column="2" Source="{StaticResource Image/Icon.DropDown.Down}"/>
 							</Grid>
 						</ToggleButton>

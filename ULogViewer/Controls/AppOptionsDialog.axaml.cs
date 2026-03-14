@@ -313,8 +313,10 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	    this.logProfileSelectionMenu ??= new LogProfileSelectionContextMenu
 	    {
 		    Placement = PlacementMode.Bottom,
-		    ShowEmptyLogProfile = true,
+		    ShowEmptyLogProfile = true
 	    };
+	    var shadowSize = this.Application.FindResourceOrDefault<double>("Double/Shadow.Size") * 2;
+	    this.logProfileSelectionMenu.MinWidth = anchor.Bounds.Width + shadowSize;
 	    this.logProfileSelectionMenu.Closed += closedHandler;
 	    this.logProfileSelectionMenu.LogProfileSelected += logProfileSelectedHandler;
 	    this.logProfileSelectionMenu.Open(anchor);

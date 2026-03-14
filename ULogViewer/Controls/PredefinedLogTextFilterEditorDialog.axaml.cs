@@ -299,6 +299,16 @@ class PredefinedLogTextFilterEditorDialog : AppSuite.Controls.Dialog<IULogViewer
 	/// <summary>
 	/// Show menu to select group name.
 	/// </summary>
-	public void ShowGroupNameSelectionMenu() =>
+	public void ShowGroupNameSelectionMenu()
+	{
+		if (this.groupNameSelectionMenu.Tag is null)
+		{
+			var shadowSize = this.Application.FindResourceOrDefault<double>("Double/Shadow.Size") * 2;
+			this.groupNameSelectionMenu.MinWidth = this.selectGroupNameButton.Bounds.Width + shadowSize;
+			this.groupNameSelectionMenu.Placement = PlacementMode.Bottom;
+			this.groupNameSelectionMenu.Tag = this.selectGroupNameButton;
+			this.selectGroupNameButton.SizeChanged += (_, e) => this.groupNameSelectionMenu.MinWidth = e.NewSize.Width + shadowSize;
+		}
 		this.groupNameSelectionMenu.Open(this.selectGroupNameButton);
+	}
 }

@@ -639,7 +639,13 @@ partial class SessionView
             return;
         var button = this.Get<ToggleButton>("importExistingCooperativeLogAnalysisScriptSetButton");
         button.IsChecked = true;
-        this.logAnalysisScriptSetSelectionContextMenu ??= new();
+        this.logAnalysisScriptSetSelectionContextMenu ??= new LogAnalysisScriptSetSelectionContextMenu().Also(it =>
+        {
+            var shadowSize = this.Application.FindResourceOrDefault<double>("Double/Shadow.Size") * 2;
+            it.MinWidth = button.Bounds.Width + shadowSize;
+            it.Placement = PlacementMode.Bottom;
+            button.SizeChanged += (_, e) => it.MinWidth = e.NewSize.Width + shadowSize;
+        });
         var scriptSet = await this.logAnalysisScriptSetSelectionContextMenu.OpenAsync(button);
         button.IsChecked = false;
         if (scriptSet is null
