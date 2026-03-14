@@ -2,9 +2,11 @@ using System.Runtime;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Media;
 using Avalonia.Styling;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Media;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Controls;
@@ -439,7 +441,7 @@ namespace CarinaStudio.ULogViewer
 		protected override SplashWindowParams OnPrepareSplashWindow() => base.OnPrepareSplashWindow().Also((ref param) =>
 		{
 			var isDarkMode = this.EffectiveThemeMode == ThemeMode.Dark;
-			param.AccentColor = Avalonia.Media.Color.FromRgb(0x8a, 0x5c, 0xe6);
+			param.AccentColor = Color.FromRgb(0x8a, 0x5c, 0xe6);
 			param.BackgroundImageOpacity = isDarkMode 
 				? 0.55
 				: 0.40;
@@ -523,7 +525,7 @@ namespace CarinaStudio.ULogViewer
 			// initialize search providers
 			Net.SearchProviderManager.Initialize(this);
 
-			// find menu items
+			// setup native menu
 			if (Platform.IsMacOS)
 			{
 				NativeMenu.GetMenu(this)?.Let(menu =>
@@ -535,16 +537,41 @@ namespace CarinaStudio.ULogViewer
 							continue;
 						switch (menuItem.CommandParameter as string)
 						{
+							case "AppInfo":
+								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Information.Outline")?.ToNativeMenuItemIcon();
+								break;
+							case "AppOptions":
+								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Settings.Outline")?.ToNativeMenuItemIcon();
+								break;
+							case "CheckForUpdate":
+								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Update.Outline")?.ToNativeMenuItemIcon();
+								break;
 							case "EditConfiguration":
 								if (!this.IsDebugMode)
 								{
 									menu.Items.RemoveAt(i--);
 									menu.Items.RemoveAt(i); // Separator
 								}
+								else
+									goto default;
 								break;
 							case "EditPersistentState":
 								if (!this.IsDebugMode)
 									menu.Items.RemoveAt(i);
+								else
+									goto default;
+								break;
+							case "Feedback":
+								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Chat.Outline")?.ToNativeMenuItemIcon();
+								break;
+							case "QuickStartGuide":
+								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Outline")?.ToNativeMenuItemIcon();
+								break;
+							case "Shutdown":
+								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Exit")?.ToNativeMenuItemIcon();
+								break;
+							default:
+								menuItem.UseEmptyIcon();
 								break;
 						}
 					}

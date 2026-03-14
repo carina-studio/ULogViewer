@@ -118,37 +118,37 @@
 			<NativeMenuItem Header="{asXaml:StringResource MainWindow.Windows}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.CreateMainWindow}" Header="{asXaml:StringResource Common.CreateWindow}" Gesture="Cmd+N"/>
+						<NativeMenuItem Command="{Binding #window.CreateMainWindow}" Header="{asXaml:StringResource Common.CreateWindow}" Icon="{StaticResource Bitmap/Icon.Add}" Gesture="Cmd+N"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Horizontal}"/>
-						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Vertical}"/>
-						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Tile}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Horizontal}" Icon="{StaticResource Bitmap/Icon.Layout.Horizontal}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Vertical}" Icon="{StaticResource Bitmap/Icon.Layout.Vertical}"/>
+						<NativeMenuItem Command="{Binding #window.LayoutMainWindowsCommand}" CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Tile}" Icon="{StaticResource Bitmap/Icon.Layout.Tile}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
 			<NativeMenuItem Header="{asXaml:StringResource MainWindow.Tabs}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{asXaml:StringResource Common.CreateTab}"  Gesture="Cmd+T"/>
+						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{asXaml:StringResource Common.CreateTab}" Icon="{StaticResource Bitmap/Icon.Add}" Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.SetCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.SetCustomSessionTitle}"/>
-						<NativeMenuItem Command="{Binding #window.ClearCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
+						<NativeMenuItem Command="{Binding #window.SetCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.SetCustomSessionTitle}" Icon="{StaticResource Bitmap/Icon.Edit.Outline}"/>
+						<NativeMenuItem Command="{Binding #window.ClearCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.ClearCustomSessionTitle}" Icon="{StaticResource Bitmap/Empty}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.MoveCurrentSessionToNewWorkspace}" Header="{asXaml:StringResource Common.OpenInNewWindow}" IsEnabled="{Binding #window.HasMultipleSessions}"/>
+						<NativeMenuItem Command="{Binding #window.MoveCurrentSessionToNewWorkspace}" Header="{asXaml:StringResource Common.OpenInNewWindow}" Icon="{StaticResource Bitmap/Icon.ExternalLink}" IsEnabled="{Binding #window.HasMultipleSessions}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.CloseCurrentSessionTabItem}" Header="{asXaml:StringResource Common.CloseTab}" Gesture="Cmd+W"/>
+						<NativeMenuItem Command="{Binding #window.CloseCurrentSessionTabItem}" Header="{asXaml:StringResource Common.CloseTab}" Icon="{StaticResource Bitmap/Icon.CloseTab.Outline}" Gesture="Cmd+W"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
 			<NativeMenuItem CommandParameter="Tools" Header="{asXaml:StringResource SessionView.Tools}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.EditPathEnvironmentVariable}" Header="{asXaml:StringResource SessionView.EditPathEnvVar}"/>
+						<NativeMenuItem Command="{Binding #window.EditPathEnvironmentVariable}" Header="{asXaml:StringResource SessionView.EditPathEnvVar}" Icon="{StaticResource Bitmap/Icon.Edit.Outline}"/>
 						<NativeMenuItemSeparator/>
-						<NativeMenuItem Command="{Binding #window.EditConfiguration}" CommandParameter="EditConfiguration" Header="{asXaml:StringResource SessionView.EditConfiguration}"/>
-						<NativeMenuItem Command="{Binding #window.EditPersistentState}" CommandParameter="EditPersistentState" Header="{asXaml:StringResource SessionView.EditPersistentState}"/>
-						<NativeMenuItem Command="{Binding #window.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{asXaml:StringResource Common.SelfTesting}"/>
-						<NativeMenuItem Command="{Binding #window.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{asXaml:StringResource Common.TakeMemorySnapshot.WithDialog}"/>
+						<NativeMenuItem Command="{Binding #window.EditConfiguration}" CommandParameter="EditConfiguration" Header="{asXaml:StringResource SessionView.EditConfiguration}" Icon="{StaticResource Bitmap/Icon.Tool.Outline}"/>
+						<NativeMenuItem Command="{Binding #window.EditPersistentState}" CommandParameter="EditPersistentState" Header="{asXaml:StringResource SessionView.EditPersistentState}" Icon="{StaticResource Bitmap/Icon.Tool.Outline}"/>
+						<NativeMenuItem Command="{Binding #window.Application.ShowSelfTestingWindow}" CommandParameter="SelfTesting" Header="{asXaml:StringResource Common.SelfTesting}" Icon="{StaticResource Bitmap/Icon.Lab}"/>
+						<NativeMenuItem Command="{Binding #window.TakeMemorySnapshot}" CommandParameter="TakeMemorySnapshot" Header="{asXaml:StringResource Common.TakeMemorySnapshot.WithDialog}" Icon="{StaticResource Bitmap/Icon.Memory.Outline}"/>
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>

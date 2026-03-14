@@ -39,7 +39,7 @@ static partial class Utility
     public static async Task<bool> ExportImage(Avalonia.Controls.Window window)
     {
         // select image
-        var image = (IImage?)null;
+        IImage? image;
         var resName = (string?)null;
         var width = 0;
         var height = 0;
@@ -110,13 +110,13 @@ static partial class Utility
         // select file
         var fileName = (await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions().Also(options =>
         {
-            options.FileTypeChoices = new[]
-            {
+            options.FileTypeChoices =
+            [
                 new FilePickerFileType(App.Current.GetStringNonNull("FileFormat.Png", "PNG")).Also(it =>
                 {
-                    it.Patterns = new[] { "*.png" };
+                    it.Patterns = [ "*.png" ];
                 })
-            };
+            ];
         })))?.Let(file => file.TryGetLocalPath());
         if (string.IsNullOrEmpty(fileName))
             return false;

@@ -10,6 +10,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Input;
+using CarinaStudio.AppSuite.Media;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
@@ -46,6 +47,23 @@ namespace CarinaStudio.ULogViewer
 		static bool IsReactivatingProVersionHintDialogShown;
 		static bool IsRefreshingAppIconOnMacOSHintDialogShown;
 		static MainWindow? MainWindowToActivateProVersion;
+		static readonly string[] NativeMenuItemIconResourceNames =
+		[
+			"Code.Outline",
+			"Icon.Add",
+			"Icon.CloseTab.Outline",
+			"Icon.Debug.Outline",
+			"Icon.Edit.Outline",
+			"Icon.ExternalLink",
+			"Icon.Lab",
+			"Icon.Layout.Horizontal",
+			"Icon.Layout.Tile",
+			"Icon.Layout.Vertical",
+			"Icon.Login",
+			"Icon.Logout",
+			"Icon.Memory.Outline",
+			"Icon.Tool.Outline",
+		];
 
 
 		// Fields.
@@ -76,6 +94,19 @@ namespace CarinaStudio.ULogViewer
 			this.CloseSessionTabItemCommand = new Command<TabItem>(this.CloseSessionTabItem);
 			this.MoveSessionToNewWorkspaceCommand = new Command<TabItem>(this.MoveSessionToNewWorkspace);
 			this.SetCustomSessionTitleCommand = new Command<TabItem>(this.SetCustomSessionTitle);
+			
+			// create icons for native menu items
+			if (Platform.IsMacOS)
+			{
+				var app = this.Application;
+				var resources = this.Resources;
+				foreach (var resourceName in NativeMenuItemIconResourceNames)
+				{
+					if (app.FindResourceOrDefault<IImage>($"Image/{resourceName}") is not { } image)
+						continue;
+					resources[$"Bitmap/{resourceName}"] = image.ToNativeMenuItemIcon();
+				}
+			}
 
 			// initialize.
 			AvaloniaXamlLoader.Load(this);
