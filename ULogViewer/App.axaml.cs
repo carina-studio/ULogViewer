@@ -25,9 +25,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
 
 namespace CarinaStudio.ULogViewer
 {
@@ -277,6 +280,55 @@ namespace CarinaStudio.ULogViewer
 				}
 			}
 			return base.OnExceptionOccurredInApplicationLifetime(ex);
+		}
+
+
+		// Import application data.
+		protected override async Task OnImportApplicationDataAsync(string directory)
+		{
+			// call super
+			await base.OnImportApplicationDataAsync(directory);
+			
+			// prepare
+			if (Platform.IsMacOS && directory.EndsWith(".app", StringComparison.OrdinalIgnoreCase))
+				directory = Path.Combine(directory, "Contents", "MacOS");
+			Task ImportDirectoryAsync(string directoryName, string usage) => Task.Run(() =>
+			{
+				var srcDirectory = Path.Combine(directory, directoryName);
+				var destDirectory = Path.Combine(this.RootPrivateDirectoryPath, directoryName);
+				if (Directory.Exists(srcDirectory))
+				{
+					// backup current directory
+					this.Logger.LogWarning($"Start backing up {usage} directory");
+					var backupDestDirectory = Path.Combine(this.RootPrivateDirectoryPath, directoryName + ".Backup");
+					if (Directory.Exists(backupDestDirectory))
+						Directory.Delete(backupDestDirectory, true);
+					if (Directory.Exists(destDirectory))
+						Directory.Move(destDirectory, backupDestDirectory);
+					this.Logger.LogWarning($"Complete backing up {usage} directory");
+					
+					// import
+					this.Logger.LogWarning($"Start importing {usage}");
+					if (!Directory.Exists(destDirectory))
+						Directory.CreateDirectory(destDirectory);
+					var fileCount = 0;
+					foreach (var srcFilePath in Directory.EnumerateFiles(srcDirectory))
+					{
+						var destFilePath = Path.Combine(destDirectory, Path.GetFileName(srcFilePath));
+						File.Copy(srcFilePath, destFilePath, true);
+						++fileCount;
+					}
+					this.Logger.LogWarning($"Complete importing {usage}, {fileCount} file(s) imported");
+				}
+				else
+					this.Logger.LogDebug($"Directory of {usage} not found for importing.");
+			});
+			
+			// import log profiles
+			await ImportDirectoryAsync("Profiles", "log profiles");
+			
+			// import predefined log text filters
+			await ImportDirectoryAsync("TextFilters", "predefined log text filters");
 		}
 
 

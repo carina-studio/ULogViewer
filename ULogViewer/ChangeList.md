@@ -6,6 +6,7 @@
 + Changes to the width of the log property column in the log viewer will be saved to the log profile, including built‑in profiles.
 + The pre-defined log level mapping will be used if no log level mapping defined in log profile.
 + Added support for applying the system text size to selected parts of user interface on Windows and macOS.
++ Added support for importing application data from an existing ULogViewer instance.
 
 ## Improvement
 + Allowed reordering items in the ```Edit log profile``` and ```Data source options``` dialogs by dragging with the mouse instead of using action buttons.
