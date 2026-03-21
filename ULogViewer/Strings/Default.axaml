@@ -3,66 +3,66 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
 	<!-- Accuracy -->
-	<sys:String x:Key="String/Accuracy.High">High accuracy</sys:String>
-	<sys:String x:Key="String/Accuracy.Low">Low accuracy</sys:String>
+	<sys:String x:Key="String/Accuracy.High">High Accuracy</sys:String>
+	<sys:String x:Key="String/Accuracy.Low">Low Accuracy</sys:String>
 	<sys:String x:Key="String/Accuracy.Normal">Normal</sys:String>
 	
 	<!-- App -->
 	<sys:String x:Key="String/App.Shutdown">Exit</sys:String>
 
 	<!-- AppOptionsDialog -->
-	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase">Clear phrases database</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">{0} phrase(s) cleared from database.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">Confirm maximum logs to be read when adding large files</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log update interval when continuous reading (milliseconds)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-line Shell to run commands</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">Phrase input assistance for text filter</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">Help you to type phrase for text filter based-on history of text filter.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to latest log after reloading logs</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Only for continuous logs reading.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.FileSizeInMBToConfirmMaxLogReadingCount">File size (MB) to treat as large files</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore case of text filter by default</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial log profile when startup</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase">Clear Phrase Database</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">{0} phrases cleared from database.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">Confirm Maximum Logs to Read when Adding Large Files</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log Update Interval during Continuous Reading (Milliseconds)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-Line Shell for Command Execution</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">Phrase Input Assistance in Text Filter</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">Helps you type phrases for the text filter based on its history.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to the Latest Log after Reloading Logs</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">Applies only during continuous log reading.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.FileSizeInMBToConfirmMaxLogReadingCount">File Size Threshold for Large Files (MB)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">Ignore Case in Text Filter by Default</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.InitialLogProfile">Initial Log Profile at Startup</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFiltering">Log Filtering</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.LogFont">Log font and size</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.LogFont">Log Font and Size</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogFont.Sample">Sample Log Text 123</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.LogOperations">Log Operations</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.LogSeparators">Separators of logs</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">Maximum number of logs when continuous reading</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum number of lines to display for each log</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">Policy of memory usage</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.PatternFont">Pattern font</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Description">Font for all patterns including regular expression, format of date time, format of time span, etc.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.LogSeparators">Log Separators</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.MaxContinuousLogCount">Maximum Logs During Continuous Reading</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.MaxDisplayLineCountForEachLog">Maximum Number of Lines to Display per Log</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.MemoryUsagePolicy">Memory Usage Policy</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.PatternFont">Pattern Font</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Description">Applies to all patterns, including regular expressions, date/time formats, time span formats, and more.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PatternFont.Sample">Sample [0-9] \s \d HH:mm:ss</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs">Limitation of memory usage ({0}, {1}%)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description">Logs reading will be disabled temporarily when memory usage of process exceeds the limitation.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">Upgrade to Pro version needed.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset applied rule sets after changing log profile</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">Script editor font and size</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs">Memory Usage Limit ({0}, {1}%)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description">Log reading will be temporarily disabled when process memory usage exceeds the limit.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">Upgrade to the Pro Version is required.</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">Reset Applied Rule Sets after Changing Log Profile</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">Script Editor Font and Size</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont.Sample">if (x == 0) { 
     Context.Logger.LogDebug(msg); 
 }</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">Show input dialog when command is needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">Select profile</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show input dialog when IP endpoint is needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show file selector when log files are needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show log profile selector after creating new tab</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">Specify precondition before reading logs from files if available</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">Show input dialog when process identifier (PID) is needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">Show input dialog when process name is needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">Show input dialog when URI is needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show directory selector when working directory is needed</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">Show 'Help' button on input field of text filter</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">Show chart panel automatically</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">Show Input Dialog if a Command Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">Select Profile</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show Input Dialog if an IP Endpoint Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show File Selector if Files Are Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show Log Profile Selector after Creating a New Tab</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">Set Precondition Before Reading Logs from Files When Available</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">Show Input Dialog if a Process Identifier (PID) Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">Show Input Dialog if a Process Name Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">Show Input Dialog if a URI Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show Directory Selector if a Working Directory Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">Show 'Help' Button on Text Filter Input Field</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">Show Chart Panel Automatically</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">Show the panel if chart has been defined in log profile.</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/memory usage on status bar</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs">Switch to 'Marked logs' panel after marking log(s)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay between changing conditions and start filtering (milliseconds)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply system accent color</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">Show CPU/Memory Usage on the Status Bar</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs">Switch to 'Marked Logs' panel After Marking Logs</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">Delay Between Changing Conditions and Starting Filtering (Milliseconds)</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">Apply System Accent Color</sys:String>
 
 	<!-- Azure -->
-	<sys:String x:Key="String/Azure.AzureCliNotFound">Cannot find Azure CLI. Please make sure that Azure CLI has been installed and its path has been added to PATH environment variable.</sys:String>
+	<sys:String x:Key="String/Azure.AzureCliNotFound">Cannot find the Azure CLI. Please make sure it is installed and that its path has been added to the PATH environment variable.</sys:String>
 	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">Unable to execute Azure CLI.</sys:String>
 	<sys:String x:Key="String/Azure.FailedToLogin">Unable to log in to Azure.</sys:String>
 	<sys:String x:Key="String/Azure.LoggedIn">Logged in to Azure with user '{0}'.</sys:String>
@@ -72,106 +72,106 @@
 	<sys:String x:Key="String/AzureCliLogDataSourceProvider.DisplayName">Azure CLI</sys:String>
 
 	<!-- AzureResourcesDialog -->
-	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double click item to use resource:</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double-click an Item to Use Resource:</sys:String>
 	<sys:String x:Key="String/AzureResourcesDialog.Title">Resources on Azure</sys:String>
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android Device Event Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">Real-time event logs from Android device through ADB.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">Real-time event logs from an Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android Device Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">Real-time logs from Android device through ADB.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">Real-time logs from an Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android Device System Trace</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">Capture 5 seconds system trace from Android device to analyze system and application performance.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">Capture a 5-second system trace from an Android device to analyze system and application performance.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. Event logs are also supported by this profile.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">Android logs stored in one or more files. This profile also supports event logs.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android Kernel Log Files</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile.Description">Android kernel logs stored in one or more files.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo">Android Process Memory Monitor</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo.Description">Realtime memory information of specific process of Android.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidProcessMemoryInfo.Description">Real-time memory information of a specific Android process.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android System Memory Monitor</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Realtime system memory information of Android.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Real-time system memory information of the Android system.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android System Trace File</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse System Trace file (*.html) to analyze system and application performance on Android device.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">Parse a System Trace file (*.html) to analyze system and application performance on an Android device.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache Access Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">Files generated by Apache which contain information about request coming to web server.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">Files generated by Apache that contain information about requests received by the web server.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache Error Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">Files generated by Apache which contain information about errors the web server encountered.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">Files generated by Apache that contain information about errors encountered by the web server.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AppleDevicesLog">Apple Devices Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AppleDevicesLog.Description">Real-time system wide log generated by connected Apple devices.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AppleDevicesLog.Description">Real-time system-wide logs from connected Apple devices.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile">Azure Webapp log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">Log files of web application downloaded from Azure.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogFile.Description">Web application log files downloaded from Azure.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream">Azure Webapp Log Stream</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">Realtime log stream of specific web application on Azure.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AzureWebappLogStream.Description">Real-time log stream of a specific web application on Azure.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.BootedAppleDeviceSimulatorsRealtimeLog">Apple Device Simulators Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.BootedAppleDeviceSimulatorsRealtimeLog.Description">Real-time system wide log generated by all booted Apple device simulators.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.BootedAppleDeviceSimulatorsRealtimeLog.Description">Real-time system-wide logs from all booted Apple device simulators.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.Empty">None</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLog">Git Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">List of git commits of specified repository.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">List of Git commits from a specified repository.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git Log (Simple)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">List of git commits of specified repository with fewer information.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">List of Git commits from a specified repository with fewer information.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux Kernel Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">The latest part of kernel log generated on Linux.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">The latest portion of the kernel logs from Linux.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux Kernel Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile.Description">Files contain kernel log generated on Linux.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile.Description">Files that contain kernel logs from Linux.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxRealtimeLog">Linux Real-time System Wide Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxRealtimeLog.Description">Real-time system wide log generated on Linux.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxRealtimeLog.Description">Real-time system-wide logs from Linux.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLog">Linux System Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLog.Description">The latest part of system log generated on Linux.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLog.Description">The latest part of system logs from Linux.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile">Linux System Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">Files contain system log generated on Linux.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">Files contain system logs from Linux.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS Installation Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">The installation log generated on macOS.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">Installation logs from macOS.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS Real-time System Wide Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">Real-time system wide log generated on macOS.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">Real-time system wide logs from macOS.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS System Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">Files contain system log generated on macOS.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">Files that contain system logs from macOS.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawFile">Raw Text In Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">Read raw text from one or more files without parsing. It is usually used for testing and debugging purpose.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">Read raw text from one or more files without parsing. Typically used for testing and debugging.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp">Raw HTTP/HTTPS Response</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">Send HTTP/HTTPS request and read raw text from response without parsing. It is usually used for testing and debugging purpose.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawHttp.Description">Send an HTTP/HTTPS request and read raw text from the response without parsing. Typically used for testing and debugging.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput">Raw Text From Standard Output (stdout)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput.Description">Run command and read raw text from its standard output (stdout) as well as standard error (stderr). It is usually used for testing and debugging purpose.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput.Description">Run a command and read raw text from its standard output (stdout) as well as standard error (stderr). Typically used for testing and debugging.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">Raw Text From TCP Client</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">Start TCP server and read raw text from client without parsing. It is usually used for testing and debugging purpose.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">Start a TCP server and read raw text from the client without parsing. Typically used for testing and debugging.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">Specific Android Device Event Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">Real-time event logs from specific Android device through ADB.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">Real-time event logs from a specific Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog">Specific Android Device Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog.Description">Real-time logs from specific Android device through ADB.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog.Description">Real-time logs from a specific Android device through ADB.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceTrace">Specific Android Device System Trace</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceTrace.Description">Capture 5 seconds system trace from specific Android device to analyze system and application performance.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceTrace.Description">Capture a 5-second system trace from a specific Android device to analyze system and application performance.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog">Specific Apple Device Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">Real-time system wide log generated by specific Apple device.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">Real-time system-wide logs from a specific Apple device.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog">Specific Apple Device Simulator Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog.Description">Real-time system wide log generated by specific Apple device simulator.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog.Description">Real-time system-wide logs from a specific Apple device simulator.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog">NLog (TCP)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">Real-time logs output by NLog in 'NLogViewer' format through TCP.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer Log File</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">Log file generated by ULogViewer or other Carina Studio's app.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">Log file from ULogViewer or other Carina Studio applications.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer Real-time Log</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">Real-time logs generated by ULogViewer in memory.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">Real-time logs from ULogViewer in memory.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows Event Logs (Application)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">Windows events belongs to category 'Application' of local machine.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">Windows events belonging to the 'Application' category of the local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows Event Log Files</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">Windows Event Logs stored in one or more files with Windows XML Event Log format (*.evtx).</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">Windows Event Logs stored in one or more files in Windows XML Event Log format (*.evtx).</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs">Windows Event Logs</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs.Description">Windows events belongs to specific category of local machine.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs.Description">Windows events belonging to a specific category of the local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows Event Logs (Security)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">Windows events belongs to category 'Security' of local machine.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">Windows events belonging to the 'Security' category of the local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows Event Logs (Setup)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">Windows events belongs to category 'Setup' of local machine.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">Windows events belonging to the 'Setup' category of the local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs">Windows Event Logs (System)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">Windows events belongs to category 'System' of local machine.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">Windows events belonging to the 'System' category of the local machine.</sys:String>
 	
 	<!-- Common -->
-	<sys:String x:Key="String/Common.ExternalDependencyNotFound">At least one required external dependency is not installed on device. Please install then try again.</sys:String>
-	<sys:String x:Key="String/Common.InvalidFormat">Invalid format</sys:String>
-	<sys:String x:Key="String/Common.MoveDown">Move down</sys:String>
-	<sys:String x:Key="String/Common.MoveUp">Move up</sys:String>
-	<sys:String x:Key="String/Common.NewLine">New line</sys:String>
+	<sys:String x:Key="String/Common.ExternalDependencyNotFound">At least one required external dependency is not installed on this device. Please install it and try again.</sys:String>
+	<sys:String x:Key="String/Common.InvalidFormat">Invalid Format</sys:String>
+	<sys:String x:Key="String/Common.MoveDown">Move Down</sys:String>
+	<sys:String x:Key="String/Common.MoveUp">Move Up</sys:String>
+	<sys:String x:Key="String/Common.NewLine">New Line</sys:String>
 	<sys:String x:Key="String/Common.References">References</sys:String>
-	<sys:String x:Key="String/Common.RegularExpression.Reference">Syntax reference</sys:String>
+	<sys:String x:Key="String/Common.RegularExpression.Reference">Syntax Reference</sys:String>
 	<sys:String x:Key="String/Common.To">To</sys:String>
-	<sys:String x:Key="String/Common.UnableToCalculateFileSize">Unable to collect size of one or more files.</sys:String>
+	<sys:String x:Key="String/Common.UnableToCalculateFileSize">Unable to collect the size of one or more files.</sys:String>
 
 	<!-- ComparisonType -->
 	<sys:String x:Key="String/ComparisonType.Equivalent">=</sys:String>
@@ -182,23 +182,23 @@
 	<sys:String x:Key="String/ComparisonType.SmallerOrEquivalent">≤</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditor -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog">Copy value between variables…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">Dequeue from queue to variable…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">Enqueue variable to queue…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">Copy from queue to variable…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog">Copy from stack to variable…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">Pop from stack to variable…</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push variable to stack…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog">Copy Value between Variables…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog">Dequeue from Queue to Variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog">Enqueue Variable to Queue…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog">Copy from Queue to Variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog">Copy from Stack to Variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog">Pop from Stack to Variable…</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push Variable to Stack…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Name of queue:</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Name of stack:</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Name of variable:</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Queue Name:</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Stack Name:</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Variable Name:</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Name of source variable:</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Name of target variable:</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.Title">Copy value between variables</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Source Variable Name:</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Target Variable Name:</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.Title">Copy Value between Variables</sys:String>
 
 	<!-- CopyVariableAction -->
 	<sys:String x:Key="String/CopyVariableAction">Copy from {{{0}}} to {{{1}}}</sys:String>
@@ -208,22 +208,22 @@
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
-	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp format:</sys:String>
-	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp Format:</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">Sample Result: {0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
-	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and time:</sys:String>
-	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select date and time</sys:String>
+	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and Time:</sys:String>
+	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select Date and Time</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
-	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeue value from queue to variable</sys:String>
+	<sys:String x:Key="String/DequeueToVarEditorDialog.Title">Dequeue Value from Queue to Variable</sys:String>
 
 	<!-- DequeueToVariableAction -->
-	<sys:String x:Key="String/DequeueToVariableAction">Dequeue value from queue '{0}' to {{{1}}}</sys:String>
+	<sys:String x:Key="String/DequeueToVariableAction">Dequeue Value from Queue '{0}' to {{{1}}}</sys:String>
 
 	<!-- DisplayableLogAnalysisConditionsEditor -->
-	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">Compare variable and constant…</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">Compare variables…</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarAndConstComparisonCondition.WithDialog">Compare Variable and Constant…</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisConditionsEditor.VarsComparisonCondition.WithDialog">Compare Variables…</sys:String>
 
 	<!-- DisplayableLogAnalysisResultType -->
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Checkpoint">Checkpoint</sys:String>
@@ -234,71 +234,71 @@
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Frequency">Frequency</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Increase">Increase</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Information">Information</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationEnd">End of operation</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationStart">Start of operation</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationEnd">End of Operation</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.OperationStart">Start of Operation</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Performance">Performance</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisResultType.SkippedOperation">Skipped operation</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.SkippedOperation">Skipped Operation</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Slow">Slow</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Steady">Steady</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">Time span</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisResultType.TimeSpan">Time Span</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Trend">Trend</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisResultType.Warning">Warning</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit">Unit to parse byte size of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName">Variable to parse byte size of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions">Extra conditions</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description">Conditions to match log properties or variables captured by pattern.</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationUnit">Unit to parse duration of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationVariableName">Variable to parse duration of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level">Log level</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level.Description">Only logs with given level will be selected to generate results.</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message">Message of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Description">You can use Interpolation Syntax "{}" to output log property or custom group in pattern to message.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit">Byte Size Unit for Analysis Result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName">Byte Size Variable for Analysis Result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions">Extra Conditions</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description">Conditions to match log properties or variables captured by the pattern.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationUnit">Duration Unit for Analysis Result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.DurationVariableName">Duration Variable for Analysis Result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level">Log Level</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Level.Description">Only logs with the given level will be selected to generate results.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message">Message for Analysis Result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Message.Description">You can use the interpolation syntax "{}" to include a log property or custom group from the pattern in the message.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Other">Other</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern">Pattern</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">Regular expression to match text of log.</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed">You can use \$\$ as separator between text properties. For example, if you want to find log with user name "John" and message "Hello" then you can use pattern "John\$\$Hello". The order of text properties are same as visible log properties defined by log profile.</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName">Variable to parse quantity of analysis result</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ResultType">Type of analysis result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description">Regular expression to match the text of a log.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed">You can use \$\$ as a separator between text properties. For example, if you want to find logs with user name "John" and message "Hello", you can use the pattern "John\$\$Hello". The order of text properties is same as the visible log properties defined by the log profile.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName">Quantity Variable for Analysis Result</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleEditorDialog.ResultType">Analysis Result Type</sys:String>
 
 	<!-- DisplayableLogAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule set before activating Pro version.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">Cannot create more rule sets without activating the Pro version.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Icon">Icon</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">Color of icon</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">Icon Color</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">Name</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 rule set and rule set won't be kept after closing ULogViewer.</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">Without activating the Pro version, you can have only 1 rule set and the rule set won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">Rules</sys:String>
 
 	<!-- EmbeddedScriptLogDataSourceProvider -->
-	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">Embedded log data source script</sys:String>
+	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">Embedded Log Data Source Script</sys:String>
 
 	<!-- EnqueueVarEditorDialog -->
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Name of queue</sys:String>
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">Enqueue value of variable to queue</sys:String>
-	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Name of variable</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Queue">Queue Name</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">Enqueue Variable to Queue</sys:String>
+	<sys:String x:Key="String/EnqueueVarEditorDialog.Variable">Variable Name</sys:String>
 
 	<!-- EnqueueVariableAction -->
-	<sys:String x:Key="String/EnqueueVariableAction">Enqueue {{{0}}} to queue '{1}'</sys:String>
+	<sys:String x:Key="String/EnqueueVariableAction">Enqueue {{{0}}} to Queue '{1}'</sys:String>
 	
 	<!-- EnvVarEditorDialog -->
-	<sys:String x:Key="String/EnvVarEditorDialog.Name">Variable name</sys:String>
-	<sys:String x:Key="String/EnvVarEditorDialog.Title">Environment variable</sys:String>
-	<sys:String x:Key="String/EnvVarEditorDialog.Value">Variable value</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Name">Name</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Title">Environment Variable</sys:String>
+	<sys:String x:Key="String/EnvVarEditorDialog.Value">Value</sys:String>
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools">Android SDK Platform Tools</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">'Android Device Log', 'Android Device Event Log', 'Android Device System Trace', 'Android Process Memory Monitor', 'Android System Memory Monitor', 'Specific Android Device Event Log', 'Specific Android Device Log' and 'Specific Android Device System Trace' built-in log profiles use Android Debug Bridge (ADB) which is distributed with Android SDK Platform Tools. Please install Android SDK Platform Tools to the default location, or add path of 'platform-tools' folder of Android SDK Platform Tools to PATH environment variable after installation.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">'Android Device Log', 'Android Device Event Log', 'Android Device System Trace', 'Android Process Memory Monitor', 'Android System Memory Monitor', 'Specific Android Device Event Log', 'Specific Android Device Log' and 'Specific Android Device System Trace' built-in log profiles use Android Debug Bridge (ADB), which is distributed with Android SDK Platform Tools. Please install Android SDK Platform Tools to the default location, or add the path of the 'platform-tools' folder of Android SDK Platform Tools to the PATH environment variable after installation.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure Command-Line Interface (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data source uses Azure Command-Line Interface (CLI) to read log data or access functions of Azure. Please install Azure Command-Line Interface (CLI) to the default location, or add path of folder contains 'az' command to PATH environment variable after installation.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">'Azure CLI', 'MySQL Database' and 'SQL Server Database' data sources use Azure Command-Line Interface (CLI) to read log data or access Azure functions. Please install Azure Command-Line Interface (CLI) to the default location, or add the path of the folder containing the 'az' command to the PATH environment variable after installation.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">'Git Log' and 'Git Log (Simple)' built-in log profiles use Git to read commit logs.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice">libimobiledevice</sys:String>
-	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' and 'Specific Apple Device Log' built-in log profiles use idevicesyslog tool, which is part of libimobiledevice, to contact device and get logs. Please add path of folder contains 'idevicesyslog' command to PATH environment variable after installation.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' and 'Specific Apple Device Log' built-in log profiles use the idevicesyslog tool, which is part of libimobiledevice, to connect to the device and get logs. Please add the path of the folder containing the 'idevicesyslog' command to the PATH environment variable after installation.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace Conversion Tool</sys:String>
-	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">'Android Device System Trace' and 'Specific Android Device System Trace' built-in log profiles use Trace Conversion Tool provided by Perfetto to convert captured data into Android Systrace format. Please add path of folder contains 'traceconv' command to PATH environment variable after installation.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">'Android Device System Trace' and 'Specific Android Device System Trace' built-in log profiles use Trace Conversion Tool provided by Perfetto to convert captured data into Android Systrace format. Please add the path of the folder containing the 'traceconv' command to the PATH environment variable after installation.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Command-Line Tools for Xcode</sys:String>
-	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">'Apple Device Simulators Log' and 'Specific Apple Device Simulator Log' built-in log profiles use command-line tools for Xcode to contact simulators and get logs. You can either install Xcode or command-line tools for Xcode directly.</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">'Apple Device Simulators Log' and 'Specific Apple Device Simulator Log' built-in log profiles use command-line tools for Xcode to connect to simulators and get logs. You can either install Xcode or the command-line tools for Xcode directly.</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting">Setup Command-Line Tools for Xcode</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting.Description">If you install Command-Line Tools for Xcode with Xcode, you need to enable it by setting 'Xcode > Settings > Locations > Command Line Tools' to 'Xcode'.</sys:String>
 	
@@ -319,27 +319,27 @@
 	<sys:String x:Key="String/FileSizeUnit.Terabytes">TB</sys:String>
 	
 	<!-- FileSystemItemSelection -->
-	<sys:String x:Key="String/FileSystemItemSelection.ExportLogAnalysisRuleSet">Export log analysis rule set or script</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ExportLogProfile">Export profile</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ExportLogs">Export logs</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ExportScriptLogDataSourceProvider">Export log data source script</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ImportLogAnalysisRuleSet">Import log analysis rule set or script</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ImportLogProfile">Import profile</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ImportScriptLogDataSourceProvider">Import log data source script</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.SelectWorkingDirectory">Select working directory</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportLogAnalysisRuleSet">Export Log Analysis Rule Set or Script</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportLogProfile">Export Profile</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportLogs">Export Logs</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportScriptLogDataSourceProvider">Export Log Data Source Script</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportLogAnalysisRuleSet">Import Log Analysis Rule Set or Script</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportLogProfile">Import Profile</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportScriptLogDataSourceProvider">Import Log Data Source Script</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.SelectWorkingDirectory">Select Working Directory</sys:String>
 
 	<!-- FilesMaxLogReadingCountDialog -->
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description">You can also change the setting in Options.</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow">Reading position</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow">Reading Position</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow.Description">The position to read logs from each file (data source).</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">Max reading count</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each file.</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to {0} inclusively.</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by log profile is {0}.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">Max Reading Count</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">Maximum number of logs read from each file.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">The valid range is 1 to {0}, inclusive.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile">Max log reading count defined by the log profile is {0}.</sys:String>
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion">You can set the value one time before activating Pro version.</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Log reading count options</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion">You can set the value only once without activating the Pro version.</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.Title">Log Reading Count Options</sys:String>
 
 	<!-- FilterCombinationMode -->
 	<sys:String x:Key="String/FilterCombinationMode.Auto">Auto</sys:String>
@@ -347,66 +347,66 @@
 	<sys:String x:Key="String/FilterCombinationMode.Union">Union</sys:String>
 
 	<!-- IPEndPointInputDialog -->
-	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 address:</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.CommonAddresses">Common addresses</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 Address:</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.CommonAddresses">Common Addresses</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv4">Loopback</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv6">Loopback (IPv6)</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port:</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP endpoint</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP Endpoint</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key">Conversion from '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value">Conversion to '{0}' is already defined.</sys:String>
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Properties of log to output:</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Log Properties to Output:</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">Properties will be sorted by name automatically.</sys:String>
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON options</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON Options</sys:String>
 
 	<!-- KeyLogAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit key log analysis rule</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleEditorDialog.Title">Edit Key Log Analysis Rule</sys:String>
 
 	<!-- KeyLogAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit key log analysis rule set</sys:String>
+	<sys:String x:Key="String/KeyLogAnalysisRuleSetEditorDialog.Title">Edit Key Log Analysis Rule Set</sys:String>
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">Script to analyze log</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The type of return value is boolean to indicate whether analysis results of the log should be taken or not.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">Script to Analyze Log</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The return value is a boolean indicating whether the analysis results of the log should be included or not.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
- * Types are imported automatically for log analysis. For ex, ILog and ResultType.
+ * Types are imported automatically for log analysis, for example, ILog and ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
 
 /*
- * Return True to take results added by Context.AddResult(), or False to ignore current log and results.
+ * Return True to include results added by Context.AddResult(), or False to skip current log and results.
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
- * Types are imported automatically for log analysis. For ex, ILog and ResultType.
+ * Types are imported automatically for log analysis, for example, ILog and ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */
 
 /*
- * Return True to take results added by context.addResult(), or False to ignore current log and results.
+ * Return True to include results added by context.addResult(), or False to skip current log and results.
  */
 return false;</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># Types are imported automatically for log analysis. For ex, ILog and ResultType.
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># Types are imported automatically for log analysis, for example, ILog and ResultType.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
 
-# Return True to take results added by context.AddResult(), or False to ignore current log and results.
+# Return True to include results added by context.AddResult(), or False to skip current log and results.
 return False</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">Cannot create more log analysis script before activating Pro version.</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors">There is one or more errors in your script. Do you still want to apply?</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">There is one or more errors in your script. Do you still want to close the editor?</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">Cannot create more log analysis scripts without activating the Pro version.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors">There are one or more errors in your script. Do you still want to apply?</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">There are one or more errors in your script. Do you still want to close the editor?</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">Icon</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Color of icon</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">Contextual-based analysis</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">Whether the logs should be analysis one-by-one sequentially in time ascending order.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">Icon Color</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">Contextual-Based Analysis</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">Whether the logs should be analyzed one by one in ascending chronological order.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log analysis script and script won't be kept after closing ULogViewer.</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to setup analysis</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run one time before starting analysis process. There is no return value needed.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Without activating the Pro version, you can have only 1 log analysis script and the script won't be kept after closing ULogViewer.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to Setup Analysis</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run once before starting the analysis process. There is no return value needed.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
@@ -414,38 +414,38 @@ return False</sys:String>
 	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp"/>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python"># Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit log analysis script</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit Log Analysis Script</sys:String>
 	
 	<!-- LogAnalysisViewModel -->
 	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">Unable to copy selected log analysis results.</sys:String>
 	
 	<!-- LogChartSeriesSourceEditorDialog -->
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">Custom display name</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue">Default value</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">Specific number if value cannot be got from property.</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">Display name</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">Custom Display Name</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue">Default Value</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">The default number if the value cannot be retrieved from the property.</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">Display Name</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">Property</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier">Quantifier</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier.Description">Quantifier of property value such as 'KB' and 'cm'.</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName">Secondary display name</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly">List defined/available log properties only</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">Source log property of chart</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">Scaling of value</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">The number which the value of property will be multiplied by.</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier.Description">Quantifier of the property value, such as 'KB' or 'cm'.</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName">Secondary Display Name</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly">List Defined/Available Log Properties Only</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">Chart Source Log Property</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">Value Scaling</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">The number to multiply the property value by.</sys:String>
 	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.None">None</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueAreas">Area chart of values</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueAreasWithDataPoints">Area chart of values with data points</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueBars">Bar chart of values</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueCurves">Curve chart of values</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">Curve chart of values with data points</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueLines">Line chart of values</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">Line chart of values with data points</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueStackedAreas">Stacked area chart of values</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">Stacked area chart of values with data points</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueStackedBars">Stacked bar chart of values</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueStatisticBars">Bar chart of count of values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreas">Area Chart of Values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreasWithDataPoints">Area Chart of Values With Data Points</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueBars">Bar Chart of Values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueCurves">Curve Chart of Values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">Curve Chart of Values With Data Points</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLines">Line Chart of Values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">Line Chart of Values With Data Points</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedAreas">Stacked Area Chart of values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">Stacked Area Chart of Values With Data Points</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedBars">Stacked Bar Chart of Values</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStatisticBars">Bar Chart of Value Counts</sys:String>
 	
 	<!-- LogChartValueGranularity -->
 	<sys:String x:Key="String/LogChartValueGranularity.Billion">Billion (10⁹)</sys:String>
@@ -453,23 +453,23 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Default">Default</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Gigabytes">Gigabytes (GB)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Hundred">Hundred (10²)</sys:String>
-	<sys:String x:Key="String/LogChartValueGranularity.HundredBillion">Hundred billion (10¹¹)</sys:String>
-	<sys:String x:Key="String/LogChartValueGranularity.HundredMillion">Hundred million (10⁸)</sys:String>
-	<sys:String x:Key="String/LogChartValueGranularity.HundredThousand">Hundred thousand (10⁵)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredBillion">Hundred Billion (10¹¹)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredMillion">Hundred Billion (10⁸)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.HundredThousand">Hundred Thousand (10⁵)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Kilobytes">Kilobytes (KB)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Megabytes">Megabytes (MB)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Million">Million (10⁶)</sys:String>
-	<sys:String x:Key="String/LogChartValueGranularity.TenBillion">Ten billion (10¹⁰)</sys:String>
-	<sys:String x:Key="String/LogChartValueGranularity.TenMillion">Ten million (10⁷)</sys:String>
-	<sys:String x:Key="String/LogChartValueGranularity.TenThousand">Ten thousand (10⁴)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenBillion">Ten Billion (10¹⁰)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenMillion">Ten Million (10⁷)</sys:String>
+	<sys:String x:Key="String/LogChartValueGranularity.TenThousand">Ten Thousand (10⁴)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Ten">Ten</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Thousand">Thousand (10³)</sys:String>
 	<sys:String x:Key="String/LogChartValueGranularity.Trillion">Trillion (10¹²)</sys:String>
 	
 	<!-- LogChartXAxisType -->
 	<sys:String x:Key="String/LogChartXAxisType.None">None</sys:String>
-	<sys:String x:Key="String/LogChartXAxisType.SimpleTimestamp">Timestamp or time span with simple format</sys:String>
-	<sys:String x:Key="String/LogChartXAxisType.Timestamp">Timestamp or time span</sys:String>
+	<sys:String x:Key="String/LogChartXAxisType.SimpleTimestamp">Timestamp or Time Span With Simple Format</sys:String>
+	<sys:String x:Key="String/LogChartXAxisType.Timestamp">Timestamp or Time Span</sys:String>
 
 	<!-- LogColorIndicator -->
 	<sys:String x:Key="String/LogColorIndicator.FileName">File</sys:String>
@@ -482,33 +482,35 @@ return False</sys:String>
 	<sys:String x:Key="String/LogColorIndicator.UserName">User</sys:String>
 
 	<!-- LogDataSourceOptions -->
-	<sys:String x:Key="String/LogDataSourceOptions.Category">Log category</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.Category">Log Category</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Command">Command</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">Connection string</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.Encoding">Text encoding</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">Environment variables</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">The environment variables '{0}' is already added before.</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FileName">File path</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">Format CLEF data when reading</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">Format JSON data when reading</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">Format XML data when reading</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">Connection String</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.Encoding">Text Encoding</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">Environment Variables</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">The environment variable '{0}' is already been added.</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FileName">File Path</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">Format CLEF Data When Reading</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">Format JSON Data When Reading</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">Format XML Data When Reading</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">Include Standard Error (stderr)</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP address</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Address">IPv4/IPv6 address</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP Address</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Address">IPv4/IPv6 Address</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Port">Port</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">This is the resource on Azure</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">This Is the Resource on Azure</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">Password</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.ProcessId">Process identifier (PID)</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.ProcessName">Process name</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.QueryString">Query string</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.SelectFileName">Select file…</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.SelectWorkingDirectory">Select directory…</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.SetupCommands">Commands before reading logs</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">Commands after reading logs</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ProcessId">Process Identifier (PID)</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.ProcessName">Process Name</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.QueryString">Query String</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SelectFileName">Select File…</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SelectWorkingDirectory">Select Directory…</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.SetupCommands">Commands Before Reading Logs</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.TeardownCommands">Commands After Reading Logs</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Uri">URI</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.UserName">User name</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.UseTextShell">Use Command-line Shell to run commands</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">Working directory</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.UserName">User Name</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.UseTextShell">Use Command-Line Shell to Run Commands</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">Working Directory</sys:String>
+	
+	<!-- Old -->
 
 	<!-- LogDataSourceOptionsDialog -->
 	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will setup environment automatically if it is the resource on Azure. For ex, logging in or updating firewall rules.</sys:String>
