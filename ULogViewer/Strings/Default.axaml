@@ -509,14 +509,12 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.UserName">User Name</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.UseTextShell">Use Command-Line Shell to Run Commands</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">Working Directory</sys:String>
-	
-	<!-- Old -->
 
 	<!-- LogDataSourceOptionsDialog -->
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will setup environment automatically if it is the resource on Azure. For ex, logging in or updating firewall rules.</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">ULogViewer will set up the environment automatically if it is the resource on Azure, for example, logging in or updating firewall rules.</sys:String>
 	<StaticResourceExtension x:Key="String/LogDataSourceOptionsDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select resources on Azure</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data source options</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">Select Resources on Azure</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">Data Source Options</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">Debug</sys:String>
@@ -531,23 +529,23 @@ return False</sys:String>
 	<sys:String x:Key="String/LogLevel.Warn">Warn</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped log level:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped Log Level:</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text:</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">Mapping of log level</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log level:</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped text:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">Log Level Mapping</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log Level:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped Text:</sys:String>
 
 	<!-- LogPatternEditorDialog -->
-	<sys:String x:Key="String/LogPatternEditorDialog.Description">Description of Pattern</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">The line can be skipped</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.IsRepeatable">The line can be repeated continuously</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Description">Description</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.IsSkippable">The Line Can Be Skipped</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.IsRepeatable">The Line Can Be Repeated Continuously</sys:String>
 	<sys:String x:Key="String/LogPatternEditorDialog.Regex">Pattern</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">Regular expression to match single raw log line.</sys:String>
-	<sys:String x:Key="String/LogPatternEditorDialog.Title">Pattern of log line</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Regex.Description">Regular expression to match a single raw log line.</sys:String>
+	<sys:String x:Key="String/LogPatternEditorDialog.Title">Log Line Pattern</sys:String>
 	
 	<!-- LogPatternMatchingMode -->
-	<sys:String x:Key="String/LogPatternMatchingMode.Arbitrary">Arbitrary order</sys:String>
-	<sys:String x:Key="String/LogPatternMatchingMode.ArbitraryAfterFirstMatch">Arbitrary order after first one</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.Arbitrary">Arbitrary Order</sys:String>
+	<sys:String x:Key="String/LogPatternMatchingMode.ArbitraryAfterFirstMatch">Arbitrary Order After the First One</sys:String>
 	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">Sequentially</sys:String>
 
 	<!-- LogProfileIcon -->
@@ -594,10 +592,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Login">Login</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Logout">Logout</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Mark">Mark</sys:String>
-	<sys:String x:Key="String/LogProfileIcon.MobileDevices">Mobile devices</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.MobileDevices">Mobile Devices</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Network">Network</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Performance">Performance</sys:String>
-	<sys:String x:Key="String/LogProfileIcon.Phone">Mobile phone</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Phone">Mobile Phone</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Power">Power</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.RAM">Memory</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Screen">Screen</sys:String>
@@ -607,12 +605,12 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Signal">Signal</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Statistic">Statistic</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Table">Table</sys:String>
-	<sys:String x:Key="String/LogProfileIcon.TabletDevice">Tablet device</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.TabletDevice">Tablet Device</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Temperature">Temperature</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Terminal">Terminal</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Tools">Tools</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Usb">USB</sys:String>
-	<sys:String x:Key="String/LogProfileIcon.VersionControl">Version control</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.VersionControl">Version Control</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Video">Video</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Warning">Warning</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Watch">Watch</sys:String>
@@ -632,102 +630,102 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIconColor.Yellow">Yellow</sys:String>
 	
 	<!-- LogProfileEditorDialog -->
-	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">Allow multiple files</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams">Cannot edit log profile '{0}' because there is at least one parameter of it is Pro-version only.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color indicator</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">Way of grouping to show color block on the left hand side of each log.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">Allow Multiple Files</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams">Cannot edit the log profile '{0}' because at least one of its parameters is available in the Pro version only.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">Color Indicator</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">The grouping method used to show a color block on the left-hand side of each log.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Common">Common</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">Cooperative log analysis script</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">It cannot be recovered once you delete the script. Are you sure to delete log analysis script?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">Cooperative Log Analysis Script</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">It cannot be recovered once deleted. Are you sure you want to delete the log analysis script?</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">The log analysis script will be run automatically when using this profile.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Description">The script will be run automatically when using this profile.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">Import existing</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">Import from file…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">Import Existing</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">Import From File…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data source</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">Data Source</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(Pro)</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel">Default log level</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel.Description">Applied when value of raw log level cannot be mapped or not presented.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel">Default Log Level</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel.Description">Applied when the raw log level value cannot be mapped or is not present.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">Description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">Conversion from '{0}' is already defined.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">Embedded log data source script</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">It cannot be recovered once you delete the script. Are you sure to delete log data source script?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">Embedded Log Data Source Script</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">It cannot be recovered once deleted. Are you sure you want to delete the log data source script?</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">You can set embedded log data source script as 'Data source' of the profile.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">You can set the embedded log data source script as 'Data Source' of the profile.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">Import existing</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">Import from file…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">Import Existing</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">Import From File…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">Format description</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">Format Description</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">Icon</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">Color of icon</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">Need to set valid options</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">Continuous reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching end of data source.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as template</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">Template cannot be used directly but can be cloned as new log profile with partial parameters.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about 《How does ULogViewer read and parse logs》 to help you to create log profile?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">Icon Color</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">Valid options are required.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">Administrator Role is Required</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">Continuous Reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching the end of the data source.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as Template</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">A template cannot be used directly, but can be cloned as a new profile with some parameters pre-filled.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about "How Does ULogViewer Read and Parse Logs" to help you create a profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">Log Chart</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">Source log properties</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">Specify at most 10 properties as sources to generate chart.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">Type of chart</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartValueGranularity">Granularity of values</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">You have defined 'Type of chart' without defining 'Source log properties'. Do you want to define 'Source log properties'?</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChartXAxisType">X axis of chart</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">Source Log Properties</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">Specify at most 10 properties as sources to generate the chart.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">Chart Type</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartValueGranularity">Values Granularity</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">You have defined 'Chart Type' without defining 'Source Log Properties'. Do you want to define 'Source Log Properties'?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChartXAxisType">Chart X Axis</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">Log Displaying</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Mapping of log level</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Convert from raw value of property specified by "Name of property of raw log level" into actual log level.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">Mapping of log level</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">Convert log level into specific text. The mapping for log reading will be used if specific level cannot be mapped.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternMatchingMode">Way of matching log lines with patterns</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">Log line patterns</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Pattern to parse each line of raw log.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap">You didn't define 'Mapping of log level' yet, the pre-defined mapping of log level will be used which may not suitable for your logs.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You have defined 'Log line patterns' without defining 'Log properties to show' which may cause logs shown incorrectly. Do you want to define 'Log properties to show'?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">Log Level Mapping</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">Converts the raw property value specified by 'Raw Log Level Property Name' into the actual log level.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">Log Level Mapping</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting.Description">Converts the log level into specific text. The mapping for log reading will be used if the specific level cannot be mapped.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternMatchingMode">Patterns Matching Method</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns">Log Line Patterns</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">Patterns to parse raw log lines.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap">You haven't defined 'Log Level Mapping' yet, so the predefined log level mapping will be used, which may not be suitable for your logs.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">You have defined 'Log Line Patterns' without defining 'Log Properties to Show', which may cause logs to be shown incorrectly. Do you want to define 'Log Properties to Show' now?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">Log Reading</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">The position to read logs from each data source.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Format of text in log for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Format of text in log for output</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">Log Text Format</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">Log Text Format</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">Log Output</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log output formats</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The format will be used for logs copying and saving. For each log, the first format which contains all valid log properties will be used from list. Otherwise, the first format in list will be used.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">Log Output Formats</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">The formats will be used for copying and saving logs. For each log, the first format containing all valid log properties will be used from the list. Otherwise, the first format in the list will be used.</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.MaxLogReadingCount" ResourceKey="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">Maximum number of logs to be read from each data source.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">The valid range of number is 1 to 2147483647 inclusively.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">The valid range is 1 to 2147483647, inclusive.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">Name</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">Name of property of raw log level</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">The property will be used for providing raw value of log level.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay before restarting log reading (ms)</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">Manage log data source scripts…</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">Sort direction of log</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">Sort key of log</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForReading">Locale of time span for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForWriting">Locale of time span for output</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading">Type of time span for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description">'Time Span' is the difference between two point of times. You can also treat it as 'Relative Time'.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForDisplaying">Format of time span for displaying</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting">Format of time span for output</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">Custom format of time span for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">Time span of categorizing logs by timestamp</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCultureInfoForReading">Locale of timestamp for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCultureInfoForWriting">Locale of timestamp for output</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">Type of timestamp for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">Format of timestamp for displaying</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">Format of timestamp for output</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark">Empty to use same format as reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatsForReading">Custom format of timestamp for reading</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">Create new log profile</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">Edit log profile</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">Log properties to show</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which properties of log can be seen in viewer.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You have defined 'Log properties to show' without defining 'Log line patterns' which may cause logs shown incorrectly. Do you want to define 'Log line patterns'?</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.WorkingDirectoryRequirement">Requirement of working directory</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">Raw Log Level Property Name</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">The property will be used to provide the raw value of the log level.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">Delay Before Restarting Log Reading (Milliseconds)</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">Manage Log Data Source Scripts…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">Log Sort Direction</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">Log Sort Key</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForReading">Time Span Locale</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForWriting">Time Span Locale</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading">Time Span Type</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanEncodingForReading.Description">'Time Span' is the difference between two time points. You can also treat it as 'Relative Time'.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForDisplaying">Time Span Format</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting">Time Span Format</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatForWriting.Watermark">Empty to Use Same Format As Reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanFormatsForReading">Custom Time Span Formats</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCategoryGranularity">Time Span to Categorize Logs By Timestamp</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCultureInfoForReading">Timestamp Locale</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampCultureInfoForWriting">Timestamp Locale</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampEncodingForReading">Timestamp Type</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForDisplaying">Timestamp Format</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting">Timestamp Format</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatForWriting.Watermark">Empty to Use Same Format As Reading</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.TimestampFormatsForReading">Custom Timestamp Formats</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.Title.Create">Create New Log Profile</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.Title.Edit">Edit Log Profile</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties">Log Properties to Show</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogProperties.Description">Specify which log properties can be seen in the viewer.</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.VisibleLogPropertiesWithoutLogPatterns">You have defined 'Log Properties to Show' without defining 'Log Line Patterns', which may cause logs to be shown incorrectly. Do you want to define 'Log Line Patterns' now?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.WorkingDirectoryRequirement">Working Directory Requirement</sys:String>
 
 	<!-- LogProfilePropertyRequirement -->
 	<sys:String x:Key="String/LogProfilePropertyRequirement.Ignored">Ignored</sys:String>
@@ -743,31 +741,31 @@ return False</sys:String>
 
 	<!-- LogProfileSelectionDialog -->
 	<sys:String x:Key="String/LogProfileSelectionDialog.AddLogProfile">Create…</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">All profiles</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">Built-in</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">Unable to import profile from '{0}' because of containing Pro version parameters.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.AllLogProfiles">All Profiles</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.BuiltInLogProfile">Built-In</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.CannotImportProVersionOnlyLogProfile">Unable to import the profile from '{0}' because it contains Pro version only parameters.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ConfirmRemovingLogProfile">It cannot be recovered once you delete the log profile. Are you sure to remove log profile '{0}'?</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">Edit profile</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">Export profile</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export profile to '{0}'.</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">Unable to import profile from '{0}'.</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet">Cooperative log analysis</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.EditLogProfile">Edit Profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ExportLogProfile">Export Profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToExportLogProfile">Unable to export the profile to '{0}'.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.FailedToImportLogProfile">Unable to import the profile from '{0}'.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.HasCooperativeLogAnalysisScriptSet">Cooperative Log Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.HasLogChart">Chart</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.ImportLogProfile">Import…</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">Administrator role needed</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">Continuous reading</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working directory needed</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">Profile has been exported to '{0}' successfully.</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.IsAdministratorNeeded">Administrator Role Required</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.IsContinuousReading">Continuous Reading</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.IsWorkingDirectoryNeeded">Working Directory Required</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.LogProfileExported">The profile has been exported to '{0}' successfully.</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.NoDescription">Custom profile without description.</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">Other profiles</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.OtherLogProfiles">Other Profiles</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.PinnedLogProfiles">Pinned</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.PinUnpinLogProfile">Pin/Unpin Profile</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileSelectionDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">Recently used profiles</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">Delete profile</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles">Clear history</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.RecentlyUsedLogProfiles">Recently Used Profiles</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.RemoveLogProfile">Delete Profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles">Clear History</sys:String>
 	<sys:String x:Key="String/LogProfileSelectionDialog.TemplateLogProfiles">Template</sys:String>
-	<sys:String x:Key="String/LogProfileSelectionDialog.Title">Select log profile</sys:String>
+	<sys:String x:Key="String/LogProfileSelectionDialog.Title">Select Log Profile</sys:String>
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String/LogProperty.Action">Action</sys:String>
@@ -903,68 +901,70 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Warning">Warning</sys:String>
 
 	<!-- LogPropertyForegroundColor -->
-	<sys:String x:Key="String/LogPropertyForegroundColor.Level">Level of log</sys:String>
+	<sys:String x:Key="String/LogPropertyForegroundColor.Level">Log Level</sys:String>
 	<sys:String x:Key="String/LogPropertyForegroundColor.None">None</sys:String>
 
 	<!-- LogReadingPreconditionDialog -->
-	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">You can set the precondition of logs to be read. It won't affect logs which were being or already read.</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">to (exclusive)</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.InvalidTimestampRange">The ending timestamp should be later than beginning timestamp</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">Specific range of timestamp</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps.Description">Read logs with timestamps in the specific range.</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Description">You can set the preconditions for logs to be read. It won't affect logs that are being or have already been read.</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.EndingTimestamp">To (Exclusive)</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.InvalidTimestampRange">The ending timestamp should be later than the beginning timestamp.</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps">Specific Timestamp Range</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.PreconditionTimestamps.Description">Read logs with timestamps within the specified range.</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description">You can also change the setting in Options.</sys:String>
-	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">Precondition of log reading</sys:String>
+	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">Log Reading Preconditions</sys:String>
 
 	<!-- LogReadingWindow -->
-	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">End of data source</sys:String>
-	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">Start of data source</sys:String>
+	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">End of Data Source</sys:String>
+	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">Start of Data Source</sys:String>
 	
 	<!-- LogSeparatorType -->
 	<sys:String x:Key="String/LogSeparatorType.Horizontal">Horizontal</sys:String>
-	<sys:String x:Key="String/LogSeparatorType.HorizontalAndVertical">Horizontal and vertical</sys:String>
+	<sys:String x:Key="String/LogSeparatorType.HorizontalAndVertical">Horizontal and Vertical</sys:String>
 	<sys:String x:Key="String/LogSeparatorType.None">None</sys:String>
 	<sys:String x:Key="String/LogSeparatorType.Vertical">Vertical</sys:String>
 
 	<!-- LogSortKey -->
-	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">Beginning time span of log</sys:String>
-	<sys:String x:Key="String/LogSortKey.BeginningTimestamp">Beginning timestamp of log</sys:String>
-	<sys:String x:Key="String/LogSortKey.EndingTimeSpan">Ending time span of log</sys:String>
-	<sys:String x:Key="String/LogSortKey.EndingTimestamp">Ending timestamp of log</sys:String>
-	<sys:String x:Key="String/LogSortKey.Id">Incremental ID of log</sys:String>
-	<sys:String x:Key="String/LogSortKey.ReadTime">Timestamp of reading log</sys:String>
-	<sys:String x:Key="String/LogSortKey.TimeSpan">Time span of log</sys:String>
-	<sys:String x:Key="String/LogSortKey.Timestamp">Timestamp of log</sys:String>
+	<sys:String x:Key="String/LogSortKey.BeginningTimeSpan">Log Beginning Time Span</sys:String>
+	<sys:String x:Key="String/LogSortKey.BeginningTimestamp">Log Beginning Timestamp</sys:String>
+	<sys:String x:Key="String/LogSortKey.EndingTimeSpan">Log Ending Time Span</sys:String>
+	<sys:String x:Key="String/LogSortKey.EndingTimestamp">Log Ending Timestamp</sys:String>
+	<sys:String x:Key="String/LogSortKey.Id">Incremental Log ID</sys:String>
+	<sys:String x:Key="String/LogSortKey.ReadTime">Log Reading Timestamp</sys:String>
+	<sys:String x:Key="String/LogSortKey.TimeSpan">Log Time Span</sys:String>
+	<sys:String x:Key="String/LogSortKey.Timestamp">Log Timestamp</sys:String>
 
 	<!-- LogStringEncoding -->
 	<sys:String x:Key="String/LogStringEncoding.Json">JSON</sys:String>
-	<sys:String x:Key="String/LogStringEncoding.Plain">Plain text</sys:String>
+	<sys:String x:Key="String/LogStringEncoding.Plain">Plain Text</sys:String>
 	<sys:String x:Key="String/LogStringEncoding.Xml">XML/HTML</sys:String>
 
 	<!-- LogStringPropertyDialog -->
-	<sys:String x:Key="String/LogStringPropertyDialog.FindText">Find text (Regular expression)</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.FindText">Find Text (Regular Expression)</sys:String>
 	<sys:String x:Key="String/LogStringPropertyDialog.SearchOnInternet">Search on the Internet</sys:String>
-	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">Wrap automatically</sys:String>
-	<sys:String x:Key="String/LogStringPropertyDialog.Title">View log property</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.WrapText">Wrap Automatically</sys:String>
+	<sys:String x:Key="String/LogStringPropertyDialog.Title">View Log Property</sys:String>
 
 	<!-- LogTimeSpanEncoding -->
-	<sys:String x:Key="String/LogTimeSpanEncoding.Custom">Custom format</sys:String>
-	<sys:String x:Key="String/LogTimeSpanEncoding.TotalDays">Total days</sys:String>
-	<sys:String x:Key="String/LogTimeSpanEncoding.TotalHours">Total hours</sys:String>
-	<sys:String x:Key="String/LogTimeSpanEncoding.TotalMicroseconds">Total microseconds</sys:String>
-	<sys:String x:Key="String/LogTimeSpanEncoding.TotalMilliseconds">Total milliseconds</sys:String>
-	<sys:String x:Key="String/LogTimeSpanEncoding.TotalMinutes">Total minutes</sys:String>
-	<sys:String x:Key="String/LogTimeSpanEncoding.TotalSeconds">Total seconds</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.Custom">Custom Format</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.TotalDays">Total Days</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.TotalHours">Total Hours</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.TotalMicroseconds">Total Microseconds</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.TotalMilliseconds">Total Milliseconds</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.TotalMinutes">Total Minutes</sys:String>
+	<sys:String x:Key="String/LogTimeSpanEncoding.TotalSeconds">Total Seconds</sys:String>
 
 	<!-- LogTimestampEncoding -->
-	<sys:String x:Key="String/LogTimestampEncoding.Custom">Custom format</sys:String>
-	<sys:String x:Key="String/LogTimestampEncoding.Unix">Unix timestamp</sys:String>
-	<sys:String x:Key="String/LogTimestampEncoding.UnixMicroseconds">Unix timestamp (microseconds)</sys:String>
-	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix timestamp (milliseconds)</sys:String>
+	<sys:String x:Key="String/LogTimestampEncoding.Custom">Custom Format</sys:String>
+	<sys:String x:Key="String/LogTimestampEncoding.Unix">Unix Timestamp</sys:String>
+	<sys:String x:Key="String/LogTimestampEncoding.UnixMicroseconds">Unix Timestamp (Microseconds)</sys:String>
+	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix Timestamp (Milliseconds)</sys:String>
 
 	<!-- LogWritingFormatEditorDialog -->
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format:</sys:String>
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">You can use Interpolation Syntax "{}" to output log property to log text.</sys:String>
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">Log output format</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">You can use the Interpolation Syntax "{}" to include the log property in the log text.</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">Log Output Format</sys:String>
+	
+	<!-- old -->
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
