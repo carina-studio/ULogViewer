@@ -15,15 +15,15 @@
 	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">'Android Device System Trace' and 'Specific Android Device System Trace' built-in log profiles use Trace Conversion Tool provided by Perfetto to convert captured data into Android Systrace format. Please add the path of the folder containing the 'traceconv' command to '/etc/paths' after installation.</sys:String>
 
 	<!-- SessionView -->
-	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (⌘O)</sys:String>
+	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add Log Files (⌘O)</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit /etc/paths…</sys:String>
-	<sys:String x:Key="String/SessionView.MemoryUsage">Total memory usage</sys:String>
-	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (⌘P)</sys:String>
+	<sys:String x:Key="String/SessionView.MemoryUsage">Total Memory Usage</sys:String>
+	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined Text Filters (⌘P)</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Superuser</sys:String>
-	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show file in Finder</sys:String>
-	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Finder</sys:String>
+	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show File in Finder</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show Working Directory in Finder</sys:String>
 
 	<!-- StandardOutputLogDataSource -->
-	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find command '{0}'. Please make sure that command or executable has been installed and its path has been added to file '/etc/paths'.</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find the command '{0}'. Please make sure that the command or executable has been installed and its path has been added to file '/etc/paths'.</sys:String>
 	
 </ResourceDictionary>

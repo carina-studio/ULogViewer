@@ -976,17 +976,17 @@ return False</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern">起始日誌格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description">用以比對代表動作起始之日誌文字的正規表示式。</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions">起始日誌的後置動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions">後置動作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description">條件符合後執行的動作。</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions">起始日誌的前置動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions">前置動作</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description">日誌文字符合格式後執行的動作。</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions">結束日條件</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions">結束條件</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern">結束日誌格式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description">用以比對代表動作結束之日誌文字的正規表示式。</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions">結束日誌的後置動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions">後置動作</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description"/>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions">結束日誌的前置動作</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions">前置動作</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description"/>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">動作結束方式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比對的變數</sys:String>
@@ -1031,7 +1031,7 @@ return False</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">群組</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName.ProVersionOnly">在啟用 ULogViewer 專業版之前您只能建立一個群組。</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName.ProVersionOnly">在啟用專業版之前您只能建立一個群組。</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion">用於排除日誌</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion.Description">符合格式的日誌將被排除。</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">名稱</sys:String>
@@ -1239,11 +1239,11 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">已指定日誌讀取前置條件</sys:String>
 	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">已指定日誌讀取數量上限</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分資料來源發生錯誤</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示。</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">沒有日誌可以顯示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">點一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">來選取日誌類型以開始使用。</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">高度記憶體使用</sys:String>
-	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">因為高度記憶體使用而暫時停用日誌讀取</sys:String>
+	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">因為高度記憶體使用而暫時停用日誌讀取。</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">忽略文字篩選的大小寫</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">篩選耗時 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">讀取耗時 {0}</sys:String>
@@ -1300,8 +1300,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">因為高度記憶體使用 ({0})，日誌讀取已暫時停用。</sys:String>
 	<sys:String x:Key="String/SessionView.LogsSaved">已成功將日誌儲存至 '{0}'。</sys:String>
 	<sys:String x:Key="String/SessionView.LogsSavingFailed">無法將日誌儲存至 '{0}'。</sys:String>
-	<sys:String x:Key="String/SessionView.LogsShowingMode">日誌顯示模式</sys:String>
-	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
+	<sys:String x:Key="String/SessionView.LogTextFilter.ToolTip">用以比對日誌文字的正規表示式</sys:String>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字篩選 (正規表示式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用執行緒 (Thread ID) 篩選日誌</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已標記日誌</sys:String>

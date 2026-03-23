@@ -406,7 +406,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Without activating the Pro version, you can have only 1 log analysis script and the script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to Setup Analysis</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run once before starting the analysis process. There is no return value needed.</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run once before starting the analysis process. There is no return value required.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
@@ -963,28 +963,26 @@ return False</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format:</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">You can use the Interpolation Syntax "{}" to include the log property in the log text.</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">Log Output Format</sys:String>
-	
-	<!-- old -->
 
 	<!-- MainWindow -->
-	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset title of this tab</sys:String>
-	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">Do you want to use built-in font '{0}' for logs? You can see more built-in fonts or change the log font in Options dialog.</sys:String>
-	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">Reactivating 'ULogViewer Pro' may be needed after upgrading to current version. You just need to remove current device from active device list if necessary and activate 'ULogViewer Pro' again.</sys:String>
-	<sys:String x:Key="String/MainWindow.RefreshingAppIconOnMacOSHint">For macOS user, you may find that application icon doesn't updated on Dock (also in Launchpad) after upgrading. Do you want to see how to refresh the application icon?</sys:String>
+	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset the Title of This Tab</sys:String>
+	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">Do you want to use the built-in font '{0}' for logs? You can find more built-in fonts or change the log font in Options.</sys:String>
+	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">Reactivating 'ULogViewer Pro' may be required after upgrading to current version. You just need to remove the current device from the active device list if necessary, and activate 'ULogViewer Pro' again.</sys:String>
+	<sys:String x:Key="String/MainWindow.RefreshingAppIconOnMacOSHint">For macOS users, you may notice that the application icon doesn't update on the Dock (also in the Launchpad) after upgrading. Do you want to check how to refresh the application icon?</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total: {0}</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to save resources</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">Memory usage: {0}</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to Save Resources</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">Memory Usage: {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">Paused</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for data source</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set title of this tab…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Title of tab:</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for Data Source</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set the Title of This Tab…</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Tab Title:</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">Tabs</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">You can also right-click on here to select log profile and set to new tab.</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">Windows</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">Blue</sys:String>
-	<sys:String x:Key="String/MarkColor.Default">No color</sys:String>
+	<sys:String x:Key="String/MarkColor.Default">No Color</sys:String>
 	<sys:String x:Key="String/MarkColor.Green">Green</sys:String>
 	<sys:String x:Key="String/MarkColor.Indigo">Indigo</sys:String>
 	<sys:String x:Key="String/MarkColor.Magenta">Magenta</sys:String>
@@ -994,12 +992,12 @@ return False</sys:String>
 	<sys:String x:Key="String/MarkColor.Yellow">Yellow</sys:String>
 
 	<!-- MemoryLoggerLogDataSourceProvider -->
-	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer realtime log</sys:String>
+	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer Real-Time Log</sys:String>
 
 	<!-- MemoryUsagePolicy -->
 	<sys:String x:Key="String/MemoryUsagePolicy.Balance">Balance</sys:String>
-	<sys:String x:Key="String/MemoryUsagePolicy.BetterPerformance">Better performance</sys:String>
-	<sys:String x:Key="String/MemoryUsagePolicy.LessMemoryUsage">Less memory usage</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.BetterPerformance">Better Performance</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.LessMemoryUsage">Less Memory Usage</sys:String>
 
 	<!-- MySqlDatabaseLogDataSource -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">Failed to update firewall rules of MySQL Server.</sys:String>
@@ -1008,147 +1006,147 @@ return False</sys:String>
 	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL Database</sys:String>
 
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">Interval to count operation</sys:String>
-	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
-	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">Edit operation counting analysis rule</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">Interval to Count Operation</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.OperationName">Operation Name</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Title">Edit Operation Counting Analysis Rule</sys:String>
 
 	<!-- OperationCountingAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">Edit operation counting analysis rule set</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalysisRuleSetEditorDialog.Title">Edit Operation Counting Analysis Rule Set</sys:String>
 
 	<!-- OperationCountingAnalyzer -->
-	<sys:String x:Key="String/OperationCountingAnalyzer.NoOperation">(No operation)</sys:String>
+	<sys:String x:Key="String/OperationCountingAnalyzer.NoOperation">(No Operation)</sys:String>
 
 	<!-- OperationDurationAnalysisRuleEditorDialog -->
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions">Conditions of beginning log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions">Beginning Conditions</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern">Pattern of beginning log</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description">Regular expression to match text of log which represents the beginning of operation.</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions">Post-actions of beginning log</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description">Actions to perform after all conditions are matched.</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions">Pre-actions of beginning log</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description">Actions to perform after text of log matched.</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions">Conditions of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern">Beginning Log Pattern</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.Pattern.Description">Regular expression to match the log text that represents the beginning of the operation.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions">Post-Actions</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description">Actions to be performed after all conditions are matched.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions">Pre-Actions</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description">Actions to be performed after the log text is matched.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions">Ending Conditions</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Conditions.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Conditions.Description"/>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern">Pattern of ending log</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description">Regular expression to match text of log which represents the ending of operation.</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions">Post-actions of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern">Ending Log Pattern</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.Pattern.Description">Regular expression to match the log text that represents the ending of the operation.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions">Post-Actions</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PostActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PostActions.Description"/>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions">Pre-actions of ending log</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions">Pre-Actions</sys:String>
 	<StaticResourceExtension x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingLog.PreActions.Description" ResourceKey="String/OperationDurationAnalysisRuleEditorDialog.BeginningLog.PreActions.Description"/>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">Mode of ending operations</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">Variable to compare</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">Variables to compare</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">The variables are used for finding beginning log. All listed variables should be captured in both beginning and ending log and values should be equivalent.</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">Effective duration of operation</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">Only operations with duration in the range will be selected to generate results. Leave it empty if there is no lower/upper bound.</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Name of operation</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit operation duration analysis rule</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">Operation Ending Mode</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">Variable to Compare</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">Variables to Compare</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">The variables are used to find the beginning log. All listed variables should be captured in both the beginning and ending logs, and their values should be equivalent.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">Effective Operation Duration</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">Only the operations with duration within the range will be selected to generate results. Leave it empty if there is no lower/upper bound.</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">Operation Name</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.Title">Edit Operation Duration Analysis Rule</sys:String>
 
 	<!-- OperationDurationAnalysisRuleSetEditorDialog -->
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter">Add rule which begins from this rule</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore">Add rule which is ended with this rule</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit operation duration analysis rule set</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleAfter">Add a Rule Beginning From This Rule</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.AddRuleBefore">Add a Rule Ending With This Rule</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleSetEditorDialog.Title">Edit Operation Duration Analysis Rule Set</sys:String>
 
 	<!-- OperationEndingMode -->
-	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First in, first out</sys:String>
-	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First in, last out</sys:String>
+	<sys:String x:Key="String/OperationEndingMode.FirstInFirstOut">First-In, First-Out</sys:String>
+	<sys:String x:Key="String/OperationEndingMode.FirstInLastOut">First-In, Last-Out</sys:String>
 
 	<!-- PatternEditor -->
-	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">Are you sure to replace this pattern?</sys:String>
-	<sys:String x:Key="String/PatternEditor.EditDetailedly">Edit detailedly…</sys:String>
-	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly">Click here to edit pattern detailedly.</sys:String>
+	<sys:String x:Key="String/PatternEditor.ConfirmReplacingPattern">Are you sure you want to replace this pattern?</sys:String>
+	<sys:String x:Key="String/PatternEditor.EditDetailedly">Edit in Detail…</sys:String>
+	<sys:String x:Key="String/PatternEditor.Tutorial.ClickButtonToEditPatternDetailedly">Click here to edit the pattern in detail.</sys:String>
 
 	<!-- PeekQueueToVarEditorDialog -->
-	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">Copy value from queue to variable</sys:String>
+	<sys:String x:Key="String/PeekQueueToVarEditorDialog.Title">Copy Value from Queue to Variable</sys:String>
 
 	<!-- PeekQueueToVariableAction -->
-	<sys:String x:Key="String/PeekQueueToVariableAction">Copy value from queue '{0}' to {{{1}}}</sys:String>
+	<sys:String x:Key="String/PeekQueueToVariableAction">Copy Value from Queue '{0}' to {{{1}}}</sys:String>
 
 	<!-- PeekStackToVarEditorDialog -->
-	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">Copy value from stack to variable</sys:String>
+	<sys:String x:Key="String/PeekStackToVarEditorDialog.Title">Copy Value from Stack to Variable</sys:String>
 
 	<!-- PeekStackToVariableAction -->
-	<sys:String x:Key="String/PeekStackToVariableAction">Copy value from stack '{0}' to {{{1}}}</sys:String>
+	<sys:String x:Key="String/PeekStackToVariableAction">Copy Value from Stack '{0}' to {{{1}}}</sys:String>
 
 	<!-- PopToVarEditorDialog -->
-	<sys:String x:Key="String/PopToVarEditorDialog.Title">Pop value from stack to variable</sys:String>
+	<sys:String x:Key="String/PopToVarEditorDialog.Title">Pop Value from Stack to Variable</sys:String>
 
 	<!-- PopToVariableAction -->
-	<sys:String x:Key="String/PopToVariableAction">Pop value from stack '{0}' to {{{1}}}</sys:String>
+	<sys:String x:Key="String/PopToVariableAction">Pop Value from Stack '{0}' to {{{1}}}</sys:String>
 
 	<!-- PredefinedLogTextFilterEditorDialog -->
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName">Group</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName.ProVersionOnly">Only one group can be created before activating ULogViewer Pro.</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion">Used for excluding logs</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.GroupName.ProVersionOnly">Only one group can be created without activating the Pro version.</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion">Used to Exclude Logs</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Mode.Exclusion.Description">Logs matched by the pattern will be excluded.</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Name">Name</sys:String>
 	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Regex">Pattern</sys:String>
 	<StaticResourceExtension x:Key="String/PredefinedLogTextFilterEditorDialog.Regex.Description" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">Select group</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create text filter</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit text filter</sys:String>
-	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Tutorial.GroupName">Now you can set group of text filter.</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.SelectGroupName">Select Group</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Create">Create Text Filter</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Title.Edit">Edit Text Filter</sys:String>
+	<sys:String x:Key="String/PredefinedLogTextFilterEditorDialog.Tutorial.GroupName">Now you can set a group for the text filter.</sys:String>
 
 	<!-- Product -->
 	<sys:String x:Key="String/Product.ULogViewer-Pro">ULogViewer Pro</sys:String>
 	<sys:String x:Key="String/Product.ULogViewer-Pro-Test">ULogViewer Pro (Test)</sys:String>
 
 	<!-- PushVarEditorDialog -->
-	<sys:String x:Key="String/PushVarEditorDialog.Title">Push value of variable to stack</sys:String>
+	<sys:String x:Key="String/PushVarEditorDialog.Title">Push Variable to Stack</sys:String>
 
 	<!-- PushVariableAction -->
-	<sys:String x:Key="String/PushVariableAction">Push {{{0}}} to stack '{1}'</sys:String>
+	<sys:String x:Key="String/PushVariableAction">Push {{{0}}} to Stack '{1}'</sys:String>
 
 	<!-- RegexEditorDialog -->
 	<sys:String x:Key="String/RegexEditorDialog.CapturingGroupsDisabled">Grouping is unsupported for this pattern.</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">Ignore case</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.IgnoreCase">Ignore Case</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex">Pattern</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.Regex.Description">Regular expression to match text.</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">You can use Grouping Syntax "(?&lt;&gt;)" to capture strings from text</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">You can use Grouping Syntax "(?&lt;&gt;)" to capture log properties from text</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">Test text</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description">Text to verify the pattern</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingGroups">Text to verify the pattern and captured group strings</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingLogProperties">Text to verify the pattern and captured log properties</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult">Test result</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedGroups">Captured groups</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedLogProperties">Captured log properties</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">Not matched</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingGroups">You can use the Grouping Syntax "(?&lt;&gt;)" to capture strings from text.</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Regex.Description.CapturingLogProperties">You can use the Grouping Syntax "(?&lt;&gt;)" to capture log properties from text.</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine">Test Text</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description">Text to verify the pattern.</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingGroups">Text to verify the pattern and captured strings.</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestLogLine.Description.CapturingLogProperties">Text to verify the pattern and captured log properties.</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult">Test Result</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedGroups">Captured Groups</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.CapturedLogProperties">Captured Log Properties</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.TestResult.Failed">Not Matched</sys:String>
 	<sys:String x:Key="String/RegexEditorDialog.TestResult.Success">Matched</sys:String>
-	<sys:String x:Key="String/RegexEditorDialog.Title">Edit pattern</sys:String>
+	<sys:String x:Key="String/RegexEditorDialog.Title">Edit Pattern</sys:String>
 
 	<!-- ScriptDisplayableLogAnalyzer -->
-	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">Cooperative log analysis</sys:String>
+	<sys:String x:Key="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis">Cooperative Log Analysis</sys:String>
 
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to close raw log reader</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run one time when closing raw log reader. There is no return value needed.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to Close the Raw Log Reader</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run once when closing the raw log reader. There is no return value required.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
- * Types are imported automatically for log reading. For ex, FileStream.
+ * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
- * Types are imported automatically for log reading. For ex, FileStream.
+ * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Types are imported automatically for logs reading, for example, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.</sys:String>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors"/>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmClosingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors"/>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to open raw log reader</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run one time when opening raw log reader. The returned value should be LogDataSourceState.ReaderOpened if succeeded, or failure if returning other values.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to Open Raw Log Reader</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run once when opening the raw log reader. The return value should be LogDataSourceState.ReaderOpened if succeeded, or other values for failure cases.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
- * Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
+ * Types are imported automatically for logs reading, for example, FileStream and LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
 /*
- * Return LogDataSourceState.ReaderOpened if reader has been opened successfully.
+ * Return LogDataSourceState.ReaderOpened if the reader has been opened successfully.
  * Or you can return one of the following values for failure cases:
  *   * LogDataSourceState.ExternalDependencyNotFound
  *   * LogDataSourceState.SourceNotFound
@@ -1156,13 +1154,13 @@ return False</sys:String>
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
- * Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
+ * Types are imported automatically for logs reading, for example, FileStream and LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
 /*
- * Return LogDataSourceState.readerOpened if reader has been opened successfully.
+ * Return LogDataSourceState.readerOpened if the reader has been opened successfully.
  * Or you can return one of the following values for failure cases:
  *   * LogDataSourceState.externalDependencyNotFound
  *   * LogDataSourceState.sourceNotFound
@@ -1173,7 +1171,7 @@ return LogDataSourceState.unclassifiedError;</sys:String>
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
 
-# Return LogDataSourceState.ReaderOpened if reader has been opened successfully.
+# Return LogDataSourceState.ReaderOpened if the reader has been opened successfully.
 # Or you can return one of the following values for failure cases:
 #   * LogDataSourceState.ExternalDependencyNotFound
 #   * LogDataSourceState.SourceNotFound
@@ -1182,44 +1180,44 @@ return LogDataSourceState.UnclassifiedError</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
- * Types are imported automatically for log reading. For ex, FileStream.
+ * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
 /*
- * Return a raw log line (string) read from source, or Null if there is no more raw log line can be read.
+ * Return a raw log line (string) read from the source, or Null if there is no more raw log line can be read.
  */
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
- * Types are imported automatically for log reading. For ex, FileStream.
+ * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */
 
 /*
- * Return a raw log line (string) read from source, or Null if there is no more raw log line can be read.
+ * Return a raw log line (string) read from the source, or Null if there is no more raw log line can be read.
  */
 return null;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># Types are imported automatically for logs reading, for example, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
 
-# Return a raw log line (string) read from source, or None if there is no more raw log line can be read.
+# Return a raw log line (string) read from the source, or None if there is no more raw log line can be read.
 return None</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported data source options</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">Supported Data Source Options</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">Required</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit log data source script</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">Edit Log Data Source Script</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">Cannot create more log data source script before activating Pro version.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">It cannot be recovered once you delete the script. Are you sure to delete log data source script '{0}'?</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">It cannot be recovered once you delete the script. Are you sure to delete log data source script '{0}' and {1} related log profile(s)?</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">Unable to export data source script '{0}' to '{1}'.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">Unable to import data source script from '{0}'.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">Data source script '{0}' has been exported to '{1}' successfully.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Before activating Pro version, you can have only 1 log data source script and script won't be kept after closing ULogViewer.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage log data source scripts</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">Cannot create more log data source scripts without activating the Pro version.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">It cannot be recovered once deleted. Are you sure you want to delete the log data source script '{0}'?</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">It cannot be recovered once deleted. Are you sure you want to delete the log data source script '{0}' and {1} related log profiles?</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">Unable to export the log data source script '{0}' to '{1}'.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">Unable to import the log data source script from '{0}'.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">The log data source script '{0}' has been exported to '{1}' successfully.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">Without activating the Pro version, you can have only 1 log data source script and the script won't be kept after closing ULogViewer.</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">Manage Log Data Source Scripts</sys:String>
 	
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple Developer</sys:String>
@@ -1232,228 +1230,227 @@ return None</sys:String>
 	<sys:String x:Key="String/SearchProvider.StackOverflow">Stack Overflow</sys:String>
 
 	<!-- Session -->
-	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">Cannot use data source '{0}' before activating ULogViewer Pro.</sys:String>
+	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">Cannot use the data source '{0}' without activating the Pro version.</sys:String>
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
 
 	<!-- SessionView -->
-	<sys:String x:Key="String/SessionView.AddLogFiles">Add log files</sys:String>
-	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add log files (Ctrl+O)</sys:String>
+	<sys:String x:Key="String/SessionView.AddLogFiles">Add Log Files</sys:String>
+	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">Add Log Files (Ctrl+O)</sys:String>
 	<sys:String x:Key="String/SessionView.AllLogCount">Total: {0}</sys:String>
-	<sys:String x:Key="String/SessionView.AllLogLevels">All levels</sys:String>
+	<sys:String x:Key="String/SessionView.AllLogLevels">All Levels</sys:String>
 	<sys:String x:Key="String/SessionView.AppInfo">About ULogViewer…</sys:String>
 	<sys:String x:Key="String/SessionView.AppOptions">Options…</sys:String>
-	<sys:String x:Key="String/SessionView.CheckForAppUpdate">Check for update…</sys:String>
-	<sys:String x:Key="String/SessionView.ClearGlobalLogTextFilterHistory">Clear the history</sys:String>
-	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear selection</sys:String>
-	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear all added log files</sys:String>
-	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Clear selection</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmClearingGlobalLogTextFilterHistory">Are you sure to clear {0} text filter(s) from history?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmMaxLogReadingCountForLargeFiles">One or more large files will be added ({0} total). You can limit the maximum number of logs to be read in order to reduce memory usage.</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">It cannot be recovered once you delete the rule set. Are you sure to remove the rule set '{0}'?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">It cannot be recovered once you delete the script. Are you sure to remove the script '{0}'?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select large amount of logs. Do you want to continue selection?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">Do you want to keep 'Help' button on input field of text filter? You can change the setting in 'Options' dialog.</sys:String>
+	<sys:String x:Key="String/SessionView.CheckForAppUpdate">Check for Update…</sys:String>
+	<sys:String x:Key="String/SessionView.ClearGlobalLogTextFilterHistory">Clear the History</sys:String>
+	<sys:String x:Key="String/SessionView.ClearLogAnalysisRuleSetsSelection">Clear Selection</sys:String>
+	<sys:String x:Key="String/SessionView.ClearLogFiles">Clear All Added Log Files</sys:String>
+	<sys:String x:Key="String/SessionView.ClearPredefinedLogTextFiltersSelection">Clear Selection</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmClearingGlobalLogTextFilterHistory">Are you sure you want to clear {0} text filters from the history?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmMaxLogReadingCountForLargeFiles">One or more large files ({0} total) will be added. You can limit the maximum number of logs to be read in order to reduce the memory usage.</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisRuleSet">It cannot be recovered once deleted. Are you sure you want to delete the rule set '{0}'?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmRemovingLogAnalysisScriptSet">It cannot be recovered once deleted. Are you sure you want to delete the script '{0}'?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmSelectingAllLogs">It will take some time to select a large amount of logs. Do you want to continue the selection?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmShowingHelpButtonOnLogTextFilter">Do you want to keep showing the 'Help' button on the text filter input field? You can change the setting in Options.</sys:String>
 	<sys:String x:Key="String/SessionView.ConfirmSwitchingToCopiedLogProfile">Do you want to switch to '{0}' now?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmUsingIPAddressInClipboard">Do you want to use IP address in clipboard?</sys:String>
-	<sys:String x:Key="String/SessionView.ConfirmUsingUriInClipboard">Do you want to use URI in clipboard?</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogFileName">Copy file name</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogFilePath">Copy full path</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogProperty">Copy log property '{0}'</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">Copy log property</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogs">Copy logs</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogText">Copy text of log for filtering</sys:String>
-	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy logs with file names</sys:String>
-	<sys:String x:Key="String/SessionView.CpuUsage">CPU usage</sys:String>
-	<sys:String x:Key="String/SessionView.EditConfiguration">Edit internal configuration…</sys:String>
-	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">Edit embedded log data source script</sys:String>
-	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">Edit log data source script '{0}'</sys:String>
-	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider.Placeholder">Edit current log data source script</sys:String>
-	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">Edit log analysis script file…</sys:String>
-	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit PATH environment variable…</sys:String>
-	<sys:String x:Key="String/SessionView.EditPersistentState">Edit internal persistent state…</sys:String>
-	<sys:String x:Key="String/SessionView.EnableRunningScript">Enable running scripts…</sys:String>
-	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export rule set or script '{0}' to '{1}'.</sys:String>
-	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import rule set or script from '{0}'.</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmUsingIPAddressInClipboard">Do you want to use the IP address in the clipboard?</sys:String>
+	<sys:String x:Key="String/SessionView.ConfirmUsingUriInClipboard">Do you want to use the URI in the clipboard?</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogFileName">Copy File Name</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogFilePath">Copy Full Path</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogProperty">Copy Log Property '{0}'</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogProperty.Disabled">Copy Log Property</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogs">Copy Logs</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogText">Copy Log Text for Filtering</sys:String>
+	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">Copy Logs With File Names</sys:String>
+	<sys:String x:Key="String/SessionView.CpuUsage">CPU Usage</sys:String>
+	<sys:String x:Key="String/SessionView.EditConfiguration">Edit Internal Configuration…</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">Edit Embedded Log Data Source Script</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">Edit Log Data Source Script '{0}'</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider.Placeholder">Edit Current Log Data Source Script</sys:String>
+	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">Edit Log Analysis Script File…</sys:String>
+	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit PATH Environment Variable…</sys:String>
+	<sys:String x:Key="String/SessionView.EditPersistentState">Edit Internal Persistent State…</sys:String>
+	<sys:String x:Key="String/SessionView.EnableRunningScript">Enable Script Execution…</sys:String>
+	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export the rule set or script '{0}' to '{1}'.</sys:String>
+	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import the rule set or script from '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FilterByLogProperty">Filter by '{0}'</sys:String>
-	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">Filter by value of log property</sys:String>
-	<sys:String x:Key="String/SessionView.FilterByLogProperty.HighAccuracy">High accuracy</sys:String>
-	<sys:String x:Key="String/SessionView.FilterByLogProperty.LowAccuracy">Low accuracy</sys:String>
-	<sys:String x:Key="String/SessionView.FilterByLogProperty.NormalAccuracy">Standard accuracy</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.Disabled">Filter by Log Property Value</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.HighAccuracy">High Accuracy</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.LowAccuracy">Low Accuracy</sys:String>
+	<sys:String x:Key="String/SessionView.FilterByLogProperty.NormalAccuracy">Standard Accuracy</sys:String>
 	<sys:String x:Key="String/SessionView.FilteredLogCount">, Filtered: {0}</sys:String>
-	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by selected PID</sys:String>
-	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by selected PID only</sys:String>
-	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">Filter by selected TID</sys:String>
-	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">Filter by selected TID only</sys:String>
+	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessId">Filter by Selected PID</sys:String>
+	<sys:String x:Key="String/SessionView.FilterLogsBySelectedProcessIdOnly">Filter by Selected PID Only</sys:String>
+	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadId">Filter by Selected TID</sys:String>
+	<sys:String x:Key="String/SessionView.FilterLogsBySelectedThreadIdOnly">Filter by Selected TID Only</sys:String>
 	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory">History</sys:String>
-	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory.ProVersionOnly">You can view the history of text filters after upgrading to ULogViewer Pro.</sys:String>
-	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">Error occurred in data sources</sys:String>
-	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">Log reading precondition set</sys:String>
-	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">Maximum log reading count set</sys:String>
-	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">Error occurred in some of data sources</sys:String>
-	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">High memory usage</sys:String>
-	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">Logs reading has been disabled temporarily because of high memory usage</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No log to show.</sys:String>
+	<sys:String x:Key="String/SessionView.GlobalLogTextFilterHistory.ProVersionOnly">You can view the text filters history after upgrading to the Pro version.</sys:String>
+	<sys:String x:Key="String/SessionView.HasAllDataSourceErrors">Error Occurred in Data Sources</sys:String>
+	<sys:String x:Key="String/SessionView.HasLogReadingPrecondition">Log Reading Preconditions Set</sys:String>
+	<sys:String x:Key="String/SessionView.HasMaxLogReadingCount">Maximum Log Reading Count Set</sys:String>
+	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">Error Occurred in Some Data Sources</sys:String>
+	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">High Memory Usage</sys:String>
+	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">Logs reading has been disabled temporarily because of high memory usage.</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No Log to Show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on toolbar to select log profile to start.</sys:String>
-	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore case of text filter</sys:String>
-	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering took {0}</sys:String>
-	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading took {0}</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on the toolbar to select log profile to start.</sys:String>
+	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore Text Filter Cases</sys:String>
+	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering Took {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading Took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">Log Analysis</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">Log analysis is disabled temporarily when removing log file(s)</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">Has new results</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click button on the top-right of panel to select analysis rule sets to apply.</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing logs…{0}</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis result</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">Size in bytes</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">Log Analysis is Disabled Temporarily When Removing Log Files</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">Has Rew Results</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">Click the button on the top-right of the panel to select analysis rule sets to apply.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisProgress">Analyzing Logs…{0}</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisResult">Analysis Result</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">Size in Bytes</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Duration">Duration</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.Quantity">Quantity</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">Rule set or script '{0}' has been exported to '{1}' successfully.</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Rule sets of analysis</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">Cooperative log analysis script</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetExported">The rule set or script '{0}' has been exported to '{1}' successfully.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets">Analysis Rule Sets</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet">Cooperative Log Analysis Script</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.Disabled">Disabled</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key log analysis</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log analysis script</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">Operation counting analysis</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation duration analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.KeyLogAnalysisRuleSet">Key Log Analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.LogAnalysisScriptSet">Log Analysis Script</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">Operation Counting Analysis</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">Operation Duration Analysis</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">Analysis rule sets to apply (multi-selectable)</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">Analysis Rule Sets to Apply (Multi-Selectable)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">Error occurred while running script of '{0}' to analyze log:</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">Error occurred while running script of '{0}' to setup analysis:</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">Error occurred while running script of '{0}':</sys:String>
-	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log count: {0}</sys:String>
-	<sys:String x:Key="String/SessionView.LogChart.NoLogTimestamp">(No time information of log)</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel">Chart panel</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">The chart has been disabled temporarily because of too many data points in the chart.</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">Need to upgrade to Pro version to enable the chart.</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel.ShowingRawLogLines">The chart has been disabled temporarily because of showing raw log lines.</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">Error occurred while running the script of '{0}' to analyze log:</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">Error occurred while running the script of '{0}' to setup analysis:</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">Error occurred while running the script of '{0}':</sys:String>
+	<sys:String x:Key="String/SessionView.LogCountInLogFile">Log Count: {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LogChart.NoLogTimestamp">(No Time Information of Log)</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel">Chart Panel</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">The chart has been disabled temporarily because of too many data points.</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">Upgrading to the Pro version is required to enable the chart.</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.ShowingRawLogLines">The chart has been disabled temporarily because raw log lines are being shown.</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(Current)</sys:String>
-	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">Error occurred while running script of '{0}' to close raw log reader:</sys:String>
-	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">Error occurred while running script of '{0}' to open raw log reader:</sys:String>
-	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">Error occurred while running script of '{0}' to read raw log line:</sys:String>
-	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.UnknownScript">Error occurred while running script of '{0}':</sys:String>
-	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">File is unsupported in current log profile.</sys:String>
-	<sys:String x:Key="String/SessionView.LogFilesPanel">Added log files</sys:String>
-	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Way to combine conditions</sys:String>
-	<sys:String x:Key="String/SessionView.LoginToAzure">Login to Azure</sys:String>
-	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">Login to Azure (Pro)</sys:String>
-	<sys:String x:Key="String/SessionView.LogLevelFilters.Description">Use levels to filter logs</sys:String>
-	<sys:String x:Key="String/SessionView.LogLevelFilters.Description.ProVersion">Upgrade to Pro version to filter&#x0a;by multiple log levels.</sys:String>
-	<sys:String x:Key="String/SessionView.LogoutFromAzure">Logout from Azure</sys:String>
-	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">Logout from Azure (Pro)</sys:String>
-	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to filter logs</sys:String>
-	<sys:String x:Key="String/SessionView.LogPropertyName">Property name: {0}</sys:String>
-	<sys:String x:Key="String/SessionView.LogsDuration">Duration of logs</sys:String>
-	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest timestamp of log/Maximum time span of log (Click to select the log)</sys:String>
-	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest timestamp of log/Minimum time span of log (Click to select the log)</sys:String>
-	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Progress of log filtering</sys:String>
-	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs memory usage of this tab</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">Error occurred while running the script of '{0}' to close raw log reader:</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">Error occurred while running the script of '{0}' to open raw log reader:</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">Error occurred while running the script of '{0}' to read raw log line:</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.UnknownScript">Error occurred while running the script of '{0}':</sys:String>
+	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">The file is not supported by the current log profile.</sys:String>
+	<sys:String x:Key="String/SessionView.LogFilesPanel">Added Log Files</sys:String>
+	<sys:String x:Key="String/SessionView.LogFiltersCombinationMode">Condition Combination Method</sys:String>
+	<sys:String x:Key="String/SessionView.LoginToAzure">Log in to Azure</sys:String>
+	<sys:String x:Key="String/SessionView.LoginToAzure.WithProVersion">Log in to Azure (Pro)</sys:String>
+	<sys:String x:Key="String/SessionView.LogLevelFilters.Description">Use Levels to Filter Logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogLevelFilters.Description.ProVersion">Upgrade to the Pro version to filter&#x0a;by multiple log levels.</sys:String>
+	<sys:String x:Key="String/SessionView.LogoutFromAzure">Log out from Azure</sys:String>
+	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">Log out from Azure (Pro)</sys:String>
+	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to Filter Logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogPropertyName">Property Name: {0}</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDuration">Logs Durations</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest Log Timestamp/Maximum Log Time Span (Click to Select the Log)</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest Log Timestamp/Minimum Log Time Span (Click to Select the Log)</sys:String>
+	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Log Filtering Progress</sys:String>
+	<sys:String x:Key="String/SessionView.LogsMemoryUsage">Logs Memory Usage by This Tab</sys:String>
 	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">Logs reading has been disabled temporarily because of high memory usage ({0}).</sys:String>
 	<sys:String x:Key="String/SessionView.LogsSaved">Logs have been saved to '{0}' successfully.</sys:String>
 	<sys:String x:Key="String/SessionView.LogsSavingFailed">Failed to save logs to '{0}'.</sys:String>
-	<sys:String x:Key="String/SessionView.LogsShowingMode">Mode of showing logs</sys:String>
-	<StaticResource x:Key="String/SessionView.LogTextFilter.ToolTip" ResourceKey="String/DisplayableLogAnalysisRuleEditorDialog.Pattern.Description"/>
-	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text filter (Regular Expression)</sys:String>
-	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to filter logs</sys:String>
-	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked logs</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilter.ToolTip">Regular Expression to Match the Text of a Log</sys:String>
+	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">Text Filter (Regular Expression)</sys:String>
+	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">Use Thread ID to Filter Logs</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel">Marked Logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">Select logs and press M, or use the context menu by right-clicking the mouse, to mark/unmark logs.</sys:String>
-	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint.ShowingRawLogLines">Log marking is temporarily disabled when showing raw log lines.</sys:String>
-	<sys:String x:Key="String/SessionView.MarkLog">Mark log</sys:String>
-	<sys:String x:Key="String/SessionView.MarkLogs">Mark logs</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint.ShowingRawLogLines">Log marking is temporarily disabled when because raw log lines are being shown.</sys:String>
+	<sys:String x:Key="String/SessionView.MarkLog">Mark Log</sys:String>
+	<sys:String x:Key="String/SessionView.MarkLogs">Mark Logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">Mark/Unmark</sys:String>
-	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">Mark/Unmark logs</sys:String>
-	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">In order to ensure the performance of application, the chart has been disabled temporarily because of too many data points in the chart. You can remove some logs or remove some properties of chart to reduce number of data points.</sys:String>
-	<sys:String x:Key="String/SessionView.MemoryUsage">Private memory usage</sys:String>
-	<sys:String x:Key="String/SessionView.MultiLineLogProperty">There are multiple lines in this property
-(Double-click to view all text)</sys:String>
-	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by current log profile.</sys:String>
-	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">Script running is needed by '{0}'. You need to enable script running before using it.</sys:String>
-	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">Administrator role is needed for '{0}'. Do you want to restart application as Administrator and use this profile?</sys:String>
+	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">Mark/Unmark Logs</sys:String>
+	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">In order to ensure the performance, the chart has been disabled temporarily because of too many data points. You can remove some logs or remove some chart properties to reduce the number of data points.</sys:String>
+	<sys:String x:Key="String/SessionView.MemoryUsage">Private Memory Usage</sys:String>
+	<sys:String x:Key="String/SessionView.MultiLineLogProperty">There Are Multiple Lines in This Property
+(Double-Click to View All Text)</sys:String>
+	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by the current log profile.</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">'{0}' requires script execution. You need to enable script execution before using it.</sys:String>
+	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' requires administrator role. Do you want to restart the application as administrator and use this profile?</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
-	<sys:String x:Key="String/SessionView.OtherActions">Other actions</sys:String>
-	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume reading logs (P)</sys:String>
+	<sys:String x:Key="String/SessionView.OtherActions">Other Actions</sys:String>
+	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume Logs Reading (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PerformGC">Force Garbage Collection (GC)</sys:String>
-	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined text filters (Ctrl+P)</sys:String>
+	<sys:String x:Key="String/SessionView.PredefinedLogTextFilters">Defined Text Filters (Ctrl+P)</sys:String>
 	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.DefaultGroup">Default</sys:String>
-	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">Text filters (multi-selectable)</sys:String>
-	<sys:String x:Key="String/SessionView.ProcessId">Process identifier (PID)</sys:String>
-	<sys:String x:Key="String/SessionView.ProcessName">Process name</sys:String>
-	<sys:String x:Key="String/SessionView.ProVersionNeeded">Need to upgrade to Pro version to enable the feature.</sys:String>
-	<sys:String x:Key="String/SessionView.QuickStartGuide">Quick-start guide</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile">Reload logs</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">Change precondition of log reading…</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">Change options of log reading count…</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear precondition of log reading</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogs">Reload logs (F5)</sys:String>
-	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove log file</sys:String>
-	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">New name of group:</sys:String>
-	<sys:String x:Key="String/SessionView.ResetLogChartZoom">Reset zoom of chart</sys:String>
-	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear all filters</sys:String>
-	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">Show logs normally</sys:String>
+	<sys:String x:Key="String/SessionView.PredefinedLogTextFiltersPopup.Header">Text Filters (Multi-Selectable)</sys:String>
+	<sys:String x:Key="String/SessionView.ProcessId">Process Identifier (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.ProcessName">Process Name</sys:String>
+	<sys:String x:Key="String/SessionView.ProVersionNeeded">Upgrading to the Pro version is required to enable the feature.</sys:String>
+	<sys:String x:Key="String/SessionView.QuickStartGuide">Quick-Start Guide</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile">Reload Logs</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">Change Logs Reading Preconditions…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">Change Logs Reading Count Options…</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear Logs Reading Preconditions</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogs">Reload Logs (F5)</sys:String>
+	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove Log File</sys:String>
+	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">New Group Name:</sys:String>
+	<sys:String x:Key="String/SessionView.ResetLogChartZoom">Reset Chart Zoom</sys:String>
+	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear All Filters</sys:String>
+	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">Show Logs Normally</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">Restart as Administrator</sys:String>
-	<sys:String x:Key="String/SessionView.SaveAllLogs">Save all logs to file</sys:String>
-	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">Save all logs to file (Ctrl+Shift+S)</sys:String>
-	<sys:String x:Key="String/SessionView.SaveLogs">Save logs to file</sys:String>
-	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">Save logs to file (Ctrl+S)</sys:String>
-	<sys:String x:Key="String/SessionView.SavingLogs">Saving logs…</sys:String>
-	<sys:String x:Key="String/SessionView.ScrollToEndOfLogChart">Scroll to end of chart</sys:String>
-	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to latest log</sys:String>
-	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">Scroll to latest analysis result</sys:String>
-	<sys:String x:Key="String/SessionView.ScrollToStartOfLogChart">Scroll to start of chart</sys:String>
+	<sys:String x:Key="String/SessionView.SaveAllLogs">Save All Logs to File</sys:String>
+	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">Save All Logs to File (Ctrl+Shift+S)</sys:String>
+	<sys:String x:Key="String/SessionView.SaveLogs">Save Logs to File</sys:String>
+	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">Save Logs to File (Ctrl+S)</sys:String>
+	<sys:String x:Key="String/SessionView.SavingLogs">Saving Logs…</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToEndOfLogChart">Scroll to End of the Chart</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToLatestLog">Scroll to the Latest Log</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToLatestLogAnalysisResult">Scroll to the Latest Analysis Result</sys:String>
+	<sys:String x:Key="String/SessionView.ScrollToStartOfLogChart">Scroll to Start of the Chart</sys:String>
 	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet">Search '{0}' on the Internet</sys:String>
-	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">Search value of log property on the Internet</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">Average size in bytes</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">Average duration</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">Average quantity</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalByteSize">Total size in bytes</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">Total duration</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuantity">Total quantity</sys:String>
+	<sys:String x:Key="String/SessionView.SearchLogPropertyOnInternet.Disabled">Search Log Property Value on the Internet</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageByteSize">Average Size in Bytes</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageDuration">Average Duration</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsAverageQuantity">Average Quantity</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalByteSize">Total Size in Bytes</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">Total Duration</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuantity">Total Quantity</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogCount">{0} Selected</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Duration of selection is {0}</sys:String>
-	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select marked logs</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select log nearest to specified timestamp</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified timestamp</sys:String>
-	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">Select log nearest to specified timestamp</sys:String>
-	<sys:String x:Key="String/SessionView.SetCommand">Select/Change command</sys:String>
-	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP endpoint</sys:String>
-	<sys:String x:Key="String/SessionView.SetLogChartType">Change type of chart</sys:String>
-	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change log profile</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessId">Select/Change process identifier (PID)</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogsDuration">Selected Duration is {0}</sys:String>
+	<sys:String x:Key="String/SessionView.SelectMarkedLogs">Select Marked Logs</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">Select Log Nearest to Specified Timestamp</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Message">Specified Timestamp</sys:String>
+	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp.Title">Select Log Nearest to Specified Timestamp</sys:String>
+	<sys:String x:Key="String/SessionView.SetCommand">Select/Change Command</sys:String>
+	<sys:String x:Key="String/SessionView.SetIPEndPoint">Select/Change IP Endpoint</sys:String>
+	<sys:String x:Key="String/SessionView.SetLogChartType">Change Chart Type</sys:String>
+	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change Log Profile</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId">Select/Change Process Identifier (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId.Invalid">Invalid process identifier (PID).</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessId.Message">Please enter a process identifier (PID):</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessName">Select/Change process name</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessName.Message">Please enter a process name:</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Message">Please Enter a Process Identifier (PID):</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName">Select/Change Process Name</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName.Message">Please Enter a Process Name:</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
-	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change working directory</sys:String>
-	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show all logs temporarily</sys:String>
-	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show file in Windows File Explorer</sys:String>
-	<sys:String x:Key="String/SessionView.ShowLogProperty">View log property '{0}'…</sys:String>
-	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View log property…</sys:String>
-	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show marked logs temporarily</sys:String>
-	<sys:String x:Key="String/SessionView.ShowRawLogLinesTemporarily">Show raw log lines temporarily</sys:String>
-	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show working directory in Windows File Explorer</sys:String>
-	<sys:String x:Key="String/SessionView.StopReadingLogs">Abort reading logs</sys:String>
-	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Categories of timestamp</sys:String>
+	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change Working Directory</sys:String>
+	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show All Logs Temporarily</sys:String>
+	<sys:String x:Key="String/SessionView.ShowFileInExplorer">Show File in Windows File Explorer</sys:String>
+	<sys:String x:Key="String/SessionView.ShowLogProperty">View Log Property '{0}'…</sys:String>
+	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">View Log Property…</sys:String>
+	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">Show Marked Logs Temporarily</sys:String>
+	<sys:String x:Key="String/SessionView.ShowRawLogLinesTemporarily">Show Raw Log Lines Temporarily</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">Show Working Directory in Windows File Explorer</sys:String>
+	<sys:String x:Key="String/SessionView.StopReadingLogs">Abort Logs Reading</sys:String>
+	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Timestamp Categories</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">Tools</sys:String>
-	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop single directory.</sys:String>
-	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total memory usage of logs</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">It is needed to cancel showing only marked logs because the log of analysis result is not contained in current list. You can switch it ON manually.</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">The text you copied is the full text of log which is used for log filtering. You can use it to verify the pattern of log text filtering and log analysis.</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">View results of log analysis.</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.LogChart">You can scroll the wheel of mouse to zoom, or press the left button of mouse to drag the chart.</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">View and manage added log files.</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop a single directory.</sys:String>
+	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total Logs Memory Usage</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">Showing only marked logs has been turned off because the analysis result log is not in the current list. You can turn it on manually.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">The copied text is the full text of a log that is used for log filtering. You can use it to verify the pattern of log text filtering and log analysis.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">View the log analysis results.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogChart">You can scroll the mouse wheel to zoom, or press the mouse left button to drag the chart.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">View and manage the added log files.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">List of marked logs.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">Click here to select log analysis rule sets to apply.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">Click here to select a log profile to start.</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">It is needed to show all logs temporarily because the log of analysis result is not contained in current list. You can switch it OFF manually.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">All logs have been shown temporarily because the analysis result log is not in the current list. You can turn it off manually.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">Switch between panels or collapse them here.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.TimestampCategoriesPanel">List of log categories according to timestamp.</sys:String>
-	<sys:String x:Key="String/SessionView.UIResponseDuration">User interface response time</sys:String>
-	<sys:String x:Key="String/SessionView.UnmarkLogs">Unmark logs</sys:String>
-	<sys:String x:Key="String/SessionView.ViewFullLogMessage">View more…</sys:String>
-	<sys:String x:Key="String/SessionView.VisibleLogChartSeries">Visible sources</sys:String>
-	<sys:String x:Key="String/SessionView.WaitingForDataSources">Waiting for data source…</sys:String>
-	<sys:String x:Key="String/SessionView.WillExceedMaxLogFileCount">Cannot add file(s) because it will exceeds the maximum number of log files.</sys:String>
+	<sys:String x:Key="String/SessionView.UIResponseDuration">User Interface Response Time</sys:String>
+	<sys:String x:Key="String/SessionView.UnmarkLogs">Unmark Logs</sys:String>
+	<sys:String x:Key="String/SessionView.ViewFullLogMessage">View More…</sys:String>
+	<sys:String x:Key="String/SessionView.VisibleLogChartSeries">Visible Sources</sys:String>
+	<sys:String x:Key="String/SessionView.WaitingForDataSources">Waiting For Data Source…</sys:String>
+	<sys:String x:Key="String/SessionView.WillExceedMaxLogFileCount">Cannot add files because it will exceed the maximum number of log files.</sys:String>
 
 	<!-- SortDirection -->
 	<sys:String x:Key="String/SortDirection.Ascending">Ascending</sys:String>
@@ -1476,19 +1473,19 @@ return None</sys:String>
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server Database</sys:String>
 	
 	<!-- StandardOutputCommandDialog -->
-	<sys:String x:Key="String/StandardOutputCommandDialog.Title">Command for standard output (stdout)</sys:String>
+	<sys:String x:Key="String/StandardOutputCommandDialog.Title">Standard Output (stdout) Command</sys:String>
 
 	<!-- StandardOutputLogDataSource -->
-	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find command '{0}'. Please make sure that command or executable has been installed and its path has been added to PATH environment variable.</sys:String>
-	<sys:String x:Key="String/StandardOutputLogDataSource.FailedToExecuteCommand">Failed to execute '{0}'. Please make sure the command or executable has correct format and permission to be executed.</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSource.CommandNotFound">Cannot find the command '{0}'. Please make sure that the command or executable has been installed and its path has been added to the PATH environment variable.</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSource.FailedToExecuteCommand">Failed to execute '{0}'. Please make sure the command or executable has the correct format and permission to be executed.</sys:String>
 
 	<!-- StandardOutputLogDataSourceProvider -->
-	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">Standard output (stdout)</sys:String>
+	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">Standard Output (stdout)</sys:String>
 
 	<!-- StringLogPropertyMapEntryEditorDialog -->
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">Mapped name:</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">Mapped Name:</sys:String>
 	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">Property:</sys:String>
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">Log property</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">Log Property</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
@@ -1503,11 +1500,11 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
-	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to execute:</sys:String>
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to Execute:</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time span format:</sys:String>
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">Sample result: {0}</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time Span Format:</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">Sample Result: {0}</sys:String>
 
 	<!-- TimeSpanUnit -->
 	<sys:String x:Key="String/TimeSpanUnit.Days">Days</sys:String>
@@ -1527,14 +1524,14 @@ return None</sys:String>
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP Server</sys:String>
 
 	<!-- UriInputDialog -->
-	<sys:String x:Key="String/UriInputDialog.Message">Please enter an valid URI:</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Message">Please Enter a Valid URI:</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison:</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value:</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit comparison condition</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Name of variable:</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit Comparison Condition</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable Name:</sys:String>
 
 	<!-- VariableAndConstantComparisonCondition -->
 	<sys:String x:Key="String/VariableAndConstantComparisonCondition">{{{0}}} {1} '{2}'</sys:String>
@@ -1545,20 +1542,20 @@ return None</sys:String>
 	<!-- VisibleLogPropertyEditorDialog -->
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.CustomDisplayName"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.DisplayName"/>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Color of text</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">Text Color</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartSeriesSourceEditorDialog.Name"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier.Description"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.SecondaryDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.ShowDefinedLogPropertiesOnly" ResourceKey="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly"/>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the column width</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible log property</sys:String>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column width</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the Column Width</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible Log Property</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column Width</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
-	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows event logs</sys:String>
+	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows Event Logs</sys:String>
 
 	<!-- WindowsEventLogFileDataSourceProvider -->
-	<sys:String x:Key="String/WindowsEventLogFileDataSourceProvider.DisplayName">Windows event log file</sys:String>
+	<sys:String x:Key="String/WindowsEventLogFileDataSourceProvider.DisplayName">Windows Event Log File</sys:String>
 
 </ResourceDictionary>
