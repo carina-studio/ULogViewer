@@ -31,7 +31,7 @@
 			<Setter Property="ItemTemplate">
 				<Setter.Value>
 					<DataTemplate DataType="{x:Type appProfiles:LogProfile}">
-						<Border Name="itemRoot" Background="{x:Static Brushes.Transparent}" DoubleTapped="OnLogProfileItemDoubleTapped" Padding="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Padding}">
+						<Border Name="itemRoot" Background="{x:Static Brushes.Transparent}" Padding="{DynamicResource Thickness/LogProfileSelectionDialog.LogProfile.Padding}">
 							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
 
 								<Grid.Styles>
@@ -282,7 +282,11 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.PinnedLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="pinnedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.PinnedLogProfiles}"/>
+							<asControls:ListBox Name="pinnedLogProfileListBox" 
+							                    Classes="LogProfiles" 
+							                    DoubleClickOnItem="OnLogProfileListBoxDoubleClickOnItem"
+							                    ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}"
+							                    ItemsSource="{Binding #window.PinnedLogProfiles}" />
 						</Border>
 					</StackPanel>
 					
@@ -299,7 +303,11 @@
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<StackPanel>
-								<ListBox Name="recentlyUsedLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.RecentlyUsedLogProfiles}"/>
+								<asControls:ListBox Name="recentlyUsedLogProfileListBox" 
+								                    Classes="LogProfiles" 
+								                    DoubleClickOnItem="OnLogProfileListBoxDoubleClickOnItem"
+								                    ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" 
+								                    ItemsSource="{Binding #window.RecentlyUsedLogProfiles}" />
 								<Separator Classes="Dialog_Separator_Small"/>
 								<Button Classes="Dialog_Item_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{asXaml:StringResource LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right"/>
 							</StackPanel>
@@ -324,7 +332,11 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{Binding #window.OtherLogProfilesPanelTitle}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="otherLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.OtherLogProfiles}"/>
+							<asControls:ListBox Name="otherLogProfileListBox" 
+							                    Classes="LogProfiles" 
+							                    DoubleClickOnItem="OnLogProfileListBoxDoubleClickOnItem"
+							                    ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" 
+							                    ItemsSource="{Binding #window.OtherLogProfiles}" />
 						</Border>
 					</StackPanel>
 					
@@ -347,7 +359,11 @@
 							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}"/>
 						</Border>
 						<Border Classes="Dialog_ItemsGroup_Container">
-							<ListBox Name="templateLogProfileListBox" Classes="LogProfiles" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.TemplateLogProfiles}"/>
+							<asControls:ListBox Name="templateLogProfileListBox" 
+							                    Classes="LogProfiles" 
+							                    DoubleClickOnItem="OnLogProfileListBoxDoubleClickOnItem"
+							                    ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}"
+							                    ItemsSource="{Binding #window.TemplateLogProfiles}" />
 						</Border>
 					</StackPanel>
 

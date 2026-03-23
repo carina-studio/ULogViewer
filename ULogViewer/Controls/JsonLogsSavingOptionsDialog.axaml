@@ -33,7 +33,7 @@
 
 			<!-- Log properties -->
 			<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties}"/>
-			<ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleTapped="OnListBoxDoubleTapped" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" ItemsSource="{Binding #dialog.LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
+			<asControls:ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" ItemsSource="{Binding #dialog.LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<Grid>
@@ -71,7 +71,7 @@
 						<Setter Property="Padding" Value="{DynamicResource Thickness/Dialog.ListBox.Item.WithInPlaceActions.Padding}"/>
 					</Style>
 				</ListBox.Styles>
-			</ListBox>
+			</asControls:ListBox>
 			<Separator Classes="Dialog_Separator_Small"/>
 			<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties.Description}"/>
 			

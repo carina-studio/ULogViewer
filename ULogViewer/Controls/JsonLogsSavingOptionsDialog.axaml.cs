@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Converters;
@@ -15,6 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Input;
+using ListBox = Avalonia.Controls.ListBox;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
@@ -25,7 +27,7 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 {
 	// Fields.
 	readonly ObservableList<KeyValuePair<string, string>> logPropertyMap = new();
-	readonly ListBox logPropertyMapListBox;
+	readonly CarinaStudio.AppSuite.Controls.ListBox logPropertyMapListBox;
 
 
 	/// <summary>
@@ -37,7 +39,7 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 		this.RemoveLogPropertyMapEntryCommand = new Command<ListBoxItem>(this.RemoveLogPropertyMapEntry);
 		AvaloniaXamlLoader.Load(this);
 		this.logPropertyMap.CollectionChanged += (_, _) => this.InvalidateInput();
-		this.logPropertyMapListBox = this.Get<ListBox>(nameof(logPropertyMapListBox));
+		this.logPropertyMapListBox = this.Get<CarinaStudio.AppSuite.Controls.ListBox>(nameof(logPropertyMapListBox));
 		this.AddHandler(KeyUpEvent, (sender, e) =>
 		{
 			if (this.logPropertyMapListBox.IsSelectedItemFocused && e.Key == Key.Enter)
@@ -78,9 +80,9 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 			var newValue = newEntry.Value.Value;
 			if (newKey != entry.Key && this.logPropertyMap.FirstOrDefault(it => it.Key == newKey).Key == newKey)
 			{
-				await new AppSuite.Controls.MessageDialog
+				await new MessageDialog
 				{
-					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Icon = MessageDialogIcon.Warning,
 					Message = new FormattedString().Also(it =>
 					{
 						it.Arg1 = LogPropertyNameConverter.Default.Convert(newKey);
@@ -92,9 +94,9 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 			}
 			if (newValue != entry.Value && this.logPropertyMap.FirstOrDefault(it => it.Value == newValue).Value == newValue)
 			{
-				await new AppSuite.Controls.MessageDialog
+				await new MessageDialog
 				{
-					Icon = AppSuite.Controls.MessageDialogIcon.Warning,
+					Icon = MessageDialogIcon.Warning,
 					Message = new FormattedString().Also(it =>
 					{
 						it.Arg1 = newValue;
@@ -163,20 +165,14 @@ class JsonLogsSavingOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerApp
 	}
 
 
-	// Called when double-tapped on list box.
-	void OnListBoxDoubleTapped(object? sender, TappedEventArgs e)
+	// Called when double-click on list box item.
+	void OnListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 	{
 		if (sender is not ListBox listBox)
 			return;
-		var selectedItem = listBox.SelectedItem;
-		if (selectedItem is null 
-			|| !listBox.TryFindListBoxItem(selectedItem, out var listBoxItem)
-			|| listBoxItem is null
-			|| !listBoxItem.IsPointerOver)
-		{
+		if (!listBox.TryFindListBoxItem(e.Item, out var listBoxItem) || listBoxItem is null)
 			return;
-		}
-		if (listBox == this.logPropertyMapListBox)
+		if (ReferenceEquals(listBox, this.logPropertyMapListBox))
 			this.EditLogPropertyMapEntry(listBoxItem);
 	}
 

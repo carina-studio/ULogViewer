@@ -368,12 +368,19 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 
 
 	// Generate result.
-	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken)
+	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
+		Task.FromResult((object?)this.GetSelectedLogProfile());
+	
+	
+	// Get selected log profile.
+	LogProfile? GetSelectedLogProfile(bool includeTemplate = false)
 	{
 		var logProfile = this.otherLogProfileListBox.SelectedItem as LogProfile
-			?? this.pinnedLogProfileListBox.SelectedItem as LogProfile
-			?? this.recentlyUsedLogProfileListBox.SelectedItem as LogProfile;
-		return Task.FromResult((object?)logProfile);
+		                 ?? this.pinnedLogProfileListBox.SelectedItem as LogProfile
+		                 ?? this.recentlyUsedLogProfileListBox.SelectedItem as LogProfile;
+		if (logProfile is null && includeTemplate)
+			return this.templateLogProfileListBox.SelectedItem as LogProfile;
+		return logProfile;
 	}
 
 
@@ -516,8 +523,9 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	}
 
 
-	// Called when double tapped on item of log profile.
-	void OnLogProfileItemDoubleTapped(object? sender, TappedEventArgs e) => this.GenerateResultCommand.TryExecute();
+	// Called when double-click on log profile list box item.
+	void OnLogProfileListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e) => 
+		this.GenerateResultCommand.TryExecute();
 
 
 	// Called when property of log profile has been changed.
