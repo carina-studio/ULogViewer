@@ -67,10 +67,7 @@
 										</Button>
 									</WrapPanel>
 									<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}"/>
-									<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding !#patternEditor.IsPatternTextValid}">
-										<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-										<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{asXaml:StringResource Common.InvalidFormat}"/>
-									</Grid>
+									<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{Binding !#patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource Common.InvalidFormat}"/>
 								</StackPanel>
 							</asControls:DialogItem>
 							<Line Classes="Dialog_Item_Separator_Inner"/>

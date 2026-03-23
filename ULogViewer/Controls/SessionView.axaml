@@ -1964,18 +1964,8 @@
 										<asControls:DialogItem ItemSize="Small">
 											<StackPanel Classes="Dialog_Item_Text_Container">
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource SessionView.LogAnalysisRuleSets.CooperativeLogAnalysisScriptSet}"/>
-												<Grid Classes="Dialog_IconText_Container_Description" 
-												      ColumnDefinitions="Auto,*"
-												      IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !#root.IsScriptRunningEnabled}}">
-													<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-													<TextBlock Classes="Dialog_TextBlock_Description_Warning" Grid.Column="1" Text="{asXaml:StringResource SessionView.LogAnalysisRuleSets.Disabled}"/>
-												</Grid>
-												<Grid Classes="Dialog_IconText_Container_Description" 
-												      ColumnDefinitions="Auto,*"
-												      IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !IsProVersionActivated}, {Binding #root.IsScriptRunningEnabled}}">
-													<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-													<TextBlock Classes="Dialog_TextBlock_Description_Warning" Grid.Column="1" Text="{asXaml:StringResource SessionView.LogAnalysisRuleSets.ProVersionOnly}"/>
-												</Grid>
+												<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !#root.IsScriptRunningEnabled}}" Text="{asXaml:StringResource SessionView.LogAnalysisRuleSets.Disabled}"/>
+												<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{asXaml:AndBindings {Binding LogAnalysis.HasCooperativeLogAnalysisScriptSet}, {Binding !IsProVersionActivated}, {Binding #root.IsScriptRunningEnabled}}" Text="{asXaml:StringResource SessionView.LogAnalysisRuleSets.ProVersionOnly}"/>
 											</StackPanel>
 											<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" 
 											              IsChecked="{Binding LogAnalysis.IsCooperativeLogAnalysisScriptSetEnabled}"

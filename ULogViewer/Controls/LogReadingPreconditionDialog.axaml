@@ -43,13 +43,13 @@
 							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps.Description}">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
-										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatDescGrid"/>
-										<Binding Path="!IsVisible" ElementName="invalidTimestampRangeDescGrid"/>
+										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatTextBlock"/>
+										<Binding Path="!IsVisible" ElementName="invalidTimestampRangeTextBlock"/>
 									</MultiBinding>
 								</TextBlock.IsVisible>
 							</TextBlock>
-							<Grid Name="invalidTimestampFormatDescGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-								<Grid.IsVisible>
+							<TextBlock Name="invalidTimestampFormatTextBlock" Classes="Dialog_TextBlock_Description_Error" Text="{asXaml:StringResource Common.InvalidFormat}">
+								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="IsChecked" ElementName="timestampsSwitch"/>
 										<MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -57,21 +57,17 @@
 											<Binding Path="!IsTextValid" ElementName="endingTimestampTextBox"/>
 										</MultiBinding>
 									</MultiBinding>
-								</Grid.IsVisible>
-								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{asXaml:StringResource Common.InvalidFormat}"/>
-							</Grid>
-							<Grid Name="invalidTimestampRangeDescGrid" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-								<Grid.IsVisible>
+								</TextBlock.IsVisible>
+							</TextBlock>
+							<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" Text="{asXaml:StringResource LogReadingPreconditionDialog.InvalidTimestampRange}">
+								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="IsChecked" ElementName="timestampsSwitch"/>
 										<Binding Path="!IsTimestampRangeValid" ElementName="window"/>
-										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatDescGrid"/>
+										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatTextBlock"/>
 									</MultiBinding>
-								</Grid.IsVisible>
-								<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-								<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" Grid.Column="1" Text="{asXaml:StringResource LogReadingPreconditionDialog.InvalidTimestampRange}"/>
-							</Grid>
+								</TextBlock.IsVisible>
+							</TextBlock>
 						</StackPanel>
 						<ToggleSwitch Name="timestampsSwitch" Classes="Dialog_Item_ToggleSwitch"/>
 					</asControls:DialogItem>

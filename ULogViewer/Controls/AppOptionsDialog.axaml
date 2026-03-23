@@ -86,17 +86,16 @@
 								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ApplicationOptions.ThemeMode}"/>
-										<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*">
-											<Grid.IsVisible>
+										<Panel>
+											<Panel.IsVisible>
 												<MultiBinding Converter="{x:Static aConverters:BoolConverters.And}">
 													<Binding Path="IsRestartingRootWindowsNeeded"/>
 													<Binding Path="IsThemeModeChanged"/>
 												</MultiBinding>
-											</Grid.IsVisible>
-											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding !HasMainWindows}" Text="{asXaml:StringResource ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" IsVisible="{Binding HasMainWindows}" Text="{asXaml:StringResource ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
-										</Grid>
+											</Panel.IsVisible>
+											<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding !HasMainWindows}" Text="{asXaml:StringResource ApplicationOptions.WillCloseAllWindowsToTakeEffect}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding HasMainWindows}" Text="{asXaml:StringResource ApplicationOptions.WillRestartMainWindowsToTakeEffect}"/>
+										</Panel>
 									</StackPanel>
 									<ComboBox Classes="Dialog_Item_ComboBox" ItemsSource="{Binding ThemeModes, Mode=OneTime}" SelectedItem="{Binding ThemeMode, Mode=TwoWay}">
 										<ComboBox.ItemTemplate>
@@ -112,10 +111,7 @@
 								<asControls:DialogItem>
 									<StackPanel Classes="Dialog_Item_Text_Container">
 										<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ApplicationOptions.Culture}"/>
-										<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsChineseVariantChanged}" Margin="{StaticResource Thickness/Dialog.TextBlock.Margin.Description}">
-											<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-											<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" Grid.Column="1" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect.ChineseVariantChanged}"/>
-										</Grid>
+										<TextBlock Classes="Dialog_TextBlock_Description_Warning" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" IsVisible="{Binding IsChineseVariantChanged}" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect.ChineseVariantChanged}"/>
 									</StackPanel>
 									<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type as:ApplicationCulture}" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
 								</asControls:DialogItem>
@@ -130,10 +126,7 @@
 												<Separator Classes="Dialog_Separator_Small"/>
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{Binding CustomScreenScaleFactor, Converter={x:Static asConverters:RatioToPercentageConverter.Default}, StringFormat={}({0})}" VerticalAlignment="Center"/>
 											</StackPanel>
-											<Grid Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Margin="{StaticResource Thickness/Dialog.TextBlock.Margin.Description}">
-												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" Grid.Column="1" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
-											</Grid>
+											<TextBlock Classes="Dialog_TextBlock_Description_Warning" Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
 										</StackPanel>
 										<Slider Classes="Dialog_Item_Slider" HorizontalAlignment="Stretch" Maximum="{Binding MaxCustomScreenScaleFactor, Mode=OneTime}" Minimum="1" TickPlacement="None" TickFrequency="{Binding CustomScreenScaleFactorGranularity, Mode=OneTime}" Value="{Binding CustomScreenScaleFactor, Mode=TwoWay}">
 											<Slider.IsEnabled>
@@ -231,11 +224,8 @@
 													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 												</Button>
 											</WrapPanel>
-											<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !#restartNeededByDisablingAngle.IsVisible}" Text="{asXaml:StringResource ApplicationOptions.DisableAngle.Description}"/>
-											<Grid Name="restartNeededByDisablingAngle" Classes="Dialog_IconText_Container_Description" ColumnDefinitions="Auto,*" IsVisible="{Binding IsDisableAngleChanged}">
-												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
-											</Grid>
+											<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding !IsDisableAngleChanged}" Text="{asXaml:StringResource ApplicationOptions.DisableAngle.Description}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description_Warning" IsVisible="{Binding IsDisableAngleChanged}" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect}"/>
 										</StackPanel>
 										<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding DisableAngle, Mode=TwoWay}"/>
 									</asControls:DialogItem>

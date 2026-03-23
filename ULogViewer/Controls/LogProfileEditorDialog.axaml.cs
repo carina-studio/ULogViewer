@@ -1336,25 +1336,31 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		this.allowMultipleFilesPanel.IsVisible = dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName));
 		if (!isTemplate)
 		{
-			foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
+			var requiredOptions = dataSourceProvider.RequiredSourceOptions;
+			if (requiredOptions.IsNotEmpty())
 			{
-				switch (optionName)
+				foreach (var optionName in dataSourceProvider.RequiredSourceOptions)
 				{
-					case nameof(LogDataSourceOptions.Category):
-					case nameof(LogDataSourceOptions.ConnectionString):
-					case nameof(LogDataSourceOptions.Password):
-					case nameof(LogDataSourceOptions.QueryString):
-					case nameof(LogDataSourceOptions.UserName):
-						this.SetValue(IsValidDataSourceOptionsProperty, this.dataSourceOptions.IsOptionSet(optionName));
-						break;
-					case nameof(LogDataSourceOptions.Command):
-						this.SetValue(IsValidDataSourceOptionsProperty, !this.dataSourceOptions.CheckPlaceholderInCommands());
-						break;
-					default:
-						this.SetValue(IsValidDataSourceOptionsProperty, true);
-						break;
+					switch (optionName)
+					{
+						case nameof(LogDataSourceOptions.Category):
+						case nameof(LogDataSourceOptions.ConnectionString):
+						case nameof(LogDataSourceOptions.Password):
+						case nameof(LogDataSourceOptions.QueryString):
+						case nameof(LogDataSourceOptions.UserName):
+							this.SetValue(IsValidDataSourceOptionsProperty, this.dataSourceOptions.IsOptionSet(optionName));
+							break;
+						case nameof(LogDataSourceOptions.Command):
+							this.SetValue(IsValidDataSourceOptionsProperty, !this.dataSourceOptions.CheckPlaceholderInCommands());
+							break;
+						default:
+							this.SetValue(IsValidDataSourceOptionsProperty, true);
+							break;
+					}
 				}
 			}
+			else
+				this.SetValue(IsValidDataSourceOptionsProperty, true);
 		}
 
 		// ok

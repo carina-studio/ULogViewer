@@ -166,19 +166,8 @@
 													<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 												</Button>
 											</WrapPanel>
-											<Grid Name="proVersionOnlyDataSourceProvider" 
-											      Classes="Dialog_IconText_Container_Description" 
-											      ColumnDefinitions="Auto,*"
-											      IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding #dataSourceProviderComboBox.SelectedItem.IsProVersionOnly, FallbackValue=False}}">
-												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Warning.Outline.Colored}"/>
-												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Warning" Grid.Column="1" Text="{asXaml:StringResource LogProfileEditorDialog.ProVersionOnly}"/>
-											</Grid>
-											<Grid Classes="Dialog_IconText_Container_Description" 
-											      ColumnDefinitions="Auto,*"
-											      IsVisible="{asXaml:AndBindings {Binding !#window.IsValidDataSourceOptions}, {Binding !#proVersionOnlyDataSourceProvider.IsVisible}}">
-												<Image Classes="Dialog_Icon_Description" Source="{StaticResource Image/Icon.Error.Outline.Colored}"/>
-												<TextBlock Classes="Dialog_Icon_TextBlock_Description_Error" Grid.Column="1" Text="{asXaml:StringResource LogProfileEditorDialog.InvalidDataSourceOptions}"/>
-											</Grid>
+											<TextBlock Name="proVersionOnlyDataSourceProvider" Classes="Dialog_TextBlock_Description_Warning" IsVisible="{asXaml:AndBindings {Binding !#window.IsProVersionActivated}, {Binding #dataSourceProviderComboBox.SelectedItem.IsProVersionOnly, FallbackValue=False}}" Text="{asXaml:StringResource LogProfileEditorDialog.ProVersionOnly}"/>
+											<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{asXaml:AndBindings {Binding !#window.IsValidDataSourceOptions}, {Binding !#proVersionOnlyDataSourceProvider.IsVisible}}" Text="{asXaml:StringResource LogProfileEditorDialog.InvalidDataSourceOptions}"/>
 										</StackPanel>
 										<ComboBox Name="dataSourceProviderComboBox" Classes="Dialog_Item_ComboBox" HorizontalAlignment="Right" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #window.DataSourceProviders}" VerticalAlignment="Center">
 											<ComboBox.ItemTemplate>
