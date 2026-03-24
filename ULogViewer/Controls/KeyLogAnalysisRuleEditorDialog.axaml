@@ -76,7 +76,13 @@
 								<ComboBox.ItemTemplate>
 									<DataTemplate>
 										<Grid ColumnDefinitions="Auto,*">
-											<Border Classes="ComboBoxItem_Icon" Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+											<Border Classes="ComboBoxItem_Icon" 
+											        BorderBrush="{DynamicResource ComboBoxItemForeground}" 
+											        BorderThickness="1"
+											        CornerRadius="1"
+											        Padding="1">
+												<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" />
+											</Border>
 											<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
 										</Grid>
 									</DataTemplate>

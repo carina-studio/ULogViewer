@@ -1341,7 +1341,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogoutFromAzure.WithProVersion">Log out from Azure (Pro)</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">Use Process ID to Filter Logs</sys:String>
 	<sys:String x:Key="String/SessionView.LogPropertyName">Property Name: {0}</sys:String>
-	<sys:String x:Key="String/SessionView.LogsDuration">Logs Durations</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDuration">Logs Duration</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">Latest Log Timestamp/Maximum Log Time Span (Click to Select the Log)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">Earliest Log Timestamp/Minimum Log Time Span (Click to Select the Log)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">Log Filtering Progress</sys:String>

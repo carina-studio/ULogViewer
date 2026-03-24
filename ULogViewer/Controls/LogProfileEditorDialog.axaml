@@ -334,7 +334,13 @@
 															</Button>
 														</StackPanel>
 														<Grid ColumnDefinitions="Auto,*">
-															<Border Classes="ListBoxItem_Icon" Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+															<Border Classes="ListBoxItem_Icon" 
+															        BorderBrush="{DynamicResource ComboBoxItemForeground}" 
+															        BorderThickness="1"
+															        CornerRadius="1"
+															        Padding="1">
+																<Border Background="{Binding Value, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" />
+															</Border>
 															<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Value, Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
 														</Grid>
 													</DockPanel>
@@ -745,7 +751,13 @@
 										<DataTemplate>
 											<Grid ColumnDefinitions="*,*">
 												<Grid ColumnDefinitions="Auto,*">
-													<Border Classes="ListBoxItem_Icon" Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" BorderBrush="{DynamicResource ComboBoxItemForeground}" BorderThickness="1"/>
+													<Border Classes="ListBoxItem_Icon" 
+													        BorderBrush="{DynamicResource ComboBoxItemForeground}" 
+													        BorderThickness="1"
+													        CornerRadius="1"
+													        Padding="1">
+														<Border Background="{Binding Key, Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" />
+													</Border>
 													<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding Key, Converter={x:Static appConverters:EnumConverters.LogLevel}}"/>
 												</Grid>
 												<Border Classes="InPlaceAction_Reserved"/>
