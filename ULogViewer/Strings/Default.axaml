@@ -72,7 +72,7 @@
 	<sys:String x:Key="String/AzureCliLogDataSourceProvider.DisplayName">Azure CLI</sys:String>
 
 	<!-- AzureResourcesDialog -->
-	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double-click an Item to Use Resource:</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">Double-click an Item to Use Resource</sys:String>
 	<sys:String x:Key="String/AzureResourcesDialog.Title">Resources on Azure</sys:String>
 
 	<!-- Built-in profile -->
@@ -191,13 +191,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">Push Variable to Stack…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Queue Name:</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Stack Name:</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Variable Name:</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">Queue Name</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">Stack Name</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">Variable Name</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Source Variable Name:</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Target Variable Name:</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">Source Variable Name</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">Target Variable Name</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">Copy Value between Variables</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -208,11 +208,11 @@
 	<sys:String x:Key="String/DatabaseSourceType.Network">Network</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
-	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp Format:</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">Timestamp Format</sys:String>
 	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">Sample Result: {0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
-	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and Time:</sys:String>
+	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">Date and Time</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">Select Date and Time</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
@@ -347,17 +347,17 @@
 	<sys:String x:Key="String/FilterCombinationMode.Union">Union</sys:String>
 
 	<!-- IPEndPointInputDialog -->
-	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 Address:</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 Address</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.CommonAddresses">Common Addresses</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv4">Loopback</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv6">Loopback (IPv6)</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port:</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Port">Port</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP Endpoint</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key">Conversion from '{0}' is already defined.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value">Conversion to '{0}' is already defined.</sys:String>
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Log Properties to Output:</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">Log Properties to Output</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">Properties will be sorted by name automatically.</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON Options</sys:String>
 
@@ -529,11 +529,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogLevel.Warn">Warn</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped Log Level:</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">Mapped Log Level</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">Text</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">Log Level Mapping</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log Level:</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped Text:</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">Log Level</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">Mapped Text</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.Description">Description</sys:String>
@@ -960,7 +960,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix Timestamp (Milliseconds)</sys:String>
 
 	<!-- LogWritingFormatEditorDialog -->
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format:</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">Format</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">You can use the Interpolation Syntax "{}" to include the log property in the log text.</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">Log Output Format</sys:String>
 
@@ -975,7 +975,7 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">Paused</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for Data Source</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set the Title of This Tab…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Tab Title:</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Tab Title</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">Tabs</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">You can also right-click on here to select log profile and set to new tab.</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">Windows</sys:String>
@@ -1383,7 +1383,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">Clear Logs Reading Preconditions</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">Reload Logs (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">Remove Log File</sys:String>
-	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">New Group Name:</sys:String>
+	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">New Group Name</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogChartZoom">Reset Chart Zoom</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">Clear All Filters</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">Show Logs Normally</sys:String>
@@ -1417,9 +1417,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">Select/Change Log Profile</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId">Select/Change Process Identifier (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId.Invalid">Invalid process identifier (PID).</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessId.Message">Please Enter a Process Identifier (PID):</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Message">Please Enter a Process Identifier (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName">Select/Change Process Name</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessName.Message">Please Enter a Process Name:</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName.Message">Please Enter a Process Name</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">Select/Change URI</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">Select/Change Working Directory</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">Show All Logs Temporarily</sys:String>
@@ -1483,8 +1483,8 @@ return None</sys:String>
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">Standard Output (stdout)</sys:String>
 
 	<!-- StringLogPropertyMapEntryEditorDialog -->
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">Mapped Name:</sys:String>
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">Property:</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">Mapped Name</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">Property</sys:String>
 	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">Log Property</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
@@ -1500,10 +1500,10 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
-	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to Execute:</sys:String>
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to Execute</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time Span Format:</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">Time Span Format</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">Sample Result: {0}</sys:String>
 
 	<!-- TimeSpanUnit -->
@@ -1524,14 +1524,14 @@ return None</sys:String>
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP Server</sys:String>
 
 	<!-- UriInputDialog -->
-	<sys:String x:Key="String/UriInputDialog.Message">Please Enter a Valid URI:</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Message">Please Enter a Valid URI</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison:</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value:</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">Comparison</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">Value</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">Edit Comparison Condition</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable Name:</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">Variable Name</sys:String>
 
 	<!-- VariableAndConstantComparisonCondition -->
 	<sys:String x:Key="String/VariableAndConstantComparisonCondition">{{{0}}} {1} '{2}'</sys:String>

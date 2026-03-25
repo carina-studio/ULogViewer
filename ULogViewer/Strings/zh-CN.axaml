@@ -69,7 +69,7 @@
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
 
 	<!-- AzureResourcesDialog -->
-	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">双击项目以使用该资源：</sys:String>
+	<sys:String x:Key="String/AzureResourcesDialog.DoubleClickToSelectName">双击项目以使用该资源</sys:String>
 	<sys:String x:Key="String/AzureResourcesDialog.Title">Azure 上的资源</sys:String>
 
 	<!-- Built-in profile -->
@@ -179,13 +179,13 @@
 	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog">将变量加入至堆栈…</sys:String>
 
 	<!-- ContextualBasedAnalysisActionsEditorDialog -->
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">队列名称：</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆栈名称：</sys:String>
-	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">变量名称：</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Queue">队列名称</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Stack">堆栈名称</sys:String>
+	<sys:String x:Key="String/ContextualBasedAnalysisActionsEditorDialog.Variable">变量名称</sys:String>
 
 	<!-- CopyVarEditorDialog -->
-	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">来源变量：</sys:String>
-	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目标变量：</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.SourceVariable">来源变量</sys:String>
+	<sys:String x:Key="String/CopyVarEditorDialog.TargetVariable">目标变量</sys:String>
 	<sys:String x:Key="String/CopyVarEditorDialog.Title">复制变量值</sys:String>
 
 	<!-- CopyVariableAction -->
@@ -196,11 +196,11 @@
 	<sys:String x:Key="String/DatabaseSourceType.Network">网络</sys:String>
 
 	<!-- DateTimeFormatInputDialog -->
-	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">时间戳格式：</sys:String>
+	<sys:String x:Key="String/DateTimeFormatInputDialog.Message">时间戳格式</sys:String>
 	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">结果示范：{0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
-	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期与时间：</sys:String>
+	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期与时间</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">选择日期与时间</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->
@@ -330,17 +330,17 @@
 	<sys:String x:Key="String/FilterCombinationMode.Union">并集</sys:String>
 
 	<!-- IPEndPointInputDialog -->
-	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 地址：</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Address">IPv4/IPv6 地址</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.CommonAddresses">通用地址</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv4">本地环回 (Loopback)</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Loopback.IPv6">本地环回 (Loopback, IPv6)</sys:String>
-	<sys:String x:Key="String/IPEndPointInputDialog.Port">端口：</sys:String>
+	<sys:String x:Key="String/IPEndPointInputDialog.Port">端口</sys:String>
 	<sys:String x:Key="String/IPEndPointInputDialog.Title">IP 端点</sys:String>
 
 	<!-- JsonLogsSavingOptionsDialog -->
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Key">已经定义从「{0}」的转换。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.DuplicatedLogPropertyMapEntry.Value">已经定义至「{0}」的转换。</sys:String>
-	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">输出的日志属性：</sys:String>
+	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties">输出的日志属性</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.LogProperties.Description">日志属性将根据名称自动排序。</sys:String>
 	<sys:String x:Key="String/JsonLogsSavingOptionsDialog.Title">JSON 选项</sys:String>
 
@@ -513,11 +513,11 @@ return False</sys:String>
 	<sys:String x:Key="String/LogLevel.Warn">警告</sys:String>
 
 	<!-- LogLevelMapEntryEditor -->
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">对应的日志等级：</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字：</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.LogLevel">对应的日志等级</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Reading.Text">文字</sys:String>
 	<sys:String x:Key="String/LogLevelMapEntryEditor.Title">日志等级对照</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日志等级：</sys:String>
-	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">对应的文字：</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.LogLevel">日志等级</sys:String>
+	<sys:String x:Key="String/LogLevelMapEntryEditor.Writing.Text">对应的文字</sys:String>
 
 	<!-- LogPatternEditorDialog -->
 	<sys:String x:Key="String/LogPatternEditorDialog.Description">格式说明</sys:String>
@@ -922,7 +922,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogTimestampEncoding.UnixMilliseconds">Unix 时间戳 (毫秒)</sys:String>
 
 	<!-- LogWritingFormatEditorDialog -->
-	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式：</sys:String>
+	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format">格式</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Format.Description">您可以使用插值语法 "{}" 以将日志属性产生至输出的日志文字。</sys:String>
 	<sys:String x:Key="String/LogWritingFormatEditorDialog.Title">日志输出格式</sys:String>
 
@@ -937,7 +937,7 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">已暂停</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待资料来源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自定义页面标题…</sys:String>
-	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">页面标题：</sys:String>
+	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">页面标题</sys:String>
 	<sys:String x:Key="String/MainWindow.Tabs">选项卡</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选取日志类型，并套用至新的页面。</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">窗口</sys:String>
@@ -1345,7 +1345,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日志读取前置条件</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志文件</sys:String>
-	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">新的分组名称：</sys:String>
+	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">新的分组名称</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogChartZoom">重置图表缩放</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有筛选设定</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">正常显示日志</sys:String>
@@ -1379,9 +1379,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SetLogProfile">选择/变更日志类型</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId">选择/变更进程识别码 (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessId.Invalid">无效的进程识别码 (PID)。</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessId.Message">请输入一个进程识别码 (PID)：</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessId.Message">请输入一个进程识别码 (PID)</sys:String>
 	<sys:String x:Key="String/SessionView.SetProcessName">选择/变更进程名称</sys:String>
-	<sys:String x:Key="String/SessionView.SetProcessName.Message">请输入一个进程名称：</sys:String>
+	<sys:String x:Key="String/SessionView.SetProcessName.Message">请输入一个进程名称</sys:String>
 	<sys:String x:Key="String/SessionView.SetUri">选择/变更网络地址 (URI)</sys:String>
 	<sys:String x:Key="String/SessionView.SetWorkingDirectory">选择/变更工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.ShowAllLogsTemporarily">暂时显示所有日志</sys:String>
@@ -1445,8 +1445,8 @@ return None</sys:String>
 	<sys:String x:Key="String/StandardOutputLogDataSourceProvider.DisplayName">标准输出 (stdout)</sys:String>
 
 	<!-- StringLogPropertyMapEntryEditorDialog -->
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">对应的名称：</sys:String>
-	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">属性：</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.MappedName">对应的名称</sys:String>
+	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Name">属性</sys:String>
 	<sys:String x:Key="String/StringLogPropertyMapEntryEditorDialog.Title">日志属性</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
@@ -1456,10 +1456,10 @@ return None</sys:String>
 	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows 命令提示符)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
-	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲执行之指令：</sys:String>
+	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲执行之指令</sys:String>
 
 	<!-- TimeSpanFormatInputDialog -->
-	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式：</sys:String>
+	<sys:String x:Key="String/TimeSpanFormatInputDialog.Message">时距格式</sys:String>
 	<sys:String x:Key="String/TimeSpanFormatInputDialog.SampleResult">结果示范：{0}</sys:String>
 
 	<!-- TimeSpanUnit -->
@@ -1480,14 +1480,14 @@ return None</sys:String>
 	<sys:String x:Key="String/UdpServerLogDataSourceProvider.DisplayName">UDP 服务器</sys:String>
 
 	<!-- UriInputDialog -->
-	<sys:String x:Key="String/UriInputDialog.Message">请输入有效的网络地址 (URI)：</sys:String>
+	<sys:String x:Key="String/UriInputDialog.Message">请输入有效的网络地址 (URI)</sys:String>
 	<sys:String x:Key="String/UriInputDialog.Title">URI</sys:String>
 
 	<!-- VarAndConstComparisonEditorDialog -->
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比较方式：</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值：</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.ComparisonType">比较方式</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Constant">值</sys:String>
 	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Title">编辑比较条件</sys:String>
-	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">变量名称：</sys:String>
+	<sys:String x:Key="String/VarAndConstComparisonEditorDialog.Variable">变量名称</sys:String>
 
 	<!-- VisibleLogPropertyEditorDialog -->
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.CustomDisplayName"/>
