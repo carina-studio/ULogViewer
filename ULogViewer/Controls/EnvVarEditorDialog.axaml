@@ -2,11 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.EnvVarEditorDialog"
         Name="dialog"
         Classes="Dialog"
-        Title="{DynamicResource String/EnvVarEditorDialog.Title}"
+        Title="{asXaml:StringResource EnvVarEditorDialog.Title}"
         Width="{DynamicResource Double/EnvVarEditorDialog.Width}">
 
 	<DockPanel>
@@ -14,8 +16,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -23,12 +25,12 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 			
 			<!-- Name -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/EnvVarEditorDialog.Name}"/>
+			<TextBlock Text="{asXaml:StringResource EnvVarEditorDialog.Name}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<TextBox Name="nameTextBox" Classes="Dialog_TextBox" MaxLength="64"/>
-			<Separator Classes="Dialog_Separator"/>
+			<Separator asControls:DialogElement.SeparatorType="Default"/>
 					
 			<!-- Value -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/EnvVarEditorDialog.Value}"/>
+			<TextBlock Text="{asXaml:StringResource EnvVarEditorDialog.Value}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<TextBox Name="valueTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/EnvVarEditorDialog.Value.Height}" HorizontalAlignment="Stretch" MaxLength="8191"/>
 			
 		</StackPanel>

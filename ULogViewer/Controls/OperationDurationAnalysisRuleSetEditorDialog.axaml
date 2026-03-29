@@ -26,12 +26,12 @@
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.CompleteEditing}" Content="{Binding #dialog.OKButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 				</StackPanel>
 			</Grid>
 		</Border>
@@ -45,37 +45,37 @@
 				
 						<!-- Name -->
 						<asControls:DialogItem Name="nameItem" ItemSize="Small">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}"/>
-							<TextBox Name="nameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}" asControls:DialogElement.TextRole="Label"/>
+							<TextBox Name="nameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 						</asControls:DialogItem>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Icon -->
 						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Icon}"/>
-							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Icon}" asControls:DialogElement.TextRole="Label"/>
+							<appControls:LogProfileIconComboBox Name="iconComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}" asControls:DialogElement.IsDialogItemInput="True"/>
 						</asControls:DialogItem>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Icon color -->
 						<asControls:DialogItem>
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.IconColor}"/>
-							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
+							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.IconColor}" asControls:DialogElement.TextRole="Label"/>
+							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" asControls:DialogElement.IsDialogItemInput="True"/>
 						</asControls:DialogItem>
 
 					</StackPanel>
 				</Border>
-				<Separator Classes="Dialog_Separator"/>
+				<Separator asControls:DialogElement.SeparatorType="Default"/>
 
 				<!-- Rules -->
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel>
 						<asControls:DialogItem Name="rulesItem" ItemSize="Small">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Rules}"/>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{asXaml:StringResource Common.None}"/>
+							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Rules}" asControls:DialogElement.TextRole="Label"/>
+							<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
 						</asControls:DialogItem>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<asControls:ListBox Name="ruleListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding #dialog.Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #dialog.Rules}">
+						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+						<asControls:ListBox Name="ruleListBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #dialog.Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #dialog.Rules}">
 							<asControls:ListBox.ItemTemplate>
 								<DataTemplate>
 									<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,*">
@@ -144,8 +144,8 @@
 								</DataTemplate>
 							</asControls:ListBox.ItemTemplate>
 						</asControls:ListBox>
-						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding #ruleListBox.IsVisible}"/>
-						<Button Name="addRuleButton" Classes="Dialog_Item_Button" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
+						<Separator IsVisible="{Binding #ruleListBox.IsVisible}" asControls:DialogElement.SeparatorType="Small"/>
+						<Button Name="addRuleButton" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
 					</StackPanel>
 				</Border>
 

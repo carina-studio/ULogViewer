@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asInput="using:CarinaStudio.AppSuite.Input"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogStringPropertyDialog"
         Name="dialog"
@@ -13,7 +14,7 @@
         MinHeight="{DynamicResource Double/LogStringPropertyDialog.MinHeight}"
         MinWidth="{DynamicResource Double/LogStringPropertyDialog.MinWidth}"
 		SizeToContent="Manual"
-        Title="{DynamicResource String/LogStringPropertyDialog.Title}"
+        Title="{asXaml:StringResource LogStringPropertyDialog.Title}"
         Width="{DynamicResource Double/LogStringPropertyDialog.Width}">
 
 	<DockPanel>
@@ -21,7 +22,7 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<Panel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.OKButtonText}"/>
 			</Panel>
 		</Border>
 
@@ -29,15 +30,15 @@
 		<Grid RowDefinitions="Auto,*">
 
 			<!-- Toolbar -->
-			<Border Classes="ToolBar">
+			<Border Classes="Toolbar">
 				<Grid ColumnDefinitions="*,Auto,Auto">
 
 					<!-- Find text -->
-					<asControls:RegexTextBox Name="findTextTextBox" Classes="ToolBar_TextBox" HorizontalAlignment="Stretch" PropertyChanged="OnFindTextTextBoxPropertyChanged" Watermark="{DynamicResource String/LogStringPropertyDialog.FindText}"/>
-					<Separator Classes="Dialog_Separator_Small" Grid.Column="1"/>
+					<asControls:RegexTextBox Name="findTextTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnFindTextTextBoxPropertyChanged" asControls:ToolbarElement.Role="Input" Watermark="{asXaml:StringResource LogStringPropertyDialog.FindText}"/>
+					<Separator asControls:DialogElement.SeparatorType="Small" Grid.Column="1"/>
 
 					<!-- Wrap text -->
-					<CheckBox Name="wrapTextCheckBox" Grid.Column="2" Content="{DynamicResource String/LogStringPropertyDialog.WrapText}" IsChecked="True" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center"/>
+					<CheckBox Name="wrapTextCheckBox" Grid.Column="2" Content="{asXaml:StringResource LogStringPropertyDialog.WrapText}" IsChecked="True" Margin="{StaticResource Thickness/ToolBar.Item.Margin}" VerticalAlignment="Center"/>
 
 				</Grid>
 			</Border>
@@ -56,14 +57,14 @@
 				</asControls:SyntaxHighlightingTextBox.Styles>
 				<asControls:SyntaxHighlightingTextBox.ContextMenu>
 					<ContextMenu>
-						<MenuItem Command="{Binding $parent[TextBox].Copy}" Header="{DynamicResource String/Common.Copy}" IsEnabled="{Binding $parent[TextBox].CanCopy}" InputGesture="{x:Static asInput:KeyGestures.Copy}">
+						<MenuItem Command="{Binding $parent[TextBox].Copy}" Header="{asXaml:StringResource Common.Copy}" IsEnabled="{Binding $parent[TextBox].CanCopy}" InputGesture="{x:Static asInput:KeyGestures.Copy}">
 							<MenuItem.Icon>
 								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Copy.Outline}"/>
 							</MenuItem.Icon>
 						</MenuItem>
-						<MenuItem Command="{Binding $parent[TextBox].SelectAll}" Header="{DynamicResource String/Common.SelectAll}" IsEnabled="{Binding $parent[TextBox].Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" InputGesture="{x:Static asInput:KeyGestures.SelectAll}"/>
+						<MenuItem Command="{Binding $parent[TextBox].SelectAll}" Header="{asXaml:StringResource Common.SelectAll}" IsEnabled="{Binding $parent[TextBox].Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" InputGesture="{x:Static asInput:KeyGestures.SelectAll}"/>
 						<Separator/>
-						<MenuItem Name="searchOnInternetMenuItem" Header="{DynamicResource String/LogStringPropertyDialog.SearchOnInternet}" IsEnabled="{Binding #dialog.CanSearchOnInternet}">
+						<MenuItem Name="searchOnInternetMenuItem" Header="{asXaml:StringResource LogStringPropertyDialog.SearchOnInternet}" IsEnabled="{Binding #dialog.CanSearchOnInternet}">
 							<MenuItem.Icon>
 								<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Search}"/>
 							</MenuItem.Icon>

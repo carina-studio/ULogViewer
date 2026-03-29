@@ -17,8 +17,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}" IsVisible="{Binding #window.IsCancellationAllowed}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}" IsVisible="{Binding #window.IsCancellationAllowed}"/>
 			</StackPanel>
 		</Border>
 
@@ -30,17 +30,17 @@
 					<!-- Description -->
 					<asControls:DialogItem>
 						<Grid ColumnDefinitions="Auto,*">
-							<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored.Gradient}"/>
-							<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{asXaml:StringResource LogReadingPreconditionDialog.Description}" TextWrapping="Wrap"/>
+							<Image asControls:DialogElement.IconType="Default" Source="{DynamicResource Image/Icon.Information.Colored.Gradient}"/>
+							<TextBlock Grid.Column="1" Text="{asXaml:StringResource LogReadingPreconditionDialog.Description}" asControls:DialogElement.TextRole="LabelNextToIcon" TextWrapping="Wrap"/>
 						</Grid>
 					</asControls:DialogItem>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 					<!-- Timestamps -->
 					<asControls:DialogItem Name="timestampsItem">
-						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps.Description}">
+						<StackPanel>
+							<TextBlock Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps}" asControls:DialogElement.TextRole="Label"/>
+							<TextBlock Text="{asXaml:StringResource LogReadingPreconditionDialog.PreconditionTimestamps.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="!IsVisible" ElementName="invalidTimestampFormatTextBlock"/>
@@ -48,7 +48,7 @@
 									</MultiBinding>
 								</TextBlock.IsVisible>
 							</TextBlock>
-							<TextBlock Name="invalidTimestampFormatTextBlock" Classes="Dialog_TextBlock_Description_Error" Text="{asXaml:StringResource Common.InvalidFormat}">
+							<TextBlock Name="invalidTimestampFormatTextBlock" Text="{asXaml:StringResource Common.InvalidFormat}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="IsChecked" ElementName="timestampsSwitch"/>
@@ -59,7 +59,7 @@
 									</MultiBinding>
 								</TextBlock.IsVisible>
 							</TextBlock>
-							<TextBlock Name="invalidTimestampRangeTextBlock" Classes="Dialog_TextBlock_Description_Error" Text="{asXaml:StringResource LogReadingPreconditionDialog.InvalidTimestampRange}">
+							<TextBlock Name="invalidTimestampRangeTextBlock" Text="{asXaml:StringResource LogReadingPreconditionDialog.InvalidTimestampRange}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="IsChecked" ElementName="timestampsSwitch"/>
@@ -69,22 +69,20 @@
 								</TextBlock.IsVisible>
 							</TextBlock>
 						</StackPanel>
-						<ToggleSwitch Name="timestampsSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+						<ToggleSwitch Name="timestampsSwitch" asControls:DialogElement.IsDialogItemInput="True"/>
 					</asControls:DialogItem>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 					<Grid ColumnDefinitions="*,Auto,*" IsEnabled="{Binding #timestampsSwitch.IsChecked}">
-						<abControls:DateTimeTextBox Name="beginningTimestampTextBox" Classes="Dialog_Item_TextBox" TextAlignment="Center"/>
-						<TextBlock Classes="Dialog_TextBlock" Grid.Column="1" Text="{asXaml:StringResource LogReadingPreconditionDialog.EndingTimestamp}"/>
-						<abControls:DateTimeTextBox Name="endingTimestampTextBox" Classes="Dialog_Item_TextBox" Grid.Column="2" TextAlignment="Center"/>
+						<abControls:DateTimeTextBox Name="beginningTimestampTextBox" asControls:DialogElement.IsDialogItemInput="True" TextAlignment="Center"/>
+						<TextBlock Grid.Column="1" Text="{asXaml:StringResource LogReadingPreconditionDialog.EndingTimestamp}" asControls:DialogElement.TextRole="Default"/>
+						<abControls:DateTimeTextBox Name="endingTimestampTextBox" Grid.Column="2" asControls:DialogElement.IsDialogItemInput="True" TextAlignment="Center"/>
 					</Grid>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
-					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource DateTimeTextBox.FormatDescription}"/>
-					<!--TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #beginningTimestampTextBox.Value}" VerticalAlignment="Center"/-->
-					<!--TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #endingTimestampTextBox.Value}" VerticalAlignment="Center"/-->
+					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+					<SelectableTextBlock Text="{asXaml:StringResource DateTimeTextBox.FormatDescription}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 
 					<!-- Select precondition before reading logs -->
 					<StackPanel>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 						<StackPanel.IsVisible>
 							<MultiBinding Converter="{x:Static BoolConverters.Or}">
 								<Binding Path="IsReadingFromFiles" ElementName="window"/>
@@ -93,11 +91,11 @@
 
 						<!-- Files -->
 						<asControls:DialogItem IsVisible="{Binding #window.IsReadingFromFiles}">
-							<StackPanel Classes="Dialog_Item_Text_Container">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource AppOptionsDialog.SelectLogReadingPreconditionForFiles}"/>
-								<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}"/>
+							<StackPanel>
+								<TextBlock Text="{asXaml:StringResource AppOptionsDialog.SelectLogReadingPreconditionForFiles}" asControls:DialogElement.TextRole="Label"/>
+								<TextBlock Text="{asXaml:StringResource LogReadingPreconditionDialog.SelectPreconditionBeforeReadingLogs.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 							</StackPanel>
-							<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding #window.SelectPreconditionForFiles, Mode=TwoWay}"/>
+							<ToggleSwitch asControls:DialogElement.IsDialogItemInput="True" IsChecked="{Binding #window.SelectPreconditionForFiles, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 
 					</StackPanel>

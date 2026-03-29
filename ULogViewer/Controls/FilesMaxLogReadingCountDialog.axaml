@@ -18,8 +18,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}" IsVisible="{Binding #window.IsCancellationAllowed}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}" IsVisible="{Binding #window.IsCancellationAllowed}"/>
 			</StackPanel>
 		</Border>
 
@@ -32,19 +32,19 @@
 					<StackPanel IsVisible="{Binding #window.Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 						<asControls:DialogItem>
 							<Grid ColumnDefinitions="Auto,*">
-								<Image Classes="Dialog_Icon" Source="{DynamicResource Image/Icon.Information.Colored.Gradient}"/>
-								<TextBlock Classes="Dialog_Icon_TextBlock" Grid.Column="1" Text="{Binding #window.Message}" TextWrapping="Wrap"/>
+								<Image asControls:DialogElement.IconType="Default" Source="{DynamicResource Image/Icon.Information.Colored.Gradient}"/>
+								<TextBlock Grid.Column="1" Text="{Binding #window.Message}" asControls:DialogElement.TextRole="LabelNextToIcon" TextWrapping="Wrap"/>
 							</Grid>
 						</asControls:DialogItem>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 					</StackPanel>
 
 					<!-- Reading window -->
 					<asControls:DialogItem>
-						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.LogReadingWindow}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #window.CanSpecifyMaxLogReadingCount}" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.LogReadingWindow.Description}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description_Warning" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion}">
+						<StackPanel>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.LogReadingWindow}" asControls:DialogElement.TextRole="Label"/>
+							<TextBlock IsVisible="{Binding #window.CanSpecifyMaxLogReadingCount}" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.LogReadingWindow.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion}" asControls:DialogElement.TextRole="WarningDescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="CanSpecifyMaxLogReadingCount" ElementName="window"/>
@@ -52,7 +52,7 @@
 									</MultiBinding>
 								</TextBlock.IsVisible>
 							</TextBlock>
-							<TextBlock Classes="Dialog_TextBlock_Description_Warning" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ProVersionOnly}">
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ProVersionOnly}" asControls:DialogElement.TextRole="WarningDescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="!CanSpecifyMaxLogReadingCount" ElementName="window"/>
@@ -61,15 +61,15 @@
 								</TextBlock.IsVisible>
 							</TextBlock>
 						</StackPanel>
-						<asControls:EnumComboBox Name="logReadingWindowComboBox" Classes="Dialog_Item_ComboBox" EnumType="{x:Type appLogs:LogReadingWindow}" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}"/>
+						<asControls:EnumComboBox Name="logReadingWindowComboBox" EnumType="{x:Type appLogs:LogReadingWindow}" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}"/>
 					</asControls:DialogItem>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 
 					<!-- Max log reading count -->
 					<asControls:DialogItem Name="maxLogReadingCountItem">
-						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description}">
+						<StackPanel>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount}" asControls:DialogElement.TextRole="Label"/>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="CanSpecifyMaxLogReadingCount" ElementName="window"/>
@@ -77,8 +77,8 @@
 									</MultiBinding>
 								</TextBlock.IsVisible>
 							</TextBlock>
-							<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description_Error" Arg1="{Binding #maxLogReadingCountTextBox.Maximum}" Format="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange}" IsVisible="{Binding !#maxLogReadingCountTextBox.IsTextValid}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description_Warning" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion}">
+							<abControls:FormattedTextBlock Arg1="{Binding #maxLogReadingCountTextBox.Maximum}" Format="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange}" IsVisible="{Binding !#maxLogReadingCountTextBox.IsTextValid}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel"/>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.SetOneTimeInNonProVersion}" asControls:DialogElement.TextRole="WarningDescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="CanSpecifyMaxLogReadingCount" ElementName="window"/>
@@ -86,7 +86,7 @@
 									</MultiBinding>
 								</TextBlock.IsVisible>
 							</TextBlock>
-							<TextBlock Classes="Dialog_TextBlock_Description_Warning" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ProVersionOnly}">
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ProVersionOnly}" asControls:DialogElement.TextRole="WarningDescriptionBelowLabel">
 								<TextBlock.IsVisible>
 									<MultiBinding Converter="{x:Static BoolConverters.And}">
 										<Binding Path="!CanSpecifyMaxLogReadingCount" ElementName="window"/>
@@ -95,23 +95,23 @@
 								</TextBlock.IsVisible>
 							</TextBlock>
 						</StackPanel>
-						<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" Classes="Dialog_Item_TextBox" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}" IsNullValueAllowed="True" Watermark="{asXaml:StringResource Common.None}"/>
+						<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}" IsNullValueAllowed="True" Watermark="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
-					<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding #maxLogReadingCountOfLogProfileTextBlock.IsVisible}"/>
+					<Separator IsVisible="{Binding #maxLogReadingCountOfLogProfileTextBlock.IsVisible}" asControls:DialogElement.SeparatorType="InnerItem"/>
 
 					<!-- Max log reading count defined in log profile -->
 					<asControls:DialogItem Name="maxLogReadingCountOfLogProfileTextBlock" IsVisible="{Binding #window.MaxLogReadingCountOfLogProfile, Converter={x:Static ObjectConverters.IsNotNull}}" ItemSize="Small">
-						<abControls:FormattedTextBlock Classes="Dialog_TextBlock_Description" Arg1="{Binding #window.MaxLogReadingCountOfLogProfile}" Format="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile}"/>
+						<abControls:FormattedTextBlock Arg1="{Binding #window.MaxLogReadingCountOfLogProfile}" Format="{asXaml:StringResource FilesMaxLogReadingCountDialog.MaxLogReadingCountOfLogProfile}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 					</asControls:DialogItem>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Separator asControls:DialogElement.SeparatorType="Item"/>
 					
 					<!-- Confirm for large files -->
 					<asControls:DialogItem>
-						<StackPanel Classes="Dialog_Item_Text_Container">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description}"/>
+						<StackPanel>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles}" asControls:DialogElement.TextRole="Label"/>
+							<TextBlock Text="{asXaml:StringResource FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 						</StackPanel>
-						<ToggleSwitch Classes="Dialog_Item_ToggleSwitch" IsChecked="{Binding #window.ConfirmMaxLogReadingCountForLargeFiles, Mode=TwoWay}"/>
+						<ToggleSwitch IsChecked="{Binding #window.ConfirmMaxLogReadingCountForLargeFiles, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
 					</asControls:DialogItem>
 
 				</StackPanel>

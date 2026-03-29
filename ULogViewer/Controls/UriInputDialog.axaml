@@ -3,6 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.UriInputDialog"
         Name="dialog"
@@ -15,14 +17,14 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/UriInputDialog.Message}"/>
+			<TextBlock Text="{DynamicResource String/UriInputDialog.Message}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<abControls:UriTextBox Name="uriTextBox" Classes="Dialog_TextBox" DefaultUriScheme="{Binding #dialog.DefaultScheme}" MaxLength="65535" PropertyChanged="OnUriTextBoxPropertyChanged" UriKind="Absolute" Watermark="{x:Null}"/>
 		</StackPanel>
 

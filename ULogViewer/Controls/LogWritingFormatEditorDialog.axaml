@@ -5,11 +5,12 @@
 		xmlns:app="using:CarinaStudio.ULogViewer"
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogWritingFormatEditorDialog"
         Name="dialog"
 		Classes="Dialog"
-		Title="{DynamicResource String/LogWritingFormatEditorDialog.Title}"
+		Title="{asXaml:StringResource LogWritingFormatEditorDialog.Title}"
         Width="{StaticResource Double/LogWritingFormatEditorDialog.Width}">
 
 	<DockPanel>
@@ -17,20 +18,20 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
 		<!-- Content -->
 		<StackPanel Classes="Dialog_ContentPanel">
 
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogWritingFormatEditorDialog.Format}"/>
+			<TextBlock Text="{asXaml:StringResource LogWritingFormatEditorDialog.Format}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<asControls:StringInterpolationFormatTextBox Name="formatTextBox" Classes="Dialog_TextBox" Height="{StaticResource Double/LogWritingFormatEditorDialog.FormatTextBox.Height}" MaxLength="1024" TextWrapping="Wrap"/>
-			<Separator Classes="Dialog_Separator_Small"/>
-			<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/LogWritingFormatEditorDialog.Format.Description}"/>
-			<Separator Classes="Dialog_Separator_Small"/>
-			<abControls:LinkTextBlock Classes="Dialog_LinkTextBlock_Description" Text="{DynamicResource String/LogProfileEditorDialog.FormatDescription}" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
+			<Separator asControls:DialogElement.SeparatorType="Small"/>
+			<SelectableTextBlock Text="{asXaml:StringResource LogWritingFormatEditorDialog.Format.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+			<Separator asControls:DialogElement.SeparatorType="Default"/>
+			<abControls:LinkTextBlock Text="{asXaml:StringResource LogProfileEditorDialog.FormatDescription}" asControls:DialogElement.TextRole="DescriptionBelowLabel" Uri="{x:Static app:Uris.StringInterpolationReference}"/>
 
 		</StackPanel>
 
