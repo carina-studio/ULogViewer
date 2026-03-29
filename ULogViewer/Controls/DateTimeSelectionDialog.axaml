@@ -3,11 +3,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:abControls="using:CarinaStudio.Controls"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.DateTimeSelectionDialog"
         Name="dialog"
 		Classes="Dialog"
-        Title="{DynamicResource String/DateTimeSelectionDialog.Title}"
+        Title="{asXaml:StringResource DateTimeSelectionDialog.Title}"
 		Width="{DynamicResource Double/DateTimeSelectionDialog.Width}">
 
 	<DockPanel>
@@ -15,8 +17,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -24,16 +26,17 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Message -->
-			<TextBlock Name="messageTextBlock" Classes="Dialog_TextBlock" Text=" "/>
+			<TextBlock Name="messageTextBlock" Text=" " asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 
 			<!-- Date time -->
 			<abControls:DateTimeTextBox Name="dateTimeTextBox" Classes="Dialog_TextBox" PropertyChanged="OnDateTimeTextBoxPropertyChanged"/>
+			<Separator asControls:DialogElement.SeparatorType="Small"/>
 			<StackPanel Orientation="Horizontal">
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeSelectionDialog.DateTime}" VerticalAlignment="Center"/>
-				<TextBlock Classes="Dialog_TextBlock_Description" Text="{Binding #dateTimeTextBox.Value}" VerticalAlignment="Center"/>
+				<TextBlock Text="{asXaml:StringResource DateTimeSelectionDialog.DateTime}" asControls:DialogElement.TextRole="DescriptionBelowLabel" VerticalAlignment="Center"/>
+				<TextBlock Text="{Binding #dateTimeTextBox.Value}" asControls:DialogElement.TextRole="DescriptionBelowLabel" VerticalAlignment="Center"/>
 			</StackPanel>
-			<Separator Classes="Dialog_Separator"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{DynamicResource String/DateTimeTextBox.FormatDescription}"/>
+			<Separator asControls:DialogElement.SeparatorType="Default"/>
+			<SelectableTextBlock Text="{asXaml:StringResource DateTimeTextBox.FormatDescription}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 			
 		</StackPanel>
 

@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
+        xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.ContextualBasedAnalysisActionsEditor"
 		HorizontalContentAlignment="Stretch"
@@ -11,39 +12,39 @@
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="addActionMenu" Placement="Bottom">
-			<MenuItem Command="{Binding $parent[UserControl].AddCopyVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddCopyVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.CopyVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Variable}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].AddEnqueueVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddEnqueueVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.EnqueueVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Enter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].AddPeekQueueToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddPeekQueueToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Peek.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].AddDequeueToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddDequeueToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.DequeueToVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Exit}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[UserControl].AddPushVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddPushVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PushVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Enter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].AddPeekStackToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddPeekStackToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Peek.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[UserControl].AddPopToVarAction}" Header="{DynamicResource String/ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog}">
+			<MenuItem Command="{Binding $parent[UserControl].AddPopToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PopToVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Exit}"/>
 				</MenuItem.Icon>
@@ -53,21 +54,21 @@
 	</UserControl.Resources>
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:ListBox Name="actionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[UserControl].Actions}">
+		<asControls:ListBox Name="actionListBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding $self.ItemCount}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding $parent[UserControl].Actions}">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Name="itemRoot" ColumnDefinitions="*,Auto">
 						<TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 						<Border Classes="InPlaceAction_Reserved"/>
 						<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveActionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Delete}">
+							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].RemoveActionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
 										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
 									</DrawingImage>
 								</asControls:Image>
 							</Button>
-							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditActionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{DynamicResource String/Common.Edit}">
+							<Button Classes="InPlaceAction_Button" Command="{Binding $parent[UserControl].EditActionCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
 								<asControls:Image Classes="InPlaceAction_Icon">
 									<DrawingImage>
 										<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
@@ -79,10 +80,10 @@
 				</DataTemplate>
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
-		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #actionListBox.IsVisible}"/>
-		<ToggleButton Name="addActionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[UserControl].ShowAddActionMenu}" Grid.Row="2">
+		<Separator Grid.Row="1" IsVisible="{Binding #actionListBox.IsVisible}" asControls:DialogElement.SeparatorType="Small"/>
+		<ToggleButton Name="addActionButton" Command="{Binding $parent[UserControl].ShowAddActionMenu}" Grid.Row="2" asControls:DialogElement.IsDialogItemInput="True">
 			<Grid ColumnDefinitions="*,Auto">
-				<TextBlock Classes="Button_TextBlock" Text="{DynamicResource String/Common.Add}"/>
+				<TextBlock Classes="Button_TextBlock" Text="{asXaml:StringResource Common.Add}"/>
 				<Panel Grid.Column="1">
 					<Image Classes="Button_DropDownIcon" IsVisible="{Binding !#addActionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
 					<Image Classes="Button_DropDownIcon" IsVisible="{Binding #addActionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down.Light}"/>

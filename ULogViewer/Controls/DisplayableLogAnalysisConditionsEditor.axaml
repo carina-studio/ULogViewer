@@ -24,7 +24,7 @@
 	</UserControl.Resources>
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:ListBox Name="conditionListBox" Classes="Dialog_Item_ListBox" IsVisible="{Binding $self.ItemCount}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #root.Conditions}" VerticalAlignment="Stretch">
+		<asControls:ListBox Name="conditionListBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding $self.ItemCount}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #root.Conditions}" VerticalAlignment="Stretch">
 			<asControls:ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid Name="itemRoot" ColumnDefinitions="*,Auto">
@@ -50,8 +50,8 @@
 				</DataTemplate>
 			</asControls:ListBox.ItemTemplate>
 		</asControls:ListBox>
-		<Separator Classes="Dialog_Separator_Small" Grid.Row="1" IsVisible="{Binding #conditionListBox.IsVisible}"/>
-		<ToggleButton Name="addConditionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding #root.ShowAddConditionMenu}" Grid.Row="2">
+		<Separator Grid.Row="1" IsVisible="{Binding #conditionListBox.IsVisible}" asControls:DialogElement.SeparatorType="Small"/>
+		<ToggleButton Name="addConditionButton" Command="{Binding #root.ShowAddConditionMenu}" Grid.Row="2" asControls:DialogElement.IsDialogItemInput="True">
 			<Grid ColumnDefinitions="*,Auto">
 				<TextBlock Classes="Button_TextBlock" Text="{asXaml:StringResource Common.Add}"/>
 				<Panel Grid.Column="1">

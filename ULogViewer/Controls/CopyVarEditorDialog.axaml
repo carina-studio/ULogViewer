@@ -2,12 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.CopyVarEditorDialog"
         Name="dialog"
         Classes="Dialog"
-        Title="{DynamicResource String/CopyVarEditorDialog.Title}"
+        Title="{asXaml:StringResource CopyVarEditorDialog.Title}"
         Width="{DynamicResource Double/CopyVarEditorDialog.Width}">
 
 	<DockPanel>
@@ -15,8 +16,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -24,12 +25,12 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 			
 			<!-- Source variable -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource CopyVarEditorDialog.SourceVariable}"/>
+			<TextBlock Text="{asXaml:StringResource CopyVarEditorDialog.SourceVariable}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<TextBox Name="sourceVarTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
-			<Separator Classes="Dialog_Separator_Small"/>
+			<Separator asControls:DialogElement.SeparatorType="Default"/>
 
 			<!-- Target variable -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource CopyVarEditorDialog.TargetVariable}"/>
+			<TextBlock Text="{asXaml:StringResource CopyVarEditorDialog.TargetVariable}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<TextBox Name="targetVarTextBox" Classes="Dialog_TextBox" MaxLength="256"/>
 			
 		</StackPanel>
