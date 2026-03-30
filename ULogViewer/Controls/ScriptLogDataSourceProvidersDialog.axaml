@@ -18,14 +18,14 @@
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.AddProvider}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.ImportProvider}" Content="{asXaml:StringResource Common.Import.WithDialog}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.AddProvider}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.ImportProvider}" Content="{asXaml:StringResource Common.Import.WithDialog}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
 				<Panel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{asXaml:StringResource Common.Close}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{asXaml:StringResource Common.Close}"/>
 				</Panel>
 			</Grid>
 		</Border>

@@ -17,8 +17,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -29,28 +29,28 @@
 					
 					<!-- Command -->
 					<asControls:DialogItem ItemSize="Small">
-						<TextBlock Classes="Dialog_TextBlock_Label" 
-						           Text="{asXaml:StringResource LogDataSourceOptions.Command}"/>
+						<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.Command}"
+						           asControls:DialogElement.TextRole="Label"/>
 					</asControls:DialogItem>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 					<asControls:SyntaxHighlightingTextBox Name="commandTextBox" 
-					                                      Classes="Dialog_Item_TextBox" 
 					                                      DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}"
 					                                      FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}"
 					                                      Height="{StaticResource Double/LogDataSourceOptionsDialog.Command.Height}"
 					                                      HorizontalAlignment="Stretch"
+					                                      asControls:DialogElement.IsDialogItemInput="True"
 					                                      TextAlignment="Left"
 					                                      Watermark="{asXaml:StringResource Common.None}"/>
 					
 					<!-- Use text shell -->
 					<StackPanel IsVisible="{Binding #window.UseTextShell, Converter={x:Static ObjectConverters.IsNotNull}}">
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 						<asControls:DialogItem ItemSize="Small">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogDataSourceOptions.UseTextShell}"/>
-							<ToggleSwitch Name="useTextShellSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+							<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.UseTextShell}" asControls:DialogElement.TextRole="Label"/>
+							<ToggleSwitch Name="useTextShellSwitch" asControls:DialogElement.IsDialogItemInput="True"/>
 						</asControls:DialogItem>
-						<Separator Classes="Dialog_Separator"/>
-						<Button Classes="Dialog_Item_Button" Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{asXaml:StringResource Common.Options.WithDialog}"/>
+						<Separator asControls:DialogElement.SeparatorType="Default"/>
+						<Button Command="{Binding #window.ShowDefaultTextShellOptions}" Content="{asXaml:StringResource Common.Options.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
 					</StackPanel>
 					
 				</StackPanel>

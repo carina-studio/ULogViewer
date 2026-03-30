@@ -30,13 +30,13 @@
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.OpenDocumentation}" Content="{Binding #window.HelpButtonText}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.OpenDocumentation}" Content="{Binding #window.HelpButtonText}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.ApplyCommand}" Content="{asXaml:StringResource Common.Apply}" IsVisible="{Binding !#window.IsNewProvider}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.CompleteEditingCommand}" Content="{Binding #window.OKButtonText}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.ApplyCommand}" Content="{asXaml:StringResource Common.Apply}" IsVisible="{Binding !#window.IsNewProvider}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.CompleteEditingCommand}" Content="{Binding #window.OKButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 				</StackPanel>
 			</Grid>
 		</Border>
@@ -52,19 +52,19 @@
 						<!-- Display Name -->
 						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
 							<asControls:DialogItem Name="displayNameItem" ItemSize="Small">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.DisplayName}"/>
-								<TextBox Name="displayNameTextBox" Classes="Dialog_Item_TextBox" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+								<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.DisplayName}" asControls:DialogElement.TextRole="Label"/>
+								<TextBox Name="displayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
-							<Separator Classes="Dialog_Item_Separator"/>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 						</StackPanel>
 
 						<!-- Supported source options -->
 						<asControls:DialogItem ItemSize="Small">
-							<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}"/>
-							<TextBlock Classes="Dialog_TextBlock" HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{asXaml:StringResource Common.None}"/>
+							<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}" asControls:DialogElement.TextRole="Label"/>
+							<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
 						</asControls:DialogItem>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<ListBox Name="supportedSourceOptionListBox" Classes="Dialog_Item_ListBox" ItemsSource="{Binding $parent[Window].SupportedSourceOptions}">
+						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+						<ListBox Name="supportedSourceOptionListBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding $parent[Window].SupportedSourceOptions}">
 							<ListBox.ItemsPanel>
 								<ItemsPanelTemplate>
 									<StackPanel/>
@@ -93,8 +93,8 @@
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 						</ListBox>
-						<Separator Classes="Dialog_Separator_Small" IsVisible="{Binding $parent[Window].SupportedSourceOptions.Count}"/>
-						<ToggleButton Name="addSupportedSourceOptionButton" Classes="Dialog_Item_ToggleButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" HorizontalAlignment="Right" IsEnabled="{Binding $parent[Window].UnsupportedSourceOptions.Count}">
+						<Separator IsVisible="{Binding $parent[Window].SupportedSourceOptions.Count}" asControls:DialogElement.SeparatorType="Small"/>
+						<ToggleButton Name="addSupportedSourceOptionButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" HorizontalAlignment="Right" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding $parent[Window].UnsupportedSourceOptions.Count}">
 							<Grid ColumnDefinitions="*,Auto">
 								<TextBlock Classes="Button_TextBlock" Text="{asXaml:StringResource Common.Add}"/>
 								<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !#addSupportedSourceOptionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>
@@ -103,7 +103,7 @@
 						</ToggleButton>
 					</StackPanel>
 				</Border>
-				<Separator Classes="Dialog_Separator"/>
+				<Separator asControls:DialogElement.SeparatorType="Default"/>
 				
 				<!-- Scripts -->
 				<Border Classes="Dialog_ItemsGroup_Container">
@@ -112,43 +112,44 @@
 						<!-- Opening reader script -->
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
+								<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript}" asControls:DialogElement.TextRole="Label"/>
+								<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Reading line script -->
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
+								<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript}" asControls:DialogElement.TextRole="Label"/>
+								<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}"/>
-						<Separator Classes="Dialog_Item_Separator"/>
+						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Closing reader script -->
 						<asControls:DialogItem>
 							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
+								<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript}" asControls:DialogElement.TextRole="Label"/>
+								<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Null}" ToolTip.Tip="{asXaml:StringResource Common.Help}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox Classes="Dialog_Item_ComboBox" EnumType="{x:Type asScripting:ScriptLanguage}" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
-						<Line Classes="Dialog_Item_Separator_Inner"/>
-						<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}"/>
+						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						
 					</StackPanel>
 				</Border>
 				

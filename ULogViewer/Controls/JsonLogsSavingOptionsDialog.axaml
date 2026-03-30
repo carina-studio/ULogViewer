@@ -18,12 +18,12 @@
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.AddLogPropertyMapEntry}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.AddLogPropertyMapEntry}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 				</StackPanel>
 			</Grid>
 		</Border>
@@ -32,7 +32,7 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log properties -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties}"/>
+			<TextBlock Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<asControls:ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" ItemsSource="{Binding #dialog.LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
@@ -72,8 +72,8 @@
 					</Style>
 				</ListBox.Styles>
 			</asControls:ListBox>
-			<Separator Classes="Dialog_Separator_Small"/>
-			<TextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties.Description}"/>
+			<Separator asControls:DialogElement.SeparatorType="Small"/>
+			<TextBlock Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 			
 		</StackPanel>
 		

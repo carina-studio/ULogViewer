@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:app="using:CarinaStudio.ULogViewer"
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogPatternEditorDialog"
@@ -19,8 +19,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -31,41 +31,41 @@
 
 					<!-- Pattern -->
 					<asControls:DialogItem Name="patternItem">
-						<StackPanel Classes="Dialog_Item_Text_Container">
+						<StackPanel>
 							<WrapPanel>
-								<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogPatternEditorDialog.Regex}"/>
-								<Button Classes="Dialog_Info_Button" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{asXaml:StringResource Common.RegularExpression.Reference}">
+								<TextBlock Text="{asXaml:StringResource LogPatternEditorDialog.Regex}" asControls:DialogElement.TextRole="Label"/>
+								<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{asXaml:StringResource Common.RegularExpression.Reference}">
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<TextBlock Classes="Dialog_TextBlock_Description" IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource LogPatternEditorDialog.Regex.Description}"/>
-							<TextBlock Classes="Dialog_TextBlock_Description_Error" IsVisible="{Binding !#patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource Common.InvalidFormat}"/>
+							<TextBlock IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource LogPatternEditorDialog.Regex.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+							<TextBlock IsVisible="{Binding !#patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource Common.InvalidFormat}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel"/>
 						</StackPanel>
 					</asControls:DialogItem>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
+					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
-					<Line Classes="Dialog_Item_Separator_Inner"/>
-					<SelectableTextBlock Classes="Dialog_TextBlock_Description" Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}"/>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+					<SelectableTextBlock Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+					<Separator asControls:DialogElement.SeparatorType="Item"/>
 					
 					<!-- Description -->
 					<asControls:DialogItem ItemSize="Small">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogPatternEditorDialog.Description}"/>
-						<TextBox Name="descriptionTextBox" Classes="Dialog_Item_TextBox" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBlock Text="{asXaml:StringResource LogPatternEditorDialog.Description}" asControls:DialogElement.TextRole="Label"/>
+						<TextBox Name="descriptionTextBox" asControls:DialogElement.IsDialogItemInput="True" Watermark="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Separator asControls:DialogElement.SeparatorType="Item"/>
 		
 					<!-- Repeatable -->
 					<asControls:DialogItem ItemSize="Small">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogPatternEditorDialog.IsRepeatable}"/>
-						<ToggleSwitch Name="repeatableSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+						<TextBlock Text="{asXaml:StringResource LogPatternEditorDialog.IsRepeatable}" asControls:DialogElement.TextRole="Label"/>
+						<ToggleSwitch Name="repeatableSwitch" asControls:DialogElement.IsDialogItemInput="True"/>
 					</asControls:DialogItem>
-					<Separator Classes="Dialog_Item_Separator"/>
+					<Separator asControls:DialogElement.SeparatorType="Item"/>
 		
 					<!-- Skippable -->
 					<asControls:DialogItem ItemSize="Small">
-						<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource LogPatternEditorDialog.IsSkippable}"/>
-						<ToggleSwitch Name="skippableSwitch" Classes="Dialog_Item_ToggleSwitch"/>
+						<TextBlock Text="{asXaml:StringResource LogPatternEditorDialog.IsSkippable}" asControls:DialogElement.TextRole="Label"/>
+						<ToggleSwitch Name="skippableSwitch" asControls:DialogElement.IsDialogItemInput="True"/>
 					</asControls:DialogItem>
 
 				</StackPanel>

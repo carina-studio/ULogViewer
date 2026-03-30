@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.Threading;
+using CarinaStudio.Windows.Input;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -34,12 +35,34 @@ class EnvVarEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplication>
 	/// <summary>
 	/// Get or set environment variable to be edited.
 	/// </summary>
-	public Tuple<string, string>? EnvironmentVariable { get; set; }
+	public Tuple<string, string>? EnvironmentVariable { get; init; }
 
 
 	// Generate result.
 	protected override Task<object?> GenerateResultAsync(CancellationToken cancellationToken) =>
 		Task.FromResult<object?>(new Tuple<string, string>(this.nameTextBox.Text.AsNonNull().Trim(), this.valueTextBox.Text?.Trim() ?? ""));
+
+
+	/// <inheritdoc/>
+	protected override void OnEnterKeyClickedOnInputControl(Control control)
+	{
+		base.OnEnterKeyClickedOnInputControl(control);
+		if (ReferenceEquals(control, this.nameTextBox))
+		{
+			if (!string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+				this.valueTextBox.Focus();
+		}
+		else if (ReferenceEquals(control, this.valueTextBox))
+		{
+			if (!string.IsNullOrEmpty(this.valueTextBox.Text))
+			{
+				if (!string.IsNullOrWhiteSpace(this.nameTextBox.Text))
+					this.GenerateResultCommand.TryExecute();
+				else
+					this.nameTextBox.Focus();
+			}
+		}
+	}
 
 
 	/// <inheritdoc/>

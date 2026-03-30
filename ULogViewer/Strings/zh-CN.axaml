@@ -1422,7 +1422,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SplashWindow.InitializeLogAnalysisRules">正在载入日志分析规则</sys:String>
 	<sys:String x:Key="String/SplashWindow.InitializeLogProfiles">正在载入日志类型</sys:String>
 	<sys:String x:Key="String/SplashWindow.InitializePredefinedLogTextFilters">正在载入文字筛选</sys:String>
-	<sys:String x:Key="String/SplashWindow.ShowMainWindow">开启主视图</sys:String>
+	<sys:String x:Key="String/SplashWindow.ShowMainWindow">开启主窗口</sys:String>
 	<sys:String x:Key="String/SplashWindow.UpdateStyles">正在载入样式</sys:String>
 
 	<!-- SQLiteLogDataSourceProvider -->
@@ -1501,6 +1501,7 @@ return None</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定栏位宽度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">显示的日志属性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">栏位宽度</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width.Description">您也可以在日志检视器中改变宽度。</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
 	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows 事件记录</sys:String>

@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+        xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.LogLevelMapEntryForWritingEditorDialog"
@@ -17,8 +18,8 @@
 		<!-- Control buttons -->
 		<Border Classes="Dialog_ControlButtonsPanel">
 			<StackPanel Classes="Dialog_ControlButtonsPanel">
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
-				<Button Classes="Dialog_ControlButton" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.GenerateResultCommand}" Content="{Binding #dialog.OKButtonText}"/>
+				<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.Close}" Content="{Binding #dialog.CancelButtonText}"/>
 			</StackPanel>
 		</Border>
 
@@ -26,7 +27,7 @@
 		<StackPanel Classes="Dialog_ContentPanel">
 
 			<!-- Log level -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.LogLevel}"/>
+			<TextBlock Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.LogLevel}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<ComboBox Name="logLevelComboBox" Classes="Dialog_ComboBox">
 				<appLogs:LogLevel>Undefined</appLogs:LogLevel>
 				<appLogs:LogLevel>Info</appLogs:LogLevel>
@@ -53,10 +54,10 @@
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Separator Classes="Dialog_Separator_Small"/>
+			<Separator asControls:DialogElement.SeparatorType="Default"/>
 			
 			<!-- Text -->
-			<TextBlock Classes="Dialog_TextBlock_Label" Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.Text}"/>
+			<TextBlock Text="{DynamicResource String/LogLevelMapEntryEditor.Writing.Text}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<TextBox Name="textBox" Classes="Dialog_TextBox" MaxLength="256" PropertyChanged="OnTextBoxPropertyChanged"/>
 
 		</StackPanel>

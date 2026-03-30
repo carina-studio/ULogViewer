@@ -1551,6 +1551,7 @@ return None</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">Specify the Column Width</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">Visible Log Property</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">Column Width</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width.Description">You can also change the width in the log viewer.</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
 	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows Event Logs</sys:String>

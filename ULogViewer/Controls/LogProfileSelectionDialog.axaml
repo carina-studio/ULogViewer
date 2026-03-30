@@ -207,21 +207,21 @@
 		<Border Classes="Dialog_ControlButtonsPanel" DockPanel.Dock="Bottom">
 			<Grid Classes="Dialog_ControlButtonsPanel" ColumnDefinitions="Auto,*">
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.AddLogProfile}" Content="{asXaml:StringResource LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.ImportLogProfile}" Content="{asXaml:StringResource LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
-					<Separator Classes="Dialog_Separator_Small"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.AddLogProfile}" Content="{asXaml:StringResource LogProfileSelectionDialog.AddLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.ImportLogProfile}" Content="{asXaml:StringResource LogProfileSelectionDialog.ImportLogProfile}" IsVisible="{Binding #window.Filter, Converter={x:Static ObjectConverters.IsNull}}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
-					<Button Classes="Dialog_ControlButton" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.GenerateResultCommand}" Content="{Binding #window.OKButtonText}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>
 				</StackPanel>
 			</Grid>
 		</Border>
 		
 		<!-- Navigation bar -->
 		<Border Name="navigationBar" 
-		        Classes="ToolBar" 
-		        BorderBrush="{DynamicResource Brush/ToolBar.Border}"
+		        Classes="Toolbar" 
+		        BorderBrush="{DynamicResource Brush/Toolbar.Border}"
 		        BorderThickness="0,0,1,0" 
 		        DockPanel.Dock="Left"
 		        IsVisible="{asXaml:OrBindings
@@ -234,34 +234,34 @@
 				<StackPanel>
 					
 					<!-- Pinned profiles -->
-					<ToggleButton Name="pinnedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
+					<ToggleButton Name="pinnedLogProfilesButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline.Light}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Recently used profiles -->
-					<ToggleButton Name="recentlyUsedLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
+					<ToggleButton Name="recentlyUsedLogProfilesButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History.Light}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Other profiles -->
-					<ToggleButton Name="otherLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.OtherLogProfiles.Count}" ToolTip.Tip="{Binding #window.OtherLogProfilesPanelTitle}">
+					<ToggleButton Name="otherLogProfilesButton" IsVisible="{Binding #window.OtherLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{Binding #window.OtherLogProfilesPanelTitle}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Template profiles -->
-					<ToggleButton Name="templateLogProfilesButton" Classes="ToolBar_ToggleButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}">
+					<ToggleButton Name="templateLogProfilesButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}">
 						<Panel>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline}"/>
-							<Image Classes="ToolBar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline.Light}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline}"/>
+							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
@@ -278,9 +278,7 @@
 
 					<!-- Pinned profiles -->
 					<StackPanel Name="pinnedLogProfilesPanel" IsVisible="{Binding #window.PinnedLogProfiles.Count}">
-						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.PinnedLogProfiles}"/>
-						</Border>
+						<TextBlock Text="{asXaml:StringResource LogProfileSelectionDialog.PinnedLogProfiles}" asControls:DialogElement.TextRole="ItemsGroupHeader"/>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<asControls:ListBox Name="pinnedLogProfileListBox" 
 							                    Classes="LogProfiles" 
@@ -290,17 +288,15 @@
 						</Border>
 					</StackPanel>
 					
-					<Separator Classes="Dialog_Separator_Large" 
-					           IsVisible="{asXaml:AndBindings
+					<Separator IsVisible="{asXaml:AndBindings
 					               {Binding #pinnedLogProfilesPanel.IsVisible},
 					               {Binding #recentlyUsedLogProfilesPanel.IsVisible}
-					           }"/>
+					           }"
+					           asControls:DialogElement.SeparatorType="Large"/>
 
 					<!-- Recently used profiles -->
 					<StackPanel Name="recentlyUsedLogProfilesPanel" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}">
-						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}"/>
-						</Border>
+						<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}" asControls:DialogElement.TextRole="ItemsGroupHeader"/>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<StackPanel>
 								<asControls:ListBox Name="recentlyUsedLogProfileListBox" 
@@ -308,13 +304,13 @@
 								                    DoubleClickOnItem="OnLogProfileListBoxDoubleClickOnItem"
 								                    ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" 
 								                    ItemsSource="{Binding #window.RecentlyUsedLogProfiles}" />
-								<Separator Classes="Dialog_Separator_Small"/>
-								<Button Classes="Dialog_Item_Button" Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{asXaml:StringResource LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right"/>
+								<Separator asControls:DialogElement.SeparatorType="Small"/>
+								<Button Command="{Binding ResetRecentlyUsedProfiles, Source={x:Static appProfiles:LogProfileManager.Default}}" Content="{asXaml:StringResource LogProfileSelectionDialog.ResetRecentlyUsedLogProfiles}" HorizontalAlignment="Right" asControls:DialogElement.IsDialogItemInput="True"/>
 							</StackPanel>
 						</Border>
 					</StackPanel>
 					
-					<Separator Classes="Dialog_Separator_Large">
+					<Separator asControls:DialogElement.SeparatorType="Large">
 						<Separator.IsVisible>
 							<MultiBinding Converter="{x:Static BoolConverters.And}">
 								<MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -328,9 +324,7 @@
 					
 					<!-- Other profiles -->
 					<StackPanel Name="otherLogProfilesPanel" IsVisible="{Binding #window.OtherLogProfiles.Count}">
-						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{Binding #window.OtherLogProfilesPanelTitle}"/>
-						</Border>
+						<TextBlock Text="{Binding #window.OtherLogProfilesPanelTitle}" asControls:DialogElement.TextRole="ItemsGroupHeader"/>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<asControls:ListBox Name="otherLogProfileListBox" 
 							                    Classes="LogProfiles" 
@@ -340,7 +334,7 @@
 						</Border>
 					</StackPanel>
 					
-					<Separator Classes="Dialog_Separator_Large">
+					<Separator asControls:DialogElement.SeparatorType="Large">
 						<Separator.IsVisible>
 							<MultiBinding Converter="{x:Static BoolConverters.And}">
 								<MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -355,9 +349,7 @@
 
 					<!-- Template profiles -->
 					<StackPanel Name="templateLogProfilesPanel" IsVisible="{Binding #window.TemplateLogProfiles.Count}">
-						<Border Classes="Dialog_ItemsGroup_Header">
-							<TextBlock Classes="Dialog_ItemsGroup_Header" Text="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}"/>
-						</Border>
+						<TextBlock Text="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}" asControls:DialogElement.TextRole="ItemsGroupHeader"/>
 						<Border Classes="Dialog_ItemsGroup_Container">
 							<asControls:ListBox Name="templateLogProfileListBox" 
 							                    Classes="LogProfiles" 

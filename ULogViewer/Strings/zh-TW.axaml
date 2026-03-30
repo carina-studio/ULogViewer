@@ -1490,6 +1490,7 @@ return None</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.SpecifyWidth">指定欄位寬度</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Title">顯示的日誌屬性</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width">欄位寬度</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width.Description">您也可以在日誌檢視器中變更寬度。</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
 	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows 事件紀錄</sys:String>
