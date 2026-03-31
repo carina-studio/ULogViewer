@@ -470,7 +470,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// load resources
 			if (this.Application.TryFindResource<double>("Double/SessionView.LogListBox.MinSizeToCloseSidePanel", out var doubleRes))
 				this.minLogListBoxSizeToCloseSidePanel = doubleRes.GetValueOrDefault();
-			this.minLogTextFilterItemsPanelWidth = this.FindResourceOrDefault<double>("Double/SessionView.ToolBar.LogTextFilterItemsPanel.MinWidth", 300);
+			this.minLogTextFilterItemsPanelWidth = this.FindResourceOrDefault<double>("Double/SessionView.Toolbar.LogTextFilterItemsPanel.MinWidth", 300);
 
 			// setup containers
 			this.logListBoxContainer = this.Get<Panel>(nameof(logListBoxContainer)).Also(it =>

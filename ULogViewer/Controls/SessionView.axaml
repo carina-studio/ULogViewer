@@ -639,7 +639,7 @@
 		<Panel Grid.ColumnSpan="4">
 
 			<!-- Toolbar -->
-			<Border Name="toolBarContainer" Classes="ToolBar" BorderBrush="{DynamicResource Brush/ToolBar.Border}" BorderThickness="0,0,0,1">
+			<Border Name="toolBarContainer" Classes="Toolbar" BorderBrush="{DynamicResource Brush/Toolbar.Border}" BorderThickness="0,0,0,1">
 				<WrapPanel>
 
 					<!-- Log actions -->
@@ -647,108 +647,108 @@
 
 						<!-- Select log profiles -->
 						<asControls:SplitButton Name="selectAndSetLogProfileButton"
-						                              Classes="ToolBar_SplitButton"
 						                              Command="{Binding #root.SelectAndSetLogProfileCommand}" 
+						                              asControls:ToolbarElement.Role="Button"
 						                              ToolTip.Tip="{asXaml:StringResource SessionView.SetLogProfile}">
 							<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
 						</asControls:SplitButton>
 
 						<!-- Set working directory -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" 
+						<Button Command="{Binding #root.SelectAndSetWorkingDirectoryCommand}" 
 						        IsVisible="{Binding CanSetWorkingDirectory}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetWorkingDirectory}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder.Outline}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsWorkingDirectoryNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsWorkingDirectoryNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 
 						<!-- Add files -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.AddLogFilesCommand}" 
+						<Button Command="{Binding #root.AddLogFilesCommand}" 
 						        IsVisible="{Binding CanAddLogFile}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.AddLogFiles.WithShortcut}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile.Outline}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsLogFileNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsLogFileNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 						
 						<!-- Set command -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.SelectAndSetCommandCommand}" 
+						<Button Command="{Binding #root.SelectAndSetCommandCommand}" 
 						        IsVisible="{Binding CanSetCommand}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetCommand}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Terminal.Outline}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsCommandNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsCommandNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 
 						<!-- Set URI -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.SelectAndSetUriCommand}" 
+						<Button Command="{Binding #root.SelectAndSetUriCommand}" 
 						        IsVisible="{Binding CanSetUri}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetUri}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Uri.Outline}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsUriNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsUriNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 
 						<!-- Set IP endpoint -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.SelectAndSetIPEndPointCommand}" 
+						<Button Command="{Binding #root.SelectAndSetIPEndPointCommand}" 
 						        IsVisible="{Binding CanSetIPEndPoint}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetIPEndPoint}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/IPAddress.Outline}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsIPEndPointNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsIPEndPointNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 						
 						<!-- Set process ID -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.SelectAndSetProcessIdCommand}" 
+						<Button Command="{Binding #root.SelectAndSetProcessIdCommand}" 
 						        IsVisible="{Binding CanSetProcessId}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetProcessId}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessIdNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsProcessIdNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 						
 						<!-- Set process name -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.SelectAndSetProcessNameCommand}"
+						<Button Command="{Binding #root.SelectAndSetProcessNameCommand}"
 						        IsVisible="{Binding CanSetProcessName}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetProcessName}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding IsProcessNameNeeded}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
+								<Border IsVisible="{Binding IsProcessNameNeeded}" asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
 							</Panel>
 						</Button>
 
 						<!-- Save logs -->
 						<ToggleButton Name="logsSavingButton" 
-						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding #root.ShowLogsSavingMenu}" 
 						              IsVisible="{Binding HasLogProfile}" 
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.SaveLogs}">
 							<ia:Interaction.Behaviors>
 								<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
@@ -762,34 +762,34 @@
 						</ToggleButton>
 
 						<!-- Clear files -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding ClearLogFilesCommand}" 
+						<Button Command="{Binding ClearLogFilesCommand}" 
 						        IsVisible="{Binding IsLogFileSupported}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ClearLogFiles}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 						</Button>
 						
 						<!-- Stop reading logs (non-continuous reading) -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding StopReadingLogsCommand}" 
+						<Button Command="{Binding StopReadingLogsCommand}" 
 						        IsVisible="{asXaml:AndBindings {Binding CanStopReadingLogs}, {Binding !IsReadingLogsContinuously}}"
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.StopReadingLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
 						</Button>
 
 						<!-- Reload logs -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding #root.ReloadLogsCommand}" 
+						<Button Command="{Binding #root.ReloadLogsCommand}" 
 						        IsVisible="{asXaml:OrBindings {Binding !CanStopReadingLogs}, {Binding IsReadingLogsContinuously}}"
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ReloadLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
 						<!-- Pause/Resume -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding PauseResumeLogsReadingCommand}"
+						<Button Command="{Binding PauseResumeLogsReadingCommand}"
 						        IsEnabled="{asXaml:OrBindings {Binding IsLogsReadingPaused}, {Binding IsReadingLogs}}"
 						        IsVisible="{Binding IsReadingLogsContinuously}" 
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.PauseResumeLogsReading}">
 							<Panel>
 								<Image Classes="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
@@ -802,23 +802,23 @@
 						</Button>
 						
 						<!-- Stop reading logs (continuous reading) -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding StopReadingLogsCommand}" 
+						<Button Command="{Binding StopReadingLogsCommand}" 
 						        IsVisible="{Binding IsReadingLogsContinuously}"
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.StopReadingLogs}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.StopMedia.Outline}"/>
 						</Button>
 						
 						<!-- Separator -->
-						<Separator Classes="ToolBar_Separator"
-						           IsVisible="{Binding #disableLogPatternsButton.IsVisible}"/>
+						<Separator IsVisible="{Binding #disableLogPatternsButton.IsVisible}"
+						           asControls:ToolbarElement.Role="Separator"/>
 						
 						<!-- Disable log patterns -->
 						<ToggleButton Name="disableLogPatternsButton" 
-						              Classes="ToolBar_ToggleButton"
 						              Command="{Binding ToggleShowingRawLogLinesTemporarilyCommand}"
 						              IsChecked="{Binding IsShowingRawLogLinesTemporarily}"
 						              IsVisible="{Binding HasLogPatterns}"
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowRawLogLinesTemporarily}">
 							<Image Classes="Icon" Source="{DynamicResource Image/ShowRawLogLines}"/>
 						</ToggleButton>
@@ -830,15 +830,15 @@
 
 						<!-- Level filters -->
 						<ToggleButton Name="logLevelFiltersButton" 
-						              Classes="ToolBar_ToggleButton_WithDropDownIcon"
 						              Command="{Binding #root.ShowLogLevelFiltersMenu}"
 						              IsEnabled="{Binding #root.HasLogProfile}"
 						              IsVisible="{Binding $self.ItemCount}" 
+						              asControls:ToolbarElement.Role="ButtonWithDropDownIcon"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.LogLevelFilters.Description}">
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="*"/>
-									<ColumnDefinition Width="{StaticResource GridLength/ToolBar.Button.DropDownIcon.Margin}"/>
+									<ColumnDefinition Width="{StaticResource GridLength/Toolbar.Button.DropDownIcon.Margin}"/>
 									<ColumnDefinition Width="Auto"/>
 								</Grid.ColumnDefinitions>
 								<Image Opacity="0" Source="{StaticResource Image/Icon.Information}"/> <!-- To reserve space -->
@@ -849,22 +849,24 @@
 								        Padding="1">
 									<Border Background="{Binding #root.LogLevelFiltersIconBrush}"/>
 								</Border>
-								<Image Classes="ToolBar_DropDownButtonIcon" Grid.Column="2" Source="{StaticResource Image/Icon.DropDown.Down}"/>
+								<Image Grid.Column="2" 
+								       asControls:ToolbarElement.Role="DropDownIcon"
+								       Source="{StaticResource Image/Icon.DropDown.Down}"/>
 							</Grid>
 						</ToggleButton>
 
 						<!-- PID filter -->
 						<abControls:IntegerTextBox Name="logProcessIdFilterTextBox" 
-						                           Classes="ToolBar_TextBox" 
 						                           IsEnabled="{Binding #root.HasLogProfile}" 
 						                           IsVisible="{Binding LogFiltering.IsProcessIdFilterEnabled}" 
 						                           Maximum="2147483647" 
 						                           Minimum="0" 
+						                           asControls:ToolbarElement.Role="Input"
 						                           ToolTip.Tip="{asXaml:StringResource SessionView.LogProcessIdFilter.Description}" 
 						                           Value="{Binding LogFiltering.ProcessIdFilter, Mode=TwoWay}" 
 						                           VerticalAlignment="Center" 
 						                           Watermark="{asXaml:StringResource LogProperty.ProcessId}"
-						                           Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
+						                           Width="{StaticResource Double/SessionView.Toolbar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox.InnerRightContent>
 								<Panel Classes="TextBox_InPlaceActions">
 									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logProcessIdFilterTextBox.Clear}" IsVisible="{Binding #logProcessIdFilterTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{asXaml:StringResource Common.Clear}">
@@ -876,15 +878,15 @@
 
 						<!-- TID filter -->
 						<abControls:IntegerTextBox Name="logThreadIdFilterTextBox" 
-						                           Classes="ToolBar_TextBox" 
 						                           IsEnabled="{Binding #root.HasLogProfile}" 
 						                           IsVisible="{Binding LogFiltering.IsThreadIdFilterEnabled}"
 						                           Maximum="2147483647" 
 						                           Minimum="0" 
+						                           asControls:ToolbarElement.Role="Input"
 						                           ToolTip.Tip="{asXaml:StringResource SessionView.LogThreadIdFilter.Description}" 
 						                           Value="{Binding LogFiltering.ThreadIdFilter, Mode=TwoWay}" 
 						                           Watermark="{asXaml:StringResource LogProperty.ThreadId}"
-						                           Width="{StaticResource Double/SessionView.ToolBar.LogProcessIdFilter.Width}">
+						                           Width="{StaticResource Double/SessionView.Toolbar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox.InnerRightContent>
 								<Panel Classes="TextBox_InPlaceActions">
 									<Button Classes="TextBox_InPlaceAction" Command="{Binding #logThreadIdFilterTextBox.Clear}" IsVisible="{Binding #logThreadIdFilterTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{asXaml:StringResource Common.Clear}">
@@ -896,9 +898,9 @@
 
 						<!-- Filters combination mode -->
 						<ToggleButton Name="logFilterCombinationModeButton" 
-						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding #root.ShowLogFiltersCombinationModeMenu}" 
 						              IsVisible="{Binding #root.CanFilterLogsByNonTextFilters}" 
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.LogFiltersCombinationMode}">
 							<Panel>
 								<asControls:Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
@@ -921,14 +923,15 @@
 
 						<!-- Text filter -->
 						<asControls:RegexTextBox Name="logTextFilterTextBox" 
-						                         Classes="ToolBar_TextBox RegexTextBox_InvalidText"
+						                         Classes="RegexTextBox_InvalidText"
 						                         FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" 
 						                         HorizontalAlignment="Stretch"
 						                         IgnoreCase="{Binding LogFiltering.IgnoreTextFilterCase}" 
 						                         IsEnabled="{Binding #root.HasLogProfile}" 
-						                         Margin="{StaticResource Thickness/ToolBar.Item.Margin}"
+						                         Margin="{StaticResource Thickness/Toolbar.Item.Margin}"
 						                         MaxLines="1"
 						                         Object="{Binding LogFiltering.TextFilter, Mode=TwoWay}" 
+						                         asControls:ToolbarElement.Role="Input"
 						                         TextWrapping="NoWrap"
 						                         ToolTip.Tip="{asXaml:StringResource SessionView.LogTextFilter.ToolTip}"
 						                         Watermark="{asXaml:StringResource SessionView.LogTextFilter.Watermark}">
@@ -952,9 +955,10 @@
 
 						<!-- Predefined text filters -->
 						<ToggleButton Name="predefinedLogTextFiltersButton" 
-						              Classes="ToolBar_ToggleButton" 
+						              Command="{Binding #root.ShowPredefinedLogTextFiltersPopup}"
 						              Grid.Column="1" 
 						              IsEnabled="{Binding #root.HasLogProfile}" 
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.PredefinedLogTextFilters}">
 							<Panel>
 								<Panel>
@@ -1096,17 +1100,17 @@
 					<StackPanel Name="toolBarOtherItemsPanel" Orientation="Horizontal">
 
 						<!-- Reset log filters -->
-						<Button Classes="ToolBar_Button" 
-						        Command="{Binding LogFiltering.ResetFiltersCommand}"
+						<Button Command="{Binding LogFiltering.ResetFiltersCommand}"
+						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ResetLogFilters}">
 							<Image Classes="Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 						</Button>
 						
 						<!-- Show marked logs temporarily -->
 						<ToggleButton Name="showMarkedLogsOnlyButton" 
-						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding ToggleShowingMarkedLogsTemporarilyCommand}"
 						              IsChecked="{Binding IsShowingMarkedLogsTemporarily, Mode=OneWay}" 
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
@@ -1116,9 +1120,9 @@
 						
 						<!-- Show all logs temporarily -->
 						<ToggleButton Name="showAllLogsTemporarilyButton"
-						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding ToggleShowingAllLogsTemporarilyCommand}"
 						              IsChecked="{Binding IsShowingAllLogsTemporarily, Mode=OneWay}" 
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowAllLogsTemporarily}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
@@ -1127,20 +1131,21 @@
 						</ToggleButton>
 
 						<!-- Separator -->
-						<Separator Classes="ToolBar_Separator" 
-						           IsVisible="{Binding #otherActionsButton.IsVisible}"/>
+						<Separator IsVisible="{Binding #otherActionsButton.IsVisible}"
+						           asControls:ToolbarElement.Role="Separator"/>
 
 						<!-- Other actions -->
 						<ToggleButton Name="otherActionsButton"
-						              Classes="ToolBar_ToggleButton" 
 						              Command="{Binding #root.ShowOtherActions}" 
 						              IsVisible="{x:Static cs:Platform.IsNotMacOS}" 
+						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.OtherActions}">
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-								<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}}">
-									<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.Update.Colored}"/>
+								<Border IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}}"
+								        asControls:ToolbarElement.Role="Badge">
+									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.Update.Colored}"/>
 								</Border>
 							</Panel>
 						</ToggleButton>
@@ -1219,12 +1224,19 @@
 					<StackPanel Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Padding}" Orientation="Horizontal">
 						
 						<!-- Select log by timestamp -->
-						<Button Classes="ToolBar_Button_Small" Command="{Binding #root.SelectNearestLogByTimestamp}" IsEnabled="{Binding HasLogs}" IsVisible="{Binding AreLogsSortedByTimestamp}" ToolTip.Tip="{asXaml:StringResource SessionView.SelectNearestLogByTimestamp}">
+						<Button Command="{Binding #root.SelectNearestLogByTimestamp}" 
+						        IsEnabled="{Binding HasLogs}" 
+						        IsVisible="{Binding AreLogsSortedByTimestamp}" 
+						        asControls:ToolbarElement.Role="SmallButton"
+						        ToolTip.Tip="{asXaml:StringResource SessionView.SelectNearestLogByTimestamp}">
 							<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>
 						</Button>
 
 						<!-- Scroll to latest log -->
-						<ToggleButton Classes="ToolBar_ToggleButton_Small" IsChecked="{Binding #root.IsScrollingToLatestLogNeeded, Mode=TwoWay}" IsEnabled="{Binding #root.HasLogProfile}" ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToLatestLog}">
+						<ToggleButton IsChecked="{Binding #root.IsScrollingToLatestLogNeeded, Mode=TwoWay}" 
+						              IsEnabled="{Binding #root.HasLogProfile}"
+						              asControls:ToolbarElement.Role="SmallButton"
+						              ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToLatestLog}">
 							<Panel>
 								<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
 									<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
@@ -1303,28 +1315,39 @@
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
 				
 				<!-- Tool bar -->
-				<Border Name="logChartToolBar" Classes="ToolBar_Small" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" DockPanel.Dock="Right" IsEnabled="{Binding #logChart.IsVisible}">
+				<Border Name="logChartToolBar" Classes="Toolbar_Small" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" DockPanel.Dock="Right" IsEnabled="{Binding #logChart.IsVisible}">
 					<StackPanel>
 						
 						<!-- Reset zoom -->
-						<Button Classes="ToolBar_Button_Small" Command="{Binding #root.ResetLogChartZoom}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{asXaml:StringResource SessionView.ResetLogChartZoom}">
+						<Button Command="{Binding #root.ResetLogChartZoom}" 
+						        IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}"
+						        asControls:ToolbarElement.Role="SmallButton"
+						        ToolTip.Tip="{asXaml:StringResource SessionView.ResetLogChartZoom}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
 						</Button>
 						
 						<!-- Scroll to start -->
-						<Button Classes="ToolBar_Button_Small" Command="{Binding #root.ScrollToStartOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToStartOfLogChart}">
+						<Button Command="{Binding #root.ScrollToStartOfLogChart}"
+						        IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" 
+						        asControls:ToolbarElement.Role="SmallButton"
+						        ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToStartOfLogChart}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
 						</Button>
 						
 						<!-- Scroll to end -->
-						<Button Classes="ToolBar_Button_Small" Command="{Binding #root.ScrollToEndOfLogChart}" IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToEndOfLogChart}">
+						<Button Command="{Binding #root.ScrollToEndOfLogChart}" 
+						        IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}"
+						        asControls:ToolbarElement.Role="SmallButton"
+						        ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToEndOfLogChart}">
 							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
 						</Button>
 						
-						<Separator Classes="ToolBar_Separator_Horizontal_Small"/>
+						<Separator asControls:ToolbarElement.Role="SmallHorizontalSeparator"/>
 						
 						<!-- Visible series -->
-						<ToggleButton Name="visibleLogChartSeriesButton" Classes="ToolBar_ToggleButton_Small" Command="{Binding #root.SelectVisibleLogChartSeries}" ToolTip.Tip="{asXaml:StringResource SessionView.VisibleLogChartSeries}">
+						<ToggleButton Name="visibleLogChartSeriesButton" Command="{Binding #root.SelectVisibleLogChartSeries}" 
+						              asControls:ToolbarElement.Role="SmallButton"
+						              ToolTip.Tip="{asXaml:StringResource SessionView.VisibleLogChartSeries}">
 							<Panel>
 								<Panel IsVisible="{Binding LogChart.AreAllSeriesSourcesVisible}">
 									<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline}"/>
@@ -1338,7 +1361,9 @@
 						</ToggleButton>
 						
 						<!-- Type of chart -->
-						<ToggleButton Name="logChartTypeButton" Classes="ToolBar_ToggleButton_Small" Command="{Binding #root.ShowLogChartTypeMenu}" ToolTip.Tip="{asXaml:StringResource SessionView.SetLogChartType}">
+						<ToggleButton Name="logChartTypeButton" Command="{Binding #root.ShowLogChartTypeMenu}" 
+						              asControls:ToolbarElement.Role="SmallButton"
+						              ToolTip.Tip="{asXaml:StringResource SessionView.SetLogChartType}">
 							<Panel>
 								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Outline}}"/>
 								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Outline}, ConverterParameter=Light}"/>
@@ -1826,11 +1851,14 @@
 		</Panel>
 
 		<!-- Side panel toolbar -->
-		<Border Classes="ToolBar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" Grid.Column="3" Grid.Row="1">
+		<Border Classes="Toolbar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" Grid.Column="3" Grid.Row="1">
 			<StackPanel Name="sidePanelBoolBarItemsPanel" VerticalAlignment="Top">
 
 				<!-- Test -->
-				<ToggleButton Name="testButton" Classes="ToolBar_ToggleButton" Command="{Binding #root.ShowTestMenu}" ToolTip.Tip="Test">
+				<ToggleButton Name="testButton" 
+				              Command="{Binding #root.ShowTestMenu}"
+				              asControls:ToolbarElement.Role="Button"
+				              ToolTip.Tip="Test">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1842,7 +1870,10 @@
 				</ToggleButton>
 
 				<!-- Marked logs -->
-				<ToggleButton Name="markedLogsPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}" ToolTip.Tip="{asXaml:StringResource SessionView.MarkedLogsPanel}">
+				<ToggleButton Name="markedLogsPanelButton" 
+				              IsChecked="{Binding IsMarkedLogsPanelVisible, Mode=TwoWay}"
+				              asControls:ToolbarElement.Role="Button"
+				              ToolTip.Tip="{asXaml:StringResource SessionView.MarkedLogsPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Marks.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" Source="{StaticResource Image/Marks.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
@@ -1850,7 +1881,10 @@
 				</ToggleButton>
 
 				<!-- Timestamp categories -->
-				<ToggleButton Name="timestampCategoriesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogCategorizing.IsTimestampCategoriesPanelVisible, Mode=TwoWay}" ToolTip.Tip="{asXaml:StringResource SessionView.TimestampCategoriesPanel}">
+				<ToggleButton Name="timestampCategoriesPanelButton" 
+				              IsChecked="{Binding LogCategorizing.IsTimestampCategoriesPanelVisible, Mode=TwoWay}" 
+				              asControls:ToolbarElement.Role="Button"
+				              ToolTip.Tip="{asXaml:StringResource SessionView.TimestampCategoriesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1862,18 +1896,31 @@
 				</ToggleButton>
 
 				<!-- Log analysis -->
-				<ToggleButton Name="logAnalysisPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding LogAnalysis.IsPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{asXaml:StringResource SessionView.LogAnalysisPanel}">
+				<ToggleButton Name="logAnalysisPanelButton" 
+				              IsChecked="{Binding LogAnalysis.IsPanelVisible, Mode=TwoWay}"
+				              IsVisible="False"
+				              asControls:ToolbarElement.Role="Button">
+					<ToolTip.Tip>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{asXaml:StringResource SessionView.LogAnalysisPanel}" VerticalAlignment="Center"/>
+							<abControls:FormattedTextBlock Arg1="{asXaml:StringResource SessionView.LogAnalysisPanel.HasNewAnalysisResults}" Format=" ({0})" IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}" VerticalAlignment="Center"/>
+						</StackPanel>
+					</ToolTip.Tip>
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-						<Border Classes="ToolBar_NotificationIndicator" IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}">
-							<Image Classes="ToolBar_NotificationIndicator" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
+						<Border IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}" asControls:ToolbarElement.Role="Badge">
+							<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
 						</Border>
 					</Panel>
 				</ToggleButton>
 
 				<!-- Log files -->
-				<ToggleButton Name="logFilesPanelButton" Classes="ToolBar_ToggleButton" IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}" IsVisible="False" ToolTip.Tip="{asXaml:StringResource SessionView.LogFilesPanel}">
+				<ToggleButton Name="logFilesPanelButton" 
+				              IsChecked="{Binding IsLogFilesPanelVisible, Mode=TwoWay}"
+				              IsVisible="False"
+				              asControls:ToolbarElement.Role="Button"
+				              ToolTip.Tip="{asXaml:StringResource SessionView.LogFilesPanel}">
 					<Panel>
 						<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
@@ -1969,7 +2016,10 @@
 						<Grid ColumnDefinitions="Auto,*,Auto,Auto">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{asXaml:StringResource SessionView.LogAnalysisPanel}"/>
 							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogAnalysis.AnalysisResults.Count, StringFormat={} ({0})}"/>
-							<ToggleButton Classes="ToolBar_ToggleButton_Small" Grid.Column="2" IsChecked="{Binding #root.IsScrollingToLatestLogAnalysisResultNeeded, Mode=TwoWay}" ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToLatestLogAnalysisResult}">
+							<ToggleButton Grid.Column="2" 
+							              IsChecked="{Binding #root.IsScrollingToLatestLogAnalysisResultNeeded, Mode=TwoWay}"
+							              asControls:ToolbarElement.Role="SmallButton"
+							              ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToLatestLogAnalysisResult}">
 								<Panel>
 									<Panel Name="scrollToBottomLogAnalysisResultIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
 										<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
@@ -1981,7 +2031,11 @@
 									</Panel>
 								</Panel>
 							</ToggleButton>
-							<ToggleButton Name="logAnalysisRuleSetsButton" Classes="ToolBar_ToggleButton_Small" Grid.Column="3" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" IsEnabled="{Binding !IsRemovingLogFiles}" ToolTip.Tip="{asXaml:StringResource SessionView.LogAnalysisRuleSets}">
+							<ToggleButton Name="logAnalysisRuleSetsButton" 
+							              Grid.Column="3" IsChecked="{Binding #logAnalysisRuleSetsPopup.IsOpen, Mode=TwoWay}" 
+							              IsEnabled="{Binding !IsRemovingLogFiles}"
+							              asControls:ToolbarElement.Role="SmallButton"
+							              ToolTip.Tip="{asXaml:StringResource SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !#activeLogAnalysisRuleSetsIconPanel.IsVisible}">
 										<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Outline}"/>
