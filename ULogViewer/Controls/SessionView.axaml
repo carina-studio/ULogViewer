@@ -1406,10 +1406,10 @@
 				<Grid ColumnDefinitions="*,Auto">
 
 					<Grid.Styles>
-						<Style Selector="Button.StatusBar_Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+						<Style Selector="Button[(asControls|StatusBarElement.Role)=Button]:pointerover /template/ ContentPresenter#PART_ContentPresenter">
 							<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
 						</Style>
-						<Style Selector="Button.StatusBar_Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+						<Style Selector="Button[(asControls|StatusBarElement.Role)=Button]:pressed /template/ ContentPresenter#PART_ContentPresenter">
 							<Setter Property="TextBlock.Foreground" Value="{DynamicResource TextControlForeground}"/>
 						</Style>
 					</Grid.Styles>
@@ -1418,25 +1418,46 @@
 					<StackPanel ClipToBounds="True" Orientation="Horizontal">
 
 						<!-- Icon -->
-						<Image Classes="StatusBar_IconWithText" Source="{StaticResource Image/Calendar}"/>
+						<Image asControls:StatusBarElement.Role="IconWithLabel" Source="{StaticResource Image/Calendar}"/>
 
 						<!-- Starting point -->
-						<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationStartingLogCommand}" Content="{Binding LogsDurationStartingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Right" ToolTip.Tip="{asXaml:StringResource SessionView.LogsDurationStartingPoint}"/>
+						<Button Command="{Binding LogSelection.SelectLogDurationStartingLogCommand}" 
+						        Content="{Binding LogsDurationStartingString}" 
+						        Foreground="{DynamicResource TextControlForeground}" 
+						        asControls:StatusBarElement.Role="Button"
+						        ToolTip.Placement="Right" 
+						        ToolTip.Tip="{asXaml:StringResource SessionView.LogsDurationStartingPoint}"/>
 
 						<!-- Duration -->
-						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
-						<TextBlock Classes="StatusBar_TextBlock" Foreground="{DynamicResource TextControlForeground}" Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.LogsDuration}"/>
-						<Image Classes="StatusBar_Icon" Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" Source="{StaticResource Image/Icon.Forward}"/>
+						<Image Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}" 
+						       asControls:StatusBarElement.Role="Icon"
+						       Source="{StaticResource Image/Icon.Forward}"/>
+						<TextBlock Foreground="{DynamicResource TextControlForeground}" 
+						           asControls:StatusBarElement.Role="Label"
+						           Text="{Binding LogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"
+						           ToolTip.Placement="Left"
+						           ToolTip.Tip="{asXaml:StringResource SessionView.LogsDuration}"/>
+						<Image Margin="{StaticResource Thickness/SessionView.LogsTimeInfoPanel.Arrow.Margin}"
+						       asControls:StatusBarElement.Role="Icon"
+						       Source="{StaticResource Image/Icon.Forward}"/>
 
 						<!-- Ending point -->
-						<Button Classes="StatusBar_Button" Command="{Binding LogSelection.SelectLogDurationEndingLogCommand}" Content="{Binding LogsDurationEndingString}" Foreground="{DynamicResource TextControlForeground}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.LogsDurationEndingPoint}"/>
+						<Button Command="{Binding LogSelection.SelectLogDurationEndingLogCommand}" 
+						        Content="{Binding LogsDurationEndingString}" 
+						        Foreground="{DynamicResource TextControlForeground}" 
+						        asControls:StatusBarElement.Role="Button"
+						        ToolTip.Placement="Left" 
+						        ToolTip.Tip="{asXaml:StringResource SessionView.LogsDurationEndingPoint}"/>
 
 					</StackPanel>
 
 					<!-- Selected logs -->
 					<StackPanel Grid.Column="1" IsVisible="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static ObjectConverters.IsNotNull}}" Orientation="Horizontal">
-						<Separator Classes="StatusBar_Separator"/>
-						<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" Foreground="{DynamicResource TextControlForeground}" Format="{asXaml:StringResource SessionView.SelectedLogsDuration}"/>
+						<Separator asControls:StatusBarElement.Role="Separator"/>
+						<abControls:FormattedTextBlock Arg1="{Binding LogSelection.SelectedLogsDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+						                               Foreground="{DynamicResource TextControlForeground}" 
+						                               Format="{asXaml:StringResource SessionView.SelectedLogsDuration}"
+						                               asControls:StatusBarElement.Role="Label"/>
 					</StackPanel>
 					
 				</Grid>
@@ -1476,17 +1497,17 @@
 						<StackPanel Grid.Column="0" 
 						            IsVisible="{Binding LogAnalysis.IsAnalyzing}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<abControls:ProgressRing Classes="StatusBar_ProgressRingWithText"
-							                         IsIndeterminate="True"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<abControls:ProgressRing IsIndeterminate="True"
+							                         asControls:StatusBarElement.Role="IconWithLabel"/>
 							<Panel VerticalAlignment="Center">
-								<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-								                               Arg1="100.0%" 
+								<abControls:FormattedTextBlock Arg1="100.0%" 
 								                               Format="{asXaml:StringResource SessionView.LogAnalysisProgress}" 
-								                               Opacity="0"/>
-								<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-								                               Arg1="{Binding LogAnalysis.AnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}" 
-								                               Format="{asXaml:StringResource SessionView.LogAnalysisProgress}"/>
+								                               Opacity="0"
+								                               asControls:StatusBarElement.Role="Label"/>
+								<abControls:FormattedTextBlock Arg1="{Binding LogAnalysis.AnalysisProgress, Converter={x:Static appViewModels:Session.LogsOperationProgressConverter}}" 
+								                               Format="{asXaml:StringResource SessionView.LogAnalysisProgress}"
+								                               asControls:StatusBarElement.Role="Label"/>
 							</Panel>
 						</StackPanel>
 
@@ -1494,10 +1515,10 @@
 						<StackPanel Grid.Column="1" 
 						            IsVisible="{Binding IsSavingLogs}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<abControls:ProgressRing Classes="StatusBar_ProgressRingWithText"
-							                         IsIndeterminate="True"/>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<abControls:ProgressRing IsIndeterminate="True"
+							                         asControls:StatusBarElement.Role="IconWithLabel"/>
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{asXaml:StringResource SessionView.SavingLogs}"/>
 						</StackPanel>
 
@@ -1505,13 +1526,13 @@
 						<StackPanel Grid.Column="2" 
 						            IsVisible="{Binding IsWaitingForDataSources}"
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Waiting.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{asXaml:StringResource SessionView.WaitingForDataSources}"/>
 						</StackPanel>
 
@@ -1519,13 +1540,13 @@
 						<StackPanel Grid.Column="3" 
 						            IsVisible="{Binding HasUri}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Uri.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{asXaml:MultiBinding 
 							               {Binding Uri.Scheme}, 
 							               {Binding Uri.Host},
@@ -1540,13 +1561,13 @@
 						<StackPanel Grid.Column="4" 
 						            IsVisible="{Binding HasIPEndPoint}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/IPAddress.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{Binding IPEndPoint}"/>
 						</StackPanel>
 						
@@ -1554,13 +1575,13 @@
 						<StackPanel Grid.Column="5" 
 						            IsVisible="{Binding ProcessId, Converter={x:Static ObjectConverters.IsNotNull}}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{Binding ProcessId}" 
 							           ToolTip.Placement="Left" 
 							           ToolTip.Tip="{asXaml:StringResource SessionView.ProcessId}"/>
@@ -1570,13 +1591,13 @@
 						<StackPanel Grid.Column="6" 
 						            IsVisible="{Binding ProcessName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Process}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{Binding ProcessName}" 
 							           ToolTip.Placement="Left"
 							           ToolTip.Tip="{asXaml:StringResource SessionView.ProcessName}"/>
@@ -1586,20 +1607,20 @@
 						<StackPanel Grid.Column="7" 
 						            IsVisible="{Binding HasWorkingDirectory}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 							<ToggleButton Name="workingDirectoryActionsButton" 
-							              Classes="StatusBar_ToggleButton" 
 							              Command="{Binding #root.ShowWorkingDirectoryActions}"
+							              asControls:StatusBarElement.Role="Button"
 							              ToolTip.Placement="Left" ToolTip.Tip="{Binding WorkingDirectoryPath}">
 								<StackPanel Orientation="Horizontal">
-									<Image Classes="StatusBar_IconWithText">
+									<Image asControls:StatusBarElement.Role="IconWithLabel">
 										<DrawingImage>
 											<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
 										</DrawingImage>
 									</Image>
-									<TextBlock Classes="StatusBar_TextBlock" 
+									<TextBlock asControls:StatusBarElement.Role="Label"
 									           Text="{Binding WorkingDirectoryName}"/>
-									<Image Classes="StatusBar_DropDownIcon">
+									<Image asControls:StatusBarElement.Role="DropDownIcon">
 										<DrawingImage>
 											<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.DropDown.Up}"/>
 										</DrawingImage>
@@ -1612,14 +1633,14 @@
 						<StackPanel Grid.Column="8" 
 						            IsVisible="{Binding IsHighMemoryUsageToStopReadingLogs}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock"
-							           Background="{x:Static Brushes.Transparent}" 
+							<TextBlock Background="{x:Static Brushes.Transparent}" 
+							           asControls:StatusBarElement.Role="Label"
 							           Text="{asXaml:StringResource SessionView.HighMemoryUsageToStopReadingLogs}" 
 							           ToolTip.Tip="{asXaml:StringResource SessionView.HighMemoryUsageToStopReadingLogs.Description}"/>
 						</StackPanel>
@@ -1628,23 +1649,24 @@
 						<StackPanel Grid.Column="9" 
 						            IsVisible="{Binding HasAllDataSourceErrors}"
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
-							<Image Classes="StatusBar_IconWithText">
+							<Separator asControls:StatusBarElement.Role="Separator"/>
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Error.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" Text="{asXaml:StringResource SessionView.HasAllDataSourceErrors}"/>
+							<TextBlock asControls:StatusBarElement.Role="Label" 
+							           Text="{asXaml:StringResource SessionView.HasAllDataSourceErrors}"/>
 						</StackPanel>
 						<StackPanel Grid.Column="9" 
 						            IsVisible="{Binding HasPartialDataSourceErrors}"
 						            Orientation="Horizontal">
-							<Image Classes="StatusBar_IconWithText">
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Warning.Outline}"/>
 								</DrawingImage>
 							</Image>
-							<TextBlock Classes="StatusBar_TextBlock" 
+							<TextBlock asControls:StatusBarElement.Role="Label"
 							           Text="{asXaml:StringResource SessionView.HasPartialDataSourceErrors}"/>
 						</StackPanel>
 
@@ -1652,41 +1674,69 @@
 						<StackPanel Grid.Column="10" 
 						            IsVisible="{Binding #root.IsProcessInfoVisible}" 
 						            Orientation="Horizontal">
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 							<StackPanel IsVisible="{Binding #root.Application.IsDebugMode, Mode=OneTime}" Orientation="Horizontal">
-								<Image Classes="StatusBar_IconWithText">
+								<Image asControls:StatusBarElement.Role="IconWithLabel">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Speed.Outline}"/>
 									</DrawingImage>
 								</Image>
 								<Panel VerticalAlignment="Center">
-									<TextBlock Classes="StatusBar_TextBlock" Text="000 ms   " Opacity="0" VerticalAlignment="Center"/>
-									<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding #root.Application.ProcessInfo.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.UIResponseDuration}"/>
+									<TextBlock asControls:StatusBarElement.Role="Label"
+									           Text="000 ms   " 
+									           Opacity="0" 
+									           VerticalAlignment="Center"/>
+									<TextBlock Background="{x:Static Brushes.Transparent}" 
+									           HorizontalAlignment="Left"
+									           asControls:StatusBarElement.Role="Label"
+									           Text="{Binding #root.Application.ProcessInfo.UIResponseDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"
+									           ToolTip.Placement="Left"
+									           ToolTip.Tip="{asXaml:StringResource SessionView.UIResponseDuration}"
+									           VerticalAlignment="Center" />
 								</Panel>
 							</StackPanel>
-							<Image Classes="StatusBar_IconWithText">
+							<Image asControls:StatusBarElement.Role="IconWithLabel">
 								<DrawingImage>
 									<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Cpu.Outline}"/>
 								</DrawingImage>
 							</Image>
 							<Panel VerticalAlignment="Center">
-								<TextBlock Classes="StatusBar_TextBlock" Text="00.0 % " Opacity="0"/>
-								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Left" Text="{Binding #root.Application.ProcessInfo.CpuUsagePercentage, StringFormat={}{0:F1} %}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.CpuUsage}"/>
+								<TextBlock asControls:StatusBarElement.Role="Label"
+								           Text="00.0 % " 
+								           Opacity="0"/>
+								<TextBlock Background="{x:Static Brushes.Transparent}" 
+								           HorizontalAlignment="Left"
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding #root.Application.ProcessInfo.CpuUsagePercentage, StringFormat={}{0:F1} %}" 
+								           ToolTip.Placement="Left" 
+								           ToolTip.Tip="{asXaml:StringResource SessionView.CpuUsage}"/>
 							</Panel>
 							<StackPanel Orientation="Horizontal">
-								<Image Classes="StatusBar_IconWithText">
+								<Image asControls:StatusBarElement.Role="IconWithLabel">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Memory.Outline}"/>
 									</DrawingImage>
 								</Image>
-								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.LogsMemoryUsage}" VerticalAlignment="Center"/>
-								<TextBlock Classes="StatusBar_TextBlock" Text="/" VerticalAlignment="Center"/>
-								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding TotalLogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.TotalLogsMemoryUsage}" VerticalAlignment="Center"/>
-								<TextBlock Classes="StatusBar_TextBlock" Text="/" VerticalAlignment="Center"/>
-								<TextBlock Classes="StatusBar_TextBlock" Background="{x:Static Brushes.Transparent}" Text="{Binding #root.Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.MemoryUsage}" VerticalAlignment="Center"/>
+								<TextBlock Background="{x:Static Brushes.Transparent}" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.LogsMemoryUsage}" VerticalAlignment="Center"/>
+								<TextBlock asControls:StatusBarElement.Role="Label"
+								           Text="/" VerticalAlignment="Center"/>
+								<TextBlock Background="{x:Static Brushes.Transparent}" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding TotalLogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.TotalLogsMemoryUsage}" VerticalAlignment="Center"/>
+								<TextBlock asControls:StatusBarElement.Role="Label"
+								           Text="/" VerticalAlignment="Center"/>
+								<TextBlock Background="{x:Static Brushes.Transparent}" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding #root.Application.ProcessInfo.PrivateMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.MemoryUsage}" VerticalAlignment="Center"/>
 							</StackPanel>
-							<Button Classes="StatusBar_Button" Command="{Binding #root.PerformGC}" IsVisible="{Binding #root.Application.IsDebugMode}" ToolTip.Placement="Left" ToolTip.Tip="{asXaml:StringResource SessionView.PerformGC}">
-								<Image Classes="StatusBar_Icon">
+							<Button Command="{Binding #root.PerformGC}" 
+							        IsVisible="{Binding #root.Application.IsDebugMode}" 
+							        asControls:StatusBarElement.Role="Button"
+							        ToolTip.Placement="Left" 
+							        ToolTip.Tip="{asXaml:StringResource SessionView.PerformGC}">
+								<Image asControls:StatusBarElement.Role="Icon">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/StatusBar.Foreground}" Geometry="{StaticResource Geometry/Icon.Broom}"/>
 									</DrawingImage>
@@ -1700,8 +1750,8 @@
 					<Grid ClipToBounds="True" ColumnDefinitions="Auto,Auto,Auto,Auto">
 
 						<!-- Empty view to reserve space -->
-						<TextBlock Classes="StatusBar_TextBlock" 
-						           Grid.ColumnSpan="5" 
+						<TextBlock Grid.ColumnSpan="5" 
+						           asControls:StatusBarElement.Role="Label"
 						           Text="{asXaml:StringResource SessionView.AllLogCount}"
 						           Opacity="0"/>
 
@@ -1710,61 +1760,62 @@
 						            Opacity="0" 
 						            Orientation="Horizontal">
 							<!-- Empty view to reserve space -->
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-							                               Arg1="0000000" 
+							<abControls:FormattedTextBlock Arg1="0000000" 
 							                               Format="{asXaml:StringResource SessionView.AllLogCount}"
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-							                               Arg1="0000000" 
+							<abControls:FormattedTextBlock Arg1="0000000" 
 							                               Format="{asXaml:StringResource SessionView.FilteredLogCount}" 
 							                               IsVisible="{Binding IsFilteringLogsNeeded}"
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 						</StackPanel>
 						<StackPanel IsVisible="{Binding AllLogCount}"
 						            Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" Arg1="{Binding AllLogCount}" 
+							<abControls:FormattedTextBlock Arg1="{Binding AllLogCount}" 
 							                               Format="{asXaml:StringResource SessionView.AllLogCount}"
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-							                               Arg1="{Binding LogFiltering.FilteredLogs.Count}" 
+							<abControls:FormattedTextBlock Arg1="{Binding LogFiltering.FilteredLogs.Count}" 
 							                               Format="{asXaml:StringResource SessionView.FilteredLogCount}" 
 							                               IsVisible="{Binding LogFiltering.IsFilteringNeeded}" 
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 						</StackPanel>
 
 						<!-- Last logs reading duration -->
 						<StackPanel Grid.Column="1" 
 						            IsVisible="{Binding HasLastLogsReadingDuration}" 
 						            Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-							                               Arg1="{Binding LastLogsReadingDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"
+							<abControls:FormattedTextBlock Arg1="{Binding LastLogsReadingDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}"
 							                               Format="{asXaml:StringResource SessionView.LastLogsReadingDuration}" 
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 						</StackPanel>
 
 						<!-- Last logs filtering duration -->
 						<StackPanel Grid.Column="2" 
 						            IsVisible="{asXaml:AndBindings {Binding LogFiltering.IsFilteringNeeded}, {Binding LogFiltering.LastFilteringDuration, Converter={x:Static ObjectConverters.IsNotNull}}}"
 						            Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-							                               Arg1="{Binding LogFiltering.LastFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
-							                               Format="{asXaml:StringResource SessionView.LastLogsFilteringDuration}" 
+							<abControls:FormattedTextBlock Arg1="{Binding LogFiltering.LastFilteringDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+							                               Format="{asXaml:StringResource SessionView.LastLogsFilteringDuration}"
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 						</StackPanel>
 
 						<!-- Selected logs -->
 						<StackPanel Grid.Column="3" 
 						            IsVisible="{Binding #logListBox.SelectedItems.Count, FallbackValue=False}" 
 						            Orientation="Horizontal">
-							<abControls:FormattedTextBlock Classes="StatusBar_TextBlock" 
-							                               Arg1="{Binding LogSelection.SelectedLogs.Count}" 
+							<abControls:FormattedTextBlock Arg1="{Binding LogSelection.SelectedLogs.Count}" 
 							                               Format="{asXaml:StringResource SessionView.SelectedLogCount}" 
+							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
-							<Separator Classes="StatusBar_Separator"/>
+							<Separator asControls:StatusBarElement.Role="Separator"/>
 						</StackPanel>
 
 					</Grid>
@@ -1774,7 +1825,7 @@
 			<Border BorderBrush="{DynamicResource Brush/StatusBar.Border}" BorderThickness="0,1,0,0"/>
 		</Panel>
 
-		<!-- Side panel tool bar -->
+		<!-- Side panel toolbar -->
 		<Border Classes="ToolBar" Background="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" Grid.Column="3" Grid.Row="1">
 			<StackPanel Name="sidePanelBoolBarItemsPanel" VerticalAlignment="Top">
 
@@ -1890,7 +1941,7 @@
 					<Border Classes="SessionView_SidePanel_Header">
 						<Grid ColumnDefinitions="Auto,*">
 							<TextBlock Classes="SessionView_SidePanel_Header_Left" Text="{asXaml:StringResource SessionView.TimestampCategoriesPanel}"/>
-							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding TimestampCategories.Count, StringFormat={} ({0})}"/>
+							<TextBlock Classes="SessionView_SidePanel_Header_Right" Grid.Column="1" Text="{Binding LogCategorizing.TimestampCategories.Count, StringFormat={} ({0})}"/>
 						</Grid>
 					</Border>
 					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
@@ -2584,86 +2635,77 @@
 
 							<!-- Duration -->
 							<Grid Name="selectedLogAnalysisResultsDurationPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<Image 
-									Classes="StatusBar_IconWithText" 
-									Source="{StaticResource Image/Timer.Outline}"/>
-								<TextBlock 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="1" 
-									Margin="0" 
-									Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
-									ToolTip.Placement="Left"
-									ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsTotalDuration}"/>
-								<TextBlock 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="2" 
-									IsVisible="{Binding #selectedLogAnalysisResultsAvgDuration.IsVisible}" 
-									Margin="0" 
-									Text=" / "/>
+								<Image asControls:StatusBarElement.Role="IconWithLabel"
+								       Source="{StaticResource Image/Timer.Outline}"/>
+								<TextBlock Grid.Column="1" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+								           ToolTip.Placement="Left"
+								           ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsTotalDuration}"/>
+								<TextBlock Grid.Column="2" 
+								           IsVisible="{Binding #selectedLogAnalysisResultsAvgDuration.IsVisible}" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text=" / "/>
 								<TextBlock Name="selectedLogAnalysisResultsAvgDuration" 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="3" 
-									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static ObjectConverters.IsNotNull}}" 
-									Margin="0" 
-									Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
-									ToolTip.Placement="Left"
-									ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsAverageDuration}"/>
+								           Grid.Column="3" 
+								           IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static ObjectConverters.IsNotNull}}" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageDuration, Converter={x:Static asConverters:TimeSpanConverter.Default}}" 
+								           ToolTip.Placement="Left"
+								           ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsAverageDuration}"/>
 							</Grid>
 
 							<!-- ByteSize -->
 							<Grid Name="selectedLogAnalysisResultsByteSizePanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalByteSize, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<Image 
-									Classes="StatusBar_IconWithText" 
-									Source="{StaticResource Image/Icon.Memory.Outline}"/>
-								<TextBlock 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="1" 
-									Margin="0" 
-									Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}" 
-									ToolTip.Placement="Left"
-									ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsTotalByteSize}"/>
-								<TextBlock 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="2" 
-									IsVisible="{Binding #selectedLogAnalysisResultsAvgByteSize.IsVisible}" 
-									Margin="0" 
-									Text=" / "/>
+								<Image asControls:StatusBarElement.Role="IconWithLabel"
+								       Source="{StaticResource Image/Icon.Memory.Outline}"/>
+								<TextBlock Grid.Column="1" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}" 
+								           ToolTip.Placement="Left"
+								           ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsTotalByteSize}"/>
+								<TextBlock Grid.Column="2" 
+								           IsVisible="{Binding #selectedLogAnalysisResultsAvgByteSize.IsVisible}" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text=" / "/>
 								<TextBlock Name="selectedLogAnalysisResultsAvgByteSize" 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="3" 
-									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageByteSize, Converter={x:Static ObjectConverters.IsNotNull}}" 
-									Margin="0" 
-									Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}" 
-									ToolTip.Placement="Left"
-									ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsAverageByteSize}"/>
+								           Grid.Column="3" 
+								           IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageByteSize, Converter={x:Static ObjectConverters.IsNotNull}}" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageByteSize, Converter={x:Static asConverters:FileSizeConverter.Default}}" 
+								           ToolTip.Placement="Left"
+								           ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsAverageByteSize}"/>
 							</Grid>
 
 							<!-- Quantity -->
 							<Grid Name="selectedLogAnalysisResultsQuantityPanel" ColumnDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsTotalQuantity, Converter={x:Static ObjectConverters.IsNotNull}}">
-								<Image 
-									Classes="StatusBar_IconWithText" 
-									Source="{StaticResource Image/Layers.Outline}"/>
-								<TextBlock 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="1" 
-									Margin="0" 
-									Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalQuantity}" 
-									ToolTip.Placement="Left"
-									ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsTotalQuantity}"/>
-								<TextBlock 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="2" 
-									IsVisible="{Binding #selectedLogAnalysisResultsAvgQuantity.IsVisible}" 
-									Margin="0" 
-									Text=" / "/>
+								<Image asControls:StatusBarElement.Role="IconWithLabel"
+								       Source="{StaticResource Image/Layers.Outline}"/>
+								<TextBlock Grid.Column="1" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogAnalysis.SelectedAnalysisResultsTotalQuantity}" 
+								           ToolTip.Placement="Left"
+								           ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsTotalQuantity}"/>
+								<TextBlock Grid.Column="2" 
+								           IsVisible="{Binding #selectedLogAnalysisResultsAvgQuantity.IsVisible}" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text=" / "/>
 								<TextBlock Name="selectedLogAnalysisResultsAvgQuantity" 
-									Classes="StatusBar_TextBlock" 
-									Grid.Column="3" 
-									IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageQuantity, Converter={x:Static ObjectConverters.IsNotNull}}" 
-									Margin="0" 
-									Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageQuantity, StringFormat={}{0:F2}}" 
-									ToolTip.Placement="Left"
-									ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsAverageQuantity}"/>
+								           Grid.Column="3" 
+								           IsVisible="{Binding LogAnalysis.SelectedAnalysisResultsAverageQuantity, Converter={x:Static ObjectConverters.IsNotNull}}" 
+								           Margin="0" 
+								           asControls:StatusBarElement.Role="Label"
+								           Text="{Binding LogAnalysis.SelectedAnalysisResultsAverageQuantity, StringFormat={}{0:F2}}" 
+								           ToolTip.Placement="Left"
+								           ToolTip.Tip="{asXaml:StringResource SessionView.SelectedLogAnalysisResultsAverageQuantity}"/>
 							</Grid>
 
 						</StackPanel>
@@ -2754,7 +2796,7 @@
 		<Panel Background="{DynamicResource Brush/WorkingArea.Panel.Background}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" IsHitTestVisible="False" IsVisible="{Binding #sidePanelContainer.IsVisible}" VerticalAlignment="Stretch">
 			<Panel VerticalAlignment="Top">
 				<Border Classes="SessionView_SidePanel_Header" Padding="{StaticResource Thickness/SessionView.SidePanel.Header.Padding.Dummy}">
-					<TextBlock Classes="SessionView_SidePanel_Header_Left" Margin="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy}"/>
+					<TextBlock Classes="SessionView_SidePanel_Header_Left" Padding="{StaticResource Thickness/SessionView.SidePanel.Header.Text.Left.Margin.Dummy}"/>
 				</Border>
 				<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False" Margin="1,0,0,0"/>
 			</Panel>
