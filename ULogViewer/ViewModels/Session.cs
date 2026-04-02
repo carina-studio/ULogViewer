@@ -2069,40 +2069,43 @@ class Session : ViewModel<IULogViewerApplication>
 		// prepare log writer
 		var logWriter = new RawLogWriter(dataOutput)
 		{
-			LogFormats = writingFormats.IsEmpty()
-				? new StringBuilder().Let(it =>
+			LogFormats = Global.Run(() =>
+			{
+				if (this.IsShowingRawLogLinesTemporarily)
+					return [ $"{{{nameof(DisplayableLog.Message)}}}" ];
+				if (writingFormats.IsNotEmpty())
+					return writingFormats;
+				var buffer = new StringBuilder();
+				foreach (var property in this.DisplayLogProperties)
 				{
-					foreach (var property in this.DisplayLogProperties)
+					if (buffer.Length > 0)
+						buffer.Append(' ');
+					var propertyName = property.Name;
+					switch (propertyName)
 					{
-						if (it.Length > 0)
-							it.Append(' ');
-						var propertyName = property.Name;
-						switch (propertyName)
-						{
-							case nameof(DisplayableLog.BeginningTimeSpanString):
-							case nameof(DisplayableLog.EndingTimeSpanString):
-							case nameof(DisplayableLog.TimeSpanString):
-								it.Append($"{{{propertyName.AsSpan(0, propertyName.Length - 6)}}}");
-								break;
-							case nameof(DisplayableLog.BeginningTimestampString):
-							case nameof(DisplayableLog.EndingTimestampString):
-							case nameof(DisplayableLog.ReadTimeString):
-							case nameof(DisplayableLog.TimestampString):
-								it.Append($"{{{propertyName.AsSpan(0, propertyName.Length - 6)}}}");
-								break;
-							case nameof(DisplayableLog.LineNumber):
-							case nameof(DisplayableLog.ProcessId):
-							case nameof(DisplayableLog.ThreadId):
-								it.Append($"{{{propertyName},-5}}");
-								break;
-							default:
-								it.Append($"{{{propertyName}}}");
-								break;
-						}
+						case nameof(DisplayableLog.BeginningTimeSpanString):
+						case nameof(DisplayableLog.EndingTimeSpanString):
+						case nameof(DisplayableLog.TimeSpanString):
+							buffer.Append($"{{{propertyName.AsSpan(0, propertyName.Length - 6)}}}");
+							break;
+						case nameof(DisplayableLog.BeginningTimestampString):
+						case nameof(DisplayableLog.EndingTimestampString):
+						case nameof(DisplayableLog.ReadTimeString):
+						case nameof(DisplayableLog.TimestampString):
+							buffer.Append($"{{{propertyName.AsSpan(0, propertyName.Length - 6)}}}");
+							break;
+						case nameof(DisplayableLog.LineNumber):
+						case nameof(DisplayableLog.ProcessId):
+						case nameof(DisplayableLog.ThreadId):
+							buffer.Append($"{{{propertyName},-5}}");
+							break;
+						default:
+							buffer.Append($"{{{propertyName}}}");
+							break;
 					}
-					return new[] { it.ToString() };
-				})
-				: writingFormats,
+				}
+				return [ buffer.ToString() ];
+			}),
 			LogLevelMap = this.displayableLogGroup?.LevelMapForDisplaying ?? profile.LogLevelMapForWriting,
 			LogStringEncoding = profile.LogStringEncodingForWriting,
 			TimeSpanCultureInfo = profile.TimeSpanCultureInfoForWriting,
