@@ -3225,6 +3225,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			var profile = session.LogProfile;
 			if (profile is null)
 				return;
+			var isNotBuiltInProfile = !profile.IsBuiltIn;
 
 			// get display log properties
 			var logProperties = session.DisplayLogProperties;
@@ -3357,6 +3358,28 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.DataContext = logProperty;
 					if (logPropertyIndex == 0)
 						it.BorderThickness = new Thickness();
+					if (isNotBuiltInProfile)
+					{
+						var editButton = it.FindLogicalDescendantOfType<Button>();
+						editButton!.Bind(IsVisibleProperty, new Binding { Source = editButton.Parent, Path = nameof(IsPointerOver) });
+						editButton.Click += async (_, _) =>
+						{
+							if (this.attachedWindow is null)
+								return;
+							var logProperties = session.DisplayLogProperties;
+							if (logPropertyIndex >= logProperties.Count)
+								return;
+							var currentLogProperty = logProperties[logPropertyIndex].ToLogProperty(resolveDisplayName: false);
+							var newLogProperty = await new VisibleLogPropertyEditorDialog
+							{
+								DefinedLogPropertyNames = session.DefinedLogPropertyNames,
+								LogProperty = currentLogProperty
+							}.ShowDialog<LogProperty?>(this.attachedWindow);
+							if (newLogProperty is null || newLogProperty == currentLogProperty)
+								return;
+							session.ReplaceVisibleLogProperty(logPropertyIndex, newLogProperty);
+						};
+					}
 				});
 				Grid.SetColumn(headerView, logPropertyIndex * 2 + columIndexOffset);
 				this.logHeaderGrid.Children.Add(headerView);

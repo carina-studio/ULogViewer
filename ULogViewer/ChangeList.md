@@ -3,6 +3,7 @@
 
 ## New Features
 + Added support for temporarily showing raw log lines even when [log patterns](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns) are defined.
++ Added support for editing visible log properties of the current non-built-in log profile in the log viewer.
 + Changes to the width of the log property column in the log viewer will be saved to the log profile, including built‑in profiles.
 + The pre-defined log level mapping will be used if no log level mapping defined in log profile.
 + Added support for applying the system text size to selected parts of user interface on Windows and macOS.

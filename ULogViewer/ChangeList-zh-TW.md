@@ -3,6 +3,7 @@
 
 ## 新功能
 + 支援在已定義[日誌行格式](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns)後暫時顯示原始日誌行。
++ 支援在日誌檢視器中編輯目前的日誌類型（非內建）所定義之顯示日誌屬性。
 + 在日誌檢視器中變更的日誌屬性欄位寬度將儲存回日誌類型，包括內建日誌類型。
 + 當日誌類型中沒有定義日誌等級對照表時，將改為使用預設之日誌等級對照。
 + 支援在 Windows 及 macOS 上套用系統文字大小至特定使用者介面元素。

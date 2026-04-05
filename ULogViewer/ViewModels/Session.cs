@@ -22,6 +22,7 @@ using CarinaStudio.Windows.Input;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -119,6 +120,10 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Property of <see cref="CustomTitle"/>.
 	/// </summary>
 	public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
+	/// <summary>
+	/// Property of <see cref="DefinedLogPropertyNames"/>.
+	/// </summary>
+	public static readonly ObservableProperty<ISet<string>> DefinedLogPropertyNamesProperty = ObservableProperty.Register<Session, ISet<string>>(nameof(DefinedLogPropertyNames), ImmutableHashSet<string>.Empty);
 	/// <summary>
 	/// Property of <see cref="DisplayLogProperties"/>.
 	/// </summary>
@@ -926,8 +931,9 @@ class Session : ViewModel<IULogViewerApplication>
 	DisplayableLogGroup? displayableLogGroup;
 	bool hasLogDataSourceCreationFailure;
 	bool isInitLogProfile;
+	bool isReplacingVisibleLogProperty;
 	bool isRestoringState;
-	bool isSettingDisplayLogPropertyWidth;
+	bool isSettingLogPropertyWidth;
 	readonly IDisposable isSpecifyingMaxLogReadingCountAllowedObserverToken;
 	readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 	readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
@@ -2157,6 +2163,12 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Raised when debug message has been generated.
 	/// </summary>
 	public event EventHandler<MessageEventArgs>? DebugMessageGenerated;
+
+
+	/// <summary>
+	/// Get the set of the defined log property names in the current log profile.
+	/// </summary>
+	public ISet<string> DefinedLogPropertyNames => this.GetValue(DefinedLogPropertyNamesProperty);
 
 
 	// Raised when group of displayable log created.
@@ -3457,7 +3469,6 @@ class Session : ViewModel<IULogViewerApplication>
 				break;
 			case nameof(LogProfile.DefaultLogLevel):
 			case nameof(LogProfile.LogPatternMatchingMode):
-			case nameof(LogProfile.LogPatterns):
 			case nameof(LogProfile.LogStringEncodingForReading):
 			case nameof(LogProfile.RawLogLevelPropertyName):
 			case nameof(LogProfile.SortDirection):
@@ -3479,7 +3490,7 @@ class Session : ViewModel<IULogViewerApplication>
 				break;
 			case nameof(LogProfile.IsContinuousReading):
 				this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
-				goto case nameof(LogProfile.LogPatterns);
+				goto case nameof(LogProfile.DefaultLogLevel);
 			case nameof(LogProfile.IsTemplate):
 				if (logProfile.IsTemplate)
 				{
@@ -3489,7 +3500,10 @@ class Session : ViewModel<IULogViewerApplication>
 				break;
 			case nameof(LogProfile.LogLevelMapForReading):
 				this.UpdateValidLogLevels();
-				goto case nameof(LogProfile.LogPatterns);
+				goto case nameof(LogProfile.DefaultLogLevel);
+			case nameof(LogProfile.LogPatterns):
+				this.UpdateDefinedLogPropertyNames();
+				goto case nameof(LogProfile.DefaultLogLevel);
 			case nameof(LogProfile.LogWritingFormats):
 				this.UpdateIsLogsWritingAvailable(this.LogProfile);
 				break;
@@ -3499,7 +3513,7 @@ class Session : ViewModel<IULogViewerApplication>
 				break;
 			case nameof(LogProfile.MaxLogReadingCount):
 				if (this.LogProfile?.IsContinuousReading == false)
-					goto case nameof(LogProfile.LogPatterns);
+					goto case nameof(LogProfile.DefaultLogLevel);
 				break;
 			case nameof(LogProfile.Name):
 				this.SetValue(LogProfileNameProperty, logProfile.Name);
@@ -3510,7 +3524,7 @@ class Session : ViewModel<IULogViewerApplication>
 					this.logReaders[0].RestartReadingDelay = TimeSpan.FromMilliseconds(logProfile.RestartReadingDelay);
 				break;
 			case nameof(LogProfile.VisibleLogProperties):
-				if (!this.isSettingDisplayLogPropertyWidth)
+				if (!this.isReplacingVisibleLogProperty && !this.isSettingLogPropertyWidth)
 					this.ScheduleReloadingLogs(false, true);
 				break;
 		}
@@ -4035,6 +4049,65 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	/// <remarks>Type of parameter is <see cref="string"/>.</remarks>
 	public ICommand RemoveLogFileCommand { get; }
+
+
+	/// <summary>
+	/// Replace the specific visible log property defined in the current log profile.
+	/// </summary>
+	/// <param name="index">Index of the visible log property to be replaced.</param>
+	/// <param name="logProperty">The new visible log property.</param>
+	/// <returns>True if the visible log property has been replaced successfully.</returns>
+	public bool ReplaceVisibleLogProperty(int index, LogProperty logProperty)
+	{
+		// check state
+		this.VerifyAccess();
+		this.VerifyDisposed();
+		if (this.LogProfile is not { } logProfile)
+		{
+			this.Logger.LogError("No log profile to replace log property");
+			return false;
+		}
+		if (logProfile.IsBuiltIn)
+		{
+			this.Logger.LogError("Cannot replace log property of built-in log profile '{id}'", logProfile.Name);
+			return false;
+		}
+		var visibleLogProperties = logProfile.VisibleLogProperties.ToArray();
+		if (index < 0 || index >= visibleLogProperties.Length)
+		{
+			this.Logger.LogError("Invalid index of log property to replace");
+			return false;
+		}
+		if (this.isReplacingVisibleLogProperty || this.isSettingLogPropertyWidth)
+		{
+			this.Logger.LogError("Replacing or setting width of log property");
+			return false;
+		}
+		
+		// replace property
+		var oldLogProperty = visibleLogProperties[index];
+		if (oldLogProperty == logProperty)
+			return true;
+		visibleLogProperties[index] = logProperty;
+		if (oldLogProperty.Name == logProperty.Name)
+		{
+			this.isReplacingVisibleLogProperty = true;
+			try
+			{
+				logProfile.VisibleLogProperties = visibleLogProperties;
+			}
+			finally
+			{
+				this.isReplacingVisibleLogProperty = false;
+			}
+			var displayLogProperties = this.GetValue(DisplayLogPropertiesProperty).ToArray();
+			displayLogProperties[index] = new(this.Application, logProperty);
+			this.SetValue(DisplayLogPropertiesProperty, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
+		}
+		else
+			logProfile.VisibleLogProperties = visibleLogProperties;
+		return true;
+	}
 	
 	
 	// Report time information of logs.
@@ -4225,6 +4298,9 @@ class Session : ViewModel<IULogViewerApplication>
 		// clear profile
 		this.Logger.LogWarning("Reset log profile '{profileName}'", profile.Name);
 		this.SetValue(LogProfileProperty, null);
+		
+		// clear defined log property names
+		this.UpdateDefinedLogPropertyNames();
 		
 		// clear valid log levels
 		this.UpdateValidLogLevels();
@@ -4833,14 +4909,14 @@ class Session : ViewModel<IULogViewerApplication>
 			this.Logger.LogError("Invalid width to set to display log property: {width}", width);
 			return false;
 		}
-		if (this.isSettingDisplayLogPropertyWidth)
+		if (this.isReplacingVisibleLogProperty || this.isSettingLogPropertyWidth)
 		{
-			this.Logger.LogError("Nested width of display log property setting");
+			this.Logger.LogError("Replacing or setting width of log property");
 			return false;
 		}
 		if (logProperty.Width != width)
 		{
-			this.isSettingDisplayLogPropertyWidth = true;
+			this.isSettingLogPropertyWidth = true;
 			try
 			{
 				logProfile.VisibleLogProperties = new List<LogProperty>(visibleLogProperties)
@@ -4850,7 +4926,7 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 			finally
 			{
-				this.isSettingDisplayLogPropertyWidth = false;
+				this.isSettingLogPropertyWidth = false;
 			}
 		}
 		return true;
@@ -4941,6 +5017,9 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// setup log comparer
 		this.UpdateDisplayableLogComparison();
+		
+		// update defined log property names
+		this.UpdateDefinedLogPropertyNames();
 
 		// update valid log levels
 		this.UpdateValidLogLevels();
@@ -5995,6 +6074,23 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 		}
 		this.ResetValue(CanStopReadingLogsProperty);
+	}
+	
+	
+	// Update defined log property names.
+	void UpdateDefinedLogPropertyNames()
+	{
+		if (this.GetValue(LogProfileProperty) is { } logProfile)
+		{
+			var propertyNames = ImmutableHashSet.CreateBuilder<string>().Also(builder =>
+			{
+				foreach (var logPattern in logProfile.LogPatterns)
+					builder.AddAll(logPattern.DefinedLogPropertyNames);
+			}).ToImmutable();
+			this.SetValue(DefinedLogPropertyNamesProperty, propertyNames);
+		}
+		else
+			this.ResetValue(DefinedLogPropertyNamesProperty);
 	}
 
 
