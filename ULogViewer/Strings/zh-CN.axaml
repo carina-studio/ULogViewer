@@ -47,7 +47,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">选择日志类型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时立即显示输入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志文件时立即开启文件选择介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新页面后开启日志类型选择介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新标签页后开启日志类型选择介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从文件读取日志前指定前置读取条件（当条件支持时）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">当需要进程识别码 (PID) 时立即显示输入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">当需要进程名称时立即显示输入介面</sys:String>
@@ -938,8 +938,8 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待资料来源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自定义页面标题…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">页面标题</sys:String>
-	<sys:String x:Key="String/MainWindow.Tabs">选项卡</sys:String>
-	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选取日志类型，并套用至新的页面。</sys:String>
+	<sys:String x:Key="String/MainWindow.Tabs">标签页</sys:String>
+	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选取日志类型，并套用至新的标签页。</sys:String>
 	<sys:String x:Key="String/MainWindow.Windows">窗口</sys:String>
 
 	<!-- MarkColor -->
@@ -1193,7 +1193,7 @@ return None</sys:String>
 
 	<!-- Session -->
 	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在启用 ULogViewer 专业版之前无法使用资料来源「{0}」。</sys:String>
-	<sys:String x:Key="String/Session.Empty">空白页面</sys:String>
+	<sys:String x:Key="String/Session.Empty">空白标签页</sys:String>
 	
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">加入日志文件</sys:String>
@@ -1307,7 +1307,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日志时间/最大日志时距 (点击以选取该日志)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距 (点击以选取该日志)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日志筛选进度</sys:String>
-	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此页面日志内存使用量</sys:String>
+	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此标签页日志内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">因为高度内存使用 ({0})，日志读取已暂时停用。</sys:String>
 	<sys:String x:Key="String/SessionView.LogsSaved">已成功将日志储存至 '{0}'。</sys:String>
 	<sys:String x:Key="String/SessionView.LogsSavingFailed">无法将日志储存至 '{0}'。</sys:String>
