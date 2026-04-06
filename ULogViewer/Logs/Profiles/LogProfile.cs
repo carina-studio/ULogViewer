@@ -35,6 +35,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 
 	// Static fields.
 	static readonly CultureInfo defaultTimestampCultureInfoForReading = CultureInfo.GetCultureInfo("en-US");
+	static int nextIndexOfIdForUsageTracking = 1;
 
 
 	// Fields.
@@ -101,6 +102,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	{
 		this.coopLogAnalysisScriptSetPropChangedHandler = this.OnCooperativeLogAnalysisScriptSetPropertyChanged;
 		this.embScriptLogDataSourceProviderPropChangedHandler = this.OnEmbeddedScriptSourceProviderPropertyChanged;
+		this.IdForUsageTracking = isBuiltIn ? id : $"Custom-{nextIndexOfIdForUsageTracking++}";
 		this.isPinnedSettingKey = isBuiltIn ? new($"BuiltInProfile.{id}.IsPinned") : null;
 		this.readOnlyLogLevelMapForReading = new ReadOnlyDictionary<string, LogLevel>(this.logLevelMapForReading);
 		this.readOnlyLogLevelMapForWriting = new ReadOnlyDictionary<LogLevel, string>(this.logLevelMapForWriting);
@@ -165,6 +167,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		// ReSharper restore VirtualMemberCallInConstructor
 		this.rawLogLevelPropertyName = template.rawLogLevelPropertyName;
 		this.restartReadingDelay = template.restartReadingDelay;
+		this.SourceBuildInLogProfileId = template.IsBuiltIn ? template.Id : template.SourceBuildInLogProfileId;
 		this.sortDirection = template.sortDirection;
 		this.sortKey = template.sortKey;
 		this.timeSpanCultureInfoForReading = template.timeSpanCultureInfoForReading;
@@ -440,6 +443,12 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 			this.OnPropertyChanged(nameof(IconColor));
 		}
 	}
+	
+	
+	/// <summary>
+	/// Get the ID of the log profile for usage tracking.
+	/// </summary>
+	public string IdForUsageTracking { get; private set; }
 
 
 	/// <summary>
@@ -1268,6 +1277,9 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 				case nameof(RestartReadingDelay):
 					this.restartReadingDelay = Math.Max(0, jsonProperty.Value.GetInt64());
 					break;
+				case "SourceBuiltInLogProfile":
+					this.SourceBuildInLogProfileId = jsonProperty.Value.GetString();
+					break;
 				case nameof(SortDirection):
 					this.sortDirection = Enum.Parse<SortDirection>(jsonProperty.Value.GetString().AsNonNull());
 					break;
@@ -1419,6 +1431,8 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		if (this.rawLogLevelPropertyName != nameof(Log.Level))
 			writer.WriteString(nameof(RawLogLevelPropertyName), this.rawLogLevelPropertyName);
 		writer.WriteNumber(nameof(RestartReadingDelay), this.restartReadingDelay);
+		if (!string.IsNullOrEmpty(this.SourceBuildInLogProfileId))
+			writer.WriteString("SourceBuiltInLogProfile", this.SourceBuildInLogProfileId);
 		writer.WriteString(nameof(SortDirection), this.sortDirection.ToString());
 		writer.WriteString(nameof(SortKey), this.sortKey.ToString());
 		writer.WriteString(nameof(TimeSpanCultureInfoForReading), this.timeSpanCultureInfoForReading.ToString());
@@ -1617,6 +1631,12 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		}
 		writer.WriteEndArray();
 	}
+	
+	
+	/// <summary>
+	/// Get the ID of the source built-in log profile which this log profile was extended from.
+	/// </summary>
+	public string? SourceBuildInLogProfileId { get; private set; }
 
 
 	/// <summary>

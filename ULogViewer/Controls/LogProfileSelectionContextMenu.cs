@@ -302,17 +302,19 @@ class LogProfileSelectionContextMenu : ContextMenu
             return;
         
         // copy log profile
+        var logProfileManager = LogProfileManager.Default;
         var newProfile = await new LogProfileEditorDialog
         {
             LogProfile = new LogProfile(logProfile)
             {
                 Name = Utility.GenerateName(logProfile.Name, name =>
-                    LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) != null),
+                    logProfileManager.Profiles.FirstOrDefault(it => it.Name == name) != null),
             },
         }.ShowDialog<LogProfile?>(window);
         if (newProfile is null || window.IsClosed)
             return;
-        LogProfileManager.Default.AddProfile(newProfile);
+        logProfileManager.AddProfile(newProfile);
+        logProfileManager.TrackLogProfileCopiedEvent(logProfile, newProfile);
         this.LogProfileCreated?.Invoke(this, newProfile);
     }
 

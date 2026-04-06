@@ -5029,6 +5029,9 @@ class Session : ViewModel<IULogViewerApplication>
 		this.SetValue(HasLogColorIndicatorByFileNameProperty, profile.ColorIndicator == LogColorIndicator.FileName);
 		this.SetValue(HasLogPatternsProperty, profile.LogPatterns.IsNotEmpty());
 		this.ResetValue(LastLogReadingPreconditionProperty);
+		
+		// track event
+		LogProfileManager.Default.TrackLogProfileSelectedEvent(profile);
 
 		// start reading logs
 		this.StartReadingLogs(!startReadingLogs);

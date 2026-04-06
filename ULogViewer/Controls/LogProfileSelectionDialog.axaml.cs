@@ -180,7 +180,9 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 			return;
 
 		// add profile
-		LogProfileManager.Default.AddProfile(profile);
+		var logProfileManager = LogProfileManager.Default;
+		logProfileManager.AddProfile(profile);
+		logProfileManager.TrackLogProfileCreatedEvent(profile);
 		
 		// select profile
 		this.SelectLogProfile(profile);
@@ -253,19 +255,21 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 			return;
 
 		// copy and edit log profile
+		var logProfileManager = LogProfileManager.Default;
 		var newProfile = await new LogProfileEditorDialog
 		{
 			LogProfile = new LogProfile(logProfile)
 			{
 				Name = Utility.GenerateName(logProfile.Name, name =>
-					LogProfileManager.Default.Profiles.FirstOrDefault(it => it.Name == name) is not null),
+					logProfileManager.Profiles.FirstOrDefault(it => it.Name == name) is not null),
 			},
 		}.ShowDialog<LogProfile?>(this);
 		if (newProfile is null)
 			return;
 
 		// add log profile
-		LogProfileManager.Default.AddProfile(newProfile);
+		logProfileManager.AddProfile(newProfile);
+		logProfileManager.TrackLogProfileCopiedEvent(logProfile, newProfile);
 		this.SelectLogProfile(newProfile);
 	}
 

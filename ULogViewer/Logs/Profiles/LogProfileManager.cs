@@ -1,14 +1,16 @@
-using System.Text;
-using System.Linq;
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.Logs.DataSources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +22,33 @@ namespace CarinaStudio.ULogViewer.Logs.Profiles;
 /// </summary>
 class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
 {
+    // Constants for usage events.
+    static class UsageEvents
+    { 
+        public const string LogProfileCopied = "LogProfile.Copied"; 
+        public const string LogProfileCreated = "LogProfile.Created"; 
+        public const string LogProfileRemoved = "LogProfile.Removed"; 
+        public const string LogProfileSelected = "LogProfile.Selected";
+        public const string LogProfileUpdated = "LogProfile.Updated";
+    }
+    
+    
+    // Constants for usage properties.
+    static class UsageProperties
+    {
+        public const string DataSourceProvider = "DataSourceProvider";
+        public const string HasCooperativeLogAnalysisScriptSet = "HasCooperativeLogAnalysisScriptSet";
+        public const string IsTemplate = "IsTemplate";
+        public const string LogPatternCount = "LogPatternCount";
+        public const string LogProfileId = "Id";
+        public const string SourceBuiltInLogProfileId = "SourceBuiltInLogProfile";
+        public const string SourceLogProfileId = "SourceLogProfile";
+        public const string VisibleLogPropertyCount = "VisibleLogPropertyCount";
+    }
+    
+    
     // Constants.
+    const string ScriptLogDataSourceProviderNameForUsageTracking = "Script";
     const int RecentlyUsedProfileCount = 8;
 
 
@@ -64,6 +92,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
 
 
     // Fields.
+    readonly HashSet<LogProfile> newlyAddedProfiles = new();
     readonly SortedObservableList<LogProfile> pinnedProfiles;
     readonly ObservableList<LogProfile> recentlyUsedProfiles = new(RecentlyUsedProfileCount);
 
@@ -126,7 +155,16 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
             throw new InvalidOperationException();
         if (this.GetProfileOrDefault(profile.Id) != null)
             profile.ChangeId();
-        base.AddProfile(profile, true);
+        this.newlyAddedProfiles.Add(profile);
+        try
+        {
+            base.AddProfile(profile, true);
+        }
+        catch
+        {
+            this.newlyAddedProfiles.Remove(profile);
+            throw;
+        }
     }
 
 
@@ -267,6 +305,18 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     }
 
 
+    /// <inheritdoc/>
+    protected override Task OnSaveProfileAsync(LogProfile profile, string fileName)
+    {
+        if (!this.newlyAddedProfiles.Remove(profile))
+        {
+            var properties = this.PrepareLogProfileUsageProperties(profile, true);
+            this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileUpdated, properties);
+        }
+        return base.OnSaveProfileAsync(profile, fileName);
+    }
+
+
     /// <summary>
     /// Get list of pinned <see cref="LogProfile"/>s.
     /// </summary>
@@ -278,6 +328,24 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// Get all log profiles.
     /// </summary>
     public new IReadOnlyList<LogProfile> Profiles => base.Profiles;
+
+
+    // Prepare basic properties for tracking log profile related events.
+    IDictionary<string, string> PrepareLogProfileUsageProperties(LogProfile logProfile, bool complexProperties) => new Dictionary<string, string>
+    {
+        [UsageProperties.DataSourceProvider] = logProfile.DataSourceProvider.Let(provider => provider is ScriptLogDataSourceProvider ? ScriptLogDataSourceProviderNameForUsageTracking : provider.Name),
+        [UsageProperties.IsTemplate] = logProfile.IsTemplate.ToString(CultureInfo.InvariantCulture),
+        [UsageProperties.LogProfileId] = logProfile.IdForUsageTracking,
+        [UsageProperties.SourceBuiltInLogProfileId] = logProfile.SourceBuildInLogProfileId ?? "",
+    }.Also(it =>
+    {
+        if (complexProperties)
+        {
+            it[UsageProperties.HasCooperativeLogAnalysisScriptSet] = (logProfile.CooperativeLogAnalysisScriptSet is not null).ToString(CultureInfo.InvariantCulture);
+            it[UsageProperties.LogPatternCount] = logProfile.LogPatterns.Count.ToString(CultureInfo.InvariantCulture);
+            it[UsageProperties.VisibleLogPropertyCount] = logProfile.VisibleLogProperties.Count.ToString(CultureInfo.InvariantCulture);
+        }
+    });
 
 
     /// <inheritdoc/>
@@ -297,10 +365,13 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     /// <returns>True if profile has been removed successfully.</returns>
     public bool RemoveProfile(LogProfile profile)
     {
+        this.newlyAddedProfiles.Remove(profile);
         if (base.RemoveProfile(profile, true))
         {
             if (this.recentlyUsedProfiles.Remove(profile))
                 this.SaveRecentlyUsedProfiles();
+            var properties = this.PrepareLogProfileUsageProperties(profile, true);
+            this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileRemoved, properties);
             return true;
         }
         return false;
@@ -368,5 +439,40 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
 
         // update persistent state
         this.SaveRecentlyUsedProfiles();
+    }
+    
+    
+    /// <summary>
+    /// Track usage event for copying of the log profile.
+    /// </summary>
+    /// <param name="srcLogProfile">The log profile copied from.</param>
+    /// <param name="newLogProfile">The new log profile.</param>
+    public void TrackLogProfileCopiedEvent(LogProfile srcLogProfile, LogProfile newLogProfile)
+    {
+        var properties = this.PrepareLogProfileUsageProperties(newLogProfile, true);
+        properties[UsageProperties.SourceLogProfileId] = srcLogProfile.IdForUsageTracking;
+        this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileCopied, properties);
+    }
+    
+    
+    /// <summary>
+    /// Track usage event for creation of the log profile.
+    /// </summary>
+    /// <param name="logProfile">The newly created log profile.</param>
+    public void TrackLogProfileCreatedEvent(LogProfile logProfile)
+    {
+        var properties = this.PrepareLogProfileUsageProperties(logProfile, true);
+        this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileCreated, properties);
+    }
+
+
+    /// <summary>
+    /// Track usage event for selection of the log profile.
+    /// </summary>
+    /// <param name="logProfile">The selected log profile.</param>
+    public void TrackLogProfileSelectedEvent(LogProfile logProfile)
+    {
+        var properties = this.PrepareLogProfileUsageProperties(logProfile, false);
+        this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileSelected, properties);
     }
 }
