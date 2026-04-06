@@ -1,12 +1,12 @@
 APP_NAME="ULogViewer"
-FRAMEWORK="net9.0"
+FRAMEWORK="net10.0"
 RID_LIST=("osx-arm64" "osx-x64")
 PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
 PACKAGING_TOOL_PATH="PackagingTool/bin/Release/$FRAMEWORK/CarinaStudio.ULogViewer.Packaging.dll"
-ICON_VERSION="3"
+ICON_VERSION="4"
 CERT_NAME="" # Name of certification to sign the application
 
 echo "********** Start building $APP_NAME **********"
