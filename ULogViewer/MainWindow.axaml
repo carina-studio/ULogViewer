@@ -115,7 +115,7 @@
 
 		<!-- Native menu -->
 		<NativeMenu x:Key="nativeMenu">
-			<NativeMenuItem Header="{asXaml:StringResource MainWindow.Windows}">
+			<NativeMenuItem Header="{asXaml:StringResource Common.Window}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
 						<NativeMenuItem Command="{Binding #window.CreateMainWindow}" Header="{asXaml:StringResource Common.CreateWindow}" Icon="{StaticResource Bitmap/Icon.Add}" Gesture="Cmd+N"/>
@@ -126,7 +126,7 @@
 					</NativeMenu>
 				</NativeMenuItem.Menu>
 			</NativeMenuItem>
-			<NativeMenuItem Header="{asXaml:StringResource MainWindow.Tabs}">
+			<NativeMenuItem Header="{asXaml:StringResource Common.Tab}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
 						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{asXaml:StringResource Common.CreateTab}" Icon="{StaticResource Bitmap/Icon.Add}" Gesture="Cmd+T"/>

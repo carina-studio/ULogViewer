@@ -976,9 +976,7 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">Waiting for Data Source</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set the Title of This Tab…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Tab Title</sys:String>
-	<sys:String x:Key="String/MainWindow.Tabs">Tabs</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">You can also right-click on here to select log profile and set to new tab.</sys:String>
-	<sys:String x:Key="String/MainWindow.Windows">Windows</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">Blue</sys:String>
