@@ -14,7 +14,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Application package manifest.
 		/// </summary>
-		public static readonly Uri AppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest.json");
+		public static readonly Uri AppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-v2.json");
 		/// <summary>
 		/// Reference of date time format.
 		/// </summary>
@@ -22,7 +22,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Application package manifest (Development).
 		/// </summary>
-		public static readonly Uri DevelopmentAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Development.json");
+		public static readonly Uri DevelopmentAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Development-v2.json");
 		/// <summary>
 		/// Documentation of formatting CLEF data while reading raw logs.
 		/// </summary>
@@ -66,7 +66,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Application package manifest (Preview).
 		/// </summary>
-		public static readonly Uri PreviewAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Preview.json");
+		public static readonly Uri PreviewAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Preview-v2.json");
 		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>
