@@ -26,6 +26,7 @@ using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -754,6 +755,10 @@ class Session : ViewModel<IULogViewerApplication>
 		/// <inheritdoc/>
 		public MemoryUsagePolicy MemoryUsagePolicy =>
 			session.memoryUsagePolicy;
+
+		/// <inheritdoc/>
+		public IDictionary<string, string> PrepareUsageTrackingProperties() =>
+			session.PrepareUsageTrackingProperties();
 	}
 
 
@@ -898,6 +903,32 @@ class Session : ViewModel<IULogViewerApplication>
 		public readonly int LineNumber = lineNumber;
 		public readonly DateTime? Timestamp = timestamp;
 	}
+	
+	
+	// Constants for usage tracking events.
+	static class UsageEvents
+	{
+		public const string ClearCustomTitle = "Session.ClearCustomTitle";
+		public const string SetCustomTitle = "Session.SetCustomTitle";
+		public const string SaveLogs = "Session.SaveLogs";
+		public const string SearchLogPropertyOnInternet = "Session.SearchLogPropertyOnInternet";
+	}
+	
+	
+	// Constants for usage tracking metrics.
+	static class UsageMetrics
+	{
+		public const string AllLogCount = "Session.AllLogCount";
+		public const string LogFileCount = "Session.LogFileCount";
+	}
+	
+	
+	// Constants for usage tracking properties.
+	static class UsageProperties
+	{
+		public const string Id = "Id";
+		public const string Provider = "Provider";
+	}
 
 
 	// Constants.
@@ -935,6 +966,7 @@ class Session : ViewModel<IULogViewerApplication>
 	bool isRestoringState;
 	bool isSettingLogPropertyWidth;
 	readonly IDisposable isSpecifyingMaxLogReadingCountAllowedObserverToken;
+	int lastTrackedAllLogCount;
 	readonly Dictionary<LogReader, LogFileInfoImpl> logFileInfoMapByLogReader = new();
 	readonly SortedObservableList<LogFileInfo> logFileInfoList = new((lhs, rhs) =>
 		PathComparer.Default.Compare(lhs.FileName, rhs.FileName));
@@ -1206,40 +1238,41 @@ class Session : ViewModel<IULogViewerApplication>
 	}
 
 
-		// Add file.
-		void AddLogFile(LogFileParams? param)
+	// Add file.
+	void AddLogFile(LogFileParams? param)
+	{
+		// check parameter and state
+		this.VerifyAccess();
+		this.VerifyDisposed();
+		var fileName = param?.FileName;
+		if (param is null || string.IsNullOrEmpty(fileName))
+			throw new ArgumentException("No file name specified.");
+		if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
 		{
-			// check parameter and state
-			this.VerifyAccess();
-			this.VerifyDisposed();
-			var fileName = param?.FileName;
-			if (param is null || string.IsNullOrEmpty(fileName))
-				throw new ArgumentException("No file name specified.");
-			if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
-			{
-				this.Logger.LogWarning("Ignore adding marked logs info file '{fileName}'", fileName);
-				return;
-			}
-			var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
-			var dataSourceOptions = profile.DataSourceOptions;
-			if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
-				throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
-			if (this.logFileInfoList.BinarySearch<LogFileInfo, string>(fileName, it => it.FileName, PathComparer.Default.Compare) >= 0)
-			{
-				this.Logger.LogWarning("File '{fileName}' is already added", fileName);
-				return;
-			}
-			if (this.logFileInfoList.Count >= this.GetValue(MaxLogFileCountProperty))
-			{
-				this.Logger.LogError("Maximum log file count reached: {count}", this.MaxLogFileCount);
-				return;
-			}
-			if (this.logReaders.Count >= DisplayableLogGroup.MaxLogReaderCount)
-			{
-				this.Logger.LogError("Maximum log reader count reached: {count}", DisplayableLogGroup.MaxLogReaderCount);
-				return;
-			}
-			this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition, null, null));
+			this.Logger.LogWarning("Ignore adding marked logs info file '{fileName}'", fileName);
+			return;
+		}
+		var profile = this.LogProfile ?? throw new InternalStateCorruptedException("No log profile to add log file.");
+		var dataSourceOptions = profile.DataSourceOptions;
+		if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
+			throw new InternalStateCorruptedException($"Cannot add log file because file name is already specified.");
+		if (this.logFileInfoList.BinarySearch<LogFileInfo, string>(fileName, it => it.FileName, PathComparer.Default.Compare) >= 0)
+		{
+			this.Logger.LogWarning("File '{fileName}' is already added", fileName);
+			return;
+		}
+		if (this.logFileInfoList.Count >= this.GetValue(MaxLogFileCountProperty))
+		{
+			this.Logger.LogError("Maximum log file count reached: {count}", this.MaxLogFileCount);
+			return;
+		}
+		if (this.logReaders.Count >= DisplayableLogGroup.MaxLogReaderCount)
+		{
+			this.Logger.LogError("Maximum log reader count reached: {count}", DisplayableLogGroup.MaxLogReaderCount);
+			return;
+		}
+		this.logFileInfoList.Add(new LogFileInfoImpl(this, fileName, param.Precondition, null, null));
+		this.TrackLogFileCount();
 
 		this.Logger.LogDebug("Add log file '{fileName}'", fileName);
 		
@@ -1607,7 +1640,10 @@ class Session : ViewModel<IULogViewerApplication>
 		this.saveMarkedLogsAction.ExecuteIfScheduled();
 
 		// dispose log readers
+		var hadLogFiles = this.logFileInfoList.IsNotEmpty();
 		this.DisposeLogReaders(true);
+		if (hadLogFiles)
+			this.TrackLogFileCount();
 
 		// update title
 		this.updateTitleAndIconAction.Schedule();
@@ -1623,7 +1659,11 @@ class Session : ViewModel<IULogViewerApplication>
 	// Clear all parameters for reading logs.
 	void ClearLogsReadingParameters()
 	{
-		this.logFileInfoList.Clear();
+		if (this.logFileInfoList.IsNotEmpty())
+		{
+			this.logFileInfoList.Clear();
+			this.TrackLogFileCount();
+		}
 		this.ResetValue(HasLogFilesProperty);
 		this.UpdateCanAddLogFile();
 		this.ResetValue(CommandProperty);
@@ -3560,6 +3600,8 @@ class Session : ViewModel<IULogViewerApplication>
 				});
 				break;
 			case NotifyCollectionChangedAction.Remove:
+				if (this.GetValue(IsReadingLogsContinuouslyProperty) && this.GetValue(HasLogProfileProperty))
+					this.TrackAllLogCount();
 				e.OldItems.AsNonNull().Let(oldItems =>
 				{
 					if (oldItems.Count == 1)
@@ -3591,6 +3633,8 @@ class Session : ViewModel<IULogViewerApplication>
 				});
 				break;
 			case NotifyCollectionChangedAction.Reset:
+				if (this.GetValue(IsReadingLogsContinuouslyProperty) && this.GetValue(HasLogProfileProperty))
+					this.TrackAllLogCount();
 				if (this.logReaders.Count == 1 && this.logReaders.First() == logReader)
 				{
 					DisposeDisplayableLogs(this.allLogs);
@@ -3637,6 +3681,7 @@ class Session : ViewModel<IULogViewerApplication>
 						{
 							this.Logger.LogDebug("All logs cleared, remove log file '{logFileInfoFileName}'", logFileInfo.FileName);
 							this.logFileInfoList.Remove(logFileInfo);
+							this.TrackLogFileCount();
 							this.updateTitleAndIconAction.Schedule();
 							if (this.logFileInfoList.IsEmpty())
 								this.OnAllLogFilesCleared();
@@ -3715,7 +3760,16 @@ class Session : ViewModel<IULogViewerApplication>
 			this.Logger.LogTrace("Can add log file: {canAdd}", newValue);
 		else if (property == CustomTitleProperty)
 		{
-			this.SetValue(HasCustomTitleProperty, newValue is not null);
+			if (newValue is not null)
+			{
+				this.SetValue(HasCustomTitleProperty, true);
+				this.Application.UsageManager.TrackEvent(UsageEvents.SetCustomTitle, this.PrepareUsageTrackingProperties());
+			}
+			else
+			{
+				this.SetValue(HasCustomTitleProperty, false);
+				this.Application.UsageManager.TrackEvent(UsageEvents.ClearCustomTitle, this.PrepareUsageTrackingProperties());
+			}
 			this.updateTitleAndIconAction.Schedule();
 		}
 		else if (property == HasLogsProperty
@@ -3746,6 +3800,8 @@ class Session : ViewModel<IULogViewerApplication>
 		else if (property == IsReadingLogsProperty
 			|| property == IsRemovingLogFilesProperty)
 		{
+			if (!(bool)newValue! && this.GetValue(HasLogProfileProperty))
+				this.TrackAllLogCount();
 			this.updateIsProcessingLogsAction.Schedule();
 		}
 		else if (property == IsSavingLogsProperty)
@@ -3870,6 +3926,13 @@ class Session : ViewModel<IULogViewerApplication>
 	public ICommand PauseResumeLogsReadingCommand { get; }
 
 
+	// Prepare properties for usage tracking.
+	IDictionary<string, string> PrepareUsageTrackingProperties() => new Dictionary<string, string>
+	{
+		[UsageProperties.Id] = this.Id.ToString(CultureInfo.InvariantCulture)
+	};
+
+
 	/// <summary>
 	/// Get process ID to read logs.
 	/// </summary>
@@ -3942,6 +4005,9 @@ class Session : ViewModel<IULogViewerApplication>
 		this.reloadLogsFullyAction.Cancel();
 		this.reloadLogsWithRecreatingLogReadersAction.Cancel();
 		this.reloadLogsWithUpdatingVisPropAction.Cancel();
+		
+		// track log count
+		this.TrackAllLogCount();
 
 		// clear logs
 		var isContinuousReading = profile.IsContinuousReading;
@@ -4250,6 +4316,10 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// save marked logs to file immediately
 		this.saveMarkedLogsAction.ExecuteIfScheduled();
+		
+		// track log count
+		this.TrackAllLogCount();
+		this.lastTrackedAllLogCount = 0;
 
 		// detach from log profile
 		profile.PropertyChanged -= this.OnLogProfilePropertyChanged;
@@ -4408,6 +4478,8 @@ class Session : ViewModel<IULogViewerApplication>
 						var maxReadingCount = default(int?);
 					this.logFileInfoList.Add(new LogFileInfoImpl(this, jsonFileName.GetString()!, precondition, readingWindow, maxReadingCount, isPredefined));
 				}
+				if (this.logFileInfoList.IsNotEmpty())
+					this.TrackLogFileCount();
 				this.canClearLogFiles.Update(this.logFileInfoList.IsNotEmpty()
 				                             && profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName))
 				                             && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)));
@@ -4580,6 +4652,7 @@ class Session : ViewModel<IULogViewerApplication>
 		// start saving
 		this.Logger.LogDebug("Start saving logs");
 		this.SetValue(IsSavingLogsProperty, true);
+		this.Application.UsageManager.TrackEvent(UsageEvents.SaveLogs, this.PrepareUsageTrackingProperties());
 		logWriter.Start();
 		await this.WaitForNecessaryTaskAsync(writingLogsTaskCompletionSource.Task);
 
@@ -4780,7 +4853,13 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// search
 		if (searchProvider.TryCreateSearchUri(tokens.Select(it => it.Item2).ToArray(), out var uri))
+		{
+			this.Application.UsageManager.TrackEvent(UsageEvents.SearchLogPropertyOnInternet, this.PrepareUsageTrackingProperties().Also(properties =>
+			{
+				properties[UsageProperties.Provider] = searchProvider.ToString();
+			}));
 			Platform.OpenLink(uri);
+		}
 	}
 
 
@@ -5434,6 +5513,7 @@ class Session : ViewModel<IULogViewerApplication>
 				this.ResetValue(IsLogFileNeededProperty);
 				this.logFileInfoList.Clear();
 				this.logFileInfoList.Add(new LogFileInfoImpl(this, defaultDataSourceOptions.FileName.AsNonNull(), new(), null, null, true));
+				this.TrackLogFileCount();
 			}
 			else if (this.logFileInfoList.IsNotEmpty())
 			{
@@ -5448,6 +5528,7 @@ class Session : ViewModel<IULogViewerApplication>
 					this.ResetValue(HasLogFilesProperty);
 					this.SetValue(IsLogFileNeededProperty, true);
 					this.logFileInfoList.Clear();
+					this.TrackLogFileCount();
 				}
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
@@ -5685,7 +5766,8 @@ class Session : ViewModel<IULogViewerApplication>
 								var fileName = defaultDataSourceOptions.FileName;
 								if (!string.IsNullOrEmpty(fileName))
 								{
-									this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName));
+									if (this.logFileInfoList.RemoveAll(it => PathEqualityComparer.Default.Equals(it.FileName, fileName)) > 0)
+										this.TrackLogFileCount();
 									this.UpdateCanAddLogFile(profile);
 								}
 							}
@@ -5803,6 +5885,22 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public long TotalLogsMemoryUsage => 
 		this.GetValue(TotalLogsMemoryUsageProperty);
+	
+	
+	// Track all log count metric.
+	void TrackAllLogCount()
+	{
+		var count = this.allLogs.Count;
+		if (count == this.lastTrackedAllLogCount)
+			return;
+		this.lastTrackedAllLogCount = count;
+		this.Application.UsageManager.TrackMetric(UsageMetrics.AllLogCount, count, this.PrepareUsageTrackingProperties());
+	}
+	
+	
+	// Track log file count metric.
+	void TrackLogFileCount() =>
+		this.Application.UsageManager.TrackMetric(UsageMetrics.LogFileCount, this.logFileInfoList.Count, this.PrepareUsageTrackingProperties());
 
 
 	// Trigger GC if needed.

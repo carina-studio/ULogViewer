@@ -106,6 +106,23 @@ class LogFilteringViewModel : SessionComponent
     public static readonly ObservableProperty<int?> ThreadIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
     
     
+    // Constants for usage tracking events.
+    static class UsageEvents
+    {
+        public const string ClearGlobalLogTextFilterHistory = "Session.ClearGlobalLogTextFilterHistory";
+        public const string SelectLogTextFilterFromGlobalHistory = "Session.SelectLogTextFilterFromGlobalHistory";
+        public const string SelectTextFilterPhraseFromSuggestion = "Session.SelectTextFilterPhraseFromSuggestion";
+    }
+    
+    
+    // Constants for usage tracking metrics.
+    static class UsageMetrics
+    {
+        public const string LogLevelFilterCount = "Session.LogLevelFilterCount";
+        public const string PredefinedLogTextFilterCount = "Session.PredefinedLogTextFilterCount";
+    }
+    
+    
     // Constants.
     const int SaveGlobalTextFilterHistoryDelay = 5000;
     const string SavedTimestampFormat = "yyyy/MM/dd HH:mm:ss.fff";
@@ -259,8 +276,11 @@ class LogFilteringViewModel : SessionComponent
             return false;
         if (this.levelFilters.Contains(level))
             return true;
+        var oldCount = this.levelFilters.Count;
         this.levelFilters.Clear();
         this.levelFilters.Add(level);
+        if (oldCount != this.levelFilters.Count)
+            this.TrackLogLevelFilterCount();
         this.OnLevelFiltersChanged();
         return true;
     }
@@ -365,6 +385,7 @@ class LogFilteringViewModel : SessionComponent
         if (this.levelFilters.IsEmpty())
             return;
         this.levelFilters.Clear();
+        this.TrackLogLevelFilterCount();
         this.OnLevelFiltersChanged();
     }
     
@@ -1042,35 +1063,47 @@ class LogFilteringViewModel : SessionComponent
             case NotifyCollectionChangedAction.Add:
                 foreach (PredefinedLogTextFilter filter in e.NewItems!)
                     this.AttachToPredefinedLogTextFilter(filter);
+                this.TrackPredefinedLogTextFilterCount();
                 break;
             case NotifyCollectionChangedAction.Remove:
                 foreach (PredefinedLogTextFilter filter in e.OldItems!)
                     this.DetachFromPredefinedLogTextFilter(filter);
+                this.TrackPredefinedLogTextFilterCount();
                 break;
             case NotifyCollectionChangedAction.Replace:
+            {
+                var oldCount = this.attachedPredefinedLogTextFilters.Count;
                 foreach (PredefinedLogTextFilter filter in e.OldItems!)
                     this.DetachFromPredefinedLogTextFilter(filter);
                 foreach (PredefinedLogTextFilter filter in e.NewItems!)
                     this.AttachToPredefinedLogTextFilter(filter);
+                if (oldCount != this.attachedPredefinedLogTextFilters.Count)
+                    this.TrackPredefinedLogTextFilterCount();
                 break;
+            }
             case NotifyCollectionChangedAction.Reset:
+            {
+                var oldCount = this.attachedPredefinedLogTextFilters.Count;
                 foreach (var filter in this.attachedPredefinedLogTextFilters.ToArray())
                     this.DetachFromPredefinedLogTextFilter(filter);
                 foreach (var filter in this.predefinedTextFilters)
                     this.AttachToPredefinedLogTextFilter(filter);
+                if (oldCount != this.attachedPredefinedLogTextFilters.Count)
+                    this.TrackPredefinedLogTextFilterCount();
                 break;
+            }
         }
         var filterCount = this.predefinedTextFilters.Count;
         this.canClearPredefinedTextFilters.Update(filterCount > 0);
         this.commitFiltersAction.Reschedule();
         if (filterCount > 0)
         {
-            this.Logger.LogTrace("Clear predefined text filters");
+            this.Logger.LogTrace("Change predefined text filters: {filterCount}", filterCount);
             this.canResetFilters.Update(true);
         }
         else
         {
-            this.Logger.LogTrace("Change predefined text filters: {filterCount}", filterCount);
+            this.Logger.LogTrace("Clear predefined text filters");
             this.UpdateCanResetFilters();
         }
     }
@@ -1212,6 +1245,8 @@ class LogFilteringViewModel : SessionComponent
                 if (jsonElement.ValueKind == JsonValueKind.String && Enum.TryParse<Logs.LogLevel>(jsonElement.GetString(), out var level))
                     this.levelFilters.Add(level);
             }
+            if (this.levelFilters.IsNotEmpty())
+                this.TrackLogLevelFilterCount();
             this.OnLevelFiltersChanged();
         } else if ((element.TryGetProperty("LogLevelFilter", out jsonValue) // Upgrade case
                     || element.TryGetProperty("LogFiltering.LevelFilter", out jsonValue)) // Upgrade case
@@ -1220,6 +1255,7 @@ class LogFilteringViewModel : SessionComponent
         {
             this.levelFilters.Clear();
             this.levelFilters.Add(level);
+            this.TrackLogLevelFilterCount();
             this.OnLevelFiltersChanged();
         }
         if ((element.TryGetProperty("LogProcessIdFilter", out jsonValue) // Upgrade case
@@ -1364,6 +1400,7 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyDisposed();
         if (!this.levelFilters.Remove(level))
             return false;
+        this.TrackLogLevelFilterCount();
         this.OnLevelFiltersChanged();
         return true;
     }
@@ -1385,6 +1422,7 @@ class LogFilteringViewModel : SessionComponent
         if (this.levelFilters.IsNotEmpty())
         {
             this.levelFilters.Clear();
+            this.TrackLogLevelFilterCount();
             this.OnLevelFiltersChanged();
         }
         this.ResetValue(ProcessIdFilterProperty);
@@ -1510,11 +1548,14 @@ class LogFilteringViewModel : SessionComponent
         this.VerifyDisposed();
         if (level == Logs.LogLevel.Undefined)
             return;
+        var oldCount = this.levelFilters.Count;
         if (!this.levelFilters.Remove(level))
         {
             this.levelFilters.Clear();
             this.levelFilters.Add(level);
         }
+        if (oldCount != this.levelFilters.Count)
+            this.TrackLogLevelFilterCount();
         this.OnLevelFiltersChanged();
     }
     
@@ -1523,6 +1564,36 @@ class LogFilteringViewModel : SessionComponent
     /// Command to toggle a log level filter. The type of parameter is <see cref="Logs.LogLevel"/>.
     /// </summary>
     public ICommand ToggleLevelFilterCommand { get; }
+    
+    
+    // Track log level filter count metric.
+    void TrackLogLevelFilterCount()
+    {
+        if (!this.IsDisposed)
+            this.Application.UsageManager.TrackMetric(UsageMetrics.LogLevelFilterCount, this.levelFilters.Count, this.PrepareUsageTrackingProperties());
+    }
+    
+    
+    // Track predefined log text filter count metric.
+    void TrackPredefinedLogTextFilterCount()
+    {
+        if (!this.IsDisposed)
+            this.Application.UsageManager.TrackMetric(UsageMetrics.PredefinedLogTextFilterCount, this.predefinedTextFilters.Count, this.PrepareUsageTrackingProperties());
+    }
+
+
+    /// <summary>
+    /// Track usage event for selecting a log text filter from global log text filter history.
+    /// </summary>
+    public void TrackSelectLogTextFilterFromGlobalHistoryEvent() =>
+        this.Application.UsageManager.TrackEvent(UsageEvents.SelectLogTextFilterFromGlobalHistory, this.PrepareUsageTrackingProperties());
+    
+    
+    /// <summary>
+    /// Track usage event for selecting a log text filter phrase from suggestion.
+    /// </summary>
+    public void TrackSelectTextFilterPhraseFromSuggestionEvent() =>
+        this.Application.UsageManager.TrackEvent(UsageEvents.SelectTextFilterPhraseFromSuggestion, this.PrepareUsageTrackingProperties());
 
 
     // Update can reset filters state.

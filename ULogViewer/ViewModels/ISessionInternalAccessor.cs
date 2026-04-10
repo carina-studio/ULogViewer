@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -23,4 +24,11 @@ interface ISessionInternalAccessor
     /// Get memory usage policy.
     /// </summary>
     MemoryUsagePolicy MemoryUsagePolicy { get; }
+
+
+    /// <summary>
+    /// Prepare the properties for usage tracking.
+    /// </summary>
+    /// <returns>The properties for usage tracking.</returns>
+    IDictionary<string, string> PrepareUsageTrackingProperties();
 }

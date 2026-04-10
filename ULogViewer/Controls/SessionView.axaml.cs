@@ -621,6 +621,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					(this.DataContext as Session)?.LogFiltering.Let(it => it.IsTemporaryTextFilter = hasOpenedMenus);
 				});
 				it.PhraseInputAssistanceProvider = new LogTextFilterPhraseInputAssistanceProvider(this);
+				// Track phrase selection when supported
 			});
 			this.logThreadIdFilterTextBox = toolBarContainer.FindControl<IntegerTextBox>(nameof(logThreadIdFilterTextBox)).AsNonNull().Also(it =>
 			{
