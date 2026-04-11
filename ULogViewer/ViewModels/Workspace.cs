@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -25,9 +26,24 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 	/// Property of <see cref="ActiveSession"/>.
 	/// </summary>
 	public static readonly ObservableProperty<Session?> ActiveSessionProperty = ObservableProperty.Register<Workspace, Session?>(nameof(ActiveSession));
+	
+	
+	// Constants for usage tracking metrics.
+	static class UsageMetrics
+	{
+		public const string SessionCount = "Workspace.SessionCount";
+	}
+	
+	
+	// Constants for usage tracking properties.
+	static class UsageProperties
+	{
+		public const string Id = "Id";
+	}
 
 
 	// Fields.
+	int lastTrackedSessionCount;
 	IDisposable? sessionActivationToken;
 	readonly ObservableCollection<Session> sessions = new();
 	readonly Stopwatch stopwatch = new();
@@ -41,6 +57,19 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 	{
 		// setup properties
 		this.Sessions = ListExtensions.AsReadOnly(this.sessions);
+		
+		// monitor sessions change
+		this.sessions.CollectionChanged += (_, _) =>
+		{
+			if (this.IsDisposed)
+				return;
+			var sessionCount = this.sessions.Count;
+			if (this.lastTrackedSessionCount != sessionCount)
+			{
+				this.lastTrackedSessionCount = sessionCount;
+				this.Application.UsageManager.TrackMetric(UsageMetrics.SessionCount, sessionCount, this.PrepareUsageTrackingProperties());
+			}
+		};
 
 		// restore
 		savedState?.Let(savedState => this.RestoreState(savedState));
@@ -357,6 +386,13 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 			titleBuilder.Append($" - {session.Title}");
 		return titleBuilder.ToString();
 	}
+
+
+	// Prepare properties for usage tracking.
+	IDictionary<string, string> PrepareUsageTrackingProperties() => new Dictionary<string, string>
+	{
+		[UsageProperties.Id] = this.Id.ToString(CultureInfo.InvariantCulture)
+	};
 
 
     /// <summary>
