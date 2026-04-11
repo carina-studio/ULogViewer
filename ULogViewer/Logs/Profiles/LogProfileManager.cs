@@ -38,7 +38,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     {
         public const string DataSourceProvider = "DataSourceProvider";
         public const string HasCooperativeLogAnalysisScriptSet = "HasCooperativeLogAnalysisScriptSet";
+        public const string HasLogChart = "HasLogChart";
         public const string IsTemplate = "IsTemplate";
+        public const string LogChartSeriesSourceCount = "LogChartSeriesSourceCount";
         public const string LogPatternCount = "LogPatternCount";
         public const string LogProfileId = "Id";
         public const string SourceBuiltInLogProfileId = "SourceBuiltInLogProfile";
@@ -341,7 +343,10 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     {
         if (complexProperties)
         {
+            var chartSeriesSourceCount = logProfile.LogChartSeriesSources.Count;
             it[UsageProperties.HasCooperativeLogAnalysisScriptSet] = (logProfile.CooperativeLogAnalysisScriptSet is not null).ToString(CultureInfo.InvariantCulture);
+            it[UsageProperties.HasLogChart] = (logProfile.LogChartType != LogChartType.None && chartSeriesSourceCount > 0).ToString(CultureInfo.InvariantCulture);
+            it[UsageProperties.LogChartSeriesSourceCount] = chartSeriesSourceCount.ToString(CultureInfo.InvariantCulture);
             it[UsageProperties.LogPatternCount] = logProfile.LogPatterns.Count.ToString(CultureInfo.InvariantCulture);
             it[UsageProperties.VisibleLogPropertyCount] = logProfile.VisibleLogProperties.Count.ToString(CultureInfo.InvariantCulture);
         }

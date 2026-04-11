@@ -94,6 +94,25 @@ class LogChartViewModel : SessionComponent
     public static readonly ObservableProperty<string?> YAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(YAxisName), null);
     
     
+    // Constants for usage tracking events.
+    static class UsageEvents
+    {
+        public const string MaxTotalSeriesValueCountReached = "Session.MaxTotalLogChartSeriesValueCountReached";
+        public const string ResetVisibleSeriesSources = "Session.ResetVisibleLogChartSeriesSources";
+        public const string SetChartType = "Session.SetLogChartType";
+        public const string ToggleVisibleSeriesSource = "Session.ToggleVisibleLogChartSeriesSource";
+    }
+    
+    
+    // Constants for usage tracking properties.
+    static class UsageProperties
+    {
+        public const string ChartType = "ChartType";
+        public const string SeriesSourcesCount = "SeriesSourcesCount";
+        public const string VisibleSeriesSourcesCount = "VisibleSeriesSourcesCount";
+    }
+    
+    
     // Constants.
     const int ReportMinMaxSeriesValuesDelay = 500;
     const int ReportMinMaxStackedSeriesValuesDelay = 800;
@@ -793,7 +812,11 @@ class LogChartViewModel : SessionComponent
         {
             case nameof(DisplayableLogChartSeriesGenerator.IsMaxTotalSeriesValueCountReached):
                 if (this.activeSeriesGenerator == generator && !this.IsDisposed)
+                {
+                    if (this.activeSeriesGenerator.IsMaxTotalSeriesValueCountReached)
+                        this.Application.UsageManager.TrackEvent(UsageEvents.MaxTotalSeriesValueCountReached, this.PrepareUsageTrackingProperties());
                     this.OnPropertyChanged(nameof(IsMaxTotalSeriesValueCountReached));
+                }
                 break;
             case nameof(DisplayableLogChartSeriesGenerator.IsProcessing):
                 if (this.activeSeriesGenerator == generator && !this.IsDisposed)
@@ -841,6 +864,13 @@ class LogChartViewModel : SessionComponent
         this.reportMinSeriesValueAction.Schedule(ReportMinMaxStackedSeriesValuesDelay);
         this.reportMaxSeriesValueAction.Schedule(ReportMinMaxStackedSeriesValuesDelay);
     }
+    
+    
+    // Prepare the properties for usage tracking.
+    protected override IDictionary<string, string> PrepareUsageTrackingProperties() => base.PrepareUsageTrackingProperties().Also(properties =>
+    {
+        properties[UsageProperties.ChartType] = this.GetValue(ChartTypeProperty).ToString();
+    });
 
 
     // Refresh list of visible series.
@@ -873,6 +903,10 @@ class LogChartViewModel : SessionComponent
         this.visibleSeriesSources.AddAll(this.seriesSources);
         this.ResetValue(AreAllSeriesSourcesVisibleProperty);
         this.RefreshVisibleSeries();
+        this.Application.UsageManager.TrackEvent(UsageEvents.ResetVisibleSeriesSources, this.PrepareUsageTrackingProperties().Also(properties =>
+        {
+            properties[UsageProperties.SeriesSourcesCount] = this.seriesSources.Count.ToString(CultureInfo.InvariantCulture);
+        }));
     }
     
     
@@ -1082,6 +1116,9 @@ class LogChartViewModel : SessionComponent
                 this.ApplyLogChartType(chartType);
                 this.SetValue(ChartTypeProperty, chartType);
             }
+            else
+                return;
+            this.Application.UsageManager.TrackEvent(UsageEvents.SetChartType, this.PrepareUsageTrackingProperties());
         });
     }
     
@@ -1141,6 +1178,13 @@ class LogChartViewModel : SessionComponent
         // report min/max values
         this.reportMinSeriesValueAction.Execute();
         this.reportMaxSeriesValueAction.Execute();
+        
+        // track event
+        this.Application.UsageManager.TrackEvent(UsageEvents.ToggleVisibleSeriesSource, this.PrepareUsageTrackingProperties().Also(properties =>
+        {
+            properties[UsageProperties.SeriesSourcesCount] = this.seriesSources.Count.ToString(CultureInfo.InvariantCulture);
+            properties[UsageProperties.VisibleSeriesSourcesCount] = this.visibleSeriesSources.Count.ToString(CultureInfo.InvariantCulture);
+        }));
     }
     
     

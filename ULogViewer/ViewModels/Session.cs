@@ -909,9 +909,14 @@ class Session : ViewModel<IULogViewerApplication>
 	static class UsageEvents
 	{
 		public const string ClearCustomTitle = "Session.ClearCustomTitle";
+		public const string ClearLogFiles = "Session.ClearLogFiles";
+		public const string ReloadLogs = "Session.ReloadLogs";
+		public const string RemoveLogFile = "Session.RemoveLogFile";
 		public const string SetCustomTitle = "Session.SetCustomTitle";
 		public const string SaveLogs = "Session.SaveLogs";
 		public const string SearchLogPropertyOnInternet = "Session.SearchLogPropertyOnInternet";
+		public const string ShowAllLogsTemporarily = "Session.ShowAllLogsTemporarily";
+		public const string ShowMarkedLogsTemporarily = "Session.ShowMarkedLogsTemporarily";
 	}
 	
 	
@@ -1007,7 +1012,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// create commands
 		this.AddLogFileCommand = new Command<LogFileParams?>(this.AddLogFile, this.GetValueAsObservable(CanAddLogFileProperty));
-		this.ClearLogFilesCommand = new Command(this.ClearLogFiles, this.canClearLogFiles);
+		this.ClearLogFilesCommand = new Command(() => this.ClearLogFiles(), this.canClearLogFiles);
 		this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
 		this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
 		this.MarkLogsCommand = new Command<MarkingLogsParams>(this.MarkLogs, this.canMarkUnmarkLogs);
@@ -1016,6 +1021,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.ReloadLogFileCommand = new Command<LogFileParams?>(this.ReloadLogFile, this.canClearLogFiles);
 		this.ReloadLogsCommand = new Command(() => 
 		{
+			this.Application.UsageManager.TrackEvent(UsageEvents.ReloadLogs, this.PrepareUsageTrackingProperties());
 			this.ScheduleReloadingLogs(false, false);
 		}, this.canReloadLogs);
 		this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
@@ -1630,11 +1636,15 @@ class Session : ViewModel<IULogViewerApplication>
 
 
 	// Clear all log files.
-	void ClearLogFiles()
+	void ClearLogFiles(bool byRemovingLastLogFile = false)
 	{
 		// check state
 		this.VerifyAccess();
 		this.VerifyDisposed();
+		
+		// track event
+		if (!byRemovingLastLogFile)
+			this.Application.UsageManager.TrackEvent(UsageEvents.ClearLogFiles, this.PrepareUsageTrackingProperties());
 
 		// save marked logs to file immediately
 		this.saveMarkedLogsAction.ExecuteIfScheduled();
@@ -3478,13 +3488,10 @@ class Session : ViewModel<IULogViewerApplication>
 					this.UpdateCanAddLogFile(logProfile);
 					if (logProfile.AllowMultipleFiles)
 						this.ScheduleReloadingLogs(true, false);
+					else if (this.logFileInfoList.Count > 1)
+						this.ClearLogFiles(byRemovingLastLogFile: true);
 					else
-					{
-						if (this.logFileInfoList.Count > 1)
-							this.ClearLogFiles();
-						else
-							this.ScheduleReloadingLogs(true, false);
-					}
+						this.ScheduleReloadingLogs(true, false);
 				}
 				break;
 			case nameof(LogProfile.ColorIndicator):
@@ -3809,9 +3816,16 @@ class Session : ViewModel<IULogViewerApplication>
 			this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			this.updateIsProcessingLogsAction.Schedule();
 		}
-		else if (property == IsShowingAllLogsTemporarilyProperty
-			|| property == IsShowingMarkedLogsTemporarilyProperty)
+		else if (property == IsShowingAllLogsTemporarilyProperty)
 		{
+			if ((bool)newValue!)
+				this.Application.UsageManager.TrackEvent(UsageEvents.ShowAllLogsTemporarily, this.PrepareUsageTrackingProperties());
+			this.selectLogsToReportActions.Schedule();
+		}
+		else if (property == IsShowingMarkedLogsTemporarilyProperty)
+		{
+			if ((bool)newValue!)
+				this.Application.UsageManager.TrackEvent(UsageEvents.ShowMarkedLogsTemporarily, this.PrepareUsageTrackingProperties());
 			this.selectLogsToReportActions.Schedule();
 		}
 		else if (property == IsShowingRawLogLinesTemporarilyProperty)
@@ -4098,10 +4112,13 @@ class Session : ViewModel<IULogViewerApplication>
 		// save marked logs to file immediately
 		this.saveMarkedLogsAction.ExecuteIfScheduled();
 		
+		// track event
+		this.Application.UsageManager.TrackEvent(UsageEvents.RemoveLogFile, this.PrepareUsageTrackingProperties());
+		
 		// clear logs directly
 		if (this.logReaders.Count == 1)
 		{
-			this.ClearLogFiles();
+			this.ClearLogFiles(byRemovingLastLogFile: true);
 			return;
 		}
 

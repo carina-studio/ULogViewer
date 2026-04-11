@@ -153,6 +153,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		{
 			File = 0x1,
 		}
+		
+		
+		// Constants for usage tracking events.
+		static class UsageEvents
+		{
+			public const string LogTimeCategorySelected = "SessionView.LogTimeCategorySelected";
+			public const string MarkedLogSelected = "SessionView.MarkedLogSelected";
+		}
+		
+		
+		// Constants for usage tracking properties.
+		static class UsageProperties
+		{
+			public const string SessionId = "SessionId";
+		}
 
 
 		// Constants.
@@ -3488,6 +3503,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				return;
 			category.Log?.Let(log =>
 			{
+				if (ReferenceEquals(listBox, this.timestampCategoryListBox))
+					this.Application.UsageManager.TrackEvent(UsageEvents.LogTimeCategorySelected, this.PrepareUsageTrackingProperties());
 				this.IsScrollingToLatestLogNeeded = false;
 				this.logListBox.SelectedItems!.Clear();
 				this.logListBox.SelectedItem = log;
@@ -3495,8 +3512,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 			this.SynchronizationContext.Post(() =>
 			{
-				if (listBox != null)
-					listBox.SelectedItem = null;
+				listBox?.SelectedItem = null;
 				this.logListBox.Focus();
 			});
 		}
@@ -3943,6 +3959,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.SelectedItems!.Clear();
 					if (index >= 0)
 					{
+						if (selectedByUser)
+							this.Application.UsageManager.TrackEvent(UsageEvents.MarkedLogSelected, this.PrepareUsageTrackingProperties());
 						it.SelectedIndex = index;
 						this.ScrollToLog(index, log, true);
 					}
@@ -4694,6 +4712,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public void PerformGC() =>
 			this.Application.PerformGC(GCCollectionMode.Forced);
+		
+		
+		// Prepare properties for usage tracking.
+		IDictionary<string, string> PrepareUsageTrackingProperties() => new Dictionary<string, string>
+		{
+			[UsageProperties.SessionId] = (this.DataContext as Session)?.Id.ToString(CultureInfo.InvariantCulture) ?? ""
+		};
 		
 		
 		// Recreate item template for log item.
