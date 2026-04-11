@@ -71,10 +71,12 @@ namespace CarinaStudio.ULogViewer
 			public override IList<ApplicationCulture> SupportedCultures =>
 			[
 				ApplicationCulture.EN_US,
+				ApplicationCulture.ZH_CN,
 				ApplicationCulture.ZH_TW
 			];
 			public override Uri Uri => this.Culture switch
 			{
+				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-zh-CN.md"),
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-zh-TW.md"),
 				_ => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy.md"),
 			};
@@ -807,7 +809,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version PrivacyPolicyVersion => new(1, 3);
+		public override Version PrivacyPolicyVersion => new(1, 4);
 
 
         // Releasing type.

@@ -54,6 +54,7 @@
 		<AvaloniaResource Include="ChangeList-zh-CN.md" />
 		<AvaloniaResource Include="ChangeList-zh-TW.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy.md" />
+		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-CN.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-TW.md" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Add_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/AddFile_Outline_24px.png" />
