@@ -253,7 +253,7 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
     /// Prepare the properties for usage tracking.
     /// </summary>
     /// <returns>The properties for usage tracking.</returns>
-    protected IDictionary<string, string> PrepareUsageTrackingProperties() =>
+    protected virtual IDictionary<string, string> PrepareUsageTrackingProperties() =>
         this.internalAccessor.PrepareUsageTrackingProperties();
 
 

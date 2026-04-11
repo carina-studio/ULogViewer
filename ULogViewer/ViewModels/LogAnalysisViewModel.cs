@@ -15,6 +15,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -93,10 +95,41 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// Property of <see cref="SelectedAnalysisResultsTotalQuantity"/>.
     /// </summary>
     public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalQuantityProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalQuantity));
+    
+    
+    // Constants for usage tracking events.
+    static class UsageEvents
+    {
+        public const string ApplyLogAnalysis = "Session.ApplyLogAnalysis";
+        public const string ClearLogAnalysis = "Session.ClearLogAnalysis";
+        public const string ClearSelectedLogAnalysisResults = "Session.ClearSelectedLogAnalysisResults";
+        public const string CopySelectedLogAnalysisResults = "Session.CopySelectedLogAnalysisResults";
+        public const string SelectLogAnalysisResult = "Session.SelectLogAnalysisResult";
+    }
+    
+    
+    // Constants for usage tracking metrics.
+    static class UsageMetrics
+    {
+        public const string LogAnalysisResultCount = "Session.LogAnalysisResultCount";
+    }
+    
+    
+    // Constants for usage tracking properties.
+    static class UsageProperties
+    {
+        public const string AnalysisScriptSetCount = "AnalysisScriptSetCount";
+        public const string HasCooperativeAnalysisScriptSet = "HasCooperativeAnalysisScriptSet";
+        public const string HasLogProfile = "HasLogProfile";
+        public const string KeyLogAnalysisRuleSetCount = "KeyLogAnalysisRuleSetCount";
+        public const string OperationCountingRuleSetCount = "OperationCountingRuleSetCount";
+        public const string OperationDurationRuleSetCount = "OperationDurationRuleSetCount";
+    }
 
 
     // Constants.
     const int LogsAnalysisStateUpdateDelay = 300;
+    const int MinLogAnalysisResultCountTrackingInterval = 60000; // 1 minute
 
 
     // Static fields.
@@ -112,9 +145,12 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     readonly HashSet<IDisplayableLogAnalyzer<DisplayableLogAnalysisResult>> attachedAnalyzers = new();
     DisplayableLogProcessingPriority baseScriptLogAnalysisPriority;
     readonly ScriptDisplayableLogAnalyzer coopScriptLogAnalyzer;
+    bool isApplyingLogAnalysisEventTracked;
     bool isRestoringState;
     readonly ObservableList<KeyLogAnalysisRuleSet> keyLogAnalysisRuleSets = new();
     readonly KeyLogDisplayableLogAnalyzer keyLogAnalyzer;
+    int lastTrackedLogAnalysisResultCount;
+    readonly Stopwatch logAnalysisResultCountTrackingWatch = new();
 	readonly ObservableList<LogAnalysisScriptSet> logAnalysisScriptSets = new();
     SortDirection logSortingDirection;
     readonly ObservableList<OperationCountingAnalysisRuleSet> operationCountingAnalysisRuleSets = new();
@@ -140,7 +176,11 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     public LogAnalysisViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     { 
         // create commands
-        this.ClearSelectedAnalysisResultsCommand = new Command(() => this.selectedAnalysisResults?.Clear(), this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
+        this.ClearSelectedAnalysisResultsCommand = new Command(() =>
+        {
+            this.selectedAnalysisResults!.Clear();
+            this.Application.UsageManager.TrackEvent(UsageEvents.ClearSelectedLogAnalysisResults, this.PrepareUsageTrackingProperties());
+        }, this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
         this.CopySelectedAnalysisResultsCommand = new Command(this.CopySelectedAnalysisResults, this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
 
         // create collections
@@ -273,7 +313,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.coopScriptLogAnalyzer.ScriptSets.Clear();
             if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) 
                 && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
-                && this.Session.IsProVersionActivated)
+                && this.IsProVersionActivated)
             {
                 var scriptSet = this.LogProfile?.CooperativeLogAnalysisScriptSet;
                 if (scriptSet is not null)
@@ -286,6 +326,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             }
             else
                 this.Logger.LogTrace("Cooperative log analysis script set has been disabled");
+            this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
+            this.TrackApplyingLogAnalysis();
         });
         this.updateKeyLogAnalysisAction = new(() =>
         {
@@ -297,6 +339,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.keyLogAnalyzer.RuleSets.Clear();
                 this.keyLogAnalyzer.RuleSets.AddAll(this.keyLogAnalysisRuleSets);
             }
+            this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
+            this.TrackApplyingLogAnalysis();
         });
         this.updateAnalysisStateAction = new(() =>
         {
@@ -333,6 +377,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.operationCountingAnalyzer.RuleSets.Clear();
                 this.operationCountingAnalyzer.RuleSets.AddAll(this.operationCountingAnalysisRuleSets);
             }
+            this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
+            this.TrackApplyingLogAnalysis();
         });
         this.updateOperationDurationAnalysisAction = new(() =>
         {
@@ -344,6 +390,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.operationDurationAnalyzer.RuleSets.Clear();
                 this.operationDurationAnalyzer.RuleSets.AddAll(this.operationDurationAnalysisRuleSets);
             }
+            this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
+            this.TrackApplyingLogAnalysis();
         });
         this.updateScriptLogAnalysisAction = new(() =>
         {
@@ -360,6 +408,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 else
                     this.Logger.LogTrace("Update log analysis with 0 script sets");
             }
+            this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
+            this.TrackApplyingLogAnalysis();
         });
         var updateScriptLogAnalysisPriorityAction = new ScheduledAction(() =>
         {
@@ -451,6 +501,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
         // add analysis results
         this.analysisResults.AddAll(analyzer.AnalysisResults);
+        this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
 
         // report state
         // ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
@@ -556,6 +607,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.Logger.LogError(ex, "Failed to set text of log analysis results to clipboard");
             this.GenerateErrorMessage(this.Application.GetStringNonNull("LogAnalysisViewModel.FailedToCopySelectedAnalysisResults"));
         }
+        
+        // track event
+        this.Application.UsageManager.TrackEvent(UsageEvents.CopySelectedLogAnalysisResults, this.PrepareUsageTrackingProperties());
     }
 
 
@@ -586,7 +640,10 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
         // remove analysis results
         if (!isDisposing)
+        {
             this.analysisResults.RemoveAll(analyzer.AnalysisResults);
+            this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
+        }
 
         // report state
         if (!isDisposing)
@@ -777,6 +834,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         }
         if (this.analysisResults.IsEmpty())
             this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
+        if (!this.GetValue(IsAnalyzingProperty))
+            this.TrackLogAnalysisResultCount();
     }
 
 
@@ -808,6 +867,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     {
         // call base
         base.OnLogProfileChanged(prevLogProfile, newLogProfile);
+        
+        // track result count
+        this.TrackLogAnalysisResultCount(skipIntervalCheck: true);
 
         // reset cooperative log analysis script set
         this.coopScriptLogAnalyzer.ScriptSets.Clear();
@@ -835,6 +897,10 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             this.operationCountingAnalysisRuleSets.Clear();
             this.operationDurationAnalysisRuleSets.Clear();
         }
+        
+        // track event
+        this.logAnalysisResultCountTrackingWatch.Reset();
+        this.TrackApplyingLogAnalysis();
         
         // update sorting info
         var sortDirection = newLogProfile?.SortDirection ?? default;
@@ -878,7 +944,6 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 }
                 break;
             }
-
             case nameof(LogProfile.SortDirection):
             {
                 (this.LogProfile?.SortDirection)?.Let(sortDirection =>
@@ -907,7 +972,12 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
     {
         base.OnPropertyChanged(property, oldValue, newValue);
-        if (property == IsCooperativeLogAnalysisScriptSetEnabledProperty)
+        if (property == IsAnalyzingProperty)
+        {
+            if (!(bool)newValue!)
+                this.TrackLogAnalysisResultCount();
+        }
+        else if (property == IsCooperativeLogAnalysisScriptSetEnabledProperty)
         {
             if ((bool)newValue!)
                 this.updateCoopScriptLogAnalysisAction.Schedule();
@@ -1084,7 +1154,11 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     {
         this.reportSelectedAnalysisResultsInfoAction.Schedule();
         if (!this.IsDisposed)
+        {
             this.SetValue(HasSelectedAnalysisResultsProperty, this.selectedAnalysisResults.IsNotEmpty());
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems!.Count == this.selectedAnalysisResults.Count)
+                this.Application.UsageManager.TrackEvent(UsageEvents.SelectLogAnalysisResult, this.PrepareUsageTrackingProperties());
+        }
     }
 
 
@@ -1126,6 +1200,13 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         get => this.GetValue(PanelSizeProperty);
         set => this.SetValue(PanelSizeProperty, value);
     }
+    
+    
+    // Prepare the properties for usage tracking.
+    protected override IDictionary<string, string> PrepareUsageTrackingProperties() => base.PrepareUsageTrackingProperties().Also(properties =>
+    {
+        properties[UsageProperties.HasLogProfile] = (this.LogProfile is not null).ToString(CultureInfo.InvariantCulture);
+    });
 
 
     /// <inheritdoc/>
@@ -1176,4 +1257,70 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// Get total quantity of selected analysis results.
     /// </summary>
     public long? SelectedAnalysisResultsTotalQuantity => this.GetValue(SelectedAnalysisResultsTotalQuantityProperty);
+    
+    
+    // Track applying log analysis usage event.
+    void TrackApplyingLogAnalysis()
+    {
+        var analysisScriptSetCount = this.logAnalysisScriptSets.Count;
+        var hasCoopAnalysisScriptSet = this.GetValue(HasCooperativeLogAnalysisScriptSetProperty) 
+                                       && this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty)
+                                       && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
+                                       && this.IsProVersionActivated;
+        var keyLogAnalysisRuleSetCount = this.keyLogAnalysisRuleSets.Count;
+        var opCountingAnalysisRuleSetCount = this.operationCountingAnalysisRuleSets.Count;
+        var opDurationAnalysisRuleSetCount = this.operationDurationAnalysisRuleSets.Count;
+        if (analysisScriptSetCount == 0 
+            && !hasCoopAnalysisScriptSet 
+            && keyLogAnalysisRuleSetCount == 0
+            && opCountingAnalysisRuleSetCount == 0
+            && opDurationAnalysisRuleSetCount == 0)
+        {
+            this.TrackClearingLogAnalysis();
+            return;
+        }
+        var properties = this.PrepareUsageTrackingProperties().Also(properties =>
+        {
+            properties[UsageProperties.AnalysisScriptSetCount] = analysisScriptSetCount.ToString(CultureInfo.InvariantCulture);
+            properties[UsageProperties.HasCooperativeAnalysisScriptSet] = hasCoopAnalysisScriptSet.ToString(CultureInfo.InvariantCulture);
+            properties[UsageProperties.KeyLogAnalysisRuleSetCount] = keyLogAnalysisRuleSetCount.ToString(CultureInfo.InvariantCulture);
+            properties[UsageProperties.OperationCountingRuleSetCount] = opCountingAnalysisRuleSetCount.ToString(CultureInfo.InvariantCulture);
+            properties[UsageProperties.OperationDurationRuleSetCount] = opDurationAnalysisRuleSetCount.ToString(CultureInfo.InvariantCulture);
+        });
+        this.isApplyingLogAnalysisEventTracked = true;
+        this.Application.UsageManager.TrackEvent(UsageEvents.ApplyLogAnalysis, properties);
+    }
+    
+    
+    // Track clearing log analysis usage event.
+    void TrackClearingLogAnalysis()
+    {
+        if (!this.isApplyingLogAnalysisEventTracked)
+            return;
+        this.isApplyingLogAnalysisEventTracked = false;
+        this.Application.UsageManager.TrackEvent(UsageEvents.ClearLogAnalysis, this.PrepareUsageTrackingProperties());
+    }
+    
+    
+    // Track log analysis result count metric.
+    void TrackLogAnalysisResultCount(bool skipIntervalCheck = false)
+    {
+        if (this.IsDisposed)
+            return;
+        var count = this.analysisResults.Count;
+        if (this.lastTrackedLogAnalysisResultCount == count)
+            return;
+        if (this.Session.IsReadingLogsContinuously && this.Session.IsReadingLogs)
+        {
+            if (this.logAnalysisResultCountTrackingWatch.IsRunning 
+                && this.logAnalysisResultCountTrackingWatch.ElapsedMilliseconds < MinLogAnalysisResultCountTrackingInterval
+                && !skipIntervalCheck)
+            {
+                return;
+            }
+            this.logAnalysisResultCountTrackingWatch.Restart();
+        }
+        this.lastTrackedLogAnalysisResultCount = count;
+        this.Application.UsageManager.TrackMetric(UsageMetrics.LogAnalysisResultCount, count, this.PrepareUsageTrackingProperties());
+    }
 }
