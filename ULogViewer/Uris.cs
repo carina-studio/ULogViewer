@@ -12,17 +12,9 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly Uri Angle = new("https://en.wikipedia.org/wiki/ANGLE_(software)");
 		/// <summary>
-		/// Application package manifest.
-		/// </summary>
-		public static readonly Uri AppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-v2.json");
-		/// <summary>
 		/// Reference of date time format.
 		/// </summary>
 		public static readonly Uri DateTimeFormatReference = new("https://docs.microsoft.com/dotnet/standard/base-types/custom-date-and-time-format-strings");
-		/// <summary>
-		/// Application package manifest (Development).
-		/// </summary>
-		public static readonly Uri DevelopmentAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Development-v2.json");
 		/// <summary>
 		/// Documentation of formatting CLEF data while reading raw logs.
 		/// </summary>
@@ -63,10 +55,6 @@ namespace CarinaStudio.ULogViewer
 		/// Noto Sans (Traditional Chinese).
 		/// </summary>
 		public static readonly Uri NotoSansTC = new("https://zh.wikipedia.org/zh-tw/%E6%80%9D%E6%BA%90%E9%BB%91%E9%AB%94");
-		/// <summary>
-		/// Application package manifest (Preview).
-		/// </summary>
-		public static readonly Uri PreviewAppPackageManifest = new("https://raw.githubusercontent.com/carina-studio/ULogViewer/master/PackageManifest-Preview-v2.json");
 		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>

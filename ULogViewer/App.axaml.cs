@@ -780,18 +780,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// URI of package manifest.
-		public override IEnumerable<Uri> PackageManifestUris => !this.Settings.GetValueOrDefault(AppSuite.SettingKeys.AcceptNonStableApplicationUpdate)
-			? [ Uris.AppPackageManifest ]
-			: this.ReleasingType == ApplicationReleasingType.Development
-				? [
-					Uris.DevelopmentAppPackageManifest,
-					Uris.PreviewAppPackageManifest,
-					Uris.AppPackageManifest,
-				]
-				: [
-					Uris.PreviewAppPackageManifest,
-					Uris.AppPackageManifest,
-				];
+		public override IEnumerable<Uri> PackageManifestUris => [ ];
 		
 		
 		// Parse arguments.
