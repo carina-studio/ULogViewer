@@ -83,6 +83,7 @@
 		<AvaloniaResource Include="Resources/QuickStartGuide/Uri_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Visibility_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/UserAgreement.md" />
+		<AvaloniaResource Include="Resources/UserAgreement-zh-CN.md" />
 		<AvaloniaResource Include="Resources/UserAgreement-zh-TW.md" />
 		<AvaloniaResource Include="SplashWindowBackground-Dark.png" />
 		<AvaloniaResource Include="SplashWindowBackground-Light.png" />

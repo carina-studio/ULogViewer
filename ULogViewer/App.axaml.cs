@@ -93,10 +93,12 @@ namespace CarinaStudio.ULogViewer
 			public override IList<ApplicationCulture> SupportedCultures =>
 			[
 				ApplicationCulture.EN_US,
+				ApplicationCulture.ZH_CN,
 				ApplicationCulture.ZH_TW
 			];
 			public override Uri Uri => this.Culture switch
 			{
+				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-zh-CN.md"),
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-zh-TW.md"),
 				_ => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement.md"),
 			};
@@ -918,6 +920,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version UserAgreementVersion => new(2, 4);
+		public override Version UserAgreementVersion => new(2, 5);
     }
 }

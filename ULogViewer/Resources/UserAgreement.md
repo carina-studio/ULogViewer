@@ -1,18 +1,18 @@
-# User Agreement of ULogViewer
+# ULogViewer User Agreement
  ---
-+ Version: 2.4
-+ Update: 2024/1/23
++ Version: 2.5
++ Update: 2026/4/12
 
-This is the User Agreement of ULogViewer which you need to read before you using ULogViewer. The User Agreement may be updated in the future and you can check it on the website of ULogViewer. It means that you have agreed this User Agreement once you start using ULogViewer.
+This is the ULogViewer User Agreement which you need to read before using ULogViewer. The User Agreement may be updated in the future and you can check it on the ULogViewer website. It means that you have agreed to this User Agreement once you start using ULogViewer.
 
 
-## Scope of User Agreement
-ULogViewer is a software based-on Open Source Project. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
+## User Agreement Scope
+ULogViewer is a software based on an open-source project. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
 
-+ [Website of ULogViewer](https://carinastudio.azurewebsites.net/ULogViewer/)
-+ [Project and release pages of ULogViewer on GitHub](https://github.com/carina-studio/ULogViewer)
++ [ULogViewer Website](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer project and release pages on GitHub](https://github.com/carina-studio/ULogViewer)
 
-This User Agreement will be applied when you use ULogViewer 4.0 and any future versions before the version specified in next version of User Agreement.
+This User Agreement will apply to ULogViewer 2026.0 and any future versions until the version specified in the next User Agreement update.
 
 
 ## Debug Mode
@@ -45,11 +45,11 @@ In order to use **'Apple Device Simulators Log'** and **'Specific Apple Device S
 
 
 ## File Access
-Except for system files, all necessary files of ULogViewer are placed inside the directory of ULogViewer. No other file access needed when running ULogViewer without loading/importing/saving/exporting data to/from ULogViewer except for the followings:
+Except for system files, all necessary files of ULogViewer are placed inside the ULogViewer directory. On **macOS**, due to app signing requirements, app data is stored in the **Application Support** directory (`~/Library/Application Support/CarinaStudio/ULogViewer/`) rather than inside the app bundle. On **Windows** and **Linux**, app data is stored in the application directory itself. No other file access needed when running ULogViewer without loading/importing/saving/exporting data to/from ULogViewer except for the followings:
 
 + Read **/proc/meminfo** to get physical memory information on Linux.
 + Read **/etc/paths** to get global paths on macOS.
-+ Read/Write Temporary directory of system for placing runtime resources.
++ Read/Write system Temporary directory for placing runtime resources.
 + Other necessary file access by .NET or 3rd-Party Libraries.
 
 ### Loading Logs
@@ -94,12 +94,12 @@ Except for system files, all necessary files of ULogViewer are placed inside the
 + The \*.json file of exported log data source script will be opened in **Read/Write** mode.
 
 ### Self Updating
-+ Downloaded packages and backed-up application files will be placed inside Temporary directory of system.
++ Downloaded packages and backed-up application files will be placed inside the system Temporary directory.
 
 ### Exporting Application Logs
 + The \*.zip file contains application logs will be opened in **Read/Write** mode.
 
-Other file access outside from executable of ULogViewer are not dominated by this User Agreement.
+Other file access outside of the ULogViewer executable are not dominated by this User Agreement.
 
 
 ## Network Access
@@ -130,26 +130,29 @@ ULogViewer contacts with the following servers to check public [IP address](http
 + [http://checkip.dyndns.org](http://checkip.dyndns.org/)
 
 ### ULogViewer Pro Activation
-ULogViewer contacts with server of [Carina Studio](https://carinastudio.azurewebsites.net/) in the following cases:
+ULogViewer contacts with Carina Studio server in the following cases:
 
 + Activating ULogViewer Pro.
 + Using ULogViewer if you have already activated ULogViewer Pro.
 
 ### Application Update Checking
-ULogViewer downloads manifest from website of ULogViewer periodically to check whether application update is available or not.
+ULogViewer downloads manifest from [GitHub](https://github.com/carina-studio/ULogViewer) periodically to check whether an application update is available.
+
+### Usage Telemetry
+ULogViewer sends usage data to [Azure](https://azure.microsoft.com/en-us/) to help improve the application. Please refer to the Privacy Policy for more details.
 
 ### Self Updating
-There are 4 type of data will be downloaded when updating ULogViewer:
+There are 4 types of data will be downloaded when updating ULogViewer:
 
-+ Manifest of auto updater component to check which auto updater is suitable for self updating.
-+ Manifest of ULogViewer to check which update package is suitable for self updating.
-+ Package of auto updater.
-+ Update package of ULogViewer.
++ Auto updater component manifest to check which auto updater is suitable for self updating.
++ ULogViewer manifest to check which update package is suitable for self updating.
++ Auto updater package.
++ ULogViewer update package.
 
 ### Taking Memory Snapshot
-[dotMemory](https://www.jetbrains.com/dotmemory/) is the main tool for memory usage analysis by Carina Studio. When you start taking memory snapshot first time in debug mode, all necessary files of [dotMemory](https://www.jetbrains.com/dotmemory/) will be downloaded into the directory of ULogViewer.
+[dotMemory](https://www.jetbrains.com/dotmemory/) is the main tool for memory usage analysis by Carina Studio. When you start taking a memory snapshot for the first time in debug mode, all necessary files of [dotMemory](https://www.jetbrains.com/dotmemory/) will be downloaded into the ULogViewer directory.
 
-Other network access outside from executable of ULogViewer are not dominated by this User Agreement.
+Other network access outside of the ULogViewer executable are not dominated by this User Agreement.
 
 
 ## External Command Execution
@@ -157,22 +160,22 @@ There are some necessary external command execution when running ULogViewer:
 
 + Run **dotnet** to check the version of .NET installed on device.
 + Run **explorer** to open File Explorer on Windows.
-+ Run **open** to open Finder on mscOS.
++ Run **open** to open Finder on macOS.
 + Run **defaults** to check system language and theme mode on macOS.
 + Run **nautilus** or **xdg-open** to open File Manager on Linux.
 + Run **cmd** to update PATH environment variable on Windows if needed.
-+ Run **osascript** to update /etc/paths on macOS if needed.interface scale factor on Linux.
++ Run **osascript** to update /etc/paths on macOS if needed.
 + Run **gsettings** to check system theme mode on Linux.
 
 Except for necessary cases above, external command execution will happen when the source of logs is **'Azure CLI'** or **'Standard Output (stdout)'**. You can check the list of commands and arguments in the **'Data source'** options dialog when editing **'Data Source'** of log profile.
 
-Please noticed that we **DON’T** guarantee the result of external command execution. It all depends on the behavior of external command and executable which you should take care of.
+Please note that we **DON'T** guarantee the result of external command execution. It all depends on the behavior of external command and executable which you should take care of.
 
 
 ## Modification of Your Computer
-Except for file access and the following cases, ULogViewer **WON’T** change the settings of your computer.
+Except for file access and the following cases, ULogViewer **WON'T** change the settings of your computer.
 
-Please noticed that we **DON’T** guarantee your computer won’t be modified after executing external command. You should take care of it by yourself especially when running ULogViewer as Administrator on Windows.
+Please note that we **DON'T** guarantee your computer won't be modified after executing external command. You should take care of it by yourself especially when running ULogViewer as Administrator on Windows.
 
 ### Editing PATH Environment Variable on Windows
 
@@ -180,19 +183,23 @@ Please noticed that we **DON’T** guarantee your computer won’t be modified a
 All added paths will be set to PATH environment variable of **User** scope.
 
 #### Removing Path
-If removed path was listed in PATH environment variable of **Machine** scope, ULogViewer will runs cmd command with **Administrator** privilige to update PATH environment variable.
+If removed path was listed in PATH environment variable of **Machine** scope, ULogViewer will run cmd command with **Administrator** privilege to update PATH environment variable.
 
 ### Editing /etc/paths on macOS
-ULogViewer will runs **osascript** command with **Administrator** privilige to update /etc/paths file.
+ULogViewer will run **osascript** command with **Administrator** privilege to update /etc/paths file.
 
 ### Running Script
-Scripts running in ULogViewer are allowed accessing .NET features including file access, network access, computer modification, etc. Therefore, running scripts may modify even damage your computer. You need to check scripts carefully before running them.
+Scripts running in ULogViewer are allowed accessing .NET features including file access, network access, computer modification, etc. Therefore, running scripts may modify or even damage your computer. You need to check scripts carefully before running them.
+
+
+## Disclaimer
+ULogViewer is provided **"AS IS"** without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement. Carina Studio makes no warranty that ULogViewer will meet your requirements or that its operation will be uninterrupted or error-free.
+
+To the fullest extent permitted by applicable law, in no event shall Carina Studio be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including but not limited to loss of data, loss of profits, or business interruption) arising out of or in connection with the use or inability to use ULogViewer, even if advised of the possibility of such damages.
 
 
 ## License and Copyright
-ULogViewer is an Open Source Project of Carina Studio under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license. All icons except for application icon are distributed under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE), [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) or [Universal Multimedia License Agreement for Icons8](https://intercom.help/icons8-7fb7577e8170/en/articles/5534926-universal-multimedia-licensing-agreement-for-icons8) license. Please refer to [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks), [SVG Repo](https://www.svgrepo.com/) and [Icons8](https://icons8.com/) for more information of icons and their licenses.  
-
-Application icon is modified from icons made by [Freepik](https://www.freepik.com/) from [Flaticon](https://www.flaticon.com/).
+ULogViewer is an Open Source Project of Carina Studio under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license. All icons except for application icon are distributed under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE), [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) or [Universal Multimedia License Agreement for Icons8](https://intercom.help/icons8-7fb7577e8170/en/articles/5534926-universal-multimedia-licensing-agreement-for-icons8) license. Please refer to [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks), [SVG Repo](https://www.svgrepo.com/), [Icons8](https://icons8.com/), [Google Fonts Icons](https://fonts.google.com/icons), [Phosphor Icons](https://phosphoricons.com/) and [Tabler Icons](https://tabler.io/icons) for more information of icons and their licenses.
 
 Built-in fonts **'Roboto'** and **'Roboto Mono'** are distributed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), **'IBM Plex Mono'**, **'Noto Sans SC'**, **'Noto Sans TC'** and **'Source Code Pro'** are distributed under [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
 
@@ -200,4 +207,4 @@ License and copyright of logs loaded into ULogViewer or saved by ULogViewer is n
 
 
 ## Contact Us
-If you have any concern of this User Agreement, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com).
+If you have any concern about this User Agreement, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com).
