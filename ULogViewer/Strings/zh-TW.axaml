@@ -932,6 +932,20 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自訂分頁標題…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">分頁標題</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在這裡按一下右鍵以選取日誌類型，並套用至新的分頁。</sys:String>
+	<sys:String x:Key="String/MainWindow.UsageDataCollection.Message">幫助我們改善 ULogViewer！</sys:String>
+	<sys:String x:Key="String/MainWindow.UsageDataCollection.SecondaryMessage">我們想要蒐集匿名的使用資料，以幫助我們了解 ULogViewer 的使用並改善。
+
+哪些將會被蒐集：
+  - 匿名的工作階段識別碼
+  - 功能使用事件（例如重新讀取日誌、套用日誌分析）
+  - 配置指標（例如日誌檔案個數、日誌行格式數量）
+
+哪些將不會被蒐集：
+  - 日誌內容
+  - 檔案路徑及名稱
+  - 任何可以識別個人的資訊
+
+您隨時可以在選項中變更這個設定。</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">藍色</sys:String>

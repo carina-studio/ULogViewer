@@ -977,6 +977,20 @@ return False</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">Set the Title of This Tab…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">Tab Title</sys:String>
 	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">You can also right-click on here to select log profile and set to new tab.</sys:String>
+	<sys:String x:Key="String/MainWindow.UsageDataCollection.Message">Help Us Improve ULogViewer!</sys:String>
+	<sys:String x:Key="String/MainWindow.UsageDataCollection.SecondaryMessage">We'd like to collect anonymous usage data to help us understand how ULogViewer is used and improve it.
+
+What will be collected:
+  - Anonymous session identifiers
+  - Feature interaction events (e.g. reloading logs, applying log analysis)
+  - Configuration metrics (e.g. number of loaded log files, log patterns)
+
+What will NOT be collected:
+  - Log content
+  - File paths or names
+  - Any personally identifiable information
+
+You can change this setting at any time in Options.</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">Blue</sys:String>
