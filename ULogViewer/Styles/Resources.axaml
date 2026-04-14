@@ -224,6 +224,7 @@
 	<CornerRadius x:Key="CornerRadius/SessionView.MarkedLogListBox.Item.Border">0</CornerRadius>
 	<CornerRadius x:Key="CornerRadius/SessionView.Menu.MarkColorIcon">8</CornerRadius>
 	<sys:Double x:Key="Double/SessionView.Hint.NoLogToShow.FontSize">20</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.Opacity">0.75</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size">10</sys:Double>
@@ -264,6 +265,7 @@
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight">400</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFilterListBox.MinHeight">100</sys:Double>
 	<sys:Double x:Key="Double/SessionView.PredefinedLogTextFiltersPopup.Width">300</sys:Double>
+	<sys:Double x:Key="Double/SessionView.SidePanel.FullPanelHint.Opacity">0.75</sys:Double>
 	<sys:Double x:Key="Double/SessionView.SidePanel.Header.FontSize">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Toolbar.LogLevelFilter.Width">140</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Toolbar.LogProcessIdFilter.Width">95</sys:Double>
