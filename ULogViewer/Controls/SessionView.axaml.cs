@@ -4788,13 +4788,18 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// scroll to latest log
 			if (session.LogProfile?.IsContinuousReading == true
-				&& !this.IsScrollingToLatestLogNeeded
 				&& this.Settings.GetValueOrDefault(SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs))
 			{
-				this.Logger.LogDebug("Enable scrolling to latest log after reloading logs");
-				this.IsScrollingToLatestLogNeeded = true;
+				this.SynchronizationContext.Post(() => // [Workaround] Delay to make sure that IsScrollingToLatestLogNeeded has been disabled in OnLogListBoxSelectionChanged()
+				{
+					if (!this.IsScrollingToLatestLogNeeded)
+					{
+						this.Logger.LogDebug("Enable scrolling to latest log after reloading logs");
+						this.IsScrollingToLatestLogNeeded = true;
+					}
+				});
 			}
-        }
+		}
 
 
 		/// <summary>
