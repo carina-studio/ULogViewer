@@ -174,7 +174,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		const int InitScrollingToLatestLogDelay = 800;
 		const int LogUpdateIntervalStatisticCount = 4;
 		const int LogUpdateIntervalToResetStatistic = 1000;
-		const int MaxLogPropertyStringLengthToDisplay = 512;
 		const double MaxSmoothScrollingToLatestLogDistance = 200;
 		const int ScrollingToLatestLogInterval = 200;
 		const int ScrollingToTargetLogRangeInterval = 200;
@@ -1828,6 +1827,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				// property views
 				var propertyColumns = new ColumnDefinition[logPropertyCount];
 				var propertyColumnWidthBindingTokens = new IDisposable?[logPropertyCount];
+				var maxPropertyStringLength = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.MaxLogPropertyStringLengthToDisplay));
+				var maxHighlightingTokenCount = Math.Max(1, this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.MaxLogPropertyStringHighlightingTokenCount));
 				for (var i = 0; i < logPropertyCount; ++i)
 				{
 					// define splitter column
@@ -1883,6 +1884,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							else
 								it.MaxLines = 1;
 							it.HorizontalAlignment = isAutoWidth ? HorizontalAlignment.Stretch : HorizontalAlignment.Left;
+							it.MaxTokenCount = maxHighlightingTokenCount;
 							it.MaxWidth = itemMaxWidth;
 							it.Padding = propertyPadding;
 							if (logProperty.Name == nameof(DisplayableLog.Level))
@@ -1902,17 +1904,17 @@ namespace CarinaStudio.ULogViewer.Controls
 									{
 										if (value is IStringSource stringSource)
 										{
-											if (stringSource.Length <= MaxLogPropertyStringLengthToDisplay)
+											if (stringSource.Length <= maxPropertyStringLength)
 												it.Text = stringSource.ToString();
 											else
 											{
-												var charArray = LogPropertyCharArrayPool.Rent(MaxLogPropertyStringLengthToDisplay);
+												var charArray = LogPropertyCharArrayPool.Rent(maxPropertyStringLength);
 												try
 												{
 													var charSpan = charArray.AsSpan();
-													if (stringSource.TryCopyTo(charSpan.Slice(0, MaxLogPropertyStringLengthToDisplay - 1)))
+													if (stringSource.TryCopyTo(charSpan.Slice(0, maxPropertyStringLength - 1)))
 													{
-														charSpan[MaxLogPropertyStringLengthToDisplay - 1] = '…';
+														charSpan[maxPropertyStringLength - 1] = '…';
 														it.Text = new string(charArray);
 													}
 												}

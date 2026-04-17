@@ -80,6 +80,14 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> MaxLinesOfMarkedLogWithoutDisplayLogProperties = new(nameof(MaxLinesOfMarkedLogWithoutDisplayLogProperties), 3);
     /// <summary>
+    /// Maximum number of token can be shown for log property value highlighting.
+    /// </summary>
+    public static readonly SettingKey<int> MaxLogPropertyStringHighlightingTokenCount = new(nameof(MaxLogPropertyStringHighlightingTokenCount), 32);
+    /// <summary>
+    /// Maximum number of log property value in characters to bo displayed.
+    /// </summary>
+    public static readonly SettingKey<int> MaxLogPropertyStringLengthToDisplay = new(nameof(MaxLogPropertyStringLengthToDisplay), 512);
+    /// <summary>
     /// Maximum number of series in log chart.
     /// </summary>
     public static readonly SettingKey<int> MaxSeriesCountInLogChart = new(nameof(MaxValueCountInLogChart), 10);
