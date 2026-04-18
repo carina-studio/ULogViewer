@@ -86,6 +86,7 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 	static readonly long LogReaderInfoMemorySize = Memory.EstimateInstanceSize<LogReaderInfo>();
 	static uint NextId = 1;
 	static Regex? TextFilterBracketAndSeparatorRegex;
+	static Regex? TextFilterCrossPropertySeparatorRegex;
 
 
 	// Fields.
@@ -183,8 +184,84 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 				}
 				if (areTextFiltersValid)
 				{
+					// setup brushes
 					this.textHighlightingBackground ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.HighlightedText.Background", Brushes.LightGray);
 					this.textHighlightingForeground ??= this.Application.FindResourceOrDefault<IBrush>("Brush/SessionView.LogListBox.Item.HighlightedText.Foreground", Brushes.Yellow);
+
+					// split a sub-pattern on cross-property separators and add one token definition per fragment
+					void addSubPattern(string subPattern, RegexOptions options)
+					{
+						// check parameter
+						if (subPattern.Length == 0)
+							return;
+
+						// check for cross-property separators
+						TextFilterCrossPropertySeparatorRegex ??= CreateTextFilterCrossPropertySeparatorRegex();
+						var sepMatch = TextFilterCrossPropertySeparatorRegex.Match(subPattern);
+						if (sepMatch.Success)
+						{
+							// add one definition per fragment between separators
+							var fragStart = 0;
+							while (sepMatch.Success)
+							{
+								if (sepMatch.Index > fragStart)
+								{
+									try
+									{
+										definitions.Add(new()
+										{
+											Background = this.textHighlightingBackground,
+											Foreground = this.textHighlightingForeground,
+											Pattern = new(subPattern[fragStart..sepMatch.Index], options),
+										});
+									}
+									// ReSharper disable EmptyGeneralCatchClause
+									catch
+									{ }
+									// ReSharper restore EmptyGeneralCatchClause
+								}
+								fragStart = sepMatch.Index + sepMatch.Length;
+								sepMatch = sepMatch.NextMatch();
+							}
+
+							// add trailing fragment
+							if (fragStart < subPattern.Length)
+							{
+								try
+								{
+									definitions.Add(new()
+									{
+										Background = this.textHighlightingBackground,
+										Foreground = this.textHighlightingForeground,
+										Pattern = new(subPattern[fragStart..], options),
+									});
+								}
+								// ReSharper disable EmptyGeneralCatchClause
+								catch
+								{ }
+								// ReSharper restore EmptyGeneralCatchClause
+							}
+						}
+						else
+						{
+							// no separator found, add whole sub-pattern as-is
+							try
+							{
+								definitions.Add(new()
+								{
+									Background = this.textHighlightingBackground,
+									Foreground = this.textHighlightingForeground,
+									Pattern = new(subPattern, options),
+								});
+							}
+							// ReSharper disable EmptyGeneralCatchClause
+							catch
+							{ }
+							// ReSharper restore EmptyGeneralCatchClause
+						}
+					}
+
+					// build token definitions from text filters
 					foreach (var textFilter in this.activeInclusiveTextFilters)
 					{
 						var originalPattern = textFilter.ToString();
@@ -220,19 +297,7 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 								{
 									if (subPatternBuffer.Length > 0)
 									{
-										try
-										{
-											definitions.Add(new()
-											{
-												Background = this.textHighlightingBackground,
-												Foreground = this.textHighlightingForeground,
-												Pattern = new(subPatternBuffer.ToString(), options),
-											});
-										}
-										// ReSharper disable EmptyGeneralCatchClause
-										catch
-										{ }
-										// ReSharper restore EmptyGeneralCatchClause
+										addSubPattern(subPatternBuffer.ToString(), options);
 										subPatternBuffer.Clear();
 									}
 								}
@@ -243,31 +308,10 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 							if (start < originalPattern.Length)
 								subPatternBuffer.Append(originalPattern[start..^0]);
 							if (subPatternBuffer.Length > 0)
-							{
-								try
-								{
-									definitions.Add(new()
-									{
-										Background = this.textHighlightingBackground,
-										Foreground = this.textHighlightingForeground,
-										Pattern = new(subPatternBuffer.ToString(), options),
-									});
-								}
-								// ReSharper disable EmptyGeneralCatchClause
-								catch
-								{ }
-								// ReSharper restore EmptyGeneralCatchClause
-							}
+								addSubPattern(subPatternBuffer.ToString(), options);
 						}
 						else
-						{
-							definitions.Add(new()
-							{
-								Background = this.textHighlightingBackground,
-								Foreground = this.textHighlightingForeground,
-								Pattern = textFilter,
-							});
-						}
+							addSubPattern(originalPattern, textFilter.Options);
 					}
 				}
 			}
@@ -382,6 +426,13 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 	// Create regex to find bracket and separator in text filter.
 	[GeneratedRegex(@"(?<=(^|[^\\])(\\\\)*)(?<StartBracket>\()|(?<=(^|[^\\])(\\\\)*)(?<Separator>(\\\$){1,2})|(?<=(^|[^\\])(\\\\)*)(?<EndBracket>\))")]
 	private static partial Regex CreateTextFilterBracketAndSeparatorRegex();
+
+
+	// Create regex to find cross-property separator in text filter sub-pattern.
+	// Matches only unescaped dot (.) with a quantifier (+  *  {n,m}), optionally lazy — dot is the only atom that can
+	// match the "$$" log-property separator used during filtering.
+	[GeneratedRegex(@"(?<=(^|[^\\])(\\\\)*)[.][+*]\??|(?<=(^|[^\\])(\\\\)*)[.]\{[0-9]+(?:,[0-9]*)?\}\??")]
+	private static partial Regex CreateTextFilterCrossPropertySeparatorRegex();
 	
 	
 	/// <summary>

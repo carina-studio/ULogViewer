@@ -13,12 +13,14 @@
 + Allowed reordering items in the ```Edit log profile``` and ```Data source options``` dialogs by dragging with the mouse instead of using action buttons.
 + Improved indicators for required or invalid values in the ```Edit log profile``` and ```Data source options```, and more dialogs.
 + Improved the user experience of the ```Select log profile``` dialog.
++ Improved text highlighting for filtered logs in the log viewer.
 + Show the selected file name, command, IP endpoint, process ID/name, URL or working directory on the tab.
 + Added more default paths for searching commands.
 + Text used for log level mapping is now treated as case‑insensitive.
 + All log levels will be available for filtering logs if no log level mapping defined in current log profile.
 
 ## Behavior Changes
++ On Windows, the application will restart automatically after a system reboot without being closed first.
 + The ```Use compact layout``` option is no longer supported.
 + The application need to be restarted if the Chinese environment changes after modifying the ```Language``` option.
 
