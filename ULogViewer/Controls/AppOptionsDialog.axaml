@@ -450,16 +450,19 @@
 									<TextBlock Text="{asXaml:StringResource ApplicationOptions.AcceptNonStableApplicationUpdate}" asControls:DialogElement.TextRole="Label"/>
 									<ToggleSwitch IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
 								</asControls:DialogItem>
-								<Separator asControls:DialogElement.SeparatorType="Item"/>
+								
 								
 								<!-- Allow usage data collection -->
-								<asControls:DialogItem ItemSize="Small">
-									<StackPanel>
-										<TextBlock Text="{asXaml:StringResource ApplicationOptions.IsUsageDataCollectionAllowed}" asControls:DialogElement.TextRole="Label"/>
-										<TextBlock Text="{asXaml:StringResource ApplicationOptions.IsUsageDataCollectionAllowed.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-									</StackPanel>
-									<ToggleSwitch IsChecked="{Binding IsUsageDataCollectionAllowed, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
-								</asControls:DialogItem>
+								<StackPanel IsVisible="{Binding IsUsageDataCollectionAvailable}">
+									<Separator asControls:DialogElement.SeparatorType="Item"/>
+									<asControls:DialogItem ItemSize="Small">
+										<StackPanel>
+											<TextBlock Text="{asXaml:StringResource ApplicationOptions.IsUsageDataCollectionAllowed}" asControls:DialogElement.TextRole="Label"/>
+											<TextBlock Text="{asXaml:StringResource ApplicationOptions.IsUsageDataCollectionAllowed.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+										</StackPanel>
+										<ToggleSwitch IsChecked="{Binding IsUsageDataCollectionAllowed, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
+									</asControls:DialogItem>
+								</StackPanel>
 
 							</StackPanel>
 						</Border>
