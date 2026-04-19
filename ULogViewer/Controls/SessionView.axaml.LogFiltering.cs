@@ -684,6 +684,13 @@ partial class SessionView
     /// </summary>
     public void ShowGlobalLogTextFilterHistoryMenu()
     { }
+
+
+    /// <summary>
+    /// Open popup of predefined log text filters.
+    /// </summary>
+    public void ShowPredefinedLogTextFiltersPopup() =>
+        this.predefinedLogTextFiltersPopup.Open();
     
 
     // Sync log text filters back to control.

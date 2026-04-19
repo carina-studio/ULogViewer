@@ -978,138 +978,140 @@
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.PredefinedLogTextFilters}">
 							<Panel>
-								<Panel>
-									<Panel IsVisible="{Binding !#root.HasSelectedPredefinedLogTextFilters}">
-										<Image Classes="Icon" Source="{StaticResource Image/Filters.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" Source="{StaticResource Image/Filters.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-									</Panel>
-									<Panel IsVisible="{Binding #root.HasSelectedPredefinedLogTextFilters}">
-										<Image Classes="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" Source="{StaticResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-									</Panel>
+								<Panel IsVisible="{Binding !#root.HasSelectedPredefinedLogTextFilters}">
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
-								<Popup Name="predefinedLogTextFiltersPopup" IsLightDismissEnabled="True" IsOpen="{Binding $parent[ToggleButton].IsChecked, Mode=TwoWay}" PlacementTarget="{Binding $parent[ToggleButton]}" Width="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" WindowManagerAddShadowHint="False">
-									<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
-										<StackPanel>
-											<asControls:DialogItem ItemSize="Small">
-												<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource SessionView.PredefinedLogTextFiltersPopup.Header}"/>
-											</asControls:DialogItem>
-											<Separator IsVisible="{Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" asControls:DialogElement.SeparatorType="InnerItem"/>
-											<Grid RowDefinitions="*,Auto,Auto">
-												<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
-													<StackPanel Name="predefinedLogTextFiltersAndGroupsPanel">
-														<StackPanel.DataTemplates>
-															<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
-																<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
-																	<ToolTip.Tip>
-																		<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #root.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding Regex}"/>
-																	</ToolTip.Tip>
-																	<Grid ColumnDefinitions="Auto,*,Auto">
-																		<Panel Height="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" Width="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
-																			<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding Mode, Converter={x:Static appControls:SessionView.PredefinedLogTextFilterIconConverter}}"/>
-																			<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding Mode, Converter={x:Static appControls:SessionView.PredefinedLogTextFilterIconConverter}, ConverterParameter=Selected}"/>
-																		</Panel>
-																		<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
-																		<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
-																		<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemovePredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
-																				<asControls:Image Classes="InPlaceAction_Icon">
-																					<DrawingImage>
-																						<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
-																					</DrawingImage>
-																				</asControls:Image>
-																			</Button>
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
-																				<asControls:Image Classes="InPlaceAction_Icon">
-																					<DrawingImage>
-																						<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
-																					</DrawingImage>
-																				</asControls:Image>
-																			</Button>
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
-																				<asControls:Image Classes="InPlaceAction_Icon">
-																					<DrawingImage>
-																						<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
-																					</DrawingImage>
-																				</asControls:Image>
-																			</Button>
-																		</StackPanel>
-																	</Grid>
-																</Border>
-															</DataTemplate>
-															<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
-																<Expander Background="{x:Null}" HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
-																	<Expander.Header>
-																		<Grid Name="rootGrid" Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto" HorizontalAlignment="Stretch">
-																			<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#textFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Icon.Folder.Outline}"/>
-																			<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=False}">
-																				<DrawingImage>
-																					<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
-																				</DrawingImage>
-																			</Image>
-																			<abControls:FormattedTextBlock Arg1="{Binding Name}" Arg2="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #textFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-																			<Button Classes="InPlaceAction_Button" Command="{Binding #root.RenamePredefinedLogTextFilterGroupCommand}" CommandParameter="{Binding}" Grid.Column="2" IsVisible="{Binding #rootGrid.IsPointerOver}" ToolTip.Tip="{asXaml:StringResource Common.Rename}">
-																				<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit.Outline}"/>
-																			</Button>
-																		</Grid>
-																	</Expander.Header>
-																	<ListBox Name="textFilterListBox" ItemsSource="{Binding Filters}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" SelectionMode="Multiple"/>
-																</Expander>
-															</DataTemplate>
-														</StackPanel.DataTemplates>
-														<StackPanel.Styles>
-															<Style Selector="ListBox">
-																<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
-																<Setter Property="BorderThickness" Value="0"/>
-																<Setter Property="Padding" Value="0"/>
-															</Style>
-															<Style Selector="ListBoxItem">
-																<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-																<Setter Property="Padding" Value="0"/>
-															</Style>
-														</StackPanel.Styles>
-														<asControls:GroupBox IsVisible="{Binding DefaultGroup.Filters.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="0">
-															<asControls:GroupBox.Header>
-																<Grid ColumnDefinitions="Auto,*">
-																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Filters.Outline}"/>
-																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=False}" Source="{StaticResource Image/Filters.Outline.Active}"/>
-																	<abControls:FormattedTextBlock Arg1="{asXaml:StringResource SessionView.PredefinedLogTextFiltersPopup.DefaultGroup}" Arg2="{Binding #predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #predefinedLogTextFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
-																</Grid>
-															</asControls:GroupBox.Header>
-														</asControls:GroupBox>
-														<Border ClipToBounds="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
-															<ListBox Name="predefinedLogTextFilterListBox" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" SelectionMode="Multiple"/>
-														</Border>
-													</StackPanel>
-												</ScrollViewer>
-												<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
-												           HorizontalAlignment="Center" 
-												           IsVisible="{asXaml:AndBindings
-												               {Binding !DefaultGroup.Filters.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}, Converter={x:Static DefaultValueConverter.Instance}},
-												               {Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}, Converter={x:Static DefaultValueConverter.Instance}}
-												           }"
-												           Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" 
-												           Text="{asXaml:StringResource Common.Empty}" 
-												           TextWrapping="Wrap" 
-												           VerticalAlignment="Center"/>
-												<Separator asControls:DialogElement.SeparatorType="Default" Grid.Row="1"/>
-												<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
-													<StackPanel Orientation="Horizontal">
-														<Button Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{asXaml:StringResource Common.Help}" asControls:DialogElement.IsDialogItemInput="True"/>
-														<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
-													</StackPanel>
-													<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-														<Button Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{asXaml:StringResource SessionView.ClearPredefinedLogTextFiltersSelection}" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
-														<Separator asControls:DialogElement.SeparatorType="Small"/>
-														<Button Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{asXaml:StringResource Common.Create.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
-													</StackPanel>
-												</Grid>
-											</Grid>
-										</StackPanel>
-									</Border>
-								</Popup>
+								<Panel IsVisible="{Binding #root.HasSelectedPredefinedLogTextFilters}">
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image Classes="Icon" Source="{StaticResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								</Panel>
 							</Panel>
 						</ToggleButton>
+						<Popup Name="predefinedLogTextFiltersPopup" 
+						       IsLightDismissEnabled="True" 
+						       PlacementTarget="{Binding #predefinedLogTextFiltersButton}" 
+						       Width="{StaticResource Double/SessionView.PredefinedLogTextFiltersPopup.Width}" 
+						       WindowManagerAddShadowHint="False">
+							<Border Background="{DynamicResource ComboBoxDropDownBackground}" BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}" BorderThickness="{DynamicResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Border}" CornerRadius="{DynamicResource OverlayCornerRadius}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFiltersPopup.Padding}">
+								<StackPanel>
+									<asControls:DialogItem ItemSize="Small">
+										<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource SessionView.PredefinedLogTextFiltersPopup.Header}"/>
+									</asControls:DialogItem>
+									<Separator IsVisible="{Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" asControls:DialogElement.SeparatorType="InnerItem"/>
+									<Grid RowDefinitions="*,Auto,Auto">
+										<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
+											<StackPanel Name="predefinedLogTextFiltersAndGroupsPanel">
+												<StackPanel.DataTemplates>
+													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
+														<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
+															<ToolTip.Tip>
+																<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #root.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding Regex}"/>
+															</ToolTip.Tip>
+															<Grid ColumnDefinitions="Auto,*,Auto">
+																<Panel Height="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Icon.Margin}" Width="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.Icon.Size}">
+																	<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding Mode, Converter={x:Static appControls:SessionView.PredefinedLogTextFilterIconConverter}}"/>
+																	<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding Mode, Converter={x:Static appControls:SessionView.PredefinedLogTextFilterIconConverter}, ConverterParameter=Selected}"/>
+																</Panel>
+																<TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center"/>
+																<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
+																<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal" VerticalAlignment="Center">
+																	<Button Classes="InPlaceAction_Button" Command="{Binding #root.RemovePredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
+																		<asControls:Image Classes="InPlaceAction_Icon">
+																			<DrawingImage>
+																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
+																			</DrawingImage>
+																		</asControls:Image>
+																	</Button>
+																	<Button Classes="InPlaceAction_Button" Command="{Binding #root.CopyPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
+																		<asControls:Image Classes="InPlaceAction_Icon">
+																			<DrawingImage>
+																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
+																			</DrawingImage>
+																		</asControls:Image>
+																	</Button>
+																	<Button Classes="InPlaceAction_Button" Command="{Binding #root.EditPredefinedLogTextFilterCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
+																		<asControls:Image Classes="InPlaceAction_Icon">
+																			<DrawingImage>
+																				<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
+																			</DrawingImage>
+																		</asControls:Image>
+																	</Button>
+																</StackPanel>
+															</Grid>
+														</Border>
+													</DataTemplate>
+													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
+														<Expander Background="{x:Null}" HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
+															<Expander.Header>
+																<Grid Name="rootGrid" Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto" HorizontalAlignment="Stretch">
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#textFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Icon.Folder.Outline}"/>
+																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=False}">
+																		<DrawingImage>
+																			<GeometryDrawing Brush="{DynamicResource Brush/Icon.Active}" Geometry="{StaticResource Geometry/Icon.Folder.Outline}"/>
+																		</DrawingImage>
+																	</Image>
+																	<abControls:FormattedTextBlock Arg1="{Binding Name}" Arg2="{Binding #textFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #textFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+																	<Button Classes="InPlaceAction_Button" Command="{Binding #root.RenamePredefinedLogTextFilterGroupCommand}" CommandParameter="{Binding}" Grid.Column="2" IsVisible="{Binding #rootGrid.IsPointerOver}" ToolTip.Tip="{asXaml:StringResource Common.Rename}">
+																		<Image Classes="InPlaceAction_Icon" Source="{DynamicResource Image/Icon.Edit.Outline}"/>
+																	</Button>
+																</Grid>
+															</Expander.Header>
+															<ListBox Name="textFilterListBox" ItemsSource="{Binding Filters}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" SelectionMode="Multiple"/>
+														</Expander>
+													</DataTemplate>
+												</StackPanel.DataTemplates>
+												<StackPanel.Styles>
+													<Style Selector="ListBox">
+														<Setter Property="Background" Value="{x:Static Brushes.Transparent}"/>
+														<Setter Property="BorderThickness" Value="0"/>
+														<Setter Property="Padding" Value="0"/>
+													</Style>
+													<Style Selector="ListBoxItem">
+														<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+														<Setter Property="Padding" Value="0"/>
+													</Style>
+												</StackPanel.Styles>
+												<asControls:GroupBox IsVisible="{Binding DefaultGroup.Filters.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="0">
+													<asControls:GroupBox.Header>
+														<Grid ColumnDefinitions="Auto,*">
+															<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Filters.Outline}"/>
+															<Image Classes="ListBoxItem_Icon" IsVisible="{Binding #predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=False}" Source="{StaticResource Image/Filters.Outline.Active}"/>
+															<abControls:FormattedTextBlock Arg1="{asXaml:StringResource SessionView.PredefinedLogTextFiltersPopup.DefaultGroup}" Arg2="{Binding #predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=0}" Arg3="{Binding #predefinedLogTextFilterListBox.ItemCount}" Format="{}{0} ({1}/{2})" Grid.Column="1" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+														</Grid>
+													</asControls:GroupBox.Header>
+												</asControls:GroupBox>
+												<Border ClipToBounds="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
+													<ListBox Name="predefinedLogTextFilterListBox" IsVisible="{Binding $self.ItemCount}" ItemsSource="{Binding DefaultGroup.Filters, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" SelectionMode="Multiple"/>
+												</Border>
+											</StackPanel>
+										</ScrollViewer>
+										<TextBlock Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}" 
+										           HorizontalAlignment="Center" 
+										           IsVisible="{asXaml:AndBindings
+										               {Binding !DefaultGroup.Filters.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}, Converter={x:Static DefaultValueConverter.Instance}},
+										               {Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}, Converter={x:Static DefaultValueConverter.Instance}}
+										           }"
+										           Margin="{StaticResource Thickness/SessionView.NoPredefinedLogTextFilterHint.Margin}" 
+										           Text="{asXaml:StringResource Common.Empty}" 
+										           TextWrapping="Wrap" 
+										           VerticalAlignment="Center"/>
+										<Separator asControls:DialogElement.SeparatorType="Default" Grid.Row="1"/>
+										<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
+											<StackPanel Orientation="Horizontal">
+												<Button Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{asXaml:StringResource Common.Help}" asControls:DialogElement.IsDialogItemInput="True"/>
+												<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
+											</StackPanel>
+											<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+												<Button Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{asXaml:StringResource SessionView.ClearPredefinedLogTextFiltersSelection}" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
+												<Separator asControls:DialogElement.SeparatorType="Small"/>
+												<Button Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{asXaml:StringResource Common.Create.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
+											</StackPanel>
+										</Grid>
+									</Grid>
+								</StackPanel>
+							</Border>
+						</Popup>
 					
 					</Grid>
 
