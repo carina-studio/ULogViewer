@@ -994,7 +994,7 @@
 											<asControls:DialogItem ItemSize="Small">
 												<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource SessionView.PredefinedLogTextFiltersPopup.Header}"/>
 											</asControls:DialogItem>
-											<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}"/>
+											<Separator IsVisible="{Binding !Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" asControls:DialogElement.SeparatorType="InnerItem"/>
 											<Grid RowDefinitions="*,Auto,Auto">
 												<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
 													<StackPanel Name="predefinedLogTextFiltersAndGroupsPanel">
@@ -1068,7 +1068,7 @@
 																<Setter Property="Padding" Value="0"/>
 															</Style>
 														</StackPanel.Styles>
-														<asControls:GroupBox IsVisible="{Binding Groups.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="0">
+														<asControls:GroupBox IsVisible="{Binding DefaultGroup.Filters.Count, Source={x:Static appViewModels:PredefinedLogTextFilterManager.Default}}" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="0">
 															<asControls:GroupBox.Header>
 																<Grid ColumnDefinitions="Auto,*">
 																	<Image Classes="ListBoxItem_Icon" IsVisible="{Binding !#predefinedLogTextFilterListBox.SelectedItems.Count, FallbackValue=True}" Source="{StaticResource Image/Filters.Outline}"/>
@@ -1092,16 +1092,16 @@
 												           Text="{asXaml:StringResource Common.Empty}" 
 												           TextWrapping="Wrap" 
 												           VerticalAlignment="Center"/>
-												<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
+												<Separator asControls:DialogElement.SeparatorType="Default" Grid.Row="1"/>
 												<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
 													<StackPanel Orientation="Horizontal">
-														<Button Classes="Dialog_Item_Button" Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{asXaml:StringResource Common.Help}"/>
-														<Separator Classes="Dialog_Separator"/>
+														<Button Command="{Binding #root.OpenPredefinedTextFiltersDocumentation}" Content="{asXaml:StringResource Common.Help}" asControls:DialogElement.IsDialogItemInput="True"/>
+														<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 													</StackPanel>
 													<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-														<Button Classes="Dialog_Item_Button" Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{asXaml:StringResource SessionView.ClearPredefinedLogTextFiltersSelection}" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
-														<Separator Classes="Dialog_Separator_Small"/>
-														<Button Classes="Dialog_Item_Button" Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{asXaml:StringResource Common.Create.WithDialog}"/>
+														<Button Command="{Binding #root.ClearPredefinedLogTextFilterSelection}" Content="{asXaml:StringResource SessionView.ClearPredefinedLogTextFiltersSelection}" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #root.HasSelectedPredefinedLogTextFilters}"/>
+														<Separator asControls:DialogElement.SeparatorType="Small"/>
+														<Button Command="{Binding #root.CreatePredefinedLogTextFilter}" Content="{asXaml:StringResource Common.Create.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
 													</StackPanel>
 												</Grid>
 											</Grid>
@@ -2156,7 +2156,7 @@
 										<asControls:DialogItem ItemSize="Small">
 											<TextBlock Classes="Dialog_TextBlock_Label" Text="{asXaml:StringResource SessionView.LogAnalysisRuleSetsPopup.Header}"/>
 										</asControls:DialogItem>
-										<Line Classes="Dialog_Item_Separator_Inner" IsVisible="{Binding #noLogAnalysisRuleSetsTextBlock.IsVisible}"/>
+										<Separator IsVisible="{Binding #noLogAnalysisRuleSetsTextBlock.IsVisible}" asControls:DialogElement.SeparatorType="InnerItem"/>
 										<Grid RowDefinitions="Auto,Auto,Auto">
 											<Panel MaxHeight="{StaticResource Double/SessionView.LogAnalysisRuleSetsPopup.MaxHeight}">
 												<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -2486,13 +2486,13 @@
 												           TextWrapping="Wrap" 
 												           VerticalAlignment="Center"/>
 											</Panel>
-											<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
+											<Separator asControls:DialogElement.SeparatorType="Default" Grid.Row="1"/>
 											<Grid ColumnDefinitions="Auto,*" Grid.Row="2">
 												<StackPanel Orientation="Horizontal">
 													<Button Classes="Dialog_Item_Button" 
 													        Command="{Binding #root.OpenLogAnalysisDocumentation}" 
 													        Content="{asXaml:StringResource Common.Help}"/>
-													<Separator Classes="Dialog_Separator_Small"/>
+													<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 												</StackPanel>
 												<StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
 													<Button Classes="Dialog_Item_Button" 
@@ -2504,11 +2504,11 @@
 													            {Binding #operationCountingAnalysisRuleSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False},
 													            {Binding #logAnalysisScriptSetListBox.SelectedItems.Count, Converter={x:Static abConverters:NumberConverters.IsNonZero}, FallbackValue=False}
 													        }"/>
-													<Separator Classes="Dialog_Separator_Small"/>
+													<Separator asControls:DialogElement.SeparatorType="Small"/>
 													<Button Classes="Dialog_Item_Button" 
 													        Command="{Binding #root.ImportLogAnalysisRuleSet}" 
 													        Content="{asXaml:StringResource Common.Import.WithDialog}"/>
-													<Separator Classes="Dialog_Separator_Small"/>
+													<Separator asControls:DialogElement.SeparatorType="Small"/>
 													<ToggleButton Name="createLogAnalysisRuleSetButton" 
 													              Classes="Dialog_Item_ToggleButton" 
 													              Command="{Binding #root.CreateLogAnalysisRuleSet}">
