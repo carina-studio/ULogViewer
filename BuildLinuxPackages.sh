@@ -1,5 +1,5 @@
 APP_NAME="ULogViewer"
-FRAMEWORK="net9.0"
+FRAMEWORK="net10.0"
 RID_LIST=("linux-x64" "linux-arm64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
