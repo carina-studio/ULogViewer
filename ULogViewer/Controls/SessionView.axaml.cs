@@ -171,6 +171,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Constants.
+		const bool AlwaysShowTutorials = false;
 		const int InitScrollingToLatestLogDelay = 800;
 		const int LogUpdateIntervalStatisticCount = 4;
 		const int LogUpdateIntervalToResetStatistic = 1000;
@@ -345,12 +346,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static initializer.
 		static SessionView()
 		{
-			//App.Current.PersistentState.ResetValue(IsLogAnalysisPanelTutorialShownKey);
-			//App.Current.PersistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
-			//App.Current.PersistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
-			//App.Current.PersistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
-			//App.Current.PersistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
-			//App.Current.PersistentState.ResetValue(IsTimestampCategoriesPanelTutorialShownKey);
+			if (AlwaysShowTutorials)
+			{
+				var persistentState = App.Current.PersistentState;
+				persistentState.ResetValue(IsLogAnalysisPanelTutorialShownKey);
+				persistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
+				persistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
+				persistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
+				persistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
+				persistentState.ResetValue(IsTimestampCategoriesPanelTutorialShownKey);
+			}
 		}
 
 
@@ -1954,22 +1959,24 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						propertyView = new DockPanel().Also(it =>
 						{
-							it.Background = Brushes.Transparent;
-							it.Children.Add(new Avalonia.Controls.Image().Also(multiLineIcon =>
+							it.Children.Add(new Border().Also(iconBorder =>
 							{
-								DockPanel.SetDock(multiLineIcon, Dock.Left);
-								multiLineIcon.Classes.Add("Icon");
-								multiLineIcon.Height = markIndicatorSize;
-								multiLineIcon.IsHitTestVisible = true;
-								multiLineIcon.Margin = multiLineIndicatorMargin;
-								multiLineIcon.Bind(IsVisibleProperty, new Binding { Path = $"HasExtraLinesOf{logProperty.Name}" });
-								multiLineIcon.Opacity = multiLineIndicatorOpacity;
-								multiLineIcon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/MultiLine");
-								multiLineIcon.Width = markIndicatorSize;
-								multiLineIcon.BindToResource(ToolTip.TipProperty, "String/SessionView.MultiLineLogProperty");
-								multiLineIcon.VerticalAlignment = VerticalAlignment.Center;
+								DockPanel.SetDock(iconBorder, Dock.Left);
+								iconBorder.Background = Brushes.Transparent;
+								iconBorder.Child = new Avalonia.Controls.Image().Also(multiLineIcon =>
+								{
+									multiLineIcon.Classes.Add("Icon");
+									multiLineIcon.Height = markIndicatorSize;
+									multiLineIcon.BindToResource(Avalonia.Controls.Image.SourceProperty, "Image/MultiLine");
+									multiLineIcon.Width = markIndicatorSize;
+								});
+								iconBorder.Margin = multiLineIndicatorMargin;
+								iconBorder.Bind(IsVisibleProperty, new Binding { Path = $"HasExtraLinesOf{logProperty.Name}" });
+								iconBorder.Opacity = multiLineIndicatorOpacity;
+								iconBorder.BindToResource(ToolTip.TipProperty, "String/SessionView.MultiLineLogProperty");
+								iconBorder.VerticalAlignment = VerticalAlignment.Center;
 								if (Platform.IsMacOS)
-									app.EnsureClosingToolTipIfWindowIsInactive(multiLineIcon);
+									app.EnsureClosingToolTipIfWindowIsInactive(iconBorder);
 							}));
 							it.Children.Add(propertyView);
 							it.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -5696,7 +5703,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				}
 				else
 				{
-					window.ShowTutorial(new Tutorial().Also(it =>
+					var isTutorialShown = window.ShowTutorial(new Tutorial().Also(it =>
 					{
 						it.Anchor = this.selectAndSetLogProfileButton;
 						it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SelectLogProfileToStart"));
@@ -5708,6 +5715,8 @@ namespace CarinaStudio.ULogViewer.Controls
 						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 						it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 					}));
+					if (isTutorialShown)
+						return;
 				}
 			}
 
@@ -5718,7 +5727,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// show "switch side panels"
 			if (!persistentState.GetValueOrDefault(IsSwitchingSidePanelsTutorialShownKey))
 			{
-				window.ShowTutorial(new Tutorial().Also(it =>
+				var isTutorialShown = window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("sidePanelBoolBarItemsPanel");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SwitchSidePanels"));
@@ -5730,12 +5739,14 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
+				if (isTutorialShown)
+					return;
 			}
 
 			// show side panel tutorials
 			if (!persistentState.GetValueOrDefault(IsMarkedLogsPanelTutorialShownKey))
 			{
-				window.ShowTutorial(new Tutorial().Also(it =>
+				var isTutorialShown = window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("markedLogsPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.MarkedLogsPanel"));
@@ -5747,10 +5758,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
+				if (isTutorialShown)
+					return;
 			}
 			if (!persistentState.GetValueOrDefault(IsTimestampCategoriesPanelTutorialShownKey))
 			{
-				window.ShowTutorial(new Tutorial().Also(it =>
+				var isTutorialShown = window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("timestampCategoriesPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.TimestampCategoriesPanel"));
@@ -5762,10 +5775,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
+				if (isTutorialShown)
+					return;
 			}
 			if (!persistentState.GetValueOrDefault(IsLogAnalysisPanelTutorialShownKey))
 			{
-				window.ShowTutorial(new Tutorial().Also(it =>
+				var isTutorialShown = window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("logAnalysisPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogAnalysisPanel"));
@@ -5777,10 +5792,12 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
+				if (isTutorialShown)
+					return;
 			}
 			if (!persistentState.GetValueOrDefault(IsLogFilesPanelTutorialShownKey))
 			{
-				window.ShowTutorial(new Tutorial().Also(it =>
+				var isTutorialShown = window.ShowTutorial(new Tutorial().Also(it =>
 				{
 					it.Anchor = this.FindControl<Control>("logFilesPanelButton");
 					it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.LogFilesPanel"));
@@ -5792,6 +5809,8 @@ namespace CarinaStudio.ULogViewer.Controls
 					it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 					it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
 				}));
+				if (isTutorialShown)
+					return;
 			}
 
 			// all tutorials shown
