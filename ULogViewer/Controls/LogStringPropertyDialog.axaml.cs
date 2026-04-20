@@ -179,7 +179,11 @@ partial class LogStringPropertyDialog : AppSuite.Controls.Dialog<IULogViewerAppl
 	{
 		if (e.Property == RegexTextBox.ObjectProperty)
 		{
-			this.propertyValueHighlightingToken.Pattern = this.findTextTextBox.Object;
+			// skip all-matching patterns to avoid highlighting everything
+			var regex = this.findTextTextBox.Object;
+			this.propertyValueHighlightingToken.Pattern = regex is not null && !Utility.IsAllMatchingRegex(regex)
+				? regex
+				: null;
 			this.propertyValueTextBox.Margin = new(1);
 		}
 	}

@@ -200,7 +200,20 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 						var sepMatch = TextFilterCrossPropertySeparatorRegex.Match(subPattern);
 						if (sepMatch.Success)
 						{
-							// add one definition per fragment between separators
+							// add whole sub-pattern to cover single-property matches
+							try
+							{
+								definitions.Add(new()
+								{
+									Background = this.textHighlightingBackground,
+									Foreground = this.textHighlightingForeground,
+									Pattern = new(subPattern, options),
+								});
+							}
+							catch
+							{ /* best effort */ }
+
+							// add one definition per fragment between separators to cover cross-property matches
 							var fragStart = 0;
 							while (sepMatch.Success)
 							{
@@ -215,10 +228,8 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 											Pattern = new(subPattern[fragStart..sepMatch.Index], options),
 										});
 									}
-									// ReSharper disable EmptyGeneralCatchClause
 									catch
-									{ }
-									// ReSharper restore EmptyGeneralCatchClause
+									{ /* best effort */ }
 								}
 								fragStart = sepMatch.Index + sepMatch.Length;
 								sepMatch = sepMatch.NextMatch();
@@ -236,10 +247,8 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 										Pattern = new(subPattern[fragStart..], options),
 									});
 								}
-								// ReSharper disable EmptyGeneralCatchClause
 								catch
-								{ }
-								// ReSharper restore EmptyGeneralCatchClause
+								{ /* best effort */ }
 							}
 						}
 						else
@@ -254,10 +263,8 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 									Pattern = new(subPattern, options),
 								});
 							}
-							// ReSharper disable EmptyGeneralCatchClause
 							catch
-							{ }
-							// ReSharper restore EmptyGeneralCatchClause
+							{ /* best effort */ }
 						}
 					}
 
