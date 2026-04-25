@@ -23,7 +23,7 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-        <AppSuiteVersion>3.0.7.418-preview</AppSuiteVersion>
+        <AppSuiteVersion>3.0.8.424-preview</AppSuiteVersion>
 		<AvaloniaVersion>11.3.13</AvaloniaVersion>
 		<DotNetLibVersion>10.0.4</DotNetLibVersion>
 		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
@@ -50,6 +50,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AvaloniaResource Include="AppInfoBanner-Dark.png" />
+		<AvaloniaResource Include="AppInfoBanner-Light.png" />
 		<AvaloniaResource Include="ChangeList.md" />
 		<AvaloniaResource Include="ChangeList-zh-CN.md" />
 		<AvaloniaResource Include="ChangeList-zh-TW.md" />
