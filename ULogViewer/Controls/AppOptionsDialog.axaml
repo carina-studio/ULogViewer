@@ -451,7 +451,6 @@
 									<ToggleSwitch IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
 								</asControls:DialogItem>
 								
-								
 								<!-- Allow usage data collection -->
 								<StackPanel IsVisible="{Binding IsUsageDataCollectionAvailable}">
 									<Separator asControls:DialogElement.SeparatorType="Item"/>
