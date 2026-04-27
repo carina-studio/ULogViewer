@@ -21,7 +21,7 @@
 	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">默认执行指令之命令列壳层 (Command-line Shell)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">文字筛选单词输入辅助</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">根据文字筛选历史纪录帮助您输入文字筛选单词。</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新载入日志后滚动到最新的日志</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新加载日志后滚动到最新的日志</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs.Description">仅适用于连续读取日志。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.FileSizeInMBToConfirmMaxLogReadingCount">视为大型文件的大小 (兆字节)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.IgnoreCaseOfLogTextFilter">默认忽略文字筛选大小写</sys:String>
@@ -41,25 +41,25 @@
 	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs">内存使用上限 ({0}, {1}%)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.PhysicalMemoryUsagePercentageToStopReadingLogs.Description">当进程的内存使用量超过上限时，日志读取将暂时停用。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">需要升级至专业版。</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">变更日志类型后重设套用的规则集</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">变更日志类型后重设应用的规则集</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">脚本编辑器字体及大小</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">当需要指令时立即显示输入介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">当需要指令时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">选择日志类型</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时立即显示输入介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志文件时立即开启文件选择介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新标签页后开启日志类型选择介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时立即显示输入界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志文件时立即打开文件选择界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新标签页后打开日志类型选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从文件读取日志前指定前置读取条件（当条件支持时）</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">当需要进程识别码 (PID) 时立即显示输入介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">当需要进程名称时立即显示输入介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即开启目录选择介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">当需要进程识别码 (PID) 时立即显示输入界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">当需要进程名称时立即显示输入界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即打开目录选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字筛选栏位中显示「说明」按钮</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">自动打开图表面板</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">当日志类型中有定义图表时打开面板。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowProcessInfo">在状态栏中显示CPU以及内存使用量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SwitchToMarkedLogsPanelAfterMarkingLogs">标记日志后切换至「已标记日志」面板</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.UpdateLogFilterDelay">条件改变至开始筛选的延迟时间（毫秒）</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调色彩</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.UseSystemAccentColor">使用系统强调颜色</sys:String>
 
 	<!-- Azure -->
 	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列接口 (CLI)。请确认 Azure 命令列接口已经安装且其路径已加入至 PATH 环境变量。</sys:String>
@@ -74,11 +74,11 @@
 
 	<!-- Built-in profile -->
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog">Android 设备事件日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 取得 Android 设备实时事件日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceEventLog.Description">通过 ADB 获取 Android 设备实时事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog">Android 设备日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">通过 ADB 取得 Android 设备实时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceLog.Description">通过 ADB 获取 Android 设备实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace">Android 设备系统追踪</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">自 Android 设备撷取 5 秒系统追踪以追分析 Android 系统及应用程序效能。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidDeviceTrace.Description">自 Android 设备抓取 5 秒系统追踪以追分析 Android 系统及应用程序性能。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog">Android 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidFileLog.Description">在一个或多个文件中的 Android 日志。此类型亦支援事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidKernelLogFile">Android 核心日志文件</sys:String>
@@ -88,7 +88,7 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo">Android 系统内存监控</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android 系统的实时内存信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系统追踪文件</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用于追踪及分析 Android 系统及应用程序效能的文件。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用于追踪及分析 Android 系统及应用程序性能的文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache 服务器存取日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">由 Apache 产生之文件，其中包括传送至服务器之请求信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache 服务器错误日志文件</sys:String>
@@ -131,11 +131,11 @@
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客户端原始内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">特定 Android 设备事件日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">通过 ADB 取得特定 Android 设备实时事件日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">通过 ADB 获取特定 Android 设备实时事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog">特定 Android 设备日志</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog.Description">通过 ADB 取得特定 Android 设备实时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog.Description">通过 ADB 获取特定 Android 设备实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceTrace">特定 Android 设备系统追踪</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceTrace.Description">自特定 Android 设备撷取 5 秒系统追踪以追分析 Android 系统及应用程序效能。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceTrace.Description">自特定 Android 设备抓取 5 秒系统追踪以追分析 Android 系统及应用程序性能。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog">特定 Apple 设备日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">由特定之 Apple 设备产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog">特定 Apple 设备模拟器日志</sys:String>
@@ -253,13 +253,13 @@
 	<!-- DisplayableLogAnalysisRuleSetEditorDialog -->
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.CannotAddMoreRuleSetWithoutProVersion">在启用专业版之前，您无法建立更多的规则集。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Icon">图标</sys:String>
-	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">图标色彩</sys:String>
+	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.IconColor">图标颜色</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Name">名称</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个规则集，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/DisplayableLogAnalysisRuleSetEditorDialog.Rules">规则</sys:String>
 
 	<!-- EmbeddedScriptLogDataSourceProvider -->
-	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">内嵌日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/EmbeddedScriptLogDataSourceProvider.DisplayName">内嵌日志数据源脚本</sys:String>
 
 	<!-- EnqueueVarEditorDialog -->
 	<sys:String x:Key="String/EnqueueVarEditorDialog.Title">将变量值加入队列</sys:String>
@@ -274,18 +274,18 @@
 
 	<!-- ExternalDependency-->
 	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools">Android SDK 平台工具</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">「Android 设备日志」、「Android 设备事件日志」、「Android 设备系统追踪」、「Android 进程内存监控」、「Android 系统内存监控」、「特定 Android 设备事件日志」、「特定 Android 设备日志」及「特定 Android 设备系统追踪」内建日志类型会使用跟随 Android SDK 平台工具发布之 Android Debug Bridge (ADB)。请将 Android SDK 平台工具安装至默认路径，或在安装完成后将 Android SDK 中的 'platform-tools' 资料夹路径加至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AndroidSdkPlatformTools.Description">「Android 设备日志」、「Android 设备事件日志」、「Android 设备系统追踪」、「Android 进程内存监控」、「Android 系统内存监控」、「特定 Android 设备事件日志」、「特定 Android 设备日志」及「特定 Android 设备系统追踪」内建日志类型会使用跟随 Android SDK 平台工具发布之 Android Debug Bridge (ADB)。请将 Android SDK 平台工具安装至默认路径，或在安装完成后将 Android SDK 中的 'platform-tools' 文件夹路径加至 PATH 环境变量。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.AzureCLI">Azure 命令行接口 (CLI)</sys:String>
-	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 资料库」及「SQL Server 资料库」资料来源使用 Azure 命令行接口 (CLI) 读取日志资料或调用 Azure 功能。请将 Azure 命令行接口 (CLI) 安装至默认路径，或在安装完成后将包含 'az' 指令之资料夹路径加至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.AzureCLI.Description">「Azure CLI」、「MySQL 数据库」及「SQL Server 数据库」数据源使用 Azure 命令行接口 (CLI) 读取日志数据或调用 Azure 功能。请将 Azure 命令行接口 (CLI) 安装至默认路径，或在安装完成后将包含 'az' 指令之文件夹路径加至 PATH 环境变量。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交纪录」及「Git 提交纪录 (精简)」内建日志类型会使用 Git 读取提交纪录。</sys:String>
-	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 设备日志」及「特定 Apple 设备日志」内建日志类型会使用 libimobiledevice 中的 idevicesyslog 工具与装置联系并取得日志。安装完成后请将包含 'idevicesyslog' 指令之资料夹路径加至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 设备日志」及「特定 Apple 设备日志」内建日志类型会使用 libimobiledevice 中的 idevicesyslog 工具与设备通信并获取日志。安装完成后请将包含 'idevicesyslog' 指令之文件夹路径加至 PATH 环境变量。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace 转换工具</sys:String>
-	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 设备系统追踪」及「特定 Android 设备系统追踪」内建日志类型使用由 Perfetto 提供的 Trace 转换工具将自设备撷取的资料转换成为 Android 系统追踪格式。安装完成后請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 设备系统追踪」及「特定 Android 设备系统追踪」内建日志类型使用由 Perfetto 提供的 Trace 转换工具将自设备抓取的数据转换成为 Android 系统追踪格式。安装完成后请将包含 'traceconv' 指令之文件夹路径加至 PATH 环境变量。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Xcode 命令行工具</sys:String>
-	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">「Apple 设备模拟器日志」及「特定 Apple 设备模拟器日志」内建日志类型会使用 Xcode 命令行工具与模拟器联系并取得日志。您可以选择安装 Xcode 或直接安装 Xcode 命令行工具。</sys:String>
-	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting">設定 Xcode 命令行工具</sys:String>
-	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting.Description">若您透过安装 Xcode 以安装 Xcode 命令行工具后，您需要将「Xcode > Settings > Locations > Command Line Tools」设定为「Xcode」来启用。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools.Description">「Apple 设备模拟器日志」及「特定 Apple 设备模拟器日志」内建日志类型会使用 Xcode 命令行工具与模拟器通信并获取日志。您可以选择安装 Xcode 或直接安装 Xcode 命令行工具。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting">设置 Xcode 命令行工具</sys:String>
+	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineToolsSetting.Description">若您通过安装 Xcode 以安装 Xcode 命令行工具后，您需要将「Xcode > Settings > Locations > Command Line Tools」设置为「Xcode」来启用。</sys:String>
 
 	<!-- FileFormat -->
 	<sys:String x:Key="String/FileFormat.Json">JSON 文件</sys:String>
@@ -305,17 +305,17 @@
 	<sys:String x:Key="String/FileSystemItemSelection.ExportLogAnalysisRuleSet">导出日志分析规则集或脚本</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ExportLogProfile">导出日志类型</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ExportLogs">导出日志</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ExportScriptLogDataSourceProvider">导出日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ExportScriptLogDataSourceProvider">导出日志数据源脚本</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ImportLogAnalysisRuleSet">导入日志分析规则集或脚本</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.ImportLogProfile">导入日志类型</sys:String>
-	<sys:String x:Key="String/FileSystemItemSelection.ImportScriptLogDataSourceProvider">导入日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/FileSystemItemSelection.ImportScriptLogDataSourceProvider">导入日志数据源脚本</sys:String>
 	<sys:String x:Key="String/FileSystemItemSelection.SelectWorkingDirectory">选择工作目录</sys:String>
 
 	<!-- FilesMaxLogReadingCountDialog -->
 	<StaticResourceExtension x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles" ResourceKey="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles"/>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.ConfirmMaxLogReadingCountForLargeFiles.Description">您也可以在应用程序选项中变更此设置。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow">读取位置</sys:String>
-	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow.Description">从每个文件 (资料来源) 的特定位置读取日志。</sys:String>
+	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.LogReadingWindow.Description">从每个文件 (数据源) 的特定位置读取日志。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount">最大读取数量</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.Description">从每个文件中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 {0} (包含)。</sys:String>
@@ -352,42 +352,42 @@
 
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日志分析脚本</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">脚本将针对每笔日志调用以分析日志。需返回布林值 (boolean) 以指示针对此日志的分析结果是否需要被撷取。</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">脚本将针对每笔日志调用以分析日志。需返回布林值 (boolean) 以指示针对此日志的分析结果是否需要被记录。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
  */
 
 /*
- * 返回 True 以保留透过 Context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
+ * 返回 True 以保留通过 Context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
  * 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
  */
 
 /*
- * 返回 True 以保留透过 context.addResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
+ * 返回 True 以保留通过 context.addResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
  */
 return false;</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
-# 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+# 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
 
 from CarinaStudio.ULogViewer.Logs import LogLevel
 from CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting import Result
 from CarinaStudio.ULogViewer.ViewModels.Analysis.Scripting import ResultType
 
-# 返回 True 以保留透过 context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
+# 返回 True 以保留通过 context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
 return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.CannotAddMoreScriptSetWithoutProVersion">在启用专业版之前，您无法建立更多的日志分析脚本。</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors">您的脚本中有一个或多个错误，是否仍要套用？</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors">您的脚本中有一个或多个错误，是否仍要应用？</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors">您的脚本中有一个或多个错误，是否仍要关闭编辑器？</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Icon">图标</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">图标色彩</sys:String>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IconColor">图标颜色</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased">分析基于上下文</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.IsContextualBased.Description">日志是否需要根据时间递增顺序逐一分析。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Name">名称</sys:String>
@@ -396,20 +396,20 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">脚本将在分析流程开始前调用一次且不需要返回值。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
  */</sys:String>
 	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp"/>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python"># 请参阅 https://carinastudio.azurewebsites.net/Scripting
-# 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以取得更多信息。</sys:String>
+# 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">编辑日志分析脚本</sys:String>
 	
 	<!-- LogAnalysisViewModel -->
-	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">无法将选取的日志分析结果复制至剪贴簿。</sys:String>
+	<sys:String x:Key="String/LogAnalysisViewModel.FailedToCopySelectedAnalysisResults">无法将选择的日志分析结果复制至剪贴板。</sys:String>
 	
 	<!-- LogChartSeriesSourceEditorDialog -->
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.CustomDisplayName">自定义显示名称</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue">默认数值</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">当无法从属性取得数值时所使用的特定数值。</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DefaultValue.Description">当无法从属性获取数值时所使用的特定数值。</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.DisplayName">显示名称</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Name">属性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Quantifier">数量词</sys:String>
@@ -418,19 +418,19 @@ return False</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ShowDefinedLogPropertiesOnly">只列出已定义及可用的日志属性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.Title">图表的来源日志属性</sys:String>
 	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling">数值缩放</sys:String>
-	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">从属性取得数值后再乘以的值。</sys:String>
+	<sys:String x:Key="String/LogChartSeriesSourceEditorDialog.ValueScaling.Description">从属性获取数值后再乘以的值。</sys:String>
 	
 	<!-- LogChartType -->
 	<sys:String x:Key="String/LogChartType.None">无</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueAreas">数值面积图</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueAreasWithDataPoints">数值面积图 (含资料点)</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueAreasWithDataPoints">数值面积图 (含数据点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueBars">数值条形图</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueCurves">数值曲线图</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">数值曲线图 (含资料点)</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueCurvesWithDataPoints">数值曲线图 (含数据点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueLines">数值折线图</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">数值折线图 (含资料点)</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueLinesWithDataPoints">数值折线图 (含数据点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedAreas">数值堆积面积图</sys:String>
-	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">数值堆积面积图 (含资料点)</sys:String>
+	<sys:String x:Key="String/LogChartType.ValueStackedAreasWithDataPoints">数值堆积面积图 (含数据点)</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStackedBars">数值堆积条形图</sys:String>
 	<sys:String x:Key="String/LogChartType.ValueStatisticBars">数值计数条形图</sys:String>
 	
@@ -473,9 +473,9 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">环境变量</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">环境变量 '{0}' 先前已加入。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">文件路径</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">读取时格式化 CLEF 资料</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">读取时格式化 JSON 资料</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">读取时格式化 XML 资料</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">读取时格式化 CLEF 数据</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">读取时格式化 JSON 数据</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.FormatXmlData">读取时格式化 XML 数据</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IncludeStandardError">包含标准错误输出 (stderr)</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP 地址</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Address">IPv4/IPv6 地址</sys:String>
@@ -495,10 +495,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.WorkingDirectory">工作目录</sys:String>
 
 	<!-- LogDataSourceOptionsDialog -->
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若这是 Azure 上的资源则 ULogViewer 将自动设定相关环境，例如登录或更新防火墙规则。</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.IsResourceOnAzure.Description">若这是 Azure 上的资源则 ULogViewer 将自动设置相关环境，例如登录或更新防火墙规则。</sys:String>
 	<StaticResourceExtension x:Key="String/LogDataSourceOptionsDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">选取 Azure 上的资源</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">资料来源参数</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.SelectAzureResources">选择 Azure 上的资源</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptionsDialog.Title">数据源参数</sys:String>
 
 	<!-- LogLevel -->
 	<sys:String x:Key="String/LogLevel.Debug">调试</sys:String>
@@ -554,7 +554,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Flag">旗帜</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Folder">目录</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Game">游戏</sys:String>
-	<sys:String x:Key="String/LogProfileIcon.Image">影像</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Image">图像</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Information">信息</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Inspiration">灵感</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Launch">启动</sys:String>
@@ -600,9 +600,9 @@ return False</sys:String>
 	<!-- LogProfileEditorDialog -->
 	<sys:String x:Key="String/LogProfileEditorDialog.AllowMultipleFiles">允许加入多个文件</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CannotEditLogProfileWithProVersionOnlyParams">无法编辑日志类型「{0}」，因为其中至少有一个参数仅供专业版使用。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">色彩指示</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator">颜色指示</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.ColorIndicator.Description">显示于日志左侧的色块分组方式。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般设定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.Common">一般设置</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet">协同日志分析脚本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ConfirmDeletion">脚本删除后将无法复原，您是否确定要删除日志分析脚本？</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Create" ResourceKey="String/Common.Create.WithDialog"/>
@@ -611,39 +611,39 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportExisting">导入现有脚本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.ImportFromFile">从文件导入…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.CooperativeLogAnalysisScriptSet.Remove" ResourceKey="String/Common.Remove"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">资料来源</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider">数据源</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DataSourceProvider.ProVersionOnly">(专业版)</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel">默认日志等级</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DefaultLogLevel.Description">当日志等级的原始值没有对照或未提供时使用。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Description">描述</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.DuplicateLogLevelMapEntry">已经定义从「{0}」的转换。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">内嵌日志资料来源脚本</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">脚本删除后将无法复原，您是否确定要删除日志资料来源脚本？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider">内嵌日志数据源脚本</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ConfirmDeletion">脚本删除后将无法复原，您是否确定要删除日志数据源脚本？</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Create" ResourceKey="String/Common.Create.WithDialog"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以将内嵌日志资料来源脚本设为此日志类型的「资料来源」。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Description">您可以将内嵌日志数据源脚本设为此日志类型的「数据源」。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Edit" ResourceKey="String/Common.Edit.WithDialog"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportExisting">导入现有脚本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.ImportFromFile">从文件导入…</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.EmbeddedScriptLogDataSourceProvider.Remove" ResourceKey="String/Common.Remove"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.FormatDescription">格式说明</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Icon">图标</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">图标色彩</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IconColor">图标颜色</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.InvalidDataSourceOptions">需要有效的参数</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsAdministratorNeeded">需要系统管理员身份</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading">连续读取</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">读取至资料末端时将自动重新开始读取日志。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">读取至数据末端时将自动重新开始读取日志。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定为模板</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">模板无法被直接使用，但可以用于包含部分参数并复制成为新的日志类型。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何读取及解析日志》 以帮助您建立日志类型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日志分析</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日志图表設定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日志图表设置</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">来源日志属性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources.Description">指定最多 10 个来源日志属性以产生图表。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartType">图表类型</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartValueGranularity">数值颗粒度</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartWithoutSources">您定义了「图表类型」但没有定义「来源日志属性」。您是否要定义「来源日志属性」？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartXAxisType">图表 X 轴</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示設定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogDisplaying">日志显示设置</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading">日志等级对照表</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForReading.Description">将「原始日志等级属性」所指定之属性值对应至日志等级。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogLevelMapForWriting">日志等级对照表</sys:String>
@@ -653,23 +653,23 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatterns.Description">分析原始日志每一行的格式。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutLogLevelMap">您尚未定义「日志等级对照表」，因此将使用默认的日志等级对照，但可能不适用于您的日志。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogPatternsWithoutVisibleLogProperties">您定义了「日志行格式」但没有定义「显示的日志属性」，这可能导致日志显示错误。您是否要定义「显示的日志属性」？</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">日志读取设定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogReading">日志读取设置</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.LogReadingWindow" ResourceKey="String/FilesMaxLogReadingCountDialog.LogReadingWindow"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">从每个资料来源的特定位置读取日志。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogReadingWindow.Description">从每个数据源的特定位置读取日志。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForReading">日志文字格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogStringEncodingForWriting">日志文字格式</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日志输出设定</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LogWriting">日志输出设置</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats">日志输出格式</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogWritingFormats.Description">此格式将用于日志复制与存储。对于每笔日志，将从列表中选出第一个包含所有有效日志属性的格式使用，否则使用列表中的第一个格式。</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.MaxLogReadingCount" ResourceKey="String/FilesMaxLogReadingCountDialog.MaxLogReadingCount"/>
-	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">从每个资料来源中所读取的最大日志数量。</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.Description">从每个数据源中所读取的最大日志数量。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.MaxLogReadingCount.OutOfRange">数量的有效范围为 1 至 2147483647 (包含)。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.Name">名称</sys:String>
 	<StaticResourceExtension x:Key="String/LogProfileEditorDialog.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName">原始日志等级属性</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RawLogLevelPropertyName.Description">该日志属性将用于提供日志等级的原始值。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.RestartReadingDelay">重新开始读取日志的延迟 (毫秒)</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">管理日志资料来源脚本…</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.ScriptLogDataSourceProviders">管理日志数据源脚本…</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortDirection">日志排序方向</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.SortKey">日志排序依据</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.TimeSpanCultureInfoForReading">日志时距文化特性</sys:String>
@@ -763,26 +763,26 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Error">错误</sys:String>
 	<sys:String x:Key="String/LogProperty.Event">事件</sys:String>
 	<sys:String x:Key="String/LogProperty.Exception">例外</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra1">附加资料 1</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra10">附加资料 10</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra11">附加资料 11</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra12">附加资料 12</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra13">附加资料 13</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra14">附加资料 14</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra15">附加资料 15</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra16">附加资料 16</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra17">附加资料 17</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra18">附加资料 18</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra19">附加资料 19</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra2">附加资料 2</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra20">附加资料 20</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra3">附加资料 3</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra4">附加资料 4</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra5">附加资料 5</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra6">附加资料 6</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra7">附加资料 7</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra8">附加资料 8</sys:String>
-	<sys:String x:Key="String/LogProperty.Extra9">附加资料 9</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra1">附加数据 1</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra10">附加数据 10</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra11">附加数据 11</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra12">附加数据 12</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra13">附加数据 13</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra14">附加数据 14</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra15">附加数据 15</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra16">附加数据 16</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra17">附加数据 17</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra18">附加数据 18</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra19">附加数据 19</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra2">附加数据 2</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra20">附加数据 20</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra3">附加数据 3</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra4">附加数据 4</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra5">附加数据 5</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra6">附加数据 6</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra7">附加数据 7</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra8">附加数据 8</sys:String>
+	<sys:String x:Key="String/LogProperty.Extra9">附加数据 9</sys:String>
 	<sys:String x:Key="String/LogProperty.FileName">文件</sys:String>
 	<sys:String x:Key="String/LogProperty.HostName">主机名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Invalid">无效</sys:String>
@@ -847,7 +847,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Type">类型</sys:String>
 	<sys:String x:Key="String/LogProperty.Unavailable">不可使用</sys:String>
 	<sys:String x:Key="String/LogProperty.Uri">网址</sys:String>
-	<sys:String x:Key="String/LogProperty.UserAgent">用户媒介</sys:String>
+	<sys:String x:Key="String/LogProperty.UserAgent">用户代理</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 	<sys:String x:Key="String/LogProperty.Using">使用中</sys:String>
 	<sys:String x:Key="String/LogProperty.Valid">有效</sys:String>
@@ -878,8 +878,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogReadingPreconditionDialog.Title">日志读取前置条件</sys:String>
 
 	<!-- LogReadingWindow -->
-	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">资料来源尾端</sys:String>
-	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">资料来源前端</sys:String>
+	<sys:String x:Key="String/LogReadingWindow.EndOfDataSource">数据源尾端</sys:String>
+	<sys:String x:Key="String/LogReadingWindow.StartOfDataSource">数据源前端</sys:String>
 	
 	<!-- LogSeparatorType -->
 	<sys:String x:Key="String/LogSeparatorType.Horizontal">水平</sys:String>
@@ -928,17 +928,17 @@ return False</sys:String>
 
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重设标签页标题</sys:String>
-	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">您是否要使用内建的「{0}」字型来显示日志？您可以在应用程序选项中找到更多的内建字型，或是更改日志显示字型。</sys:String>
+	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">您是否要使用内建的「{0}」字体来显示日志？您可以在应用程序选项中找到更多的内建字体，或是更改日志显示字体。</sys:String>
 	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">升级至当前版本后可能需要重新启用「ULogViewer 专业版」。必要时您只需要将当前的设备从已启用的设备列表中移除，再重新启用「ULogViewer 专业版」即可。</sys:String>
 	<sys:String x:Key="String/MainWindow.RefreshingAppIconOnMacOSHint">针对 macOS 用户，您可能会发现升级之后在 Dock 及 Launchpad 中的应用程序图标没有刷新。您是否想了解如何刷新应用程序图标？</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">总共 {0} 笔</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">休眠中以节省资源</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.LogsMemoryUsage">内存使用 {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Paused">已暂停</sys:String>
-	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待资料来源</sys:String>
+	<sys:String x:Key="String/MainWindow.Session.WaitingForDataSources">正在等待数据源</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle">自定义标签页标题…</sys:String>
 	<sys:String x:Key="String/MainWindow.SetCustomSessionTitle.Message">标签页标题</sys:String>
-	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选取日志类型，并套用至新的标签页。</sys:String>
+	<sys:String x:Key="String/MainWindow.Tutorial.UseAddTabButtonToSelectLogProfile">您也可以在这里点击右键以选择日志类型，并应用至新的标签页。</sys:String>
 	<sys:String x:Key="String/MainWindow.UsageDataCollection.Message">帮助我们改善 ULogViewer！</sys:String>
 	<sys:String x:Key="String/MainWindow.UsageDataCollection.SecondaryMessage">我们想要收集匿名的使用数据，以帮助我们了解 ULogViewer 的使用并优化。
 
@@ -956,7 +956,7 @@ return False</sys:String>
 
 	<!-- MarkColor -->
 	<sys:String x:Key="String/MarkColor.Blue">蓝色</sys:String>
-	<sys:String x:Key="String/MarkColor.Default">无色彩</sys:String>
+	<sys:String x:Key="String/MarkColor.Default">无颜色</sys:String>
 	<sys:String x:Key="String/MarkColor.Green">绿色</sys:String>
 	<sys:String x:Key="String/MarkColor.Indigo">深蓝色</sys:String>
 	<sys:String x:Key="String/MarkColor.Magenta">洋红色</sys:String>
@@ -970,14 +970,14 @@ return False</sys:String>
 
 	<!-- MemoryUsagePolicy -->
 	<sys:String x:Key="String/MemoryUsagePolicy.Balance">平衡</sys:String>
-	<sys:String x:Key="String/MemoryUsagePolicy.BetterPerformance">更好的效能</sys:String>
+	<sys:String x:Key="String/MemoryUsagePolicy.BetterPerformance">更好的性能</sys:String>
 	<sys:String x:Key="String/MemoryUsagePolicy.LessMemoryUsage">较少的内存用量</sys:String>
 
 	<!-- MySqlDatabaseLogDataSource -->
 	<sys:String x:Key="String/MySqlDatabaseLogDataSource.FailedToUpdateFirewallRules">无法更新 MySQL 服务器的防火墙规则。</sys:String>
 
 	<!-- MySqlDatabaseLogDataSourceProvider -->
-	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 资料库</sys:String>
+	<sys:String x:Key="String/MySqlDatabaseLogDataSourceProvider.DisplayName">MySQL 数据库</sys:String>
 
 	<!-- OperationCountingAnalysisRuleEditorDialog -->
 	<sys:String x:Key="String/OperationCountingAnalysisRuleEditorDialog.Interval">计数时间间距</sys:String>
@@ -1010,7 +1010,7 @@ return False</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingMode">动作结束方式</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariable">比对的变量</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables">比对的变量</sys:String>
-	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">变量将用于搜寻动作起始日志。所有列出的变量必须同时在起始及结束日志中被撷取且值相同。</sys:String>
+	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.EndingVariables.Description">变量将用于搜寻动作起始日志。所有列出的变量必须同时在起始及结束日志中被提取且值相同。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration">有效动作时距</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.MinMaxDuration.Description">只有在指定时距区间内的动作才会被用以输出结果。若没有上/下限则留白。</sys:String>
 	<sys:String x:Key="String/OperationDurationAnalysisRuleEditorDialog.OperationName">动作名称</sys:String>
@@ -1098,29 +1098,29 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
-# 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。</sys:String>
+# 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。</sys:String>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors"/>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmClosingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmClosingWithCompilationErrors"/>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器开启脚本</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在开启原始日志行读取器时运行。需返回 LogDataSourceState.ReaderOpened 表示读取器开启成功，或其他值表示失败。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器打开脚本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在打开原始日志行读取器时运行。需返回 LogDataSourceState.ReaderOpened 表示读取器打开成功，或其他值表示失败。</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */
 
 /*
- * 返回 LogDataSourceState.ReaderOpened 表示原始日志行读取器开启成功。
+ * 返回 LogDataSourceState.ReaderOpened 表示原始日志行读取器打开成功。
  * 若失败则返回下列值：
  *   * LogDataSourceState.ExternalDependencyNotFound
  *   * LogDataSourceState.SourceNotFound
@@ -1130,11 +1130,11 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */
 
 /*
- * 返回 LogDataSourceState.readerOpened 表示原始日志行读取器开启成功。
+ * 返回 LogDataSourceState.readerOpened 表示原始日志行读取器打开成功。
  * 若失败则返回下列值：
  *   * LogDataSourceState.externalDependencyNotFound
  *   * LogDataSourceState.sourceNotFound
@@ -1143,9 +1143,9 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
 return LogDataSourceState.unclassifiedError;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
-# 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+# 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
 
-# 返回 LogDataSourceState.ReaderOpened 表示原始日志行读取器开启成功。
+# 返回 LogDataSourceState.ReaderOpened 表示原始日志行读取器打开成功。
 # 若失败则返回下列值：
 #   * LogDataSourceState.ExternalDependencyNotFound
 #   * LogDataSourceState.SourceNotFound
@@ -1156,7 +1156,7 @@ return LogDataSourceState.UnclassifiedError</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */
 
 /*
@@ -1166,7 +1166,7 @@ return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
- * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+ * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */
 
 /*
@@ -1175,23 +1175,23 @@ return null;</sys:String>
 return null;</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
-# 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以取得更多信息。
+# 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
 
 # 返回自来源读取的单一原始日志行 (string)，若没有剩余的原始日志行可读取时则返回 None
 return None</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支持的资料来源参数</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions">支持的数据源参数</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required">必要参数</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">编辑日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.Title">编辑日志数据源脚本</sys:String>
 
 	<!-- ScriptLogDataSourceProvidersDialog -->
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">在启用专业版之前，您无法建立更多的日志资料来源脚本。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">脚本删除后将无法复原，您是否确定要删除日志资料来源脚本「{0}」？</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">脚本删除后将无法复原，您是否确定要删除日志资料来源脚本「{0}」以及相关的 {1} 个日志类型？</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">无法将日志资料来源脚本「{0}」导出至 '{1}'。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">无法自文件 '{0}' 导入日志资料来源脚本。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">日志资料来源脚本「{0}」已成功导出至 '{1}'。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志资料来源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.CannotAddMoreProviderWithoutProVersion">在启用专业版之前，您无法建立更多的日志数据源脚本。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider">脚本删除后将无法复原，您是否确定要删除日志数据源脚本「{0}」？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ConfirmDeletingProvider.WithLogProfiles">脚本删除后将无法复原，您是否确定要删除日志数据源脚本「{0}」以及相关的 {1} 个日志类型？</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToExportProvider">无法将日志数据源脚本「{0}」导出至 '{1}'。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.FailedToImportProvider">无法自文件 '{0}' 导入日志数据源脚本。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.ProviderExported">日志数据源脚本「{0}」已成功导出至 '{1}'。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志数据源脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
+	<sys:String x:Key="String/ScriptLogDataSourceProvidersDialog.Title">管理日志数据源脚本</sys:String>
 	
 	<!-- SearchProvider -->
 	<sys:String x:Key="String/SearchProvider.AppleDeveloper">Apple 开发者</sys:String>
@@ -1204,7 +1204,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SearchProvider.Zhihu">知乎</sys:String>
 
 	<!-- Session -->
-	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在启用 ULogViewer 专业版之前无法使用资料来源「{0}」。</sys:String>
+	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在启用 ULogViewer 专业版之前无法使用数据源「{0}」。</sys:String>
 	<sys:String x:Key="String/Session.Empty">空白标签页</sys:String>
 	
 	<!-- SessionView -->
@@ -1237,9 +1237,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.CopyLogsWithFileNames">复制日志 (包含文件名称)</sys:String>
 	<sys:String x:Key="String/SessionView.CpuUsage">CPU 使用率</sys:String>
 	<sys:String x:Key="String/SessionView.EditConfiguration">编辑內部配置…</sys:String>
-	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">编辑内嵌日志资料来源脚本</sys:String>
-	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">编辑「{0}」日志资料来源脚本</sys:String>
-	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider.Placeholder">编辑当前的日志资料来源脚本</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentEmbeddedScriptLogDataSourceProvider">编辑内嵌日志数据源脚本</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider">编辑「{0}」日志数据源脚本</sys:String>
+	<sys:String x:Key="String/SessionView.EditCurrentScriptLogDataSourceProvider.Placeholder">编辑当前的日志数据源脚本</sys:String>
 	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">编辑日志分析脚本文件…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">编辑 PATH 环境变量…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">编辑內部存储的状态…</sys:String>
@@ -1273,7 +1273,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel">日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.DisabledWhenRemovingLogFiles">移除日志文件时暂时无法使用日志分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisPanel.HasNewAnalysisResults">有新的结果</sys:String>
-	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">点击面板右上角的按钮以选择要套用的的分析规则集。</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisPanel.Hint">点击面板右上角的按钮以选择要应用的的分析规则集。</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisProgress">分析日志中…{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult">分析结果</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisResult.ByteSize">字节大小</sys:String>
@@ -1288,20 +1288,20 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationCountingAnalysisRuleSet">动作计数分析</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisRuleSets.OperationDurationAnalysisRuleSet">动作时距分析</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisRuleSets.ProVersionOnly" ResourceKey="String/AppOptionsDialog.ProVersionOnly"/>
-	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">套用的分析规则集 (可多选)</sys:String>
+	<sys:String x:Key="String/SessionView.LogAnalysisRuleSetsPopup.Header">应用的分析规则集 (可多选)</sys:String>
 	<StaticResourceExtension x:Key="String/SessionView.LogAnalysisScript.CooperativeLogAnalysis" ResourceKey="String/ScriptDisplayableLogAnalyzer.CooperativeLogAnalysis"/>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.AnalysisScript">运行「{0}」之脚本以分析日志时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.SetupScript">运行「{0}」之脚本以初始化分析时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogAnalysisScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogChart.NoLogTimestamp">(没有日志的时间信息)</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel">图表面板</sys:String>
-	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">图表因资料点过多而暂时停用。</sys:String>
+	<sys:String x:Key="String/SessionView.LogChartPanel.MaxTotalSeriesValueCountReached">图表因数据点过多而暂时停用。</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ProVersionNeeded">需升级至专业版以启用图表。</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartPanel.ShowingRawLogLines">图表因显示原始日志行而暂时停用。</sys:String>
 	<sys:String x:Key="String/SessionView.LogChartTypeMenu.CurrentLogChartType">(当前使用)</sys:String>
 	<sys:String x:Key="String/SessionView.LogCountInLogFile">日志个数：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ClosingReaderScript">运行「{0}」之脚本以关闭原始日志行读取器时发生错误：</sys:String>
-	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">运行「{0}」之脚本以开启原始日志行读取器时发生错误：</sys:String>
+	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.OpeningReaderScript">运行「{0}」之脚本以打开原始日志行读取器时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.ReadingLineScript">运行「{0}」之脚本以读取原始日志行时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogDataSourceScript.RuntimeError.UnknownScript">运行「{0}」之脚本时发生错误：</sys:String>
 	<sys:String x:Key="String/SessionView.LogFileIsUnsupported">当前的日志类型不支持使用文件。</sys:String>
@@ -1316,24 +1316,24 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.LogProcessIdFilter.Description">使用 进程ID (Process ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.LogPropertyName">属性名称：{0}</sys:String>
 	<sys:String x:Key="String/SessionView.LogsDuration">日志时间长度</sys:String>
-	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日志时间/最大日志时距 (点击以选取该日志)</sys:String>
-	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距 (点击以选取该日志)</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDurationEndingPoint">最晚日志时间/最大日志时距 (点击以选择该日志)</sys:String>
+	<sys:String x:Key="String/SessionView.LogsDurationStartingPoint">最早日志时间/最小日志间距 (点击以选择该日志)</sys:String>
 	<sys:String x:Key="String/SessionView.LogsFilteringProgress">日志筛选进度</sys:String>
 	<sys:String x:Key="String/SessionView.LogsMemoryUsage">此标签页日志内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.LogsReadingStoppedDueToHighMemoryUsage">因为高度内存使用 ({0})，日志读取已暂时停用。</sys:String>
-	<sys:String x:Key="String/SessionView.LogsSaved">已成功将日志储存至 '{0}'。</sys:String>
-	<sys:String x:Key="String/SessionView.LogsSavingFailed">无法将日志储存至 '{0}'。</sys:String>
+	<sys:String x:Key="String/SessionView.LogsSaved">已成功将日志保存至 '{0}'。</sys:String>
+	<sys:String x:Key="String/SessionView.LogsSavingFailed">无法将日志保存至 '{0}'。</sys:String>
 	<sys:String x:Key="String/SessionView.LogTextFilter.ToolTip">用以比对日志文字正则表达式</sys:String>
 	<sys:String x:Key="String/SessionView.LogTextFilter.Watermark">文字筛选 (正则表达式)</sys:String>
 	<sys:String x:Key="String/SessionView.LogThreadIdFilter.Description">使用线程ID (Thread ID) 筛选日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel">已标记日志</sys:String>
-	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">选择日志然后点击 M，或是透过点击鼠标右键的选单来标记/解除标记日志。</sys:String>
+	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint">选择日志然后点击 M，或是通过点击鼠标右键的选单来标记/解除标记日志。</sys:String>
 	<sys:String x:Key="String/SessionView.MarkedLogsPanel.Hint.ShowingRawLogLines">显示原始日志行时暂时停用日志标记。</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLog">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">标记/解除标记</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
-	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">为了维持应用程序的性能，图表因资料点过多而被暂时停用。您可以移除一些日志或移除一些图表的属性以减少资料点数量。</sys:String>
+	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">为了维持应用程序的性能，图表因数据点过多而被暂时停用。您可以移除一些日志或移除一些图表的属性以减少数据点数量。</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultiLineLogProperty">此属性包含多行文字
 (双击以查看所有文字)</sys:String>
@@ -1355,17 +1355,17 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewLogReadingPrecondition">变更日志读取前置条件…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithNewMaxLogReadingCount">变更日志读取数量设置…</sys:String>
 	<sys:String x:Key="String/SessionView.ReloadLogFile.WithoutLogReadingPrecondition">清除日志读取前置条件</sys:String>
-	<sys:String x:Key="String/SessionView.ReloadLogs">重新载入日志 (F5)</sys:String>
+	<sys:String x:Key="String/SessionView.ReloadLogs">重新加载日志 (F5)</sys:String>
 	<sys:String x:Key="String/SessionView.RemoveLogFile">移除日志文件</sys:String>
 	<sys:String x:Key="String/SessionView.RenamePredefinedLogTextFilterGroup.Message">新的分组名称</sys:String>
 	<sys:String x:Key="String/SessionView.ResetLogChartZoom">重置图表缩放</sys:String>
-	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有筛选设定</sys:String>
+	<sys:String x:Key="String/SessionView.ResetLogFilters">清除所有筛选设置</sys:String>
 	<sys:String x:Key="String/SessionView.ResetTemporarilyShownLogs">正常显示日志</sys:String>
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以系统管理员身份重新启动</sys:String>
-	<sys:String x:Key="String/SessionView.SaveAllLogs">储存所有日志到文件</sys:String>
-	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">储存所有日志到文件 (Ctrl+Shift+S)</sys:String>
-	<sys:String x:Key="String/SessionView.SaveLogs">储存日志到文件</sys:String>
-	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">储存日志到文件 (Ctrl+S)</sys:String>
+	<sys:String x:Key="String/SessionView.SaveAllLogs">保存所有日志到文件</sys:String>
+	<sys:String x:Key="String/SessionView.SaveAllLogs.WithShortcut">保存所有日志到文件 (Ctrl+Shift+S)</sys:String>
+	<sys:String x:Key="String/SessionView.SaveLogs">保存日志到文件</sys:String>
+	<sys:String x:Key="String/SessionView.SaveLogs.WithShortcut">保存日志到文件 (Ctrl+S)</sys:String>
 	<sys:String x:Key="String/SessionView.SavingLogs">正在存储日志…</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToEndOfLogChart">滚动至图表的末端</sys:String>
 	<sys:String x:Key="String/SessionView.ScrollToLatestLog">滚动至最新的日志</sys:String>
@@ -1379,7 +1379,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalByteSize">总字节大小</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalDuration">总时距</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogAnalysisResultsTotalQuantity">总数量</sys:String>
-	<sys:String x:Key="String/SessionView.SelectedLogCount">已选取 {0} 笔</sys:String>
+	<sys:String x:Key="String/SessionView.SelectedLogCount">已选择 {0} 笔</sys:String>
 	<sys:String x:Key="String/SessionView.SelectedLogsDuration">选择的时长为 {0}</sys:String>
 	<sys:String x:Key="String/SessionView.SelectMarkedLogs">选择已标记的日志</sys:String>
 	<sys:String x:Key="String/SessionView.SelectNearestLogByTimestamp">选择最近指定时间戳的日志</sys:String>
@@ -1402,7 +1402,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.ShowLogProperty.Disabled">查看日志属性…</sys:String>
 	<sys:String x:Key="String/SessionView.ShowMarkedLogsTemporarily">暂时只显示已标记的日志</sys:String>
 	<sys:String x:Key="String/SessionView.ShowRawLogLinesTemporarily">暂时显示原始日志行</sys:String>
-	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在文件管理中开启工作目录</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在文件管理中打开工作目录</sys:String>
 	<sys:String x:Key="String/SessionView.StopReadingLogs">中止日志读取</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">工具</sys:String>
@@ -1411,19 +1411,19 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">在于当前的列表不包含分析结果的日志，因此必须取消只显示已标记的日志。您可以自行将其开启。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">您复制的文字是用于日志文字筛选的完整日志文字，可以用来验证日志文字筛选以及日志分析的格式。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogAnalysisPanel">检查日志的的分析结果。</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.LogChart">您可以卷动鼠标滚轮以缩放，或按住鼠标左键以拖曳图表。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.LogChart">您可以卷动鼠标滚轮以缩放，或按住鼠标左键以拖动图表。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">检查及管理已加入的日志文件。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">已标记的日志列表。</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">点一下这里以选择套用的日志分析规则集。</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">点一下这里以选择日志类型并开启使用。</sys:String>
-	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">在于当前的列表不包含分析结果的日志，因此必须暂停显示所有日志。您可以自行将其开启。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">点一下这里以选择应用的日志分析规则集。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">点一下这里以选择日志类型并开始使用。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">在于当前的列表不包含分析结果的日志，因此必须暂时显示所有日志。您可以自行将其关闭。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">从这里切换侧边面板内容或关闭面板。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.TimestampCategoriesPanel">根据时间戳的日志分组列表。</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者界面响应时间</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">解除日志标记</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">查看更多…</sys:String>
 	<sys:String x:Key="String/SessionView.VisibleLogChartSeries">可见的来源</sys:String>
-	<sys:String x:Key="String/SessionView.WaitingForDataSources">正在等待资料来源…</sys:String>
+	<sys:String x:Key="String/SessionView.WaitingForDataSources">正在等待数据源…</sys:String>
 	<sys:String x:Key="String/SessionView.WillExceedMaxLogFileCount">无法加入日志文件，因为将超过日志文件数量上限。</sys:String>
 
 	<!-- SortDirection -->
@@ -1431,20 +1431,20 @@ return None</sys:String>
 	<sys:String x:Key="String/SortDirection.Descending">递减</sys:String>
 
 	<!-- SplashWindow -->
-	<sys:String x:Key="String/SplashWindow.InitializeLogAnalysisRules">正在载入日志分析规则</sys:String>
-	<sys:String x:Key="String/SplashWindow.InitializeLogProfiles">正在载入日志类型</sys:String>
-	<sys:String x:Key="String/SplashWindow.InitializePredefinedLogTextFilters">正在载入文字筛选</sys:String>
-	<sys:String x:Key="String/SplashWindow.ShowMainWindow">开启主窗口</sys:String>
-	<sys:String x:Key="String/SplashWindow.UpdateStyles">正在载入样式</sys:String>
+	<sys:String x:Key="String/SplashWindow.InitializeLogAnalysisRules">正在加载日志分析规则</sys:String>
+	<sys:String x:Key="String/SplashWindow.InitializeLogProfiles">正在加载日志类型</sys:String>
+	<sys:String x:Key="String/SplashWindow.InitializePredefinedLogTextFilters">正在加载文字筛选</sys:String>
+	<sys:String x:Key="String/SplashWindow.ShowMainWindow">打开主窗口</sys:String>
+	<sys:String x:Key="String/SplashWindow.UpdateStyles">正在加载样式</sys:String>
 
 	<!-- SQLiteLogDataSourceProvider -->
-	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite 资料库</sys:String>
+	<sys:String x:Key="String/SQLiteLogDataSourceProvider.DisplayName">SQLite 数据库</sys:String>
 
 	<!-- SqlServerDatabaseLogDataSource -->
 	<sys:String x:Key="String/SqlServerDatabaseLogDataSource.FailedToUpdateFirewallRules">无法更新 SQL Server 的防火墙规则。</sys:String>
 
 	<!-- SqlServerDatabaseLogDataSourceProvider -->
-	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 资料库</sys:String>
+	<sys:String x:Key="String/SqlServerDatabaseLogDataSourceProvider.DisplayName">SQL Server 数据库</sys:String>
 	
 	<!-- StandardOutputCommandDialog -->
 	<sys:String x:Key="String/StandardOutputCommandDialog.Title">标准输出 (stdout) 指令</sys:String>
@@ -1504,7 +1504,7 @@ return None</sys:String>
 	<!-- VisibleLogPropertyEditorDialog -->
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.CustomDisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.CustomDisplayName"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.DisplayName" ResourceKey="String/LogChartSeriesSourceEditorDialog.DisplayName"/>
-	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">文字色彩</sys:String>
+	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.ForegroundColor">文字颜色</sys:String>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Name" ResourceKey="String/LogChartSeriesSourceEditorDialog.Name"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier"/>
 	<StaticResourceExtension x:Key="String/VisibleLogPropertyEditorDialog.Quantifier.Description" ResourceKey="String/LogChartSeriesSourceEditorDialog.Quantifier.Description"/>

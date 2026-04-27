@@ -840,7 +840,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Type">類型</sys:String>
 	<sys:String x:Key="String/LogProperty.Unavailable">無法使用</sys:String>
 	<sys:String x:Key="String/LogProperty.Uri">網址</sys:String>
-	<sys:String x:Key="String/LogProperty.UserAgent">使用者媒介</sys:String>
+	<sys:String x:Key="String/LogProperty.UserAgent">使用者代理</sys:String>
 	<sys:String x:Key="String/LogProperty.UserName">使用者</sys:String>
 	<sys:String x:Key="String/LogProperty.Using">使用中</sys:String>
 	<sys:String x:Key="String/LogProperty.Valid">有效</sys:String>
