@@ -7,7 +7,6 @@ set FRAMEWORK=net10.0
 set SELF_CONTAINED=true
 set TRIM_ASSEMBLIES=true
 set TESTING_MODE_BUILD=false
-set PACKAGING_TOOL_PATH=PackagingTool\bin\Release\%FRAMEWORK%\CarinaStudio.ULogViewer.Packaging.dll
 set ERRORLEVEL=0
 
 echo ********** Start building %APP_NAME% **********
@@ -16,28 +15,26 @@ REM Create base directory
 IF not exist Packages (
     echo Create directory 'Packages'
 	mkdir Packages
-    if %ERRORLEVEL% neq 0 ( 
+    if %ERRORLEVEL% neq 0 (
         exit
     )
 )
 
-REM Build packaging tool
-dotnet build PackagingTool -c Release -f %FRAMEWORK%
-if %ERRORLEVEL% neq 0 ( 
-    exit
-)
-
 REM Get current version
-dotnet %PACKAGING_TOOL_PATH% get-current-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
-if %ERRORLEVEL% neq 0 ( 
+dotnet run PackagingTool.cs -- get-current-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
+if %ERRORLEVEL% neq 0 (
     del /Q Packages\Packaging.txt
     exit
 )
 set /p CURRENT_VERSION=<Packages\Packaging.txt
-echo Version: %CURRENT_VERSION%
+dotnet run PackagingTool.cs -- get-current-informational-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
+set /p CURRENT_INFORMATIONAL_VERSION=<Packages\Packaging.txt
+set PACKAGE_VERSION=%CURRENT_VERSION%
+if not [%CURRENT_INFORMATIONAL_VERSION%] == [] set PACKAGE_VERSION=%CURRENT_INFORMATIONAL_VERSION%
+echo Version: %CURRENT_VERSION% (%PACKAGE_VERSION%)
 
 REM Get previous version
-dotnet %PACKAGING_TOOL_PATH% get-previous-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
+dotnet run PackagingTool.cs -- get-previous-version %APP_NAME%\%APP_NAME%.csproj > Packages\Packaging.txt
 if %ERRORLEVEL% neq 0 ( 
     del /Q Packages\Packaging.txt
     exit
@@ -87,7 +84,7 @@ REM Build packages
     )
 
     REM Generate package
-    start /Wait PowerShell -NoLogo -Command Compress-Archive -Force -Path %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\* -DestinationPath Packages\%CURRENT_VERSION%\%APP_NAME%-%CURRENT_VERSION%-%%r.zip
+    start /Wait PowerShell -NoLogo -Command Compress-Archive -Force -Path %APP_NAME%\bin\%CONFIG%\%FRAMEWORK%\%%r\publish\* -DestinationPath Packages\%CURRENT_VERSION%\%APP_NAME%-%PACKAGE_VERSION%-%%r.zip
     if %ERRORLEVEL% neq 0 (
         echo Failed to generate package: %ERRORLEVEL%
         del /Q Packages\Packaging.txt
@@ -97,11 +94,11 @@ REM Build packages
 
 REM Generate diff packages
 if [%PREVIOUS_VERSION%] neq [] (
-    dotnet %PACKAGING_TOOL_PATH% create-diff-packages linux %PREVIOUS_VERSION% %CURRENT_VERSION%
+    dotnet run PackagingTool.cs -- create-diff-packages linux %PREVIOUS_VERSION% %CURRENT_VERSION%
 )
 
 REM Generate package manifest
-REM dotnet %PACKAGING_TOOL_PATH% create-package-manifest linux %APP_NAME% %CURRENT_VERSION%
+REM dotnet run PackagingTool.cs -- create-package-manifest linux %APP_NAME% %CURRENT_VERSION%
 
 REM Complete
 del /Q Packages\Packaging.txt

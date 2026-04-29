@@ -5,24 +5,22 @@ PUB_PLATFORM_LIST=("osx-arm64" "osx-x64")
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
-PACKAGING_TOOL_PATH="PackagingTool/bin/Release/$FRAMEWORK/CarinaStudio.ULogViewer.Packaging.dll"
 CERT_NAME="" # Name of certification to sign the application
 
 echo "********** Start building $APP_NAME **********"
 
-# Build packaging tool
-dotnet build PackagingTool -c Release -f $FRAMEWORK
-if [ "$?" != "0" ]; then
-    exit
-fi
-
 # Get application version
-VERSION=$(dotnet $PACKAGING_TOOL_PATH get-current-version $APP_NAME/$APP_NAME.csproj)
+VERSION=$(dotnet run PackagingTool.cs -- get-current-version $APP_NAME/$APP_NAME.csproj)
 if [ "$?" != "0" ]; then
     echo "Unable to get version of $APP_NAME"
     exit
 fi
-echo "Version: $VERSION"
+INFORMATIONAL_VERSION=$(dotnet run PackagingTool.cs -- get-current-informational-version $APP_NAME/$APP_NAME.csproj)
+PACKAGE_VERSION=$VERSION
+if [ ! -z "$INFORMATIONAL_VERSION" ]; then
+    PACKAGE_VERSION=$INFORMATIONAL_VERSION
+fi
+echo "Version: $VERSION ($PACKAGE_VERSION)"
 
 # Create output directory
 if [[ ! -d "./Packages" ]]; then
@@ -93,7 +91,7 @@ for i in "${!RID_LIST[@]}"; do
     codesign --deep --force --options=runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app"
 
     # zip .app directory
-    ditto -c -k --sequesterRsrc --keepParent "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app" "./Packages/$VERSION/$APP_NAME-$VERSION-$PUB_PLATFORM.zip"
+    ditto -c -k --sequesterRsrc --keepParent "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app" "./Packages/$VERSION/$APP_NAME-$PACKAGE_VERSION-$PUB_PLATFORM.zip"
     if [ "$?" != "0" ]; then
         exit
     fi
@@ -101,4 +99,4 @@ for i in "${!RID_LIST[@]}"; do
 done
 
 # Generate package manifest
-# dotnet $PACKAGING_TOOL_PATH create-package-manifest osx $APP_NAME $VERSION
+# dotnet run PackagingTool.cs -- create-package-manifest osx $APP_NAME $VERSION
