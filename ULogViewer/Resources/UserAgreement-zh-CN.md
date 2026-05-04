@@ -1,16 +1,18 @@
 # ULogViewer 用户协议
  ---
-+ 版本：2.5
-+ 更新时间：2026/4/12
++ 版本：2.6
++ 更新时间：2026/5/4
 
 这是 ULogViewer 的用户协议，您应该要在使用 ULogViewer 之前详细阅读本协议。 用户协议可能会在未来有所更新，您可以在 ULogViewer 网站中查看。 当您开始使用 ULogViewer 表示您同意本用户协议。
 
 
 ## 适用范围
-ULogViewer 为基于开放源代码项目之软件，以下所指 ULogViewer **仅包括** 与下列页面所提供之可执行文件或压缩包内容完全相同之版本：
+ULogViewer 为 Carina Studio 之开放源代码项目，以下所指 ULogViewer **仅包括** 与下列页面所提供之可执行文件或压缩包内容完全相同之版本：
 
 + [ULogViewer 网站](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [GitHub 上之 ULogViewer 项目页面及各版本发布页面](https://github.com/carina-studio/ULogViewer)
+
+若您通过源代码自行构建 ULogViewer，您使用该构建之版本仅受 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授权之约束，不受本用户协议之约束。
 
 本用户协议适用于您使用 ULogViewer 2026.0 及下一份用户协议所指定之版本之间 (但不包括) 的所有版本。
 
@@ -129,17 +131,8 @@ ULogViewer 会连接至下列服务器以确认设备的公开 [IP 地址](https
 + [https://ipv4.icanhazip.com](https://ipv4.icanhazip.com/)
 + [http://checkip.dyndns.org](http://checkip.dyndns.org/)
 
-### 启用 ULogViewer 专业版
-ULogViewer 会在下列情况与 [Carina Studio](https://carinastudio.azurewebsites.net/) 服务器连接：
-
-+ 启用 ULogViewer 专业版。
-+ 当您完成启用 ULogViewer 专业版且使用 ULogViewer 时。
-
 ### 检查应用程序更新
 ULogViewer 会定期从 [GitHub](https://github.com/carina-studio/ULogViewer) 下载清单以检查是否有新的应用程序更新。
-
-### 使用遥测
-ULogViewer 会发送使用数据至 [Azure](https://azure.microsoft.com/zh-cn/) 以协助改进应用程序。详细信息请参阅隐私政策。
 
 ### 自我更新
 以下 4 种数据需要在更新 ULogViewer 时下载：

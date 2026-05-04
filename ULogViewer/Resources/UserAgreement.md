@@ -1,16 +1,18 @@
 # ULogViewer User Agreement
  ---
-+ Version: 2.5
-+ Update: 2026/4/12
++ Version: 2.6
++ Update: 2026/5/4
 
 This is the ULogViewer User Agreement which you need to read before using ULogViewer. The User Agreement may be updated in the future and you can check it on the ULogViewer website. It means that you have agreed to this User Agreement once you start using ULogViewer.
 
 
 ## User Agreement Scope
-ULogViewer is a software based on an open-source project. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
+ULogViewer is an open-source project of Carina Studio. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
 
 + [ULogViewer Website](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [ULogViewer project and release pages on GitHub](https://github.com/carina-studio/ULogViewer)
+
+If you build ULogViewer from source code, your use of that build is governed solely by the [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license, not by this User Agreement.
 
 This User Agreement will apply to ULogViewer 2026.0 and any future versions until the version specified in the next User Agreement update.
 
@@ -129,17 +131,8 @@ ULogViewer contacts with the following servers to check public [IP address](http
 + [https://ipv4.icanhazip.com](https://ipv4.icanhazip.com/)
 + [http://checkip.dyndns.org](http://checkip.dyndns.org/)
 
-### ULogViewer Pro Activation
-ULogViewer contacts with Carina Studio server in the following cases:
-
-+ Activating ULogViewer Pro.
-+ Using ULogViewer if you have already activated ULogViewer Pro.
-
 ### Application Update Checking
 ULogViewer downloads manifest from [GitHub](https://github.com/carina-studio/ULogViewer) periodically to check whether an application update is available.
-
-### Usage Telemetry
-ULogViewer sends usage data to [Azure](https://azure.microsoft.com/en-us/) to help improve the application. Please refer to the Privacy Policy for more details.
 
 ### Self Updating
 There are 4 types of data will be downloaded when updating ULogViewer:
@@ -199,7 +192,7 @@ To the fullest extent permitted by applicable law, in no event shall Carina Stud
 
 
 ## License and Copyright
-ULogViewer is an Open Source Project of Carina Studio under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license. All icons except for application icon are distributed under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE), [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) or [Universal Multimedia License Agreement for Icons8](https://intercom.help/icons8-7fb7577e8170/en/articles/5534926-universal-multimedia-licensing-agreement-for-icons8) license. Please refer to [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks), [SVG Repo](https://www.svgrepo.com/), [Icons8](https://icons8.com/), [Google Fonts Icons](https://fonts.google.com/icons), [Phosphor Icons](https://phosphoricons.com/) and [Tabler Icons](https://tabler.io/icons) for more information of icons and their licenses.
+ULogViewer is an open-source project of Carina Studio under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license. All icons except for application icon are distributed under [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE), [CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) or [Universal Multimedia License Agreement for Icons8](https://intercom.help/icons8-7fb7577e8170/en/articles/5534926-universal-multimedia-licensing-agreement-for-icons8) license. Please refer to [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks), [SVG Repo](https://www.svgrepo.com/), [Icons8](https://icons8.com/), [Google Fonts Icons](https://fonts.google.com/icons), [Phosphor Icons](https://phosphoricons.com/) and [Tabler Icons](https://tabler.io/icons) for more information of icons and their licenses.
 
 Built-in fonts **'Roboto'** and **'Roboto Mono'** are distributed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), **'IBM Plex Mono'**, **'Noto Sans SC'**, **'Noto Sans TC'** and **'Source Code Pro'** are distributed under [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL).
 

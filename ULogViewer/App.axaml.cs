@@ -920,6 +920,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version UserAgreementVersion => new(2, 5);
+		public override Version UserAgreementVersion => new(2, 6);
     }
 }
