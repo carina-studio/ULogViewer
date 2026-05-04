@@ -811,7 +811,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version PrivacyPolicyVersion => new(1, 4);
+		public override Version PrivacyPolicyVersion => new(1, 5);
 
 
         // Releasing type.

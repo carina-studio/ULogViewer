@@ -1,14 +1,16 @@
 # ULogViewer Privacy Policy
  ---
-+ Version: 1.4
-+ Update: 2026/4/11
++ Version: 1.5
++ Update: 2026/5/4
 
 This is the ULogViewer Privacy Policy which you need to read before using ULogViewer. The Privacy Policy may be updated in the future and you can check it on the ULogViewer website. It means that you have agreed to this Privacy Policy once you start using ULogViewer.
 
 ## Privacy Policy Scope
-ULogViewer is a software based on an open-source project. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
+ULogViewer is an open-source project of Carina Studio. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
 + [ULogViewer Website](https://carinastudio.azurewebsites.net/ULogViewer/)
 + [ULogViewer project and release pages on GitHub](https://github.com/carina-studio/ULogViewer)
+
+If you build ULogViewer from source code, your use of that build is governed solely by the [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license, not by this Privacy Policy.
 
 This Privacy Policy will apply to ULogViewer 2026.0 and any future versions until the version specified in the next Privacy Policy update.
 
@@ -19,10 +21,6 @@ We **DON'T** collect the following personal data:
 + Geographical location.
 
 We **DO** collect the following data which may relate to your personal data:
-+ [**IP address**](https://en.wikipedia.org/wiki/IP_address) after activating ULogViewer Pro.
-+ **Device name** after activating ULogViewer Pro.
-+ [**MAC address**](https://en.wikipedia.org/wiki/MAC_address) after activating ULogViewer Pro.
-+ **Email address** after activating ULogViewer Pro.
 + **File Path/Name** you open in ULogViewer or save in ULogViewer.
 + Specific device **IP addresses** you set in ULogViewer for reading logs.
 + Specific resource **URIs** you set in ULogViewer for reading logs.
@@ -32,25 +30,16 @@ We **DO** collect the following data which may relate to your personal data:
 + Application crash details.
 + **Log text filter phrases** you entered in ULogViewer.
 + Your **IP address**, **OS platform**, and **CPU architecture** may be shared with [GitHub](https://github.com) when ULogViewer checks for updates. Please refer to [GitHub's Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) for how this data is handled by GitHub.
-+ **Usage data** including anonymous session identifiers, feature interaction events (e.g. reloading logs, applying log analysis, changing chart type, log profile operations), and configuration metrics (e.g. number of loaded log files, log patterns, analysis rule sets) when using ULogViewer.
 
 ## Storing Your Personal Data
-+ **IP address** will be stored as clear text in Carina Studio website log deployed on [Azure](https://azure.microsoft.com/en-us/).
-+ **Device name** and **MAC address** will be stored as encrypted text in the product database deployed on [Azure](https://azure.microsoft.com/en-us/).
-+ **Email address** will be stored as encrypted text inside the ULogViewer directory in your computer, will also be stored as clear text in Carina Studio website log and product database deployed on [Azure](https://azure.microsoft.com/en-us/).
 + **File Path/Name**, **IP addresses** and **URIs** may be written to the log file inside the ULogViewer directory in your computer.
 + **File Path/Name**, **IP addresses** and **URIs** you set in log profiles will be saved as clear text in \*.json files inside the ULogViewer directory in your computer.
 + **User name and password** you set in log profiles will be saved as encrypted text in \*.json files inside the ULogViewer directory in your computer.
 + Application crash information will be written to the log file inside the ULogViewer directory in your computer.
 + **Log text filter phrases** will be saved in a local database inside the ULogViewer directory in your computer.
-+ **Usage data** will be stored on [Azure](https://azure.microsoft.com/en-us/).
 
 ## Using Your Personal Data
-+ **IP address** for debugging purposes related to the Carina Studio website.
-+ Encoded **Device name** and **MAC address** are used to identify active ULogViewer Pro devices you purchased.
-+ **Email address** to track the purchasing/payment process and to identify the ULogViewer Pro license you have purchased.
 + **Log text filter phrases** for providing auto-completion suggestions when filtering logs.
-+ **Usage data** to understand how ULogViewer features are used and to improve the application.
 + Other information will be used for debugging purposes (e.g., application crashes). You can check these data before sending to us, or you can also reject to send these data.
 
 Except when required by a government authority, we **WON'T** provide your personal data to people, organizations, or companies outside of Carina Studio.
