@@ -426,8 +426,8 @@
 									<TextBlock Text="{asXaml:StringResource AppOptionsDialog.MemoryUsagePolicy}" asControls:DialogElement.TextRole="Label"/>
 									<asControls:EnumComboBox EnumType="{x:Type app:MemoryUsagePolicy}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding MemoryUsagePolicy, Mode=TwoWay}"/>
 								</asControls:DialogItem>
-								<Separator asControls:DialogElement.SeparatorType="Item"/>
-								
+								<Separator asControls:DialogElement.SeparatorType="Item" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}"/>
+
 								<!-- Physical memory usage percentage to stop reading logs -->
 								<asControls:DialogItem IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}">
 									<StackPanel>
@@ -436,21 +436,7 @@
 									</StackPanel>
 									<Slider asControls:DialogElement.IsDialogItemInput="True" IsSnapToTickEnabled="True" Maximum="{Binding MaxPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" Minimum="{Binding MinPhysicalMemoryUsagePercentageToStopReadingLogs, Mode=OneTime}" TickFrequency="5" Value="{Binding PhysicalMemoryUsagePercentageToStopReadingLogs, Mode=TwoWay}"/>
 								</asControls:DialogItem>
-								<Separator asControls:DialogElement.SeparatorType="Item" IsVisible="{Binding PrivateMemoryUsageToStopReadingLogs}"/>
 
-								<!-- Notify application update -->
-								<asControls:DialogItem ItemSize="Small">
-									<TextBlock Text="{asXaml:StringResource ApplicationOptions.NotifyApplicationUpdate}" asControls:DialogElement.TextRole="Label"/>
-									<ToggleSwitch IsChecked="{Binding NotifyApplicationUpdate, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
-								</asControls:DialogItem>
-								<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-								<!-- Accept non-stable update -->
-								<asControls:DialogItem ItemSize="Small">
-									<TextBlock Text="{asXaml:StringResource ApplicationOptions.AcceptNonStableApplicationUpdate}" asControls:DialogElement.TextRole="Label"/>
-									<ToggleSwitch IsChecked="{Binding AcceptNonStableApplicationUpdate, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
-								</asControls:DialogItem>
-								
 								<!-- Allow usage data collection -->
 								<StackPanel IsVisible="{Binding IsUsageDataCollectionAvailable}">
 									<Separator asControls:DialogElement.SeparatorType="Item"/>

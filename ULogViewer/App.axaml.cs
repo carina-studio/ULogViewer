@@ -202,10 +202,6 @@ namespace CarinaStudio.ULogViewer
 		public override int ExternalDependenciesVersion => 4;
 
 
-		// Accept update for testing purpose.
-        //protected override bool ForceAcceptingUpdateInfo => true;
-
-
         // Initialize.
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
@@ -455,9 +451,6 @@ namespace CarinaStudio.ULogViewer
 				case "AppOptions":
 					this.ShowApplicationOptionsDialog();
 					break;
-				case "CheckForUpdate":
-					this.CheckForApplicationUpdate();
-					break;
 				case "Feedback":
 					this.OpenFeedbackPage();
 					break;
@@ -596,9 +589,6 @@ namespace CarinaStudio.ULogViewer
 								break;
 							case "AppOptions":
 								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Settings.Outline")?.ToNativeMenuItemIcon();
-								break;
-							case "CheckForUpdate":
-								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Update.Outline")?.ToNativeMenuItemIcon();
 								break;
 							case "EditConfiguration":
 								if (!this.IsDebugMode)

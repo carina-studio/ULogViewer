@@ -482,16 +482,7 @@
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.Application.CheckForApplicationUpdate}" 
-			          Header="{asXaml:StringResource SessionView.CheckForAppUpdate}">
-				<MenuItem.Icon>
-					<Panel>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNull}}" Source="{StaticResource Image/Icon.Update.Outline}"/>
-						<Image Classes="MenuItem_Icon" IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}}" Source="{StaticResource Image/Icon.Update.Colored}"/>
-					</Panel>
-				</MenuItem.Icon>
-			</MenuItem>
-			<MenuItem Command="{Binding #root.RestartAsAdministratorCommand}" 
+			<MenuItem Command="{Binding #root.RestartAsAdministratorCommand}"
 			          Header="{asXaml:StringResource SessionView.RestartAsAdministrator}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Administrator.Outline}"/>
@@ -1162,10 +1153,6 @@
 							<Panel>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
 								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
-								<Border IsVisible="{Binding $parent[Window].Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}}"
-								        asControls:ToolbarElement.Role="Badge">
-									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.Update.Colored}"/>
-								</Border>
 							</Panel>
 						</ToggleButton>
 
