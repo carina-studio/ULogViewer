@@ -29,7 +29,6 @@ ULogViewer 為 Carina Studio 之開放原始碼專案，以下所指 ULogViewer 
 + 在啟動 **偵錯模式** 時，無法符合目前日誌類型所定義的任何格式之 **原始日誌行 (Raw Log Line)**。
 + 應用程式錯誤的詳細資訊。
 + 您在 ULogViewer 中所輸入的 **日誌文字篩選字詞**。
-+ ULogViewer 確認是否有應用程式更新時，您的 **IP 位址**、**作業系統**及 **CPU 資訊**可能會被分享至 [GitHub](https://github.com)。關於 GitHub 如何處理這些資料，請參閱 [GitHub 隱私聲明](https://docs.github.com/zh/site-policy/privacy-policies/github-general-privacy-statement)。
 
 ## 個人資訊之儲存
 + **檔案名稱**、**IP 位址**及**網址 (URI)** 可能會被儲存至位於您電腦中 ULogViewer 目錄內的日誌檔案。

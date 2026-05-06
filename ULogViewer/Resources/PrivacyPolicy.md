@@ -29,7 +29,6 @@ We **DO** collect the following data which may relate to your personal data:
 + The **Raw Log Line** which cannot be matched by any pattern defined in current log profile when Debug Mode is enabled.
 + Application crash details.
 + **Log text filter phrases** you entered in ULogViewer.
-+ Your **IP address**, **OS platform**, and **CPU architecture** may be shared with [GitHub](https://github.com) when ULogViewer checks for updates. Please refer to [GitHub's Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) for how this data is handled by GitHub.
 
 ## Storing Your Personal Data
 + **File Path/Name**, **IP addresses** and **URIs** may be written to the log file inside the ULogViewer directory in your computer.

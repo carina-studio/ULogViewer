@@ -95,9 +95,6 @@ Except for system files, all necessary files of ULogViewer are placed inside the
 ### Exporting Log Data Source Script
 + The \*.json file of exported log data source script will be opened in **Read/Write** mode.
 
-### Self Updating
-+ Downloaded packages and backed-up application files will be placed inside the system Temporary directory.
-
 ### Exporting Application Logs
 + The \*.zip file contains application logs will be opened in **Read/Write** mode.
 
@@ -130,17 +127,6 @@ ULogViewer contacts with the following servers to check public [IP address](http
 
 + [https://ipv4.icanhazip.com](https://ipv4.icanhazip.com/)
 + [http://checkip.dyndns.org](http://checkip.dyndns.org/)
-
-### Application Update Checking
-ULogViewer downloads manifest from [GitHub](https://github.com/carina-studio/ULogViewer) periodically to check whether an application update is available.
-
-### Self Updating
-There are 4 types of data will be downloaded when updating ULogViewer:
-
-+ Auto updater component manifest to check which auto updater is suitable for self updating.
-+ ULogViewer manifest to check which update package is suitable for self updating.
-+ Auto updater package.
-+ ULogViewer update package.
 
 ### Taking Memory Snapshot
 [dotMemory](https://www.jetbrains.com/dotmemory/) is the main tool for memory usage analysis by Carina Studio. When you start taking a memory snapshot for the first time in debug mode, all necessary files of [dotMemory](https://www.jetbrains.com/dotmemory/) will be downloaded into the ULogViewer directory.
