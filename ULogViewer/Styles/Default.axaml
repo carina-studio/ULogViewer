@@ -362,7 +362,6 @@
 
 			<!-- TextBox -->
 			<SolidColorBrush x:Key="Brush/TextBox.Foreground.Error">#ff0000</SolidColorBrush>
-			<StaticResourceExtension x:Key="Color/TextBox.BoxShadow.Focused" ResourceKey="Color/Accent"/>
 
 			<!-- TextShellCommandSyntaxHighlighting -->
 			<SolidColorBrush x:Key="Brush/TextShellCommandSyntaxHighlighting.FilePath">#d98d74</SolidColorBrush>
