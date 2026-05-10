@@ -5,7 +5,7 @@ A cross-platform log viewer that supports reading, parsing, and analyzing variou
 
 跨平台日誌檢視器，支援多種形式之日誌讀取、解析與分析。請參閱 [網站](https://carinastudio.azurewebsites.net/ULogViewer/) 以取得更多資訊。
 
-<img alt="ULogViewer" src="https://carinastudio.azurewebsites.net/ULogViewer/Banner.png"/>
+![](https://carinastudio.azurewebsites.net/ULogViewer/Banner.png?v=2)
 
 ## 📥 Download 2026.0 Preview
 
