@@ -1201,23 +1201,28 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 				{
 					lock (readLineSyncLock)
 					{
+						Exception? readException = null;
 						ThreadPool.QueueUserWorkItem(_ =>
 						{
 							try
 							{
 								logLine = reader.ReadLine();
 							}
-							// ReSharper disable EmptyGeneralCatchClause
-							catch
-							{ }
-							// ReSharper restore EmptyGeneralCatchClause
+							catch (Exception ex)
+							{
+								readException = ex;
+							}
 							lock (readLineSyncLock)
 							{
 								Monitor.PulseAll(readLineSyncLock);
 							}
 						});
 						if (Monitor.Wait(readLineSyncLock, 5000))
+						{
+							if (readException is not null)
+								throw new IOException("Failed to read next line.", readException);
 							++lineNumber;
+						}
 						else
 						{
 							this.Logger.LogTrace("No line read, skip pattern {index}/{t}: '{pattern}'", logPatternIndex, lastLogPatternIndex, logPatterns[logPatternIndex].Regex);
@@ -1259,6 +1264,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 							// wait for reading line
 							Monitor.Wait(readLineSyncLock);
+							if (readException is not null)
+								throw new IOException("Failed to read next line.", readException);
 							++lineNumber;
 						}
 					}
