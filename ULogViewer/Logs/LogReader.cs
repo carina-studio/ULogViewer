@@ -1,5 +1,4 @@
 ﻿using CarinaStudio.Collections;
-using CarinaStudio.Configuration;
 using CarinaStudio.Diagnostics;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
@@ -933,7 +932,15 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			if (Log.HasMultiLineStringProperty(name))
 			{
 				foreach (Capture capture in group.Captures)
-					logBuilder.AppendToNextLine(name, capture.Value);
+				{
+					var captureValue = logStringEncoding switch
+					{
+						LogStringEncoding.Json => JsonUtility.DecodeFromJsonString(capture.Value.TrimEnd()),
+						LogStringEncoding.Xml => WebUtility.HtmlDecode(capture.Value.TrimEnd()),
+						_ => capture.Value.TrimEnd(),
+					};
+					logBuilder.AppendToNextLine(name, captureValue);
+				}
 			}
 			else if (Log.HasStringProperty(name))
 				logBuilder.Set(name, value);
