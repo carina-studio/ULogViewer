@@ -3753,7 +3753,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					this.SynchronizationContext.Post(() => this.markedLogListBox.SelectedItems!.Clear());
 				
 				// stop auto scrolling
-				if (hasSelectedItems)
+				if (hasSelectedItems && !session.LogSelection.IsAllLogsSelectionRequested)
 					this.IsScrollingToLatestLogNeeded = false;
 				
 				// scroll to selected log
