@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<AssemblyVersion>5.0.3.511</AssemblyVersion>
+		<AssemblyVersion>5.0.3.516</AssemblyVersion>
 		<Version>2026.0.3</Version>
 		<OutputType>WinExe</OutputType>
 		<DebugType>embedded</DebugType>
