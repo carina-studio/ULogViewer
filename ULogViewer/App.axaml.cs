@@ -831,7 +831,11 @@ namespace CarinaStudio.ULogViewer
         public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.ReleaseCandidate;
 
 
-		// Version of settings.
+        /// <inheritdoc/>
+        protected override bool RestoreMainWindowsAfterSystemReboot => true;
+		
+        
+        // Version of settings.
 		protected override int SettingsVersion => 6;
 
 
