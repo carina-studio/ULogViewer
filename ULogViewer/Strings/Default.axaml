@@ -1303,6 +1303,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">High Memory Usage</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">Logs reading has been disabled temporarily because of high memory usage.</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No Log to Show</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">You need to run the application as administrator to use '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on the toolbar to select log profile to start.</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore Text Filter Cases</sys:String>
@@ -1377,7 +1378,6 @@ return None</sys:String>
 (Double-Click to View All Text)</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by the current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">'{0}' requires script execution. You need to enable script execution before using it.</sys:String>
-	<sys:String x:Key="String/SessionView.NeedToRestartAsAdministrator">'{0}' requires administrator role. Do you want to restart the application as administrator and use this profile?</sys:String>
 	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other Actions</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume Logs Reading (P)</sys:String>

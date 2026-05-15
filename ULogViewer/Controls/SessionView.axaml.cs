@@ -261,7 +261,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool hasPendingLogSelectionChange;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
-		bool isAttachedToLogicalTree;
 		bool isAutoSettingLogsReadingParameters;
 		bool isCommandNeededAfterLogProfileSet;
 		bool isIPEndPointNeededAfterLogProfileSet;
@@ -270,7 +269,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool isPointerPressedOnLogListBox;
 		bool isProcessIdNeededAfterLogProfileSet;
 		bool isProcessNameNeededAfterLogProfileSet;
-		bool isRestartingAsAdminConfirmed;
 		bool isSelectingFileToSaveLogs;
 		bool isSettingDisplayLogPropertyWidth;
 		bool isSmoothScrollingToLatestLog;
@@ -722,7 +720,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.SizeChanged += (_, _) => 
 				{
-					this.lastToolBarWidthWhenLayoutItems = default;
+					this.lastToolBarWidthWhenLayoutItems = 0;
 					this.UpdateToolBarItemsLayout();
 				};
 			});
@@ -731,7 +729,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.SizeChanged += (_, _) => 
 				{
-					this.lastToolBarWidthWhenLayoutItems = default;
+					this.lastToolBarWidthWhenLayoutItems = 0;
 					this.UpdateToolBarItemsLayout();
 				};
 			});
@@ -739,7 +737,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			{
 				it.SizeChanged += (_, _) => 
 				{
-					this.lastToolBarWidthWhenLayoutItems = default;
+					this.lastToolBarWidthWhenLayoutItems = 0;
 					this.UpdateToolBarItemsLayout();
 				};
 			});
@@ -1517,59 +1515,6 @@ namespace CarinaStudio.ULogViewer.Controls
 					}),
 			}.ShowDialog(this.attachedWindow);
 			return (result == MessageDialogResult.Yes);
-		}
-
-
-		// Show dialog and let user choose whether to restart as administrator for given log profile.
-		void ConfirmRestartingAsAdmin()
-		{
-			if (this.isRestartingAsAdminConfirmed || !this.isAttachedToLogicalTree)
-				return;
-			if (this.DataContext is not Session session)
-				return;
-			var profile = session.LogProfile;
-			if (profile != null && profile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
-			{
-				this.isRestartingAsAdminConfirmed = true;
-				// ReSharper disable once AsyncVoidLambda
-				this.SynchronizationContext.PostDelayed(async () =>
-				{
-					if (this.DataContext == session && ReferenceEquals(session.LogProfile, profile))
-					{
-						if (await this.ConfirmRestartingAsAdmin(profile))
-							this.RestartAsAdministrator();
-						else
-							this.Logger.LogWarning("Unable to use profile '{profileName}' because application is not running as administrator", profile.Name);
-					}
-				}, 1000); // Delay to make sure that owner window has been shown
-			}
-		}
-		async Task<bool> ConfirmRestartingAsAdmin(LogProfile profile)
-		{
-			// check state
-			if (!profile.IsAdministratorNeeded || this.Application.IsRunningAsAdministrator)
-				return false;
-			if (this.attachedWindow == null)
-				return false;
-
-			// show dialog
-			var result = await new MessageDialog
-			{
-				Buttons = MessageDialogButtons.YesNo,
-				Icon = MessageDialogIcon.Question,
-				Message = new FormattedString().Also(it =>
-				{
-					it.Bind(FormattedString.Arg1Property, new Binding { Path = nameof(LogProfile.Name), Source = profile });
-					it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.NeedToRestartAsAdministrator"));
-				}),
-			}.ShowDialog(this.attachedWindow);
-			if (result == MessageDialogResult.Yes)
-			{
-				this.Logger.LogWarning("User agreed to restart as administrator for '{profileName}'", profile.Name);
-				return true;
-			}
-			this.Logger.LogWarning("User denied to restart as administrator for '{profileName}'", profile.Name);
-			return false;
 		}
 
 
@@ -3023,9 +2968,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when attaching to view tree.
 		protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
-			// update state
-			this.isAttachedToLogicalTree = true;
-
 			// call base
 			base.OnAttachedToLogicalTree(e);
 
@@ -3119,9 +3061,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// select parameters for reading logs
 			this.AutoSelectAndSetLogsReadingParameters();
-
-			// check administrator role
-			this.ConfirmRestartingAsAdmin();
 			
 			// update resources for log chart
 			this.UpdateLogChartPaints();
@@ -3194,9 +3133,6 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Called when detach from view tree.
 		protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
 		{
-			// update state
-			this.isAttachedToLogicalTree = false;
-
 			// remove event handlers
 			this.Application.StringsUpdated -= this.OnApplicationStringsUpdated;
 			this.Application.Configuration.SettingChanged -= this.OnConfigurationChanged;
@@ -3578,13 +3514,10 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// reset auto scrolling
 			this.IsScrollingToLatestLogNeeded = profile.IsContinuousReading;
-
-			// check administrator role
-			this.ConfirmRestartingAsAdmin();
 		}
 
 
-		// Called when double click on log list box.
+		// Called when double-click on log list box.
 		// ReSharper disable UnusedParameter.Local
 		void OnLogListBoxDoubleClickOnItem(object? sender, ListBoxItemEventArgs e)
 		{
@@ -5512,19 +5445,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (ReferenceEquals(session.LogProfile, logProfile))
 				return true;
 
-			// check administrator role
-			var isRestartingAsAdminNeeded = false;
-			if (logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator)
-			{
-				if (await this.ConfirmRestartingAsAdmin(logProfile))
-					isRestartingAsAdminNeeded = true;
-				else
-				{
-					this.Logger.LogWarning("Unable to use profile '{logProfileName}' ({logProfileId}) because application is not running as administrator", logProfile.Name, logProfile.Id);
-					return false;
-				}
-			}
-
 			// enable running script
 			if (!await this.ConfirmEnablingRunningScript(logProfile))
 			{
@@ -5536,7 +5456,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.isCommandNeededAfterLogProfileSet = false;
 			this.isIPEndPointNeededAfterLogProfileSet = false;
 			this.isLogFileNeededAfterLogProfileSet = false;
-			this.isRestartingAsAdminConfirmed = false;
 			this.isProcessIdNeededAfterLogProfileSet = false;
 			this.isProcessNameNeededAfterLogProfileSet = false;
 			this.isUriNeededAfterLogProfileSet = false;
@@ -5557,10 +5476,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			}
 			this.OnLogProfileSet(logProfile);
-
-			// restart as administrator role
-			if (isRestartingAsAdminNeeded)
-				this.RestartAsAdministrator();
 
 			// complete
 			return true;

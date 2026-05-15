@@ -1302,7 +1302,11 @@
 				<Panel>
 
 					<!-- Hint: no log to show -->
-					<Border IsVisible="{Binding !HasLogs}">
+					<Border IsVisible="{asXaml:AndBindings 
+					                       {Binding !HasLogs},
+					                       {Binding !#selectLogProfileHint.IsVisible},
+					                       {Binding !#runAsAdminNeededHint.IsVisible}
+					                   }">
 						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.NoLogToShow.FontSize}"
 						           HorizontalAlignment="Center" IsVisible="{Binding #root.HasLogProfile}" 
 						           Text="{asXaml:StringResource SessionView.Hint.NoLogToShow}" 
@@ -1311,9 +1315,9 @@
 					</Border>
 
 					<!-- Hint: select log profile -->
-					<StackPanel HorizontalAlignment="Center" 
+					<StackPanel Name="selectLogProfileHint"
+					            HorizontalAlignment="Center" 
 					            IsVisible="{Binding !#root.HasLogProfile}" 
-					            Opacity="{StaticResource Double/SessionView.Hint.Opacity}" 
 					            Orientation="Horizontal">
 						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
 						           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.Section1}" 
@@ -1329,6 +1333,23 @@
 						           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.Section2}"
 						           TextWrapping="NoWrap" 
 						           VerticalAlignment="Center"/>
+					</StackPanel>
+					
+					<!-- Hint: run as admin needed -->
+					<StackPanel Name="runAsAdminNeededHint"
+					            HorizontalAlignment="Center"
+					            IsVisible="{Binding IsRestartAsAdministratorNeeded}"
+					            Orientation="Vertical">
+						<abControls:FormattedTextBlock Arg1="{Binding LogProfile.Name, FallbackValue={}}"
+						                               FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
+						                               Format="{asXaml:StringResource SessionView.Hint.RunningAsAdminNeeded}" 
+						                               HorizontalAlignment="Center"
+						                               TextWrapping="NoWrap" 
+						                               VerticalAlignment="Center"/>
+						<abControls:LinkTextBlock Command="{Binding #root.RestartAsAdministratorCommand}"
+						                          FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
+						                          HorizontalAlignment="Center"
+						                          Text="{asXaml:StringResource SessionView.RestartAsAdministrator}"/>
 					</StackPanel>
 
 				</Panel>

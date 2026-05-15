@@ -326,6 +326,10 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public static readonly ObservableProperty<bool> IsRemovingLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(IsRemovingLogFiles));
 	/// <summary>
+	/// Property of <see cref="IsRestartAsAdministratorNeeded"/>.
+	/// </summary>
+	public static readonly ObservableProperty<bool> IsRestartAsAdministratorNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsRestartAsAdministratorNeeded));
+	/// <summary>
 	/// Property of <see cref="IsSavingLogs"/>.
 	/// </summary>
 	public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
@@ -1460,12 +1464,13 @@ class Session : ViewModel<IULogViewerApplication>
 
 
 	// Check whether logs reading can be started in current state or not.
-	bool CanStartReadingLogs => !this.GetValue(IsCommandNeededProperty) 
+	bool CanStartReadingLogs => !this.GetValue(IsCommandNeededProperty)
 	                            && !this.GetValue(IsHibernatedProperty)
 	                            && !this.GetValue(IsIPEndPointNeededProperty)
 	                            && !this.GetValue(IsLogFileNeededProperty)
 	                            && !this.GetValue(IsProcessIdNeededProperty)
 	                            && !this.GetValue(IsProcessNameNeededProperty)
+	                            && !this.GetValue(IsRestartAsAdministratorNeededProperty)
 	                            && !this.GetValue(IsUriNeededProperty)
 	                            && !this.GetValue(IsWorkingDirectoryNeededProperty);
 	
@@ -2855,6 +2860,12 @@ class Session : ViewModel<IULogViewerApplication>
 
 
 	/// <summary>
+	/// Check whether restarting application as administrator is needed to use current log profile or not.
+	/// </summary>
+	public bool IsRestartAsAdministratorNeeded => this.GetValue(IsRestartAsAdministratorNeededProperty);
+
+
+	/// <summary>
 	/// Check whether logs saving is on-going or not.
 	/// </summary>
 	public bool IsSavingLogs => this.GetValue(IsSavingLogsProperty);
@@ -3535,6 +3546,9 @@ class Session : ViewModel<IULogViewerApplication>
 			case nameof(LogProfile.IconColor):
 				this.updateTitleAndIconAction.Schedule();
 				break;
+			case nameof(LogProfile.IsAdministratorNeeded):
+				this.SetValue(IsRestartAsAdministratorNeededProperty, logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator);
+				goto case nameof(LogProfile.DefaultLogLevel);
 			case nameof(LogProfile.IsContinuousReading):
 				this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
 				goto case nameof(LogProfile.DefaultLogLevel);
@@ -3853,6 +3867,7 @@ class Session : ViewModel<IULogViewerApplication>
 		{
 			this.SetValue(HasLogProfileProperty, newValue is not null);
 			this.SetValue(IsBuiltInLogProfileProperty, (newValue as LogProfile)?.IsBuiltIn == true);
+			this.SetValue(IsRestartAsAdministratorNeededProperty, (newValue as LogProfile)?.IsAdministratorNeeded == true && !this.Application.IsRunningAsAdministrator);
 			this.SetValue(LogProfileNameProperty, (newValue as LogProfile)?.Name);
 		}
 		else if (property == LogsProperty)
@@ -5797,6 +5812,8 @@ class Session : ViewModel<IULogViewerApplication>
 					}
 				}
 			}
+			else if (this.GetValue(IsRestartAsAdministratorNeededProperty))
+				this.Logger.LogWarning("Wait for running application as administrator");
 			else
 				this.Logger.LogWarning("Wait for all parameters ready to start reading logs");
 		}
