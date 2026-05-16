@@ -99,6 +99,10 @@
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
 	</ItemGroup>
 
+	<ItemGroup Condition="$(RuntimeIdentifier.Contains('linux'))">
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="$(SkiaSharpVersion)" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.3.0.6" />
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
