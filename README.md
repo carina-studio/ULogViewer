@@ -7,20 +7,20 @@ A cross-platform log viewer that supports reading, parsing, and analyzing variou
 
 ![](https://carinastudio.azurewebsites.net/ULogViewer/Banner.png?v=2)
 
-## 📥 Download 2026.0 Preview
+## 📥 Download 2026.0 RC
 
 ### Windows
-[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-win-x64.zip)
-[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-win-x86.zip)
-[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-win-arm64.zip)
+[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-win-x64.zip)
+[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-win-x86.zip)
+[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-win-arm64.zip)
 
 ### macOS
-[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-osx-arm64.zip)
-[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-osx-x64.zip)
+[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-osx-arm64.zip)
+[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-osx-x64.zip)
 
 ### Linux
-[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-linux-x64.zip)
-[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.2/ULogViewer-2026.0.2-linux-arm64.zip)
+[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-linux-x64.zip)
+[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.3/ULogViewer-2026.0.3-linux-arm64.zip)
 
 ## 📥 Download 4.1.7.411
 
@@ -37,7 +37,7 @@ A cross-platform log viewer that supports reading, parsing, and analyzing variou
 [![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.7.411/ULogViewer-4.1.7.411-linux-x64.zip)
 [![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/4.1.7.411/ULogViewer-4.1.7.411-linux-arm64.zip)
 
-## 📣 What's Change in 2026.0 Preview
+## 📣 What's Change in 2026.0 RC
 - Support filtering log profiles in the `Select log profile` dialog.
 - Support temporarily showing raw log lines even when [log patterns](https://carinastudio.azurewebsites.net//ULogViewer/HowToReadAndParseLogs#LogPatterns) are defined.
 - Support filtering logs by multiple log levels.
