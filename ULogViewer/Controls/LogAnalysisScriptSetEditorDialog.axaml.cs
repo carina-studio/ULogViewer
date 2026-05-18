@@ -265,14 +265,24 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 			}
 		}
 		
-		// enable running script
-		await this.RequestEnablingRunningScriptAsync();
-
-		// setup initial focus
-		this.SynchronizationContext.Post(() =>
+		// try enabling script running and setup initial focus
+		void SetupInitialFocus() => this.SynchronizationContext.Post(() =>
 		{
 			this.nameTextBox.Focus();
 		});
+		if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+			SetupInitialFocus();
+		else
+		{
+			this.SynchronizationContext.PostDelayed(async () => // [Workaround] need to wait for initial size ready
+			{
+				// enable running script
+				await this.RequestEnablingRunningScriptAsync();
+
+				// setup initial focus
+				SetupInitialFocus();
+			}, 300);
+		}
 	}
 
 

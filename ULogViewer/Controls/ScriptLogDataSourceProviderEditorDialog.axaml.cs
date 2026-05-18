@@ -285,25 +285,31 @@ class ScriptLogDataSourceProviderEditorDialog : AppSuite.Controls.Dialog<IULogVi
 	/// <inheritdoc/>
 	protected override void OnOpened(EventArgs e)
 	{
+		// call base
 		base.OnOpened(e);
-		_ = this.OnOpenedAsync();
-	}
-	
-	
-	// Handle dialog opened asynchronously.
-	async Task OnOpenedAsync()
-	{
-		// request running script
-		await this.RequestEnablingRunningScriptAsync();
-
-		// setup initial focus
-		this.SynchronizationContext.Post(() =>
+		
+		// try enabling script running and setup initial focus
+		void SetupInitialFocus() => this.SynchronizationContext.Post(() =>
 		{
+			//scrollViewer.ScrollToHome();
 			if (this.IsEmbeddedProvider)
 				this.supportedSourceOptionListBox.Focus();
 			else
 				this.displayNameTextBox.Focus();
 		});
+		if (this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+			SetupInitialFocus();
+		else
+		{
+			this.SynchronizationContext.PostDelayed(async () => // [Workaround] need to wait for initial size ready
+			{ 
+				// request running script
+				await this.RequestEnablingRunningScriptAsync();
+
+				// setup initial focus
+				SetupInitialFocus();
+			}, 300);
+		}
 	}
 
 
