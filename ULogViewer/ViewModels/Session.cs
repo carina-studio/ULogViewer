@@ -142,6 +142,10 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
 	/// <summary>
+	/// Property of <see cref="LogsVersion"/>.
+	/// </summary>
+	public static readonly ObservableProperty<int> LogsVersionProperty = ObservableProperty.Register<Session, int>(nameof(LogsVersion));
+	/// <summary>
 	/// Property of <see cref="HasAllDataSourceErrors"/>.
 	/// </summary>
 	public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
@@ -1364,6 +1368,11 @@ class Session : ViewModel<IULogViewerApplication>
 		component.DebugMessageGenerated += this.OnComponentDebugMessageGenerated;
 		component.ErrorMessageGenerated += this.OnComponentErrorMessageGenerated;
 	}
+
+
+	// Bump LogsVersion to signal that pinned log IDs may have been invalidated.
+	void BumpLogsVersion() =>
+		this.SetValue(LogsVersionProperty, this.GetValue(LogsVersionProperty) + 1);
 
 
 	/// <summary>
@@ -3140,6 +3149,12 @@ class Session : ViewModel<IULogViewerApplication>
 
 
 	/// <summary>
+	/// Get monotonic counter that increments whenever <see cref="AllLogs"/> or filtered logs change in a way that invalidates pinned log IDs.
+	/// </summary>
+	public int LogsVersion => this.GetValue(LogsVersionProperty);
+
+
+	/// <summary>
 	/// Raised when complete saving logs to file.
 	/// </summary>
 	public event Action<Session, string, bool>? LogsSavingCompleted;
@@ -3359,12 +3374,17 @@ class Session : ViewModel<IULogViewerApplication>
 		}
 		if (!this.IsDisposed)
 		{
+			// update log count properties
 			if ((!this.LogFiltering.IsFilteringNeeded && !this.IsShowingMarkedLogsTemporarily) || this.IsShowingAllLogsTemporarily)
 			{
 				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
 				this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 			}
 			this.SetValue(AllLogCountProperty, this.allLogs.Count);
+
+			// bump LogsVersion if pinned log IDs were invalidated
+			if (ShouldUpdateLogsVersion(e.Action))
+				this.BumpLogsVersion();
 		}
 	}
 
@@ -3392,12 +3412,17 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		if (!this.IsDisposed)
 		{
+			// update log count properties
 			if (this.LogFiltering.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily && !this.IsShowingMarkedLogsTemporarily)
 			{
 				this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
 				this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 			}
 			this.SetValue(FilteredLogCountProperty, this.LogFiltering.FilteredLogs.Count);
+
+			// bump LogsVersion if pinned log IDs were invalidated
+			if (ShouldUpdateLogsVersion(e.Action))
+				this.BumpLogsVersion();
 		}
 	}
 
@@ -5459,8 +5484,19 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	/// <remarks>Type of command parameter is <see cref="string"/>.</remarks>
 	public ICommand SetWorkingDirectoryCommand { get; }
-	
-	
+
+
+	// Returns whether LogsVersion should be bumped for the given collection change.
+	static bool ShouldUpdateLogsVersion(NotifyCollectionChangedAction action) => action switch
+	{
+		NotifyCollectionChangedAction.Add => true,
+		NotifyCollectionChangedAction.Remove => true,
+		NotifyCollectionChangedAction.Replace => true,
+		NotifyCollectionChangedAction.Reset => true,
+		_ => false,
+	};
+
+
 	// Enable showing all logs temporarily.
 	void ShowAllLogsTemporarily()
 	{
