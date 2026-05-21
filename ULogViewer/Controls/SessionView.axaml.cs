@@ -4943,15 +4943,21 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
-		// Scroll to specific log.
-		void ScrollToLog(DisplayableLog log, bool moveToCenter = false)
+		/// <summary>
+		/// Scroll the log list to a specific log.
+		/// </summary>
+		/// <param name="log">Log to scroll to.</param>
+		/// <param name="moveToCenter">True to center the log in the viewport even if it is already visible.</param>
+		/// <returns>True if the log was located in <see cref="Session.Logs"/> and the scroll was issued; false if no session is attached or the log is not in the current view.</returns>
+		public bool ScrollToLog(DisplayableLog log, bool moveToCenter = false)
 		{
 			if (this.DataContext is not Session session)
-				return;
+				return false;
 			var index = session.Logs.IndexOf(log);
 			if (index < 0)
-				return;
+				return false;
 			this.ScrollToLog(index, log, moveToCenter);
+			return true;
 		}
 		void ScrollToLog(int index, DisplayableLog log, bool moveToCenter)
 		{

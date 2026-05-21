@@ -4022,19 +4022,19 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		
 		// do nothing if all parameters are same
-			if (logReader.Precondition == param.Precondition)
-				return;
+		if (logReader.Precondition == param.Precondition)
+			return;
 
 		this.Logger.LogDebug("Request refreshing log file '{fileName}'", fileName);
 
 		// save marked logs to file immediately
 		this.saveMarkedLogsAction.ExecuteIfScheduled();
 
-			// reload logs
-			logFileInfo.UpdateLogReadingPrecondition(param.Precondition);
-			logReader.Precondition = param.Precondition;
-			logReader.Restart();
-		}
+		// reload logs
+		logFileInfo.UpdateLogReadingPrecondition(param.Precondition);
+		logReader.Precondition = param.Precondition;
+		logReader.Restart();
+	}
 
 
 	/// <summary>
@@ -5504,11 +5504,12 @@ class Session : ViewModel<IULogViewerApplication>
 		this.VerifyAccess();
 		this.VerifyDisposed();
 
-		// enable
+		// enable, and synchronously flush the Logs swap so the change is visible to immediate callers
 		if (!this.GetValue(IsShowingAllLogsTemporarilyProperty))
 		{
 			this.SetValue(IsShowingAllLogsTemporarilyProperty, true);
 			this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+			this.selectLogsToReportActions.ExecuteIfScheduled();
 		}
 	}
 
