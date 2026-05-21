@@ -83,8 +83,9 @@ for i in "${!RID_LIST[@]}"; do
     if [ "$?" != "0" ]; then
         exit
     fi
-    rm ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.png
-    rm ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.pdb
+    rm -rf ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.png
+    rm -rf ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.pdb
+    rm -rf ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.dSYM
 
     # sign application
     echo "Sign package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
