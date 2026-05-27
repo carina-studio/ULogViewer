@@ -46,6 +46,7 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 
 
 	// Static fields.
+	static readonly StyledProperty<IList<RegexGroup>?> CustomGroupsProperty = AvaloniaProperty.Register<RegexEditorDialog, IList<RegexGroup>?>(nameof(CustomGroups));
 	static readonly Regex DefaultRegexGroupNameRegex = new("^[\\d]+$");
 	static readonly StyledProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("HasTestResult");
 	static readonly StyledProperty<bool> IsCapturingGroupsEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupsEnabled));
@@ -134,6 +135,14 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	/// List of captured groups.
 	/// </summary>
 	public IList<Tuple<string, string>> CapturedGroups { get; }
+
+
+	// Custom named groups to suggest in addition to default ones.
+	public IList<RegexGroup>? CustomGroups
+	{
+		get => this.GetValue(CustomGroupsProperty);
+		set => this.SetValue(CustomGroupsProperty, value);
+	}
 
 
 	// Generate result.
@@ -246,7 +255,12 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 				testLogLineDescriptionTextBlock.Bind(TextBlock.TextProperty, this.Application.GetObservableString("RegexEditorDialog.TestLogLine.Description.CapturingLogProperties"));
 			}
 			else
+			{
+				var customGroups = this.GetValue(CustomGroupsProperty);
+				if (!customGroups.IsNullOrEmpty())
+					this.regexTextBox.PredefinedGroups.AddAll(customGroups);
 				testLogLineDescriptionTextBlock.Bind(TextBlock.TextProperty, this.Application.GetObservableString("RegexEditorDialog.TestLogLine.Description.CapturingGroups"));
+			}
 		}
 		else
 			testLogLineDescriptionTextBlock.Bind(TextBlock.TextProperty, this.Application.GetObservableString("RegexEditorDialog.TestLogLine.Description"));

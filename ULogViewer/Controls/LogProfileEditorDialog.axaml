@@ -390,7 +390,7 @@
 								                            <GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Skippable}"/>
 							                            </DrawingImage>
 						                            </Image>
-			                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="2" Text="{Binding Regex}" TextTrimming="None" VerticalAlignment="Center"/>
+			                                        <asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="2" Text="{Binding Regex}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 			                                        <abControls:TextBlock FontSize="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Margin="{StaticResource Thickness/LogProfileEditorDialog.LogPattern.Description.Margin}" Opacity="{StaticResource Double/LogProfileEditorDialog.LogPattern.Description.Opacity}" Text="{Binding Description}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                             						<Border Classes="InPlaceAction_Reserved"/>
 		                                            <StackPanel Grid.Column="3" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
@@ -477,7 +477,7 @@
 										<asControls:ListBox.ItemTemplate>
 											<DataTemplate>
 												<Grid ColumnDefinitions="*,Auto">
-													<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None"/>
+													<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.DateTimeFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="CharacterEllipsis"/>
 													<Border Classes="InPlaceAction_Reserved"/>
 													<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 														<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveTimestampFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
@@ -540,7 +540,7 @@
 										<asControls:ListBox.ItemTemplate>
 											<DataTemplate>
 												<Grid ColumnDefinitions="*,Auto">
-													<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None"/>
+													<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.TimeSpanFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="CharacterEllipsis"/>
 													<Border Classes="InPlaceAction_Reserved"/>
 													<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 														<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveTimeSpanFormatForReadingCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
@@ -709,7 +709,7 @@
 									<asControls:ListBox.ItemTemplate>
 										<DataTemplate>
 											<Grid ColumnDefinitions="*,Auto">
-												<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.LogWritingFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextWrapping="NoWrap" TextTrimming="None"/>
+												<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.LogWritingFormatSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 												<Border Classes="InPlaceAction_Reserved"/>
 												<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 													<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveLogWritingFormatCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">

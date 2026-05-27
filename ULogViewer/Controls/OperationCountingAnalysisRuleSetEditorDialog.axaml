@@ -93,7 +93,7 @@
 											Margin="{StaticResource Thickness/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Margin}"
 											Opacity="{StaticResource Double/OperationCountingAnalysisRuleSetEditorDialog.RuleListBox.Item.Pattern.Opacity}"
 											Text="{Binding Pattern}"
-											TextTrimming="None"/>
+											TextTrimming="CharacterEllipsis"/>
 										<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>
 										<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">

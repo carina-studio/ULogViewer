@@ -25,7 +25,7 @@
 				<Setter.Value>
 					<DataTemplate>
 						<Grid ColumnDefinitions="*,Auto">
-							<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="None" TextWrapping="NoWrap" VerticalAlignment="Center"/>
+							<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #window.CommandSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center"/>
 							<Border Classes="InPlaceAction_Reserved"/>
 							<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
 								<Button Classes="InPlaceAction_Button" Command="{Binding #window.RemoveSetupTeardownCommandCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">

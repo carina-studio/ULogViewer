@@ -6,6 +6,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.Input;
+using CarinaStudio.Collections;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using System;
@@ -21,6 +22,10 @@ namespace CarinaStudio.ULogViewer.Controls;
 /// </summary>
 class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 {
+	/// <summary>
+	/// Property of <see cref="CustomGroups"/>.
+	/// </summary>
+	public static readonly StyledProperty<IList<RegexGroup>?> CustomGroupsProperty = AvaloniaProperty.Register<PatternEditor, IList<RegexGroup>?>(nameof(CustomGroups));
 	/// <summary>
 	/// Property of <see cref="IsCapturingGroupsEnabled"/>.
 	/// </summary>
@@ -113,13 +118,16 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 		});
 		this.updatePredefinedCapturingGroupsAction = new(() =>
 		{
-			if (this.IsCapturingGroupsEnabled && this.IsCapturingLogPropertiesEnabled)
+			this.patternTextBox.PredefinedGroups.Clear();
+			if (!this.IsCapturingGroupsEnabled)
+				return;
+			if (this.IsCapturingLogPropertiesEnabled)
 			{
 				foreach (var propertyName in RegexEditorDialog.LogPropertyNames)
 				{
 					var group = new RegexGroup().Also(group =>
 					{
-						group.Bind(RegexGroup.DisplayNameProperty, new Binding()
+						group.Bind(RegexGroup.DisplayNameProperty, new Binding
 						{
 							Converter = Converters.LogPropertyNameConverter.Default,
 							Path = nameof(RegexGroup.Name),
@@ -131,12 +139,13 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 				}
 			}
 			else
-				this.patternTextBox.PredefinedGroups.Clear();
+			{
+				var customGroups = this.GetValue(CustomGroupsProperty);
+				if (customGroups.IsNullOrEmpty())
+					return;
+				this.patternTextBox.PredefinedGroups.AddAll(customGroups);
+			}
 		});
-		this.GetObservable(IsCapturingGroupsEnabledProperty).Subscribe(_ =>
-			this.updatePredefinedCapturingGroupsAction.Schedule());
-		this.GetObservable(IsCapturingLogPropertiesEnabledProperty).Subscribe(_ =>
-			this.updatePredefinedCapturingGroupsAction.Schedule());
 	}
 
 
@@ -172,6 +181,16 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 
 
 	/// <summary>
+	/// Get or set custom named groups.
+	/// </summary>
+	public IList<RegexGroup>? CustomGroups
+	{
+		get => this.GetValue(CustomGroupsProperty);
+		set => this.SetValue(CustomGroupsProperty, value);
+	}
+
+
+	/// <summary>
 	/// Start editing pattern.
 	/// </summary>
 	public async Task EditPatternAsync()
@@ -188,6 +207,7 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 		this.hasDialog = true;
 		var regex = await new RegexEditorDialog
 		{
+			CustomGroups = this.GetValue(CustomGroupsProperty),
 			IgnoreCase = this.patternTextBox.IgnoreCase,
 			InitialRegexText = this.patternTextBox.Text,
 			IsCapturingGroupsEnabled = this.GetValue(IsCapturingGroupsEnabledProperty),
@@ -286,6 +306,23 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 		base.OnGotFocus(e);
 		if (e.Source is not Button)
 			this.patternTextBox.Focus();
+	}
+
+
+	/// <inheritdoc/>
+	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+	{
+		base.OnPropertyChanged(change);
+		var property = change.Property;
+		if (property == CustomGroupsProperty)
+		{
+			if (this.GetValue(IsCapturingGroupsEnabledProperty) && !this.GetValue(IsCapturingLogPropertiesEnabledProperty))
+				this.updatePredefinedCapturingGroupsAction.Schedule();
+		}
+		else if (property == IsCapturingGroupsEnabledProperty)
+			this.updatePredefinedCapturingGroupsAction.Schedule();
+		else if (property == IsCapturingLogPropertiesEnabledProperty)
+			this.updatePredefinedCapturingGroupsAction.Schedule();
 	}
 
 
