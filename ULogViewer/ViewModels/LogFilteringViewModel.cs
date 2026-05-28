@@ -402,9 +402,17 @@ class LogFilteringViewModel : SessionComponent
     public ICommand ClearPredefinedTextFiltersCommand { get; }
 
 
-    // Commit filters to log filter.
-    void CommitFilters()
+    /// <summary>
+    /// Commits any pending filter changes immediately, bypassing the debounce.
+    /// </summary>
+    public void CommitFilters()
     {
+        // check thread
+        this.VerifyAccess();
+
+        // cancel any scheduled commit so it doesn't double-fire
+        this.commitFiltersAction.Cancel();
+
         // check state
         if (this.IsDisposed || this.Session.LogProfile is null)
             return;
