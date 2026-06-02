@@ -367,16 +367,9 @@
 				<TextBlock HorizontalAlignment="Center" Text="{asXaml:StringResource LogProfileSelectionDialog.NoLogProfiles}" TextWrapping="Wrap" VerticalAlignment="Center"/>
 			</Border>
 			
-			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Margin="0,-100,-100,0">
-				<i:Interaction.Behaviors>
-					<iCore:DataTriggerBehavior Binding="{Binding #navigationBar.IsVisible}" Value="True">
-						<iCore:ChangePropertyAction PropertyName="Margin" Value="0,-100,-100,0"/>
-					</iCore:DataTriggerBehavior>
-					<iCore:DataTriggerBehavior Binding="{Binding #navigationBar.IsVisible}" Value="False">
-						<iCore:ChangePropertyAction PropertyName="Margin" Value="-100,-100,-100,0"/>
-					</iCore:DataTriggerBehavior>
-				</i:Interaction.Behaviors>
-			</Border>
+			<!-- Shadows -->
+			<Border HorizontalAlignment="Left" IsVisible="{Binding #navigationBar.IsVisible}" asControls:ControlShadow.Position="Right" asControls:ControlShadow.Source="Toolbar" VerticalAlignment="Stretch"/>
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
 			
 		</Panel>
 		

@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -123,7 +124,14 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		this.CommandSyntaxHighlightingDefinitionSet = Highlighting.TextShellCommandSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		this.SqlSyntaxHighlightingDefinitionSet = Highlighting.SqlSyntaxHighlighting.CreateDefinitionSet(this.Application);
 		AvaloniaXamlLoader.Load(this);
-		this.baseScrollViewer = this.Get<ScrollViewer>(nameof(baseScrollViewer));
+		this.baseScrollViewer = this.Get<ScrollViewer>(nameof(baseScrollViewer)).Also(it =>
+		{
+			var bottomShadow = this.Get<Border>("bottomShadow");
+			it.SizeChanged += (_, e) =>
+			{
+				bottomShadow.IsVisible = e.NewSize.Height < it.Extent.Height;
+			};
+		});
 		this.categoryTextBox = this.Get<TextBox>(nameof(categoryTextBox));
 		this.commandTextBox = this.Get<TextBox>(nameof(commandTextBox)).Also(it =>
 		{

@@ -40,149 +40,152 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="baseScrollViewer">
-			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
+		<Panel>
+			<ScrollViewer Name="baseScrollViewer">
+				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
-				<!-- Common -->
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+					<!-- Common -->
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
 
-						<!-- Pattern -->
-						<asControls:DialogItem Name="patternItem">
-							<StackPanel>
-								<WrapPanel>
-									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern}" asControls:DialogElement.TextRole="Label"/>
-									<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{asXaml:StringResource Common.RegularExpression.Reference}">
+							<!-- Pattern -->
+							<asControls:DialogItem Name="patternItem">
+								<StackPanel>
+									<WrapPanel>
+										<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern}" asControls:DialogElement.TextRole="Label"/>
+										<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.RegexReference}" ToolTip.Tip="{asXaml:StringResource Common.RegularExpression.Reference}">
+											<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
+										</Button>
+									</WrapPanel>
+									<TextBlock IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+									<TextBlock IsVisible="{Binding !#patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource Common.InvalidFormat}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel"/>
+								</StackPanel>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+							<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
+							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+							<SelectableTextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
+
+							<!-- Level -->
+							<asControls:DialogItem>
+								<StackPanel>
+									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Level}" asControls:DialogElement.TextRole="Label"/>
+									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Level.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+								</StackPanel>
+								<ComboBox Name="levelComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appLogs:LogLevel}, Converter={x:Static abConverters:EnumConverters.Values}}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="Auto,*">
+												<Border Classes="ComboBoxItem_Icon" 
+												        BorderBrush="{DynamicResource ComboBoxItemForeground}" 
+												        BorderThickness="1"
+												        CornerRadius="1"
+												        Padding="1">
+													<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" />
+												</Border>
+												<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
+											</Grid>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
+
+							<!-- Conditions -->
+							<asControls:DialogItem>
+								<StackPanel>
+									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Conditions}" asControls:DialogElement.TextRole="Label"/>
+									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Conditions.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+								</StackPanel>
+								<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !#dialog.Conditions.Count}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+							<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding #dialog.Conditions}" VerticalScrollBarVisibility="Disabled"/>
+
+						</StackPanel>
+					</Border>
+					<Separator asControls:DialogElement.SeparatorType="Default"/>
+
+					<!-- Result -->
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
+
+							<!-- Result type -->
+							<asControls:DialogItem>
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ResultType}" asControls:DialogElement.TextRole="Label"/>
+								<ComboBox Name="resultTypeComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
+									<ComboBox.ItemTemplate>
+										<DataTemplate>
+											<Grid ColumnDefinitions="Auto,*">
+												<Panel Classes="ComboBoxItem_Icon">
+													<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+													<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+												</Panel>
+												<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
+											</Grid>
+										</DataTemplate>
+									</ComboBox.ItemTemplate>
+								</ComboBox>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
+
+							<!-- Message -->
+							<asControls:DialogItem Name="messageItem" ItemSize="Small">
+								<WrapPanel VerticalAlignment="Center">
+									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Message}" asControls:DialogElement.TextRole="Label"/>
+									<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.StringInterpolationReference}" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.FormatDescription}">
 										<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 									</Button>
 								</WrapPanel>
-								<TextBlock IsVisible="{Binding #patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-								<TextBlock IsVisible="{Binding !#patternEditor.IsPatternTextValid}" Text="{asXaml:StringResource Common.InvalidFormat}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel"/>
-							</StackPanel>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
-						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<SelectableTextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+							<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{asXaml:StringResource Common.Required}"/>
+							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Message.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-						<!-- Level -->
-						<asControls:DialogItem>
-							<StackPanel>
-								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Level}" asControls:DialogElement.TextRole="Label"/>
-								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Level.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-							</StackPanel>
-							<ComboBox Name="levelComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appLogs:LogLevel}, Converter={x:Static abConverters:EnumConverters.Values}}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="Auto,*">
-											<Border Classes="ComboBoxItem_Icon" 
-											        BorderBrush="{DynamicResource ComboBoxItemForeground}" 
-											        BorderThickness="1"
-											        CornerRadius="1"
-											        Padding="1">
-												<Border Background="{Binding Converter={x:Static appConverters:LogLevelBrushConverter.Background}}" />
-											</Border>
-											<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appControls:SessionView.LogLevelNameConverter}}"/>
-										</Grid>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
+							<!-- Byte size variable -->
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName}" asControls:DialogElement.TextRole="Label"/>
+								<TextBox Name="byteSizeVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-						<!-- Conditions -->
-						<asControls:DialogItem>
-							<StackPanel>
-								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Conditions}" asControls:DialogElement.TextRole="Label"/>
-								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Conditions.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-							</StackPanel>
-							<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !#dialog.Conditions.Count}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<appControls:DisplayableLogAnalysisConditionsEditor Conditions="{Binding #dialog.Conditions}" VerticalScrollBarVisibility="Disabled"/>
+							<!-- Byte size unit -->
+							<asControls:DialogItem>
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit}" asControls:DialogElement.TextRole="Label"/>
+								<asControls:EnumComboBox Name="byteSizeUnitComboBox" EnumType="{x:Type appIO:FileSizeUnit}" asControls:DialogElement.IsDialogItemInput="True"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-					</StackPanel>
-				</Border>
-				<Separator asControls:DialogElement.SeparatorType="Default"/>
+							<!-- Duration variable -->
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.DurationVariableName}" asControls:DialogElement.TextRole="Label"/>
+								<TextBox Name="durationVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-				<!-- Result -->
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+							<!-- Duration unit -->
+							<asControls:DialogItem>
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.DurationUnit}" asControls:DialogElement.TextRole="Label"/>
+								<asControls:EnumComboBox Name="durationUnitComboBox" EnumType="{x:Type app:TimeSpanUnit}" asControls:DialogElement.IsDialogItemInput="True"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-						<!-- Result type -->
-						<asControls:DialogItem>
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ResultType}" asControls:DialogElement.TextRole="Label"/>
-							<ComboBox Name="resultTypeComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
-								<ComboBox.ItemTemplate>
-									<DataTemplate>
-										<Grid ColumnDefinitions="Auto,*">
-											<Panel Classes="ComboBoxItem_Icon">
-												<Image Classes="Icon" IsVisible="{Binding $parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
-												<Image Classes="Icon" IsVisible="{Binding !$parent[ComboBoxItem].IsSelected}" Source="{Binding Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
-											</Panel>
-											<TextBlock Classes="ComboBoxItem_TextBlock" Grid.Column="1" Text="{Binding Converter={x:Static appConverters:EnumConverters.DisplayableLogAnalysisResultType}}"/>
-										</Grid>
-									</DataTemplate>
-								</ComboBox.ItemTemplate>
-							</ComboBox>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
+							<!-- Quantity variable -->
+							<asControls:DialogItem ItemSize="Small">
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName}" asControls:DialogElement.TextRole="Label"/>
+								<TextBox Name="quantityVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+							</asControls:DialogItem>
 
-						<!-- Message -->
-						<asControls:DialogItem Name="messageItem" ItemSize="Small">
-							<WrapPanel VerticalAlignment="Center">
-								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Message}" asControls:DialogElement.TextRole="Label"/>
-								<Button asControls:DialogElement.ButtonRole="ShowInformation" Command="{x:Static app:Utility.OpenLinkCommand}" CommandParameter="{x:Static app:Uris.StringInterpolationReference}" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.FormatDescription}">
-									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
-								</Button>
-							</WrapPanel>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<asControls:StringInterpolationFormatTextBox Name="messageTextBox" Height="{StaticResource Double/KeyLogAnalysisRuleEditorDialog.MessageInput.Height}" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{asXaml:StringResource Common.Required}"/>
-						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Message.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-						<!-- Byte size variable -->
-						<asControls:DialogItem ItemSize="Small">
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="byteSizeVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-						<!-- Byte size unit -->
-						<asControls:DialogItem>
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ByteSizeUnit}" asControls:DialogElement.TextRole="Label"/>
-							<asControls:EnumComboBox Name="byteSizeUnitComboBox" EnumType="{x:Type appIO:FileSizeUnit}" asControls:DialogElement.IsDialogItemInput="True"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-						<!-- Duration variable -->
-						<asControls:DialogItem ItemSize="Small">
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.DurationVariableName}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="durationVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-						<!-- Duration unit -->
-						<asControls:DialogItem>
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.DurationUnit}" asControls:DialogElement.TextRole="Label"/>
-							<asControls:EnumComboBox Name="durationUnitComboBox" EnumType="{x:Type app:TimeSpanUnit}" asControls:DialogElement.IsDialogItemInput="True"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-						<!-- Quantity variable -->
-						<asControls:DialogItem ItemSize="Small">
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="quantityVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
-						</asControls:DialogItem>
-
-					</StackPanel>
-				</Border>
-				
-			</StackPanel>
-		</ScrollViewer>
+						</StackPanel>
+					</Border>
+					
+				</StackPanel>
+			</ScrollViewer>
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
+		</Panel>
 		
 	</DockPanel>
 	

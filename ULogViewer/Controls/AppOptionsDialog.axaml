@@ -455,6 +455,8 @@
 					
 				</StackPanel>
 			</ScrollViewer>
+			<Border HorizontalAlignment="Left" asControls:ControlShadow.Position="Right" asControls:ControlShadow.Source="Toolbar" VerticalAlignment="Stretch"/>
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
 		</Panel>
 
 	</DockPanel>

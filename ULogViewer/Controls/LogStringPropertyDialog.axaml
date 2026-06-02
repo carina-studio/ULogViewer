@@ -30,7 +30,7 @@
 		<Grid RowDefinitions="Auto,*">
 
 			<!-- Toolbar -->
-			<Border Classes="Toolbar">
+			<Border Classes="Toolbar" BorderBrush="{DynamicResource Brush/Toolbar.Border}" BorderThickness="0,0,0,1">
 				<Grid ColumnDefinitions="*,Auto,Auto">
 
 					<!-- Find text -->
@@ -72,6 +72,10 @@
 					</ContextMenu>
 				</asControls:SyntaxHighlightingTextBox.ContextMenu>
 			</asControls:SyntaxHighlightingTextBox>
+			
+			<!-- Shadows -->
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Bottom" Grid.Row="1" asControls:ControlShadow.Source="Toolbar" VerticalAlignment="Top"/>
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" Grid.Row="1" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
 			
 		</Grid>
 		

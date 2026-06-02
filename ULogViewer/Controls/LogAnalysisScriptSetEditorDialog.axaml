@@ -39,7 +39,8 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
+		<Panel>
+			<ScrollViewer Name="contentScrollViewer" HorizontalScrollBarVisibility="Disabled">
 			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups">
 
 				<!-- Common -->
@@ -120,6 +121,8 @@
 				</Border>
 			</StackPanel>
 		</ScrollViewer>
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
+		</Panel>
 		
 	</DockPanel>
 	

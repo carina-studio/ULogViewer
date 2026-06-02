@@ -67,7 +67,8 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="baseScrollViewer" HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double/LogDataSourceOptionsDialog.Content.MaxHeight}">
+		<Panel>
+			<ScrollViewer Name="baseScrollViewer" HorizontalScrollBarVisibility="Disabled" MaxHeight="{StaticResource Double/LogDataSourceOptionsDialog.Content.MaxHeight}">
 			<Border Classes="Dialog_ContentPanel_WithItemsGroups">
 				<Border Classes="Dialog_ItemsGroup_Container">
 					<StackPanel Name="itemsPanel">
@@ -531,6 +532,8 @@
 				</Border>
 			</Border>
 		</ScrollViewer>
+			<Border Name="bottomShadow" HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
+		</Panel>
 		
 	</DockPanel>
   

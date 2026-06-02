@@ -37,91 +37,94 @@
 		</Border>
 
 		<!-- Content -->
-		<ScrollViewer Name="baseScrollViewer">
-			<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups" VerticalAlignment="Stretch">
+		<Panel>
+			<ScrollViewer Name="baseScrollViewer">
+				<StackPanel Classes="Dialog_ContentPanel_WithItemsGroups" VerticalAlignment="Stretch">
 
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
 
-						<!-- Name -->
-						<asControls:DialogItem Name="nameItem" ItemSize="Small">
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="nameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
+							<!-- Name -->
+							<asControls:DialogItem Name="nameItem" ItemSize="Small">
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}" asControls:DialogElement.TextRole="Label"/>
+								<TextBox Name="nameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-						<!-- Icon -->
-						<asControls:DialogItem>
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Icon}" asControls:DialogElement.TextRole="Label"/>
-							<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="Item"/>
+							<!-- Icon -->
+							<asControls:DialogItem>
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Icon}" asControls:DialogElement.TextRole="Label"/>
+								<appControls:LogProfileIconComboBox Name="iconComboBox" Classes="Dialog_Item_ComboBox" IconColor="{Binding #iconColorComboBox.SelectedItem}"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-						<!-- Icon color -->
-						<asControls:DialogItem>
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.IconColor}" asControls:DialogElement.TextRole="Label"/>
-							<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
-						</asControls:DialogItem>
+							<!-- Icon color -->
+							<asControls:DialogItem>
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.IconColor}" asControls:DialogElement.TextRole="Label"/>
+								<appControls:LogProfileIconColorComboBox Name="iconColorComboBox" Classes="Dialog_Item_ComboBox"/>
+							</asControls:DialogItem>
 
-					</StackPanel>
-				</Border>
-				<Separator asControls:DialogElement.SeparatorType="Default"/>
+						</StackPanel>
+					</Border>
+					<Separator asControls:DialogElement.SeparatorType="Default"/>
 
-				<!-- Rules -->
-				<Border Classes="Dialog_ItemsGroup_Container">
-					<StackPanel>
+					<!-- Rules -->
+					<Border Classes="Dialog_ItemsGroup_Container">
+						<StackPanel>
 
-						<asControls:DialogItem Name="rulesItem" ItemSize="Small">
-							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Rules}" asControls:DialogElement.TextRole="Label"/>
-							<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
-						</asControls:DialogItem>
-						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<asControls:ListBox Name="ruleListBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #dialog.Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #dialog.Rules}">
-							<asControls:ListBox.ItemTemplate>
-								<DataTemplate>
-									<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
-										<Panel Classes="ListBoxItem_Icon">
-											<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
-											<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
-										</Panel>
-										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #dialog.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Pattern}" TextTrimming="CharacterEllipsis"/>
-										<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #dialog.MessageSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin}" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
-										<Border Classes="InPlaceAction_Reserved"/>
-										<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-											<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
-												<asControls:Image Classes="InPlaceAction_Icon">
-													<DrawingImage>
-														<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
-													</DrawingImage>
-												</asControls:Image>
-											</Button>
-										</StackPanel>
-									</Grid>
-								</DataTemplate>
-							</asControls:ListBox.ItemTemplate>
-						</asControls:ListBox>
-						<Separator asControls:DialogElement.SeparatorType="Small" IsVisible="{Binding #ruleListBox.IsVisible}"/>
-						<Button Name="addRuleButton" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
+							<asControls:DialogItem Name="rulesItem" ItemSize="Small">
+								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Rules}" asControls:DialogElement.TextRole="Label"/>
+								<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !#ruleListBox.IsVisible}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
+							<asControls:ListBox Name="ruleListBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #dialog.Rules.Count}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding #dialog.Rules}">
+								<asControls:ListBox.ItemTemplate>
+									<DataTemplate>
+										<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+											<Panel Classes="ListBoxItem_Icon">
+												<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}, ConverterParameter=Light}"/>
+												<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{Binding ResultType, Converter={x:Static appConverters:DisplayableLogAnalysisResultIconConverter.Default}}"/>
+											</Panel>
+											<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #dialog.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Text="{Binding Pattern}" TextTrimming="CharacterEllipsis"/>
+											<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #dialog.MessageSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.FontSize}" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Margin="{StaticResource Thickness/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Message.Margin}" Opacity="{StaticResource Double/KeyLogAnalysisRuleSetEditorDialog.RuleListBox.Item.Message.Opacity}" Text="{Binding Message}" TextTrimming="CharacterEllipsis"/>
+											<Border Classes="InPlaceAction_Reserved"/>
+											<StackPanel Grid.Column="2" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
+												<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.RemoveRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+												<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.CopyRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Copy}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Copy.Outline}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+												<Button Classes="InPlaceAction_Button" Command="{Binding #dialog.EditRuleCommand}" CommandParameter="{Binding $parent[ListBoxItem]}" ToolTip.Tip="{asXaml:StringResource Common.Edit}">
+													<asControls:Image Classes="InPlaceAction_Icon">
+														<DrawingImage>
+															<GeometryDrawing Brush="{Binding #itemRoot.(TextElement.Foreground)}" Geometry="{StaticResource Geometry/Icon.Edit.Outline}"/>
+														</DrawingImage>
+													</asControls:Image>
+												</Button>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</asControls:ListBox.ItemTemplate>
+							</asControls:ListBox>
+							<Separator asControls:DialogElement.SeparatorType="Small" IsVisible="{Binding #ruleListBox.IsVisible}"/>
+							<Button Name="addRuleButton" Command="{Binding #dialog.AddRule}" Content="{asXaml:StringResource Common.Add.WithDialog}" asControls:DialogElement.IsDialogItemInput="True"/>
 
-					</StackPanel>
-				</Border>
-				
-			</StackPanel>
-		</ScrollViewer>
+						</StackPanel>
+					</Border>
+					
+				</StackPanel>
+			</ScrollViewer>
+			<Border HorizontalAlignment="Stretch" asControls:ControlShadow.Position="Top" asControls:ControlShadow.Source="ControlButtonsPanel" VerticalAlignment="Bottom"/>
+		</Panel>
 		
 	</DockPanel>
 	
