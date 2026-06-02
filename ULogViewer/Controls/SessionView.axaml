@@ -1535,7 +1535,10 @@
 			</Border>
 			
 			<!-- Shadows -->
-			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" Grid.RowSpan="5" IsHitTestVisible="False"/>
+			<Border BoxShadow="{DynamicResource BoxShadows/Shadow.Inner.Light}" 
+			        Grid.Row="1" 
+			        Grid.RowSpan="2" 
+			        IsHitTestVisible="False"/>
 
 			<!-- Drag-and-drop receiver -->
 			<Border Name="dragDropReceiverBorder" Background="{x:Static Brushes.Transparent}" Grid.RowSpan="3" IsVisible="False"/>
