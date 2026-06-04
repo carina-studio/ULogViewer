@@ -101,7 +101,7 @@
 							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #setupScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<SelectableTextBlock Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.SetupScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<SelectableTextBlock Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.SetupScript.Description}" asControls:DialogElement.TextRole="Description"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Analysis script -->
@@ -115,7 +115,7 @@
 							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #analysisScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<SelectableTextBlock Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<SelectableTextBlock Text="{asXaml:StringResource LogAnalysisScriptSetEditorDialog.AnalysisScript.Description}" asControls:DialogElement.TextRole="Description"/>
 						
 					</StackPanel>
 				</Border>

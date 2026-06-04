@@ -49,8 +49,8 @@
 						<asControls:RegexTextBox Name="regexTextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" TextWrapping="Wrap" Watermark="{asXaml:StringResource Common.Required}"/>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem" IsVisible="{Binding #window.IsCapturingGroupsEnabled}"/>
 						<Panel IsVisible="{Binding #window.IsCapturingGroupsEnabled}">
-							<SelectableTextBlock IsVisible="{Binding !#window.IsCapturingLogPropertiesEnabled}" Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingGroups}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
-							<SelectableTextBlock IsVisible="{Binding #window.IsCapturingLogPropertiesEnabled}" Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+							<SelectableTextBlock IsVisible="{Binding !#window.IsCapturingLogPropertiesEnabled}" Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingGroups}" asControls:DialogElement.TextRole="Description"/>
+							<SelectableTextBlock IsVisible="{Binding #window.IsCapturingLogPropertiesEnabled}" Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}" asControls:DialogElement.TextRole="Description"/>
 						</Panel>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 

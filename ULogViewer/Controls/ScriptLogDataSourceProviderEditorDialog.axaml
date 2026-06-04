@@ -121,7 +121,7 @@
 							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}" asControls:DialogElement.TextRole="Description"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Reading line script -->
@@ -135,7 +135,7 @@
 							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}" asControls:DialogElement.TextRole="Description"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Closing reader script -->
@@ -149,7 +149,7 @@
 							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}" asControls:DialogElement.TextRole="Description"/>
 						
 					</StackPanel>
 				</Border>

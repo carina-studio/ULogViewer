@@ -45,7 +45,7 @@
 					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
 					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-					<SelectableTextBlock Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+					<SelectableTextBlock Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}" asControls:DialogElement.TextRole="Description"/>
 					<Separator asControls:DialogElement.SeparatorType="Item"/>
 					
 					<!-- Description -->
