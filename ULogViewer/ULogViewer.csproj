@@ -23,7 +23,7 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-        <AppSuiteVersion>3.1.0.601-dev</AppSuiteVersion>
+        <AppSuiteVersion>3.1.0.606-dev</AppSuiteVersion>
 		<AvaloniaVersion>11.3.17</AvaloniaVersion>
 		<DotNetLibVersion>10.0.8</DotNetLibVersion>
 		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
