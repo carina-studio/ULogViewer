@@ -1420,8 +1420,11 @@ class LogFilteringViewModel : SessionComponent
     public ICommand RemoveLevelFilterCommand { get; }
 
 
-    // Reset all filters.
-    void ResetFilters(bool updateImmediately)
+    /// <summary>
+    /// Reset all filters (level, timestamp range, process id, thread id, text, predefined text).
+    /// </summary>
+    /// <param name="updateImmediately">True to commit the filter change immediately instead of waiting for the debounced commit.</param>
+    public void ResetFilters(bool updateImmediately)
     {
         this.VerifyAccess();
         this.VerifyDisposed();
