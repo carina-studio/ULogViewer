@@ -1,5 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:asInput="using:CarinaStudio.AppSuite.Input"
+             xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
              x:Class="CarinaStudio.ULogViewer.App">
 
 	<!-- Resources -->
@@ -12,10 +14,10 @@
 			</ResourceDictionary.MergedDictionaries>
 			
 			<!-- Pro version native menu -->
-			<NativeMenuItem x:Key="NativeMenuItem/App.ProVersion" Header="{DynamicResource String/Common.UpgradeToProVersion}">
+			<NativeMenuItem x:Key="NativeMenuItem/App.ProVersion" Header="{asXaml:StringResource Common.UpgradeToProVersion}">
 				<NativeMenu>
-					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="ActivateProVersion" Header="{DynamicResource String/Common.ActivateProVersion.WithDialog}"/>
-					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="PurchaseProVersion" Header="{DynamicResource String/Common.PurchaseProVersion}"/>
+					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="ActivateProVersion" Header="{asXaml:StringResource Common.ActivateProVersion.WithDialog}"/>
+					<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="PurchaseProVersion" Header="{asXaml:StringResource Common.PurchaseProVersion}"/>
 				</NativeMenu>
 			</NativeMenuItem>
 			
@@ -25,13 +27,13 @@
 	<!-- Native menu -->
 	<NativeMenu.Menu>
 		<NativeMenu>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppOptions" Header="{DynamicResource String/SessionView.AppOptions}"/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppOptions" Header="{asXaml:StringResource SessionView.AppOptions}"/>
 			<NativeMenuItemSeparator/>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="QuickStartGuide" Header="{DynamicResource String/SessionView.QuickStartGuide}"/>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Feedback" Header="{DynamicResource String/Common.Feedback}"/>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppInfo" Header="{DynamicResource String/SessionView.AppInfo}"/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="QuickStartGuide" Header="{asXaml:StringResource SessionView.QuickStartGuide}"/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Feedback" Header="{asXaml:StringResource Common.Feedback}"/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="AppInfo" Header="{asXaml:StringResource SessionView.AppInfo}"/>
 			<NativeMenuItemSeparator/>
-			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Shutdown" Header="{DynamicResource String/App.Shutdown}"/>
+			<NativeMenuItem Click="OnNativeMenuItemClick" CommandParameter="Shutdown" Header="{asXaml:StringResource App.Shutdown}" Gesture="{x:Static asInput:KeyGestures.QuitApplication}"/>
 		</NativeMenu>
 	</NativeMenu.Menu>
 	
