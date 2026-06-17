@@ -34,34 +34,34 @@
 				<StackPanel>
 					
 					<!-- User interface -->
-					<ToggleButton Name="userInterfacePanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource ApplicationOptions.UserInterface}">
+					<ToggleButton Name="userInterfacePanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource ApplicationOptions.UserInterface}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.UserInterface.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log operations -->
-					<ToggleButton Name="logOperationsPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource AppOptionsDialog.LogOperations}">
+					<ToggleButton Name="logOperationsPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource AppOptionsDialog.LogOperations}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log filtering -->
-					<ToggleButton Name="logFilteringPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource AppOptionsDialog.LogFiltering}">
+					<ToggleButton Name="logFilteringPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource AppOptionsDialog.LogFiltering}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Others -->
-					<ToggleButton Name="othersPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource ApplicationOptions.Others}">
+					<ToggleButton Name="othersPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource ApplicationOptions.Others}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Tool.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					

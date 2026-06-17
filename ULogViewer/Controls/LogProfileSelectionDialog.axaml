@@ -234,34 +234,34 @@
 				<StackPanel>
 					
 					<!-- Pinned profiles -->
-					<ToggleButton Name="pinnedLogProfilesButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
+					<ToggleButton Name="pinnedLogProfilesButton" IsVisible="{Binding #window.PinnedLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.PinnedLogProfiles}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.Pin.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Recently used profiles -->
-					<ToggleButton Name="recentlyUsedLogProfilesButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
+					<ToggleButton Name="recentlyUsedLogProfilesButton" IsVisible="{Binding #window.RecentlyUsedLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.RecentlyUsedLogProfiles}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Icon.History.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Other profiles -->
-					<ToggleButton Name="otherLogProfilesButton" IsVisible="{Binding #window.OtherLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{Binding #window.OtherLogProfilesPanelTitle}">
+					<ToggleButton Name="otherLogProfilesButton" IsVisible="{Binding #window.OtherLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{Binding #window.OtherLogProfilesPanelTitle}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/LogProfile.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Template profiles -->
-					<ToggleButton Name="templateLogProfilesButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}">
+					<ToggleButton Name="templateLogProfilesButton" IsVisible="{Binding #window.TemplateLogProfiles.Count}" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileSelectionDialog.TemplateLogProfiles}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Template.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					

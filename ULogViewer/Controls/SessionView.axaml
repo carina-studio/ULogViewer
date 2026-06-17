@@ -330,8 +330,8 @@
 					        IsVisible="False"
 					        asControls:ToolbarElement.Role="SmallButton"
 					        ToolTip.Tip="{asXaml:StringResource Common.Edit.WithDialog}">
-						<Image Classes="Icon" 
-						       Height="{StaticResource Double/SessionView.LogListBox.MarkIndicator.Size}" 
+						<Image Height="{StaticResource Double/SessionView.LogListBox.MarkIndicator.Size}"
+						       asControls:ToolbarElement.Role="SmallIcon"
 						       Source="{StaticResource Image/Icon.Edit.Outline}"
 						       Width="{StaticResource Double/SessionView.LogListBox.MarkIndicator.Size}" />
 					</Button>
@@ -658,7 +658,7 @@
 						                              Command="{Binding #root.SelectAndSetLogProfileCommand}" 
 						                              asControls:ToolbarElement.Role="Button"
 						                              ToolTip.Tip="{asXaml:StringResource SessionView.SetLogProfile}">
-							<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
 						</asControls:SplitButton>
 
 						<!-- Set working directory -->
@@ -667,7 +667,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetWorkingDirectory}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Folder.Outline}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Folder.Outline}"/>
 								<Border IsVisible="{Binding IsWorkingDirectoryNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -680,7 +680,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.AddLogFiles.WithShortcut}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.AddFile.Outline}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.AddFile.Outline}"/>
 								<Border IsVisible="{Binding IsLogFileNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -693,7 +693,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetCommand}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Terminal.Outline}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Terminal.Outline}"/>
 								<Border IsVisible="{Binding IsCommandNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -706,7 +706,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetUri}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Uri.Outline}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Uri.Outline}"/>
 								<Border IsVisible="{Binding IsUriNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -719,7 +719,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetIPEndPoint}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/IPAddress.Outline}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/IPAddress.Outline}"/>
 								<Border IsVisible="{Binding IsIPEndPointNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -732,7 +732,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetProcessId}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Process}"/>
 								<Border IsVisible="{Binding IsProcessIdNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -745,7 +745,7 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SetProcessName}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Process}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Process}"/>
 								<Border IsVisible="{Binding IsProcessNameNeeded}" asControls:ToolbarElement.Role="Badge">
 									<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Warning}"/>
 								</Border>
@@ -764,8 +764,8 @@
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.Save.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Save.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Save.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 
@@ -774,7 +774,7 @@
 						        IsVisible="{Binding IsLogFileSupported}" 
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ClearLogFiles}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Delete.Outline}"/>
 						</Button>
 						
 						<!-- Stop reading logs (non-continuous reading) -->
@@ -782,7 +782,7 @@
 						        IsVisible="{asXaml:AndBindings {Binding CanStopReadingLogs}, {Binding !IsReadingLogsContinuously}}"
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.StopReadingLogs}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Close}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Close}"/>
 						</Button>
 
 						<!-- Reload logs -->
@@ -790,7 +790,7 @@
 						        IsVisible="{asXaml:OrBindings {Binding !CanStopReadingLogs}, {Binding IsReadingLogsContinuously}}"
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ReloadLogs}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Refresh}"/>
 						</Button>
 
 						<!-- Pause/Resume -->
@@ -800,8 +800,8 @@
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.PauseResumeLogsReading}">
 							<Panel>
-								<Image Classes="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
-								<Image Classes="Icon" IsVisible="{Binding IsLogsReadingPaused}">
+								<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !IsLogsReadingPaused}" Source="{DynamicResource Image/Icon.PauseMedia.Outline}"/>
+								<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding IsLogsReadingPaused}">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/Icon.OK}" Geometry="{DynamicResource Geometry/Icon.PlayMedia.Outline}"/>
 									</DrawingImage>
@@ -814,7 +814,7 @@
 						        IsVisible="{Binding IsReadingLogsContinuously}"
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.StopReadingLogs}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.StopMedia.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.StopMedia.Outline}"/>
 						</Button>
 						
 						<!-- Separator -->
@@ -828,7 +828,7 @@
 						              IsVisible="{Binding HasLogPatterns}"
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowRawLogLinesTemporarily}">
-							<Image Classes="Icon" Source="{DynamicResource Image/ShowRawLogLines}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{DynamicResource Image/ShowRawLogLines}"/>
 						</ToggleButton>
 
 					</StackPanel>
@@ -911,12 +911,12 @@
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.LogFiltersCombinationMode}">
 							<Panel>
-								<asControls:Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
+								<asControls:Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/Icon}" Geometry="{Binding LogFiltering.FiltersCombinationMode, Converter={x:Static appControls:SessionView.LogFilterCombinationModeIconConverter}}"/>
 									</DrawingImage>
 								</asControls:Image>
-								<asControls:Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+								<asControls:Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 									<DrawingImage>
 										<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{Binding LogFiltering.FiltersCombinationMode, Converter={x:Static appControls:SessionView.LogFilterCombinationModeIconConverter}}"/>
 									</DrawingImage>
@@ -970,12 +970,12 @@
 						              ToolTip.Tip="{asXaml:StringResource SessionView.PredefinedLogTextFilters}">
 							<Panel>
 								<Panel IsVisible="{Binding !#root.HasSelectedPredefinedLogTextFilters}">
-									<Image Classes="Icon" Source="{StaticResource Image/Filters.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/Filters.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Filters.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Filters.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
 								<Panel IsVisible="{Binding #root.HasSelectedPredefinedLogTextFilters}">
-									<Image Classes="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Filters.Active}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Filters.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
 							</Panel>
 						</ToggleButton>
@@ -1113,7 +1113,7 @@
 						<Button Command="{Binding LogFiltering.ResetFiltersCommand}"
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ResetLogFilters}">
-							<Image Classes="Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
 						</Button>
 						
 						<!-- Show marked logs temporarily -->
@@ -1123,8 +1123,8 @@
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowMarkedLogsTemporarily}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-								<Image Classes="Icon" Source="{StaticResource Image/MarkedOnly.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/MarkedOnly.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/MarkedOnly.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 						
@@ -1135,8 +1135,8 @@
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ShowAllLogsTemporarily}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-								<Image Classes="Icon" Source="{StaticResource Image/Visibility.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Visibility.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Visibility.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 
@@ -1151,8 +1151,8 @@
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.OtherActions}">
 							<Panel>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-								<Image Classes="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.More}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.More.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 							</Panel>
 						</ToggleButton>
 
@@ -1235,7 +1235,7 @@
 						        IsVisible="{Binding AreLogsSortedByTimestamp}" 
 						        asControls:ToolbarElement.Role="SmallButton"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.SelectNearestLogByTimestamp}">
-							<Image Classes="Icon" Source="{StaticResource Image/FindDate}"/>
+							<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/FindDate}"/>
 						</Button>
 
 						<!-- Scroll to latest log -->
@@ -1245,12 +1245,12 @@
 						              ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToLatestLog}">
 							<Panel>
 								<Panel Name="scrollToBottomLogIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
-									<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
 								<Panel IsVisible="{Binding !#scrollToBottomLogIconPanel.IsVisible}">
-									<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-									<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 								</Panel>
 							</Panel>
 						</ToggleButton>
@@ -1369,7 +1369,7 @@
 						        IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}"
 						        asControls:ToolbarElement.Role="SmallButton"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ResetLogChartZoom}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.Collapse}"/>
+							<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/Icon.Collapse}"/>
 						</Button>
 						
 						<!-- Scroll to start -->
@@ -1377,7 +1377,7 @@
 						        IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}" 
 						        asControls:ToolbarElement.Role="SmallButton"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToStartOfLogChart}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastBackward}"/>
+							<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/Icon.FastBackward}"/>
 						</Button>
 						
 						<!-- Scroll to end -->
@@ -1385,7 +1385,7 @@
 						        IsEnabled="{Binding #root.IsLogChartHorizontallyZoomed}"
 						        asControls:ToolbarElement.Role="SmallButton"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToEndOfLogChart}">
-							<Image Classes="Icon" Source="{StaticResource Image/Icon.FastForward}"/>
+							<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/Icon.FastForward}"/>
 						</Button>
 						
 						<Separator asControls:ToolbarElement.Role="SmallHorizontalSeparator"/>
@@ -1396,12 +1396,12 @@
 						              ToolTip.Tip="{asXaml:StringResource SessionView.VisibleLogChartSeries}">
 							<Panel>
 								<Panel IsVisible="{Binding LogChart.AreAllSeriesSourcesVisible}">
-									<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline}"/>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline.Light}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Outline.Light}"/>
 								</Panel>
 								<Panel IsVisible="{Binding !LogChart.AreAllSeriesSourcesVisible}">
-									<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Active}"/>
-									<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Light}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Active}"/>
+									<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Filter.Light}"/>
 								</Panel>
 							</Panel>
 						</ToggleButton>
@@ -1411,8 +1411,8 @@
 						              asControls:ToolbarElement.Role="SmallButton"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.SetLogChartType}">
 							<Panel>
-								<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Outline}}"/>
-								<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Outline}, ConverterParameter=Light}"/>
+								<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Outline}}"/>
+								<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{Binding LogChart.ChartType, Converter={x:Static appConverters:LogChartTypeIconConverter.Outline}, ConverterParameter=Light}"/>
 							</Panel>
 						</ToggleButton>
 						
@@ -1909,8 +1909,8 @@
 				              asControls:ToolbarElement.Role="Button"
 				              ToolTip.Tip="Test">
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Icon.Lab}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Lab}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.Lab}"/>
 							</DrawingImage>
@@ -1924,8 +1924,8 @@
 				              asControls:ToolbarElement.Role="Button"
 				              ToolTip.Tip="{asXaml:StringResource SessionView.MarkedLogsPanel}">
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Marks.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" Source="{StaticResource Image/Marks.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Marks.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Marks.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 					</Panel>
 				</ToggleButton>
 
@@ -1935,8 +1935,8 @@
 				              asControls:ToolbarElement.Role="Button"
 				              ToolTip.Tip="{asXaml:StringResource SessionView.TimestampCategoriesPanel}">
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Calendar}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Calendar}"/>
 							</DrawingImage>
@@ -1956,8 +1956,8 @@
 						</StackPanel>
 					</ToolTip.Tip>
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" Source="{StaticResource Image/Icon.Analysis.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Analysis.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Analysis.Outline.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 						<Border IsVisible="{Binding LogAnalysis.HasNewAnalysisResultsInBackground}" asControls:ToolbarElement.Role="Badge">
 							<Image asControls:ToolbarElement.Role="Badge" Source="{StaticResource Image/Icon.NotificationIndicator.Information}"/>
 						</Border>
@@ -1971,8 +1971,8 @@
 				              asControls:ToolbarElement.Role="Button"
 				              ToolTip.Tip="{asXaml:StringResource SessionView.LogFilesPanel}">
 					<Panel>
-						<Image Classes="Icon" Source="{StaticResource Image/Icon.File.Text.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-						<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
+						<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.File.Text.Outline}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+						<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}">
 							<DrawingImage>
 								<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/Icon.File.Text.Outline}"/>
 							</DrawingImage>
@@ -2071,12 +2071,12 @@
 							              ToolTip.Tip="{asXaml:StringResource SessionView.ScrollToLatestLogAnalysisResult}">
 								<Panel>
 									<Panel Name="scrollToBottomLogAnalysisResultIconPanel" IsVisible="{Binding LogProfile.SortDirection, Converter={x:Static abConverters:ObjectConverters.IsEquivalentTo}, ConverterParameter={x:Static app:SortDirection.Ascending}}">
-										<Image Classes="Icon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToBottom}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToBottom.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 									</Panel>
 									<Panel IsVisible="{Binding !#scrollToBottomLogAnalysisResultIconPanel.IsVisible}">
-										<Image Classes="Icon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
-										<Image Classes="Icon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToTop}" IsVisible="{Binding !$parent[ToggleButton].IsChecked}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" Source="{StaticResource Image/ToTop.Light}" IsVisible="{Binding $parent[ToggleButton].IsChecked}"/>
 									</Panel>
 								</Panel>
 							</ToggleButton>
@@ -2087,8 +2087,8 @@
 							              ToolTip.Tip="{asXaml:StringResource SessionView.LogAnalysisRuleSets}">
 								<Panel>
 									<Panel IsVisible="{Binding !#activeLogAnalysisRuleSetsIconPanel.IsVisible}">
-										<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Outline}"/>
-										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Outline.Light}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Outline}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Outline.Light}"/>
 									</Panel>
 									<Panel Name="activeLogAnalysisRuleSetsIconPanel">
 										<Panel.IsVisible>
@@ -2105,8 +2105,8 @@
 												</MultiBinding>
 											</MultiBinding>
 										</Panel.IsVisible>
-										<Image Classes="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Active}"/>
-										<Image Classes="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Light}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Active}"/>
+										<Image asControls:ToolbarElement.Role="SmallIcon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Checklist.Light}"/>
 									</Panel>
 								</Panel>
 							</ToggleButton>

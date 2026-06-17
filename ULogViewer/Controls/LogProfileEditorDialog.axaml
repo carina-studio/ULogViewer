@@ -58,34 +58,34 @@
 				<StackPanel>
 					
 					<!-- Common -->
-					<ToggleButton Name="commonPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.Common}">
+					<ToggleButton Name="commonPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.Common}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Settings.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log reading -->
-					<ToggleButton Name="logReadingPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.LogReading}">
+					<ToggleButton Name="logReadingPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.LogReading}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Import}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Import.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Import}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Import.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log displaying -->
-					<ToggleButton Name="logDisplayingPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.LogDisplaying}">
+					<ToggleButton Name="logDisplayingPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.LogDisplaying}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Outline}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Outline.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Outline}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{StaticResource Image/Screen.Outline.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
 					<!-- Log writing -->
-					<ToggleButton Name="logWritingPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.LogWriting}">
+					<ToggleButton Name="logWritingPanelButton" asControls:ToolbarElement.Role="Button" ToolTip.ShowDelay="0" ToolTip.Tip="{asXaml:StringResource LogProfileEditorDialog.LogWriting}">
 						<Panel>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Export}"/>
-							<Image Classes="Toolbar_Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Export.Light}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding !$parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Export}"/>
+							<Image asControls:ToolbarElement.Role="Icon" IsVisible="{Binding $parent[ToggleButton].IsChecked}" Source="{DynamicResource Image/Icon.Export.Light}"/>
 						</Panel>
 					</ToggleButton>
 					
