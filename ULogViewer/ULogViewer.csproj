@@ -23,7 +23,7 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-        <AppSuiteVersion>3.1.0.617-dev</AppSuiteVersion>
+        <AppSuiteVersion>3.1.0.618-dev</AppSuiteVersion>
 		<AvaloniaVersion>11.3.17</AvaloniaVersion>
 		<DotNetLibVersion>10.0.8</DotNetLibVersion>
 		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
@@ -112,7 +112,7 @@
 		<PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
 		<PackageReference Include="evtx" Version="1.2.0" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
-		<PackageReference Include="MySqlConnector" Version="2.5.0" />
+		<PackageReference Include="MySqlConnector" Version="2.6.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SkiaSharp" Version="$(SkiaSharpVersion)" />
 		<PackageReference Include="SkiaSharp.HarfBuzz" Version="$(SkiaSharpVersion)" />
