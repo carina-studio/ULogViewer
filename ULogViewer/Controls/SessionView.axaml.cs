@@ -74,6 +74,10 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// </summary>
 		public static readonly DirectProperty<SessionView, bool> CanEditCurrentScriptLogDataSourceProviderProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(CanEditCurrentScriptLogDataSourceProvider), sv => sv.canEditCurrentScriptLogDataSourceProvider);
 		/// <summary>
+		/// Property of <see cref="IsApplicationUpdateNotificationEnabled"/>.
+		/// </summary>
+		public static readonly DirectProperty<SessionView, bool> IsApplicationUpdateNotificationEnabledProperty = AvaloniaProperty.RegisterDirect<SessionView, bool>(nameof(IsApplicationUpdateNotificationEnabled), sv => sv.isAppUpdateNotificationEnabled);
+		/// <summary>
 		/// <see cref="IValueConverter"/> to convert log level to readable name.
 		/// </summary>
 		public static readonly IValueConverter LogLevelNameConverter = new LogLevelNameConverterImpl(App.Current);
@@ -261,6 +265,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		bool hasPendingLogSelectionChange;
 		IDisposable? isActiveObserverToken;
 		bool isAltKeyPressed;
+		bool isAppUpdateNotificationEnabled;
 		bool isAutoSettingLogsReadingParameters;
 		bool isCommandNeededAfterLogProfileSet;
 		bool isIPEndPointNeededAfterLogProfileSet;
@@ -456,6 +461,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.UnmarkSelectedLogsCommand = new Command(this.UnmarkSelectedLogs, this.canUnmarkSelectedLogs);
 
 			// setup properties
+			this.isAppUpdateNotificationEnabled = this.Settings.GetValueOrDefault(AppSuite.SettingKeys.NotifyApplicationUpdate);
 			this.SetValue(IsProcessInfoVisibleProperty, this.Settings.GetValueOrDefault(AppSuite.SettingKeys.ShowProcessInfo));
 			this.LogChartXAxes = ListExtensions.AsReadOnly([ this.logChartXAxis ]);
 			this.LogChartYAxes = ListExtensions.AsReadOnly([ this.logChartYAxis ]);
@@ -2788,6 +2794,12 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
+		/// Check whether notification for application update is enabled or not.
+		/// </summary>
+		public bool IsApplicationUpdateNotificationEnabled => this.isAppUpdateNotificationEnabled;
+
+
+		/// <summary>
 		/// Check whether the view is handling drag-and-drop data or not.
 		/// </summary>
 		public bool IsHandlingDragAndDrop { get; private set; }
@@ -4614,6 +4626,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.updateLogItemHeightAction.Schedule();
 			else if (e.Key == SettingKeys.LogSeparators)
 				this.RecreateLogItemTemplate();
+			else if (e.Key == AppSuite.SettingKeys.NotifyApplicationUpdate)
+				this.SetAndRaise(IsApplicationUpdateNotificationEnabledProperty, ref this.isAppUpdateNotificationEnabled, (bool)e.Value);
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 				this.OnShowHelpButtonOnLogTextFilterSettingChanged((bool)e.Value);
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)

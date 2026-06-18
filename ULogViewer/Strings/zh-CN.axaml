@@ -1421,6 +1421,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.TimestampCategoriesPanel">根据时间戳的日志分组列表。</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">使用者界面响应时间</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">解除日志标记</sys:String>
+	<sys:String x:Key="String/SessionView.UpdateApp">更新</sys:String>
+	<sys:String x:Key="String/SessionView.UpdateApp.ToolTip">更新至新的版本</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">查看更多…</sys:String>
 	<sys:String x:Key="String/SessionView.VisibleLogChartSeries">可见的来源</sys:String>
 	<sys:String x:Key="String/SessionView.WaitingForDataSources">正在等待数据源…</sys:String>

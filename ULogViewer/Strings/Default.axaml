@@ -1459,6 +1459,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.TimestampCategoriesPanel">List of log categories according to timestamp.</sys:String>
 	<sys:String x:Key="String/SessionView.UIResponseDuration">User Interface Response Time</sys:String>
 	<sys:String x:Key="String/SessionView.UnmarkLogs">Unmark Logs</sys:String>
+	<sys:String x:Key="String/SessionView.UpdateApp">Update</sys:String>
+	<sys:String x:Key="String/SessionView.UpdateApp.ToolTip">Update to the new version</sys:String>
 	<sys:String x:Key="String/SessionView.ViewFullLogMessage">View More…</sys:String>
 	<sys:String x:Key="String/SessionView.VisibleLogChartSeries">Visible Sources</sys:String>
 	<sys:String x:Key="String/SessionView.WaitingForDataSources">Waiting For Data Source…</sys:String>

@@ -1141,8 +1141,28 @@
 						</ToggleButton>
 
 						<!-- Separator -->
-						<Separator IsVisible="{Binding #otherActionsButton.IsVisible}"
+						<Separator IsVisible="{asXaml:OrBindings
+								       {Binding #updateAppButton.IsVisible},
+								       {Binding #otherActionsButton.IsVisible}
+								   }"
 						           asControls:ToolbarElement.Role="Separator"/>
+
+						<!-- Update application -->
+						<Button Name="updateAppButton"
+						        BorderThickness="1"
+						        Command="{Binding #root.Application.CheckForApplicationUpdate}"
+						        IsVisible="{asXaml:AndBindings
+						            {Binding #root.Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}},
+						            {Binding #root.IsApplicationUpdateNotificationEnabled}
+						        }"
+						        asControls:ToolbarElement.Role="Button"
+						        ToolTip.Tip="{asXaml:StringResource SessionView.UpdateApp.ToolTip}"
+						        Width="NaN">
+							<StackPanel ClipToBounds="False" Orientation="Horizontal">
+								<Image asControls:ToolbarElement.Role="Icon" Source="{StaticResource Image/Icon.Update.Outline.Colored}"/>
+								<TextBlock ClipToBounds="False" Padding="0,1,0,0" asControls:ToolbarElement.Role="TextAfterIcon" Text="{asXaml:StringResource SessionView.UpdateApp}"/>
+							</StackPanel>
+						</Button>
 
 						<!-- Other actions -->
 						<ToggleButton Name="otherActionsButton"
