@@ -69,28 +69,31 @@
 							</StackPanel.Styles>
 							<TextBlock FontWeight="Bold" IsVisible="{Binding LogProfileName, Converter={x:Static ObjectConverters.IsNotNull}}" Text="{Binding LogProfileName}"/>
 							<TextBlock FontWeight="Bold" IsVisible="{Binding LogProfileName, Converter={x:Static ObjectConverters.IsNull}}" Text="{asXaml:StringResource Session.Empty}"/>
-							<Separator Classes="Dialog_Separator_Small"/>
 							<StackPanel IsVisible="{Binding !IsHibernated}">
+								<Separator asControls:DialogElement.SeparatorType="Small"/>
+								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding AllLogCount}" Format="{asXaml:StringResource MainWindow.Session.AllLogCount}"/>
+								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" Format="{asXaml:StringResource MainWindow.Session.LogsMemoryUsage}"/>
 								<StackPanel IsVisible="{Binding IsLogsReadingPaused}">
+									<Separator asControls:DialogElement.SeparatorType="Small"/>
 									<StackPanel Orientation="Horizontal">
 										<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.PauseMedia}"/>
 										<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.Paused}"/>
 									</StackPanel>
-									<Separator Classes="Dialog_Separator_Small"/>
 								</StackPanel>
 								<StackPanel IsVisible="{Binding IsWaitingForDataSources}">
+									<Separator asControls:DialogElement.SeparatorType="Small"/>
 									<StackPanel Orientation="Horizontal">
 										<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Waiting}"/>
 										<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.WaitingForDataSources}"/>
 									</StackPanel>
-									<Separator Classes="Dialog_Separator_Small"/>
 								</StackPanel>
-								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding AllLogCount}" Format="{asXaml:StringResource MainWindow.Session.AllLogCount}"/>
-								<abControls:FormattedTextBlock Classes="ToolTipText" Arg1="{Binding LogsMemoryUsage, Converter={x:Static asConverters:FileSizeConverter.Default}}" Format="{asXaml:StringResource MainWindow.Session.LogsMemoryUsage}"/>
 							</StackPanel>
-							<StackPanel IsVisible="{Binding IsHibernated}" Orientation="Horizontal">
-								<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Leaf.Colored}"/>
-								<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.Hibernated}"/>
+							<StackPanel IsVisible="{Binding IsHibernated}">
+								<Separator asControls:DialogElement.SeparatorType="Small"/>
+								<StackPanel Orientation="Horizontal">
+									<Image Classes="ToolTipIcon" Source="{StaticResource Image/Icon.Leaf.Colored}"/>
+									<TextBlock Classes="ToolTipText" Text="{asXaml:StringResource MainWindow.Session.Hibernated}"/>
+								</StackPanel>
 							</StackPanel>
 						</StackPanel>
 					</ToolTip.Tip>
