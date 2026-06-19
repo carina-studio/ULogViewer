@@ -8,8 +8,5 @@
 + Prevented intercepting `⌘←` / `⌘→` for tab switching when editing text on macOS.
 + Added a button on toolbar for updating application when new version is available.
 
-## Behavior Changes
-+ 
-
 ## Bug Fixing
 + Minor bug fixing.
