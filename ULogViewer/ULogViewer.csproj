@@ -23,10 +23,10 @@
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-        <AppSuiteVersion>3.1.1.623-preview</AppSuiteVersion>
+        <AppSuiteVersion>3.1.2.625-preview</AppSuiteVersion>
 		<AvaloniaVersion>11.3.17</AvaloniaVersion>
 		<DotNetLibVersion>10.0.9</DotNetLibVersion>
-		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
+		<SkiaSharpVersion>3.119.4</SkiaSharpVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -136,6 +136,7 @@
 		<TrimmerRootAssembly Include="NLog" />
 		<TrimmerRootAssembly Include="System.Console" />
 		<TrimmerRootAssembly Include="System.Management" />
+		<TrimmerRootAssembly Include="System.ObjectModel" />
 		<TrimmerRootAssembly Include="System.Private.Xml" />
 		<TrimmerRootAssembly Include="System.Private.CoreLib" />
 	</ItemGroup>
