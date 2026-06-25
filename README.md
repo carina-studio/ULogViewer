@@ -1,11 +1,26 @@
 # ULogViewer
 [![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/releases/tag/3.0.13.128) ![](https://img.shields.io/github/downloads/carina-studio/ULogViewer/total) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
-A cross-platform log viewer that supports reading, parsing, and analyzing various types of logs. Please visit the [Website](https://carinastudio.azurewebsites.net/ULogViewer/) for more details.
+A cross-platform, agent-native log viewer for reading, parsing, and analyzing various types of logs. Please visit the [Website](https://carinastudio.azurewebsites.net/ULogViewer/) for more details.
 
-跨平台日誌檢視器，支援多種形式之日誌讀取、解析與分析。請參閱 [網站](https://carinastudio.azurewebsites.net/ULogViewer/) 以取得更多資訊。
+跨平台且支援 AI 代理的日誌檢視器，提供多種形式之日誌讀取、解析與分析。請參閱 [網站](https://carinastudio.azurewebsites.net/ULogViewer/) 以取得更多資訊。
 
 ![](https://carinastudio.azurewebsites.net/ULogViewer/Banner.png?v=2)
+
+## 📥 Download 2026.1 Preview
+
+### Windows
+[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-win-x64.zip)
+[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-win-x86.zip)
+[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-win-arm64.zip)
+
+### macOS
+[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-osx-arm64.zip)
+[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-osx-x64.zip)
+
+### Linux
+[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-linux-x64.zip)
+[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.0/ULogViewer-2026.1.0-linux-arm64.zip)
 
 ## 📥 Download 2026.0
 
@@ -21,6 +36,13 @@ A cross-platform log viewer that supports reading, parsing, and analyzing variou
 ### Linux
 [![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-linux-x64.zip)
 [![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-linux-arm64.zip)
+
+## 📣 What's Change in 2026.1 Preview
+- Added Sensitive Data Protection (SDP).
+- Added `Model Context Protocol (MCP)` support for AI clients.
+- Improved user experience of phrase input assistance in text filter.
+
+[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#PreviewChangeList)
 
 ## 📣 What's Change in 2026.0
 - Support filtering log profiles in the `Select log profile` dialog.
