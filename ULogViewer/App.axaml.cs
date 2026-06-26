@@ -482,13 +482,19 @@ namespace CarinaStudio.ULogViewer
 
 
         /// <inheritdoc/>
-        protected override async Task OnPrepareShuttingDownAsync(bool isCritical)
+        protected override async Task OnPrepareShuttingDownAsync(ApplicationShutdownReason reason)
         {
+	        // check whether shutting down for critical reason
+	        var isCritical = reason == ApplicationShutdownReason.Critical;
+
+	        // close log text filter phrases database
 	        if (isCritical)
 		        LogTextFilterPhrasesDatabase.CloseAsync().Wait();
 	        else
 				await LogTextFilterPhrasesDatabase.CloseAsync();
-	        await base.OnPrepareShuttingDownAsync(isCritical);
+	        
+	        // chain to the base implementation
+	        await base.OnPrepareShuttingDownAsync(reason);
         }
 
 
