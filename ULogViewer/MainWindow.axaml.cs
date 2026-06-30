@@ -49,20 +49,9 @@ namespace CarinaStudio.ULogViewer
 		static MainWindow? MainWindowToActivateProVersion;
 		static readonly string[] NativeMenuItemIconResourceNames =
 		[
-			"Code.Outline",
-			"Icon.Add",
-			"Icon.CloseTab.Outline",
-			"Icon.Debug.Outline",
-			"Icon.Edit.Outline",
-			"Icon.ExternalLink",
-			"Icon.Lab",
 			"Icon.Layout.Horizontal",
 			"Icon.Layout.Tile",
 			"Icon.Layout.Vertical",
-			"Icon.Login",
-			"Icon.Logout",
-			"Icon.Memory.Outline",
-			"Icon.Tool.Outline",
 		];
 
 

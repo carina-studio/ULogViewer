@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
+	<!-- App -->
+	<sys:String x:Key="String/App.Shutdown">退出 ULogViewer</sys:String>
+
 	<!-- Azure -->
 	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。请确认 Azure 命令列介面已经安装且其路径已加入至文件 '/etc/paths'。</sys:String>
 	

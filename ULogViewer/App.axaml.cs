@@ -599,9 +599,6 @@ namespace CarinaStudio.ULogViewer
 							case "AppInfo":
 								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Information.Outline")?.ToNativeMenuItemIcon();
 								break;
-							case "AppOptions":
-								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Settings.Outline")?.ToNativeMenuItemIcon();
-								break;
 							case "EditConfiguration":
 								if (!this.IsDebugMode)
 								{
@@ -623,11 +620,7 @@ namespace CarinaStudio.ULogViewer
 							case "QuickStartGuide":
 								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Outline")?.ToNativeMenuItemIcon();
 								break;
-							case "Shutdown":
-								menuItem.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Exit")?.ToNativeMenuItemIcon();
-								break;
 							default:
-								menuItem.UseEmptyIcon();
 								break;
 						}
 					}
