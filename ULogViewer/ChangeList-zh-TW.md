@@ -2,7 +2,7 @@
  ---
 
 ## 新功能
-+ 支援使用鍵盤快捷鍵關閉應用程式 (macOS 上為 `⌘Q`，Windows/Linux 上為 `Ctrl+Q`)。
++ 支援使用鍵盤快速鍵關閉應用程式 (Windows/Linux 上為 `Ctrl+Q`，macOS 上為 `⌘Q`)。
 
 ## 改善
 + 在 macOS 上編輯文字時，不再攔截 `⌘←` / `⌘→` 用於分頁切換。

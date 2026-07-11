@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+ Added support for shutting down the application by keyboard shortcut (`⌘Q` on macOS, `Ctrl+Q` on Windows/Linux).
++ Added support for shutting down the application by keyboard shortcut (`Ctrl+Q` on Windows/Linux, `⌘Q` on macOS).
 
 ## Improvement
 + Prevented intercepting `⌘←` / `⌘→` for tab switching when editing text on macOS.
