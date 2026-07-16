@@ -353,7 +353,7 @@
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">日志分析脚本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">脚本将针对每笔日志调用以分析日志。需返回布林值 (boolean) 以指示针对此日志的分析结果是否需要被记录。</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_13">/*
  * 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
@@ -363,7 +363,8 @@
  * 返回 True 以保留通过 Context.AddResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
  */
 return false;</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_14" ResourceKey="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript_ES_5_1">/*
  * 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
@@ -373,7 +374,7 @@ return false;</sys:String>
  * 返回 True 以保留通过 context.addResult() 所建立的分析结果，或返回 False 以略过当前的日志及分析结果。
  */
 return false;</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python_3_4"># 相关型别已自动添加以提供日志分析所需，例如 ILog 及 ResultType。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
 
@@ -394,12 +395,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">在启用专业版之前，您只能建立 1 个日志分析脚本，且在关闭 ULogViewer 后不会被保留。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">分析初始化脚本</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">脚本将在分析流程开始前调用一次且不需要返回值。</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13">/*
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。
  */</sys:String>
-	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp"/>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python"># 请参阅 https://carinastudio.azurewebsites.net/Scripting
+	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_14" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13"/>
+	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript_ES_5_1" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python_3_4"># 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript 以获取更多信息。</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">编辑日志分析脚本</sys:String>
 	
@@ -1095,17 +1097,18 @@ return False</sys:String>
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">原始日志行读取器关闭脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">脚本将在关闭原始日志行读取器时运行。此脚本不需要返回值。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_13">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_14" ResourceKey="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript_ES_5_1">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
  */</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python_3_4"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。</sys:String>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors"/>
@@ -1113,7 +1116,7 @@ return False</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">名称</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">原始日志行读取器打开脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">脚本将在打开原始日志行读取器时运行。需返回 LogDataSourceState.ReaderOpened 表示读取器打开成功，或其他值表示失败。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_13">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
@@ -1127,7 +1130,8 @@ return False</sys:String>
  *   * LogDataSourceState.UnclassifiedError
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_14" ResourceKey="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript_ES_5_1">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
@@ -1141,7 +1145,7 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
  *   * LogDataSourceState.unclassifiedError
  */
 return LogDataSourceState.unclassifiedError;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python_3_4"># 相关型别已自动添加以提供日志读取所需，例如 FileStream 及 LogDataSourceState。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
 
@@ -1153,7 +1157,7 @@ return LogDataSourceState.unclassifiedError;</sys:String>
 return LogDataSourceState.UnclassifiedError</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">原始日志行读取脚本</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">脚本将在每行原始日志行读取时运行。需返回字符串 (String) 或 Null 表示已读取至最后一行。</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_13">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
@@ -1163,7 +1167,8 @@ return LogDataSourceState.UnclassifiedError</sys:String>
  * 返回自来源读取的单一原始日志行 (string)，若没有剩余的原始日志行可读取时则返回 Null。
  */
 return null;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_14" ResourceKey="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript_ES_5_1">/*
  * 相关型别已自动添加以提供日志读取所需，例如 FileStream。
  * 请参阅 https://carinastudio.azurewebsites.net/Scripting
  * 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
@@ -1173,7 +1178,7 @@ return null;</sys:String>
  * 返回自来源读取的单一原始日志行 (string)，若没有剩余的原始日志行可读取时则返回 Null。
  */
 return null;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python_3_4"># 相关型别已自动添加以提供日志读取所需，例如 FileStream。
 # 请参阅 https://carinastudio.azurewebsites.net/Scripting
 # 及 https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource 以获取更多信息。
 

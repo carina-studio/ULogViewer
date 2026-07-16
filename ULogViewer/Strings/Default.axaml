@@ -370,7 +370,7 @@
 	<!-- LogAnalysisScriptSetEditorDialog -->
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript">Script to Analyze Log</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Description">The script will be run for each log to analyze. The return value is a boolean indicating whether the analysis results of the log should be included or not.</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp">/*
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_13">/*
  * Types are imported automatically for log analysis, for example, ILog and ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
@@ -380,7 +380,8 @@
  * Return True to include results added by Context.AddResult(), or False to skip current log and results.
  */
 return false;</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_14" ResourceKey="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript_ES_5_1">/*
  * Types are imported automatically for log analysis, for example, ILog and ResultType.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
@@ -390,7 +391,7 @@ return false;</sys:String>
  * Return True to include results added by context.addResult(), or False to skip current log and results.
  */
 return false;</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python"># Types are imported automatically for log analysis, for example, ILog and ResultType.
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python_3_4"># Types are imported automatically for log analysis, for example, ILog and ResultType.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
 
@@ -407,12 +408,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.RestrictionsOfNonProVersion">Without activating the Pro version, you can have only 1 log analysis script and the script won't be kept after closing ULogViewer.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript">Script to Setup Analysis</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">The script will be run once before starting the analysis process. There is no return value required.</sys:String>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp">/*
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13">/*
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.
  */</sys:String>
-	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp"/>
-	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python"># Please refer to https://carinastudio.azurewebsites.net/Scripting
+	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_14" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13"/>
+	<StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript_ES_5_1" ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python_3_4"># Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript for more information.</sys:String>
 	<sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">Edit Log Analysis Script</sys:String>
 	
@@ -1133,17 +1135,18 @@ You can change this setting at any time in Options.</sys:String>
 	<!-- ScriptLogDataSourceProviderEditorDialog -->
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript">Script to Close the Raw Log Reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description">The script will be run once when closing the raw log reader. There is no return value required.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp">/*
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_13">/*
  * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_14" ResourceKey="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript_ES_5_1">/*
  * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
  */</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python"># Types are imported automatically for logs reading, for example, FileStream.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python_3_4"># Types are imported automatically for logs reading, for example, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.</sys:String>
 	<StaticResourceExtension x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors" ResourceKey="String/LogAnalysisScriptSetEditorDialog.ConfirmApplyingWithCompilationErrors"/>
@@ -1151,7 +1154,7 @@ You can change this setting at any time in Options.</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.DisplayName">Name</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript">Script to Open Raw Log Reader</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description">The script will be run once when opening the raw log reader. The return value should be LogDataSourceState.ReaderOpened if succeeded, or other values for failure cases.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp">/*
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_13">/*
  * Types are imported automatically for logs reading, for example, FileStream and LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
@@ -1165,7 +1168,8 @@ You can change this setting at any time in Options.</sys:String>
  *   * LogDataSourceState.UnclassifiedError
  */
 return LogDataSourceState.UnclassifiedError;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_14" ResourceKey="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript_ES_5_1">/*
  * Types are imported automatically for logs reading, for example, FileStream and LogDataSourceState.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
@@ -1179,7 +1183,7 @@ return LogDataSourceState.UnclassifiedError;</sys:String>
  *   * LogDataSourceState.unclassifiedError
  */
 return LogDataSourceState.unclassifiedError;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python"># Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python_3_4"># Types are imported automatically for log reading. For ex, FileStream and LogDataSourceState.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
 
@@ -1191,7 +1195,7 @@ return LogDataSourceState.unclassifiedError;</sys:String>
 return LogDataSourceState.UnclassifiedError</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript">Script to read raw log line</sys:String>
 	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description">The script will be run for reading each raw log line. The returned value should be String or Null.</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp">/*
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_13">/*
  * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
@@ -1201,7 +1205,8 @@ return LogDataSourceState.UnclassifiedError</sys:String>
  * Return a raw log line (string) read from the source, or Null if there is no more raw log line can be read.
  */
 return null;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript">/*
+	<StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_14" ResourceKey="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_13"/>
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript_ES_5_1">/*
  * Types are imported automatically for logs reading, for example, FileStream.
  * Please refer to https://carinastudio.azurewebsites.net/Scripting
  * and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
@@ -1211,7 +1216,7 @@ return null;</sys:String>
  * Return a raw log line (string) read from the source, or Null if there is no more raw log line can be read.
  */
 return null;</sys:String>
-	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python"># Types are imported automatically for logs reading, for example, FileStream.
+	<sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python_3_4"># Types are imported automatically for logs reading, for example, FileStream.
 # Please refer to https://carinastudio.azurewebsites.net/Scripting
 # and https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource for more information.
 
