@@ -827,7 +827,7 @@ namespace CarinaStudio.ULogViewer
 
 
         // Releasing type.
-        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.ReleaseCandidate;
+        public override ApplicationReleasingType ReleasingType => ApplicationReleasingType.Stable;
 
 
         /// <inheritdoc/>
