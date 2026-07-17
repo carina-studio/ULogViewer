@@ -1,12 +1,11 @@
-﻿# Changes in ULogViewer 2026.1
+﻿# Changes in ULogViewer 2026.2
  ---
 
 ## New Features
-+ Added support for shutting down the application by keyboard shortcut (`Ctrl+Q` on Windows/Linux, `⌘Q` on macOS).
++ 
 
 ## Improvement
-+ Prevented intercepting `⌘←` / `⌘→` for tab switching when editing text on macOS.
-+ Added a button on toolbar for updating application when new version is available.
++ 
 
 ## Bug Fixing
 + Minor bug fixing.
