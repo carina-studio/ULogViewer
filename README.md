@@ -7,51 +7,25 @@ A cross-platform, agent-native log viewer for reading, parsing, and analyzing va
 
 ![](https://carinastudio.azurewebsites.net/ULogViewer/Banner.png?v=2)
 
-## 📥 Download 2026.1 RC
+## 📥 Download 2026.1
 
 ### Windows
-[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-win-x64.zip)
-[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-win-x86.zip)
-[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-win-arm64.zip)
+[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-win-x64.zip)
+[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-win-x86.zip)
+[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-win-arm64.zip)
 
 ### macOS
-[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-osx-arm64.zip)
-[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-osx-x64.zip)
+[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-osx-arm64.zip)
+[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-osx-x64.zip)
 
 ### Linux
-[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-linux-x64.zip)
-[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.1/ULogViewer-2026.1.1-linux-arm64.zip)
+[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-linux-x64.zip)
+[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.2/ULogViewer-2026.1.2-linux-arm64.zip)
 
-## 📥 Download 2026
-
-### Windows
-[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-win-x64.zip)
-[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-win-x86.zip)
-[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-win-arm64.zip)
-
-### macOS
-[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-osx-arm64.zip)
-[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-osx-x64.zip)
-
-### Linux
-[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-linux-x64.zip)
-[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.0.4/ULogViewer-2026.0.4-linux-arm64.zip)
-
-## 📣 What's Change in 2026.1 RC
+## 📣 What's Change in 2026.1
 - Added Sensitive Data Protection (SDP).
 - Added `Model Context Protocol (MCP)` support for AI clients.
 - Improved user experience of phrase input assistance in text filter.
-
-[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#PreviewChangeList)
-
-## 📣 What's Change in 2026.0
-- Support filtering log profiles in the `Select log profile` dialog.
-- Support temporarily showing raw log lines even when [log patterns](https://carinastudio.azurewebsites.net//ULogViewer/HowToReadAndParseLogs#LogPatterns) are defined.
-- Support filtering logs by multiple log levels.
-- Support editing visible log properties of the current non-built-in log profile in the log viewer.
-- Support importing application data from an existing ULogViewer instance.
-- Support using `C# 14` as scripting language.
-- Improve user experience of the `Select log profile` dialog and log chart.
 
 [Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#StableChangeList)
 
