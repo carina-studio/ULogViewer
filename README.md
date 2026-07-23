@@ -7,6 +7,9 @@ A cross-platform, agent-native log viewer for reading, parsing, and analyzing va
 
 ![](https://carinastudio.azurewebsites.net/ULogViewer/Banner.png?v=2)
 
+## ⚠️ NOTICE
+If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or `2026.1.2` on Windows, please manually close all `mcp.exe` processes and try again.
+
 ## 📥 Download 2026.1
 
 ### Windows
@@ -21,8 +24,6 @@ A cross-platform, agent-native log viewer for reading, parsing, and analyzing va
 ### Linux
 [![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.3/ULogViewer-2026.1.3-linux-x64.zip)
 [![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.3/ULogViewer-2026.1.3-linux-arm64.zip)
-
-> If you encounter failure of upgrading from **2026.1.0 Preview/2026.1.1 RC/2026.1.2** on Windows, please manually close all **mcp.exe** processes and try again.
 
 ## 📣 What's Change in 2026.1
 - Added Sensitive Data Protection (SDP).
