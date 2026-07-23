@@ -107,10 +107,7 @@
 								
 								<!-- Culture -->
 								<asControls:DialogItem>
-									<StackPanel>
-										<TextBlock Text="{asXaml:StringResource ApplicationOptions.Culture}" asControls:DialogElement.TextRole="Label"/>
-										<TextBlock Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" IsVisible="{Binding IsChineseVariantChanged}" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect.ChineseVariantChanged}" asControls:DialogElement.TextRole="WarningDescriptionBelowLabel"/>
-									</StackPanel>
+									<TextBlock Text="{asXaml:StringResource ApplicationOptions.Culture}" asControls:DialogElement.TextRole="Label"/>
 									<asControls:EnumComboBox EnumType="{x:Type as:ApplicationCulture}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator asControls:DialogElement.SeparatorType="Item"/>
