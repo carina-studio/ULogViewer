@@ -1,6 +1,5 @@
-﻿using CarinaStudio.AppSuite;
-using CarinaStudio.Collections;
-using CarinaStudio.Tests;
+﻿using CarinaStudio.Collections;
+using CarinaStudio.ComponentModel;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
 using System;
@@ -9,154 +8,157 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarinaStudio.ULogViewer.Logs
+namespace CarinaStudio.ULogViewer.Logs;
+
+/// <summary>
+/// Tests of <see cref="LogReader"/>.
+/// </summary>
+[TestFixture]
+class LogReaderTests : ApplicationBasedTests
 {
-	/// <summary>
-	/// Tests of <see cref="LogReader"/>.
-	/// </summary>
-	[TestFixture]
-	class LogReaderTests : ApplicationBasedTests
+	// Constants.
+	const string TimestampFormat = "yyyy-MM-dd HH-mm-ss.SSS";
+
+
+	// Static fields.
+	static readonly Regex LogHeaderRegex = new("^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<Level>[^\\s]+)[\\s]+(?<SourceName>[^\\s]+)\\:[\\s]*(?<Message>.*)$");
+	static readonly Dictionary<string, LogLevel> LogLevelMap = new()
 	{
-		// Constants.
-		const string TimestampFormat = "yyyy-MM-dd HH-mm-ss.SSS";
+		{ "D", LogLevel.Debug },
+		{ "E", LogLevel.Error },
+		{ "F", LogLevel.Fatal },
+		{ "I", LogLevel.Info },
+		{ "V", LogLevel.Verbose },
+		{ "W", LogLevel.Warn },
+	};
+	static readonly Regex LogMessageRegex = new("^[\\s]{2}(?<Message>[^\\[]*)$");
+	static readonly LogPattern[] LogPatterns;
+	static readonly Regex LogTailRegex = new("^[\\s]{2}\\[TAIL\\]$");
 
 
-		// Static fields.
-		static readonly Regex LogHeaderRegex = new Regex("^(?<Timestamp>[^\\s]+[\\s]+[^\\s]+)[\\s]+(?<Level>[^\\s]+)[\\s]+(?<SourceName>[^\\s]+)\\:[\\s]*(?<Message>.*)$");
-		static readonly Dictionary<string, LogLevel> LogLevelMap = new Dictionary<string, LogLevel>()
+	// Fields.
+	string? testDirectoryPath;
+
+
+	// Static initializer.
+	static LogReaderTests()
+	{
+		LogPatterns =
+		[
+			new LogPattern(LogHeaderRegex, false, false, null),
+			new LogPattern(LogMessageRegex, true, true, null),
+			new LogPattern(LogTailRegex, false, false, null)
+		];
+	}
+
+
+	/// <summary>
+	/// Test for reading logs continuously from file.
+	/// </summary>
+	[Test]
+	public void ContinuousReadingLogsFromFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
 		{
-			{ "D", LogLevel.Debug },
-			{ "E", LogLevel.Error },
-			{ "F", LogLevel.Fatal },
-			{ "I", LogLevel.Info },
-			{ "V", LogLevel.Verbose },
-			{ "W", LogLevel.Warn },
-		};
-		static readonly Regex LogMessageRegex = new Regex("^[\\s]{2}(?<Message>[^\\[]*)$");
-		static readonly LogPattern[] LogPatterns;
-		static readonly Regex LogTailRegex = new Regex("^[\\s]{2}\\[TAIL\\]$");
-
-
-		// Fields.
-		string? testDirectoryPath;
-
-
-		// Static initializer.
-		static LogReaderTests()
-		{
-			LogPatterns = new LogPattern[] {
-				new LogPattern(LogHeaderRegex, false, false),
-				new LogPattern(LogMessageRegex, true, true),
-				new LogPattern(LogTailRegex, false, false),
-			};
-		}
-
-
-		/// <summary>
-		/// Test for reading logs continuously from file.
-		/// </summary>
-		[Test]
-		public void ContinuousReadingLogsFromFileTest()
-		{
-			this.TestOnApplicationThread(async () =>
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			for (var i = 0; i < 10; ++i)
 			{
-				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
-					throw new AssertionException("Cannot find file log data source provider.");
-				for (var i = 0; i < 10; ++i)
+				// prepare source
+				var logCount = 256;
+				var filePath = this.GenerateLogFile(logCount);
+				var options = new LogDataSourceOptions { FileName = filePath };
+
+				// create source
+				using var source = provider.CreateSource(options);
+
+				// create log reader
+				using var logReader = new LogReader(null, source).Setup(it =>
 				{
-					// prepare source
-					var logCount = 256;
-					var filePath = this.GenerateLogFile(logCount);
-					var options = new LogDataSourceOptions() { FileName = filePath };
+					it.IsContinuousReading = true;
+					it.LogLevelMap = LogLevelMap;
+					it.LogPatterns = LogPatterns;
+					it.TimestampFormats = [ TimestampFormat ];
+				});
 
-					// create source
-					using var source = provider.CreateSource(options);
-
-					// create log reader
-					using var logReader = new LogReader(source, Task.Factory)
-					{
-						IsContinuousReading = true,
-						LogLevelMap = LogLevelMap,
-						LogPatterns = LogPatterns,
-						TimestampFormat = TimestampFormat,
-					};
-
-					// read logs 10 times
-					logReader.Start();
-					for (var j = 0; j < 50; ++j)
-					{
-						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Starting, 5000));
-						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
-						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Starting, -1));
-					}
-					Assert.LessOrEqual(logCount * 30, logReader.Logs.Count);
+				// read logs 10 times
+				logReader.Start();
+				for (var j = 0; j < 50; ++j)
+				{
+					await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Starting, new CancellationTokenSource(5000).Token);
+					await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.ReadingLogs, new CancellationTokenSource(5000).Token);
+					await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Starting, CancellationToken.None);
 				}
-			});
-		}
-
-
-		/// <summary>
-		/// Delete generated test directory.
-		/// </summary>
-		[OneTimeTearDown]
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void DeleteTestDirectory()
-		{
-			if (this.testDirectoryPath != null)
-			{
-				Directory.Delete(this.testDirectoryPath, true);
-				this.testDirectoryPath = null;
+				Assert.LessOrEqual(logCount * 30, logReader.Logs.Count);
 			}
-		}
+		});
+	}
 
 
-		// Generate header line of log.
-		string GenerateLogHeaderLine()
+	/// <summary>
+	/// Delete generated test directory.
+	/// </summary>
+	[OneTimeTearDown]
+	[MethodImpl(MethodImplOptions.Synchronized)]
+	public void DeleteTestDirectory()
+	{
+		if (this.testDirectoryPath != null)
 		{
-			var timestampString = DateTime.Now.ToString(TimestampFormat);
-			var levelString = ((LogLevel[])Enum.GetValues(typeof(LogLevel))).SelectRandomElement() switch
-			{
-				LogLevel.Debug => "D",
-				LogLevel.Error => "E",
-				LogLevel.Fatal => "F",
-				LogLevel.Info => "I",
-				LogLevel.Verbose => "V",
-				LogLevel.Warn => "W",
-				_ => "U",
-			};
-			var sourceName = Tests.Random.GenerateRandomString(4);
-			var message = Tests.Random.GenerateRandomString(8);
-			return $"{timestampString} {levelString} {sourceName}: {message}";
+			Directory.Delete(this.testDirectoryPath, true);
+			this.testDirectoryPath = null;
 		}
+	}
 
 
-		// Generate file with random logs.
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		string GenerateLogFile(int logCount)
+	// Generate header line of log.
+	string GenerateLogHeaderLine()
+	{
+		var timestampString = DateTime.Now.ToString(TimestampFormat);
+		var levelString = ((LogLevel[])Enum.GetValues(typeof(LogLevel))).SelectRandomElement() switch
 		{
-			if (this.testDirectoryPath == null)
-				this.testDirectoryPath = this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
-			return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(stream =>
+			LogLevel.Debug => "D",
+			LogLevel.Error => "E",
+			LogLevel.Fatal => "F",
+			LogLevel.Info => "I",
+			LogLevel.Verbose => "V",
+			LogLevel.Warn => "W",
+			_ => "U",
+		};
+		var sourceName = Tests.Random.GenerateRandomString(4);
+		var message = Tests.Random.GenerateRandomString(8);
+		return $"{timestampString} {levelString} {sourceName}: {message}";
+	}
+
+
+	// Generate file with random logs.
+	[MethodImpl(MethodImplOptions.Synchronized)]
+	string GenerateLogFile(int logCount)
+	{
+		this.testDirectoryPath ??= this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
+		return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(stream =>
+		{
+			var isFirstLine = true;
+			using var writer = new StreamWriter(stream, Encoding.UTF8);
+			foreach (var logLine in this.GenerateLogLines(logCount))
 			{
-				var isFirstLine = true;
-				using var writer = new StreamWriter(stream, Encoding.UTF8);
-				foreach (var logLine in this.GenerateLogLines(logCount))
-				{
-					if (!isFirstLine)
-						writer.WriteLine();
-					else
-						isFirstLine = false;
-					writer.Write(logLine);
-				}
-				return stream.Name;
-			});
-		}
+				if (!isFirstLine)
+					writer.WriteLine();
+				else
+					isFirstLine = false;
+				writer.Write(logLine);
+			}
+			return stream.Name;
+		});
+	}
 
 
-		// Generate random log lines.
-		string[] GenerateLogLines(int logCount) => new List<string>().Also(it =>
+	// Generate random log lines.
+	string[] GenerateLogLines(int logCount) =>
+	[
+		.. new List<string>().Also(it =>
 		{
 			if (Tests.Random.Next(2) == 0)
 				it.Add("(Invalid)");
@@ -170,265 +172,266 @@ namespace CarinaStudio.ULogViewer.Logs
 				if (Tests.Random.Next(2) == 0)
 					it.Add("(Invalid)");
 			}
-		}).ToArray();
+		})
+	];
 
 
-		// Generate message line of log.
-		string GenerateLogMessageLine() => $"  {Tests.Random.GenerateRandomString(8)}";
+	// Generate message line of log.
+	string GenerateLogMessageLine() => $"  {Tests.Random.GenerateRandomString(8)}";
 
 
-		// Generate tail line of log.
-		string GenerateLogTailLine() => "  [TAIL]";
+	// Generate tail line of log.
+	string GenerateLogTailLine() => "  [TAIL]";
 
 
-		/// <summary>
-		/// Test for setting max/drop log count.
-		/// </summary>
-		[Test]
-		public void MaxLogCountTest()
+	/// <summary>
+	/// Test for setting max/drop log count.
+	/// </summary>
+	[Test]
+	public void MaxLogCountTest()
+	{
+		this.TestOnApplicationThread(async () =>
 		{
-			this.TestOnApplicationThread(async () =>
+			// prepare source
+			var logCount = 256;
+			var filePath = this.GenerateLogFile(logCount);
+			var options = new LogDataSourceOptions { FileName = filePath };
+
+			// create source
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			using var source = provider.CreateSource(options);
+
+			// create log reader
+			using var logReader1 = new LogReader(null, source).Setup(it =>
+			{
+				it.DropLogCount = 1024;
+				it.IsContinuousReading = true;
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.MaxLogCount = 2048;
+				it.TimestampFormats = [ TimestampFormat ];
+			});
+
+			// start reading logs and check log count
+			logReader1.Start();
+			for (var j = 0; j < 100; ++j)
+			{
+				await Task.Delay(200);
+				Assert.LessOrEqual(logReader1.Logs.Count, logReader1.MaxLogCount);
+			}
+			logReader1.Dispose();
+
+			// create log reader
+			using var logReader2 = new LogReader(null, source).Setup(it =>
+			{
+				it.IsContinuousReading = true;
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.MaxLogCount = 2048;
+				it.TimestampFormats = [ TimestampFormat ];
+			});
+
+			// start reading logs and check log count
+			logReader2.Start();
+			for (var j = 0; j < 100; ++j)
+			{
+				await Task.Delay(200);
+				Assert.LessOrEqual(logReader2.Logs.Count, logReader2.MaxLogCount);
+			}
+			logReader2.Dispose();
+
+			// create log reader
+			using var logReader3 = new LogReader(null, source).Setup(it =>
+			{
+				it.DropLogCount = 4096;
+				it.IsContinuousReading = true;
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.MaxLogCount = 2048;
+				it.TimestampFormats = [ TimestampFormat ];
+			});
+
+			// start reading logs and check log count
+			logReader3.Start();
+			for (var j = 0; j < 100; ++j)
+			{
+				await Task.Delay(200);
+				Assert.LessOrEqual(logReader3.Logs.Count, logReader3.MaxLogCount);
+			}
+			logReader3.Dispose();
+		});
+	}
+
+
+	/// <summary>
+	/// Test for pausing reading logs.
+	/// </summary>
+	[Test]
+	public void PauseReadingLogsTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// prepare source
+			var logCount = 256;
+			var filePath = this.GenerateLogFile(logCount);
+			var options = new LogDataSourceOptions { FileName = filePath };
+
+			// create source
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			using var source = provider.CreateSource(options);
+
+			// create log reader
+			using var logReader = new LogReader(null, source).Setup(it =>
+			{
+				it.IsContinuousReading = true;
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.TimestampFormats = [ TimestampFormat ];
+			});
+
+			// start reading logs and check pause/resume
+			logReader.Start();
+			var prevReadLogCount = 0;
+			for (var j = 0; j < 10; ++j)
+			{
+				// read logs
+				await Task.Delay(1000);
+
+				// pause
+				Assert.IsTrue(logReader.Pause());
+				var readLogCount = logReader.Logs.Count;
+				if (logReader.State == LogReaderState.Paused)
+					await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.StartingWhenPaused, CancellationToken.None);
+				else
+					await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Paused, CancellationToken.None);
+				await Task.Delay(1000);
+				Assert.AreEqual(readLogCount, logReader.Logs.Count);
+				Assert.Greater(readLogCount, prevReadLogCount);
+				prevReadLogCount = readLogCount;
+
+				// resume
+				Assert.IsTrue(logReader.Resume());
+				Assert.IsTrue(logReader.State == LogReaderState.Starting || logReader.State == LogReaderState.ReadingLogs);
+			}
+		});
+	}
+
+
+	/// <summary>
+	/// Test for reading logs from file.
+	/// </summary>
+	[Test]
+	public void ReadingLogsFromFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			for (var i = 0; i < 10; ++i)
 			{
 				// prepare source
 				var logCount = 256;
 				var filePath = this.GenerateLogFile(logCount);
-				var options = new LogDataSourceOptions() { FileName = filePath };
+				var options = new LogDataSourceOptions { FileName = filePath };
 
 				// create source
-				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
-					throw new AssertionException("Cannot find file log data source provider.");
 				using var source = provider.CreateSource(options);
 
 				// create log reader
-				using var logReader1 = new LogReader(source, Task.Factory)
+				using var logReader1 = new LogReader(null, source).Setup(it =>
 				{
-					DropLogCount = 1024,
-					IsContinuousReading = true,
-					LogLevelMap = LogLevelMap,
-					LogPatterns = LogPatterns,
-					MaxLogCount = 2048,
-					TimestampFormat = TimestampFormat,
-				};
-
-				// start reading logs and check log count
-				logReader1.Start();
-				for (var j = 0; j < 100; ++j)
-				{
-					await Task.Delay(200);
-					Assert.LessOrEqual(logReader1.Logs.Count, logReader1.MaxLogCount);
-				}
-				logReader1.Dispose();
-
-				// create log reader
-				using var logReader2 = new LogReader(source, Task.Factory)
-				{
-					IsContinuousReading = true,
-					LogLevelMap = LogLevelMap,
-					LogPatterns = LogPatterns,
-					MaxLogCount = 2048,
-					TimestampFormat = TimestampFormat,
-				};
-
-				// start reading logs and check log count
-				logReader2.Start();
-				for (var j = 0; j < 100; ++j)
-				{
-					await Task.Delay(200);
-					Assert.LessOrEqual(logReader2.Logs.Count, logReader2.MaxLogCount);
-				}
-				logReader2.Dispose();
-
-				// create log reader
-				using var logReader3 = new LogReader(source, Task.Factory)
-				{
-					DropLogCount = 4096,
-					IsContinuousReading = true,
-					LogLevelMap = LogLevelMap,
-					LogPatterns = LogPatterns,
-					MaxLogCount = 2048,
-					TimestampFormat = TimestampFormat,
-				};
-
-				// start reading logs and check log count
-				logReader3.Start();
-				for (var j = 0; j < 100; ++j)
-				{
-					await Task.Delay(200);
-					Assert.LessOrEqual(logReader3.Logs.Count, logReader3.MaxLogCount);
-				}
-				logReader3.Dispose();
-			});
-		}
-
-
-		/// <summary>
-		/// Test for pausing reading logs.
-		/// </summary>
-		[Test]
-		public void PauseReadingLogsTest()
-		{
-			this.TestOnApplicationThread(async () =>
-			{
-				// prepare source
-				var logCount = 256;
-				var filePath = this.GenerateLogFile(logCount);
-				var options = new LogDataSourceOptions() { FileName = filePath };
-
-				// create source
-				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
-					throw new AssertionException("Cannot find file log data source provider.");
-				using var source = provider.CreateSource(options);
-
-				// create log reader
-				using var logReader = new LogReader(source, Task.Factory)
-				{
-					IsContinuousReading = true,
-					LogLevelMap = LogLevelMap,
-					LogPatterns = LogPatterns,
-					TimestampFormat = TimestampFormat,
-				};
-
-				// start reading logs and check pause/resume
-				logReader.Start();
-				var prevReadLogCount = 0;
-				for (var j = 0; j < 10; ++j)
-				{
-					// read logs
-					await Task.Delay(1000);
-
-					// pause
-					Assert.IsTrue(logReader.Pause());
-					var readLogCount = logReader.Logs.Count;
-					if (logReader.State == LogReaderState.Paused)
-						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.StartingWhenPaused, -1));
-					else
-						Assert.IsTrue(await logReader.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Paused, -1));
-					await Task.Delay(1000);
-					Assert.AreEqual(readLogCount, logReader.Logs.Count);
-					Assert.Greater(readLogCount, prevReadLogCount);
-					prevReadLogCount = readLogCount;
-
-					// resume
-					Assert.IsTrue(logReader.Resume());
-					Assert.IsTrue(logReader.State == LogReaderState.Starting || logReader.State == LogReaderState.ReadingLogs);
-				}
-			});
-		}
-
-
-		/// <summary>
-		/// Test for reading logs from file.
-		/// </summary>
-		[Test]
-		public void ReadingLogsFromFileTest()
-		{
-			this.TestOnApplicationThread(async () =>
-			{
-				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
-					throw new AssertionException("Cannot find file log data source provider.");
-				for (var i = 0; i < 10; ++i)
-				{
-					// prepare source
-					var logCount = 256;
-					var filePath = this.GenerateLogFile(logCount);
-					var options = new LogDataSourceOptions() { FileName = filePath };
-
-					// create source
-					using var source = provider.CreateSource(options);
-
-					// create log reader
-					using var logReader1 = new LogReader(source, Task.Factory)
-					{
-						LogLevelMap = LogLevelMap,
-						LogPatterns = LogPatterns,
-						TimestampFormat = TimestampFormat,
-					};
-
-					// read logs
-					logReader1.Start();
-					Assert.AreEqual(LogReaderState.Starting, logReader1.State);
-					Assert.IsTrue(await logReader1.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
-					Assert.IsTrue(await logReader1.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Stopped, -1));
-					Assert.AreEqual(logCount, logReader1.Logs.Count);
-
-					// try reading logs again
-					try
-					{
-						logReader1.Start();
-						throw new AssertionException("Should not allow restart reading logs.");
-					}
-					catch (Exception ex)
-					{
-						if (ex is AssertionException)
-							throw;
-					}
-
-					// dispose log reader
-					logReader1.Dispose();
-					Assert.AreEqual(LogReaderState.Disposed, logReader1.State);
-
-					// create log reader
-					using var logReader2 = new LogReader(source, Task.Factory)
-					{
-						LogLevelMap = LogLevelMap,
-						LogPatterns = new LogPattern[] { 
-							new LogPattern(LogHeaderRegex, false, false),
-						},
-						TimestampFormat = TimestampFormat,
-					};
-
-					// read logs
-					logReader2.Start();
-					Assert.AreEqual(LogReaderState.Starting, logReader2.State);
-					Assert.IsTrue(await logReader2.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.ReadingLogs, 5000));
-					Assert.IsTrue(await logReader2.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.Stopped, -1));
-					Assert.AreEqual(logCount, logReader2.Logs.Count);
-				}
-			});
-		}
-
-
-		/// <summary>
-		/// Test for reading logs from invalid file.
-		/// </summary>
-		[Test]
-		public void ReadingLogsFromInvalidFileTest()
-		{
-			this.TestOnApplicationThread(async () =>
-			{
-				// prepare source
-				var options = new LogDataSourceOptions() { FileName = "Invalid" };
-
-				// create source
-				if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider) || provider == null)
-					throw new AssertionException("Cannot find file log data source provider.");
-				using var source = provider.CreateSource(options);
-
-				// create log reader
-				using var logReader1 = new LogReader(source, Task.Factory)
-				{
-					LogLevelMap = LogLevelMap,
-					LogPatterns = LogPatterns,
-					TimestampFormat = TimestampFormat,
-				};
+					it.LogLevelMap = LogLevelMap;
+					it.LogPatterns = LogPatterns;
+					it.TimestampFormats = [ TimestampFormat ];
+				});
 
 				// read logs
 				logReader1.Start();
 				Assert.AreEqual(LogReaderState.Starting, logReader1.State);
-				Assert.IsTrue(await logReader1.WaitForPropertyAsync(nameof(LogReader.State), LogReaderState.DataSourceError, 5000));
-				Assert.AreEqual(0, logReader1.Logs.Count);
-				logReader1.Dispose();
+				await logReader1.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.ReadingLogs, new CancellationTokenSource(5000).Token);
+				await logReader1.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, CancellationToken.None);
+				Assert.AreEqual(logCount, logReader1.Logs.Count);
 
-				// create another log reader
-				using var logReader2 = new LogReader(source, Task.Factory)
+				// try reading logs again
+				try
 				{
-					LogLevelMap = LogLevelMap,
-					LogPatterns = LogPatterns,
-					TimestampFormat = TimestampFormat,
-				};
+					logReader1.Start();
+					throw new AssertionException("Should not allow restart reading logs.");
+				}
+				catch (Exception ex)
+				{
+					if (ex is AssertionException)
+						throw;
+				}
+
+				// dispose log reader
+				logReader1.Dispose();
+				Assert.AreEqual(LogReaderState.Disposed, logReader1.State);
+
+				// create log reader
+				using var logReader2 = new LogReader(null, source).Setup(it =>
+				{
+					it.LogLevelMap = LogLevelMap;
+					it.LogPatterns =
+					[
+						new LogPattern(LogHeaderRegex, false, false, null)
+					];
+					it.TimestampFormats = [ TimestampFormat ];
+				});
+
+				// read logs
 				logReader2.Start();
-				Assert.AreEqual(LogReaderState.DataSourceError, logReader2.State);
+				Assert.AreEqual(LogReaderState.Starting, logReader2.State);
+				await logReader2.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.ReadingLogs, new CancellationTokenSource(5000).Token);
+				await logReader2.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, CancellationToken.None);
+				Assert.AreEqual(logCount, logReader2.Logs.Count);
+			}
+		});
+	}
+
+
+	/// <summary>
+	/// Test for reading logs from invalid file.
+	/// </summary>
+	[Test]
+	public void ReadingLogsFromInvalidFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// prepare source
+			var options = new LogDataSourceOptions { FileName = "Invalid" };
+
+			// create source
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			using var source = provider.CreateSource(options);
+
+			// create log reader
+			using var logReader1 = new LogReader(null, source).Setup(it =>
+			{
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.TimestampFormats = [ TimestampFormat ];
 			});
-		}
+
+			// read logs
+			logReader1.Start();
+			Assert.AreEqual(LogReaderState.Starting, logReader1.State);
+			await logReader1.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.DataSourceError, new CancellationTokenSource(5000).Token);
+			Assert.AreEqual(0, logReader1.Logs.Count);
+			logReader1.Dispose();
+
+			// create another log reader
+			using var logReader2 = new LogReader(null, source).Setup(it =>
+			{
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.TimestampFormats = [ TimestampFormat ];
+			});
+			logReader2.Start();
+			await logReader2.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.DataSourceError, new CancellationTokenSource(5000).Token);
+		});
 	}
 }
