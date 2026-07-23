@@ -6,27 +6,15 @@
 		<OutputType>WinExe</OutputType>
 		<DebugType>embedded</DebugType>
 		<RootNamespace>CarinaStudio.ULogViewer</RootNamespace>
-		<Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<TrimMode>partial</TrimMode>
-		<TargetFramework>net10.0</TargetFramework>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
-		<Authors>Carina Studio</Authors>
-		<Company>Carina Studio</Company>
-		<Copyright>©2021-$([System.DateTime]::Now.Year) Carina Studio</Copyright>
 		<StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
 		<ApplicationIcon>ULogViewer.ico</ApplicationIcon>
-		<NoWin32Manifest>true</NoWin32Manifest>
 		<SatelliteResourceLanguages>en;zh-Hans;zh-Hant</SatelliteResourceLanguages>
 		<Configurations>Debug;Release</Configurations>
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
 		<AvaloniaNameGeneratorFilterByNamespace>Dummy</AvaloniaNameGeneratorFilterByNamespace> <!-- Prevent generating InitializeComponents() and fields -->
-        <AppSuiteVersion>3.2.0.722-dev</AppSuiteVersion>
-		<AvaloniaVersion>11.3.18</AvaloniaVersion>
-		<DotNetLibVersion>10.0.9</DotNetLibVersion>
-		<SkiaSharpVersion>3.119.4</SkiaSharpVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -104,7 +92,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.3.0.6" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="$(AvaloniaXamlBehaviorsVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />

@@ -18,17 +18,6 @@
             "stopAtEntry": false
         },
         {
-            "name": "ULogViewer-Windows",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-Windows",
-            "program": "${workspaceFolder}/ULogViewer/bin/Debug-Windows/net8.0-windows10.0.17763.0/ULogViewer.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/ULogViewer",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
             "name": "ULogViewer-macOS-arm64",
             "type": "coreclr",
             "request": "launch",

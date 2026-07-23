@@ -26,20 +26,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build-Windows",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/ULogViewer/ULogViewer.csproj",
-                "-c",
-                "Debug-Windows",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "build-macOS-arm64",
             "command": "dotnet",
             "type": "process",

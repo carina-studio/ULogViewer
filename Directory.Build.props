@@ -1,0 +1,19 @@
+<Project>
+    <PropertyGroup>
+
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AppSuiteVersion>3.2.0.722-dev</AppSuiteVersion>
+        <Authors>Carina Studio</Authors>
+        <AvaloniaVersion>11.3.18</AvaloniaVersion>
+        <AvaloniaXamlBehaviorsVersion>11.3.0.6</AvaloniaXamlBehaviorsVersion>
+        <Company>Carina Studio</Company>
+        <Copyright>©2021-$([System.DateTime]::Now.Year) Carina Studio</Copyright>
+        <DotNetLibVersion>10.0.9</DotNetLibVersion>
+        <NoWin32Manifest>true</NoWin32Manifest>
+        <Nullable>enable</Nullable>
+        <RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
+        <SkiaSharpVersion>3.119.4</SkiaSharpVersion>
+        <TargetFramework>net10.0</TargetFramework>
+
+    </PropertyGroup>
+</Project>

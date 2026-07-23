@@ -6,13 +6,7 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net7.0</TargetFramework>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx.11.0-arm64</RuntimeIdentifiers>
-		<Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Authors>Carina Studio</Authors>
-		<Company>Carina Studio</Company>
-		<Copyright>©2021 Carina Studio</Copyright>
 		<StartupObject>CarinaStudio.ULogViewer.TextShellHost</StartupObject>
-		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 
 	<ItemGroup>
