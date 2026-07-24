@@ -393,8 +393,13 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 			var match = ExtraCaptureRegex.Match(pattern.Regex.ToString());
 			while (match.Success)
 			{
-				if (int.TryParse(match.Groups["Number"].Value, out var index) && index > 0 && index <= Log.ExtraCapacity)
+				if (int.TryParse(match.Groups["Number"].Value, out var index)
+					&& index > 0
+					&& index <= Log.ExtraCapacity
+					&& !extraNumbers.Contains(index))
+				{
 					Global.RunWithoutError(() => extraNumbers.Add(index));
+				}
 				match = match.NextMatch();
 			}
 		}
@@ -653,7 +658,7 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 		{
 			if (this.isShowingRawLogLinesTemporarily != value)
 			{
-				this.isShowingRawLogLinesTemporarily = true;
+				this.isShowingRawLogLinesTemporarily = value;
 				this.UpdateColorIndicatorBrushes();
 			}
 		}

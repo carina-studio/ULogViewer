@@ -1,13 +1,10 @@
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs;
-using CarinaStudio.ULogViewer.Logs.DataSources;
-using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.Text;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace CarinaStudio.ULogViewer.ViewModels;
 
@@ -17,53 +14,6 @@ namespace CarinaStudio.ULogViewer.ViewModels;
 [TestFixture]
 class DisplayableLogTests : ApplicationBasedTests
 {
-	// Context to create displayable logs for testing.
-	class TestContext : IDisposable
-	{
-		// Fields.
-		readonly string filePath;
-		readonly DisplayableLogGroup group;
-		readonly LogBuilder logBuilder = new();
-		readonly ILogDataSource logDataSource;
-		readonly LogReader logReader;
-
-		// Constructor.
-		public TestContext(IULogViewerApplication app, Action<LogProfile>? profileSetup = null)
-		{
-			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
-				throw new AssertionException("Cannot find file log data source provider.");
-			this.filePath = Path.GetTempFileName();
-			var profile = new LogProfile(app);
-			profileSetup?.Invoke(profile);
-			this.group = new DisplayableLogGroup(profile);
-			this.logDataSource = provider.CreateSource(new LogDataSourceOptions { FileName = this.filePath });
-			this.logReader = new LogReader(this.group, this.logDataSource);
-		}
-
-		// Create displayable log with given properties.
-		public DisplayableLog CreateLog(Action<LogBuilder>? setup = null)
-		{
-			setup?.Invoke(this.logBuilder);
-			return new DisplayableLog(this.group, this.logReader, this.logBuilder.BuildAndReset());
-		}
-
-		// Dispose context.
-		public void Dispose()
-		{
-			this.logReader.Dispose();
-			this.logDataSource.Dispose();
-			this.group.Dispose();
-			Global.RunWithoutError(() => File.Delete(this.filePath));
-		}
-
-		// Group of created displayable logs.
-		public DisplayableLogGroup Group => this.group;
-
-		// Log profile used by the group.
-		public LogProfile Profile => this.group.LogProfile;
-	}
-
-
 	// Static fields.
 	static readonly IDisplayableLogComparer comparer = new DisplayableLogComparer((lhs, rhs) => lhs.LogId.CompareTo(rhs.LogId), SortDirection.Ascending);
 
@@ -77,7 +27,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log and analyzer
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			ObservableList<DisplayableLog> sourceLogs = [];
 			using var analyzer = new DummyDisplayableLogAnalyzer(this.Application, sourceLogs, comparer);
 			var log = context.CreateLog();
@@ -166,7 +116,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log and results from two analyzers
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			ObservableList<DisplayableLog> sourceLogs = [];
 			using var analyzerA = new DummyDisplayableLogAnalyzer(this.Application, sourceLogs, comparer);
 			using var analyzerB = new DummyDisplayableLogAnalyzer(this.Application, sourceLogs, comparer);
@@ -213,7 +163,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = CreateLogWithAllProperties(context);
 
 			// get property with native type
@@ -236,7 +186,7 @@ class DisplayableLogTests : ApplicationBasedTests
 
 
 	// Create displayable log with all common properties.
-	static DisplayableLog CreateLogWithAllProperties(TestContext context) => context.CreateLog(it =>
+	static DisplayableLog CreateLogWithAllProperties(DisplayableLogTestContext context) => context.CreateLog(it =>
 	{
 		it.Set(nameof(Log.BeginningTimeSpan), "00:00:01");
 		it.Set(nameof(Log.BeginningTimestamp), "2026-07-24T10:30:00");
@@ -278,7 +228,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare logs
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var logWithValues = context.CreateLog(it =>
 			{
 				it.Set(nameof(Log.TimeSpan), "00:00:03");
@@ -318,7 +268,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// check formatting with custom format
-			using var context = new TestContext(this.Application, profile => profile.TimeSpanFormatForDisplaying = @"hh\:mm\:ss");
+			using var context = new DisplayableLogTestContext(this.Application, profile => profile.TimeSpanFormatForDisplaying = @"hh\:mm\:ss");
 			var log = CreateLogWithAllProperties(context);
 			Assert.That(log.BeginningTimeSpanString?.ToString(), Is.EqualTo("00:00:01"));
 			Assert.That(log.EndingTimeSpanString?.ToString(), Is.EqualTo("00:00:05"));
@@ -331,12 +281,12 @@ class DisplayableLogTests : ApplicationBasedTests
 			Assert.That(emptyLog.TimeSpanString, Is.Null);
 
 			// check formatting without custom format
-			using var defaultContext = new TestContext(this.Application);
+			using var defaultContext = new DisplayableLogTestContext(this.Application);
 			var defaultLog = CreateLogWithAllProperties(defaultContext);
 			Assert.That(defaultLog.TimeSpanString?.ToString(), Is.EqualTo(TimeSpan.FromSeconds(3).ToString()));
 
 			// check formatting with invalid format
-			using var invalidContext = new TestContext(this.Application, profile => profile.TimeSpanFormatForDisplaying = "q");
+			using var invalidContext = new DisplayableLogTestContext(this.Application, profile => profile.TimeSpanFormatForDisplaying = "q");
 			var invalidLog = CreateLogWithAllProperties(invalidContext);
 			Assert.That(invalidLog.TimeSpanString, Is.Null);
 		});
@@ -353,7 +303,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		{
 			// check formatting with custom format
 			const string format = "yyyy/MM/dd HH:mm:ss";
-			using var context = new TestContext(this.Application, profile => profile.TimestampFormatForDisplaying = format);
+			using var context = new DisplayableLogTestContext(this.Application, profile => profile.TimestampFormatForDisplaying = format);
 			var log = CreateLogWithAllProperties(context);
 			Assert.That(log.BeginningTimestampString?.ToString(), Is.EqualTo(new DateTime(2026, 7, 24, 10, 30, 0).ToString(format)));
 			Assert.That(log.EndingTimestampString?.ToString(), Is.EqualTo(new DateTime(2026, 7, 24, 10, 30, 5).ToString(format)));
@@ -368,7 +318,7 @@ class DisplayableLogTests : ApplicationBasedTests
 			Assert.That(emptyLog.ReadTimeString, Is.Not.Null);
 
 			// check formatting without custom format
-			using var defaultContext = new TestContext(this.Application);
+			using var defaultContext = new DisplayableLogTestContext(this.Application);
 			var defaultLog = CreateLogWithAllProperties(defaultContext);
 			Assert.That(defaultLog.TimestampString?.ToString(), Is.EqualTo(new DateTime(2026, 7, 24, 10, 30, 1).ToString(System.Globalization.CultureInfo.InvariantCulture)));
 		});
@@ -384,7 +334,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log and analyzer
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			ObservableList<DisplayableLog> sourceLogs = [];
 			using var analyzer = new DummyDisplayableLogAnalyzer(this.Application, sourceLogs, comparer);
 			var log = context.CreateLog(it => it.Set(nameof(Log.Message), "Test message"));
@@ -423,7 +373,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log with extras captured by profile
-			using var context = new TestContext(this.Application, profile => profile.LogPatterns = [ new LogPattern("(?<Extra1>.*) (?<Extra5>.*)", false, false, null) ]);
+			using var context = new DisplayableLogTestContext(this.Application, profile => profile.LogPatterns = [ new LogPattern("(?<Extra1>.*) (?<Extra5>.*)", false, false, null) ]);
 			var log = context.CreateLog(it =>
 			{
 				it.Set(nameof(Log.Extra1), "A\nB");
@@ -460,7 +410,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// check maximum display line count
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			Assert.That(context.Group.MaxDisplayLineCount, Is.EqualTo(1));
 
 			// check multi-line properties
@@ -509,7 +459,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// check level with mapping in profile
-			using var context = new TestContext(this.Application, profile => profile.LogLevelMapForWriting = new Dictionary<LogLevel, string> { { LogLevel.Error, "E!" } });
+			using var context = new DisplayableLogTestContext(this.Application, profile => profile.LogLevelMapForWriting = new Dictionary<LogLevel, string> { { LogLevel.Error, "E!" } });
 			var log = CreateLogWithAllProperties(context);
 			Assert.That(log.LevelString, Is.EqualTo("E!"));
 
@@ -533,7 +483,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// check line counts of properties with values
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = context.CreateLog(it =>
 			{
 				it.Set(nameof(Log.Error), "Line 1\nLine 2\nLine 3");
@@ -575,7 +525,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// check initial state
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = context.CreateLog();
 			Assert.That(log.MarkedColor, Is.EqualTo(MarkColor.None));
 			Assert.That(log.IsMarked, Is.False);
@@ -618,7 +568,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log with cached line counts
-			using var context = new TestContext(this.Application, profile => profile.LogPatterns = [ new LogPattern("(?<Extra1>.*) (?<Extra5>.*)", false, false, null) ]);
+			using var context = new DisplayableLogTestContext(this.Application, profile => profile.LogPatterns = [ new LogPattern("(?<Extra1>.*) (?<Extra5>.*)", false, false, null) ]);
 			var log = context.CreateLog(it =>
 			{
 				it.Set(nameof(Log.Error), "E1\nE2");
@@ -671,7 +621,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = CreateLogWithAllProperties(context);
 
 			// check string properties
@@ -783,7 +733,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare logs
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = context.CreateLog(it =>
 			{
 				it.Set(nameof(Log.ProcessId), "123");
@@ -833,7 +783,7 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// check log with timestamps and time spans
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = CreateLogWithAllProperties(context);
 			Assert.That(log.TryGetEarliestAndLatestTimestamp(out var earliest, out var latest), Is.True);
 			Assert.That(earliest, Is.EqualTo(new DateTime(2026, 7, 24, 10, 30, 0)));
@@ -863,12 +813,12 @@ class DisplayableLogTests : ApplicationBasedTests
 		this.TestOnApplicationThread(() =>
 		{
 			// prepare log
-			using var context = new TestContext(this.Application);
+			using var context = new DisplayableLogTestContext(this.Application);
 			var log = CreateLogWithAllProperties(context);
 
 			// get property with native type
 			Assert.That(log.TryGetProperty<IStringSource>(nameof(DisplayableLog.Message), out var messageSource), Is.True);
-			Assert.That(messageSource?.ToString(), Is.EqualTo("Test message"));
+			Assert.That(messageSource.ToString(), Is.EqualTo("Test message"));
 			Assert.That(log.TryGetProperty<int?>(nameof(DisplayableLog.ProcessId), out var pid), Is.True);
 			Assert.That(pid, Is.EqualTo(123));
 			Assert.That(log.TryGetProperty<LogLevel>(nameof(DisplayableLog.Level), out var level), Is.True);
