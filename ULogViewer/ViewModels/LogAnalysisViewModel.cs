@@ -598,7 +598,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         // set to clipboard
         try
         {
-            var task = App.Current.LatestActiveWindow?.Clipboard?.SetTextAsync(textBuffer.ToString());
+            var task = this.Application.LatestActiveWindow?.Clipboard?.SetTextAsync(textBuffer.ToString());
             if (task is not null)
                 await task;
         }

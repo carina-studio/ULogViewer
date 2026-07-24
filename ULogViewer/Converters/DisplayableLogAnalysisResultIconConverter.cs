@@ -14,7 +14,7 @@ class DisplayableLogAnalysisResultIconConverter : BaseValueConverter<object?, II
     /// <summary>
     /// Default instance.
     /// </summary>
-    public static readonly DisplayableLogAnalysisResultIconConverter Default = new(App.Current);
+    public static readonly DisplayableLogAnalysisResultIconConverter Default = new(IULogViewerApplication.Current);
 
 
     // Fields.

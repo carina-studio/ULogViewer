@@ -661,7 +661,7 @@ class Session : ViewModel<IULogViewerApplication>
 	static readonly SettingKey<bool> areAllPanelsHiddenKey = new("Session.AreAllPanelsHidden", false);
 	static readonly Regex commandExecutableRegex = new("^(?<ExecutableCommand>([^\\s\"]*)|\"([^\\s])*\")(\\s|$)", RegexOptions.Compiled);
 	static readonly List<DisplayableLog> displayableLogsToDispose = new();
-	static readonly ScheduledAction disposeDisplayableLogsAction = new(App.Current, () =>
+	static readonly ScheduledAction disposeDisplayableLogsAction = new(IULogViewerApplication.Current, () =>
 	{
 		if (displayableLogsToDispose.IsEmpty())
 			return;
@@ -671,7 +671,7 @@ class Session : ViewModel<IULogViewerApplication>
 			foreach (var log in displayableLogsToDispose)
 				log.Dispose();
 			displayableLogsToDispose.Clear();
-			if (App.Current.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
+			if (IULogViewerApplication.Current.Settings.GetValueOrDefault(SettingKeys.MemoryUsagePolicy) != MemoryUsagePolicy.BetterPerformance)
 				displayableLogsToDispose.TrimExcess();
 			staticLogger?.LogTrace("Disposed {disposed} displayable logs", logCount);
 			staticLogger?.LogTrace($"All displayable logs were disposed, trigger GC");
@@ -693,7 +693,7 @@ class Session : ViewModel<IULogViewerApplication>
 		// setup threshold
 		if (memoryThresholdToStartHibernation <= 0)
 		{
-			memoryThresholdToStartHibernation = App.Current.HardwareInfo.TotalPhysicalMemory.GetValueOrDefault() >> 2;
+			memoryThresholdToStartHibernation = IULogViewerApplication.Current.HardwareInfo.TotalPhysicalMemory.GetValueOrDefault() >> 2;
 			if (memoryThresholdToStartHibernation <= 0)
 			{
 				staticLogger?.LogWarning("Unable to get total physical memory to setup threshold for hibernation");
@@ -4493,6 +4493,10 @@ class Session : ViewModel<IULogViewerApplication>
 			if (jsonState.TryGetProperty(nameof(IsHibernated), out var jsonValue) && jsonValue.ValueKind == JsonValueKind.True)
 				this.SetValue(IsHibernatedProperty, true);
 			
+			// restore custom title
+			if (jsonState.TryGetProperty(nameof(CustomTitle), out jsonValue) && jsonValue.ValueKind == JsonValueKind.String)
+				this.SetValue(CustomTitleProperty, jsonValue.GetString());
+
 			// restore showing raw log lines
 			var showRawLogLines = jsonState.TryGetProperty(nameof(this.IsShowingRawLogLinesTemporarily), out jsonValue) && jsonValue.ValueKind == JsonValueKind.True;
 
@@ -5270,6 +5274,11 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// save state
 		jsonWriter.WriteStartObject();
+		
+		// save custom title
+		this.CustomTitle?.Let(it => jsonWriter.WriteString(nameof(CustomTitle), it));
+
+		// save log profile related state
 		this.LogProfile?.Let(profile =>
 		{
 			// save hibernation state
