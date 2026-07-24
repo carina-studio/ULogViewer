@@ -62,16 +62,16 @@ public class CompressedStringSource : IStringSource
             CompressionMemoryStream ??= new();
             using (var stream = new DeflateStream(CompressionMemoryStream, CompressionLevel.SmallestSize, true))
                 stream.Write(utf8);
-            this.data = CompressionMemoryStream.ToArray();
-            if (this.data.Length < utf8ByteCount)
+            if (CompressionMemoryStream.Position < utf8ByteCount)
             {
+                this.data = CompressionMemoryStream.ToArray();
                 this.flags = 0x80000000u | (uint)utf8ByteCount;
                 ByteArrayPool.Return(utf8);
             }
             else
             {
                 this.data = utf8;
-                this.flags = (uint)utf8ByteCount;
+                this.flags = (uint)utf8ByteCount & 0x7fffffffu;
             }
             CompressionMemoryStream.SetLength(0);
         }
@@ -121,7 +121,7 @@ public class CompressedStringSource : IStringSource
         if ((this.flags & 0x80000000u) == 0)
         {
             utf8 = this.data;
-            utf8ByteCount = utf8.Length;
+            utf8ByteCount = (int)(this.flags & 0x7fffffffu);
         }
         else
         {

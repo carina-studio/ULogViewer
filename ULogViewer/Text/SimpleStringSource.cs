@@ -55,6 +55,10 @@ public class SimpleStringSource : IStringSource
     /// <inheritdoc/>
     public bool TryCopyTo(Span<char> buffer)
     {
+        if (this.@string.Length == 0)
+            return true;
+        if (buffer.IsEmpty)
+            return false;
         if (buffer.Length >= this.@string.Length)
             return this.@string.AsSpan().TryCopyTo(buffer);
         return this.@string.AsSpan().Slice(0, buffer.Length).TryCopyTo(buffer);
