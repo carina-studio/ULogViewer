@@ -1148,13 +1148,26 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 		if (propertyChangedHandlers is null)
 			return;
 
-		// check extra line count
+		// check extra line counts
 		var data = this.data;
-		for (var i = this.data.Length - 1; i >= ExtraLineCountsDataOffset; --i)
+		if (data.Length > ExtraLineCountsDataOffset && DisplayableLogGroup.TryGetInstanceById(this.GroupId, out var group))
 		{
-			if (data[i] > 0)
-				propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{i + 1}"));
+			var extraNumbers = group.LogExtraNumbers;
+			for (var i = this.data.Length - 1; i >= ExtraLineCountsDataOffset; --i)
+			{
+				var index = i - ExtraLineCountsDataOffset;
+				if (data[i] > 0 && index < extraNumbers.Count)
+					propertyChangedHandlers(this, new PropertyChangedEventArgs($"HasExtraLinesOfExtra{extraNumbers[index]}"));
+			}
 		}
+
+		// check error line count
+		if (data[ErrorLineCountOffset] > 0)
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfError)));
+
+		// check exception line count
+		if (data[ExceptionLineCountOffset] > 0)
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfException)));
 
 		// check message line count
 		if (data[MessageLineCountDataOffset] > 0)
@@ -1163,6 +1176,10 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 		// check summary line count
 		if (data[SummaryLineCountDataOffset] > 0)
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfSummary)));
+
+		// check warning line count
+		if (data[WarningLineCountDataOffset] > 0)
+			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(HasExtraLinesOfWarning)));
 	}
 
 
@@ -1230,8 +1247,7 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(BeginningTimestampString)));
 		if (this.Log.EndingTimestamp.HasValue)
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(EndingTimestampString)));
-		if (this.Log.Timestamp.HasValue)
-			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(ReadTimeString)));
+		propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(ReadTimeString)));
 		if (this.Log.Timestamp.HasValue)
 			propertyChangedHandlers(this, new PropertyChangedEventArgs(nameof(TimestampString)));
 	}
@@ -1413,14 +1429,11 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 				{
 					foreach (var propertyName in Log.PropertyNames)
 					{
-						var convertedName = (propertyName == nameof(Logs.Log.Id))
-							? nameof(LogId)
-							: propertyName;
 						try
 						{
-							type.GetProperty(convertedName)?.Let(it =>
+							type.GetProperty(propertyName)?.Let(it =>
 							{
-								propertyMap[convertedName] = it;
+								propertyMap[propertyName] = it;
 							});
 						}
 						// ReSharper disable EmptyGeneralCatchClause
@@ -1435,6 +1448,7 @@ unsafe class DisplayableLog : IApplicationObject, IDisposable, INotifyPropertyCh
 						nameof(EndingTimeSpanString),
 						nameof(EndingTimestampString),
 						nameof(LevelString),
+						nameof(LogId),
 						nameof(ReadTimeString),
 						nameof(TimeSpanString),
 						nameof(TimestampString),

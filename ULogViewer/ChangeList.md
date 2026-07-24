@@ -9,4 +9,5 @@
 
 ## Bug Fixing
 + Fixed the failure to use `Noto Sans` in the Chinese environment.
++ Fixed an issue that the timestamp of reading log may not be updated after changing the timestamp format.
 + Minor bug fixing.
