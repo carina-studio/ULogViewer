@@ -123,7 +123,7 @@ partial class DisplayableLogGroup : BaseDisposableApplicationObject<IULogViewerA
 	/// Initialize new <see cref="DisplayableLogGroup"/> instance.
 	/// </summary>
 	/// <param name="profile">Log profile.</param>
-	public DisplayableLogGroup(LogProfile profile) : base(App.Current)
+	public DisplayableLogGroup(LogProfile profile) : base(profile.Application)
 	{
 		// get ID
 		uint id;

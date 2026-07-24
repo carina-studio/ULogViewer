@@ -16,6 +16,12 @@ interface IDisplayableLogProcessor : IApplicationObject<IULogViewerApplication>,
 
 
     /// <summary>
+    /// Get exception occurred while processing logs.
+    /// </summary>
+    Exception? Exception { get; }
+
+
+    /// <summary>
     /// Notify that given log was updated and should be processed again.
     /// </summary>
     /// <param name="log">Log to be processed again.</param>
@@ -27,6 +33,12 @@ interface IDisplayableLogProcessor : IApplicationObject<IULogViewerApplication>,
     /// </summary>
     /// <param name="logs">Logs to be processed again.</param>
     void InvalidateLogs(IEnumerable<DisplayableLog> logs);
+
+
+    /// <summary>
+    /// Check whether error occurred while processing logs or not.
+    /// </summary>
+    bool IsFaulted { get; }
 
 
     /// <summary>

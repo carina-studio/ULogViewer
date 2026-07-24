@@ -15,6 +15,10 @@ namespace CarinaStudio.ULogViewer;
 /// </summary>
 class TestApp : MockAppSuiteApplication, IULogViewerApplication
 {
+	// Static fields.
+	static bool isLogProfileManagerInitialized;
+
+
 	/// <summary>
 	/// Initialize instance.
 	/// </summary>
@@ -24,10 +28,20 @@ class TestApp : MockAppSuiteApplication, IULogViewerApplication
 		// create instance
 		var app = (TestApp)MockAppSuiteApplication.Initialize(() => new TestApp());
 
-		// initialize
+		// initialize log data source providers
 		Task? initTask = null;
 		app.SynchronizationContext.Send(() => initTask = Logs.DataSources.LogDataSourceProviders.InitializeAsync(app));
 		initTask.AsNonNull().GetAwaiter().GetResult();
+
+		// initialize log profile manager
+		if (!isLogProfileManagerInitialized)
+		{
+			isLogProfileManagerInitialized = true;
+			app.SynchronizationContext.Send(() => initTask = Logs.Profiles.LogProfileManager.InitializeAsync(app));
+			initTask.AsNonNull().GetAwaiter().GetResult();
+		}
+
+		// complete
 		return app;
 	}
 

@@ -1,6 +1,5 @@
 ﻿using Avalonia.Data.Converters;
 using Avalonia.Media;
-using CarinaStudio.Controls;
 using CarinaStudio.ULogViewer.Logs;
 using System;
 using System.Globalization;
@@ -15,20 +14,20 @@ namespace CarinaStudio.ULogViewer.Converters
 		/// <summary>
 		/// Default instance for background.
 		/// </summary>
-		public static readonly LogLevelBrushConverter Background = new(App.Current, "Background");
+		public static readonly LogLevelBrushConverter Background = new(IAvaloniaApplication.Current, "Background");
 		/// <summary>
 		/// Default instance for foreground.
 		/// </summary>
-		public static readonly LogLevelBrushConverter Foreground = new(App.Current, "Foreground");
+		public static readonly LogLevelBrushConverter Foreground = new(IAvaloniaApplication.Current, "Foreground");
 
 
 		// Fields.
-		readonly App app;
+		readonly IAvaloniaApplication app;
 		readonly string prefix;
 
 
 		// Constructor.
-		LogLevelBrushConverter(App app, string prefix)
+		LogLevelBrushConverter(IAvaloniaApplication app, string prefix)
 		{
 			this.app = app;
 			this.prefix = prefix;

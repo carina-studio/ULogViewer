@@ -60,6 +60,8 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
         // create lists
         this.sourceLogVersions = new(sourceLogs.Count);
+        if (sourceLogs.IsNotEmpty())
+            this.sourceLogVersions.AddRange(new byte[sourceLogs.Count]);
         this.unprocessedLogs = comparer.SortDirection == SortDirection.Ascending
             ? new(new Comparison<DisplayableLog>(comparer.Compare).Invert())
             : new(comparer.Compare);
@@ -201,6 +203,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// Raise when error message generated.
     /// </summary>
     public event Action<IDisplayableLogProcessor, MessageEventArgs>? ErrorMessageGenerated;
+
+
+    /// <summary>
+    /// Get exception occurred while processing logs.
+    /// </summary>
+    public Exception? Exception { get; private set; }
 
 
     /// <summary>
@@ -373,6 +381,12 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
 
 
     /// <summary>
+    /// Check whether error occurred while processing logs or not.
+    /// </summary>
+    public bool IsFaulted { get; private set; }
+
+
+    /// <summary>
     /// Check whether logs processing is on-going or not.
     /// </summary>
     public bool IsProcessing { get; private set; }
@@ -508,6 +522,22 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
     /// <param name="logs">Processed logs.</param>
     /// <param name="results">Processing result.</param>
     protected abstract void OnChunkProcessed(TProcessingToken token, List<DisplayableLog> logs, List<TProcessingResult> results);
+
+
+    /// <summary>
+    /// Called when error occurred while processing chunk of logs.
+    /// </summary>
+    /// <param name="token">Token of processing.</param>
+    /// <param name="exception">Exception occurred while processing.</param>
+    protected virtual void OnChunkProcessingFailed(TProcessingToken token, Exception exception)
+    {
+        if (this.IsFaulted)
+            return;
+        this.Exception = exception;
+        this.IsFaulted = true;
+        this.OnPropertyChanged(nameof(Exception));
+        this.OnPropertyChanged(nameof(IsFaulted));
+    }
 
 
     /// <summary>
@@ -703,13 +733,21 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         catch (Exception ex)
         {
             this.Logger.LogError(ex, "Unhandled error occurred while processing log chunk [{chunkId}].", chunkId);
+            this.SynchronizationContext.Post(() =>
+            {
+                if (this.currentProcessingParams == processingParams && !this.IsDisposed)
+                    this.OnChunkProcessingFailed(processingParams.Token, ex);
+            });
         }
 
         // Reverse back to same order as source list
         if (sortDirection == SortDirection.Ascending)
-            logVersions.Reverse(); 
+            logVersions.Reverse();
         else
+        {
             processedLogs.Reverse();
+            processingResults.Reverse();
+        }
 
         // recycle list
         this.RecycleInternalDisplayableLogList(logs);
@@ -981,6 +1019,15 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
         // cancel current processing
         this.CancelProcessing(true);
 
+        // clear fault
+        if (this.IsFaulted)
+        {
+            this.IsFaulted = false;
+            this.Exception = null;
+            this.OnPropertyChanged(nameof(IsFaulted));
+            this.OnPropertyChanged(nameof(Exception));
+        }
+
         // create token
         var processingToken = this.CreateProcessingToken(out var isProcessingNeeded);
 
@@ -1143,7 +1190,7 @@ static class BaseDisplayableLogProcessors
             return list;
         }
         if (elements is not null)
-            return [..elements];
+            return [ ..elements ];
         return [];
     }
 
@@ -1170,7 +1217,7 @@ static class BaseDisplayableLogProcessors
             return list;
         }
         if (elements is not null)
-            return [..elements];
+            return [ ..elements ];
         return [];
     }
     
