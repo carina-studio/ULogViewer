@@ -42,6 +42,10 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 	}
 
 
+	// Static fields.
+	static readonly List<Workspace> activeInstances = [];
+
+
 	// Fields.
 	int lastTrackedSessionCount;
 	IDisposable? sessionActivationToken;
@@ -77,7 +81,17 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 		// start watch
 		if (this.Application.IsDebugMode)
 			this.stopwatch.Start();
+
+		// register instance
+		activeInstances.Add(this);
 	}
+
+
+	/// <summary>
+	/// Get all active (non-disposed) <see cref="Workspace"/> instances in current process.
+	/// </summary>
+	/// <remarks>Can only be accessed from the UI thread.</remarks>
+	internal static IList<Workspace> ActiveInstances { get; } = ListExtensions.AsReadOnly(activeInstances);
 
 
 	/// <summary>
@@ -300,6 +314,9 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 
 		// check thread
 		this.VerifyAccess();
+
+		// unregister instance
+		activeInstances.Remove(this);
 
 		// dispose sessions
 		foreach (var session in this.sessions.ToArray())
