@@ -13,6 +13,7 @@ namespace CarinaStudio.ULogViewer.Logs;
 class LogBuilder
 {
 	// Constants.
+	const int NoSecondCharKeyPart = 0x80;
 	const int StringLengthToUseCache = 32;
 	
 	
@@ -49,7 +50,7 @@ class LogBuilder
 				var newValue = new char[oldLength + value.Length];
 				memory.CopyTo(newValue);
 				value.AsMemory().CopyTo(new Memory<char>(newValue).Slice(oldLength));
-				properties[propertyName] = newValue;
+				properties[propertyName] = new ReadOnlyMemory<char>(newValue);
 				return;
 			}
 			if (current is string str)
@@ -77,7 +78,7 @@ class LogBuilder
 				var newValue = new char[oldLength + value.Length];
 				memory.CopyTo(newValue);
 				value.CopyTo(new Memory<char>(newValue).Slice(oldLength));
-				properties[propertyName] = newValue;
+				properties[propertyName] = new ReadOnlyMemory<char>(newValue);
 				return;
 			}
 			if (current is string str)
@@ -109,7 +110,7 @@ class LogBuilder
 					memory.CopyTo(newValue);
 					newValue[oldLength] = '\n';
 					value.AsMemory().CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
-					properties[propertyName] = newValue;
+					properties[propertyName] = new ReadOnlyMemory<char>(newValue);
 					return;
 				}
 			}
@@ -145,7 +146,7 @@ class LogBuilder
 					memory.CopyTo(newValue);
 					newValue[oldLength] = '\n';
 					value.CopyTo(new Memory<char>(newValue).Slice(oldLength + 1));
-					properties[propertyName] = newValue;
+					properties[propertyName] = new ReadOnlyMemory<char>(newValue);
 					return;
 				}
 			}
@@ -200,7 +201,14 @@ class LogBuilder
 		if (DateTime.TryParse(span, out var dateTimeValue))
 			return dateTimeValue;
 		if (long.TryParse(span, out var longValue))
-			return DateTime.FromBinary(longValue);
+		{
+			try
+			{
+				return DateTime.FromBinary(longValue);
+			}
+			catch (ArgumentException)
+			{ /* value is out of range of date time, treat it as an unparseable value */ }
+		}
 		return null;
 	}
 
@@ -315,7 +323,7 @@ class LogBuilder
 				var stringSpan = memory.Span;
 				if (memory.Length <= 2 && stringSpan[0] <= 127 && (memory.Length == 1 || stringSpan[1] <= 127))
 				{
-					var key = (ushort)((stringSpan[0] << 8) | (memory.Length == 1 ? 0 : stringSpan[1]));
+					var key = (ushort)((stringSpan[0] << 8) | (memory.Length == 1 ? NoSecondCharKeyPart : stringSpan[1]));
 					if (SharedSmallStringSources.TryGetValue(key, out var sharedStringSource))
 					{
 						fromCache = true;
@@ -350,7 +358,7 @@ class LogBuilder
 				var stringSpan = s.AsSpan();
 				if (s.Length <= 2 && stringSpan[0] <= 127 && (s.Length == 1 || stringSpan[1] <= 127))
 				{
-					var key = (ushort)((stringSpan[0] << 8) | (s.Length == 1 ? 0 : stringSpan[1]));
+					var key = (ushort)((stringSpan[0] << 8) | (s.Length == 1 ? NoSecondCharKeyPart : stringSpan[1]));
 					if (SharedSmallStringSources.TryGetValue(key, out var sharedStringSource))
 					{
 						fromCache = true;
@@ -380,10 +388,7 @@ class LogBuilder
 			
 			// add string source to cache
 			if (cacheKey is not null && stringCache is not null)
-			{
-				fromCache = true;
-				stringCache.Add(cacheKey, stringSource!);
-			}
+				fromCache = stringCache.Add(cacheKey, stringSource!);
 
 			// complete
 			return stringSource;
@@ -447,7 +452,8 @@ class LogBuilder
 			string s => s.AsSpan(),
 			_ => default,
 		};
-		if (double.TryParse(span, out var ms))
+		// the range is also checked to keep NaN and out of range values as unparseable values instead of letting FromMilliseconds() throw
+		if (double.TryParse(span, out var ms) && ms >= TimeSpan.MinValue.TotalMilliseconds && ms <= TimeSpan.MaxValue.TotalMilliseconds)
 			return TimeSpan.FromMilliseconds(ms);
 		if (TimeSpan.TryParse(span, out var timeSpan))
 			return timeSpan;
