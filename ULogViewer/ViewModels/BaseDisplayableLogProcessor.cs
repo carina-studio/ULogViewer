@@ -776,7 +776,9 @@ abstract class BaseDisplayableLogProcessor<TProcessingToken, TProcessingResult> 
             return;
         if (this.unprocessedLogs.IsEmpty())
         {
-            if (this.IsProcessing)
+            // declare completion only when no dispatched chunk is still in flight; unprocessedLogs
+            // drains at dispatch time, so results of in-flight chunks may not be applied yet
+            if (this.IsProcessing && processingParams.ConcurrencyLevel <= 0)
             {
                 this.IsProcessing = false;
                 this.Progress = 1;
