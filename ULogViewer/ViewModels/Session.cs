@@ -3340,9 +3340,11 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		this.canClearLogFiles.Update(false);
 		var profile = this.GetValue(LogProfileProperty);
-		if (profile is not null && !this.IsDisposed)
+		if (!this.IsDisposed)
 		{
-			if (profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
+			this.ResetValue(HasLogFilesProperty);
+			if (profile is not null
+			    && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
 			    && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.SetValue(IsLogFileNeededProperty, true);
@@ -4536,7 +4538,7 @@ class Session : ViewModel<IULogViewerApplication>
 					                   && jsonIsPredefined.ValueKind == JsonValueKind.True;
 					var precondition = new LogReadingPrecondition();
 					var readingWindow = LogReadingWindow.StartOfDataSource;
-						var maxReadingCount = default(int?);
+					var maxReadingCount = default(int?);
 					this.logFileInfoList.Add(new LogFileInfoImpl(this, jsonFileName.GetString()!, precondition, readingWindow, maxReadingCount, isPredefined));
 				}
 				if (this.logFileInfoList.IsNotEmpty())
@@ -4577,7 +4579,7 @@ class Session : ViewModel<IULogViewerApplication>
 			{
 				if (jsonValue.ValueKind == JsonValueKind.False)
 					this.SetValue(UseTextShellToExecuteCommandProperty, false);
-				else if (jsonValue.ValueKind == JsonValueKind.False)
+				else if (jsonValue.ValueKind == JsonValueKind.True)
 					this.SetValue(UseTextShellToExecuteCommandProperty, true);
 			}
 			if (jsonState.TryGetProperty(nameof(WorkingDirectoryPath), out var jsonWorkingDir)
@@ -6353,7 +6355,7 @@ class Session : ViewModel<IULogViewerApplication>
 		{
 			this.canCopyLogs.Update(this.Application is App && !this.IsCopyingLogs);
 			this.canCopyLogsWithFileNames.Update(this.canCopyLogs.Value && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)));
-			this.canSaveLogs.Update(this.Application is App && !this.IsSavingLogs && this.AllLogCount > 0);
+			this.canSaveLogs.Update(!this.IsSavingLogs && this.AllLogCount > 0);
 		}
 	}
 	
@@ -6494,7 +6496,15 @@ class Session : ViewModel<IULogViewerApplication>
 			if (logProfile is null)
 				return customTitle ?? app?.GetString("Session.Empty");
 			var dataSourceOptions = logProfile.DataSourceOptions;
-				
+
+			// custom title
+			if (customTitle is not null)
+			{
+				return this.logFileInfoList.Count > 1
+					? $"{customTitle} ({this.logFileInfoList.Count})"
+					: customTitle;
+			}
+
 			// single file
 			if (this.logFileInfoList.Count == 1
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
@@ -6550,8 +6560,8 @@ class Session : ViewModel<IULogViewerApplication>
 
 			// 0 or multiple files
 			if (this.logFileInfoList.IsEmpty())
-				return customTitle ?? logProfile.Name;
-			return $"{customTitle ?? logProfile.Name} ({this.logFileInfoList.Count})";
+				return logProfile.Name;
+			return $"{logProfile.Name} ({this.logFileInfoList.Count})";
 		});
 
 		// update properties
