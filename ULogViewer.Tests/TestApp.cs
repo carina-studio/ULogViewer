@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,6 +45,10 @@ class TestApp : MockAppSuiteApplication, IULogViewerApplication
 		// complete
 		return app;
 	}
+
+
+	/// <inheritdoc/>
+	public override Assembly Assembly => typeof(App).Assembly;
 
 
 	/// <inheritdoc/>

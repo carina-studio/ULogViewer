@@ -415,7 +415,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							options.IsResourceOnAzure = jsonProperty.Value.GetBoolean();
 							break;
 						case nameof(Password):
-							crypto ??= new Crypto(App.Current);
+							crypto ??= new Crypto(IULogViewerApplication.Current);
 							options.Password = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 							break;
 						case nameof(ProcessId):
@@ -455,7 +455,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							options.Uri = new Uri(jsonProperty.Value.GetString().AsNonNull());
 							break;
 						case nameof(UserName):
-							crypto ??= new Crypto(App.Current);
+							crypto ??= new Crypto(IULogViewerApplication.Current);
 							options.UserName = crypto.Decrypt(jsonProperty.Value.GetString().AsNonNull());
 							break;
 						case nameof(UseTextShell):
@@ -570,7 +570,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					jsonWriter.WriteBoolean(nameof(IsResourceOnAzure), true);
 				this.Password?.Let(it =>
 				{
-					crypto = new Crypto(App.Current);
+					crypto = new Crypto(IULogViewerApplication.Current);
 					jsonWriter.WriteString(nameof(Password), crypto.Encrypt(it));
 				});
 				this.ProcessId?.Let(it =>
@@ -605,7 +605,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					jsonWriter.WriteString(nameof(Uri), it.ToString()));
 				this.UserName?.Let(it =>
 				{
-					crypto ??= new Crypto(App.Current);
+					crypto ??= new Crypto(IULogViewerApplication.Current);
 					jsonWriter.WriteString(nameof(UserName), crypto.Encrypt(it));
 				});
 				if (this.UseTextShell)

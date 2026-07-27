@@ -206,6 +206,20 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	}
 
 
+	// Check whether the given maps of log level contain same entries or not.
+	static bool AreLogLevelMapsEquivalent<TKey, TValue>(IDictionary<TKey, TValue> x, IDictionary<TKey, TValue> y) where TKey : notnull
+	{
+		if (x.Count != y.Count)
+			return false;
+		foreach (var (key, value) in x)
+		{
+			if (!y.TryGetValue(key, out var valueOfY) || !EqualityComparer<TValue>.Default.Equals(value, valueOfY))
+				return false;
+		}
+		return true;
+	}
+
+
 	/// <summary>
 	/// Change ID of profile.
 	/// </summary>
@@ -555,7 +569,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	public static async Task<LogProfile> LoadAsync(IULogViewerApplication app, string fileName)
 	{
 		// load JSON document
-		var jsonDocument = await Task.Run(() =>
+		using var jsonDocument = await Task.Run(() =>
 		{
 			using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
 			return JsonDocument.Parse(stream);
@@ -590,7 +604,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 	public static async Task<LogProfile> LoadBuiltInAsync(IULogViewerApplication app, string id)
 	{
 		// load JSON document
-		var jsonDocument = await Task.Run(() =>
+		using var profileJsonDocument = await Task.Run(() =>
 		{
 			using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"CarinaStudio.ULogViewer.Logs.Profiles.BuiltIn.{id}.json") ?? throw new ArgumentException($"Cannot find built-in profile '{id}'.");
 			return JsonDocument.Parse(stream);
@@ -599,7 +613,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		// load profile
 		var profile = new LogProfile(app, id, true);
 		var persistentState = app.PersistentState;
-		profile.Load(jsonDocument.RootElement);
+		profile.Load(profileJsonDocument.RootElement);
 		profile.isPinned = persistentState.GetValueOrDefault(profile.isPinnedSettingKey.AsNonNull());
 		persistentState.GetValueOrDefault(profile.visibleLogPropertyWidthsSettingKey.AsNonNull()).Let(settingValue =>
 		{
@@ -928,7 +942,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		{
 			this.VerifyAccess();
 			this.VerifyBuiltIn();
-			if (this.logLevelMapForReading.Equals(value))
+			if (AreLogLevelMapsEquivalent(this.logLevelMapForReading, value))
 				return;
 			this.logLevelMapForReading.Clear();
 			this.logLevelMapForReading.AddAll(value);
@@ -947,7 +961,7 @@ class LogProfile : BaseProfile<IULogViewerApplication>, IEquatable<LogProfile>, 
 		{
 			this.VerifyAccess();
 			this.VerifyBuiltIn();
-			if (this.logLevelMapForWriting.Equals(value))
+			if (AreLogLevelMapsEquivalent(this.logLevelMapForWriting, value))
 				return;
 			this.logLevelMapForWriting.Clear();
 			this.logLevelMapForWriting.AddAll(value);
