@@ -198,6 +198,11 @@ for i in "${!RID_LIST[@]}"; do
     if [ "$SIGN_PACKAGE" = "true" ]; then
         echo "Sign package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
         codesign --deep --force --options=runtime --timestamp --entitlements "./$APP_NAME/$APP_NAME.entitlements" -s "$CERT_NAME" "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app"
+        if [ "$?" != "0" ]; then
+            echo "Failed to sign package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
+            rm -f "./Packages/$VERSION/$APP_NAME-$PACKAGE_VERSION-$PUB_PLATFORM.zip"
+            exit 1
+        fi
     else
         echo "Skip signing package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
     fi
