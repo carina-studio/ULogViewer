@@ -59,14 +59,11 @@ namespace CarinaStudio.ULogViewer.Logs
 					});
 					deflateSize += deflateBytes.Length;
 				}
-				originalSize /= 100;
-				utf8Size /= 100;
-				deflateSize /= 100;
-				var utf8SizeRatio = (double)utf8Size / originalSize;
-				var deflateSizeRatio = (double)deflateSize / originalSize;
 
+#pragma warning disable CS0642
 				if (deflateSize < utf8Size)
 					; // in most cases, size of deflate compression string will be smaller than UTF8 when length >= 64.
+#pragma warning restore CS0642
 			}
 		}
 	}

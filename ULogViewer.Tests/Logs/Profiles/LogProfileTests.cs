@@ -307,13 +307,13 @@ class LogProfileTests : ApplicationBasedTests
 			Assert.That(profile.Equals(profile));
 			Assert.That(profile.GetHashCode(), Is.EqualTo(profile.Id.GetHashCode()));
 
+			// copy of log profile is not equivalent to its template
+			Assert.That(profile.Equals(new LogProfile(profile)), Is.False);
+
 			// log profile is not equivalent to null
 			Assert.That(profile.Equals(null), Is.False);
 			Assert.That(profile == null, Is.False);
 			Assert.That(profile != null);
-
-			// copy of log profile is not equivalent to its template
-			Assert.That(profile.Equals(new LogProfile(profile)), Is.False);
 		});
 	}
 
