@@ -133,8 +133,11 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         }
         if (isProcessingNeeded)
         {
-            if (this.inclusiveTextRegexList.IsNotEmpty() || this.exclusiveTextRegexList.IsNotEmpty())
+            if (this.inclusiveTextRegexList.IsEmpty() && this.exclusiveTextRegexList.IsEmpty())
+                isProcessingNeeded = false;
+            else if (this.exclusiveTextRegexList.IsEmpty())
             {
+                // text filtering is unnecessary only if all logs are accepted by one of inclusive regexes and no log will be excluded
                 foreach (var regex in this.inclusiveTextRegexList)
                 {
                     if (Utility.IsAllMatchingRegex(regex))
@@ -143,17 +146,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                         break;
                     }
                 }
-                foreach (var regex in this.exclusiveTextRegexList)
-                {
-                    if (Utility.IsAllMatchingRegex(regex))
-                    {
-                        isProcessingNeeded = false;
-                        break;
-                    }
-                }
             }
-            else
-                isProcessingNeeded = false;
         }
         if (!isProcessingNeeded)
             isProcessingNeeded = this.timestampLogProperty is not null && (this.beginningTimestamp.HasValue || this.endingTimestamp.HasValue);
@@ -323,8 +316,6 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
         {
             this.VerifyAccess();
             this.VerifyDisposed();
-            if (this.levels.Equals(value))
-                return;
             var newLevels = value.IsNotEmpty() && value.First() != LogLevel.Undefined
                 ? ImmutableHashSet.CreateBuilder<LogLevel>().Also(builder =>
                 {
@@ -335,7 +326,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                     }
                 }).ToImmutable()
                 : ImmutableHashSet<LogLevel>.Empty;
-            if (this.levels.Equals(newLevels))
+            if (this.levels.SetEquals(newLevels))
                 return;
             this.levels = newLevels;
             this.InvalidateProcessing();
@@ -585,7 +576,7 @@ class DisplayableLogFilter : BaseDisplayableLogProcessor<DisplayableLogFilter.Fi
                 return;
             this.timestampLogProperty = value;
             this.InvalidateProcessing();
-            this.OnPropertyChanged(nameof(EndTimestamp));
+            this.OnPropertyChanged(nameof(TimestampLogProperty));
         }
     }
 }
