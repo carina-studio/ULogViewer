@@ -1,6 +1,5 @@
 using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
-using CarinaStudio.ComponentModel;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.ViewModels.Categorizing;
 using NUnit.Framework;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
@@ -352,13 +350,13 @@ class LogProfileTests : ApplicationBasedTests
 
 				// check upgraded data
 				Assert.That(profile.IsDataUpgraded, "Data of log profile should be upgraded.");
-				Assert.That(profile.LogWritingFormats, Is.EqualTo(new[] { "{Message}" }));
-				Assert.That(profile.TimestampFormatsForReading, Is.EqualTo(new[] { "yyyy-MM-dd HH:mm:ss" }));
+				Assert.That(profile.LogWritingFormats, Is.EqualTo([ "{Message}" ]));
+				Assert.That(profile.TimestampFormatsForReading, Is.EqualTo([ "yyyy-MM-dd HH:mm:ss" ]));
 				Assert.That(profile.WorkingDirectoryRequirement, Is.EqualTo(LogProfilePropertyRequirement.Required));
 				Assert.That(profile.DataSourceProvider.Name, Is.EqualTo("File"));
 				Assert.That(profile.DataSourceOptions.FileName, Is.EqualTo("/tmp/legacy.log"));
 				Assert.That(profile.DataSourceOptions.Encoding?.WebName, Is.EqualTo(Encoding.UTF8.WebName));
-				Assert.That(profile.DataSourceOptions.SetupCommands, Is.EqualTo(new[] { "setup" }));
+				Assert.That(profile.DataSourceOptions.SetupCommands, Is.EqualTo([ "setup" ]));
 			}
 			finally
 			{
@@ -378,17 +376,17 @@ class LogProfileTests : ApplicationBasedTests
 		{
 			// attach to log profile
 			var profile = new LogProfile(this.Application);
-			var changedPropertyNames = new List<string>();
+			List<string> changedPropertyNames = [];
 			profile.PropertyChanged += (_, e) => changedPropertyNames.Add(e.PropertyName.AsNonNull());
 
 			// change value of properties
 			profile.ColorIndicator = LogColorIndicator.ProcessId;
-			Assert.That(changedPropertyNames, Is.EqualTo(new[] { nameof(LogProfile.ColorIndicator) }));
+			Assert.That(changedPropertyNames, Is.EqualTo([ nameof(LogProfile.ColorIndicator) ]));
 			changedPropertyNames.Clear();
 			profile.Icon = LogProfileIcon.Database;
 			profile.MaxLogReadingCount = 100;
 			profile.Name = "New Name";
-			Assert.That(changedPropertyNames, Is.EquivalentTo(new[] { nameof(LogProfile.Icon), nameof(LogProfile.MaxLogReadingCount), nameof(LogProfile.Name) }));
+			Assert.That(changedPropertyNames, Is.EquivalentTo([ nameof(LogProfile.Icon), nameof(LogProfile.MaxLogReadingCount), nameof(LogProfile.Name) ]));
 
 			// set same value to properties
 			changedPropertyNames.Clear();
@@ -412,7 +410,7 @@ class LogProfileTests : ApplicationBasedTests
 			// change value of map properties
 			profile.LogLevelMapForReading = new Dictionary<string, LogLevel> { ["D"] = LogLevel.Debug };
 			profile.LogLevelMapForWriting = new Dictionary<LogLevel, string> { [LogLevel.Debug] = "D" };
-			Assert.That(changedPropertyNames, Is.EquivalentTo(new[] { nameof(LogProfile.LogLevelMapForReading), nameof(LogProfile.LogLevelMapForWriting) }));
+			Assert.That(changedPropertyNames, Is.EquivalentTo([ nameof(LogProfile.LogLevelMapForReading), nameof(LogProfile.LogLevelMapForWriting) ]));
 
 			// set same value to map properties
 			changedPropertyNames.Clear();

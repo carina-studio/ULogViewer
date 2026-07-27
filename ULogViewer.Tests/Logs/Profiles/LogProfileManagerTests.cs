@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
@@ -66,7 +65,7 @@ class LogProfileManagerTests : ApplicationBasedTests
 			var manager = LogProfileManager.Default;
 			var builtInProfiles = manager.Profiles.Where(it => it.IsBuiltIn).ToArray();
 			Assert.That(builtInProfiles, Is.Not.Empty);
-			foreach (var id in new[] { "AndroidFileLog", "RawFile", "RawHttp", "RawStandardOutput", "RawTcpServer" })
+			foreach (var id in (string[])[ "AndroidFileLog", "RawFile", "RawHttp", "RawStandardOutput", "RawTcpServer" ])
 			{
 				var profile = manager.GetProfileOrDefault(id);
 				Assert.That(profile, Is.Not.Null, $"Built-in log profile '{id}' was not loaded.");
@@ -199,11 +198,11 @@ class LogProfileManagerTests : ApplicationBasedTests
 			// use log profiles
 			manager.SetAsRecentlyUsed(profiles[0]);
 			manager.SetAsRecentlyUsed(profiles[1]);
-			Assert.That(manager.RecentlyUsedProfiles, Is.EqualTo(new[] { profiles[1], profiles[0] }), "Recently used log profile should be the first one.");
+			Assert.That(manager.RecentlyUsedProfiles, Is.EqualTo([ profiles[1], profiles[0] ]), "Recently used log profile should be the first one.");
 
 			// use log profile which was used before
 			manager.SetAsRecentlyUsed(profiles[0]);
-			Assert.That(manager.RecentlyUsedProfiles, Is.EqualTo(new[] { profiles[0], profiles[1] }), "Log profile should be moved to the first one without duplication.");
+			Assert.That(manager.RecentlyUsedProfiles, Is.EqualTo([ profiles[0], profiles[1] ]), "Log profile should be moved to the first one without duplication.");
 
 			// number of recently used log profiles is limited
 			foreach (var profile in profiles)

@@ -354,7 +354,7 @@ class LogBuilderTests
 		Assert.That(builder.IsEmpty(), Is.False);
 		Assert.That(builder.IsNotEmpty());
 		Assert.That(builder.PropertyCount, Is.EqualTo(3));
-		Assert.That(builder.PropertyNames, Is.EquivalentTo(new[] { nameof(Log.Message), nameof(Log.Summary), nameof(Log.Category) }));
+		Assert.That(builder.PropertyNames, Is.EquivalentTo([ nameof(Log.Message), nameof(Log.Summary), nameof(Log.Category) ]));
 
 		// override property
 		builder.Set(nameof(Log.Message), "another message");
