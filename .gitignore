@@ -1,6 +1,10 @@
+.claude/launch.json
 .idea
 .run
 .vs
+AGENTS.local.md
+CLAUDE.local.md
+*.DS_Store
 obj
 bin
 global.json
