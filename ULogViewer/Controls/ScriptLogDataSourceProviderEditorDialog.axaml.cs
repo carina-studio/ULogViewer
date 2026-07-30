@@ -86,6 +86,7 @@ class ScriptLogDataSourceProviderEditorDialog : AppSuite.Controls.Dialog<IULogVi
 	readonly TextBox displayNameTextBox;
 	bool isNewProvider;
 	bool isProviderShown;
+	bool isRequestingEnablingRunningScript;
 	Uri? openingReaderScriptDocumentUri;
 	Uri? readingLineScriptDocumentUri;
 	readonly Avalonia.Controls.ListBox supportedSourceOptionListBox;
@@ -341,6 +342,18 @@ class ScriptLogDataSourceProviderEditorDialog : AppSuite.Controls.Dialog<IULogVi
 	}
 
 
+	/// <inheritdoc/>
+	protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+	{
+		// call base
+		base.OnPropertyChanged(change);
+
+		// running script may have been disabled by user through the application options while the editor was inactive
+		if (change.Property == IsActiveProperty && this.IsActive)
+			_ = this.RequestEnablingRunningScriptAsync();
+	}
+
+
 	/// <summary>
 	/// Open online documentation.
 	/// </summary>
@@ -377,16 +390,26 @@ class ScriptLogDataSourceProviderEditorDialog : AppSuite.Controls.Dialog<IULogVi
 	public ICommand RemoveSupportedSourceOptionCommand { get; }
 
 
-	// Request running script.
+	// Request user to enable running script, close the editor if declined.
 	async Task RequestEnablingRunningScriptAsync()
 	{
-		if (!this.IsOpened || this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
+		// check state
+		if (!this.IsOpened || this.isRequestingEnablingRunningScript || this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript))
 			return;
-		if (!await new EnableRunningScriptDialog().ShowDialog(this))
+
+		// let user decide, the latch is needed because showing the dialog deactivates this window and activating it again requests once more
+		this.isRequestingEnablingRunningScript = true;
+		if (await new EnableRunningScriptDialog().ShowDialog(this))
 		{
-			this.IsEnabled = false;
-			this.SynchronizationContext.PostDelayed(this.Close, 300); // [Workaround] Prevent crashing on macOS.
+			// allow requesting again in case running script is disabled by user later
+			this.isRequestingEnablingRunningScript = false;
+			return;
 		}
+
+		// close the editor if user declined, the latch is kept because the editor is being closed
+		// [Workaround] delayed closing to prevent crashing on macOS
+		this.IsEnabled = false;
+		this.SynchronizationContext.PostDelayed(this.Close, 300);
 	}
 
 

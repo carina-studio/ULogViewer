@@ -20,7 +20,7 @@
 				<StackPanel Classes="Dialog_ControlButtonsPanel">
 					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.OpenDocumentation}" Content="{Binding #dialog.HelpButtonText}"/>
 					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
-					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.AddProvider}" Content="{asXaml:StringResource Common.Add.WithDialog}"/>
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.AddProvider}" Content="{asXaml:StringResource Common.Create.WithDialog}"/>
 					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #dialog.ImportProvider}" Content="{asXaml:StringResource Common.Import.WithDialog}"/>
 					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
