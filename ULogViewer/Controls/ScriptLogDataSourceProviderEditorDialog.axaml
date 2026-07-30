@@ -34,6 +34,8 @@
 					<Separator asControls:DialogElement.SeparatorType="ControlButton"/>
 				</StackPanel>
 				<StackPanel Classes="Dialog_ControlButtonsPanel" Grid.Column="1">
+					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.OpenScriptLogWindow}" Content="{asXaml:StringResource Common.OpenScriptLogWindow}" IsVisible="{Binding !#window.IsNewProvider}"/>
+					<Separator asControls:DialogElement.SeparatorType="ControlButton" IsVisible="{Binding !#window.IsNewProvider}"/>
 					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.ApplyCommand}" Content="{asXaml:StringResource Common.Apply}" IsVisible="{Binding !#window.IsNewProvider}"/>
 					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.CompleteEditingCommand}" Content="{Binding #window.OKButtonText}"/>
 					<Button asControls:DialogElement.ButtonRole="Control" Command="{Binding #window.Close}" Content="{Binding #window.CancelButtonText}"/>

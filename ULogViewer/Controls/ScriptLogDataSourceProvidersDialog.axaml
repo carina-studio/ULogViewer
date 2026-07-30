@@ -38,8 +38,8 @@
 					<DataTemplate>
 						<Grid ColumnDefinitions="Auto,*,Auto">
 							<Panel Classes="ListBoxItem_Icon">
-								<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Code.Light}"/>
-								<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Code}"/>
+								<Image Classes="Icon" IsVisible="{Binding $parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Code.Outline.Light}"/>
+								<Image Classes="Icon" IsVisible="{Binding !$parent[ListBoxItem].IsSelected}" Source="{StaticResource Image/Code.Outline}"/>
 							</Panel>
 							<TextBlock Classes="ListBoxItem_TextBlock" Grid.Column="1" Text="{Binding DisplayName}"/>
 							<Border Classes="InPlaceAction_Reserved" Grid.Column="1"/>

@@ -257,27 +257,36 @@ class ScriptLogDataSourceProvidersDialog : AppSuite.Controls.Dialog<IULogViewerA
 	protected override void OnOpened(EventArgs e)
 	{
 		base.OnOpened(e);
-		if (!this.Application.ProductManager.IsProductActivated(Products.Professional))
+		if (!this.Application.ProductManager.IsProductActivated(Products.Professional)
+		    && !this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
 		{
-			// ReSharper disable once AsyncVoidLambda
+			this.IsEnabled = false;
 			this.SynchronizationContext.PostDelayed(async () =>
 			{
-				if (this.IsOpened 
-					&& !this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
+				try
 				{
-					var messageDialog = new MessageDialog()
+					if (this.IsOpened && !this.PersistentState.GetValueOrDefault(DonotShowRestrictionsWithNonProVersionKey))
 					{
-						DoNotAskOrShowAgain = false,
-						Icon = MessageDialogIcon.Information,
-						Message = this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion"),
-					};
-					await messageDialog.ShowDialog(this);
-					if (messageDialog.DoNotAskOrShowAgain == true)
-						this.PersistentState.SetValue(DonotShowRestrictionsWithNonProVersionKey, true);
+						var messageDialog = new MessageDialog
+						{
+							DoNotAskOrShowAgain = false,
+							Icon = MessageDialogIcon.Information,
+							Message = this.Application.GetObservableString("ScriptLogDataSourceProvidersDialog.RestrictionsOfNonProVersion"),
+						};
+						await messageDialog.ShowDialog(this);
+						if (messageDialog.DoNotAskOrShowAgain == true)
+							this.PersistentState.SetValue(DonotShowRestrictionsWithNonProVersionKey, true);
+					}
+					this.SynchronizationContext.Post(() => this.providerListBox.Focus());
+				}
+				finally
+				{
+					this.IsEnabled = true;
 				}
 			}, 300);
 		}
-		this.SynchronizationContext.Post(() => this.providerListBox.Focus());
+		else
+			this.SynchronizationContext.Post(() => this.providerListBox.Focus());
 	}
 
 

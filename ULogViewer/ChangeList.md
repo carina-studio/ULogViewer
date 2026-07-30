@@ -6,6 +6,7 @@
 
 ## Improvement
 + The application no longer needs to be restarted when the Chinese environment changes after modifying the `Language` option.
++ Added a button to open the script log window when editing scripts.
 
 ## Bug Fixing
 + Fixed the failure to use `Noto Sans` in the Chinese environment.
