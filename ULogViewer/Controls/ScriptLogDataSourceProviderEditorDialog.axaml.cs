@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using CarinaStudio.AppSuite.Controls;
+using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;
 using CarinaStudio.Controls;
 using CarinaStudio.Threading;

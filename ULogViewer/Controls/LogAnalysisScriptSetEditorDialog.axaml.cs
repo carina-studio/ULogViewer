@@ -14,7 +14,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.AppSuite.Scripting;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace CarinaStudio.ULogViewer.Controls;
 
