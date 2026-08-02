@@ -5,17 +5,16 @@
 	<!-- Common -->
 	<sys:String x:Key="String/Common.Administrator">Superuser</sys:String>
 	
-<!-- ExternalDependency-->
-<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' ����� 'Specific Apple Device Log' �g�ݍ��݃��O�v���t�@�C���́Alibimobiledevice �̈ꕔ�ł��� idevicesyslog �c�[�����g�p���ăf�o�C�X�ɐڑ����A���O���擾���܂��B�p�b�P�[�W�}�l�[�W���[�� libimobiledevice ���C���X�g�[�����Ȃ������ꍇ�́A�C���X�g�[����� 'idevicesyslog' �R�}���h���܂ރt�H���_�[�̃p�X�� PATH ���ϐ��ɒǉ����Ă��������B</sys:String>
+	<!-- ExternalDependency-->
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' および 'Specific Apple Device Log' 組み込みログプロファイルは、libimobiledevice の一部である idevicesyslog ツールを使用してデバイスに接続し、ログを取得します。パッケージマネージャーで libimobiledevice をインストールしなかった場合は、インストール後に 'idevicesyslog' コマンドを含むフォルダーのパスを PATH 環境変数に追加してください。</sys:String>
 
-	
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK TC,Noto Sans Mono CJK TS</sys:String>
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies.CJK">Noto Sans Mono CJK TC,Noto Sans Mono CJK TS</sys:String>
 
 	<!-- SessionView -->
-	<sys:String x:Key="String/SessionView.RestartAsAdministrator">�X�[�p�[���[�U�[�Ƃ��čċN��</sys:String>
-	<sys:String x:Key="String/SessionView.ShowFileInExplorer">�t�@�C���}�l�[�W���[�Ńt�@�C����\��</sys:String>
-	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">�t�@�C���}�l�[�W���[�ō�ƃf�B���N�g����\��</sys:String>
+	<sys:String x:Key="String/SessionView.RestartAsAdministrator">スーパーユーザーとして再起動</sys:String>
+	<sys:String x:Key="String/SessionView.ShowFileInExplorer">ファイルマネージャーでファイルを表示</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">ファイルマネージャーで作業ディレクトリを表示</sys:String>
 	
 </ResourceDictionary>
