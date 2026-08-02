@@ -108,7 +108,13 @@
 								<!-- Culture -->
 								<asControls:DialogItem>
 									<TextBlock Text="{asXaml:StringResource ApplicationOptions.Culture}" asControls:DialogElement.TextRole="Label"/>
-									<asControls:EnumComboBox EnumType="{x:Type as:ApplicationCulture}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding Culture, Mode=TwoWay}"/>
+									<ComboBox asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Cultures}" SelectedItem="{Binding Culture, Mode=TwoWay}">
+										<ComboBox.DataTemplates>
+											<DataTemplate x:DataType="{x:Type as:ApplicationCulture}">
+												<TextBlock Text="{Binding Converter={x:Static asViewModels:ApplicationOptions.ApplicationCultureConverter}}"/>
+											</DataTemplate>
+										</ComboBox.DataTemplates>
+									</ComboBox>
 								</asControls:DialogItem>
 								<Separator asControls:DialogElement.SeparatorType="Item"/>
 
