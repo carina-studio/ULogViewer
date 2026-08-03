@@ -265,11 +265,13 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
     /// Open document of Noto Sans font.
     /// </summary>
     public void OpenNotoSansDocument() =>
-	    Platform.OpenLink(this.Application.CultureInfo.Name.Let(name =>
+	    Platform.OpenLink(this.Application.CultureInfo.Let(cultureInfo =>
 	    {
-		    if (name.StartsWith("zh"))
+		    if (cultureInfo.IsJapanese)
+			    return Uris.NotoSansJP;
+		    if (cultureInfo.IsChinese)
 		    {
-			    if (name.EndsWith("TW"))
+			    if (cultureInfo.ChineseVariant == ChineseVariant.Taiwan)
 				    return Uris.NotoSansTC;
 			    return Uris.NotoSansSC;
 		    }

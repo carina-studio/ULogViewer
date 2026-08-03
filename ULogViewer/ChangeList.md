@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+ 
++ Added support for Japanese language.
 
 ## Improvement
 + The application no longer needs to be restarted when the Chinese environment changes after modifying the `Language` option.

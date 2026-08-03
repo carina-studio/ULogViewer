@@ -10,7 +10,7 @@
 		<TrimMode>partial</TrimMode>
 		<StartupObject>CarinaStudio.ULogViewer.App</StartupObject>
 		<ApplicationIcon>ULogViewer.ico</ApplicationIcon>
-		<SatelliteResourceLanguages>en;zh-Hans;zh-Hant</SatelliteResourceLanguages>
+		<SatelliteResourceLanguages>en;ja;zh-Hans;zh-Hant</SatelliteResourceLanguages>
 		<Configurations>Debug;Release</Configurations>
 		<PublishReadyToRun>false</PublishReadyToRun>
 		<PublishReadyToRunEmitSymbols>false</PublishReadyToRunEmitSymbols>
@@ -41,9 +41,11 @@
 		<AvaloniaResource Include="AppInfoBanner-Dark.png" />
 		<AvaloniaResource Include="AppInfoBanner-Light.png" />
 		<AvaloniaResource Include="ChangeList.md" />
+		<AvaloniaResource Include="ChangeList-ja-JP.md" />
 		<AvaloniaResource Include="ChangeList-zh-CN.md" />
 		<AvaloniaResource Include="ChangeList-zh-TW.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy.md" />
+		<AvaloniaResource Include="Resources/PrivacyPolicy-ja-JP.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-CN.md" />
 		<AvaloniaResource Include="Resources/PrivacyPolicy-zh-TW.md" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Add_24px.png" />
@@ -65,6 +67,7 @@
 		<AvaloniaResource Include="Resources/QuickStartGuide/MarkedOnly_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Marks_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Process_Outline_24px.png" />
+		<AvaloniaResource Include="Resources/QuickStartGuide/QuickStartGuide-ja-JP.md" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/QuickStartGuide-zh-CN.md" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/QuickStartGuide-zh-TW.md" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/QuickStartGuide.md" />
@@ -73,6 +76,7 @@
 		<AvaloniaResource Include="Resources/QuickStartGuide/Uri_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/QuickStartGuide/Visibility_Outline_24px.png" />
 		<AvaloniaResource Include="Resources/UserAgreement.md" />
+		<AvaloniaResource Include="Resources/UserAgreement-ja-JP.md" />
 		<AvaloniaResource Include="Resources/UserAgreement-zh-CN.md" />
 		<AvaloniaResource Include="Resources/UserAgreement-zh-TW.md" />
 		<AvaloniaResource Include="SplashWindowBackground-Dark.png" />

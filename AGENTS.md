@@ -227,8 +227,10 @@ public static TimeSpan? CalculateDurationBetweenLogs(...)
 UI strings live in `ULogViewer/Strings/` as Avalonia `.axaml` resource dictionaries. All keys are prefixed `String/` (e.g. `String/SessionView.AddLogFiles`); preserve this prefix in every file.
 
 - `Default.axaml` — base English (en-US). All keys live here.
-- `zh-TW.axaml`, `zh-CN.axaml` — Traditional / Simplified Chinese. Only contain entries that differ from `Default.axaml`; the resource system falls back to the default for missing keys.
-- `Default-OSX.axaml`, `Default-Linux.axaml`, `zh-TW-OSX.axaml`, `zh-TW-Linux.axaml`, `zh-CN-OSX.axaml`, `zh-CN-Linux.axaml` — platform overrides for keystrokes (`⌘` vs `Ctrl`) and OS-specific labels (Finder / File Manager / File Explorer). Only override what's platform-specific.
+- `ja-JP.axaml` — Japanese.
+- `zh-TW.axaml`, `zh-CN.axaml` — Traditional / Simplified Chinese.
+- Every non-default file only contains entries that differ from `Default.axaml`; the resource system falls back to the default for missing keys. Entries are kept in the same order as `Default.axaml`, under the same section comments.
+- `Default-OSX.axaml`, `Default-Linux.axaml`, `ja-JP-OSX.axaml`, `ja-JP-Linux.axaml`, `zh-TW-OSX.axaml`, `zh-TW-Linux.axaml`, `zh-CN-OSX.axaml`, `zh-CN-Linux.axaml` — platform overrides for keystrokes (`⌘` vs `Ctrl`) and OS-specific labels (Finder / File Manager / File Explorer). Only override what's platform-specific.
 
 ### English style
 
@@ -252,9 +254,24 @@ UI strings live in `ULogViewer/Strings/` as Avalonia `.axaml` resource dictionar
 - For "frame", zh-TW uses 畫格 (**not** 畫面 or 影格); zh-CN uses 帧.
 - zh-TW phrasing preferences: prefer 不包含 over 不具備, and 而不是 over 而非. zh-CN keeps 不具备 / 而非.
 - For "set" (a value), zh-TW uses 設定, zh-CN uses 设置. A description explaining a special value uses the declarative pattern 「設定為 X 表示…」 / 「设置为 X 表示…」 — state what the value means, not a conditional 「若…則設為 X」.
-- For English entries phrased as "Added support for X" (typical in `ChangeList*.md` and similar notes), translate as `支援 X` (zh-TW) / `支持 X` (zh-CN), not the literal `新增 X 的支援 / 新增 X 的支持`.
+- For English entries phrased as "Added support for X" (typical in `ChangeList*.md` and similar notes), translate as `支援 X` (zh-TW) / `支持 X` (zh-CN), not the literal `新增 X 的支援 / 新增 X 的支持`. **Exception — when X is a bare noun short enough that `支援 X` reads too terse** (a language, format, or file-type name, e.g. 日文 / CLEF), use `新增 X 支援` (zh-TW) / `新增 X 支持` (zh-CN) instead; there is still no `的`. Example: "Added support for Japanese language." → `新增日文支援。` (zh-TW) / `新增日语支持。` (zh-CN).
 - For "fix" wording, **zh-CN uses 修复 everywhere, including the section header** (`修复…的问题`, the `## 错误修复` header, `其他错误修复`); **zh-TW keeps 修正** (`修正…的問題`, `## 錯誤修正`).
 - Description strings end with the full-width period 。 — no trailing space before `</sys:String>`.
+
+### Japanese conventions
+
+Three reference sources settle wording, in this order of precedence:
+
+1. **The file itself.** When `ja-JP.axaml` already renders a term, match it — consistency inside the shipped UI outranks any external style guide. This is why the long-vowel mark is not applied uniformly: the file uses サーバー and ユーザー (with ー) but フィルタ, コンピュータ and フォルダ (without), and new strings follow the term already present rather than a blanket rule.
+2. **AppSuiteBase's own `Core/Strings/ja-JP.axaml`** — see the [AppSuiteBase repository](https://github.com/carina-studio/AppSuiteBase) — for anything the framework names: 利用規約 (User Agreement), プライバシーポリシー, アプリケーションオプション, オプション, デバッグモードで再起動, 外部依存関係. Documents under `ULogViewer/Resources/` must use these exact terms.
+3. **macOS's Japanese locale tables** (the `.loctable` files under `/System/Library/Frameworks` and `/System/Library/PrivateFrameworks`, readable with `plistlib`) as the tie-breaker for everything else. They are the only sizeable Japanese glossary available locally.
+
+- "Ignore case" is 大文字小文字を区別しない (matching the existing `RegexEditorDialog.IgnoreCase` string), not Apple's 大文字/小文字を無視.
+- "Later" as a dismissive button is あとで, not 後で.
+- Other settled terms: 上書き (overwrite), 構成 (configuration), スニペット (snippet), パターン (pattern), マスク (mask), 名前付きグループ (named group), 正規表現 (regular expression), 組み込み (built-in), カスタム (custom), 履歴 (history), クリップボード (clipboard), 連携 (integration).
+- A session is タブ when it means a ULogViewer tab (`空のタブ`, `このタブの…`); use セッション only when the English genuinely means something other than a tab.
+- Put a space between Latin and Japanese runs: `IP アドレス`, `Pro バージョン`.
+- Descriptions use polite です/ます form and end with the full-width period 。 Titles and button labels are bare noun or verb phrases with no period.
 
 ### Keys
 
@@ -268,12 +285,12 @@ UI strings live in `ULogViewer/Strings/` as Avalonia `.axaml` resource dictionar
 
 ## Change Lists
 
-`ULogViewer/ChangeList.md`, `ULogViewer/ChangeList-zh-TW.md`, and `ULogViewer/ChangeList-zh-CN.md` describe the changes shipping in the next version.
+`ULogViewer/ChangeList.md`, `ULogViewer/ChangeList-ja-JP.md`, `ULogViewer/ChangeList-zh-TW.md`, and `ULogViewer/ChangeList-zh-CN.md` describe the changes shipping in the next version.
 
-- **Key names and key combinations must be wrapped in single-backtick inline code** — e.g. `` `⌘Q` ``, `` `Ctrl+Q` ``, `` `⌘←` ``, `` `Ctrl+Shift+F` ``. Use single backticks, not triple. This rule applies in every locale variant; the inline code wrapping is identical across English, zh-TW, and zh-CN.
+- **Key names and key combinations must be wrapped in single-backtick inline code** — e.g. `` `⌘Q` ``, `` `Ctrl+Q` ``, `` `⌘←` ``, `` `Ctrl+Shift+F` ``. Use single backticks, not triple. This rule applies in every locale variant; the inline code wrapping is identical across English, ja-JP, zh-TW, and zh-CN.
 - **When an entry lists a shortcut for more than one platform, order the platforms Windows/Linux first, then macOS** — e.g. `Ctrl+V` on Windows/Linux, `⌘V` on macOS.
 - English entries use past tense (`Added`, `Improved`, `Prevented`, `Fixed`).
-- Each new bullet must be mirrored in all three locale files; do not update one without updating the others.
+- Each new bullet must be mirrored in all four locale files; do not update one without updating the others.
 - **Keep the existing order of entries** — when adding a bullet, append it (or place it beside a directly related entry) without resorting or regrouping the entries already present in a section. Do not reorder existing items by importance.
 
 ---

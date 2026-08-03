@@ -349,6 +349,7 @@ partial class SessionView
         SKColor.FromHsl(315, 100, 40), // Magenta
     ];
     // ReSharper disable IdentifierTypo
+    static SKTypeface? NotoSansJPSKTypeFace;
     static SKTypeface? NotoSansSCSKTypeFace;
     static SKTypeface? NotoSansTCSKTypeFace;
     // ReSharper restore IdentifierTypo
@@ -1465,8 +1466,13 @@ partial class SessionView
     SKTypeface SelectSKTypeface()
     {
         var fontManager = SKFontManager.Default;
-        var cultureName = this.Application.CultureInfo.Name;
-        if (cultureName.StartsWith("zh"))
+        var cultureInfo = this.Application.CultureInfo;
+        if (cultureInfo.IsJapanese)
+        {
+            NotoSansJPSKTypeFace ??= BuiltInFonts.OpenStream(nameof(BuiltInFonts.NotoSansJP)).Use(stream => fontManager.CreateTypeface(stream));
+            return NotoSansJPSKTypeFace;
+        }
+        if (cultureInfo.IsChinese)
         {
             switch (this.Application.ChineseVariant)
             {

@@ -48,6 +48,10 @@ namespace CarinaStudio.ULogViewer
 		/// </summary>
 		public static readonly Uri NotoSans = new("https://en.wikipedia.org/wiki/Source_Han_Sans");
 		/// <summary>
+		/// Noto Sans (Japanese).
+		/// </summary>
+		public static readonly Uri NotoSansJP = new("https://ja.wikipedia.org/wiki/%E6%BA%90%E3%83%8E%E8%A7%92%E3%82%B4%E3%82%B7%E3%83%83%E3%82%AF");
+		/// <summary>
 		/// Noto Sans (Simplified Chinese).
 		/// </summary>
 		public static readonly Uri NotoSansSC = new("https://zh.wikipedia.org/zh-cn/%E6%80%9D%E6%BA%90%E9%BB%91%E9%AB%94");

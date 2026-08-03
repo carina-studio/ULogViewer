@@ -45,11 +45,13 @@ namespace CarinaStudio.ULogViewer
 			public override IList<ApplicationCulture> SupportedCultures =>
 			[
 				ApplicationCulture.EN_US,
+				ApplicationCulture.JA_JP,
 				ApplicationCulture.ZH_CN,
 				ApplicationCulture.ZH_TW
 			];
 			public override Uri Uri => this.Culture switch
 			{
+				ApplicationCulture.JA_JP => this.Application.CreateAvaloniaResourceUri("/ChangeList-ja-JP.md"),
 				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/ChangeList-zh-CN.md"),
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/ChangeList-zh-TW.md"),
 				_ => this.Application.CreateAvaloniaResourceUri("/ChangeList.md"),
@@ -71,11 +73,13 @@ namespace CarinaStudio.ULogViewer
 			public override IList<ApplicationCulture> SupportedCultures =>
 			[
 				ApplicationCulture.EN_US,
+				ApplicationCulture.JA_JP,
 				ApplicationCulture.ZH_CN,
 				ApplicationCulture.ZH_TW
 			];
 			public override Uri Uri => this.Culture switch
 			{
+				ApplicationCulture.JA_JP => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-ja-JP.md"),
 				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-zh-CN.md"),
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy-zh-TW.md"),
 				_ => this.Application.CreateAvaloniaResourceUri("/Resources/PrivacyPolicy.md"),
@@ -93,11 +97,13 @@ namespace CarinaStudio.ULogViewer
 			public override IList<ApplicationCulture> SupportedCultures =>
 			[
 				ApplicationCulture.EN_US,
+				ApplicationCulture.JA_JP,
 				ApplicationCulture.ZH_CN,
 				ApplicationCulture.ZH_TW
 			];
 			public override Uri Uri => this.Culture switch
 			{
+				ApplicationCulture.JA_JP => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-ja-JP.md"),
 				ApplicationCulture.ZH_CN => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-zh-CN.md"),
 				ApplicationCulture.ZH_TW => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement-zh-TW.md"),
 				_ => this.Application.CreateAvaloniaResourceUri("/Resources/UserAgreement.md"),
