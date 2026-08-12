@@ -509,7 +509,7 @@ namespace CarinaStudio.ULogViewer
 		{
 			var isDarkMode = this.EffectiveThemeMode == ThemeMode.Dark;
 			param.AccentColor = Color.FromRgb(0x8a, 0x5c, 0xe6);
-			param.BackgroundImageOpacity = 0.8;
+			param.BackgroundImageOpacity = isDarkMode ? 0.9 : 0.8;
 			param.BackgroundImageUri = isDarkMode
 				? new Uri($"avares://{this.Assembly.GetName().Name}/SplashWindowBackground-Dark.png")
 				: new Uri($"avares://{this.Assembly.GetName().Name}/SplashWindowBackground-Light.png");
