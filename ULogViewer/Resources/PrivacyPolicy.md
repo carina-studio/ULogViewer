@@ -1,18 +1,18 @@
 # ULogViewer Privacy Policy
  ---
-+ Version: 1.5
-+ Update: 2026/5/4
++ Version: 1.7
++ Update: 2026/8/13
 
 This is the ULogViewer Privacy Policy which you need to read before using ULogViewer. The Privacy Policy may be updated in the future and you can check it on the ULogViewer website. It means that you have agreed to this Privacy Policy once you start using ULogViewer.
 
 ## Privacy Policy Scope
 ULogViewer is an open-source project of Carina Studio. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
-+ [ULogViewer Website](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer Website](https://carinastudio.net/ULogViewer/)
 + [ULogViewer project and release pages on GitHub](https://github.com/carina-studio/ULogViewer)
 
 If you build ULogViewer from source code, your use of that build is governed solely by the [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license, not by this Privacy Policy.
 
-This Privacy Policy will apply to ULogViewer 2026.0 and any future versions until the version specified in the next Privacy Policy update.
+This Privacy Policy will apply to ULogViewer 2026.2 and any future versions until the version specified in the next Privacy Policy update.
 
 ## Collecting Your Personal Data
 We **DON'T** collect the following personal data:
@@ -44,4 +44,4 @@ We **DO** collect the following data which may relate to your personal data:
 Except when required by a government authority, we **WON'T** provide your personal data to people, organizations, or companies outside of Carina Studio.
 
 ## Contact Us
-If you have any concern about this Privacy Policy, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com).
+If you have any concern about this Privacy Policy, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [support@carinastudio.net](mailto:support@carinastudio.net).

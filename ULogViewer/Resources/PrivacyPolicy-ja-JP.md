@@ -1,18 +1,18 @@
 # ULogViewer プライバシーポリシー
  ---
-+ バージョン: 1.5
-+ 更新日: 2026/5/4
++ バージョン: 1.7
++ 更新日: 2026/8/13
 
 これは ULogViewer のプライバシーポリシーであり、ULogViewer をご使用になる前にお読みいただく必要があります。プライバシーポリシーは今後更新される場合があり、ULogViewer の Web サイトでご確認いただけます。ULogViewer の使用を開始した時点で、本プライバシーポリシーに同意したものとみなされます。
 
 ## プライバシーポリシーの適用範囲
 ULogViewer は、Carina Studio のオープンソースプロジェクトです。以降で述べる ULogViewer は、下記のページで提供される実行可能ファイルまたは圧縮ファイルとまったく同一のもの **のみ** を指します。
-+ [ULogViewer の Web サイト](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer の Web サイト](https://carinastudio.net/ULogViewer/)
 + [GitHub 上の ULogViewer プロジェクトページおよびリリースページ](https://github.com/carina-studio/ULogViewer)
 
 ULogViewer をソースコードからビルドした場合、そのビルドのご使用は本プライバシーポリシーではなく [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) ライセンスのみに従います。
 
-本プライバシーポリシーは、ULogViewer 2026.0 から、次回のプライバシーポリシーの更新で指定されるバージョンまでのすべてのバージョンに適用されます。
+本プライバシーポリシーは、ULogViewer 2026.2 から、次回のプライバシーポリシーの更新で指定されるバージョンまでのすべてのバージョンに適用されます。
 
 ## 個人情報の収集
 当社は以下の個人情報を **収集しません** 。
@@ -44,4 +44,4 @@ ULogViewer をソースコードからビルドした場合、そのビルドの
 政府機関から要求された場合を除き、当社はお客様の個人情報を Carina Studio 以外の個人、団体、企業に **提供しません** 。
 
 ## お問い合わせ
-本プライバシーポリシーについてご不明な点がある場合は、[GitHub](https://github.com/carina-studio/ULogViewer/issues) で issue を作成するか、[carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com) までメールをお送りください。
+本プライバシーポリシーについてご不明な点がある場合は、[GitHub](https://github.com/carina-studio/ULogViewer/issues) で issue を作成するか、[support@carinastudio.net](mailto:support@carinastudio.net) までメールをお送りください。

@@ -1,7 +1,7 @@
 # ULogViewer User Agreement
  ---
-+ Version: 2.6
-+ Update: 2026/5/4
++ Version: 2.8
++ Update: 2026/8/13
 
 This is the ULogViewer User Agreement which you need to read before using ULogViewer. The User Agreement may be updated in the future and you can check it on the ULogViewer website. It means that you have agreed to this User Agreement once you start using ULogViewer.
 
@@ -9,12 +9,12 @@ This is the ULogViewer User Agreement which you need to read before using ULogVi
 ## User Agreement Scope
 ULogViewer is an open-source project of Carina Studio. The ULogViewer mentioned after includes **ONLY** the executable files or zipped files which are exact same as the files provided by the following pages:
 
-+ [ULogViewer Website](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer Website](https://carinastudio.net/ULogViewer/)
 + [ULogViewer project and release pages on GitHub](https://github.com/carina-studio/ULogViewer)
 
 If you build ULogViewer from source code, your use of that build is governed solely by the [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) license, not by this User Agreement.
 
-This User Agreement will apply to ULogViewer 2026.0 and any future versions until the version specified in the next User Agreement update.
+This User Agreement will apply to ULogViewer 2026.2 and any future versions until the version specified in the next User Agreement update.
 
 
 ## Debug Mode
@@ -186,4 +186,4 @@ License and copyright of logs loaded into ULogViewer or saved by ULogViewer is n
 
 
 ## Contact Us
-If you have any concern about this User Agreement, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com).
+If you have any concern about this User Agreement, please create an issue on [GitHub](https://github.com/carina-studio/ULogViewer/issues) or send e-mail to [support@carinastudio.net](mailto:support@carinastudio.net).

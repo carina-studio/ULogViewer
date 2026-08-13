@@ -1,7 +1,7 @@
 # ULogViewer 利用規約
  ---
-+ バージョン: 2.6
-+ 更新日: 2026/5/4
++ バージョン: 2.8
++ 更新日: 2026/8/13
 
 これは ULogViewer の利用規約であり、ULogViewer をご使用になる前にお読みいただく必要があります。利用規約は今後更新される場合があり、ULogViewer の Web サイトでご確認いただけます。ULogViewer の使用を開始した時点で、本利用規約に同意したものとみなされます。
 
@@ -9,12 +9,12 @@
 ## 適用範囲
 ULogViewer は、Carina Studio のオープンソースプロジェクトです。以降で述べる ULogViewer は、下記のページで提供される実行可能ファイルまたは圧縮ファイルとまったく同一のもの **のみ** を指します。
 
-+ [ULogViewer の Web サイト](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer の Web サイト](https://carinastudio.net/ULogViewer/)
 + [GitHub 上の ULogViewer プロジェクトページおよびリリースページ](https://github.com/carina-studio/ULogViewer)
 
 ULogViewer をソースコードからビルドした場合、そのビルドのご使用は本利用規約ではなく [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) ライセンスのみに従います。
 
-本利用規約は、ULogViewer 2026.0 から、次回の利用規約の更新で指定されるバージョンまでのすべてのバージョンに適用されます。
+本利用規約は、ULogViewer 2026.2 から、次回の利用規約の更新で指定されるバージョンまでのすべてのバージョンに適用されます。
 
 
 ## デバッグモード
@@ -185,4 +185,4 @@ ULogViewer に読み込まれたログ、または ULogViewer によって保存
 
 
 ## お問い合わせ
-本利用規約についてご不明な点がある場合は、[GitHub](https://github.com/carina-studio/ULogViewer/issues) で issue を作成するか、[carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com) までメールをお送りください。
+本利用規約についてご不明な点がある場合は、[GitHub](https://github.com/carina-studio/ULogViewer/issues) で issue を作成するか、[support@carinastudio.net](mailto:support@carinastudio.net) までメールをお送りください。

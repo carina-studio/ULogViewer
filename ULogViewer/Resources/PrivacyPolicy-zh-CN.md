@@ -1,18 +1,18 @@
 # ULogViewer 隐私政策
  ---
-+ 版本：1.5
-+ 更新时间：2026/5/4
++ 版本：1.7
++ 更新时间：2026/8/13
 
 这是 ULogViewer 的隐私政策，您应该要在使用 ULogViewer 之前详细阅读本政策。 隐私政策可能会在未来有所更新，您可以在 ULogViewer 网站中查看。 当您开始使用 ULogViewer 表示您同意本隐私政策。
 
 ## 适用范围
 ULogViewer 为 Carina Studio 之开放源代码项目，以下所指 ULogViewer **仅包括** 与下列页面所提供之可执行文件或压缩包内容完全相同之版本：
-+ [ULogViewer 网站](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer 网站](https://carinastudio.net/ULogViewer/)
 + [GitHub 上之 ULogViewer 项目页面及各版本发布页面](https://github.com/carina-studio/ULogViewer)
 
 若您通过源代码自行构建 ULogViewer，您使用该构建之版本仅受 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授权之约束，不受本隐私政策之约束。
 
-本隐私政策适用于您使用 ULogViewer 2026.0 及下一份隐私政策所指定之版本之间 (但不包括) 的所有版本。
+本隐私政策适用于您使用 ULogViewer 2026.2 及下一份隐私政策所指定之版本之间 (但不包括) 的所有版本。
 
 ## 个人信息的收集
 我们 **不会** 收集下列的个人信息：
@@ -44,4 +44,4 @@ ULogViewer 为 Carina Studio 之开放源代码项目，以下所指 ULogViewer 
 除了政府要求之外，我们 **不会** 将您的个人信息提供给 Carina Studio 以外的人、团体及公司。
 
 ## 联系我们
-如果您对于本隐私政策有任何疑问，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或发送邮件至 [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com)。
+如果您对于本隐私政策有任何疑问，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或发送邮件至 [support@carinastudio.net](mailto:support@carinastudio.net)。

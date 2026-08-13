@@ -1,7 +1,7 @@
 # ULogViewer 用户协议
  ---
-+ 版本：2.6
-+ 更新时间：2026/5/4
++ 版本：2.8
++ 更新时间：2026/8/13
 
 这是 ULogViewer 的用户协议，您应该要在使用 ULogViewer 之前详细阅读本协议。 用户协议可能会在未来有所更新，您可以在 ULogViewer 网站中查看。 当您开始使用 ULogViewer 表示您同意本用户协议。
 
@@ -9,12 +9,12 @@
 ## 适用范围
 ULogViewer 为 Carina Studio 之开放源代码项目，以下所指 ULogViewer **仅包括** 与下列页面所提供之可执行文件或压缩包内容完全相同之版本：
 
-+ [ULogViewer 网站](https://carinastudio.azurewebsites.net/ULogViewer/)
++ [ULogViewer 网站](https://carinastudio.net/ULogViewer/)
 + [GitHub 上之 ULogViewer 项目页面及各版本发布页面](https://github.com/carina-studio/ULogViewer)
 
 若您通过源代码自行构建 ULogViewer，您使用该构建之版本仅受 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授权之约束，不受本用户协议之约束。
 
-本用户协议适用于您使用 ULogViewer 2026.0 及下一份用户协议所指定之版本之间 (但不包括) 的所有版本。
+本用户协议适用于您使用 ULogViewer 2026.2 及下一份用户协议所指定之版本之间 (但不包括) 的所有版本。
 
 
 ## 调试模式
@@ -186,4 +186,4 @@ ULogViewer 是 Carina Studio 在 [MIT](https://github.com/carina-studio/ULogView
 
 
 ## 联系我们
-如果您对于本用户协议有任何疑问，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或发送邮件至 [carina.software.studio@gmail.com](mailto:carina.software.studio@gmail.com)。
+如果您对于本用户协议有任何疑问，可以至 [GitHub](https://github.com/carina-studio/ULogViewer/issues) 提出或发送邮件至 [support@carinastudio.net](mailto:support@carinastudio.net)。
