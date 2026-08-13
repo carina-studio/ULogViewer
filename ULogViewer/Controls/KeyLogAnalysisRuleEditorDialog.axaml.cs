@@ -154,7 +154,7 @@ class KeyLogAnalysisRuleEditorDialog : InputDialog<IULogViewerApplication>
 	/// </summary>
 #pragma warning disable CA1822
 	public void OpenDocumentation() =>
-		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#KeyLogAnalysis");
+		Platform.OpenLink("https://carinastudio.net/ULogViewer/LogAnalysis#KeyLogAnalysis");
 #pragma warning restore CA1822
 	
 

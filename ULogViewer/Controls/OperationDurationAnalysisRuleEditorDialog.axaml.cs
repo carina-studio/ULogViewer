@@ -369,7 +369,7 @@ class OperationDurationAnalysisRuleEditorDialog : AppSuite.Controls.InputDialog<
 	/// </summary>
 #pragma warning disable CA1822
 	public void OpenDocumentation() =>
-		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#OperationDurationAnalysis");
+		Platform.OpenLink("https://carinastudio.net/ULogViewer/LogAnalysis#OperationDurationAnalysis");
 #pragma warning restore CA1822
 	
 

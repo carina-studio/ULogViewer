@@ -350,7 +350,7 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 	/// </summary>
 #pragma warning disable CA1822
 	public void OpenDocumentation() =>
-		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript");
+		Platform.OpenLink("https://carinastudio.net/ULogViewer/LogAnalysis#LogAnalysisScript");
 #pragma warning restore CA1822
 
 

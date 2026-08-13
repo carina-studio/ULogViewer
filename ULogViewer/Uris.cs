@@ -18,31 +18,31 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Documentation of formatting CLEF data while reading raw logs.
 		/// </summary>
-		public static readonly Uri FormattingClefDataDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#FormatClefData");
+		public static readonly Uri FormattingClefDataDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs#FormatClefData");
 		/// <summary>
 		/// Documentation of formatting JSON data while reading raw logs.
 		/// </summary>
-		public static readonly Uri FormattingJsonDataDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#FormatJsonData");
+		public static readonly Uri FormattingJsonDataDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs#FormatJsonData");
 		/// <summary>
 		/// Documentation of formatting XML data while reading raw logs.
 		/// </summary>
-		public static readonly Uri FormattingXmlDataDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#FormatXmlData");
+		public static readonly Uri FormattingXmlDataDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs#FormatXmlData");
 		/// <summary>
 		/// Documentation of log data sources.
 		/// </summary>
-		public static readonly Uri LogDataSourcesDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogDataSources");
+		public static readonly Uri LogDataSourcesDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs#LogDataSources");
 		/// <summary>
 		/// Documentation of mode of log pattern matching.
 		/// </summary>
-		public static readonly Uri LogPatternMatchingModeDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatternMatchingMode");
+		public static readonly Uri LogPatternMatchingModeDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs#LogPatternMatchingMode");
 		/// <summary>
 		/// Documentation of log patterns.
 		/// </summary>
-		public static readonly Uri LogPatternsDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs#LogPatterns");
+		public static readonly Uri LogPatternsDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs#LogPatterns");
 		/// <summary>
 		/// Documentation of logs reading and parsing.
 		/// </summary>
-		public static readonly Uri LogsReadingAndParsingDocument = new("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
+		public static readonly Uri LogsReadingAndParsingDocument = new("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs");
 		/// <summary>
 		/// Noto Sans.
 		/// </summary>
@@ -62,7 +62,7 @@ namespace CarinaStudio.ULogViewer
 		/// <summary>
 		/// Reference of regular expression.
 		/// </summary>
-		public static readonly Uri RegexReference = new("https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions");
+		public static readonly Uri RegexReference = new("https://carinastudio.net/ULogViewer/RegularExpressions");
 		/// <summary>
 		/// Reference of string interpolation.
 		/// </summary>

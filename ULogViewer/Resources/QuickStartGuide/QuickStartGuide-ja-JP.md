@@ -28,7 +28,7 @@
 
 ## ログプロファイルの作成と編集
 必要に応じて、ログプロファイルの作成や変更が必要になる場合があります。
-ログプロファイルの詳細については [こちら](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs) をご参照ください。
+ログプロファイルの詳細については [こちら](https://carinastudio.net/ULogViewer/HowToReadAndParseLogs) をご参照ください。
 
 ### 現在のログプロファイルを編集する
 1. ツールバーの ![](LogProfile_Outline_24px.png) の横にあるドロップダウン矢印をクリックします。
@@ -140,7 +140,7 @@ ULogViewer にファイルを追加するには 2 つの方法があります。
 
 #### テキストフィルタを設定する
 1. `Ctrl+F` (macOS では `⌘F`) を押すか、ツールバーのテキストフィルタ入力欄をクリックします。
-2. テキストフィルタを正規表現で入力します。ULogViewer での正規表現の使用方法については [こちら](https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions) をご参照ください。
+2. テキストフィルタを正規表現で入力します。ULogViewer での正規表現の使用方法については [こちら](https://carinastudio.net/ULogViewer/RegularExpressions) をご参照ください。
 
 テキストフィルタ入力欄にフォーカスがある状態で `Up`/`Down` キーを押すと、現在のタブのテキストフィルタ履歴をたどれます。
 

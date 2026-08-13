@@ -28,7 +28,7 @@
 
 ## 建立或編輯日誌類型
 您可能需要建立或修改日誌類型以滿足您的需求。
-請參考 [這裡](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs) 以取得更詳細關於日誌讀取的資訊。
+請參考 [這裡](https://carinastudio.net/ULogViewer/HowToReadAndParseLogs) 以取得更詳細關於日誌讀取的資訊。
 
 ### 編輯目前的日誌類型
 1. 點一下工具列 ![](LogProfile_Outline_24px.png) 旁的下拉箭頭。
@@ -140,7 +140,7 @@
 
 #### 設定文字篩選
 1. 按下 `Ctrl+F` (macOS 為 `⌘F`) 或點一下工具列上的文字篩選輸入欄位。
-2. 以正規表示式設定文字篩選。關於在 ULogViewer 中使用正規表示式的詳細資訊請參考 [這裡](https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions)。
+2. 以正規表示式設定文字篩選。關於在 ULogViewer 中使用正規表示式的詳細資訊請參考 [這裡](https://carinastudio.net/ULogViewer/RegularExpressions)。
 
 當輸入焦點位於文字篩選輸入欄位時，您可以按下 `上`/`下` 來瀏覽該分頁中的文字篩選歷史紀錄。
 

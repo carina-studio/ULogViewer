@@ -1329,7 +1329,7 @@ partial class SessionView
     /// </summary>
 #pragma warning disable CA1822
     public void OpenLogAnalysisDocumentation() =>
-        Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis");
+        Platform.OpenLink("https://carinastudio.net/ULogViewer/LogAnalysis");
 #pragma warning restore CA1822
     
     

@@ -377,8 +377,8 @@
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.CSharp_13">
         /*
         * ログ分析用に型は自動的にインポートされます (例: ILog、ResultType)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
         */
 
         /*
@@ -392,8 +392,8 @@
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.JavaScript_ES_5_1">
         /*
         * ログ分析用に型は自動的にインポートされます (例: ILog、ResultType)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
         */
 
         /*
@@ -404,8 +404,8 @@
     </sys:String>
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.AnalysisScript.Template.Python_3_4">
         # ログ分析用に型は自動的にインポートされます (例: ILog、ResultType)。
-        # 詳細については https://carinastudio.azurewebsites.net/Scripting
-        # および https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
+        # 詳細については https://carinastudio.net/Scripting
+        # および https://carinastudio.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
 
         # context.AddResult() で追加された結果を含める場合は True を返し、
         # 現在のログと結果をスキップする場合は False を返します。
@@ -424,8 +424,8 @@
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Description">このスクリプトは分析プロセスを開始する前に 1回実行されます。戻り値は不要です。</sys:String>
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13">
         /*
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
         */
     </sys:String>
     <StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_14"
@@ -433,8 +433,8 @@
     <StaticResource x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.JavaScript_ES_5_1"
                     ResourceKey="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.CSharp_13" />
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.SetupScript.Template.Python_3_4">
-        # 詳細については https://carinastudio.azurewebsites.net/Scripting
-        # および https://carinastudio.azurewebsites.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
+        # 詳細については https://carinastudio.net/Scripting
+        # および https://carinastudio.net/ULogViewer/LogAnalysis#LogAnalysisScript を参照してください。
     </sys:String>
     <sys:String x:Key="String/LogAnalysisScriptSetEditorDialog.Title">ログ分析スクリプトを編集</sys:String>
 
@@ -1177,8 +1177,8 @@
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_13">
         /*
         * ログ読込用に型は自動的にインポートされます (例 : FileStream)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
         */
     </sys:String>
     <StaticResource x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.CSharp_14"
@@ -1186,14 +1186,14 @@
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.JavaScript_ES_5_1">
         /*
         * ログ読込用に型は自動的にインポートされます (例 : FileStream)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
         */
     </sys:String>
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Template.Python_3_4">
         # ログ読込用に型は自動的にインポートされます (例 : FileStream)。
-        # 詳細については https://carinastudio.azurewebsites.net/Scripting
-        # および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        # 詳細については https://carinastudio.net/Scripting
+        # および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
     </sys:String>
     <StaticResourceExtension
         x:Key="String/ScriptLogDataSourceProviderEditorDialog.ConfirmApplyingWithCompilationErrors"
@@ -1206,8 +1206,8 @@
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.CSharp_13">
         /*
         * ログ読込用に型は自動的にインポートされます (例 : FileStream、LogDataSourceState)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
         */
 
         /*
@@ -1224,8 +1224,8 @@
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.JavaScript_ES_5_1">
         /*
         * ログ読込用に型は自動的にインポートされます (例: FileStream、LogDataSourceState)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
         */
 
         /*
@@ -1239,8 +1239,8 @@
     </sys:String>
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Template.Python_3_4">
         # ログ読込用に型は自動的にインポートされます (例: FileStream、LogDataSourceState)。
-        # 詳細については https://carinastudio.azurewebsites.net/Scripting
-        # および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        # 詳細については https://carinastudio.net/Scripting
+        # および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
 
         # リーダーが正常に開かれた場合は LogDataSourceState.ReaderOpened を返します。
         # または、失敗の場合は以下の値のいずれかを返します :
@@ -1254,8 +1254,8 @@
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.CSharp_13">
         /*
         * ログ読込用に型は自動的にインポートされます (例 : FileStream)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
         */
 
         /*
@@ -1268,8 +1268,8 @@
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.JavaScript_ES_5_1">
         /*
         * ログ読込用に型は自動的にインポートされます (例 : FileStream)。
-        * 詳細については https://carinastudio.azurewebsites.net/Scripting
-        * および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        * 詳細については https://carinastudio.net/Scripting
+        * および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
         */
 
         /*
@@ -1279,8 +1279,8 @@
     </sys:String>
     <sys:String x:Key="String/ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Template.Python_3_4">
         # ログ読込用に型は自動的にインポートされます (例 : FileStream)。
-        # 詳細については https://carinastudio.azurewebsites.net/Scripting
-        # および https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource を参照してください。
+        # 詳細については https://carinastudio.net/Scripting
+        # および https://carinastudio.net/ULogViewer/ScriptLogDataSource を参照してください。
 
         # ソースから読み取った Raw ログ行 (文字列)を返すか、読み取る行がこれ以上ない場合は None を返します。
         return None

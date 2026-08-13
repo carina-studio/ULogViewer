@@ -28,7 +28,7 @@ There are 3 ways to select or change log profile:
 
 ## Create or Edit a Log Profile
 You may need to create or modify a log profile in order to match your requirement. 
-Please refer to [here](https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs) for more information about log profiles.
+Please refer to [here](https://carinastudio.net/ULogViewer/HowToReadAndParseLogs) for more information about log profiles.
 
 ### Edit the Current Log Profile
 1. Click the drop-down arrow next to ![](LogProfile_Outline_24px.png) on the toolbar.
@@ -140,7 +140,7 @@ By default, logs will be included if they match the text filter. You can also en
 
 #### Set Text Filter
 1. Press `Ctrl+F` (`⌘F` on macOS) or click on the text filter input field on the toolbar.
-2. Enter the text filter in Regular Expression. Please refer to [here](https://carinastudio.azurewebsites.net/ULogViewer/RegularExpressions) for more information about using Regular Expressions in ULogViewer.
+2. Enter the text filter in Regular Expression. Please refer to [here](https://carinastudio.net/ULogViewer/RegularExpressions) for more information about using Regular Expressions in ULogViewer.
 
 You can press the `Up`/`Down` keys when focusing on the text filter input field to navigate through the text filter history in the current tab.
 

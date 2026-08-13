@@ -41,5 +41,5 @@ class AppInfo : AppSuite.ViewModels.ApplicationInfo
 
     
     /// <inheritdoc/>
-    public override Uri WebsiteUri => new("https://carinastudio.azurewebsites.net/ULogViewer/");
+    public override Uri WebsiteUri => new("https://carinastudio.net/ULogViewer/");
 }

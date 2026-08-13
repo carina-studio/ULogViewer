@@ -1377,7 +1377,7 @@ namespace CarinaStudio.ULogViewer
 						Message = this.Application.GetObservableString("MainWindow.RefreshingAppIconOnMacOSHint"),
 					}.ShowDialog(this);
 					if (result == MessageDialogResult.Yes)
-						Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/InstallAndUpgrade#Upgrade");
+						Platform.OpenLink("https://carinastudio.net/ULogViewer/InstallAndUpgrade#Upgrade");
 					this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
 					return;
 				}

@@ -1,11 +1,11 @@
 # ULogViewer
 [![](https://img.shields.io/github/release-date-pre/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/releases/tag/3.0.13.128) ![](https://img.shields.io/github/downloads/carina-studio/ULogViewer/total) [![](https://img.shields.io/github/last-commit/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/commits/master) [![](https://img.shields.io/github/license/carina-studio/ULogViewer?style=flat)](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)
 
-A cross-platform, agent-native log viewer for reading, parsing, and analyzing various types of logs. Please visit the [Website](https://carinastudio.azurewebsites.net/ULogViewer/) for more details.
+A cross-platform, agent-native log viewer for reading, parsing, and analyzing various types of logs. Please visit the [Website](https://carinastudio.net/ULogViewer/) for more details.
 
-跨平台且支援 AI 代理的日誌檢視器，提供多種形式之日誌讀取、解析與分析。請參閱 [網站](https://carinastudio.azurewebsites.net/ULogViewer/) 以取得更多資訊。
+跨平台且支援 AI 代理的日誌檢視器，提供多種形式之日誌讀取、解析與分析。請參閱 [網站](https://carinastudio.net/ULogViewer/) 以取得更多資訊。
 
-![](https://carinastudio.azurewebsites.net/ULogViewer/Banner.png?v=2)
+![](https://carinastudio.net/ULogViewer/Banner.png?v=2)
 
 ## ⚠️ NOTICE
 If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or `2026.1.2` on Windows, please manually close all `mcp.exe` processes and try again.
@@ -30,7 +30,7 @@ If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or
 - Added `Model Context Protocol (MCP)` support for AI clients.
 - Improved user experience of phrase input assistance in text filter.
 
-[Know more about](https://carinastudio.azurewebsites.net/ULogViewer/ChangeList#StableChangeList)
+[Know more about](https://carinastudio.net/ULogViewer/ChangeList#StableChangeList)
 
 ## 🤝 Dependencies
 - [.NET](https://dotnet.microsoft.com/)

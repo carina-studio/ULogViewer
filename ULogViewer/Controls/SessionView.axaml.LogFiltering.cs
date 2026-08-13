@@ -581,7 +581,7 @@ partial class SessionView
     /// </summary>
     public void OpenLogFilteringDocumentation()
     {
-        if (!Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering"))
+        if (!Platform.OpenLink("https://carinastudio.net/ULogViewer/LogFiltering"))
             return;
         this.SynchronizationContext.PostDelayed(() =>
         {
@@ -601,7 +601,7 @@ partial class SessionView
     /// </summary>
 #pragma warning disable CA1822
     public void OpenPredefinedTextFiltersDocumentation() =>
-        Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/LogFiltering#PredefinedTextFilters");
+        Platform.OpenLink("https://carinastudio.net/ULogViewer/LogFiltering#PredefinedTextFilters");
 #pragma warning restore CA1822
 
 

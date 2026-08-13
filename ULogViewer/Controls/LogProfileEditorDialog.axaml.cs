@@ -1373,7 +1373,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	/// </summary>
 #pragma warning disable CA1822
 	public void OpenDocumentation() =>
-		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/HowToReadAndParseLogs");
+		Platform.OpenLink("https://carinastudio.net/ULogViewer/HowToReadAndParseLogs");
 #pragma warning restore CA1822
 
 

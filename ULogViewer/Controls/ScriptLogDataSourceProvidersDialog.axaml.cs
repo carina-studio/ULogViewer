@@ -295,7 +295,7 @@ class ScriptLogDataSourceProvidersDialog : AppSuite.Controls.Dialog<IULogViewerA
 	/// </summary>
 #pragma warning disable CA1822
 	public void OpenDocumentation() =>
-		Platform.OpenLink("https://carinastudio.azurewebsites.net/ULogViewer/ScriptLogDataSource");
+		Platform.OpenLink("https://carinastudio.net/ULogViewer/ScriptLogDataSource");
 #pragma warning restore CA1822
 	
 
