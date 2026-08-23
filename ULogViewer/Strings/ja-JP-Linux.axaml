@@ -6,7 +6,7 @@
 	<sys:String x:Key="String/Common.Administrator">スーパーユーザー</sys:String>
 	
 	<!-- ExternalDependency-->
-	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">'Apple Devices Log' および 'Specific Apple Device Log' 組み込みログプロファイルは、libimobiledevice の一部である idevicesyslog ツールを使用してデバイスに接続し、ログを取得します。パッケージマネージャーで libimobiledevice をインストールしなかった場合は、インストール後に 'idevicesyslog' コマンドを含むフォルダーのパスを PATH 環境変数に追加してください。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple Devices Log」および「Specific Apple Device Log」組み込みログプロファイルは、libimobiledevice の一部である idevicesyslog ツールを使用してデバイスに接続し、ログを取得します。パッケージマネージャーで libimobiledevice をインストールしなかった場合は、インストール後に 'idevicesyslog' コマンドを含むフォルダーのパスを PATH 環境変数に追加してください。</sys:String>
 
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK JP,Noto Sans Mono CJK SC</sys:String>

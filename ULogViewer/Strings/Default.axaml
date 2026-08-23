@@ -668,7 +668,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">Restart reading logs automatically when reaching the end of the data source.</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">Set as Template</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">A template cannot be used directly, but can be cloned as a new profile with some parameters pre-filled.</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about "How Does ULogViewer Read and Parse Logs" to help you create a profile?</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">Do you want to learn about《How Does ULogViewer Read and Parse Logs》to help you create a profile?</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">Log Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">Log Chart</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">Source Log Properties</sys:String>
@@ -969,7 +969,7 @@ return False</sys:String>
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">Reset the Title of This Tab</sys:String>
 	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">Do you want to use the built-in font '{0}' for logs? You can find more built-in fonts or change the log font in Options.</sys:String>
-	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">Reactivating 'ULogViewer Pro' may be required after upgrading to current version. You just need to remove the current device from the active device list if necessary, and activate 'ULogViewer Pro' again.</sys:String>
+	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">Reactivating ULogViewer Pro may be required after upgrading to current version. You just need to remove the current device from the active device list if necessary, and activate ULogViewer Pro again.</sys:String>
 	<sys:String x:Key="String/MainWindow.RefreshingAppIconOnMacOSHint">For macOS users, you may notice that the application icon doesn't update on the Dock (also in the Launchpad) after upgrading. Do you want to check how to refresh the application icon?</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">Total: {0}</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">Hibernated to Save Resources</sys:String>

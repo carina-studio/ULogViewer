@@ -18,32 +18,32 @@ ULogViewer 为 Carina Studio 之开放源代码项目，以下所指 ULogViewer 
 
 
 ## 调试模式
-ULogViewer 包含预设关闭的内建调试模式，您可以透过 **「关于 ULogViewer > 以调试模式重新启动」** 启用调试模式。
+ULogViewer 包含预设关闭的内建调试模式，您可以透过 **“关于 ULogViewer > 以调试模式重新启动”** 启用调试模式。
 
 
 ## 外部依赖
 
 ### Android SDK 平台工具
-若要使用 **「Android 设备日志」** 、 **「Android 设备事件日志」** 、 **「Android 设备系统追踪」** 、 **「Android 系统内存监控」** 、 **「Android 进程内存监控」** 、 **「特定 Android 设备事件日志」** 、 **「特定 Android 设备日志」** 及 **「特定 Android 设备系统追踪」** 日志类型，您必须先安装 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
+若要使用 **“Android 设备日志”** 、 **“Android 设备事件日志”** 、 **“Android 设备系统追踪”** 、 **“Android 系统内存监控”** 、 **“Android 进程内存监控”** 、 **“特定 Android 设备事件日志”** 、 **“特定 Android 设备日志”** 及 **“特定 Android 设备系统追踪”** 日志类型，您必须先安装 [Android SDK 平台工具](https://developer.android.com/tools/releases/platform-tools) 或 [Android Studio](https://developer.android.com/studio)。
 
 ### Azure 命令行界面 (CLI)
-若要使用 **「Azure 命令行界面 (CLI)」**、**「MySQL 数据库」** 及 **「SQL Server 数据库」** 数据源之完整功能，您必须先安装 [Azure 命令行界面 (CLI)](https://docs.microsoft.com/cli/azure/)。
+若要使用 **“Azure 命令行界面 (CLI)”**、**“MySQL 数据库”** 及 **“SQL Server 数据库”** 数据源之完整功能，您必须先安装 [Azure 命令行界面 (CLI)](https://docs.microsoft.com/cli/azure/)。
 
 ### Git
-若要使用 **「Git 提交记录」** 及 **「Git 提交记录 (精简)」** 日志类型，您必须先安装 [Git](https://git-scm.com/)。
+若要使用 **“Git 提交记录”** 及 **“Git 提交记录 (精简)”** 日志类型，您必须先安装 [Git](https://git-scm.com/)。
 
 ### libimobiledevice
-若要使用 **「Apple 设备日志」** 及 **「特定 Apple 设备日志」** 日志类型，您必须先安装 [libimobiledevice](https://libimobiledevice.org/)。
+若要使用 **“Apple 设备日志”** 及 **“特定 Apple 设备日志”** 日志类型，您必须先安装 [libimobiledevice](https://libimobiledevice.org/)。
 
 + [Windows 用户](https://github.com/iFred09/libimobiledevice-windows)
 + [macOS 用户](https://formulae.brew.sh/formula/libimobiledevice)
 + [Linux 用户](https://command-not-found.com/idevicesyslog)
 
 ### Trace 转换工具
-若要在 **macOS/Linux** 上使用 **「Android 设备系统追踪」** 及 **「特定 Android 设备系统追踪」** 日志类型，您必须先安装 [Trace 转换工具](https://perfetto.dev/docs/quickstart/traceconv)。
+若要在 **macOS/Linux** 上使用 **“Android 设备系统追踪”** 及 **“特定 Android 设备系统追踪”** 日志类型，您必须先安装 [Trace 转换工具](https://perfetto.dev/docs/quickstart/traceconv)。
 
 ### Xcode 命令行工具
-若要在 **macOS** 上使用 **「Apple 设备模拟器日志」** 及 **「特定 Apple 设备模拟器日志」** 日志类型，您必须先安装 [Xcode 命令行工具](https://developer.apple.com/xcode/)。若您透过安装 Xcode 以安装 Xcode 命令行工具，您需要将 **「Xcode > Settings > Locations > Command Line Tools」** 设定为 **「Xcode」** 来启用。
+若要在 **macOS** 上使用 **“Apple 设备模拟器日志”** 及 **“特定 Apple 设备模拟器日志”** 日志类型，您必须先安装 [Xcode 命令行工具](https://developer.apple.com/xcode/)。若您透过安装 Xcode 以安装 Xcode 命令行工具，您需要将 **“Xcode > Settings > Locations > Command Line Tools”** 设定为 **“Xcode”** 来启用。
 
 
 ## 文件访问
@@ -146,7 +146,7 @@ ULogViewer 会连接至下列服务器以确认设备的公开 [IP 地址](https
 + 执行 **osascript** 以在必要时更新 macOS 上的 /etc/paths。
 + 执行 **gsettings** 以确认在 Linux 上的系统主题设置。
 
-除了上述必要情况外，当日志来源为 **「Azure 命令行界面 (CLI)」** 或 **「标准输出 (stdout)」** 时将执行外部命令。您可以在编辑日志类型之 **「数据源」** 时在 **「数据源参数」** 对话框中查看完整的命令及参数列表。
+除了上述必要情况外，当日志来源为 **“Azure 命令行界面 (CLI)”** 或 **“标准输出 (stdout)”** 时将执行外部命令。您可以在编辑日志类型之 **“数据源”** 时在 **“数据源参数”** 对话框中查看完整的命令及参数列表。
 
 请注意，我们 **不保证** 执行外部命令后的结果，这完全依赖于外部命令及可执行文件之行为。这部分必须由您自行确认。
 
@@ -172,7 +172,7 @@ ULogViewer 将会以 **管理员** 权限启动 **osascript** 命令以更新 /e
 
 
 ## 免责声明
-ULogViewer 系以 **「现状」** 提供，不附带任何明示或暗示之保证，包括但不限于适销性、特定用途适用性及不侵权之保证。Carina Studio 不保证 ULogViewer 能符合您的需求，亦不保证其运行不会中断或不发生错误。
+ULogViewer 系以 **“现状”** 提供，不附带任何明示或暗示之保证，包括但不限于适销性、特定用途适用性及不侵权之保证。Carina Studio 不保证 ULogViewer 能符合您的需求，亦不保证其运行不会中断或不发生错误。
 
 在适用法律允许之最大范围内，Carina Studio 对于因使用或无法使用 ULogViewer 而产生之任何直接、间接、偶发、特殊、惩罚性或衍生性损害（包括但不限于数据丢失、利润损失或业务中断），概不承担任何责任，即使已被告知可能发生此类损害亦然。
 
@@ -180,7 +180,7 @@ ULogViewer 系以 **「现状」** 提供，不附带任何明示或暗示之保
 ## 授权及版权
 ULogViewer 是 Carina Studio 在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE) 授权之下的开放源代码项目。除了应用程序图标外，所有图标皆在 [MIT](https://github.com/carina-studio/ULogViewer/blob/master/LICENSE)、[CC 4.0](https://en.wikipedia.org/wiki/Creative_Commons_license) 或 [Universal Multimedia License Agreement for Icons8](https://intercom.help/icons8-7fb7577e8170/en/articles/5534926-universal-multimedia-licensing-agreement-for-icons8) 授权下使用。您可以在 [MahApps.Metro.IconPacks](https://github.com/MahApps/MahApps.Metro.IconPacks)、[SVG Repo](https://www.svgrepo.com/)、[Icons8](https://icons8.com/)、[Google Fonts Icons](https://fonts.google.com/icons)、[Phosphor Icons](https://phosphoricons.com/) 及 [Tabler Icons](https://tabler.io/icons) 了解更多图标相关信息与授权。
 
-内建字体 **「Roboto」** 及 **「Roboto Mono」** 在 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 授权下使用及发布，**「IBM Plex Mono」** 、 **「Noto Sans SC」** 、 **「Noto Sans TC」** 及 **「Source Code Pro」** 在 [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL) 授权下使用及发布。
+内建字体 **“Roboto”** 及 **“Roboto Mono”** 在 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) 授权下使用及发布，**“IBM Plex Mono”** 、 **“Noto Sans SC”** 、 **“Noto Sans TC”** 及 **“Source Code Pro”** 在 [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL) 授权下使用及发布。
 
 加载至 ULogViewer 或由 ULogViewer 保存之日志的授权与版权不受本协议之约束。您必须自行注意及负责日志的授权与版权。
 

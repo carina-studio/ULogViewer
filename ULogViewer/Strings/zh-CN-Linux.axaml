@@ -3,7 +3,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	
 	<!-- ExternalDependency-->
-	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 设备日志」及「特定 Apple 设备日志」内建日志类型会使用 libimobiledevice 中的 idevicesyslog 工具与装置联系并取得日志。若您不是透过套件管理员安装 libimobiledevice，安装完成后请将包含 'idevicesyslog' 指令之资料夹路径加至 PATH 环境变量。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">“Apple 设备日志” 及 “特定 Apple 设备日志” 内建日志类型会使用 libimobiledevice 中的 idevicesyslog 工具与设备通信并获取日志。若您不是通过软件包管理器安装 libimobiledevice，安装完成后请将包含 'idevicesyslog' 指令之文件夹路径加至 PATH 环境变量。</sys:String>
 
 	<!-- ScriptEditor -->
 	<sys:String x:Key="String/ScriptEditor.DefaultFontFamilies">Noto Sans Mono CJK TS,Noto Sans Mono CJK TC</sys:String>
@@ -11,7 +11,7 @@
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.RestartAsAdministrator">以 超级管理员 身份重新启动</sys:String>
-	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在档案管理器中显示档案</sys:String>
-	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在档案管理器中开启工作目录</sys:String>
+	<sys:String x:Key="String/SessionView.ShowFileInExplorer">在文件管理器中显示文件</sys:String>
+	<sys:String x:Key="String/SessionView.ShowWorkingDirectoryInExplorer">在文件管理器中打开工作目录</sys:String>
 	
 </ResourceDictionary>

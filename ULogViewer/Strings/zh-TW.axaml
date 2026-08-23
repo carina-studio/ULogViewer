@@ -65,7 +65,7 @@
 	<sys:String x:Key="String/Azure.AzureCliNotFound">找不到 Azure 命令列介面 (CLI)。請確認 Azure 命令列介面已經安裝且其路徑已加入至 PATH 環境變數。</sys:String>
 	<sys:String x:Key="String/Azure.FailedExecuteAzureCli">無法執行 Azure 命令列介面 (CLI)。</sys:String>
 	<sys:String x:Key="String/Azure.FailedToLogin">無法登入至 Azure。</sys:String>
-	<sys:String x:Key="String/Azure.LoggedIn">成功以 '{0}' 登入至 Azure。</sys:String>
+	<sys:String x:Key="String/Azure.LoggedIn">成功以「{0}」登入至 Azure。</sys:String>
 	<sys:String x:Key="String/Azure.LoggedOut">已登出 Azure。</sys:String>
 
 	<!-- AzureResourcesDialog -->
@@ -140,23 +140,23 @@
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">由特定之 Apple 裝置產生的即時全域系統日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog">特定 Apple 裝置模擬器日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog.Description">由特定 Apple 裝置模擬器產生的即時全域系統日誌。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式輸出，並透過 TCP 傳輸的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以「NLogViewer」格式輸出，並透過 TCP 傳輸的即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 應用程式輸出的日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">來自 ULogViewer 位於記憶體中的即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位於本機上分類為 'Application' 的 Windows 事件紀錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位於本機上分類為「Application」的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows 事件紀錄檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">儲存在一個或多個 Windows XML 事件紀錄格式 (*.evtx) 之檔案中的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs">Windows 事件紀錄</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs.Description">位於本機上特定分類的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">位於本機上分類為 'Security' 的 Windows 事件紀錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">位於本機上分類為「Security」的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows 事件紀錄 (安裝)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">位於本機上分類為 'Setup' 的 Windows 事件紀錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">位於本機上分類為「Setup」的 Windows 事件紀錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs">Windows 事件紀錄 (系統)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位於本機上分類為 'System' 的 Windows 事件紀錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位於本機上分類為「System」的 Windows 事件紀錄。</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一個必要的外部相依性沒有安裝至裝置，請先安裝後再嘗試。</sys:String>
@@ -466,7 +466,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.ConnectionString">連線字串</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Encoding">文字編碼</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables">環境變數</sys:String>
-	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">環境變數 '{0}' 先前已加入。</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.EnvironmentVariables.Duplicated">環境變數「{0}」先前已加入。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FileName">檔案路徑</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatClefData">讀取時格式化 CLEF 資料</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.FormatJsonData">讀取時格式化 JSON 資料</sys:String>
@@ -629,7 +629,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsContinuousReading.Description">讀取至資料末端時將自動重新開始讀取日誌。</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate">指定為範本</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.IsTemplate.Description">範本無法被直接使用，但可以用於包含部分參數並複製成為新的日誌類型。</sys:String>
-	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解 《ULogViewer 如何讀取及解析日誌》 以幫助您建立日誌類型？</sys:String>
+	<sys:String x:Key="String/LogProfileEditorDialog.LearnAboutLogsReadingAndParsingFirst">您是否想要先了解《ULogViewer 如何讀取及解析日誌》以幫助您建立日誌類型？</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogAnalysis">日誌分析</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChart">日誌圖表設定</sys:String>
 	<sys:String x:Key="String/LogProfileEditorDialog.LogChartSeriesSources">來源日誌屬性</sys:String>
@@ -924,7 +924,7 @@ return False</sys:String>
 	<!-- MainWindow -->
 	<sys:String x:Key="String/MainWindow.ClearCustomSessionTitle">重設分頁標題</sys:String>
 	<sys:String x:Key="String/MainWindow.ConfirmUsingBuiltInFontAsLogFont">您是否要使用內建的「{0}」字型來顯示日誌？您可以在應用程式選項中找到更多的內建字型，或是更改日誌顯示字型。</sys:String>
-	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">升級至目前版本後可能需要重新啟用「ULogViewer 專業版」。必要時您只需要將目前的裝置從已啟用的裝置列表中移除，再重新啟用「ULogViewer 專業版」即可。</sys:String>
+	<sys:String x:Key="String/MainWindow.ReactivatingProVersionMayBeNeeded">升級至目前版本後可能需要重新啟用 ULogViewer 專業版。必要時您只需要將目前的裝置從已啟用的裝置列表中移除，再重新啟用 ULogViewer 專業版即可。</sys:String>
 	<sys:String x:Key="String/MainWindow.RefreshingAppIconOnMacOSHint">針對 macOS 使用者，您可能會發現升級之後在 Dock 及 Launchpad 中的應用程式圖示沒有更新。您是否想了解如何重新整理應用程式圖示？</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.AllLogCount">總共 {0} 筆</sys:String>
 	<sys:String x:Key="String/MainWindow.Session.Hibernated">休眠中以節省資源</sys:String>

@@ -232,6 +232,23 @@ UI strings live in `ULogViewer/Strings/` as Avalonia `.axaml` resource dictionar
 - Every non-default file only contains entries that differ from `Default.axaml`; the resource system falls back to the default for missing keys. Entries are kept in the same order as `Default.axaml`, under the same section comments.
 - `Default-OSX.axaml`, `Default-Linux.axaml`, `ja-JP-OSX.axaml`, `ja-JP-Linux.axaml`, `zh-TW-OSX.axaml`, `zh-TW-Linux.axaml`, `zh-CN-OSX.axaml`, `zh-CN-Linux.axaml` — platform overrides for keystrokes (`⌘` vs `Ctrl`) and OS-specific labels (Finder / File Manager / File Explorer). Only override what's platform-specific.
 
+### Quoting
+
+Quoting follows the target locale, not the source text. This applies to `ULogViewer/Strings/` and to the localized documents under `ULogViewer/Resources/` alike.
+
+| Locale | Quoting a name in prose |
+|---|---|
+| `zh-TW`, `ja-JP` | `AAA「BBB」CCC` — corner brackets, no surrounding whitespace |
+| `zh-CN` | `AAA “BBB” CCC` — curly double quotes, one half-width space on each side |
+| `Default` (en) | `AAA 'BBB' CCC` |
+
+- Corner brackets (`「」`) are **wrong in `zh-CN`**, which uses `“”`.
+- Drop the surrounding space when the quote sits next to full-width punctuation such as `，`, `。`, `、` or `…` — the punctuation already carries it (`查看日志属性 “{0}”…`, `使用 “{0}” 筛选`).
+- **File names and file paths take ASCII single quotes in every locale**: `AAA 'Path' BBB`, spaced the same way. This overrides the locale quoting above, so a placeholder holding a path is never wrapped in `「」` or `“”` — hence `日志数据源脚本 “{0}” 导出至 '{1}'。`, where `{0}` is a name and `{1}` a path. Command and executable names (`'az'`, `'traceconv'`, `'platform-tools'`) count as file names; an *alias* for a location is a name and keeps the locale quotes.
+- Syntax literals and sample values keep the ASCII **double** quotes they already use across all locales (`"{}"`, `"(?<>)"`, `"John\$\$Hello"`) — the table above governs names, not literals.
+- A product or application name takes no quotes at all, whether literal or substituted from a placeholder: `无法启用 {0}，请尝试再次启用。`
+- Document titles use `《…》` in `Default` / `zh-CN` / `zh-TW` — no surrounding space on either side in any of the three, matching AppSuiteBase's `《Privacy Policy》` / `《User Agreement》` — and `「…」` in `ja-JP`.
+
 ### English style
 
 - **Title case** for strings without trailing period (item titles, option labels, button text). AP-style: lowercase short prepositions/conjunctions (`a/an/the/of/for/in/on/at/to/by/per/as/and/or/if/after/when/during`); capitalize 4+ letter prepositions when at the start (`Before`, `Between`, `With`) and all verbs including `Is`/`Are`.
@@ -322,3 +339,4 @@ Three reference sources settle wording, in this order of precedence:
 - `default` is not passed as an argument — explicit values used instead.
 - Inline section comments (inside methods) are lowercase with no trailing period; each logical block has its own comment preceded by a blank line, including the leading and trailing blocks; member-level comments use sentence case with a trailing period.
 - **Member ordering** is correct: public constants → public static fields → inner types → constants → static fields → private fields → static initializer → constructor(s) → all remaining members sorted alphabetically by name. Verify after adding, renaming, or moving any member.
+- Localized strings use the target locale's quoting — `「」` for zh-TW/ja-JP, `“”` for zh-CN, ASCII `'…'` for file names and paths in every locale.
