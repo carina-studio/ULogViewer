@@ -47,12 +47,12 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">Select Profile</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">Show Input Dialog if an IP Endpoint Is Required</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">Show File Selector if Files Are Required</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">Show Log Profile Selector after Creating a New Tab</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">Set Precondition Before Reading Logs from Files When Available</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">Show Input Dialog if a Process Identifier (PID) Is Required</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">Show Input Dialog if a Process Name Is Required</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">Show Input Dialog if a URI Is Required</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">Show Directory Selector if a Working Directory Is Required</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SessionInitLogProfileSelectionMode">Log Profile Selection for a New Tab</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">Show 'Help' Button on Text Filter Input Field</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">Show Chart Panel Automatically</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">Show the panel if chart has been defined in log profile.</sys:String>
@@ -1249,6 +1249,11 @@ return None</sys:String>
 	<!-- Session -->
 	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">Cannot use the data source '{0}' without activating the Pro version.</sys:String>
 	<sys:String x:Key="String/Session.Empty">Empty Tab</sys:String>
+
+	<!-- SessionInitLogProfileSelectionMode -->
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.None">None</sys:String>
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.Auto">Auto</sys:String>
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.Manual">Manual</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">Add Log Files</sys:String>

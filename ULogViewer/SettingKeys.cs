@@ -111,10 +111,6 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<bool> SelectLogFilesWhenNeeded = new(nameof(SelectLogFilesWhenNeeded), false);
 	/// <summary>
-	/// Select log profile immediately after creating new session.
-	/// </summary>
-	public static readonly SettingKey<bool> SelectLogProfileForNewSession = new(nameof(SelectLogProfileForNewSession), true);
-	/// <summary>
 	/// Select precondition before reading logs from files.
 	/// </summary>
 	public static readonly SettingKey<bool> SelectLogReadingPreconditionForFiles = new(nameof(SelectLogReadingPreconditionForFiles), true);
@@ -134,6 +130,10 @@ static class SettingKeys
 	/// Select working directory immediately when it is needed.
 	/// </summary>
 	public static readonly SettingKey<bool> SelectWorkingDirectoryWhenNeeded = new(nameof(SelectWorkingDirectoryWhenNeeded), true);
+	/// <summary>
+	/// Mode of selecting log profile for session which has no log profile yet.
+	/// </summary>
+	public static readonly SettingKey<SessionInitLogProfileSelectionMode> SessionInitLogProfileSelectionMode = new(nameof(SessionInitLogProfileSelectionMode), ULogViewer.SessionInitLogProfileSelectionMode.Manual);
 	/// <summary>
 	/// Show help button on input field of log text filter.
 	/// </summary>

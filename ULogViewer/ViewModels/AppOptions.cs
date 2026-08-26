@@ -418,8 +418,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(SelectIPEndPointWhenNeeded));
 		else if (key == SettingKeys.SelectLogFilesWhenNeeded)
 			this.OnPropertyChanged(nameof(SelectLogFilesWhenNeeded));
-		else if (key == SettingKeys.SelectLogProfileForNewSession)
-			this.OnPropertyChanged(nameof(SelectLogProfileForNewSession));
 		else if (key == SettingKeys.SelectLogReadingPreconditionForFiles)
 			this.OnPropertyChanged(nameof(SelectLogReadingPreconditionForFiles));
 		else if (key == SettingKeys.SelectProcessIdWhenNeeded)
@@ -430,6 +428,8 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(SelectUriWhenNeeded));
 		else if (key == SettingKeys.SelectWorkingDirectoryWhenNeeded)
 			this.OnPropertyChanged(nameof(SelectWorkingDirectoryWhenNeeded));
+		else if (key == SettingKeys.SessionInitLogProfileSelectionMode)
+			this.OnPropertyChanged(nameof(SessionInitLogProfileSelectionMode));
 		else if (key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 			this.OnPropertyChanged(nameof(ShowHelpButtonOnLogTextFilter));
 		else if (key == SettingKeys.ShowLogChartPanelIfDefined)
@@ -582,16 +582,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 
 
 	/// <summary>
-	/// Get or set to select log profile immediately after creating new session.
-	/// </summary>
-	public bool SelectLogProfileForNewSession
-	{
-		get => this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession);
-		set => this.Settings.SetValue(SettingKeys.SelectLogProfileForNewSession, value);
-	}
-
-
-	/// <summary>
 	/// Select precondition before reading logs from files.
 	/// </summary>
 	public bool SelectLogReadingPreconditionForFiles
@@ -638,6 +628,16 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.SelectWorkingDirectoryWhenNeeded);
 		set => this.Settings.SetValue(SettingKeys.SelectWorkingDirectoryWhenNeeded, value);
+	}
+
+
+	/// <summary>
+	/// Get or set mode of selecting log profile for session which has no log profile yet.
+	/// </summary>
+	public SessionInitLogProfileSelectionMode SessionInitLogProfileSelectionMode
+	{
+		get => this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode);
+		set => this.Settings.SetValue(SettingKeys.SessionInitLogProfileSelectionMode, value);
 	}
 
 

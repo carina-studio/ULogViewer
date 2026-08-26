@@ -49,12 +49,12 @@
     <sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">プロファイルを選択</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">IP エンドポイントが必要な場合は入力ダイアログを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">ファイルが必要な場合はファイル選択ダイアログを表示</sys:String>
-    <sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">新規タブ作成後にログプロファイル選択ダイアログを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">ファイルからのログ読み込み時に利用可能な場合は事前条件を設定</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">プロセスID (PID)が必要な場合は入力ダイアログを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">プロセス名が必要な場合は入力ダイアログを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">URI が必要な場合は入力ダイアログを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">作業ディレクトリが必要な場合はディレクトリ選択ダイアログを表示</sys:String>
+    <sys:String x:Key="String/AppOptionsDialog.SessionInitLogProfileSelectionMode">新規タブのログプロファイル選択方法</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">テキストフィルタ入力欄に「ヘルプ」ボタンを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">チャートパネルを自動表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">ログプロファイルでチャートが定義されている場合にパネルを表示します。</sys:String>
@@ -1312,6 +1312,11 @@
     <!-- Session -->
     <sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">Pro バージョンを有効にしないとデータソース「{0}」を使用できません。</sys:String>
     <sys:String x:Key="String/Session.Empty">空のタブ</sys:String>
+
+    <!-- SessionInitLogProfileSelectionMode -->
+    <sys:String x:Key="String/SessionInitLogProfileSelectionMode.None">なし</sys:String>
+    <sys:String x:Key="String/SessionInitLogProfileSelectionMode.Auto">自動</sys:String>
+    <sys:String x:Key="String/SessionInitLogProfileSelectionMode.Manual">手動</sys:String>
 
     <!-- SessionView -->
     <sys:String x:Key="String/SessionView.AddLogFiles">ログファイルを追加</sys:String>

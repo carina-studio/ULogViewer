@@ -47,12 +47,12 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">选择日志类型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">当需要 IP 端点时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">当需要日志文件时立即打开文件选择界面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新标签页后打开日志类型选择界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在从文件读取日志前指定前置读取条件（当条件支持时）</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">当需要进程识别码 (PID) 时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">当需要进程名称时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">当需要 URI 时立即显示输入界面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">当需要工作目录时立即打开目录选择界面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SessionInitLogProfileSelectionMode">新建标签页的日志类型选择方式</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字筛选栏位中显示 “说明” 按钮</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">自动打开图表面板</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">当日志类型中有定义图表时打开面板。</sys:String>
@@ -1212,6 +1212,11 @@ return None</sys:String>
 	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在启用 ULogViewer 专业版之前无法使用数据源 “{0}”。</sys:String>
 	<sys:String x:Key="String/Session.Empty">空白标签页</sys:String>
 	
+	<!-- SessionInitLogProfileSelectionMode -->
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.None">无</sys:String>
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.Auto">自动</sys:String>
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.Manual">手动</sys:String>
+
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">加入日志文件</sys:String>
 	<sys:String x:Key="String/SessionView.AddLogFiles.WithShortcut">加入日志文件 (Ctrl+O)</sys:String>

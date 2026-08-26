@@ -1251,7 +1251,7 @@ namespace CarinaStudio.ULogViewer
 			workspace.ActiveSession?.Let(it =>
 			{
 				if (it.LogProfile == null
-					&& this.Settings.GetValueOrDefault(SettingKeys.SelectLogProfileForNewSession)
+					&& this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Manual
 					&& !this.HasDialogs)
 				{
 					this.FindSessionView(it)?.SelectAndSetLogProfileAsync();

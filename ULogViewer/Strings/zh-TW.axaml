@@ -47,12 +47,12 @@
 	<sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">選擇日誌類型</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">當需要 IP 端點時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogFilesWhenNeeded">當需要日誌檔案時立即開啟檔案選取介面</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.SelectLogProfileForNewSession">建立新分頁後開啟日誌類型選取介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectLogReadingPreconditionForFiles">在從檔案讀取日誌前指定前置讀取條件 (當條件支援時)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessIdWhenNeeded">當需要處理程序識別碼 (PID) 時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectProcessNameWhenNeeded">當需要處理程序名稱時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectUriWhenNeeded">當需要 URI 時立即顯示輸入介面</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.SelectWorkingDirectoryWhenNeeded">當需要工作目錄時立即開啟目錄選取介面</sys:String>
+	<sys:String x:Key="String/AppOptionsDialog.SessionInitLogProfileSelectionMode">新增分頁的日誌類型選擇方式</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowHelpButtonOnLogTextFilter">在文字篩選欄位中顯示「說明」按鈕</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined">自動開啟圖表面板</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ShowLogChartPanelIfDefined.Description">當日誌類型中有定義圖表時開啟面板。</sys:String>
@@ -1200,6 +1200,11 @@ return None</sys:String>
 	<!-- Session -->
 	<sys:String x:Key="String/Session.CannotUseProVersionOnlyDataSource">在啟用 ULogViewer 專業版之前無法使用資料來源「{0}」。</sys:String>
 	<sys:String x:Key="String/Session.Empty">空白分頁</sys:String>
+
+	<!-- SessionInitLogProfileSelectionMode -->
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.None">無</sys:String>
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.Auto">自動</sys:String>
+	<sys:String x:Key="String/SessionInitLogProfileSelectionMode.Manual">手動</sys:String>
 
 	<!-- SessionView -->
 	<sys:String x:Key="String/SessionView.AddLogFiles">加入日誌檔案</sys:String>

@@ -269,10 +269,10 @@
 								</asControls:DialogItem>
 								<Separator asControls:DialogElement.SeparatorType="Item"/>
 
-								<!-- Select log profile for new session -->
-								<asControls:DialogItem ItemSize="Small">
-									<TextBlock Text="{asXaml:StringResource AppOptionsDialog.SelectLogProfileForNewSession}" asControls:DialogElement.TextRole="Label"/>
-									<ToggleSwitch IsChecked="{Binding SelectLogProfileForNewSession, Mode=TwoWay}" asControls:DialogElement.IsDialogItemInput="True"/>
+								<!-- Mode of selecting log profile for session without log profile -->
+								<asControls:DialogItem>
+									<TextBlock Text="{asXaml:StringResource AppOptionsDialog.SessionInitLogProfileSelectionMode}" asControls:DialogElement.TextRole="Label"/>
+									<asControls:EnumComboBox EnumType="{x:Type app:SessionInitLogProfileSelectionMode}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding SessionInitLogProfileSelectionMode, Mode=TwoWay}"/>
 								</asControls:DialogItem>
 								<Separator asControls:DialogElement.SeparatorType="Item"/>
 

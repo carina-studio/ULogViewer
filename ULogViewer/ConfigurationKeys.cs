@@ -16,6 +16,10 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> DelayToRestartContextualBasedLogAnalysis = new(nameof(DelayToRestartContextualBasedLogAnalysis), 1000);
     /// <summary>
+    /// Delay before showing the dialog of matching log profiles in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> DelayToShowLogProfileMatchingDialog = new(nameof(DelayToShowLogProfileMatchingDialog), 500);
+    /// <summary>
     /// Interval between each displayable log chunk processing in milliseconds.
     /// </summary>
     public static readonly SettingKey<int> DisplayableLogChunkProcessingPaddingIntervalBackground = new(nameof(DisplayableLogChunkProcessingPaddingIntervalBackground), 300);
@@ -76,9 +80,25 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> LogTextFilterPhrasesDatabaseUpdateDelay = new(nameof(LogTextFilterPhrasesDatabaseUpdateDelay), 2000);
     /// <summary>
+    /// Maximum number of bytes to read from the head of a log file to detect its format.
+    /// </summary>
+    public static readonly SettingKey<int> MaxBytesToDetectLogFileFormat = new(nameof(MaxBytesToDetectLogFileFormat), 65536);
+    /// <summary>
+    /// Maximum number of log files and log profiles to be matched concurrently.
+    /// </summary>
+    public static readonly SettingKey<int> MaxConcurrentLogProfileMatching = new(nameof(MaxConcurrentLogProfileMatching), 4);
+    /// <summary>
+    /// Maximum number of log files to be examined when matching log profiles.
+    /// </summary>
+    public static readonly SettingKey<int> MaxFileCountToMatchLogProfile = new(nameof(MaxFileCountToMatchLogProfile), 8);
+    /// <summary>
     /// Maximum lines shown for marked logs when there is no user defined display log properties.
     /// </summary>
     public static readonly SettingKey<int> MaxLinesOfMarkedLogWithoutDisplayLogProperties = new(nameof(MaxLinesOfMarkedLogWithoutDisplayLogProperties), 3);
+    /// <summary>
+    /// Maximum number of logs to read from a log file when matching a log profile.
+    /// </summary>
+    public static readonly SettingKey<int> MaxLogCountToMatchLogProfile = new(nameof(MaxLogCountToMatchLogProfile), 5);
     /// <summary>
     /// Maximum number of token can be shown for log property value highlighting.
     /// </summary>
@@ -88,9 +108,21 @@ abstract class ConfigurationKeys
     /// </summary>
     public static readonly SettingKey<int> MaxLogPropertyStringLengthToDisplay = new(nameof(MaxLogPropertyStringLengthToDisplay), 512);
     /// <summary>
+    /// Maximum number of raw log lines allowed to be consumed by each log read when matching a log profile.
+    /// </summary>
+    public static readonly SettingKey<int> MaxRawLineCountPerLogToMatchLogProfile = new(nameof(MaxRawLineCountPerLogToMatchLogProfile), 32);
+    /// <summary>
+    /// Maximum number of raw log lines to read from a log file when matching a log profile.
+    /// </summary>
+    public static readonly SettingKey<int> MaxRawLineCountToMatchLogProfile = new(nameof(MaxRawLineCountToMatchLogProfile), 1024);
+    /// <summary>
     /// Maximum number of series in log chart.
     /// </summary>
     public static readonly SettingKey<int> MaxSeriesCountInLogChart = new(nameof(MaxValueCountInLogChart), 10);
+    /// <summary>
+    /// Maximum number of raw log lines allowed to be skipped before the first log read when matching a log profile.
+    /// </summary>
+    public static readonly SettingKey<int> MaxSkippedLineCountToMatchLogProfile = new(nameof(MaxSkippedLineCountToMatchLogProfile), 32);
     /// <summary>
     /// Maximum number of value in log chart.
     /// </summary>
@@ -127,6 +159,14 @@ abstract class ConfigurationKeys
     /// Timeout before calculating size of one or more files.
     /// </summary>
     public static readonly SettingKey<int> TimeoutToCancelFileSizeCalculation = new(nameof(TimeoutToCancelFileSizeCalculation), 5 * 1000);
+    /// <summary>
+    /// Timeout of matching log profiles for all log files in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> TimeoutToMatchAllLogProfiles = new(nameof(TimeoutToMatchAllLogProfiles), 15 * 1000);
+    /// <summary>
+    /// Timeout of matching a log profile for a log file in milliseconds.
+    /// </summary>
+    public static readonly SettingKey<int> TimeoutToMatchLogProfile = new(nameof(TimeoutToMatchLogProfile), 2000);
     /// <summary>
     /// Whether trimming of text of log property is enabled or not.
     /// </summary>
