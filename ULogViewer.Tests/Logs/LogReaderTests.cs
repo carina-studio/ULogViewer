@@ -37,6 +37,7 @@ class LogReaderTests : ApplicationBasedTests
 	static readonly Regex LogMessageRegex = new("^[\\s]{2}(?<Message>[^\\[]*)$");
 	static readonly LogPattern[] LogPatterns;
 	static readonly Regex LogTailRegex = new("^[\\s]{2}\\[TAIL\\]$");
+	static readonly Regex SingleLineLogRegex = new("^(?<Message>LINE [0-9]+)$");
 
 
 	// Fields.
@@ -110,6 +111,27 @@ class LogReaderTests : ApplicationBasedTests
 			Directory.Delete(this.testDirectoryPath, true);
 			this.testDirectoryPath = null;
 		}
+	}
+
+
+	// Generate log file which contains given number of unmatchable lines followed by given number of single-line logs.
+	string GenerateLineCountedLogFile(int unmatchableLineCount, int logLineCount)
+	{
+		this.testDirectoryPath ??= this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
+		return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(stream =>
+		{
+			// write lines which cannot be matched by any log pattern
+			using var writer = new StreamWriter(stream, Encoding.UTF8);
+			for (var i = 0; i < unmatchableLineCount; ++i)
+				writer.WriteLine("(Invalid)");
+
+			// write lines which can be matched as single-line logs
+			for (var i = 0; i < logLineCount; ++i)
+				writer.WriteLine($"LINE {i}");
+
+			// complete
+			return stream.Name;
+		});
 	}
 
 
@@ -260,6 +282,54 @@ class LogReaderTests : ApplicationBasedTests
 				Assert.LessOrEqual(logReader3.Logs.Count, logReader3.MaxLogCount);
 			}
 			logReader3.Dispose();
+		});
+	}
+
+
+	/// <summary>
+	/// Test for setting maximum number of raw log lines to read.
+	/// </summary>
+	[Test]
+	public void MaxRawLogLineCountTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// find provider
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			var maxRawLogLineCount = 100;
+
+			// prepare source which contains no matchable line within the limitation
+			var filePath1 = this.GenerateLineCountedLogFile(maxRawLogLineCount, maxRawLogLineCount * 9);
+			using var source1 = provider.CreateSource(new LogDataSourceOptions { FileName = filePath1 });
+
+			// create log reader
+			using var logReader1 = new LogReader(null, source1).Setup(it =>
+			{
+				it.LogPatterns = [ new LogPattern(SingleLineLogRegex, false, false, null) ];
+				it.MaxRawLogLineCount = maxRawLogLineCount;
+			});
+
+			// read logs and check that reading stopped before reaching any matchable line
+			logReader1.Start();
+			await logReader1.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(30000).Token);
+			Assert.AreEqual(0, logReader1.Logs.Count);
+
+			// prepare source which contains matchable lines far beyond the limitation
+			var filePath2 = this.GenerateLineCountedLogFile(0, maxRawLogLineCount * 10);
+			using var source2 = provider.CreateSource(new LogDataSourceOptions { FileName = filePath2 });
+
+			// create log reader
+			using var logReader2 = new LogReader(null, source2).Setup(it =>
+			{
+				it.LogPatterns = [ new LogPattern(SingleLineLogRegex, false, false, null) ];
+				it.MaxRawLogLineCount = maxRawLogLineCount;
+			});
+
+			// read logs and check that only logs within the limitation are read
+			logReader2.Start();
+			await logReader2.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(30000).Token);
+			Assert.AreEqual(maxRawLogLineCount, logReader2.Logs.Count);
 		});
 	}
 

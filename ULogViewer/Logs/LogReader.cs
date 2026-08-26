@@ -73,6 +73,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	object logsReadingToken = new();
 	LogStringEncoding logStringEncoding = LogStringEncoding.Plain;
 	int maxLogCount = -1;
+	int maxRawLogLineCount = -1;
 	CancellationTokenSource? openingReaderCancellationSource;
 	[UsedOnBackgroundThread]
 	readonly List<Log> pendingLogs = new();
@@ -601,6 +602,29 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.maxLogCount = value;
 			this.DropLogs(0);
 			this.OnPropertyChanged(nameof(MaxLogCount));
+		}
+	}
+
+
+	/// <summary>
+	/// Get or set maximum number of raw log lines to read from the data source.
+	/// </summary>
+	/// <remarks>Negative number means unlimited number of lines. The value can only be changed before starting to read logs.</remarks>
+	public int MaxRawLogLineCount
+	{
+		get => this.maxRawLogLineCount;
+		set
+		{
+			this.VerifyAccess();
+			this.VerifyDisposed();
+			if (this.state != LogReaderState.Preparing)
+				throw new InvalidOperationException($"Cannot change {nameof(MaxRawLogLineCount)} when state is {this.state}.");
+			if (value == 0)
+				throw new ArgumentOutOfRangeException(nameof(value));
+			if (this.maxRawLogLineCount == value)
+				return;
+			this.maxRawLogLineCount = value;
+			this.OnPropertyChanged(nameof(MaxRawLogLineCount));
 		}
 	}
 
@@ -1821,6 +1845,11 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	[CalledOnBackgroundThread]
 	string? ReadNextLine(TextReader reader, ref int lineNumber)
 	{
+		// stop reading when raw log line limitation reached
+		if (this.maxRawLogLineCount >= 0 && lineNumber >= this.maxRawLogLineCount)
+			return null;
+
+		// read next line
 		++lineNumber;
 		return reader.ReadLine();
 	}
