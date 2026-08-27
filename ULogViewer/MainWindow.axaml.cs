@@ -43,9 +43,11 @@ namespace CarinaStudio.ULogViewer
 		static readonly DataFormat<byte[]> DraggingSessionFormat = DataFormat.CreateBytesApplicationFormat("DraggingSession");
 		static readonly StyledProperty<bool> HasMultipleSessionsProperty = AvaloniaProperty.Register<MainWindow, bool>(nameof(HasMultipleSessions));
 		static readonly SettingKey<bool> IsBuiltInFontSuggestionShownKey = new("MainWindow.IsBuiltInFontSuggestionShown");
+		static bool IsLogProfileMatchingPromotionDialogShown;
 		static readonly SettingKey<bool> IsUsingAddTabButtonToSelectLogProfileTutorialShownKey = new("MainWindow.IsUsingAddTabButtonToSelectLogProfileTutorialShown");
 		static bool IsReactivatingProVersionHintDialogShown;
 		static bool IsRefreshingAppIconOnMacOSHintDialogShown;
+		static readonly SettingKey<string> LogProfileMatchingPromotionShownForVersionKey = new("MainWindow.LogProfileMatchingPromotionShownForVersion", "");
 		static MainWindow? MainWindowToActivateProVersion;
 		static readonly string[] NativeMenuItemIconResourceNames =
 		[
@@ -1299,6 +1301,53 @@ namespace CarinaStudio.ULogViewer
 		public ICommand SetCustomSessionTitleCommand { get; }
 
 
+		// Show promotion dialog of automatic log profile matching if it has not been shown for the current promotion version.
+		// Returns true if the dialog was shown, false otherwise.
+		async Task<bool> ShowLogProfileMatchingPromotionIfNeededAsync()
+		{
+			// guard against re-entry, closed window, and already-shown
+			if (this.IsClosed || IsLogProfileMatchingPromotionDialogShown)
+				return false;
+			var saved = this.PersistentState.GetValueOrDefault(LogProfileMatchingPromotionShownForVersionKey);
+			if (Version.TryParse(saved, out var savedVersion) && savedVersion >= App.LogProfileMatchingPromotionVersion)
+				return false;
+
+			// a new user has no previous behavior to be surprised by, mark the promotion as shown without showing it
+			if (this.Application.IsFirstLaunch)
+			{
+				this.PersistentState.SetValue(LogProfileMatchingPromotionShownForVersionKey, App.LogProfileMatchingPromotionVersion.ToString());
+				return false;
+			}
+
+			// defer until no other dialog is open so the promotion is not stacked on top of another dialog
+			if (this.HasDialogs)
+				await this.WaitForPropertyChangeAsync(HasDialogsProperty, false);
+			if (this.IsClosed || IsLogProfileMatchingPromotionDialogShown)
+				return false;
+
+			// show the promotion dialog
+			IsLogProfileMatchingPromotionDialogShown = true;
+			var result = await new MessageDialog
+			{
+				Buttons = MessageDialogButtons.OKCancel,
+				CustomCancelText = this.Application.GetObservableString("Common.OK"),
+				CustomIcon = this.Application.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored.Gradient"),
+				CustomOKText = this.Application.GetObservableString("LogProfileMatchingPromotionDialog.OpenOptions"),
+				Icon = MessageDialogIcon.Custom,
+				Message = this.Application.GetObservableString("LogProfileMatchingPromotionDialog.Message"),
+				Title = this.Application.GetObservableString("LogProfileMatchingPromotionDialog.Title"),
+			}.ShowDialog(this);
+
+			// persist that the promotion has been shown for the current version
+			this.PersistentState.SetValue(LogProfileMatchingPromotionShownForVersionKey, App.LogProfileMatchingPromotionVersion.ToString());
+
+			// open the log operations section of the application options if requested
+			if (result == MessageDialogResult.OK && !this.IsClosed)
+				await this.Application.ShowApplicationOptionsDialogAsync(this, AppOptionsDialog.LogProfileMatchingSection);
+			return true;
+		}
+
+
 		// Show dialog to notify user that reactivating Pro-version may be needed.
 		Task<bool> ShowReactivatingProVersionHintDialogAsync() =>
 			Task.FromResult(false);
@@ -1408,6 +1457,13 @@ namespace CarinaStudio.ULogViewer
 					this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
 					return;
 				}
+			}
+
+			// promotion of automatic log profile matching for users who are upgrading
+			if (await this.ShowLogProfileMatchingPromotionIfNeededAsync())
+			{
+				this.SynchronizationContext.Post(this.ShowULogViewerInitialDialogs);
+				return;
 			}
 
 			// all dialogs were shown

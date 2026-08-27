@@ -270,7 +270,7 @@
 								<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 								<!-- Mode of selecting log profile for session without log profile -->
-								<asControls:DialogItem>
+								<asControls:DialogItem Name="sessionInitLogProfileSelectionModeItem">
 									<TextBlock Text="{asXaml:StringResource AppOptionsDialog.SessionInitLogProfileSelectionMode}" asControls:DialogElement.TextRole="Label"/>
 									<asControls:EnumComboBox EnumType="{x:Type app:SessionInitLogProfileSelectionMode}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding SessionInitLogProfileSelectionMode, Mode=TwoWay}"/>
 								</asControls:DialogItem>

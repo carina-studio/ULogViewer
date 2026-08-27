@@ -801,6 +801,12 @@ namespace CarinaStudio.ULogViewer
 	        Platform.OpenLink("https://github.com/carina-studio/ULogViewer/issues");
 
 
+		/// <summary>
+		/// Version of build that introduced (or last bumped) the automatic log profile matching feature-promotion dialog.
+		/// </summary>
+		public static readonly Version LogProfileMatchingPromotionVersion = new(5, 2, 0);
+
+
 		// URI of package manifest.
 		public override IEnumerable<Uri> PackageManifestUris => [ ];
 		

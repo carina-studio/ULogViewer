@@ -967,6 +967,13 @@ return False</sys:String>
 	<sys:String x:Key="String/MarkColor.Red">红色</sys:String>
 	<sys:String x:Key="String/MarkColor.Yellow">黄色</sys:String>
 
+	<!-- LogProfileMatchingPromotionDialog -->
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Title">自动选择日志类型</sys:String>
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer 现在会自动帮拖动进来的文件搜索合适的日志类型，新建标签页时默认将不再打开日志类型选择界面。
+
+您可以在应用程序选项中变更此设置。</sys:String>
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.OpenOptions">打开选项</sys:String>
+
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer 实时日志</sys:String>
 
@@ -1274,6 +1281,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分数据来源发生错误</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">没有日志可以展示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">您必须以系统管理员身份运行应用程序以使用 “{0}”。</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">或将文件拖动至此。</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">点一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">来选择日志类型以开始使用。</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">高度内存使用</sys:String>
@@ -1344,6 +1352,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">标记日志</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">标记/解除标记</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">标记/解除标记日志</sys:String>
+	<sys:String x:Key="String/SessionView.MatchingLogProfiles">正在为文件搜索合适的日志类型…</sys:String>
 	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">为了维持应用程序的性能，图表因数据点过多而被暂时停用。您可以移除一些日志或移除一些图表的属性以减少数据点数量。</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">私有内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.MultiLineLogProperty">此属性包含多行文字

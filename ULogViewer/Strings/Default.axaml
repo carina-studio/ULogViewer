@@ -1005,6 +1005,13 @@ You can change this setting at any time in Options.</sys:String>
 	<sys:String x:Key="String/MarkColor.Red">Red</sys:String>
 	<sys:String x:Key="String/MarkColor.Yellow">Yellow</sys:String>
 
+	<!-- LogProfileMatchingPromotionDialog -->
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Title">Automatic Log Profile Matching</sys:String>
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer now searches for a suitable log profile for the files you drop into the window, and new tabs no longer show the log profile selector by default.
+
+You can change this setting in Application Options.</sys:String>
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.OpenOptions">Open Options</sys:String>
+
 	<!-- MemoryLoggerLogDataSourceProvider -->
 	<sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer Real-Time Log</sys:String>
 
@@ -1314,6 +1321,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">Logs reading has been disabled temporarily because of high memory usage.</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No Log to Show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">You need to run the application as administrator to use '{0}'.</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">Or drop files to here.</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on the toolbar to select log profile to start.</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore Text Filter Cases</sys:String>
@@ -1382,6 +1390,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.MarkLogs">Mark Logs</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLog">Mark/Unmark</sys:String>
 	<sys:String x:Key="String/SessionView.MarkUnmarkLogs">Mark/Unmark Logs</sys:String>
+	<sys:String x:Key="String/SessionView.MatchingLogProfiles">Searching for suitable log profiles for the file(s)…</sys:String>
 	<sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">In order to ensure the performance, the chart has been disabled temporarily because of too many data points. You can remove some logs or remove some chart properties to reduce the number of data points.</sys:String>
 	<sys:String x:Key="String/SessionView.MemoryUsage">Private Memory Usage</sys:String>
 	<sys:String x:Key="String/SessionView.MultiLineLogProperty">There Are Multiple Lines in This Property

@@ -1038,6 +1038,13 @@
     <sys:String x:Key="String/MarkColor.Red">赤</sys:String>
     <sys:String x:Key="String/MarkColor.Yellow">黄</sys:String>
 
+    <!-- LogProfileMatchingPromotionDialog -->
+    <sys:String x:Key="String/LogProfileMatchingPromotionDialog.Title">ログプロファイルの自動選択</sys:String>
+    <sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer は、ウィンドウにドロップされたファイルに適したログプロファイルを自動的に検索するようになりました。新規タブでは、既定でログプロファイル選択ダイアログが表示されなくなります。
+
+この設定はアプリケーションオプションで変更できます。</sys:String>
+    <sys:String x:Key="String/LogProfileMatchingPromotionDialog.OpenOptions">オプションを開く</sys:String>
+
     <!-- MemoryLoggerLogDataSourceProvider -->
     <sys:String x:Key="String/MemoryLoggerLogDataSourceProvider.DisplayName">ULogViewer リアルタイムログ</sys:String>
 
@@ -1377,6 +1384,7 @@
     <sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">メモリ使用量が高いため、ログの読み込みが一時的に無効になっています。</sys:String>
     <sys:String x:Key="String/SessionView.Hint.NoLogToShow">表示するログがありません</sys:String>
     <sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">「{0}」を使用するには、アプリケーションを管理者として実行する必要があります。</sys:String>
+    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">または、ここにファイルをドロップしてください。</sys:String>
     <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">ツールバーの</sys:String>
     <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">をクリックして、ログプロファイルを選択して開始します。</sys:String>
     <sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">テキストフィルタの大文字小文字を区別しない</sys:String>
@@ -1447,6 +1455,7 @@
     <sys:String x:Key="String/SessionView.MarkLogs">ログをマーク</sys:String>
     <sys:String x:Key="String/SessionView.MarkUnmarkLog">マーク/マーク解除</sys:String>
     <sys:String x:Key="String/SessionView.MarkUnmarkLogs">ログをマーク/マーク解除</sys:String>
+    <sys:String x:Key="String/SessionView.MatchingLogProfiles">ファイルに適したログプロファイルを検索中…</sys:String>
     <sys:String x:Key="String/SessionView.MaxTotalLogChartSeriesValueCountReached">パフォーマンスを確保するため、データポイントが多すぎるためチャートは一時的に無効になっています。一部のログを削除するか、チャートプロパティを削除してデータポイント数を減らしてください。</sys:String>
     <sys:String x:Key="String/SessionView.MemoryUsage">プライベートメモリ使用量</sys:String>
     <sys:String x:Key="String/SessionView.MultiLineLogProperty">

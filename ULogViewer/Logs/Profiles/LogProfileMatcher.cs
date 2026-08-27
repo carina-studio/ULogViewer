@@ -1,3 +1,5 @@
+//#define SIMULATE_SLOW_MATCHING
+
 using CarinaStudio.Collections;
 using CarinaStudio.ComponentModel;
 using CarinaStudio.Logging;
@@ -21,6 +23,9 @@ static class LogProfileMatcher
     // Constants.
     const string FileDataSourceProviderName = "File";
     const string WindowsEventLogFileDataSourceProviderName = "WindowsEventLogFile";
+#if SIMULATE_SLOW_MATCHING
+    const int SimulatedMatchingDelayPerFile = 3000;
+#endif
 
 
     // Static fields.
@@ -166,6 +171,11 @@ static class LogProfileMatcher
         {
             foreach (var fileName in fileNamesToExamine)
             {
+#if SIMULATE_SLOW_MATCHING
+                // slow matching down so that the progress dialog and cancelling it can be exercised by hand
+                await Task.Delay(SimulatedMatchingDelayPerFile, matchingToken);
+#endif
+
                 // classify the log file, the format narrows the candidates before any log file is read
                 var detection = await LogFileFormatDetector.DetectAsync(app, fileName, matchingToken);
 

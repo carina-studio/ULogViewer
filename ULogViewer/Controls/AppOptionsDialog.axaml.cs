@@ -26,6 +26,10 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	/// Name of section of default text shell.
 	/// </summary>
 	public const string DefaultTextShellSection = "DefaultTextShell";
+	/// <summary>
+	/// Name of section of automatic log profile matching.
+	/// </summary>
+	public const string LogProfileMatchingSection = "LogProfileMatching";
 
 
 	/// <summary>
@@ -198,6 +202,7 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 		var initControl = this.InitSectionName switch
 		{
 			DefaultTextShellSection => this.Get<Control>("defaultTextShellItem"),
+			LogProfileMatchingSection => this.Get<Control>("sessionInitLogProfileSelectionModeItem"),
 			_ => null,
 		};
 		if (initControl is not null)

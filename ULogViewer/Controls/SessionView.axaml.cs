@@ -1524,6 +1524,15 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Close given processing dialog as soon as the task it reports completes, whether it succeeded, failed or was cancelled.
+		async Task CompleteProcessingDialogAsync(ProcessingDialog dialog, Task task)
+		{
+			await Task.WhenAny(task);
+			if (dialog.IsShowing)
+				dialog.Complete();
+		}
+
+
 		// Copy file name of log file.
 		void CopyLogFileName(string filePath)
 		{
@@ -2620,12 +2629,35 @@ namespace CarinaStudio.ULogViewer.Controls
 					}.ShowDialog(this.attachedWindow);
 				}
 
+				// match log profiles which are able to read the dropped log files
+				var matchedLogProfiles = (IList<LogProfileMatchingResult>?)null;
+				if (filePaths.IsNotEmpty()
+					&& this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Auto)
+				{
+					// the current log profile is the explicit choice of user, keep it when it can still read the dropped files
+					if (!needNewLogProfile && currentLogProfile is not null)
+					{
+						var currentLogProfileResults = await this.MatchLogProfilesAsync(filePaths, new(currentLogProfile));
+						if (currentLogProfileResults is not null && currentLogProfileResults.IsEmpty())
+							needNewLogProfile = true;
+					}
+
+					// look for log profiles which can read the dropped files
+					if (needNewLogProfile)
+						matchedLogProfiles = await this.MatchLogProfilesAsync(filePaths, new());
+				}
+
 				// select new log profile
 				if (this.attachedWindow == null)
 					return false;
-				var newLogProfile = !needNewLogProfile ? null : await new LogProfileSelectionDialog().Also(it =>
+				var newLogProfile = !needNewLogProfile ? null : matchedLogProfiles?.Count == 1 ? matchedLogProfiles[0].Profile : await new LogProfileSelectionDialog().Also(it =>
 				{
-					if (filePaths.IsEmpty())
+					if (matchedLogProfiles is { Count: > 1 })
+					{
+						var matchedLogProfileSet = new HashSet<LogProfile>(matchedLogProfiles.Select(result => result.Profile));
+						it.Filter = matchedLogProfileSet.Contains;
+					}
+					else if (filePaths.IsEmpty())
 					{
 						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
 						                          && logProfile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored
@@ -2952,6 +2984,46 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to mark or unmark selected logs.
 		/// </summary>
 		public ICommand MarkUnmarkSelectedLogsCommand { get; }
+
+
+		// Match log profiles which are able to read given log files, showing a progress dialog when matching takes long enough to be noticed.
+		async Task<IList<LogProfileMatchingResult>?> MatchLogProfilesAsync(IList<string> fileNames, LogProfileMatchingOptions options)
+		{
+			// check state
+			if (this.attachedWindow is null)
+				return null;
+
+			// start matching
+			var app = this.Application;
+			using var cancellationTokenSource = new CancellationTokenSource();
+			var matchingTask = LogProfileMatcher.MatchAsync(app, fileNames, options, cancellationTokenSource.Token);
+
+			// show the progress dialog only when matching outlives the delay, the common drop never sees it
+			var delay = app.Configuration.GetValueOrDefault(ConfigurationKeys.DelayToShowLogProfileMatchingDialog);
+			if (delay > 0 && await Task.WhenAny(matchingTask, Task.Delay(delay)) != matchingTask)
+			{
+				var dialog = new ProcessingDialog
+				{
+					IsCancellable = true,
+					Message = app.GetObservableString("SessionView.MatchingLogProfiles"),
+				};
+				dialog.CancellationRequested += (_, _) => cancellationTokenSource.Cancel();
+				var showingDialogTask = dialog.ShowDialog(this.attachedWindow);
+				_ = this.CompleteProcessingDialogAsync(dialog, matchingTask);
+				await showingDialogTask;
+			}
+
+			// collect the result, a cancelled matching falls back to the behavior without matching
+			try
+			{
+				return await matchingTask;
+			}
+			catch (OperationCanceledException)
+			{
+				this.Logger.LogWarning("Matching log profiles was cancelled");
+				return null;
+			}
+		}
 
 
 		// Max line count to display for each log.

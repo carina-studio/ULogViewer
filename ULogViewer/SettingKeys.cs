@@ -133,7 +133,7 @@ static class SettingKeys
 	/// <summary>
 	/// Mode of selecting log profile for session which has no log profile yet.
 	/// </summary>
-	public static readonly SettingKey<SessionInitLogProfileSelectionMode> SessionInitLogProfileSelectionMode = new(nameof(SessionInitLogProfileSelectionMode), ULogViewer.SessionInitLogProfileSelectionMode.Manual);
+	public static readonly SettingKey<SessionInitLogProfileSelectionMode> SessionInitLogProfileSelectionMode = new(nameof(SessionInitLogProfileSelectionMode), ULogViewer.SessionInitLogProfileSelectionMode.Auto);
 	/// <summary>
 	/// Show help button on input field of log text filter.
 	/// </summary>
