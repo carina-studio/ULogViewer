@@ -3,7 +3,11 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
@@ -26,6 +30,26 @@ class LogProfileMatcherTests : ApplicationBasedTests
 		"LinuxSystemLogFile",
 		"MacOSSystemLogFile",
 		"ULogViewerLog",
+	];
+
+
+	static readonly string[] ApacheAccessLines =
+	[
+		"127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] \"GET /apache_pb.gif HTTP/1.0\" 200 2326 \"http://example.com/\" \"Mozilla/5.0\"",
+		"127.0.0.1 - alice [10/Oct/2000:13:55:37 -0700] \"GET /index.html HTTP/1.0\" 200 2326 \"http://example.com/\" \"Mozilla/5.0\"",
+		"127.0.0.1 - bob [10/Oct/2000:13:55:38 -0700] \"GET /a.html HTTP/1.0\" 200 2326 \"http://example.com/\" \"Mozilla/5.0\"",
+		"127.0.0.1 - carol [10/Oct/2000:13:55:39 -0700] \"GET /b.html HTTP/1.0\" 200 2326 \"http://example.com/\" \"Mozilla/5.0\"",
+		"127.0.0.1 - dave [10/Oct/2000:13:55:40 -0700] \"GET /c.html HTTP/1.0\" 200 2326 \"http://example.com/\" \"Mozilla/5.0\"",
+		"127.0.0.1 - erin [10/Oct/2000:13:55:41 -0700] \"GET /d.html HTTP/1.0\" 200 2326 \"http://example.com/\" \"Mozilla/5.0\"",
+	];
+	static readonly string[] SyslogLines =
+	[
+		"Aug 26 01:02:03 localhost kernel: something happened",
+		"Aug 26 01:02:04 localhost kernel: something else happened",
+		"Aug 26 01:02:05 localhost systemd: started a unit",
+		"Aug 26 01:02:06 localhost systemd: stopped a unit",
+		"Aug 26 01:02:07 localhost cron: ran a job",
+		"Aug 26 01:02:08 localhost cron: ran another job",
 	];
 
 
@@ -66,6 +90,24 @@ class LogProfileMatcherTests : ApplicationBasedTests
 			var userDefined = CreateResult(this.CreateFileLogProfile(_ => { }), [ "a" ], new(5, 1, 5, 5, true));
 			Assert.That(LogProfileMatcher.CompareResults(userDefined, builtIn), Is.LessThan(0));
 		});
+	}
+
+
+	// Fields.
+	string? testDirectoryPath;
+
+
+	/// <summary>
+	/// Delete directory which contains files generated for testing.
+	/// </summary>
+	[OneTimeTearDown]
+	public void DeleteTestDirectory()
+	{
+		if (this.testDirectoryPath is not null)
+		{
+			Global.RunWithoutError(() => Directory.Delete(this.testDirectoryPath, true));
+			this.testDirectoryPath = null;
+		}
 	}
 
 
@@ -116,6 +158,150 @@ class LogProfileMatcherTests : ApplicationBasedTests
 			// logs scattered once every few hundred lines are noise instead of a parse
 			Assert.That(LogProfileMatcher.IsMatched(app, new(5, 1, 900, 900, true)), Is.False);
 		});
+	}
+
+
+	// Generate log file which contains given lines.
+	string GenerateLogFile(params string[] lines)
+	{
+		this.testDirectoryPath ??= this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
+		return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(stream =>
+		{
+			using var writer = new StreamWriter(stream, Encoding.UTF8);
+			foreach (var line in lines)
+				writer.WriteLine(line);
+			return stream.Name;
+		});
+	}
+
+
+	/// <summary>
+	/// Test for cancelling matching of log profiles.
+	/// </summary>
+	[Test]
+	public void MatchCancellationTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// cancelling before matching starts is reported to the caller instead of being swallowed
+			var filePath = this.GenerateLogFile(SyslogLines);
+			using var cancellationTokenSource = new CancellationTokenSource();
+			await cancellationTokenSource.CancelAsync();
+			try
+			{
+				await LogProfileMatcher.MatchAsync(this.Application, [ filePath ], new(), cancellationTokenSource.Token);
+				throw new AssertionException("Cancellation should be reported.");
+			}
+			catch (Exception ex)
+			{
+				if (ex is AssertionException)
+					throw;
+				Assert.That(ex, Is.InstanceOf<OperationCanceledException>());
+			}
+		});
+	}
+
+
+	/// <summary>
+	/// Test for matching log profiles for log files which contain no matchable log.
+	/// </summary>
+	[Test]
+	public void MatchUnmatchableFilesTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// a log file which contains nothing matches nothing
+			var emptyFilePath = this.GenerateLogFile();
+			Assert.That(await MatchNamesAsync(this.Application, emptyFilePath), Is.Empty);
+
+			// a format which starts after a page of noise is not a match
+			var noiseLines = new List<string>();
+			for (var i = 0; i < 200; ++i)
+				noiseLines.Add($"(noise line {i})");
+			noiseLines.AddRange(SyslogLines);
+			var noisyFilePath = this.GenerateLogFile(noiseLines.ToArray());
+			Assert.That(await MatchNamesAsync(this.Application, noisyFilePath), Does.Not.Contain("LinuxSystemLogFile"));
+		});
+	}
+
+
+	/// <summary>
+	/// Test for matching log profiles for a single log file.
+	/// </summary>
+	[Test]
+	public void MatchSingleFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// a syslog file is read by the profile for Linux system log files, not by the one for Apache access logs
+			var syslogFilePath = this.GenerateLogFile(SyslogLines);
+			var syslogNames = await MatchNamesAsync(this.Application, syslogFilePath);
+			Assert.That(syslogNames, Does.Contain("LinuxSystemLogFile"));
+			Assert.That(syslogNames, Does.Not.Contain("ApacheAccessLogFile"));
+
+			// an Apache access log file is read by the profile for Apache access logs
+			var apacheFilePath = this.GenerateLogFile(ApacheAccessLines);
+			var apacheNames = await MatchNamesAsync(this.Application, apacheFilePath);
+			Assert.That(apacheNames, Does.Contain("ApacheAccessLogFile"));
+			Assert.That(apacheNames, Does.Not.Contain("LinuxSystemLogFile"));
+		});
+	}
+
+
+	/// <summary>
+	/// Test for matching a single log profile for the log profile of current session.
+	/// </summary>
+	[Test]
+	public void MatchSingleProfileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// matching is restricted to the given log profile
+			var syslogFilePath = this.GenerateLogFile(SyslogLines);
+			var syslogProfile = LogProfileManager.Default.Profiles.First(it => it.Name == "LinuxSystemLogFile");
+			var results = await LogProfileMatcher.MatchAsync(this.Application, [ syslogFilePath ], new(syslogProfile), CancellationToken.None);
+			Assert.That(results.Select(it => it.Profile.Name).ToArray(), Is.EqualTo(new[] { "LinuxSystemLogFile" }));
+
+			// a log profile which cannot read the log file reports no match
+			var apacheProfile = LogProfileManager.Default.Profiles.First(it => it.Name == "ApacheAccessLogFile");
+			Assert.That(await LogProfileMatcher.MatchAsync(this.Application, [ syslogFilePath ], new(apacheProfile), CancellationToken.None), Is.Empty);
+
+			// a log profile without log patterns reads every text file, it matches without reading anything
+			var rawProfile = LogProfileManager.Default.Profiles.First(it => it.Name == "RawFile");
+			var rawResults = await LogProfileMatcher.MatchAsync(this.Application, [ syslogFilePath ], new(rawProfile), CancellationToken.None);
+			Assert.That(rawResults.Select(it => it.Profile.Name).ToArray(), Is.EqualTo(new[] { "RawFile" }));
+		});
+	}
+
+
+	/// <summary>
+	/// Test for matching log profiles for multiple log files of different formats.
+	/// </summary>
+	[Test]
+	public void MatchMultipleFilesTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// dropping a syslog file together with an Apache access log file yields both profiles
+			var syslogFilePath = this.GenerateLogFile(SyslogLines);
+			var apacheFilePath = this.GenerateLogFile(ApacheAccessLines);
+			var results = await LogProfileMatcher.MatchAsync(this.Application, [ syslogFilePath, apacheFilePath ], new(), CancellationToken.None);
+			var resultsByName = results.ToDictionary(it => it.Profile.Name);
+			Assert.That(resultsByName.ContainsKey("LinuxSystemLogFile"));
+			Assert.That(resultsByName.ContainsKey("ApacheAccessLogFile"));
+
+			// each of them matched exactly one of the dropped log files
+			Assert.That(resultsByName["LinuxSystemLogFile"].FileNames, Is.EqualTo(new[] { syslogFilePath }));
+			Assert.That(resultsByName["ApacheAccessLogFile"].FileNames, Is.EqualTo(new[] { apacheFilePath }));
+		});
+	}
+
+
+	// Match log profiles and report their names.
+	static async Task<string[]> MatchNamesAsync(IULogViewerApplication app, params string[] fileNames)
+	{
+		var results = await LogProfileMatcher.MatchAsync(app, fileNames, new(), CancellationToken.None);
+		return results.Select(it => it.Profile.Name).ToArray();
 	}
 
 

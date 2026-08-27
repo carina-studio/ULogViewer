@@ -1,7 +1,15 @@
 using CarinaStudio.Collections;
+using CarinaStudio.ComponentModel;
+using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.Logs.DataSources;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
@@ -13,6 +21,10 @@ static class LogProfileMatcher
     // Constants.
     const string FileDataSourceProviderName = "File";
     const string WindowsEventLogFileDataSourceProviderName = "WindowsEventLogFile";
+
+
+    // Static fields.
+    static ILogger? logger;
 
 
     /// <summary>
@@ -106,6 +118,230 @@ static class LogProfileMatcher
     // Check whether logs can be read by given data source provider without running a script or spawning a process.
     static bool IsProviderAllowed(ILogDataSourceProvider provider) =>
         provider.Name == FileDataSourceProviderName || provider.Name == WindowsEventLogFileDataSourceProviderName;
+
+
+    /// <summary>
+    /// Match log profiles which are able to read given log files.
+    /// </summary>
+    /// <param name="app">Application.</param>
+    /// <param name="fileNames">Names of log files to be read.</param>
+    /// <param name="options">Options of matching.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Task of matching log profiles, the result is ranked with the best match first.</returns>
+    /// <remarks>The method must be called on the application thread. Reading logs is performed by <see cref="LogReader"/> on its own background threads, but every log reader is created, started and disposed on the application thread.</remarks>
+    public static async Task<IList<LogProfileMatchingResult>> MatchAsync(IULogViewerApplication app, IEnumerable<string> fileNames, LogProfileMatchingOptions options, CancellationToken cancellationToken)
+    {
+        // check state
+        app.VerifyAccess();
+        logger ??= app.LoggerFactory.CreateLogger(nameof(LogProfileMatcher));
+        var allFileNames = fileNames.ToArray();
+        if (allFileNames.IsEmpty())
+            return [];
+
+        // a log profile without log patterns reads every text file, report it as matched without reading anything
+        if (options.ProfileToMatch is { } profileToMatch && profileToMatch.LogPatterns.IsEmpty())
+        {
+            logger.LogTrace("Match: {profile} [ok], no log pattern to check", profileToMatch.Name);
+            return [ new LogProfileMatchingResult(profileToMatch, allFileNames, new(0, 0, 0, 0, true)) ];
+        }
+
+        // examine only the leading log files, the rest ride along on the winning log profile
+        var configuration = app.Configuration;
+        var maxFileCount = Math.Max(1, configuration.GetValueOrDefault(ConfigurationKeys.MaxFileCountToMatchLogProfile));
+        var fileNamesToExamine = allFileNames.Length <= maxFileCount ? allFileNames : allFileNames[..maxFileCount];
+        if (allFileNames.Length > fileNamesToExamine.Length)
+            logger.LogDebug("Match: examining {count} of {total} log files", fileNamesToExamine.Length, allFileNames.Length);
+
+        // bound the whole operation, a caller which cancels is reported but a timeout only stops further testing
+        using var timeoutCancellationTokenSource = new CancellationTokenSource(configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToMatchAllLogProfiles));
+        using var matchingCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCancellationTokenSource.Token);
+        var matchingToken = matchingCancellationTokenSource.Token;
+        var maxConcurrency = Math.Max(1, configuration.GetValueOrDefault(ConfigurationKeys.MaxConcurrentLogProfileMatching));
+        using var concurrencyLimiter = new SemaphoreSlim(maxConcurrency);
+
+        // match each log file against the candidates of its own format
+        var fileNamesByProfile = new Dictionary<LogProfile, List<string>>();
+        var scoreByProfile = new Dictionary<LogProfile, LogProfileMatchingScore>();
+        try
+        {
+            foreach (var fileName in fileNamesToExamine)
+            {
+                // classify the log file, the format narrows the candidates before any log file is read
+                var detection = await LogFileFormatDetector.DetectAsync(app, fileName, matchingToken);
+
+                // a group which yields no match cascades to the next one, a Windows event log file is exclusive
+                foreach (var format in SelectFormatCascade(detection.Format))
+                {
+                    // select candidates of the group
+                    var candidates = SelectCandidates(app, format, allFileNames.Length);
+                    if (options.ProfileToMatch is { } profile)
+                        candidates = candidates.Where(it => it.Profile == profile).ToArray();
+                    if (candidates.IsEmpty())
+                        continue;
+
+                    // read each log file with each candidate, limiting how many log readers run at once
+                    var scores = await Task.WhenAll(candidates.Select(async candidate =>
+                    {
+                        await concurrencyLimiter.WaitAsync(matchingToken);
+                        try
+                        {
+                            return await MatchFileAsync(app, candidate, fileName, detection.Encoding, matchingToken);
+                        }
+                        finally
+                        {
+                            concurrencyLimiter.Release();
+                        }
+                    }));
+
+                    // collect the matches of the group
+                    var hasMatch = false;
+                    for (var i = 0; i < candidates.Count; ++i)
+                    {
+                        var score = scores[i];
+                        if (!IsMatched(app, score))
+                            continue;
+                        hasMatch = true;
+                        var matchedProfile = candidates[i].Profile;
+                        if (fileNamesByProfile.TryGetValue(matchedProfile, out var matchedFileNames))
+                        {
+                            matchedFileNames.Add(fileName);
+                            if (CompareScores(score, scoreByProfile[matchedProfile]) < 0)
+                                scoreByProfile[matchedProfile] = score;
+                        }
+                        else
+                        {
+                            fileNamesByProfile[matchedProfile] = [ fileName ];
+                            scoreByProfile[matchedProfile] = score;
+                        }
+                    }
+                    if (hasMatch)
+                        break;
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // a caller which cancels expects the exception, a timeout keeps whatever has been matched so far
+            cancellationToken.ThrowIfCancellationRequested();
+            logger.LogWarning("Match: timeout, keeping {count} matched log profiles", fileNamesByProfile.Count);
+        }
+
+        // rank the matched log profiles
+        var results = fileNamesByProfile.Select(it => new LogProfileMatchingResult(it.Key, it.Value, scoreByProfile[it.Key])).ToList();
+        results.Sort(CompareResults);
+        logger.LogDebug("Match [ok], profiles: {count}, files: {files}", results.Count, fileNamesToExamine.Length);
+        return results;
+    }
+
+
+    // Compare two scores of matching, the better score is ordered first.
+    static int CompareScores(LogProfileMatchingScore lhs, LogProfileMatchingScore rhs)
+    {
+        var result = lhs.FirstLogLineNumber - rhs.FirstLogLineNumber;
+        if (result != 0)
+            return result;
+        return lhs.RawLineCountPerLog.CompareTo(rhs.RawLineCountPerLog);
+    }
+
+
+    // Read one log file with one candidate of log profile and score the result.
+    static async Task<LogProfileMatchingScore> MatchFileAsync(IULogViewerApplication app, LogProfileMatchingCandidate candidate, string fileName, Encoding encoding, CancellationToken cancellationToken)
+    {
+        // drive the dropped log file through the data source of the candidate
+        var profile = candidate.Profile;
+        var sourceOptions = candidate.DataSourceOptions;
+        sourceOptions.FileName = fileName;
+        sourceOptions.Encoding = encoding;
+        var source = profile.DataSourceProvider.CreateSource(sourceOptions);
+        var reader = (LogReader?)null;
+        try
+        {
+            // create log reader, mirroring how a session configures one but bounded and never tailing
+            var configuration = app.Configuration;
+            var maxRawLogLineCount = Math.Max(1, configuration.GetValueOrDefault(ConfigurationKeys.MaxRawLineCountToMatchLogProfile));
+            reader = new LogReader(null, source).Setup(it =>
+            {
+                it.DefaultLogLevel = profile.DefaultLogLevel;
+                it.IsContinuousReading = false;
+                it.LogLevelMap = profile.LogLevelMapForReading;
+                it.LogPatternMatchingMode = profile.LogPatternMatchingMode;
+                it.LogPatterns = profile.LogPatterns;
+                it.LogStringEncoding = profile.LogStringEncodingForReading;
+                it.MaxLogCount = Math.Max(1, configuration.GetValueOrDefault(ConfigurationKeys.MaxLogCountToMatchLogProfile));
+                it.MaxRawLogLineCount = maxRawLogLineCount;
+                it.Precondition = new LogReadingPrecondition();
+                it.RawLogLevelPropertyName = profile.RawLogLevelPropertyName;
+                it.ReadingWindow = LogReadingWindow.StartOfDataSource;
+                it.TimeSpanCultureInfo = profile.TimeSpanCultureInfoForReading;
+                it.TimeSpanEncoding = profile.TimeSpanEncodingForReading;
+                it.TimeSpanFormats = profile.TimeSpanFormatsForReading;
+                it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
+                it.TimestampEncoding = profile.TimestampEncodingForReading;
+                it.TimestampFormats = profile.TimestampFormatsForReading;
+            });
+
+            // read logs until the log reader settles or the pair takes too long
+            reader.Start();
+            if (!IsTerminalState(reader.State))
+            {
+                using var timeoutCancellationTokenSource = new CancellationTokenSource(configuration.GetValueOrDefault(ConfigurationKeys.TimeoutToMatchLogProfile));
+                using var pairCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCancellationTokenSource.Token);
+                try
+                {
+                    await reader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => IsTerminalState(it.State), pairCancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    logger?.LogTrace("Match: {profile} [timeout]", profile.Name);
+                }
+            }
+
+            // score the result
+            var score = ScoreReader(reader, maxRawLogLineCount);
+            logger?.LogTrace("Match: {profile} [ok], logs: {logCount}, lines: {lineCount}", profile.Name, score.LogCount, score.RawLineCount);
+            return score;
+        }
+        finally
+        {
+            // dispose on the application thread on every path, a leaked log reader keeps reading the log file
+            reader?.Dispose();
+            source.Dispose();
+        }
+    }
+
+
+    // Score the logs which a log reader produced.
+    static LogProfileMatchingScore ScoreReader(LogReader reader, int maxRawLogLineCount)
+    {
+        // reading is exhausted only when it stopped before consuming the whole raw line budget
+        var rawLineCount = reader.RawLogLineCount;
+        var reachedEndOfDataSource = reader.State == LogReaderState.Stopped && rawLineCount < maxRawLogLineCount;
+
+        // a log reader which produced nothing carries no line numbers to score
+        var logs = reader.Logs;
+        if (logs.IsEmpty())
+            return new LogProfileMatchingScore(0, 0, 0, rawLineCount, reachedEndOfDataSource);
+
+        // line numbers point at the first line of each log
+        var firstLogLineNumber = logs[0].LineNumber ?? 1;
+        var lastLogLineNumber = logs[^1].LineNumber ?? firstLogLineNumber;
+        return new LogProfileMatchingScore(logs.Count, firstLogLineNumber, lastLogLineNumber, rawLineCount, reachedEndOfDataSource);
+    }
+
+
+    // Get the sequence of format groups to try for a log file with given format, stopping at the first group which matches.
+    static LogFileFormat[] SelectFormatCascade(LogFileFormat format) => format switch
+    {
+        LogFileFormat.WindowsEventLog => [ LogFileFormat.WindowsEventLog ],
+        LogFileFormat.Json => [ LogFileFormat.Json, LogFileFormat.PlainText ],
+        _ => [ LogFileFormat.PlainText ],
+    };
+
+
+    // Check whether a log reader has settled and will produce no more logs or not.
+    static bool IsTerminalState(LogReaderState state) =>
+        state is LogReaderState.Stopped or LogReaderState.DataSourceError or LogReaderState.UnclassifiedError or LogReaderState.Disposed;
 
 
     /// <summary>

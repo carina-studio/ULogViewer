@@ -84,6 +84,8 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	LogReadingPrecondition precondition;
 	bool printTraceLogs;
 	IDisposable? progressiveLogsClearingToken;
+	[ThreadSafe]
+	int rawLogLineCount;
 	string? rawLogLevelPropertyName;
 	readonly IDictionary<string, LogLevel> readOnlyLogLevelMap;
 	LogReadingWindow readingWindow = LogReadingWindow.StartOfDataSource;
@@ -877,6 +879,14 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.OnPropertyChanged(nameof(Precondition));
 		}
 	}
+
+
+	/// <summary>
+	/// Get number of raw log lines which have been read from the data source.
+	/// </summary>
+	/// <remarks>The value is 0 before reading starts and stops growing once reading completes. Compare it with <see cref="MaxRawLogLineCount"/> to tell whether reading stopped because the data source was exhausted or because the limitation was reached.</remarks>
+	[ThreadSafe]
+	public int RawLogLineCount => Interlocked.CompareExchange(ref this.rawLogLineCount, 0, 0);
 
 
 	/// <summary>
@@ -1851,6 +1861,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 		// read next line
 		++lineNumber;
+		Interlocked.Exchange(ref this.rawLogLineCount, lineNumber);
 		return reader.ReadLine();
 	}
 
@@ -1963,7 +1974,7 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 
 
 	// Start reading logs.
-	async void StartReadingLogs()
+	async Task StartReadingLogs()
 	{
 		// change state
 		switch (this.state)

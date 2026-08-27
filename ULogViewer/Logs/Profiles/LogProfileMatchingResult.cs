@@ -13,6 +13,14 @@ readonly record struct LogProfileMatchingCandidate(LogProfile Profile, LogDataSo
 
 
 /// <summary>
+/// Options of matching log profiles.
+/// </summary>
+/// <param name="ProfileToMatch">Log profile to be matched, or Null to match every eligible log profile.</param>
+/// <remarks>Setting <see cref="ProfileToMatch"/> switches matching into the single-profile mode used to check whether the log profile of the current session can read the dropped log files. A log profile without log patterns reports a match in that mode without reading any file, because it is the explicit choice of user and it genuinely reads every text file.</remarks>
+readonly record struct LogProfileMatchingOptions(LogProfile? ProfileToMatch = null);
+
+
+/// <summary>
 /// Result of matching a log profile against one or more log files.
 /// </summary>
 /// <param name="Profile">Log profile which matched the log files.</param>
