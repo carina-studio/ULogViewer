@@ -9,6 +9,7 @@
 + The application no longer needs to be restarted when the Chinese environment changes after modifying the `Language` option.
 + Added a button to open the script log window when editing scripts.
 + Added a hint of dropping files to the tab without log profile.
++ Applied the new window style of macOS 26.
 
 ## Behavior Changes
 + The log profile selector is no longer shown after creating a new tab by default, and can be changed by the `Log Profile Selection for a New Tab` option.

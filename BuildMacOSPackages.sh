@@ -9,6 +9,7 @@ PUB_PLATFORM_LIST=()
 CONFIG="Release"
 TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
+MACOS_SDK_VERSION="26.0" # Linked SDK version to write into the application binary, opts-in to the window design of macOS 26+
 CERT_NAME="" # Name of certification to sign the application
 SIGN_PACKAGE="true"
 RUN_TESTS="true"
@@ -194,6 +195,25 @@ for i in "${!RID_LIST[@]}"; do
     rm -rf ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.pdb
     rm -rf ./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/*.dSYM
 
+    # [Workaround] Rewrite the linked SDK version of the application binary to opt-in to the window design of macOS 26+.
+    # AppKit selects window chrome by the linked SDK version of the main executable, and the .NET apphost is still
+    # linked against an old SDK. Must be done before signing, otherwise the signature will be invalidated.
+    APP_BINARY="./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app/Contents/MacOS/$APP_NAME"
+    if [ -z "$(command -v vtool)" ]; then
+        echo "Unable to find 'vtool', please install Xcode"
+        exit
+    fi
+    MIN_OS_VERSION=$(vtool -show-build-version "$APP_BINARY" | awk '/minos/ { print $2; exit }')
+    if [ -z "$MIN_OS_VERSION" ]; then
+        echo "Unable to get minimum OS version from '$APP_BINARY'"
+        exit
+    fi
+    echo "Set linked SDK version of '$APP_BINARY' to $MACOS_SDK_VERSION"
+    vtool -set-build-version macos "$MIN_OS_VERSION" "$MACOS_SDK_VERSION" -replace -output "$APP_BINARY" "$APP_BINARY"
+    if [ "$?" != "0" ]; then
+        exit
+    fi
+
     # sign application
     if [ "$SIGN_PACKAGE" = "true" ]; then
         echo "Sign package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
@@ -205,6 +225,7 @@ for i in "${!RID_LIST[@]}"; do
         fi
     else
         echo "Skip signing package 'Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app'"
+        codesign --deep --force -s - "./Packages/$VERSION/$PUB_PLATFORM/$APP_NAME.app" # Restore ad-hoc signature invalidated by vtool
     fi
 
     # zip .app directory
