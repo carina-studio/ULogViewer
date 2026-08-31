@@ -1261,7 +1261,7 @@ class Session : ViewModel<IULogViewerApplication>
 		var fileName = param?.FileName;
 		if (param is null || string.IsNullOrEmpty(fileName))
 			throw new ArgumentException("No file name specified.");
-		if (PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension))
+		if (IsMarkedLogsInfoFile(fileName))
 		{
 			this.Logger.LogWarning("Ignore adding marked logs info file '{fileName}'", fileName);
 			return;
@@ -2796,6 +2796,15 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Check whether logs reading has been paused or not.
 	/// </summary>
 	public bool IsLogsReadingPaused => this.GetValue(IsLogsReadingPausedProperty);
+
+
+	/// <summary>
+	/// Check whether the file keeps info of marked logs instead of being a log file or not.
+	/// </summary>
+	/// <param name="fileName">Name of file.</param>
+	/// <returns>True if the file keeps info of marked logs.</returns>
+	public static bool IsMarkedLogsInfoFile(string? fileName) =>
+		PathEqualityComparer.Default.Equals(Path.GetExtension(fileName), MarkedFileExtension);
 
 
 	/// <summary>

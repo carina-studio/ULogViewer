@@ -1230,8 +1230,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				var fileNameList = new List<string>(fileNames);
 				fileNameList.RemoveAll(session.IsLogFileAdded);
 
-				// exclude .ulvmark files
-				fileNameList.RemoveAll(it => it.EndsWith(".ulvmark", Platform.IsWindows, CultureInfo.InvariantCulture));
+				// exclude marked logs info files
+				fileNameList.RemoveAll(Session.IsMarkedLogsInfoFile);
 				if (fileNameList.IsEmpty())
 					return false;
 				
@@ -2556,7 +2556,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// handling drag-and-drop
 			try
 			{
-				// collect files
+				// collect files, a marked logs info file belongs to ULogViewer itself so it is not a log file to be read
 				var dirPaths = new List<string>();
 				var filePaths = new List<string>();
 				await Task.Run(() =>
@@ -2566,7 +2566,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						Global.RunWithoutError(() =>
 						{
 							if (System.IO.File.Exists(path))
-								filePaths.Add(path);
+							{
+								if (!Session.IsMarkedLogsInfoFile(path))
+									filePaths.Add(path);
+							}
 							else if (System.IO.Directory.Exists(path))
 								dirPaths.Add(path);
 						});
