@@ -676,7 +676,10 @@
 
 						<!-- Add files -->
 						<Button Command="{Binding #root.AddLogFilesCommand}" 
-						        IsVisible="{Binding CanAddLogFile}" 
+						        IsVisible="{asXaml:OrBindings 
+						                       {Binding CanAddLogFile}, 
+						                       {Binding #root.CanSelectLogFilesWithoutLogProfile}
+						                   }" 
 						        asControls:ToolbarElement.Role="Button"
 						        ToolTip.Tip="{asXaml:StringResource SessionView.AddLogFiles.WithShortcut}">
 							<Panel>

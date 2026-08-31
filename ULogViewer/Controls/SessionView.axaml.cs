@@ -188,6 +188,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Static fields.
+		static readonly StyledProperty<bool> CanSelectLogFilesWithoutLogProfileProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanSelectLogFilesWithoutLogProfile), false);
 		static readonly IValueConverter EliminateLeadingTimestampConverter = new FuncValueConverter<object?, string?>(value =>
 		{
 			var s = value?.ToString();
@@ -235,6 +236,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		INotifyCollectionChanged? attachedLogs;
 		readonly ForwardedObservableBoolean canAddLogFiles;
 		readonly ObservableCommandState<Session.LogFileParams> canAddLogFilesToSession = new();
+		readonly ForwardedObservableBoolean canAddOrSelectLogFiles;
 		readonly MutableObservableBoolean canCopyLogProperty = new();
 		readonly MutableObservableBoolean canCopyLogText = new();
 		bool canEditCurrentScriptLogDataSourceProvider;
@@ -245,6 +247,8 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ObservableCommandState<object?> canResetLogProfileToSession = new();
 		readonly MutableObservableBoolean canRestartAsAdmin = new(Platform.IsWindows && !App.Current.IsRunningAsAdministrator);
 		readonly ObservableCommandState<LogsSavingOptions> canSaveLogs = new();
+		// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+		readonly ForwardedObservableBoolean canSelectLogFiles;
 		readonly ObservableCommandState<Session.CommandParams> canSetCommand = new();
 		readonly ObservableCommandState<IPEndPoint> canSetIPEndPoint = new();
 		// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
@@ -374,6 +378,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (value)
 					this.AutoSelectAndSetLogsReadingParameters();
 			});
+			this.canSelectLogFiles = new(ForwardedObservableBoolean.CombinationMode.And, false, this.GetObservable(CanSelectLogFilesWithoutLogProfileProperty), this.isNotAddingLogFiles);
+			this.canAddOrSelectLogFiles = new(ForwardedObservableBoolean.CombinationMode.Or, false, this.canAddLogFiles, this.canSelectLogFiles);
 			this.canSetCommand.Subscribe(value =>
 			{
 				if (value)
@@ -411,7 +417,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 
 			// create commands
-			this.AddLogFilesCommand = new Command(this.AddLogFilesAsync, this.canAddLogFiles);
+			this.AddLogFilesCommand = new Command(this.AddLogFilesAsync, this.canAddOrSelectLogFiles);
 			this.CopyKeyLogAnalysisRuleSetCommand = new Command<KeyLogAnalysisRuleSet>(this.CopyKeyLogAnalysisRuleSet);
 			this.CopyLogAnalysisScriptSetCommand = new Command<LogAnalysisScriptSet>(this.CopyLogAnalysisScriptSet);
 			this.CopyLogFileNameCommand = new Command<string>(this.CopyLogFileName);
@@ -1185,6 +1191,13 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (fileNames.IsNullOrEmpty())
 				return;
 			
+			// selected files go through the same funnel as dropped files, so a log profile is matched for them
+			if (this.GetValue(CanSelectLogFilesWithoutLogProfileProperty))
+			{
+				await this.DropAsync(KeyModifiers.None, fileNames);
+				return;
+			}
+
 			// add log files
 			await this.AddLogFilesAsync(fileNames);
 		}
@@ -1330,6 +1343,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.SetValue(HasLogProfileProperty, true);
 				this.OnLogProfileSet(profile);
 			}
+			this.UpdateCanSelectLogFilesWithoutLogProfile();
 
 			// attach to command
 			this.canAddLogFilesToSession.Bind(session.AddLogFileCommand, new Session.LogFileParams());
@@ -1446,6 +1460,12 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 			return size;
 		}, cancellationToken);
+
+
+		/// <summary>
+		/// Check whether log files can be selected to let the application match log profile for them or not.
+		/// </summary>
+		public bool CanSelectLogFilesWithoutLogProfile => this.GetValue(CanSelectLogFilesWithoutLogProfileProperty);
 
 
 		// Clear target log range to scroll to.
@@ -2476,6 +2496,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 			// update properties
 			this.canEditLogProfile.Update(false);
+			this.SetValue(CanSelectLogFilesWithoutLogProfileProperty, false);
 			this.SetValue(HasLogProfileProperty, false);
 			this.updateCanEditCurrentScriptLogDataSourceProviderAction.Execute();
 			this.logProfileSelectionMenu.CurrentLogProfile = null;
@@ -2721,7 +2742,7 @@ namespace CarinaStudio.ULogViewer.Controls
 					return false;
 
 				// set working directory or add log files
-				if (session.SetWorkingDirectoryCommand.CanExecute(null))
+				if (dirPaths.IsNotEmpty() && session.SetWorkingDirectoryCommand.CanExecute(null))
 					session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
 				else if (session.AddLogFileCommand.CanExecute(null))
 					return await this.AddLogFilesAsync(filePaths);
@@ -4154,7 +4175,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							}
 							break;
 						case Key.O:
-							if (!hasOpenedPopup)
+							if (!hasOpenedPopup && this.canAddOrSelectLogFiles.Value)
 							{
 								_ = this.AddLogFilesAsync();
 								e.Handled = true;
@@ -4656,6 +4677,7 @@ namespace CarinaStudio.ULogViewer.Controls
 							this.canEditLogProfile.Update(false);
 							this.SetValue(HasLogProfileProperty, false);
 						}
+						this.UpdateCanSelectLogFilesWithoutLogProfile();
 						this.logProfileSelectionMenu.CurrentLogProfile = profile;
 					});
 					break;
@@ -4700,6 +4722,8 @@ namespace CarinaStudio.ULogViewer.Controls
 				this.RecreateLogItemTemplate();
 			else if (e.Key == AppSuite.SettingKeys.NotifyApplicationUpdate)
 				this.SetAndRaise(IsApplicationUpdateNotificationEnabledProperty, ref this.isAppUpdateNotificationEnabled, (bool)e.Value);
+			else if (e.Key == SettingKeys.SessionInitLogProfileSelectionMode)
+				this.UpdateCanSelectLogFilesWithoutLogProfile();
 			else if (e.Key == SettingKeys.ShowHelpButtonOnLogTextFilter)
 				this.OnShowHelpButtonOnLogTextFilterSettingChanged((bool)e.Value);
 			else if (e.Key == AppSuite.SettingKeys.ShowProcessInfo)
@@ -6001,7 +6025,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Command to unmark selected logs.
 		/// </summary>
 		public ICommand UnmarkSelectedLogsCommand { get; }
-
+		
+		
+		// Check whether log files can be selected to let the application match log profile for them or not.
+		void UpdateCanSelectLogFilesWithoutLogProfile() =>
+			this.SetValue(CanSelectLogFilesWithoutLogProfileProperty, this.DataContext is Session { LogProfile: null }
+				&& this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Auto);
+		
 
 		// Update auto scrolling state according to user scrolling state.
 		void UpdateIsScrollingToLatestLogNeeded(double userScrollingDelta)
