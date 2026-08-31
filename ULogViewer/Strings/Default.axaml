@@ -1397,7 +1397,8 @@ return None</sys:String>
 (Double-Click to View All Text)</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">Multiple files are not allowed by the current log profile.</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">'{0}' requires script execution. You need to enable script execution before using it.</sys:String>
-	<sys:String x:Key="String/SessionView.NoFilePathDropped">Please drag and drop valid files.</sys:String>
+	<sys:String x:Key="String/SessionView.NoFilePathDropped">No valid file found in the dropped files.</sys:String>
+	<sys:String x:Key="String/SessionView.NoFilePathSelected">No valid file found in the selected files.</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">Other Actions</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">Pause/Resume Logs Reading (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PerformGC">Force Garbage Collection (GC)</sys:String>
@@ -1463,7 +1464,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.StopReadingLogs">Abort Logs Reading</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">Timestamp Categories</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">Tools</sys:String>
-	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">Please drag and drop a single directory.</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">More than one directory was dropped.</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsSelected">More than one directory was selected.</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total Logs Memory Usage</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">Showing only marked logs has been turned off because the analysis result log is not in the current list. You can turn it on manually.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">The copied text is the full text of a log that is used for log filtering. You can use it to verify the pattern of log text filtering and log analysis.</sys:String>

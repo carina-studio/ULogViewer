@@ -1244,7 +1244,7 @@ namespace CarinaStudio.ULogViewer
 			var sessionView = workspace.ActiveSession?.Let(it =>
 				this.FindSessionView(it));
 			if (sessionView?.AreAllTutorialsShown == false 
-				|| sessionView?.IsHandlingDragAndDrop == true)
+				|| sessionView?.IsHandlingSelectedFiles == true)
 			{
 				return;
 			}

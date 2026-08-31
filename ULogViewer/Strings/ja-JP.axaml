@@ -1464,7 +1464,8 @@
     </sys:String>
     <sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">現在のログプロファイルでは複数ファイルは許可されていません。</sys:String>
     <sys:String x:Key="String/SessionView.NeedToEnableRunningScript">「{0}」はスクリプト実行を必要とします。使用する前にスクリプト実行を有効にする必要があります。</sys:String>
-    <sys:String x:Key="String/SessionView.NoFilePathDropped">有効なファイルをドラッグ＆ドロップしてください。</sys:String>
+    <sys:String x:Key="String/SessionView.NoFilePathDropped">ドロップされたファイルの中に有効なファイルが見つかりません。</sys:String>
+    <sys:String x:Key="String/SessionView.NoFilePathSelected">選択されたファイルの中に有効なファイルが見つかりません。</sys:String>
     <sys:String x:Key="String/SessionView.OtherActions">その他の操作</sys:String>
     <sys:String x:Key="String/SessionView.PauseResumeLogsReading">ログ読込の一時停止/再開 (P)</sys:String>
     <sys:String x:Key="String/SessionView.PerformGC">ガベージコレクション (GC)を強制実行</sys:String>
@@ -1530,7 +1531,8 @@
     <sys:String x:Key="String/SessionView.StopReadingLogs">ログ読込を中止</sys:String>
     <sys:String x:Key="String/SessionView.TimestampCategoriesPanel">タイムスタンプカテゴリ</sys:String>
     <sys:String x:Key="String/SessionView.Tools">ツール</sys:String>
-    <sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">単一のディレクトリをドラッグ＆ドロップしてください。</sys:String>
+    <sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">複数のディレクトリがドロップされました。</sys:String>
+    <sys:String x:Key="String/SessionView.TooManyDirectoryPathsSelected">複数のディレクトリが選択されました。</sys:String>
     <sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">合計ログメモリ使用量</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">分析結果ログが現在のリストにないため、マークされたログのみの表示はオフになりました。手動でオンにすることができます。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.CopyLogText">コピーされたテキストは、ログフィルタリングに使用されるログの全文です。ログテキストフィルタリングやログ分析のパターンを検証するために使用できます。</sys:String>

@@ -1194,7 +1194,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			// selected files go through the same funnel as dropped files, so a log profile is matched for them
 			if (this.GetValue(CanSelectLogFilesWithoutLogProfileProperty))
 			{
-				await this.DropAsync(KeyModifiers.None, fileNames);
+				await this.HandleSelectedFilesAsync(KeyModifiers.None, fileNames, false);
 				return;
 			}
 
@@ -2529,239 +2529,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <returns>True if dragged data is accepted by this view.</returns>
 		public Task<bool> DropAsync(KeyModifiers keyModifiers, IDataTransfer data)
 		{
-			if (!data.HasFiles() || this.IsHandlingDragAndDrop)
+			if (!data.HasFiles() || this.IsHandlingSelectedFiles)
 				return Task.FromResult(false);
 			var dropFilePaths = data.TryGetLocalFilePaths();
 			if (dropFilePaths.IsNotEmpty())
-				return this.DropAsync(keyModifiers, dropFilePaths!);
+				return this.HandleSelectedFilesAsync(keyModifiers, dropFilePaths!, true);
 			return Task.FromResult(false);
-		}
-
-
-		// Drop dragged data to this view asynchronously.
-		async Task<bool> DropAsync(KeyModifiers keyModifiers, IList<string> dropFilePaths)
-		{
-			// check data
-			if (dropFilePaths.IsEmpty() || this.IsHandlingDragAndDrop)
-				return false;
-
-			// bring window to front
-			if (this.attachedWindow == null)
-				return false;
-			this.attachedWindow.ActivateAndBringToFront();
-
-			// update state
-			this.IsHandlingDragAndDrop = true;
-
-			// handling drag-and-drop
-			try
-			{
-				// collect files, a marked logs info file belongs to ULogViewer itself so it is not a log file to be read
-				var dirPaths = new List<string>();
-				var filePaths = new List<string>();
-				await Task.Run(() =>
-				{
-					foreach (var path in dropFilePaths)
-					{
-						Global.RunWithoutError(() =>
-						{
-							if (System.IO.File.Exists(path))
-							{
-								if (!Session.IsMarkedLogsInfoFile(path))
-									filePaths.Add(path);
-							}
-							else if (System.IO.Directory.Exists(path))
-								dirPaths.Add(path);
-						});
-					}
-					return filePaths;
-				});
-				if (filePaths.IsEmpty())
-				{
-					if (dirPaths.IsEmpty())
-					{
-						_ = new MessageDialog
-						{
-							Icon = MessageDialogIcon.Information,
-							Message = this.Application.GetObservableString("SessionView.NoFilePathDropped")
-						}.ShowDialog(this.attachedWindow);
-						return false;
-					}
-					if (this.attachedWindow == null)
-						return false;
-					if (dirPaths.Count > 1)
-					{
-						_ = new MessageDialog
-						{
-							Icon = MessageDialogIcon.Information,
-							Message = this.Application.GetObservableString("SessionView.TooManyDirectoryPathsDropped")
-						}.ShowDialog(this.attachedWindow);
-						return false;
-					}
-				}
-
-				// check state
-				if (this.DataContext is not Session session)
-					return false;
-				
-				// exclude added files
-				if (filePaths.IsNotEmpty())
-				{
-					filePaths.RemoveAll(session.IsLogFileAdded);
-					if (filePaths.IsEmpty())
-					{
-						this.Logger.LogTrace("All dropped files have been added to session before");
-						return true;
-					}
-				}
-
-				// check whether new log profile is needed or not
-				var warningMessage = (IObservable<object?>?)null;
-				var currentLogProfile = session.LogProfile;
-				var needNewLogProfile = Global.Run(() =>
-				{
-					if (currentLogProfile == null)
-						return true;
-					if (session.IsLogFileSupported)
-					{
-						if (filePaths.IsEmpty())
-							return true;
-						if (!currentLogProfile.AllowMultipleFiles)
-						{
-							if (!session.IsLogFileNeeded || filePaths.Count > 1)
-							{
-								warningMessage = this.Application.GetObservableString("SessionView.MultipleFilesAreNotAllowed");
-								return true;
-							}
-						}
-						return false;
-					}
-					if (session.IsWorkingDirectoryNeeded)
-						return filePaths.IsNotEmpty();
-					return true;
-				});
-
-				// show warning message
-				if (this.attachedWindow == null)
-					return false;
-				if (warningMessage != null)
-				{
-					await new MessageDialog
-					{
-						Icon = MessageDialogIcon.Warning,
-						Message = warningMessage,
-					}.ShowDialog(this.attachedWindow);
-				}
-
-				// match log profiles which are able to read the dropped log files
-				var matchedLogProfiles = (IList<LogProfileMatchingResult>?)null;
-				if (filePaths.IsNotEmpty()
-					&& this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Auto)
-				{
-					// the current log profile is the explicit choice of user, keep it when it can still read the dropped files
-					if (!needNewLogProfile && currentLogProfile is not null)
-					{
-						var currentLogProfileResults = await this.MatchLogProfilesAsync(filePaths, new(currentLogProfile));
-						if (currentLogProfileResults is not null && currentLogProfileResults.IsEmpty())
-							needNewLogProfile = true;
-					}
-
-					// look for log profiles which can read the dropped files
-					if (needNewLogProfile)
-						matchedLogProfiles = await this.MatchLogProfilesAsync(filePaths, new());
-				}
-
-				// select new log profile
-				if (this.attachedWindow == null)
-					return false;
-				var newLogProfile = !needNewLogProfile ? null : matchedLogProfiles?.Count == 1 ? matchedLogProfiles[0].Profile : await new LogProfileSelectionDialog().Also(it =>
-				{
-					if (matchedLogProfiles is { Count: > 1 })
-					{
-						var matchedLogProfileSet = new HashSet<LogProfile>(matchedLogProfiles.Select(result => result.Profile));
-						it.Filter = matchedLogProfileSet.Contains;
-					}
-					else if (filePaths.IsEmpty())
-					{
-						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
-						                          && logProfile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored
-						                          && !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
-					}
-					else if (filePaths.Count > 1)
-					{
-						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
-							&& logProfile.AllowMultipleFiles
-							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
-					}
-					else
-					{
-						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
-							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
-					}
-				}).ShowDialog<LogProfile>(this.attachedWindow);
-
-				// set log profile or create new session
-				if (newLogProfile is not null)
-				{
-					var workspace = (Workspace)session.Owner.AsNonNull();
-					var newIndex = workspace.Sessions.IndexOf(session).Let(it =>
-					{
-						if (it >= 0)
-							return it + 1;
-						return workspace.Sessions.Count;
-					});
-					if (currentLogProfile == null)
-					{
-						if (!session.SetLogProfileCommand.TryExecute(newLogProfile))
-							return false;
-					}
-					else if (filePaths.IsNotEmpty())
-					{
-						if (this.attachedWindow is MainWindow mainWindow)
-						{
-							// create session
-							var newSession = workspace.CreateAndAttachSession(newIndex, newLogProfile);
-							workspace.ActiveSession = newSession;
-
-							// drop files to new session
-							mainWindow.FindSessionView(newSession)?.Let(view => 
-								view.DropAsync(keyModifiers, dropFilePaths));
-						}
-						else
-						{
-							var newSession = workspace.CreateAndAttachSessionWithLogFiles(newIndex, newLogProfile, filePaths);
-							workspace.ActiveSession = newSession;
-						}
-						return true;
-					}
-					else
-					{
-						var newSession = workspace.CreateAndAttachSessionWithWorkingDirectory(newIndex, newLogProfile, dirPaths[0]);
-						workspace.ActiveSession = newSession;
-						return true;
-					}
-				}
-				else if (needNewLogProfile)
-					return false;
-
-				// set working directory or add log files
-				if (dirPaths.IsNotEmpty() && session.SetWorkingDirectoryCommand.CanExecute(null))
-					session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
-				else if (session.AddLogFileCommand.CanExecute(null))
-					return await this.AddLogFilesAsync(filePaths);
-
-				// complete
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Logger.LogError(ex, "Error occurred while dropping data");
-				return false;
-			}
-			finally
-			{
-				this.IsHandlingDragAndDrop = false;
-			}
 		}
 
 
@@ -2830,6 +2603,237 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Handle selected files by this view asynchronously.
+		async Task<bool> HandleSelectedFilesAsync(KeyModifiers keyModifiers, IList<string> selectedFilePaths, bool fromDragAndDrop)
+		{
+			// check data
+			if (selectedFilePaths.IsEmpty() || this.IsHandlingSelectedFiles)
+				return false;
+
+			// bring window to front
+			if (this.attachedWindow is null)
+				return false;
+			this.attachedWindow.ActivateAndBringToFront();
+
+			// update state
+			this.IsHandlingSelectedFiles = true;
+
+			// handling selected files
+			try
+			{
+				// collect files, a marked logs info file belongs to ULogViewer itself so it is not a log file to be read
+				var dirPaths = new List<string>();
+				var filePaths = new List<string>();
+				await Task.Run(() =>
+				{
+					foreach (var path in selectedFilePaths)
+					{
+						Global.RunWithoutError(() =>
+						{
+							if (System.IO.File.Exists(path))
+							{
+								if (!Session.IsMarkedLogsInfoFile(path))
+									filePaths.Add(path);
+							}
+							else if (System.IO.Directory.Exists(path))
+								dirPaths.Add(path);
+						});
+					}
+					return filePaths;
+				});
+
+				// check state
+				if (this.attachedWindow is null)
+					return false;
+
+				// notify user that there is no valid file or directory to be handled
+				if (filePaths.IsEmpty())
+				{
+					var message = (IObservable<string?>?)null;
+					if (dirPaths.IsEmpty())
+					{
+						message = fromDragAndDrop
+							? this.Application.GetObservableString("SessionView.NoFilePathDropped")
+							: this.Application.GetObservableString("SessionView.NoFilePathSelected");
+					}
+					else if (dirPaths.Count > 1)
+					{
+						message = fromDragAndDrop
+							? this.Application.GetObservableString("SessionView.TooManyDirectoryPathsDropped")
+							: this.Application.GetObservableString("SessionView.TooManyDirectoryPathsSelected");
+					}
+					if (message is not null)
+					{
+						this.ShowWarningMessage(message);
+						return false;
+					}
+				}
+
+				// check state
+				if (this.DataContext is not Session session)
+					return false;
+				
+				// exclude added files
+				if (filePaths.IsNotEmpty())
+				{
+					filePaths.RemoveAll(session.IsLogFileAdded);
+					if (filePaths.IsEmpty())
+					{
+						this.Logger.LogTrace("All selected files have been added to session before");
+						return true;
+					}
+				}
+
+				// check whether new log profile is needed or not
+				var warningMessage = (IObservable<object?>?)null;
+				var currentLogProfile = session.LogProfile;
+				var needNewLogProfile = Global.Run(() =>
+				{
+					if (currentLogProfile == null)
+						return true;
+					if (session.IsLogFileSupported)
+					{
+						if (filePaths.IsEmpty())
+							return true;
+						if (!currentLogProfile.AllowMultipleFiles)
+						{
+							if (!session.IsLogFileNeeded || filePaths.Count > 1)
+							{
+								warningMessage = this.Application.GetObservableString("SessionView.MultipleFilesAreNotAllowed");
+								return true;
+							}
+						}
+						return false;
+					}
+					if (session.IsWorkingDirectoryNeeded)
+						return filePaths.IsNotEmpty();
+					return true;
+				});
+
+				// show warning message
+				if (this.attachedWindow == null)
+					return false;
+				if (warningMessage != null)
+				{
+					await new MessageDialog
+					{
+						Icon = MessageDialogIcon.Warning,
+						Message = warningMessage,
+					}.ShowDialog(this.attachedWindow);
+				}
+
+				// match log profiles which are able to read the selected log files
+				var matchedLogProfiles = (IList<LogProfileMatchingResult>?)null;
+				if (filePaths.IsNotEmpty()
+					&& this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Auto)
+				{
+					// the current log profile is the explicit choice of user, keep it when it can still read the selected files
+					if (!needNewLogProfile && currentLogProfile is not null)
+					{
+						var currentLogProfileResults = await this.MatchLogProfilesAsync(filePaths, new(currentLogProfile));
+						if (currentLogProfileResults is not null && currentLogProfileResults.IsEmpty())
+							needNewLogProfile = true;
+					}
+
+					// look for log profiles which can read the selected files
+					if (needNewLogProfile)
+						matchedLogProfiles = await this.MatchLogProfilesAsync(filePaths, new());
+				}
+
+				// select new log profile
+				if (this.attachedWindow == null)
+					return false;
+				var newLogProfile = !needNewLogProfile ? null : matchedLogProfiles?.Count == 1 ? matchedLogProfiles[0].Profile : await new LogProfileSelectionDialog().Also(it =>
+				{
+					if (matchedLogProfiles is { Count: > 1 })
+					{
+						var matchedLogProfileSet = new HashSet<LogProfile>(matchedLogProfiles.Select(result => result.Profile));
+						it.Filter = matchedLogProfileSet.Contains;
+					}
+					else if (filePaths.IsEmpty())
+					{
+						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+						                          && logProfile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored
+						                          && !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory));
+					}
+					else if (filePaths.Count > 1)
+					{
+						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
+							&& logProfile.AllowMultipleFiles
+							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+					}
+					else
+					{
+						it.Filter = logProfile => logProfile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
+							&& !logProfile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName));
+					}
+				}).ShowDialog<LogProfile>(this.attachedWindow);
+
+				// set log profile or create new session
+				if (newLogProfile is not null)
+				{
+					var workspace = (Workspace)session.Owner.AsNonNull();
+					var newIndex = workspace.Sessions.IndexOf(session).Let(it =>
+					{
+						if (it >= 0)
+							return it + 1;
+						return workspace.Sessions.Count;
+					});
+					if (currentLogProfile == null)
+					{
+						if (!session.SetLogProfileCommand.TryExecute(newLogProfile))
+							return false;
+					}
+					else if (filePaths.IsNotEmpty())
+					{
+						if (this.attachedWindow is MainWindow mainWindow)
+						{
+							// create session
+							var newSession = workspace.CreateAndAttachSession(newIndex, newLogProfile);
+							workspace.ActiveSession = newSession;
+
+							// drop files to new session
+							mainWindow.FindSessionView(newSession)?.Let(view => 
+								view.HandleSelectedFilesAsync(keyModifiers, selectedFilePaths, fromDragAndDrop));
+						}
+						else
+						{
+							var newSession = workspace.CreateAndAttachSessionWithLogFiles(newIndex, newLogProfile, filePaths);
+							workspace.ActiveSession = newSession;
+						}
+						return true;
+					}
+					else
+					{
+						var newSession = workspace.CreateAndAttachSessionWithWorkingDirectory(newIndex, newLogProfile, dirPaths[0]);
+						workspace.ActiveSession = newSession;
+						return true;
+					}
+				}
+				else if (needNewLogProfile)
+					return false;
+
+				// set working directory or add log files
+				if (dirPaths.IsNotEmpty() && session.SetWorkingDirectoryCommand.CanExecute(null))
+					session.SetWorkingDirectoryCommand.TryExecute(dirPaths[0]);
+				else if (session.AddLogFileCommand.CanExecute(null))
+					return await this.AddLogFilesAsync(filePaths);
+
+				// complete
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError(ex, "Error occurred while handling selected files");
+				return false;
+			}
+			finally
+			{
+				this.IsHandlingSelectedFiles = false;
+			}
+		}
+
+
 		/// <summary>
 		/// Check whether log profile has been set or not.
 		/// </summary>
@@ -2856,9 +2860,9 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		/// <summary>
-		/// Check whether the view is handling drag-and-drop data or not.
+		/// Check whether the view is handling selected files or not.
 		/// </summary>
-		public bool IsHandlingDragAndDrop { get; private set; }
+		public bool IsHandlingSelectedFiles { get; private set; }
 
 
 		// Check whether at least one key for multi-selection has been pressed or not.
@@ -5880,6 +5884,28 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (!this.Application.IsDebugMode)
 				return;
 			this.testMenu.Open(this.testButton);
+		}
+
+
+		// Show warning message by notification, or by dialog if notification is unsupported by the attached window.
+		void ShowWarningMessage(IObservable<string?> message)
+		{
+			if (this.attachedWindow is INotificationPresenter notificationPresenter)
+			{
+				notificationPresenter.AddNotification(new Notification().Also(it =>
+				{
+					it.BindToResource(Notification.IconProperty, this, "Image/Icon.Warning.Colored.Gradient");
+					it.Bind(Notification.MessageProperty, message);
+				}));
+			}
+			else if (this.attachedWindow is not null)
+			{
+				_ = new MessageDialog
+				{
+					Icon = MessageDialogIcon.Warning,
+					Message = message,
+				}.ShowDialog(this.attachedWindow);
+			}
 		}
 
 

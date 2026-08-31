@@ -969,7 +969,7 @@ return False</sys:String>
 
 	<!-- LogProfileMatchingPromotionDialog -->
 	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Title">自动选择日志类型</sys:String>
-	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer 现在会自动帮拖动进来的文件搜索合适的日志类型，新建标签页时默认将不再打开日志类型选择界面。
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer 现在会自动帮拖放进来的文件搜索合适的日志类型，新建标签页时默认将不再打开日志类型选择界面。
 
 您可以在应用程序选项中变更此设置。</sys:String>
 	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.OpenOptions">打开选项</sys:String>
@@ -1281,7 +1281,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分数据来源发生错误</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">没有日志可以展示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">您必须以系统管理员身份运行应用程序以使用 “{0}”。</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">或将文件拖动至此。</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">或将文件拖放至此。</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">点一下工具列的</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">来选择日志类型以开始使用。</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">高度内存使用</sys:String>
@@ -1359,7 +1359,8 @@ return None</sys:String>
 (双击以查看所有文字)</sys:String>
 	<sys:String x:Key="String/SessionView.MultipleFilesAreNotAllowed">当前的日志类型不允许加入多个文件。</sys:String>
 	<sys:String x:Key="String/SessionView.NeedToEnableRunningScript">“{0}” 需要脚本运行功能，您需要在使用之前启用脚本运行。</sys:String>
-	<sys:String x:Key="String/SessionView.NoFilePathDropped">请拖放有效的文件。</sys:String>
+	<sys:String x:Key="String/SessionView.NoFilePathDropped">拖放的文件中找不到有效的文件。</sys:String>
+	<sys:String x:Key="String/SessionView.NoFilePathSelected">选择的文件中找不到有效的文件。</sys:String>
 	<sys:String x:Key="String/SessionView.OtherActions">其他动作</sys:String>
 	<sys:String x:Key="String/SessionView.PauseResumeLogsReading">暂停/继续读取日志 (P)</sys:String>
 	<sys:String x:Key="String/SessionView.PerformGC">强制垃圾收集 (GC)</sys:String>
@@ -1425,7 +1426,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.StopReadingLogs">中止日志读取</sys:String>
 	<sys:String x:Key="String/SessionView.TimestampCategoriesPanel">时间戳分组</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">工具</sys:String>
-	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">请拖放单个目录。</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">拖放的目录超过一个。</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsSelected">选择的目录超过一个。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">总日志内存使用量</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">由于当前的列表不包含分析结果的日志，因此必须取消只显示已标记的日志。您可以自行将其开启。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">您复制的文字是用于日志文字筛选的完整日志文字，可以用来验证日志文字筛选以及日志分析的格式。</sys:String>
