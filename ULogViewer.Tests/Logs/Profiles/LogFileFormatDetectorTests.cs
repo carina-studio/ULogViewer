@@ -56,6 +56,33 @@ class LogFileFormatDetectorTests : ApplicationBasedTests
 
 
 	/// <summary>
+	/// Test for detecting format of file which contains binary data.
+	/// </summary>
+	[Test]
+	public void DetectBinaryFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// a null byte never appears in text encoded in UTF-8
+			var binaryFilePath = this.GenerateBinaryFile([ 0x00, 0x01, 0x02, 0xFD, 0xFC, 0x7F, 0x13, 0x42, 0x99, 0xA1 ]);
+			Assert.That((await this.DetectAsync(binaryFilePath)).Format, Is.EqualTo(LogFileFormat.Binary));
+
+			// text encoded in UTF-16 is full of null bytes, its byte-order mark keeps it away from being treated as binary data
+			var utf16FilePath = this.GenerateTextFile(Encoding.Unicode, true, SyslogLines);
+			Assert.That((await this.DetectAsync(utf16FilePath)).Format, Is.EqualTo(LogFileFormat.PlainText));
+
+			// text encoded in UTF-32 as well
+			var utf32FilePath = this.GenerateTextFile(new UTF32Encoding(false, true), true, SyslogLines);
+			Assert.That((await this.DetectAsync(utf32FilePath)).Format, Is.EqualTo(LogFileFormat.PlainText));
+
+			// binary data compressed by gzip is judged after it has been decompressed
+			var gzipFilePath = this.GenerateGZipBinaryFile([ 0x00, 0x01, 0x02, 0xFD, 0xFC, 0x7F, 0x13, 0x42, 0x99, 0xA1 ]);
+			Assert.That((await this.DetectAsync(gzipFilePath)).Format, Is.EqualTo(LogFileFormat.Binary));
+		});
+	}
+
+
+	/// <summary>
 	/// Test for detecting format of file which contains no data.
 	/// </summary>
 	[Test]
@@ -124,10 +151,6 @@ class LogFileFormatDetectorTests : ApplicationBasedTests
 			// Apache access log
 			var apacheFilePath = this.GenerateTextFile(Encoding.UTF8, false, ApacheLines);
 			Assert.That((await this.DetectAsync(apacheFilePath)).Format, Is.EqualTo(LogFileFormat.PlainText));
-
-			// binary noise
-			var binaryFilePath = this.GenerateBinaryFile([ 0x00, 0x01, 0x02, 0xFD, 0xFC, 0x7F, 0x13, 0x42, 0x99, 0xA1 ]);
-			Assert.That((await this.DetectAsync(binaryFilePath)).Format, Is.EqualTo(LogFileFormat.PlainText));
 		});
 	}
 
@@ -189,6 +212,20 @@ class LogFileFormatDetectorTests : ApplicationBasedTests
 			stream.Write(bytes, 0, bytes.Length);
 			return stream.Name;
 		});
+	}
+
+
+	// Generate file which contains given bytes compressed by gzip.
+	string GenerateGZipBinaryFile(byte[] bytes)
+	{
+		this.testDirectoryPath ??= this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
+		var filePath = Path.Combine(this.testDirectoryPath, $"{Guid.NewGuid()}.gz");
+		using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+		{
+			using var gzipStream = new GZipStream(stream, CompressionMode.Compress);
+			gzipStream.Write(bytes, 0, bytes.Length);
+		}
+		return filePath;
 	}
 
 

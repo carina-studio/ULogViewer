@@ -25,4 +25,8 @@ enum LogFileFormat
     /// Windows event log file.
     /// </summary>
     WindowsEventLog,
+    /// <summary>
+    /// Binary data which is not readable as text.
+    /// </summary>
+    Binary,
 }

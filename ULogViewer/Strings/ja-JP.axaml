@@ -1361,6 +1361,7 @@
     <sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">ログ分析スクリプトファイルを編集…</sys:String>
     <sys:String x:Key="String/SessionView.EditPathEnvVar">PATH 環境変数を編集…</sys:String>
     <sys:String x:Key="String/SessionView.EditPersistentState">内部永続状態を編集…</sys:String>
+    <sys:String x:Key="String/SessionView.EmptyDirectoryDropped">ドロップされたディレクトリ '{0}' の中に有効なファイルが見つかりません。</sys:String>
     <sys:String x:Key="String/SessionView.EnableRunningScript">スクリプト実行を有効化…</sys:String>
     <sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">ルールセットまたはスクリプト「{0}」を '{1}' にエクスポートできませんでした。</sys:String>
     <sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">'{0}' からルールセットまたはスクリプトをインポートできませんでした。</sys:String>
@@ -1533,6 +1534,7 @@
     <sys:String x:Key="String/SessionView.Tools">ツール</sys:String>
     <sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">複数のディレクトリがドロップされました。</sys:String>
     <sys:String x:Key="String/SessionView.TooManyDirectoryPathsSelected">複数のディレクトリが選択されました。</sys:String>
+    <sys:String x:Key="String/SessionView.TooManyFilesInDirectory">ドロップされたディレクトリ '{0}' 内のファイルが多すぎます。</sys:String>
     <sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">合計ログメモリ使用量</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">分析結果ログが現在のリストにないため、マークされたログのみの表示はオフになりました。手動でオンにすることができます。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.CopyLogText">コピーされたテキストは、ログフィルタリングに使用されるログの全文です。ログテキストフィルタリングやログ分析のパターンを検証するために使用できます。</sys:String>

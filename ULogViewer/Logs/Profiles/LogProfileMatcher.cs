@@ -343,6 +343,7 @@ static class LogProfileMatcher
     // Get the sequence of format groups to try for a log file with given format, stopping at the first group which matches.
     static LogFileFormat[] SelectFormatCascade(LogFileFormat format) => format switch
     {
+        LogFileFormat.Binary => [],
         LogFileFormat.WindowsEventLog => [ LogFileFormat.WindowsEventLog ],
         LogFileFormat.Json => [ LogFileFormat.Json, LogFileFormat.PlainText ],
         _ => [ LogFileFormat.PlainText ],

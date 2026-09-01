@@ -28,6 +28,7 @@ using CarinaStudio.Data.Converters;
 using CarinaStudio.IO;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
+using CarinaStudio.ULogViewer.IO;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using CarinaStudio.ULogViewer.Logs.Profiles;
 using CarinaStudio.ULogViewer.Text;
@@ -2645,6 +2646,55 @@ namespace CarinaStudio.ULogViewer.Controls
 				// check state
 				if (this.attachedWindow is null)
 					return false;
+				if (this.DataContext is not Session session)
+					return false;
+
+				// dropped directories may be folders of log files instead of working directories, handle their log files as if they had been dropped
+				if (dirPaths.IsNotEmpty()
+				    && !session.CanSetWorkingDirectory
+				    && this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Auto)
+				{
+					// collect the log files in the directories, the budget is shared by the dropped files and all the directories because they are read by one session
+					var firstDirectoryPath = dirPaths[0];
+					var logFilePaths = new List<string>();
+					foreach (var directoryPath in dirPaths)
+					{
+						try
+						{
+							var collectedFilePaths = await LogFileCollector.CollectAsync(this.Application, directoryPath, DisplayableLogGroup.MaxLogReaderCount - filePaths.Count - logFilePaths.Count, CancellationToken.None);
+							logFilePaths.AddAll(collectedFilePaths);
+						}
+						catch (TooManyFilesException ex)
+						{
+							// there are more log files than a session is able to read, the drop cannot be handled at all
+							this.ShowWarningMessage(new FormattedString().Also(it =>
+							{
+								it.Arg1 = ex.RootDirectoryName;
+								it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.TooManyFilesInDirectory"));
+							}));
+							return false;
+						}
+						catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+						{
+							this.Logger.LogWarning(ex, "Unable to collect log files in directory '{directoryName}'", directoryPath);
+						}
+					}
+
+					// handle the log files in the directories instead of the directories themselves
+					filePaths.AddAll(logFilePaths);
+					dirPaths.Clear();
+
+					// notify user that there is no log file to be read in the directories, the dropped files are still worth handling
+					if (filePaths.IsEmpty())
+					{
+						this.ShowWarningMessage(new FormattedString().Also(it =>
+						{
+							it.Arg1 = firstDirectoryPath;
+							it.Bind(FormattedString.FormatProperty, this.Application.GetObservableString("SessionView.EmptyDirectoryDropped"));
+						}));
+						return false;
+					}
+				}
 
 				// notify user that there is no valid file or directory to be handled
 				if (filePaths.IsEmpty())
@@ -2668,10 +2718,6 @@ namespace CarinaStudio.ULogViewer.Controls
 						return false;
 					}
 				}
-
-				// check state
-				if (this.DataContext is not Session session)
-					return false;
 				
 				// exclude added files
 				if (filePaths.IsNotEmpty())
@@ -2705,7 +2751,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						}
 						return false;
 					}
-					if (session.IsWorkingDirectoryNeeded)
+					if (session.CanSetWorkingDirectory)
 						return filePaths.IsNotEmpty();
 					return true;
 				});
@@ -2794,7 +2840,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 							// drop files to new session
 							mainWindow.FindSessionView(newSession)?.Let(view => 
-								view.HandleSelectedFilesAsync(keyModifiers, selectedFilePaths, fromDragAndDrop));
+								view.HandleSelectedFilesAsync(keyModifiers, filePaths, fromDragAndDrop));
 						}
 						else
 						{

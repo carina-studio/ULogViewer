@@ -77,6 +77,10 @@ static class LogFileFormatDetector
                 if (!isGZipFile && IsWindowsEventLogFile(buffer, byteCount))
                     return new LogFileFormatDetectionResult(LogFileFormat.WindowsEventLog, encoding);
 
+                // binary data is not readable as text by any data source, it is checked after the signature of Windows event log file which is binary as well
+                if (IsBinaryHead(buffer, byteCount))
+                    return new LogFileFormatDetectionResult(LogFileFormat.Binary, encoding);
+
                 // a gzip file is only readable through the plain text path of FileLogDataSource
                 if (isGZipFile)
                     return new LogFileFormatDetectionResult(LogFileFormat.PlainText, encoding);
@@ -127,6 +131,30 @@ static class LogFileFormatDetector
 
         // there is no byte-order mark
         return (Encoding.UTF8, 0);
+    }
+
+
+    /// <summary>
+    /// Check whether the head of log file is binary data which is not readable as text or not.
+    /// </summary>
+    /// <param name="buffer">Buffer which holds the head of log file.</param>
+    /// <param name="byteCount">Number of bytes read into the buffer.</param>
+    /// <returns>True if the head of log file is binary data.</returns>
+    /// <remarks>Text encoded in UTF-16 or UTF-32 is full of null bytes, so only text encoded in UTF-8 is judged by them.</remarks>
+    internal static bool IsBinaryHead(byte[] buffer, int byteCount)
+    {
+        // the byte-order mark tells whether the null bytes belong to the encoding of text instead of binary data
+        var (encoding, preambleSize) = DetectEncoding(buffer, byteCount);
+        if (encoding.CodePage != Encoding.UTF8.CodePage)
+            return false;
+
+        // a null byte never appears in text encoded in UTF-8
+        for (var i = preambleSize; i < byteCount; ++i)
+        {
+            if (buffer[i] == 0)
+                return true;
+        }
+        return false;
     }
 
 

@@ -161,6 +161,18 @@ class LogProfileMatcherTests : ApplicationBasedTests
 	}
 
 
+	// Generate log file which contains given bytes.
+	string GenerateBinaryLogFile(byte[] bytes)
+	{
+		this.testDirectoryPath ??= this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
+		return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(stream =>
+		{
+			stream.Write(bytes, 0, bytes.Length);
+			return stream.Name;
+		});
+	}
+
+
 	// Generate log file which contains given lines.
 	string GenerateLogFile(params string[] lines)
 	{
@@ -221,6 +233,10 @@ class LogProfileMatcherTests : ApplicationBasedTests
 			noiseLines.AddRange(SyslogLines);
 			var noisyFilePath = this.GenerateLogFile(noiseLines.ToArray());
 			Assert.That(await MatchNamesAsync(this.Application, noisyFilePath), Does.Not.Contain("LinuxSystemLogFile"));
+
+			// binary data is not readable as text, no candidate of log profile is selected for it at all
+			var binaryFilePath = this.GenerateBinaryLogFile([ 0x00, 0x01, 0x02, 0xFD, 0xFC, 0x7F, 0x13, 0x42, 0x99, 0xA1 ]);
+			Assert.That(await MatchNamesAsync(this.Application, binaryFilePath), Is.Empty);
 		});
 	}
 

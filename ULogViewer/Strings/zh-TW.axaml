@@ -1249,6 +1249,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">編輯日誌分析腳本檔案…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">編輯 PATH 環境變數…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">編輯內部儲存的狀態…</sys:String>
+	<sys:String x:Key="String/SessionView.EmptyDirectoryDropped">拖放的目錄 '{0}' 中找不到有效的檔案。</sys:String>
 	<sys:String x:Key="String/SessionView.EnableRunningScript">允許執行腳本…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">無法將規則集或腳本「{0}」匯出至 '{1}'。</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">無法從 '{0}' 匯入規則集或腳本。</sys:String>
@@ -1417,6 +1418,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">工具</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">拖放的目錄超過一個。</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsSelected">選取的目錄超過一個。</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyFilesInDirectory">拖放目錄 '{0}' 中的檔案過多。</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">總日誌記憶體使用量</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">由於目前的列表不包含分析結果之日誌，因此必須取消只顯示已標記的日誌。您可以自行將其開啟。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">您複製的文字是用於日誌文字篩選的完整日誌文字，可以用來驗證日誌文字篩選以及日誌分析的格式。</sys:String>

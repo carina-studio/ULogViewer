@@ -1298,6 +1298,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.EditLogAnalysisScriptSetFile">Edit Log Analysis Script File…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPathEnvVar">Edit PATH Environment Variable…</sys:String>
 	<sys:String x:Key="String/SessionView.EditPersistentState">Edit Internal Persistent State…</sys:String>
+	<sys:String x:Key="String/SessionView.EmptyDirectoryDropped">No valid file found in the dropped directory '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.EnableRunningScript">Enable Script Execution…</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToExportLogAnalysisRuleSet">Unable to export the rule set or script '{0}' to '{1}'.</sys:String>
 	<sys:String x:Key="String/SessionView.FailedToImportLogAnalysisRuleSet">Unable to import the rule set or script from '{0}'.</sys:String>
@@ -1466,6 +1467,7 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tools">Tools</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsDropped">More than one directory was dropped.</sys:String>
 	<sys:String x:Key="String/SessionView.TooManyDirectoryPathsSelected">More than one directory was selected.</sys:String>
+	<sys:String x:Key="String/SessionView.TooManyFilesInDirectory">There are too many files in the dropped directory '{0}'.</sys:String>
 	<sys:String x:Key="String/SessionView.TotalLogsMemoryUsage">Total Logs Memory Usage</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CancelShowingMarkedLogsOnlyForSelectingLogAnalysisResult">Showing only marked logs has been turned off because the analysis result log is not in the current list. You can turn it on manually.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.CopyLogText">The copied text is the full text of a log that is used for log filtering. You can use it to verify the pattern of log text filtering and log analysis.</sys:String>
