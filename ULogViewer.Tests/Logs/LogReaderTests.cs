@@ -206,6 +206,27 @@ class LogReaderTests : ApplicationBasedTests
 	string GenerateLogTailLine() => "  [TAIL]";
 
 
+	// Generate file which contains a log without its tail line, so that the skippable log pattern keeps consuming the file.
+	[MethodImpl(MethodImplOptions.Synchronized)]
+	string GenerateUnterminatedLogFile(int messageLineCount)
+	{
+		this.testDirectoryPath ??= this.Application.CreatePrivateDirectory(this.GetType().Name + "_test").FullName;
+		return Tests.Random.CreateFileWithRandomName(this.testDirectoryPath).Use(stream =>
+		{
+			// write the header line of the one and only log
+			using var writer = new StreamWriter(stream, Encoding.UTF8);
+			writer.WriteLine(this.GenerateLogHeaderLine());
+
+			// write message lines which are matched by the skippable log pattern, without the tail line which ends the log
+			for (var i = 0; i < messageLineCount; ++i)
+				writer.WriteLine(this.GenerateLogMessageLine());
+
+			// complete
+			return stream.Name;
+		});
+	}
+
+
 	/// <summary>
 	/// Test for setting max/drop log count.
 	/// </summary>
@@ -330,6 +351,40 @@ class LogReaderTests : ApplicationBasedTests
 			logReader2.Start();
 			await logReader2.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(30000).Token);
 			Assert.AreEqual(maxRawLogLineCount, logReader2.Logs.Count);
+		});
+	}
+
+
+	/// <summary>
+	/// Test for setting max raw log line count when the lines are consumed by a skippable log pattern.
+	/// </summary>
+	[Test]
+	public void MaxRawLogLineCountWithSkippablePatternTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// find provider
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+			var maxRawLogLineCount = 100;
+
+			// prepare source which contains far more lines than the limitation, all of them consumed by the skippable log pattern
+			var filePath = this.GenerateUnterminatedLogFile(maxRawLogLineCount * 10);
+			using var source = provider.CreateSource(new LogDataSourceOptions { FileName = filePath });
+
+			// create log reader
+			using var logReader = new LogReader(null, source).Setup(it =>
+			{
+				it.LogLevelMap = LogLevelMap;
+				it.LogPatterns = LogPatterns;
+				it.MaxRawLogLineCount = maxRawLogLineCount;
+				it.TimestampFormats = [ TimestampFormat ];
+			});
+
+			// read logs and check that reading stopped at the limitation instead of consuming the whole file
+			logReader.Start();
+			await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(30000).Token);
+			Assert.That(logReader.RawLogLineCount, Is.EqualTo(maxRawLogLineCount));
 		});
 	}
 

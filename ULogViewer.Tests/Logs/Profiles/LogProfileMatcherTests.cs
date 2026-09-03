@@ -157,6 +157,12 @@ class LogProfileMatcherTests : ApplicationBasedTests
 
 			// logs scattered once every few hundred lines are noise instead of a parse
 			Assert.That(LogProfileMatcher.IsMatched(app, new(5, 1, 900, 900, true)), Is.False);
+
+			// a single log which swallowed the whole log file does not cover it, that is not a parse either
+			Assert.That(LogProfileMatcher.IsMatched(app, new(1, 1, 1, 500, true)), Is.False);
+
+			// the full quota of logs is a match no matter how many lines were consumed to read them
+			Assert.That(LogProfileMatcher.IsMatched(app, new(5, 1, 12, 500, true)));
 		});
 	}
 

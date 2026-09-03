@@ -103,7 +103,8 @@ static class LogProfileMatcher
 
         // the full quota of logs must be read, unless the whole log file has been read first
         var configuration = app.Configuration;
-        if (score.LogCount < configuration.GetValueOrDefault(ConfigurationKeys.MaxLogCountToMatchLogProfile) && !score.ReachedEndOfDataSource)
+        var maxLogCount = configuration.GetValueOrDefault(ConfigurationKeys.MaxLogCountToMatchLogProfile);
+        if (score.LogCount < maxLogCount && !score.ReachedEndOfDataSource)
             return false;
 
         // the format must start near the head of log file instead of after a page of noise
@@ -113,6 +114,10 @@ static class LogProfileMatcher
         // the logs must be dense enough, a pattern which matches once every few hundred lines is noise
         var maxRawLineCount = score.LogCount * configuration.GetValueOrDefault(ConfigurationKeys.MaxRawLineCountPerLogToMatchLogProfile);
         if (score.LastLogLineNumber - score.FirstLogLineNumber + 1 > maxRawLineCount)
+            return false;
+
+        // the logs must also cover the log file which they were read from, a single log which swallowed the whole file is not a parse
+        if (score.LogCount < maxLogCount && score.RawLineCount > maxRawLineCount)
             return false;
 
         // complete

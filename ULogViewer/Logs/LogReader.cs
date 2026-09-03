@@ -1240,6 +1240,14 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			{
 				if (logPatterns[logPatternIndex].IsSkippable)
 				{
+					// stop reading when raw log line limitation reached
+					if (!this.TryConsumeRawLogLine(ref lineNumber))
+					{
+						logLine = null;
+						return;
+					}
+
+					// read next line, the line is skipped when it takes too long to be read
 					lock (readLineSyncLock)
 					{
 						Exception? readException = null;
@@ -1262,7 +1270,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 						{
 							if (readException is not null)
 								throw new IOException("Failed to read next line.", readException);
-							++lineNumber;
 						}
 						else
 						{
@@ -1307,7 +1314,6 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 							Monitor.Wait(readLineSyncLock);
 							if (readException is not null)
 								throw new IOException("Failed to read next line.", readException);
-							++lineNumber;
 						}
 					}
 				}
@@ -1856,12 +1862,10 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 	string? ReadNextLine(TextReader reader, ref int lineNumber)
 	{
 		// stop reading when raw log line limitation reached
-		if (this.maxRawLogLineCount >= 0 && lineNumber >= this.maxRawLogLineCount)
+		if (!this.TryConsumeRawLogLine(ref lineNumber))
 			return null;
 
 		// read next line
-		++lineNumber;
-		Interlocked.Exchange(ref this.rawLogLineCount, lineNumber);
 		return reader.ReadLine();
 	}
 
@@ -2237,6 +2241,21 @@ class LogReader : BaseDisposable, IApplicationObject, INotifyPropertyChanged
 			this.timestampFormats = ImmutableList.CreateRange(value);
 			this.OnPropertyChanged(nameof(TimestampFormats));
 		}
+	}
+
+
+	// Consume one raw log line, return False if the limitation of number of raw log lines has been reached.
+	[CalledOnBackgroundThread]
+	bool TryConsumeRawLogLine(ref int lineNumber)
+	{
+		// check limitation
+		if (this.maxRawLogLineCount >= 0 && lineNumber >= this.maxRawLogLineCount)
+			return false;
+
+		// consume the raw log line
+		++lineNumber;
+		Interlocked.Exchange(ref this.rawLogLineCount, lineNumber);
+		return true;
 	}
 
 
