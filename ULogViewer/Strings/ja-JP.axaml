@@ -1543,6 +1543,8 @@
     <sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">追加されたログファイルを表示・管理します。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">マークされたログの一覧です。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">ここをクリックして適用するログ分析ルールセットを選択します。</sys:String>
+    <sys:String x:Key="String/SessionView.Tutorial.SelectLogFilesToStart">ULogViewer は、選択されたファイルに適したログプロファイルを検索するようになりました。</sys:String>
+    <sys:String x:Key="String/SessionView.Tutorial.SelectLogFilesToStart.Alternative">または、ここをクリックしてファイルを選択すると、ULogViewer が適したログプロファイルを検索します。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">ここをクリックして開始するログプロファイルを選択します。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">分析結果ログが現在のリストにないため、すべてのログが一時的に表示されました。手動でオフにすることができます。</sys:String>
     <sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">ここでパネルを切り替えるか、折りたたみます。</sys:String>

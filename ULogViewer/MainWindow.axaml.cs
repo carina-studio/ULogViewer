@@ -1312,8 +1312,10 @@ namespace CarinaStudio.ULogViewer
 			if (Version.TryParse(saved, out var savedVersion) && savedVersion >= App.LogProfileMatchingPromotionVersion)
 				return false;
 
-			// a new user has no previous behavior to be surprised by, mark the promotion as shown without showing it
-			if (this.Application.IsFirstLaunch)
+			// a new user has no previous behavior to be surprised by, and a user whose new tab starts without the specific log profile is introduced to the feature by the tutorial anchored on the button of selecting log files, mark the promotion as shown without showing it
+			if (this.Application.IsFirstLaunch
+				|| (string.IsNullOrEmpty(this.Settings.GetValueOrDefault(SettingKeys.InitialLogProfile))
+					&& this.Settings.GetValueOrDefault(SettingKeys.SessionInitLogProfileSelectionMode) == SessionInitLogProfileSelectionMode.Auto))
 			{
 				this.PersistentState.SetValue(LogProfileMatchingPromotionShownForVersionKey, App.LogProfileMatchingPromotionVersion.ToString());
 				return false;

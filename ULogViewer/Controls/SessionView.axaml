@@ -675,8 +675,9 @@
 						</Button>
 
 						<!-- Add files -->
-						<Button Command="{Binding #root.AddLogFilesCommand}" 
-						        IsVisible="{asXaml:OrBindings 
+						<Button Name="addLogFilesButton"
+						        Command="{Binding #root.AddLogFilesCommand}"
+						        IsVisible="{asXaml:OrBindings
 						                       {Binding CanAddLogFile}, 
 						                       {Binding #root.CanSelectLogFilesWithoutLogProfile}
 						                   }" 

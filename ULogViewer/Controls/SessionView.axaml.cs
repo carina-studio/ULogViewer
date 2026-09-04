@@ -1,3 +1,5 @@
+//#define ALWAYS_SHOW_TUTORIALS
+
 using System.Threading;
 using AsControls = CarinaStudio.AppSuite.Controls;
 using Avalonia;
@@ -176,7 +178,6 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Constants.
-		const bool AlwaysShowTutorials = false;
 		const int InitScrollingToLatestLogDelay = 800;
 		const int LogUpdateIntervalStatisticCount = 4;
 		const int LogUpdateIntervalToResetStatistic = 1000;
@@ -212,6 +213,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		static readonly SettingKey<bool> IsCopyLogTextTutorialShownKey = new("SessionView.IsCopyLogTextTutorialShown");
 		static readonly SettingKey<bool> IsLogFilesPanelTutorialShownKey = new("SessionView.IsLogFilesPanelTutorialShown");
 		static readonly SettingKey<bool> IsMarkedLogsPanelTutorialShownKey = new("SessionView.IsMarkedLogsPanelTutorialShown");
+		static readonly SettingKey<bool> IsSelectingLogFilesToStartTutorialShownKey = new("SessionView.IsSelectingLogFilesToStartTutorialShown");
 		static readonly SettingKey<bool> IsSelectingLogProfileToStartTutorialShownKey = new("SessionView.IsSelectingLogProfileToStartTutorialShown");
 		static readonly SettingKey<bool> IsSwitchingSidePanelsTutorialShownKey = new("SessionView.IsSwitchingSidePanelsTutorialShown");
 		static readonly SettingKey<bool> IsTimestampCategoriesPanelTutorialShownKey = new("SessionView.IsTimestampCategoriesPanelTutorialShown");
@@ -223,6 +225,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 		
 		// Fields.
+		readonly Button addLogFilesButton;
 		bool areAllTutorialsShown;
 		IDisposable? areInitDialogsClosedObserverToken;
 		Avalonia.Controls.Window? attachedWindow;
@@ -354,16 +357,16 @@ namespace CarinaStudio.ULogViewer.Controls
 		// Static initializer.
 		static SessionView()
 		{
-			if (AlwaysShowTutorials)
-			{
-				var persistentState = App.Current.PersistentState;
-				persistentState.ResetValue(IsLogAnalysisPanelTutorialShownKey);
-				persistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
-				persistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
-				persistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
-				persistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
-				persistentState.ResetValue(IsTimestampCategoriesPanelTutorialShownKey);
-			}
+#if ALWAYS_SHOW_TUTORIALS
+			var persistentState = App.Current.PersistentState;
+			persistentState.ResetValue(IsLogAnalysisPanelTutorialShownKey);
+			persistentState.ResetValue(IsLogFilesPanelTutorialShownKey);
+			persistentState.ResetValue(IsMarkedLogsPanelTutorialShownKey);
+			persistentState.ResetValue(IsSelectingLogFilesToStartTutorialShownKey);
+			persistentState.ResetValue(IsSelectingLogProfileToStartTutorialShownKey);
+			persistentState.ResetValue(IsSwitchingSidePanelsTutorialShownKey);
+			persistentState.ResetValue(IsTimestampCategoriesPanelTutorialShownKey);
+#endif
 		}
 
 
@@ -514,6 +517,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			});
 
 			// setup controls
+			this.addLogFilesButton = this.toolBarContainer.FindControl<Button>(nameof(addLogFilesButton)).AsNonNull();
 			this.clearLogTextFilterButton = this.toolBarContainer.FindControl<Button>(nameof(clearLogTextFilterButton)).AsNonNull();
 			this.createLogAnalysisRuleSetButton = this.Get<ToggleButton>(nameof(createLogAnalysisRuleSetButton));
 			this.createLogAnalysisRuleSetMenu = ((ContextMenu)this.Resources[nameof(createLogAnalysisRuleSetMenu)].AsNonNull()).Also(it =>
@@ -5791,10 +5795,11 @@ namespace CarinaStudio.ULogViewer.Controls
 					{
 						it.Anchor = this.selectAndSetLogProfileButton;
 						it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString("SessionView.Tutorial.SelectLogProfileToStart"));
-						it.Dismissed += (_, _) => 
+						it.Dismissed += (_, _) =>
 						{
 							persistentState.SetValue(IsSelectingLogProfileToStartTutorialShownKey, true);
-							this.ShowNextTutorial();
+							if (!this.ShowSelectingLogFilesToStartTutorial(true))
+								this.ShowNextTutorial();
 						};
 						it.Icon = (IImage?)this.FindResource("Image/Icon.Lightbulb.Colored.Gradient");
 						it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
@@ -5803,6 +5808,10 @@ namespace CarinaStudio.ULogViewer.Controls
 						return;
 				}
 			}
+
+			// show "select log files to start"
+			if (this.ShowSelectingLogFilesToStartTutorial(false))
+				return;
 
 			// show "use add tab button to select log profile"
 			if ((window as MainWindow)?.ShowTutorialOfUsingAddTabButtonToSelectLogProfile(this.ShowNextTutorial, this.SkipAllTutorials) == true)
@@ -5922,6 +5931,43 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		// Show the tutorial of selecting log files to let the application match log profile for them.
+		// Returns true if the tutorial has been shown, false otherwise.
+		bool ShowSelectingLogFilesToStartTutorial(bool isFollowingSelectingLogProfileTutorial)
+		{
+			// check state
+			if (this.attachedWindow is not AsControls.Window window)
+				return false;
+			var persistentState = this.PersistentState;
+			if (persistentState.GetValueOrDefault(IsSelectingLogFilesToStartTutorialShownKey))
+				return false;
+
+			// the promotion dialog is shown instead when a new tab starts with the specific log profile
+			if (!string.IsNullOrEmpty(this.Settings.GetValueOrDefault(SettingKeys.InitialLogProfile)))
+				return false;
+
+			// the tutorial is meaningless when log files cannot be selected without log profile, keep it unshown for the next tab which can
+			if (!this.GetValue(CanSelectLogFilesWithoutLogProfileProperty))
+				return false;
+
+			// show tutorial
+			return window.ShowTutorial(new Tutorial().Also(it =>
+			{
+				it.Anchor = this.addLogFilesButton;
+				it.Bind(Tutorial.DescriptionProperty, this.Application.GetObservableString(isFollowingSelectingLogProfileTutorial
+					? "SessionView.Tutorial.SelectLogFilesToStart.Alternative"
+					: "SessionView.Tutorial.SelectLogFilesToStart"));
+				it.Dismissed += (_, _) =>
+				{
+					persistentState.SetValue(IsSelectingLogFilesToStartTutorialShownKey, true);
+					this.ShowNextTutorial();
+				};
+				it.Icon = this.FindResourceOrDefault<IImage?>("Image/Icon.Lightbulb.Colored.Gradient");
+				it.SkippingAllTutorialRequested += (_, _) => this.SkipAllTutorials();
+			}));
+		}
+
+
 		/// <summary>
 		/// Show test menu.
 		/// </summary>
@@ -6000,6 +6046,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.SetValue(IsLogAnalysisPanelTutorialShownKey, true);
 				it.SetValue(IsLogFilesPanelTutorialShownKey, true);
 				it.SetValue(IsMarkedLogsPanelTutorialShownKey, true);
+				it.SetValue(IsSelectingLogFilesToStartTutorialShownKey, true);
 				it.SetValue(IsSelectingLogProfileToStartTutorialShownKey, true);
 				it.SetValue(IsSwitchingSidePanelsTutorialShownKey, true);
 				it.SetValue(IsTimestampCategoriesPanelTutorialShownKey, true);

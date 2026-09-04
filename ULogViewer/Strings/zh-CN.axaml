@@ -1438,6 +1438,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">检查及管理已加入的日志文件。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">已标记的日志列表。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">点一下这里以选择应用的日志分析规则集。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogFilesToStart">ULogViewer 现在会帮您选择的文件搜索合适的日志类型。</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogFilesToStart.Alternative">或点一下这里以选择文件，并让 ULogViewer 搜索合适的日志类型。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">点一下这里以选择日志类型并开始使用。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">由于当前的列表不包含分析结果的日志，因此必须暂时显示所有日志。您可以自行将其关闭。</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">从这里切换侧边面板内容或关闭面板。</sys:String>

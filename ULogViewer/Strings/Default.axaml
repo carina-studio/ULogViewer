@@ -1007,7 +1007,7 @@ You can change this setting at any time in Options.</sys:String>
 
 	<!-- LogProfileMatchingPromotionDialog -->
 	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Title">Automatic Log Profile Matching</sys:String>
-	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer now searches for a suitable log profile for the files you drop into the window, and new tabs no longer show the log profile selector by default.
+	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.Message">ULogViewer now searches for the log profiles which support the files you drop into the window, and new tabs no longer show the log profile selector by default.
 
 You can change this setting in Application Options.</sys:String>
 	<sys:String x:Key="String/LogProfileMatchingPromotionDialog.OpenOptions">Open Options</sys:String>
@@ -1476,6 +1476,8 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.LogFilesPanel">View and manage the added log files.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.MarkedLogsPanel">List of marked logs.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogAnalysisRuleSets">Click here to select log analysis rule sets to apply.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogFilesToStart">ULogViewer now searches for the log profiles which support the files you selected.</sys:String>
+	<sys:String x:Key="String/SessionView.Tutorial.SelectLogFilesToStart.Alternative">Or click here to select files and let ULogViewer search for the log profiles which support them.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SelectLogProfileToStart">Click here to select a log profile to start.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.ShowAllLogsTemporarilyForSelectingLogAnalysisResult">All logs have been shown temporarily because the analysis result log is not in the current list. You can turn it off manually.</sys:String>
 	<sys:String x:Key="String/SessionView.Tutorial.SwitchSidePanels">Switch between panels or collapse them here.</sys:String>
