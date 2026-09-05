@@ -200,7 +200,6 @@
 	<sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">結果範例：{0}</sys:String>
 
 	<!-- DateTimeSelectionDialog -->
-	<sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日期與時間</sys:String>
 	<sys:String x:Key="String/DateTimeSelectionDialog.Title">選擇日期與時間</sys:String>
 
 	<!-- DequeueToVarEditorDialog -->

@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="https://github.com/avaloniaui"
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
@@ -214,7 +214,6 @@
     <sys:String x:Key="String/DateTimeFormatInputDialog.SampleResult">サンプル結果 : {0}</sys:String>
 
     <!-- DateTimeSelectionDialog -->
-    <sys:String x:Key="String/DateTimeSelectionDialog.DateTime">日付と時刻</sys:String>
     <sys:String x:Key="String/DateTimeSelectionDialog.Title">日付と時刻を選択</sys:String>
 
     <!-- DequeueToVarEditorDialog -->

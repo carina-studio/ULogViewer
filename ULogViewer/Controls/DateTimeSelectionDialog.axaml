@@ -31,10 +31,7 @@
 			<!-- Date time -->
 			<abControls:DateTimeTextBox Name="dateTimeTextBox" Classes="Dialog_TextBox" PropertyChanged="OnDateTimeTextBoxPropertyChanged"/>
 			<Separator asControls:DialogElement.SeparatorType="Small"/>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="{asXaml:StringResource DateTimeSelectionDialog.DateTime}" asControls:DialogElement.TextRole="DescriptionBelowLabel" VerticalAlignment="Center"/>
-				<TextBlock Text="{Binding #dateTimeTextBox.Value}" asControls:DialogElement.TextRole="DescriptionBelowLabel" VerticalAlignment="Center"/>
-			</StackPanel>
+			<TextBlock Text="{Binding #dateTimeTextBox.Value}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 			<Separator asControls:DialogElement.SeparatorType="Default"/>
 			<SelectableTextBlock Text="{asXaml:StringResource DateTimeTextBox.FormatDescription}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 			
