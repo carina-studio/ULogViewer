@@ -464,7 +464,7 @@
 		<appControls:LogProfileSelectionContextMenu x:Key="logProfileSelectionMenu" Placement="Bottom"/>
 
 		<!-- Log property tool tip template -->
-		<DataTemplate x:Key="logPropertyToolTipTemplate">
+		<DataTemplate x:Key="logPropertyToolTipTemplate" x:CompileBindings="True" x:DataType="{x:Type sys:Object}">
 			<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLines="8" Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
 		</DataTemplate>
 
@@ -998,7 +998,7 @@
 										<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
 											<StackPanel Name="predefinedLogTextFiltersAndGroupsPanel">
 												<StackPanel.DataTemplates>
-													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
+													<DataTemplate x:CompileBindings="True" DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 														<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
 															<ToolTip.Tip>
 																<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #root.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding Regex}"/>
@@ -1036,7 +1036,7 @@
 															</Grid>
 														</Border>
 													</DataTemplate>
-													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
+													<DataTemplate x:CompileBindings="True" DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
 														<Expander Background="{x:Null}" HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
 															<Expander.Header>
 																<Grid Name="rootGrid" Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto" HorizontalAlignment="Stretch">
@@ -2626,8 +2626,8 @@
 												<StaticResourceExtension x:Key="ToolTipContentMaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
 											</abControls:TextBlock.Resources>
 											<abControls:TextBlock.ToolTipTemplate>
-												<DataTemplate x:CompileBindings="False">
-													<TextBlock FontFamily="{Binding $parent[TextBlock].FontFamily}" 
+												<DataTemplate x:CompileBindings="True" x:DataType="{x:Type appAnalysis:DisplayableLogAnalysisResult}">
+													<TextBlock FontFamily="{ReflectionBinding $parent[TextBlock].FontFamily}" 
 													           Text="{Binding}" 
 													           TextTrimming="CharacterEllipsis"
 													           TextWrapping="Wrap" />
@@ -2855,9 +2855,9 @@
 					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logFileActionMenu}" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding LogFiles}">
 						<asControls:ListBox.ItemTemplate>
-							<DataTemplate>
+							<DataTemplate x:CompileBindings="True" x:DataType="{x:Type appViewModels:Session+LogFileInfo}">
 								<DockPanel>
-									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding #root.DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{ReflectionBinding #root.DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Grid ColumnDefinitions="Auto,*,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
 											<Panel IsVisible="{Binding !#lightLogFileIconsContainer.IsVisible}">
@@ -2892,14 +2892,14 @@
 										</Panel>
 										<StackPanel Grid.Column="1">
 											<TextBlock Background="{x:Static Brushes.Transparent}" FontSize="{StaticResource Double/SessionView.LogFileInfo.FileName.FontSize}" FontWeight="Bold" Margin="{StaticResource Thickness/SessionView.LogFileInfo.FileName.Margin}" Text="{Binding FileName, Converter={x:Static abConverters:FilePathConverters.FileName}}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding FileName}"/>
-											<abControls:FormattedTextBlock Arg1="{Binding LogCount}" Format="{asXaml:StringResource SessionView.LogCountInLogFile}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" TextTrimming="CharacterEllipsis"/>
+											<abControls:FormattedTextBlock Arg1="{Binding LogCount}" FontSize="{StaticResource Double/Dialog.TextBlock.FontSize.Description}" Format="{asXaml:StringResource SessionView.LogCountInLogFile}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Summary.Margin}" TextTrimming="CharacterEllipsis"/>
 										</StackPanel>
 										<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
 											<Border Background="{x:Static Brushes.Transparent}" IsVisible="{Binding !LogReadingPrecondition.IsEmpty}" ToolTip.Tip="{asXaml:StringResource SessionView.HasLogReadingPrecondition}">
-												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Filter}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
+												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Filter.Outline}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
 											</Border>
 											<Border Background="{x:Static Brushes.Transparent}" IsVisible="{Binding MaxLogReadingCount, Converter={x:Static ObjectConverters.IsNotNull}}" ToolTip.Tip="{asXaml:StringResource SessionView.HasMaxLogReadingCount}">
-												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Layers}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
+												<Image Classes="Icon" Height="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Indicator.Margin}" Source="{StaticResource Image/Layers.Outline}" Width="{StaticResource Double/SessionView.LogFileInfo.Indicator.Size}"/>
 											</Border>
 										</StackPanel>
 									</Grid>
