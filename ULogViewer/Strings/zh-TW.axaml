@@ -145,18 +145,18 @@
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 應用程式輸出的日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">來自 ULogViewer 位於記憶體中的即時日誌。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件紀錄 (應用程式)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位於本機上分類為「Application」的 Windows 事件紀錄。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows 事件紀錄檔案</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">儲存在一個或多個 Windows XML 事件紀錄格式 (*.evtx) 之檔案中的 Windows 事件紀錄。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs">Windows 事件紀錄</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs.Description">位於本機上特定分類的 Windows 事件紀錄。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows 事件紀錄 (安全性)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">位於本機上分類為「Security」的 Windows 事件紀錄。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows 事件紀錄 (安裝)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">位於本機上分類為「Setup」的 Windows 事件紀錄。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs">Windows 事件紀錄 (系統)</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位於本機上分類為「System」的 Windows 事件紀錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件記錄 (應用程式)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位於本機上分類為「Application」的 Windows 事件記錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows 事件記錄檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles.Description">儲存在一個或多個 Windows XML 事件記錄格式 (*.evtx) 之檔案中的 Windows 事件記錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs">Windows 事件記錄</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogs.Description">位於本機上特定分類的 Windows 事件記錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs">Windows 事件記錄 (安全性)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSecurityEventLogs.Description">位於本機上分類為「Security」的 Windows 事件記錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs">Windows 事件記錄 (安裝)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSetupEventLogs.Description">位於本機上分類為「Setup」的 Windows 事件記錄。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs">Windows 事件記錄 (系統)</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.WindowsSystemEventLogs.Description">位於本機上分類為「System」的 Windows 事件記錄。</sys:String>
 	
 	<!-- Common -->
 	<sys:String x:Key="String/Common.ExternalDependencyNotFound">至少有一個必要的外部相依性沒有安裝至裝置，請先安裝後再嘗試。</sys:String>
@@ -1531,9 +1531,9 @@ return None</sys:String>
 	<sys:String x:Key="String/VisibleLogPropertyEditorDialog.Width.Description">您也可以在日誌檢視器中變更寬度。</sys:String>
 
 	<!-- WindowsEventLogDataSourceProvider -->
-	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows 事件紀錄</sys:String>
+	<sys:String x:Key="String/WindowsEventLogDataSourceProvider.DisplayName">Windows 事件記錄</sys:String>
 
 	<!-- WindowsEventLogFileDataSourceProvider -->
-	<sys:String x:Key="String/WindowsEventLogFileDataSourceProvider.DisplayName">Windows 事件紀錄檔案</sys:String>
+	<sys:String x:Key="String/WindowsEventLogFileDataSourceProvider.DisplayName">Windows 事件記錄檔案</sys:String>
 	
 </ResourceDictionary>

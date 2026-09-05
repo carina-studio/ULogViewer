@@ -269,6 +269,7 @@ Quoting follows the target locale, not the source text. This applies to `ULogVie
 - Tab UI term: 标签页 (Mainland) / 分頁 (Taiwan).
 - For "double-tap", zh-TW uses 點兩下 (**not** 雙擊); zh-CN uses 双击.
 - For "frame", zh-TW uses 畫格 (**not** 畫面 or 影格); zh-CN uses 帧.
+- For "Windows Event Log", zh-TW uses 事件記錄 (**not** 事件紀錄), matching Microsoft's Taiwan terminology and the wording published on the ULogViewer website; zh-CN uses 事件记录. This applies only to the event-log concept — 歷史紀錄 / 历史纪录 (text filter history), 清除紀錄 / 清除纪录, and the `Git 提交紀錄` / `Git 提交纪录` built-in profile names keep 紀錄 / 纪录, and the last of those is additionally frozen by the published User Agreement documents which name the profiles that way.
 - zh-TW phrasing preferences: prefer 不包含 over 不具備, and 而不是 over 而非. zh-CN keeps 不具备 / 而非.
 - For "set" (a value), zh-TW uses 設定, zh-CN uses 设置. A description explaining a special value uses the declarative pattern 「設定為 X 表示…」 / 「设置为 X 表示…」 — state what the value means, not a conditional 「若…則設為 X」.
 - For English entries phrased as "Added support for X" (typical in `ChangeList*.md` and similar notes), translate as `支援 X` (zh-TW) / `支持 X` (zh-CN), not the literal `新增 X 的支援 / 新增 X 的支持`. **Exception — when X is a bare noun short enough that `支援 X` reads too terse** (a language, format, or file-type name, e.g. 日文 / CLEF), use `新增 X 支援` (zh-TW) / `新增 X 支持` (zh-CN) instead; there is still no `的`. Example: "Added support for Japanese language." → `新增日文支援。` (zh-TW) / `新增日语支持。` (zh-CN).
