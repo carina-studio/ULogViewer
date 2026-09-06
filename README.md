@@ -45,6 +45,8 @@ If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or
 - Added automatic log profile selection when dropping log files into the window.
 - Added support for opening log files by dropping a directory into the window.
 
+[Know more about](https://carinastudio.net/ULogViewer/ChangeList#PreviewChangeList)
+
 ## 📣 What's Change in 2026.1
 - Added Sensitive Data Protection (SDP).
 - Added `Model Context Protocol (MCP)` support for AI clients.
