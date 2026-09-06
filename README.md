@@ -10,6 +10,21 @@ A cross-platform, agent-native log viewer for reading, parsing, and analyzing va
 ## ⚠️ NOTICE
 If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or `2026.1.2` on Windows, please manually close all `mcp.exe` processes and try again.
 
+## 📥 Download 2026.2 Preview
+
+### Windows
+[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-win-x64.zip)
+[![](https://img.shields.io/badge/x86-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-win-x86.zip)
+[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-win-arm64.zip)
+
+### macOS
+[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-osx-arm64.zip)
+[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-osx-x64.zip)
+
+### Linux
+[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-linux-x64.zip)
+[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.0/ULogViewer-2026.2.0-linux-arm64.zip)
+
 ## 📥 Download 2026.1
 
 ### Windows
@@ -24,6 +39,11 @@ If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or
 ### Linux
 [![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.5/ULogViewer-2026.1.5-linux-x64.zip)
 [![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.1.5/ULogViewer-2026.1.5-linux-arm64.zip)
+
+## 📣 What's Change in 2026.2 Preview
+- Added support for Japanese language.
+- Added automatic log profile selection when dropping log files into the window.
+- Added support for opening log files by dropping a directory into the window.
 
 ## 📣 What's Change in 2026.1
 - Added Sensitive Data Protection (SDP).
