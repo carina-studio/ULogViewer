@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CarinaStudio.ULogViewer.Logs.Profiles;
 
@@ -442,7 +443,7 @@ class LogProfileTests : ApplicationBasedTests
 			var fileName = Path.Combine(Path.GetTempPath(), $"ULogViewer.LogProfileTests.{Guid.NewGuid()}.json");
 			try
 			{
-				await profile.SaveAsync(fileName, true, CancellationToken.None);
+				await SaveProfileToFileAsync(profile, fileName, true);
 				var loadedProfile = await LogProfile.LoadAsync(this.Application, fileName);
 				Assert.That(loadedProfile.DataSourceOptions.Password, Is.EqualTo("P@ssw0rd"));
 				Assert.That(loadedProfile.DataSourceOptions.UserName, Is.EqualTo("user"));
@@ -470,14 +471,14 @@ class LogProfileTests : ApplicationBasedTests
 			var fileName = Path.Combine(Path.GetTempPath(), $"ULogViewer.LogProfileTests.{Guid.NewGuid()}.json");
 			try
 			{
-				await profile.SaveAsync(fileName, true, CancellationToken.None);
+				await SaveProfileToFileAsync(profile, fileName, true);
 				var loadedProfile = await LogProfile.LoadAsync(this.Application, fileName);
 				Assert.That(loadedProfile.Id, Is.EqualTo(profile.Id));
 				Assert.That(loadedProfile.IsDataUpgraded, Is.False, "Data of log profile saved by current version should not be upgraded.");
 				AssertProfilesEqual(profile, loadedProfile);
 
 				// save and load log profile without ID
-				await profile.SaveAsync(fileName, false, CancellationToken.None);
+				await SaveProfileToFileAsync(profile, fileName, false);
 				loadedProfile = await LogProfile.LoadAsync(this.Application, fileName);
 				Assert.That(loadedProfile.Id, Is.Not.EqualTo(profile.Id), "New ID should be generated for log profile saved without ID.");
 				AssertProfilesEqual(profile, loadedProfile);
@@ -487,6 +488,14 @@ class LogProfileTests : ApplicationBasedTests
 				File.Delete(fileName);
 			}
 		});
+	}
+
+
+	// Save log profile to file and make sure that the file is closed before returning.
+	static async Task SaveProfileToFileAsync(LogProfile profile, string fileName, bool includeId)
+	{
+		await using var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+		await profile.SaveAsync(stream, includeId, CancellationToken.None);
 	}
 
 

@@ -1,4 +1,3 @@
-using CarinaStudio.AppSuite.Data;
 using CarinaStudio.Collections;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
@@ -113,7 +112,8 @@ class LogProfileManagerTests : ApplicationBasedTests
 			LogProfile profileWithDuplicateId;
 			try
 			{
-				await profile.SaveAsync(fileName, true, CancellationToken.None);
+				await using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+					await profile.SaveAsync(stream, true, CancellationToken.None);
 				profileWithDuplicateId = await LogProfile.LoadAsync(this.Application, fileName);
 			}
 			finally
