@@ -1,2 +1,3 @@
 # Batch scripts are parsed by cmd.exe, which expects CRLF line endings.
 *.bat text eol=crlf
+graphify-out/graph.json merge=graphify

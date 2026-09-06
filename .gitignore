@@ -2,12 +2,15 @@
 .idea
 .run
 .vs
+.vscode
 AGENTS.local.md
 CLAUDE.local.md
 *.DS_Store
+Claude outputs
 obj
 bin
 global.json
+graphify-out
 ULogViewer.csproj.user
 ULogViewer.sln.DotSettings.user
 /ULogViewer/Properties/PublishProfiles/*.user
