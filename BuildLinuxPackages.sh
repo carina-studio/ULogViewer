@@ -9,6 +9,7 @@ TRIM_ASSEMBLIES="true"
 TESTING_MODE_BUILD="false"
 GENERATE_DIFF_PACKAGES="true"
 RUN_TESTS="true"
+TESTS_ONLY="false"
 
 # Print usage of this script.
 print_usage() {
@@ -22,6 +23,7 @@ print_usage() {
     echo "  --no-trim            Do not trim assemblies while publishing the application."
     echo "  --testing-mode       Build the application in testing mode."
     echo "  --no-tests           Do not run test cases before building packages."
+    echo "  --tests-only         Only run test cases without building packages."
     echo "  --no-diff-packages   Do not generate diff packages."
 }
 
@@ -81,6 +83,10 @@ while [ $# -gt 0 ]; do
             RUN_TESTS="false"
             shift
             ;;
+        --tests-only)
+            TESTS_ONLY="true"
+            shift
+            ;;
         --no-diff-packages)
             GENERATE_DIFF_PACKAGES="false"
             shift
@@ -99,6 +105,12 @@ if [ ${#RID_LIST[@]} -eq 0 ]; then
     RID_LIST=("${DEFAULT_RID_LIST[@]}")
 fi
 
+# Check conflict between arguments
+if [ "$TESTS_ONLY" = "true" ] && [ "$RUN_TESTS" = "false" ]; then
+    echo "Cannot specify both '--no-tests' and '--tests-only'"
+    exit 1
+fi
+
 echo "********** Start building $APP_NAME **********"
 
 # Run test cases
@@ -107,15 +119,20 @@ if [ "$RUN_TESTS" = "true" ]; then
     dotnet test $APP_NAME.Tests -c $CONFIG
     if [ "$?" != "0" ]; then
         echo "Test cases failed"
-        exit
+        exit 1
     fi
+fi
+
+# Stop if only test cases need to be run
+if [ "$TESTS_ONLY" = "true" ]; then
+    exit 0
 fi
 
 # Get application version
 VERSION=$(dotnet run PackagingTool.cs -- get-current-version $APP_NAME/$APP_NAME.csproj)
 if [ "$?" != "0" ]; then
     echo "Unable to get version of $APP_NAME"
-    exit
+    exit 1
 fi
 INFORMATIONAL_VERSION=$(dotnet run PackagingTool.cs -- get-current-informational-version $APP_NAME/$APP_NAME.csproj)
 PACKAGE_VERSION=$VERSION
@@ -135,14 +152,14 @@ if [[ ! -d "./Packages" ]]; then
     echo "Create directory 'Packages'"
     mkdir ./Packages
     if [ "$?" != "0" ]; then
-        exit
+        exit 1
     fi
 fi
 if [[ ! -d "./Packages/$VERSION" ]]; then
     echo "Create directory 'Packages/$VERSION'"
     mkdir ./Packages/$VERSION
     if [ "$?" != "0" ]; then
-        exit
+        exit 1
     fi
 fi
 
@@ -158,23 +175,23 @@ for i in "${!RID_LIST[@]}"; do
     rm -r ./$APP_NAME/bin/$CONFIG/$FRAMEWORK/$RID
     dotnet restore $APP_NAME -r $RID
     if [ "$?" != "0" ]; then
-        exit
+        exit 1
     fi
     dotnet clean $APP_NAME -c $CONFIG -r $RID
     if [ "$?" != "0" ]; then
-        exit
+        exit 1
     fi
     
     # build
     dotnet publish $APP_NAME -c $CONFIG -r $RID --self-contained true -p:PublishTrimmed=$TRIM_ASSEMBLIES -p:TestingModeBuild=$TESTING_MODE_BUILD
     if [ "$?" != "0" ]; then
-        exit
+        exit 1
     fi
 
     # zip package
     ditto -c -k --sequesterRsrc "./$APP_NAME/bin/$CONFIG/$FRAMEWORK/$RID/publish/" "./Packages/$VERSION/$APP_NAME-$PACKAGE_VERSION-$RID.zip"
     if [ "$?" != "0" ]; then
-        exit
+        exit 1
     fi
 
 done
