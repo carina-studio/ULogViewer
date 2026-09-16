@@ -3,7 +3,7 @@
 setlocal EnableDelayedExpansion
 
 set APP_NAME=ULogViewer
-set DEFAULT_RID_LIST=win-x64 win-x86 win-arm64
+set DEFAULT_RID_LIST=win-x64 win-arm64
 set RID_LIST=
 set CONFIG=Release
 set FRAMEWORK=net10.0
