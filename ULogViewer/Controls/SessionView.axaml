@@ -221,37 +221,6 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithNewPreconditionCommand}" 
-			          CommandParameter="{Binding FileName}" 
-			          Header="{asXaml:StringResource SessionView.ReloadLogFile.WithNewLogReadingPrecondition}"
-			          IsEnabled="{asXaml:AndBindings
-			              {Binding !IsPredefined, FallbackValue=False},
-			              {Binding #root.DataContext.HasTimestampDisplayableLogProperty, FallbackValue=False}
-			          }">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Filter.Outline}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithoutLogReadingPreconditionCommand}" 
-			          CommandParameter="{Binding FileName}" 
-			          Header="{asXaml:StringResource SessionView.ReloadLogFile.WithoutLogReadingPrecondition}"
-			          IsEnabled="{asXaml:AndBindings
-			              {Binding !IsPredefined, FallbackValue=False},
-			              {Binding !LogReadingPrecondition.IsEmpty, FallbackValue=False}
-			          }">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/ClearFilters.Outline}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-			<MenuItem Command="{Binding #root.ReloadLogFileWithNewMaxLogReadingCountCommand}" 
-			          CommandParameter="{Binding FileName}" 
-			          Header="{asXaml:StringResource SessionView.ReloadLogFile.WithNewMaxLogReadingCount}" 
-			          IsEnabled="{Binding !IsPredefined, FallbackValue=False}">
-				<MenuItem.Icon>
-					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Layers.Outline}"/>
-				</MenuItem.Icon>
-			</MenuItem>
-			<Separator/>
 			<MenuItem Command="{Binding #root.DataContext.RemoveLogFileCommand, FallbackValue={x:Null}}" 
 			          CommandParameter="{Binding FileName}" 
 			          Header="{asXaml:StringResource SessionView.RemoveLogFile}" 

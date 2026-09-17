@@ -544,7 +544,6 @@ class SessionTests : ApplicationBasedTests
 				Assert.That(session.AddLogFileCommand.TryExecute(new Session.LogFileParams
 				{
 					FileName = filePath,
-					ReadingWindow = LogReadingWindow.EndOfDataSource,
 				}));
 				await WaitForConditionAsync(() => session.AllLogCount == 3, "Logs were not read.");
 
@@ -555,7 +554,6 @@ class SessionTests : ApplicationBasedTests
 				Assert.That(restoredSession.HasCustomTitle);
 				Assert.That(restoredSession.LogFiles.Count, Is.EqualTo(1));
 				Assert.That(restoredSession.LogFiles[0].FileName, Is.EqualTo(filePath));
-				Assert.That(restoredSession.LogFiles[0].LogReadingWindow, Is.EqualTo(LogReadingWindow.EndOfDataSource), "Window of reading logs should be restored.");
 				await WaitForConditionAsync(() => restoredSession.AllLogCount == 3, "Logs were not read after restoring state.");
 			}
 			finally

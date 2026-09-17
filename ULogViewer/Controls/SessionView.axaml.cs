@@ -442,9 +442,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.ExportOperationDurationAnalysisRuleSetCommand = new Command<OperationDurationAnalysisRuleSet>(this.ExportOperationDurationAnalysisRuleSet);
 			this.MarkSelectedLogsCommand = new Command<MarkColor>(this.MarkSelectedLogs, this.canMarkSelectedLogs);
 			this.MarkUnmarkSelectedLogsCommand = new Command(this.MarkUnmarkSelectedLogs, this.canMarkUnmarkSelectedLogs);
-			this.ReloadLogFileWithNewMaxLogReadingCountCommand = new Command<string>(this.ReloadLogFileWithNewMaxLogReadingCount);
-			this.ReloadLogFileWithNewPreconditionCommand = new Command<string>(this.ReloadLogFileWithNewPrecondition);
-			this.ReloadLogFileWithoutLogReadingPreconditionCommand = new Command<string>(this.ReloadLogFileWithoutLogReadingPrecondition);
 			this.ReloadLogsCommand = new Command(this.ReloadLogs, this.canReloadLogs);
 			this.RemoveKeyLogAnalysisRuleSetCommand = new Command<KeyLogAnalysisRuleSet>(this.RemoveKeyLogAnalysisRuleSet);
 			this.RemoveLogAnalysisScriptSetCommand = new Command<LogAnalysisScriptSet>(this.RemoveLogAnalysisScriptSet);
@@ -1516,11 +1513,6 @@ namespace CarinaStudio.ULogViewer.Controls
 				return false;
 			return await new EnableRunningScriptDialog().ShowDialog(this.attachedWindow);
 		}
-
-
-		// Confirm log reading window and limitation.
-		Task<(bool, Logs.LogReadingWindow, int?)> ConfirmMaxLogReadingCountFromLargeFilesAsync(long fileSize) =>
-			Task.FromResult<(bool, Logs.LogReadingWindow, int?)>(default);
 
 
 		// Show UI to confirm removing log analysis rule set.
@@ -4838,44 +4830,6 @@ namespace CarinaStudio.ULogViewer.Controls
 			if (logProfile is not null)
 				this.logListBox.ItemTemplate = this.CreateLogItemTemplate(logProfile, session!.DisplayLogProperties);
 		}
-
-
-		// Reload log file.
-		void ReloadLogFile(Session.LogFileInfo logFileInfo, Logs.LogReadingPrecondition precondition, Logs.LogReadingWindow? readingWindow, int? maxLogReadingCount)
-		{ }
-
-
-		// Reload log file.
-		void ReloadLogFileWithNewMaxLogReadingCount(string? fileName)
-		{ }
-
-
-		/// <summary>
-		/// Command to reload log file with maximum log reading count.
-		/// </summary>
-		public ICommand ReloadLogFileWithNewMaxLogReadingCountCommand { get; }
-
-
-		// Reload log file.
-		void ReloadLogFileWithNewPrecondition(string? fileName)
-		{ }
-
-
-		/// <summary>
-		/// Command to reload log file with new precondition.
-		/// </summary>
-		public ICommand ReloadLogFileWithNewPreconditionCommand { get; }
-
-
-		// Reload log file without reading precondition.
-		void ReloadLogFileWithoutLogReadingPrecondition(string? fileName)
-		{ }
-
-
-		/// <summary>
-		/// Command to reload log file without reading precondition.
-		/// </summary>
-		public ICommand ReloadLogFileWithoutLogReadingPreconditionCommand { get; }
 
 
 		// Reload logs.
