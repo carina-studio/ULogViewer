@@ -612,12 +612,15 @@ class LogProfileSelectionDialog : AppSuite.Controls.InputDialog<IULogViewerAppli
 	/// <inheritdoc/>
 	protected override void OnOpening(EventArgs e)
 	{
-		this.Screens.Let(it =>
+		this.Screens.Let(screens =>
 		{
-			(it.ScreenFromWindow(this) ?? it.Primary)?.Let(it =>
+			(screens.ScreenFromWindow(this) ?? screens.Primary)?.Let(screen =>
 			{
 				this.CanResize = true;
-				this.Height = Math.Max(this.MinHeight, it.WorkingArea.Height / it.Scaling * 0.75);
+				var scaling = screen.Scaling;
+				if (!double.IsFinite(scaling) || scaling <= 0)
+					return;
+				this.Height = Math.Max(this.MinHeight, screen.WorkingArea.Height / scaling * 0.75);
 			});
 		});
 		this.RefreshLogProfiles();

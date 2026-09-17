@@ -215,6 +215,8 @@ class LogAnalysisScriptSetEditorDialog : Dialog<IULogViewerApplication>
 			var widthRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitWidthRatio);
 			var heightRatio = this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogAnalysisScriptSetEditorDialogInitHeightRatio);
 			var scaling = screen.Scaling;
+			if (!double.IsFinite(scaling) || scaling <= 0)
+				return;
 			var left = (workingArea.TopLeft.X + workingArea.Width * (1 - widthRatio) / 2); // in device pixels
 			var top = (workingArea.TopLeft.Y + workingArea.Height * (1 - heightRatio) / 2); // in device pixels
 			var sysDecorSize = this.GetSystemDecorationSizes();
