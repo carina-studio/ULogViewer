@@ -83,8 +83,12 @@ public class SimpleVirtualizingStackPanel : VirtualizingPanel
     // Align given value with physical pixels
     static double AlignToPixels(double value, Screen? screen) =>
         AlignToPixels(value, screen?.Scaling ?? 1.0);
-    static double AlignToPixels(double value, double screenScale) =>
-        Math.Abs(screenScale - 1) > 0.01 ? (int)(value * screenScale + 0.5) / screenScale : (int)(value + 0.5);
+    static double AlignToPixels(double value, double screenScale)
+    {
+        if (!double.IsFinite(screenScale) || screenScale <= 0)
+            screenScale = 1.0;
+        return Math.Abs(screenScale - 1) > 0.01 ? (int)(value * screenScale + 0.5) / screenScale : (int)(value + 0.5);
+    }
 
 
     /// <inheritdoc/>

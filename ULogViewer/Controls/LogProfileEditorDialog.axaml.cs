@@ -1242,7 +1242,10 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 		{
 			(screens.ScreenFromWindow(this) ?? screens.Primary)?.Let(screen =>
 			{
-				this.Height = Math.Max(screen.WorkingArea.Height / screen.Scaling / 2, this.FindResourceOrDefault("Double/LogProfileEditorDialog.Height", 600.0));
+				var scaling = screen.Scaling;
+				if (!double.IsFinite(scaling) || scaling <= 0)
+					return;
+				this.Height = Math.Max(screen.WorkingArea.Height / scaling / 2, this.FindResourceOrDefault("Double/LogProfileEditorDialog.Height", 600.0));
 			});
 		});
 	}
