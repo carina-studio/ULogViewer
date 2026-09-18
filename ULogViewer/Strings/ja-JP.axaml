@@ -40,11 +40,6 @@
     <sys:String x:Key="String/AppOptionsDialog.ProVersionOnly">Pro バージョンへのアップグレードが必要です。</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ResetLogAnalysisRuleSetsAfterSettingLogProfile">ログプロファイル変更後に適用中のルールセットをリセット</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont">スクリプトエディタのフォントとサイズ</sys:String>
-    <sys:String x:Key="String/AppOptionsDialog.ScriptEditorFont.Sample">
-        if (x == 0) {
-        Context.Logger.LogDebug(msg);
-        }
-    </sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectCommandWhenNeeded">コマンドが必要な場合は入力ダイアログを表示</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectInitialLogProfile">プロファイルを選択</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.SelectIPEndPointWhenNeeded">IP エンドポイントが必要な場合は入力ダイアログを表示</sys:String>
