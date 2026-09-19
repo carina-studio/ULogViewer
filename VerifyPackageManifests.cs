@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 // Verify links in package manifests listed in 'manifestFileNames' which are changed but not committed yet, or in the
 // given manifest files.
@@ -16,14 +15,13 @@ using System.Text.RegularExpressions;
 // For each manifest:
 //   - Show the version described in the manifest.
 //   - Page URI and package URIs must be reachable.
-//   - SHA256 of each package must match the uploaded file (digest from GitHub API, or download the file when the
-//     digest is unavailable).
+//   - SHA256 of each package must match the uploaded file. Packages are hosted on Cloudflare R2 which provides no
+//     SHA256 of files, so each file is downloaded once to compute it.
 //
-// Links of a release may be unavailable for a while right after publishing the release, so failed requests are retried
-// 'RetryCount' times with 'RetryInterval' milliseconds between them.
+// Links may be unavailable for a while right after uploading the packages, so failed requests are retried 'RetryCount'
+// times with 'RetryInterval' milliseconds between them.
 
 // Constants.
-const string GitHubReleaseDownloadUriPattern = "^https://github\\.com/(?<Owner>[^/]+)/(?<Repo>[^/]+)/releases/download/(?<Tag>[^/]+)/(?<FileName>[^/]+)$";
 const int RetryCount = 3;
 const int RetryInterval = 10000;
 
@@ -36,9 +34,7 @@ string[] manifestFileNames =
 
 // state
 var errorCount = 0;
-var warningCount = 0;
-var gitHubReleaseAssets = new Dictionary<string, Dictionary<string, string?>?>();
-var gitHubReleaseDownloadUriRegex = new Regex(GitHubReleaseDownloadUriPattern);
+var remoteSha256s = new Dictionary<string, string>();
 using var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ULogViewer-VerifyPackageManifests");
 httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue { NoCache = true };
@@ -122,70 +118,32 @@ foreach (var manifestPath in manifestPaths)
 Console.WriteLine();
 if (errorCount > 0)
 {
-    WriteLine(ConsoleColor.Red, $"Verification failed: {errorCount} error(s), {warningCount} warning(s).");
+    WriteLine(ConsoleColor.Red, $"Verification failed: {errorCount} error(s).");
     return 1;
 }
-if (warningCount > 0)
-    WriteLine(ConsoleColor.Yellow, $"Verification passed with {warningCount} warning(s).");
-else
-    WriteLine(ConsoleColor.Green, "Verification passed.");
+WriteLine(ConsoleColor.Green, "Verification passed.");
 return 0;
 
 
-// Compute SHA256 of file by downloading it.
+// Compute SHA256 of file by downloading it. The result is cached because manifests may share the same packages.
 async Task<string> ComputeRemoteSha256Async(string uri)
 {
+    // use cached hash
+    if (remoteSha256s.TryGetValue(uri, out var cachedSha256))
+        return cachedSha256;
+
     // download
+    Console.WriteLine($"  Download '{uri}' to compute SHA256...");
     using var response = await SendWithRetryAsync(HttpMethod.Get, uri, HttpCompletionOption.ResponseHeadersRead);
     response.EnsureSuccessStatusCode();
 
     // compute hash
     await using var stream = await response.Content.ReadAsStreamAsync(CancellationToken.None);
-    var hash = await SHA256.HashDataAsync(stream, CancellationToken.None);
-    return Convert.ToHexString(hash);
-}
+    var sha256 = Convert.ToHexString(await SHA256.HashDataAsync(stream, CancellationToken.None));
 
-
-// Get assets of GitHub release, or null if they are unavailable.
-async Task<Dictionary<string, string?>?> GetGitHubReleaseAssetsAsync(string owner, string repo, string tag)
-{
-    // use cached assets
-    var key = $"{owner}/{repo}/{tag}";
-    if (gitHubReleaseAssets.TryGetValue(key, out var cachedAssets))
-        return cachedAssets;
-
-    // get release
-    Dictionary<string, string?>? assets = null;
-    try
-    {
-        using var response = await SendWithRetryAsync(HttpMethod.Get, $"https://api.github.com/repos/{owner}/{repo}/releases/tags/{Uri.EscapeDataString(tag)}", HttpCompletionOption.ResponseContentRead);
-        if (!response.IsSuccessStatusCode)
-            ReportWarning($"Unable to get release '{tag}' from GitHub, status: {(int)response.StatusCode} {response.ReasonPhrase}. Files will be downloaded to verify SHA256.");
-        else
-        {
-            // parse assets
-            using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(CancellationToken.None));
-            assets = new();
-            foreach (var asset in document.RootElement.GetProperty("assets").EnumerateArray())
-            {
-                var name = asset.GetProperty("name").GetString();
-                if (name is null)
-                    continue;
-                var digest = asset.TryGetProperty("digest", out var digestElement) && digestElement.ValueKind == JsonValueKind.String
-                    ? digestElement.GetString()
-                    : null;
-                assets[name] = digest;
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        ReportWarning($"Unable to get release '{tag}' from GitHub. {ex.GetType().Name}: {ex.Message}. Files will be downloaded to verify SHA256.");
-    }
-
-    // cache assets
-    gitHubReleaseAssets[key] = assets;
-    return assets;
+    // cache hash
+    remoteSha256s[uri] = sha256;
+    return sha256;
 }
 
 
@@ -219,14 +177,6 @@ void ReportError(string message)
 {
     ++errorCount;
     WriteLine(ConsoleColor.Red, $"  [error] {message}");
-}
-
-
-// Report warning.
-void ReportWarning(string message)
-{
-    ++warningCount;
-    WriteLine(ConsoleColor.Yellow, $"  [warning] {message}");
 }
 
 
@@ -328,31 +278,16 @@ async Task VerifyManifestAsync(string manifestPath)
         if (!await IsUriReachableAsync(uri, subject))
             continue;
 
-        // get digest from GitHub
-        string? actualSha256 = null;
-        var downloadUriMatch = gitHubReleaseDownloadUriRegex.Match(uri);
-        if (downloadUriMatch.Success)
-        {
-            var groups = downloadUriMatch.Groups;
-            var assets = await GetGitHubReleaseAssetsAsync(groups["Owner"].Value, groups["Repo"].Value, groups["Tag"].Value);
-            var assetName = Uri.UnescapeDataString(groups["FileName"].Value);
-            if (assets is not null && assets.TryGetValue(assetName, out var digest) && digest is not null && digest.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase))
-                actualSha256 = digest["sha256:".Length..];
-        }
-
         // download file to compute SHA256
-        if (actualSha256 is null)
+        string actualSha256;
+        try
         {
-            Console.WriteLine($"  Download '{uri}' to compute SHA256...");
-            try
-            {
-                actualSha256 = await ComputeRemoteSha256Async(uri);
-            }
-            catch (Exception ex)
-            {
-                ReportError($"{subject}: unable to download '{uri}'. {ex.GetType().Name}: {ex.Message}");
-                continue;
-            }
+            actualSha256 = await ComputeRemoteSha256Async(uri);
+        }
+        catch (Exception ex)
+        {
+            ReportError($"{subject}: unable to download '{uri}'. {ex.GetType().Name}: {ex.Message}");
+            continue;
         }
 
         // compare SHA256
