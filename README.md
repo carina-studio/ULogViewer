@@ -13,16 +13,16 @@ If you encounter failure of upgrading from `2026.1.0 Preview`, `2026.1.1 RC`, or
 ## 📥 Download 2026.2
 
 ### Windows
-[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.2/ULogViewer-2026.2.2-win-x64.zip)
-[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.2/ULogViewer-2026.2.2-win-arm64.zip)
+[![](https://img.shields.io/badge/x64-blue?style=for-the-badge)](https://packages.carinastudio.net/ULogViewer/2026.2.2/ULogViewer-2026.2.2-win-x64.zip)
+[![](https://img.shields.io/badge/arm64-blue?style=for-the-badge)](https://packages.carinastudio.net/ULogViewer/2026.2.2/ULogViewer-2026.2.2-win-arm64.zip)
 
 ### macOS
-[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.2/ULogViewer-2026.2.2-osx-arm64.zip)
-[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.2/ULogViewer-2026.2.2-osx-x64.zip)
+[![](https://img.shields.io/badge/Apple%20Silicon%20(arm64)-blueviolet?style=for-the-badge)](https://packages.carinastudio.net/ULogViewer/2026.2.2/ULogViewer-2026.2.2-osx-arm64.zip)
+[![](https://img.shields.io/badge/x64-blueviolet?style=for-the-badge)](https://packages.carinastudio.net/ULogViewer/2026.2.2/ULogViewer-2026.2.2-osx-x64.zip)
 
 ### Linux
-[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.2/ULogViewer-2026.2.2-linux-x64.zip)
-[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://github.com/carina-studio/ULogViewer/releases/download/2026.2.2/ULogViewer-2026.2.2-linux-arm64.zip)
+[![](https://img.shields.io/badge/x64-orange?style=for-the-badge)](https://packages.carinastudio.net/ULogViewer/2026.2.2/ULogViewer-2026.2.2-linux-x64.zip)
+[![](https://img.shields.io/badge/arm64-orange?style=for-the-badge)](https://packages.carinastudio.net/ULogViewer/2026.2.2/ULogViewer-2026.2.2-linux-arm64.zip)
 
 ## ⭐ Supported Log Data Sources
 A log data source reads raw log data into ULogViewer. It can be a file, a network stream, a database, or a script you write.
