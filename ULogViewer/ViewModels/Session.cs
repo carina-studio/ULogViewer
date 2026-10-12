@@ -60,339 +60,339 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Property of <see cref="AllLogCount"/>.
 	/// </summary>
-	public static readonly ObservableProperty<int> AllLogCountProperty = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
+	public static readonly ObservableProperty<int> AllLogCountProp = ObservableProperty.Register<Session, int>(nameof(AllLogCount));
 	/// <summary>
 	/// Property of <see cref="AllLogsDuration"/>.
 	/// </summary>
-	public static readonly ObservableProperty<TimeSpan?> AllLogsDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(AllLogsDuration));
+	public static readonly ObservableProperty<TimeSpan?> AllLogsDurationProp = ObservableProperty.Register<Session, TimeSpan?>(nameof(AllLogsDuration));
 	/// <summary>
 	/// Property of <see cref="AllLogsDurationEndingString"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> AllLogsDurationEndingStringProperty = ObservableProperty.Register<Session, string?>(nameof(AllLogsDurationEndingString));
+	public static readonly ObservableProperty<string?> AllLogsDurationEndingStringProp = ObservableProperty.Register<Session, string?>(nameof(AllLogsDurationEndingString));
 	/// <summary>
 	/// Property of <see cref="AllLogsDurationStartingString"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> AllLogsDurationStartingStringProperty = ObservableProperty.Register<Session, string?>(nameof(AllLogsDurationStartingString));
+	public static readonly ObservableProperty<string?> AllLogsDurationStartingStringProp = ObservableProperty.Register<Session, string?>(nameof(AllLogsDurationStartingString));
 	/// <summary>
 	/// Property of <see cref="AreDisplayLogPropertiesDefinedByLogProfile"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> AreDisplayLogPropertiesDefinedByLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(AreDisplayLogPropertiesDefinedByLogProfile));
+	public static readonly ObservableProperty<bool> AreDisplayLogPropertiesDefinedByLogProfileProp = ObservableProperty.Register<Session, bool>(nameof(AreDisplayLogPropertiesDefinedByLogProfile));
 	/// <summary>
 	/// Property of <see cref="AreLogsSortedByTimestamp"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProperty = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
+	public static readonly ObservableProperty<bool> AreLogsSortedByTimestampProp = ObservableProperty.Register<Session, bool>(nameof(AreLogsSortedByTimestamp));
 	/// <summary>
 	/// Property of <see cref="CanAddLogFile"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanAddLogFileProperty = ObservableProperty.Register<Session, bool>(nameof(CanAddLogFile));
+	public static readonly ObservableProperty<bool> CanAddLogFileProp = ObservableProperty.Register<Session, bool>(nameof(CanAddLogFile));
 	/// <summary>
 	/// Property of <see cref="CanSetCommand"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanSetCommandProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetCommand));
+	public static readonly ObservableProperty<bool> CanSetCommandProp = ObservableProperty.Register<Session, bool>(nameof(CanSetCommand));
 	/// <summary>
 	/// Property of <see cref="CanSetIPEndPoint"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanSetIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetIPEndPoint));
+	public static readonly ObservableProperty<bool> CanSetIPEndPointProp = ObservableProperty.Register<Session, bool>(nameof(CanSetIPEndPoint));
 	/// <summary>
 	/// Property of <see cref="CanSetProcessId"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanSetProcessIdProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetProcessId));
+	public static readonly ObservableProperty<bool> CanSetProcessIdProp = ObservableProperty.Register<Session, bool>(nameof(CanSetProcessId));
 	/// <summary>
 	/// Property of <see cref="CanSetProcessName"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanSetProcessNameProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetProcessName));
+	public static readonly ObservableProperty<bool> CanSetProcessNameProp = ObservableProperty.Register<Session, bool>(nameof(CanSetProcessName));
 	/// <summary>
 	/// Property of <see cref="CanSetUri"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanSetUriProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetUri));
+	public static readonly ObservableProperty<bool> CanSetUriProp = ObservableProperty.Register<Session, bool>(nameof(CanSetUri));
 	/// <summary>
 	/// Property of <see cref="CanSetWorkingDirectory"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanSetWorkingDirectoryProperty = ObservableProperty.Register<Session, bool>(nameof(CanSetWorkingDirectory));
+	public static readonly ObservableProperty<bool> CanSetWorkingDirectoryProp = ObservableProperty.Register<Session, bool>(nameof(CanSetWorkingDirectory));
 	/// <summary>
 	/// Property of <see cref="CanStopReadingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> CanStopReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(CanStopReadingLogs));
+	public static readonly ObservableProperty<bool> CanStopReadingLogsProp = ObservableProperty.Register<Session, bool>(nameof(CanStopReadingLogs));
 	/// <summary>
 	/// Property of <see cref="Command"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> CommandProperty = ObservableProperty.Register<Session, string?>(nameof(Command));
+	public static readonly ObservableProperty<string?> CommandProp = ObservableProperty.Register<Session, string?>(nameof(Command));
 	/// <summary>
 	/// Property of <see cref="CustomTitle"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> CustomTitleProperty = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
+	public static readonly ObservableProperty<string?> CustomTitleProp = ObservableProperty.Register<Session, string?>(nameof(CustomTitle), coerce: (_, it) => string.IsNullOrWhiteSpace(it) ? null : it);
 	/// <summary>
 	/// Property of <see cref="DefinedLogPropertyNames"/>.
 	/// </summary>
-	public static readonly ObservableProperty<ISet<string>> DefinedLogPropertyNamesProperty = ObservableProperty.Register<Session, ISet<string>>(nameof(DefinedLogPropertyNames), ImmutableHashSet<string>.Empty);
+	public static readonly ObservableProperty<ISet<string>> DefinedLogPropertyNamesProp = ObservableProperty.Register<Session, ISet<string>>(nameof(DefinedLogPropertyNames), ImmutableHashSet<string>.Empty);
 	/// <summary>
 	/// Property of <see cref="DisplayLogProperties"/>.
 	/// </summary>
-	public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProperty = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), Array.Empty<DisplayableLogProperty>());
+	public static readonly ObservableProperty<IList<DisplayableLogProperty>> DisplayLogPropertiesProp = ObservableProperty.Register<Session, IList<DisplayableLogProperty>>(nameof(DisplayLogProperties), Array.Empty<DisplayableLogProperty>());
 	/// <summary>
 	/// Property of <see cref="EarliestAllLogTimestamp"/>.
 	/// </summary>
-	public static readonly ObservableProperty<DateTime?> EarliestAllLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestAllLogTimestamp));
+	public static readonly ObservableProperty<DateTime?> EarliestAllLogTimestampProp = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestAllLogTimestamp));
 	/// <summary>
 	/// Property of <see cref="EarliestLogTimestamp"/>.
 	/// </summary>
-	public static readonly ObservableProperty<DateTime?> EarliestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestLogTimestamp));
+	public static readonly ObservableProperty<DateTime?> EarliestLogTimestampProp = ObservableProperty.Register<Session, DateTime?>(nameof(EarliestLogTimestamp));
 	/// <summary>
 	/// Property of <see cref="FilteredLogCount"/>.
 	/// </summary>
-	public static readonly ObservableProperty<int> FilteredLogCountProperty = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
+	public static readonly ObservableProperty<int> FilteredLogCountProp = ObservableProperty.Register<Session, int>(nameof(FilteredLogCount));
 	/// <summary>
 	/// Property of <see cref="LogsVersion"/>.
 	/// </summary>
-	public static readonly ObservableProperty<int> LogsVersionProperty = ObservableProperty.Register<Session, int>(nameof(LogsVersion));
+	public static readonly ObservableProperty<int> LogsVersionProp = ObservableProperty.Register<Session, int>(nameof(LogsVersion));
 	/// <summary>
 	/// Property of <see cref="HasAllDataSourceErrors"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
+	public static readonly ObservableProperty<bool> HasAllDataSourceErrorsProp = ObservableProperty.Register<Session, bool>(nameof(HasAllDataSourceErrors));
 	/// <summary>
 	/// Property of <see cref="HasAllLogsDuration"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasAllLogsDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasAllLogsDuration));
+	public static readonly ObservableProperty<bool> HasAllLogsDurationProp = ObservableProperty.Register<Session, bool>(nameof(HasAllLogsDuration));
 	/// <summary>
 	/// Property of <see cref="HasCustomTitle"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasCustomTitleProperty = ObservableProperty.Register<Session, bool>(nameof(HasCustomTitle));
+	public static readonly ObservableProperty<bool> HasCustomTitleProp = ObservableProperty.Register<Session, bool>(nameof(HasCustomTitle));
 	/// <summary>
 	/// Property of <see cref="HasIPEndPoint"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasIPEndPointProperty = ObservableProperty.Register<Session, bool>(nameof(HasIPEndPoint));
+	public static readonly ObservableProperty<bool> HasIPEndPointProp = ObservableProperty.Register<Session, bool>(nameof(HasIPEndPoint));
 	/// <summary>
 	/// Property of <see cref="HasLastLogsReadingDuration"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLastLogsReadingDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLastLogsReadingDuration));
+	public static readonly ObservableProperty<bool> HasLastLogsReadingDurationProp = ObservableProperty.Register<Session, bool>(nameof(HasLastLogsReadingDuration));
 	/// <summary>
 	/// Property of <see cref="HasLogColorIndicator"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogColorIndicatorProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicator));
+	public static readonly ObservableProperty<bool> HasLogColorIndicatorProp = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicator));
 	/// <summary>
 	/// Property of <see cref="HasLogColorIndicatorByFileName"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogColorIndicatorByFileNameProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicatorByFileName));
+	public static readonly ObservableProperty<bool> HasLogColorIndicatorByFileNameProp = ObservableProperty.Register<Session, bool>(nameof(HasLogColorIndicatorByFileName));
 	/// <summary>
 	/// Property of <see cref="HasLogFiles"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogFiles));
+	public static readonly ObservableProperty<bool> HasLogFilesProp = ObservableProperty.Register<Session, bool>(nameof(HasLogFiles));
 	/// <summary>
 	/// Property of <see cref="HasLogPatterns"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogPatternsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogPatterns));
+	public static readonly ObservableProperty<bool> HasLogPatternsProp = ObservableProperty.Register<Session, bool>(nameof(HasLogPatterns));
 	/// <summary>
 	/// Property of <see cref="HasLogProfile"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogProfile));
+	public static readonly ObservableProperty<bool> HasLogProfileProp = ObservableProperty.Register<Session, bool>(nameof(HasLogProfile));
 	/// <summary>
 	/// Property of <see cref="HasLogReaders"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogReadersProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogReaders));
+	public static readonly ObservableProperty<bool> HasLogReadersProp = ObservableProperty.Register<Session, bool>(nameof(HasLogReaders));
 	/// <summary>
 	/// Property of <see cref="HasLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
+	public static readonly ObservableProperty<bool> HasLogsProp = ObservableProperty.Register<Session, bool>(nameof(HasLogs));
 	/// <summary>
 	/// Property of <see cref="HasLogsDuration"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasLogsDurationProperty = ObservableProperty.Register<Session, bool>(nameof(HasLogsDuration));
+	public static readonly ObservableProperty<bool> HasLogsDurationProp = ObservableProperty.Register<Session, bool>(nameof(HasLogsDuration));
 	/// <summary>
 	/// Property of <see cref="HasMarkedLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasMarkedLogsProperty = ObservableProperty.Register<Session, bool>(nameof(HasMarkedLogs));
+	public static readonly ObservableProperty<bool> HasMarkedLogsProp = ObservableProperty.Register<Session, bool>(nameof(HasMarkedLogs));
 	/// <summary>
 	/// Property of <see cref="HasPartialDataSourceErrors"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasPartialDataSourceErrorsProperty = ObservableProperty.Register<Session, bool>(nameof(HasPartialDataSourceErrors));
+	public static readonly ObservableProperty<bool> HasPartialDataSourceErrorsProp = ObservableProperty.Register<Session, bool>(nameof(HasPartialDataSourceErrors));
 	/// <summary>
 	/// Property of <see cref="HasUri"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasUriProperty = ObservableProperty.Register<Session, bool>(nameof(HasUri));
+	public static readonly ObservableProperty<bool> HasUriProp = ObservableProperty.Register<Session, bool>(nameof(HasUri));
 	/// <summary>
 	/// Property of <see cref="HasTimestampDisplayableLogProperty"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasTimestampDisplayableLogPropertyProperty = ObservableProperty.Register<Session, bool>(nameof(HasTimestampDisplayableLogProperty));
+	public static readonly ObservableProperty<bool> HasTimestampDisplayableLogPropertyProp = ObservableProperty.Register<Session, bool>(nameof(HasTimestampDisplayableLogProperty));
 	/// <summary>
 	/// Property of <see cref="HasWorkingDirectory"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> HasWorkingDirectoryProperty = ObservableProperty.Register<Session, bool>(nameof(HasWorkingDirectory));
+	public static readonly ObservableProperty<bool> HasWorkingDirectoryProp = ObservableProperty.Register<Session, bool>(nameof(HasWorkingDirectory));
 	/// <summary>
 	/// Property of <see cref="Icon"/>.
 	/// </summary>
-	public static readonly ObservableProperty<IImage?> IconProperty = ObservableProperty.Register<Session, IImage?>(nameof(Icon));
+	public static readonly ObservableProperty<IImage?> IconProp = ObservableProperty.Register<Session, IImage?>(nameof(Icon));
 	/// <summary>
 	/// Property of <see cref="IPEndPoint"/>.
 	/// </summary>
-	public static readonly ObservableProperty<IPEndPoint?> IPEndPointProperty = ObservableProperty.Register<Session, IPEndPoint?>(nameof(IPEndPoint));
+	public static readonly ObservableProperty<IPEndPoint?> IPEndPointProp = ObservableProperty.Register<Session, IPEndPoint?>(nameof(IPEndPoint));
 	/// <summary>
 	/// Property of <see cref="IsActivated"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsActivated));
+	public static readonly ObservableProperty<bool> IsActivatedProp = ObservableProperty.Register<Session, bool>(nameof(IsActivated));
 	/// <summary>
 	/// Property of <see cref="IsAnalyzingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsAnalyzingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsAnalyzingLogs));
+	public static readonly ObservableProperty<bool> IsAnalyzingLogsProp = ObservableProperty.Register<Session, bool>(nameof(IsAnalyzingLogs));
 	/// <summary>
 	/// Property of <see cref="IsBuiltInLogProfile"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsBuiltInLogProfileProperty = ObservableProperty.Register<Session, bool>(nameof(IsBuiltInLogProfile));
+	public static readonly ObservableProperty<bool> IsBuiltInLogProfileProp = ObservableProperty.Register<Session, bool>(nameof(IsBuiltInLogProfile));
 	/// <summary>
 	/// Property of <see cref="IsCommandNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsCommandNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsCommandNeeded));
+	public static readonly ObservableProperty<bool> IsCommandNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsCommandNeeded));
 	/// <summary>
 	/// Property of <see cref="IsCommandSupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsCommandSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsCommandSupported));
+	public static readonly ObservableProperty<bool> IsCommandSupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsCommandSupported));
 	/// <summary>
 	/// Property of <see cref="IsCopyingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsCopyingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsCopyingLogs));
+	public static readonly ObservableProperty<bool> IsCopyingLogsProp = ObservableProperty.Register<Session, bool>(nameof(IsCopyingLogs));
 	/// <summary>
 	/// Property of <see cref="IsEmbeddedScriptLogDataSourceProvider"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsEmbeddedScriptLogDataSourceProviderProperty = ObservableProperty.Register<Session, bool>(nameof(IsEmbeddedScriptLogDataSourceProvider));
+	public static readonly ObservableProperty<bool> IsEmbeddedScriptLogDataSourceProviderProp = ObservableProperty.Register<Session, bool>(nameof(IsEmbeddedScriptLogDataSourceProvider));
 	/// <summary>
 	/// Property of <see cref="IsHibernated"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsHibernatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsHibernated));
+	public static readonly ObservableProperty<bool> IsHibernatedProp = ObservableProperty.Register<Session, bool>(nameof(IsHibernated));
 	/// <summary>
 	/// Property of <see cref="IsHighMemoryUsageToStopReadingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsHighMemoryUsageToStopReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsHighMemoryUsageToStopReadingLogs));
+	public static readonly ObservableProperty<bool> IsHighMemoryUsageToStopReadingLogsProp = ObservableProperty.Register<Session, bool>(nameof(IsHighMemoryUsageToStopReadingLogs));
 	/// <summary>
 	/// Property of <see cref="IsIPEndPointNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsIPEndPointNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointNeeded));
+	public static readonly ObservableProperty<bool> IsIPEndPointNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointNeeded));
 	/// <summary>
 	/// Property of <see cref="IsIPEndPointSupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsIPEndPointSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointSupported));
+	public static readonly ObservableProperty<bool> IsIPEndPointSupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsIPEndPointSupported));
 	/// <summary>
 	/// Property of <see cref="IsLogFileNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsLogFileNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFileNeeded));
+	public static readonly ObservableProperty<bool> IsLogFileNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsLogFileNeeded));
 	/// <summary>
 	/// Property of <see cref="IsLogFilesPanelVisible"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsLogFilesPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFilesPanelVisible), false);
+	public static readonly ObservableProperty<bool> IsLogFilesPanelVisibleProp = ObservableProperty.Register<Session, bool>(nameof(IsLogFilesPanelVisible), false);
 	/// <summary>
 	/// Property of <see cref="IsLogFileSupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsLogFileSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogFileSupported), false);
+	public static readonly ObservableProperty<bool> IsLogFileSupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsLogFileSupported), false);
 	/// <summary>
 	/// Property of <see cref="IsLogsReadingPaused"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsLogsReadingPausedProperty = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
+	public static readonly ObservableProperty<bool> IsLogsReadingPausedProp = ObservableProperty.Register<Session, bool>(nameof(IsLogsReadingPaused));
 	/// <summary>
 	/// Property of <see cref="IsMarkedLogsPanelVisible"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsMarkedLogsPanelVisibleProperty = ObservableProperty.Register<Session, bool>(nameof(IsMarkedLogsPanelVisible), true);
+	public static readonly ObservableProperty<bool> IsMarkedLogsPanelVisibleProp = ObservableProperty.Register<Session, bool>(nameof(IsMarkedLogsPanelVisible), true);
 	/// <summary>
 	/// Property of <see cref="IsProcessIdNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsProcessIdNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessIdNeeded), false);
+	public static readonly ObservableProperty<bool> IsProcessIdNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsProcessIdNeeded), false);
 	/// <summary>
 	/// Property of <see cref="IsProcessIdSupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsProcessIdSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessIdSupported), false);
+	public static readonly ObservableProperty<bool> IsProcessIdSupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsProcessIdSupported), false);
 	/// <summary>
 	/// Property of <see cref="IsProcessNameNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsProcessNameNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessNameNeeded), false);
+	public static readonly ObservableProperty<bool> IsProcessNameNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsProcessNameNeeded), false);
 	/// <summary>
 	/// Property of <see cref="IsProcessNameSupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsProcessNameSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessNameSupported), false);
+	public static readonly ObservableProperty<bool> IsProcessNameSupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsProcessNameSupported), false);
 	/// <summary>
 	/// Property of <see cref="IsSpecifyingMaxLogReadingCountAllowed"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsSpecifyingMaxLogReadingCountAllowedProperty = ObservableProperty.Register<Session, bool>(nameof(IsSpecifyingMaxLogReadingCountAllowed), false);
+	public static readonly ObservableProperty<bool> IsSpecifyingMaxLogReadingCountAllowedProp = ObservableProperty.Register<Session, bool>(nameof(IsSpecifyingMaxLogReadingCountAllowed), false);
 	/// <summary>
 	/// Property of <see cref="IsProcessingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsProcessingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsProcessingLogs));
+	public static readonly ObservableProperty<bool> IsProcessingLogsProp = ObservableProperty.Register<Session, bool>(nameof(IsProcessingLogs));
 	/// <summary>
 	/// Property of <see cref="IsProVersionActivated"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsProVersionActivatedProperty = ObservableProperty.Register<Session, bool>(nameof(IsProVersionActivated));
+	public static readonly ObservableProperty<bool> IsProVersionActivatedProp = ObservableProperty.Register<Session, bool>(nameof(IsProVersionActivated));
 	/// <summary>
 	/// Property of <see cref="IsReadingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsReadingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
+	public static readonly ObservableProperty<bool> IsReadingLogsProp = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogs));
 	/// <summary>
 	/// Property of <see cref="IsReadingLogsContinuously"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsReadingLogsContinuouslyProperty = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogsContinuously));
+	public static readonly ObservableProperty<bool> IsReadingLogsContinuouslyProp = ObservableProperty.Register<Session, bool>(nameof(IsReadingLogsContinuously));
 	/// <summary>
 	/// Property of <see cref="IsRemovingLogFiles"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsRemovingLogFilesProperty = ObservableProperty.Register<Session, bool>(nameof(IsRemovingLogFiles));
+	public static readonly ObservableProperty<bool> IsRemovingLogFilesProp = ObservableProperty.Register<Session, bool>(nameof(IsRemovingLogFiles));
 	/// <summary>
 	/// Property of <see cref="IsRestartAsAdministratorNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsRestartAsAdministratorNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsRestartAsAdministratorNeeded));
+	public static readonly ObservableProperty<bool> IsRestartAsAdministratorNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsRestartAsAdministratorNeeded));
 	/// <summary>
 	/// Property of <see cref="IsSavingLogs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsSavingLogsProperty = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
+	public static readonly ObservableProperty<bool> IsSavingLogsProp = ObservableProperty.Register<Session, bool>(nameof(IsSavingLogs));
 	/// <summary>
 	/// Property of <see cref="IsScriptLogDataSourceProvider"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsScriptLogDataSourceProviderProperty = ObservableProperty.Register<Session, bool>(nameof(IsScriptLogDataSourceProvider));
+	public static readonly ObservableProperty<bool> IsScriptLogDataSourceProviderProp = ObservableProperty.Register<Session, bool>(nameof(IsScriptLogDataSourceProvider));
 	/// <summary>
 	/// Property of <see cref="IsShowingAllLogsTemporarily"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsShowingAllLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingAllLogsTemporarily));
+	public static readonly ObservableProperty<bool> IsShowingAllLogsTemporarilyProp = ObservableProperty.Register<Session, bool>(nameof(IsShowingAllLogsTemporarily));
 	/// <summary>
 	/// Property of <see cref="IsShowingMarkedLogsTemporarily"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
+	public static readonly ObservableProperty<bool> IsShowingMarkedLogsTemporarilyProp = ObservableProperty.Register<Session, bool>(nameof(IsShowingMarkedLogsTemporarily));
 	/// <summary>
 	/// Property of <see cref="IsShowingRawLogLinesTemporarily"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsShowingRawLogLinesTemporarilyProperty = ObservableProperty.Register<Session, bool>(nameof(IsShowingRawLogLinesTemporarily));
+	public static readonly ObservableProperty<bool> IsShowingRawLogLinesTemporarilyProp = ObservableProperty.Register<Session, bool>(nameof(IsShowingRawLogLinesTemporarily));
 	/// <summary>
 	/// Property of <see cref="IsUriNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsUriNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
+	public static readonly ObservableProperty<bool> IsUriNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsUriNeeded));
 	/// <summary>
 	/// Property of <see cref="IsUriSupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsUriSupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsUriSupported));
+	public static readonly ObservableProperty<bool> IsUriSupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsUriSupported));
 	/// <summary>
 	/// Property of <see cref="IsWaitingForDataSources"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsWaitingForDataSourcesProperty = ObservableProperty.Register<Session, bool>(nameof(IsWaitingForDataSources));
+	public static readonly ObservableProperty<bool> IsWaitingForDataSourcesProp = ObservableProperty.Register<Session, bool>(nameof(IsWaitingForDataSources));
 	/// <summary>
 	/// Property of <see cref="IsWorkingDirectoryNeeded"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsWorkingDirectoryNeededProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectoryNeeded));
+	public static readonly ObservableProperty<bool> IsWorkingDirectoryNeededProp = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectoryNeeded));
 	/// <summary>
 	/// Property of <see cref="IsWorkingDirectorySupported"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool> IsWorkingDirectorySupportedProperty = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectorySupported));
+	public static readonly ObservableProperty<bool> IsWorkingDirectorySupportedProp = ObservableProperty.Register<Session, bool>(nameof(IsWorkingDirectorySupported));
 	/// <summary>
 	/// Property of <see cref="LastLogReadingPrecondition"/>.
 	/// </summary>
-	public static readonly ObservableProperty<LogReadingPrecondition> LastLogReadingPreconditionProperty = ObservableProperty.Register<Session, LogReadingPrecondition>(nameof(LastLogReadingPrecondition));
+	public static readonly ObservableProperty<LogReadingPrecondition> LastLogReadingPreconditionProp = ObservableProperty.Register<Session, LogReadingPrecondition>(nameof(LastLogReadingPrecondition));
 	/// <summary>
 	/// Property of <see cref="LastLogsReadingDuration"/>.
 	/// </summary>
-	public static readonly ObservableProperty<TimeSpan?> LastLogsReadingDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LastLogsReadingDuration));
+	public static readonly ObservableProperty<TimeSpan?> LastLogsReadingDurationProp = ObservableProperty.Register<Session, TimeSpan?>(nameof(LastLogsReadingDuration));
 	/// <summary>
 	/// Property of <see cref="LatestAllLogTimestamp"/>.
 	/// </summary>
-	public static readonly ObservableProperty<DateTime?> LatestAllLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(LatestAllLogTimestamp));
+	public static readonly ObservableProperty<DateTime?> LatestAllLogTimestampProp = ObservableProperty.Register<Session, DateTime?>(nameof(LatestAllLogTimestamp));
 	/// <summary>
 	/// Property of <see cref="LatestLogTimestamp"/>.
 	/// </summary>
-	public static readonly ObservableProperty<DateTime?> LatestLogTimestampProperty = ObservableProperty.Register<Session, DateTime?>(nameof(LatestLogTimestamp));
+	public static readonly ObservableProperty<DateTime?> LatestLogTimestampProp = ObservableProperty.Register<Session, DateTime?>(nameof(LatestLogTimestamp));
 	/// <summary>
 	/// Property of <see cref="LogFilesPanelSize"/>.
 	/// </summary>
-	public static readonly ObservableProperty<double> LogFilesPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(LogFilesPanelSize), DefaultSidePanelSize, 
+	public static readonly ObservableProperty<double> LogFilesPanelSizeProp = ObservableProperty.Register<Session, double>(nameof(LogFilesPanelSize), DefaultSidePanelSize, 
 		coerce: (_, it) =>
 		{
 			if (it >= MaxSidePanelSize)
@@ -405,35 +405,35 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Property of <see cref="LogProfile"/>.
 	/// </summary>
-	public static readonly ObservableProperty<LogProfile?> LogProfileProperty = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
+	public static readonly ObservableProperty<LogProfile?> LogProfileProp = ObservableProperty.Register<Session, LogProfile?>(nameof(LogProfile));
 	/// <summary>
 	/// Property of <see cref="LogProfileName"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> LogProfileNameProperty = ObservableProperty.Register<Session, string?>(nameof(LogProfileName));
+	public static readonly ObservableProperty<string?> LogProfileNameProp = ObservableProperty.Register<Session, string?>(nameof(LogProfileName));
 	/// <summary>
 	/// Property of <see cref="LogsMemoryUsage"/>.
 	/// </summary>
-	public static readonly ObservableProperty<long> LogsMemoryUsageProperty = ObservableProperty.Register<Session, long>(nameof(LogsMemoryUsage));
+	public static readonly ObservableProperty<long> LogsMemoryUsageProp = ObservableProperty.Register<Session, long>(nameof(LogsMemoryUsage));
 	/// <summary>
 	/// Property of <see cref="Logs"/>.
 	/// </summary>
-	public static readonly ObservableProperty<IList<DisplayableLog>> LogsProperty = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), Array.Empty<DisplayableLog>());
+	public static readonly ObservableProperty<IList<DisplayableLog>> LogsProp = ObservableProperty.Register<Session, IList<DisplayableLog>>(nameof(Logs), Array.Empty<DisplayableLog>());
 	/// <summary>
 	/// Property of <see cref="LogsDuration"/>.
 	/// </summary>
-	public static readonly ObservableProperty<TimeSpan?> LogsDurationProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(LogsDuration));
+	public static readonly ObservableProperty<TimeSpan?> LogsDurationProp = ObservableProperty.Register<Session, TimeSpan?>(nameof(LogsDuration));
 	/// <summary>
 	/// Property of <see cref="LogsDurationEndingString"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> LogsDurationEndingStringProperty = ObservableProperty.Register<Session, string?>(nameof(LogsDurationEndingString));
+	public static readonly ObservableProperty<string?> LogsDurationEndingStringProp = ObservableProperty.Register<Session, string?>(nameof(LogsDurationEndingString));
 	/// <summary>
 	/// Property of <see cref="LogsDurationStartingString"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> LogsDurationStartingStringProperty = ObservableProperty.Register<Session, string?>(nameof(LogsDurationStartingString));
+	public static readonly ObservableProperty<string?> LogsDurationStartingStringProp = ObservableProperty.Register<Session, string?>(nameof(LogsDurationStartingString));
 	/// <summary>
 	/// Property of <see cref="MarkedLogsPanelSize"/>.
 	/// </summary>
-	public static readonly ObservableProperty<double> MarkedLogsPanelSizeProperty = ObservableProperty.Register<Session, double>(nameof(MarkedLogsPanelSize), DefaultSidePanelSize, 
+	public static readonly ObservableProperty<double> MarkedLogsPanelSizeProp = ObservableProperty.Register<Session, double>(nameof(MarkedLogsPanelSize), DefaultSidePanelSize, 
 		coerce: (_, it) =>
 		{
 			if (it >= MaxSidePanelSize)
@@ -446,51 +446,51 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Property of <see cref="MaxLogFileCount"/>.
 	/// </summary>
-	public static readonly ObservableProperty<int> MaxLogFileCountProperty = ObservableProperty.Register<Session, int>(nameof(MaxLogFileCount));
+	public static readonly ObservableProperty<int> MaxLogFileCountProp = ObservableProperty.Register<Session, int>(nameof(MaxLogFileCount));
 	/// <summary>
 	/// Property of <see cref="MaxLogTimeSpan"/>.
 	/// </summary>
-	public static readonly ObservableProperty<TimeSpan?> MaxLogTimeSpanProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(MaxLogTimeSpan));
+	public static readonly ObservableProperty<TimeSpan?> MaxLogTimeSpanProp = ObservableProperty.Register<Session, TimeSpan?>(nameof(MaxLogTimeSpan));
 	/// <summary>
 	/// Property of <see cref="MinLogTimeSpan"/>.
 	/// </summary>
-	public static readonly ObservableProperty<TimeSpan?> MinLogTimeSpanProperty = ObservableProperty.Register<Session, TimeSpan?>(nameof(MinLogTimeSpan));
+	public static readonly ObservableProperty<TimeSpan?> MinLogTimeSpanProp = ObservableProperty.Register<Session, TimeSpan?>(nameof(MinLogTimeSpan));
 	/// <summary>
 	/// Property of <see cref="ProcessId"/>.
 	/// </summary>
-	public static readonly ObservableProperty<int?> ProcessIdProperty = ObservableProperty.Register<Session, int?>(nameof(ProcessId));
+	public static readonly ObservableProperty<int?> ProcessIdProp = ObservableProperty.Register<Session, int?>(nameof(ProcessId));
 	/// <summary>
 	/// Property of <see cref="ProcessName"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> ProcessNameProperty = ObservableProperty.Register<Session, string?>(nameof(ProcessName));
+	public static readonly ObservableProperty<string?> ProcessNameProp = ObservableProperty.Register<Session, string?>(nameof(ProcessName));
 	/// <summary>
 	/// Property of <see cref="Title"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> TitleProperty = ObservableProperty.Register<Session, string?>(nameof(Title));
+	public static readonly ObservableProperty<string?> TitleProp = ObservableProperty.Register<Session, string?>(nameof(Title));
 	/// <summary>
 	/// Property of <see cref="TotalLogsMemoryUsage"/>.
 	/// </summary>
-	public static readonly ObservableProperty<long> TotalLogsMemoryUsageProperty = ObservableProperty.Register<Session, long>(nameof(TotalLogsMemoryUsage));
+	public static readonly ObservableProperty<long> TotalLogsMemoryUsageProp = ObservableProperty.Register<Session, long>(nameof(TotalLogsMemoryUsage));
 	/// <summary>
 	/// Property of <see cref="Uri"/>.
 	/// </summary>
-	public static readonly ObservableProperty<Uri?> UriProperty = ObservableProperty.Register<Session, Uri?>(nameof(Uri));
+	public static readonly ObservableProperty<Uri?> UriProp = ObservableProperty.Register<Session, Uri?>(nameof(Uri));
 	/// <summary>
 	/// Property of <see cref="UseTextShellToExecuteCommand"/>.
 	/// </summary>
-	public static readonly ObservableProperty<bool?> UseTextShellToExecuteCommandProperty = ObservableProperty.Register<Session, bool?>(nameof(UseTextShellToExecuteCommand));
+	public static readonly ObservableProperty<bool?> UseTextShellToExecuteCommandProp = ObservableProperty.Register<Session, bool?>(nameof(UseTextShellToExecuteCommand));
 	/// <summary>
 	/// Property of <see cref="ValidLogLevels"/>.
 	/// </summary>
-	public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProperty = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), Array.Empty<Logs.LogLevel>());
+	public static readonly ObservableProperty<IList<Logs.LogLevel>> ValidLogLevelsProp = ObservableProperty.Register<Session, IList<Logs.LogLevel>>(nameof(ValidLogLevels), Array.Empty<Logs.LogLevel>());
 	/// <summary>
 	/// Property of <see cref="WorkingDirectoryName"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> WorkingDirectoryNameProperty = ObservableProperty.Register<Session, string?>(nameof(WorkingDirectoryName));
+	public static readonly ObservableProperty<string?> WorkingDirectoryNameProp = ObservableProperty.Register<Session, string?>(nameof(WorkingDirectoryName));
 	/// <summary>
 	/// Property of <see cref="WorkingDirectoryPath"/>.
 	/// </summary>
-	public static readonly ObservableProperty<string?> WorkingDirectoryPathProperty = ObservableProperty.Register<Session, string?>(nameof(WorkingDirectoryPath));
+	public static readonly ObservableProperty<string?> WorkingDirectoryPathProp = ObservableProperty.Register<Session, string?>(nameof(WorkingDirectoryPath));
 
 
 	/// <summary>
@@ -730,10 +730,10 @@ class Session : ViewModel<IULogViewerApplication>
 	static readonly HashSet<Session> instances = new();
 	static readonly TaskFactory ioTaskFactory = new(new FixedThreadsTaskScheduler(1));
 	static readonly MutableObservableBoolean isSpecifyingMaxLogReadingCountAllowed = new(true);
-	static readonly SettingKey<double> latestLogFilesPanelSizeKey = new("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProperty.DefaultValue);
-	static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
+	static readonly SettingKey<double> latestLogFilesPanelSizeKey = new("Session.LatestLogFilesPanelSize", LogFilesPanelSizeProp.DefaultValue);
+	static readonly SettingKey<double> latestMarkedLogsPanelSizeKey = new("Session.LatestMarkedLogsPanelSize", MarkedLogsPanelSizeProp.DefaultValue);
 	[Obsolete]
-	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", MarkedLogsPanelSizeProperty.DefaultValue);
+	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", MarkedLogsPanelSizeProp.DefaultValue);
 	static long memoryThresholdToStartHibernation;
 	static ILogger? staticLogger;
 	static long totalLogsMemoryUsage;
@@ -1019,7 +1019,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.activationHistoryListNode = new LinkedListNode<Session>(this);
 
 		// create commands
-		this.AddLogFileCommand = new Command<LogFileParams?>(this.AddLogFile, this.GetValueAsObservable(CanAddLogFileProperty));
+		this.AddLogFileCommand = new Command<LogFileParams?>(this.AddLogFile, this.GetValueAsObservable(CanAddLogFileProp));
 		this.ClearLogFilesCommand = new Command(() => this.ClearLogFiles(), this.canClearLogFiles);
 		this.CopyLogsCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, false), this.canCopyLogs);
 		this.CopyLogsWithFileNamesCommand = new Command<IList<DisplayableLog>>(it => this.CopyLogs(it, true), this.canCopyLogsWithFileNames);
@@ -1034,22 +1034,22 @@ class Session : ViewModel<IULogViewerApplication>
 		}, this.canReloadLogs);
 		this.RemoveLogFileCommand = new Command<string?>(this.RemoveLogFile, this.canClearLogFiles);
 		this.ResetLogProfileCommand = new Command(this.ResetLogProfile, this.canResetLogProfile);
-		this.ResetTemporarilyShownLogsCommand = new Command(this.ResetTemporarilyShownLogs, this.GetValueAsObservable(HasLogProfileProperty));
+		this.ResetTemporarilyShownLogsCommand = new Command(this.ResetTemporarilyShownLogs, this.GetValueAsObservable(HasLogProfileProp));
 		this.SaveLogsCommand = new Command<LogsSavingOptions>(this.SaveLogs, this.canSaveLogs);
 		this.SearchLogPropertyOnInternetCommand = new Command<Net.SearchProvider>(this.SearchLogPropertyOnInternet, this.canSearchLogPropertyOnInternet);
-		this.SetCommandCommand = new Command<CommandParams?>(this.SetCommand, this.GetValueAsObservable(CanSetCommandProperty));
-		this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(CanSetIPEndPointProperty));
+		this.SetCommandCommand = new Command<CommandParams?>(this.SetCommand, this.GetValueAsObservable(CanSetCommandProp));
+		this.SetIPEndPointCommand = new Command<IPEndPoint?>(this.SetIPEndPoint, this.GetValueAsObservable(CanSetIPEndPointProp));
 		this.SetLogProfileCommand = new Command<LogProfile?>(this.SetLogProfile, this.canSetLogProfile);
-		this.SetProcessIdCommand = new Command<int?>(this.SetProcessId, this.GetValueAsObservable(CanSetProcessIdProperty));
-		this.SetProcessNameCommand = new Command<string?>(this.SetProcessName, this.GetValueAsObservable(CanSetProcessNameProperty));
-		this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(CanSetUriProperty));
-		this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(CanSetWorkingDirectoryProperty));
+		this.SetProcessIdCommand = new Command<int?>(this.SetProcessId, this.GetValueAsObservable(CanSetProcessIdProp));
+		this.SetProcessNameCommand = new Command<string?>(this.SetProcessName, this.GetValueAsObservable(CanSetProcessNameProp));
+		this.SetUriCommand = new Command<Uri?>(this.SetUri, this.GetValueAsObservable(CanSetUriProp));
+		this.SetWorkingDirectoryCommand = new Command<string?>(this.SetWorkingDirectory, this.GetValueAsObservable(CanSetWorkingDirectoryProp));
 		this.ShowAllLogsTemporarilyCommand = new Command(this.ShowAllLogsTemporarily, this.canShowAllLogsTemporarily);
-		this.ShowMarkedLogsTemporarilyCommand = new Command(this.ShowMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
-		this.StopReadingLogsCommand = new Command(this.StopReadingLogs, this.GetValueAsObservable(CanStopReadingLogsProperty));
+		this.ShowMarkedLogsTemporarilyCommand = new Command(this.ShowMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProp));
+		this.StopReadingLogsCommand = new Command(this.StopReadingLogs, this.GetValueAsObservable(CanStopReadingLogsProp));
 		this.ToggleShowingAllLogsTemporarilyCommand = new Command(this.ToggleShowingAllLogsTemporarily, this.canShowAllLogsTemporarily);
-		this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProperty));
-		this.ToggleShowingRawLogLinesTemporarilyCommand = new Command(this.ToggleShowingRawLogLinesTemporarily, this.GetValueAsObservable(HasLogPatternsProperty));
+		this.ToggleShowingMarkedLogsTemporarilyCommand = new Command(this.ToggleShowingMarkedLogsTemporarily, this.GetValueAsObservable(HasMarkedLogsProp));
+		this.ToggleShowingRawLogLinesTemporarilyCommand = new Command(this.ToggleShowingRawLogLinesTemporarily, this.GetValueAsObservable(HasLogPatternsProp));
 		this.UnmarkLogsCommand = new Command<IEnumerable<DisplayableLog>>(this.UnmarkLogs, this.canMarkUnmarkLogs);
 		this.canSetLogProfile.Update(true);
 
@@ -1069,7 +1069,7 @@ class Session : ViewModel<IULogViewerApplication>
 		// setup properties
 		this.AllLogs = new SafeReadOnlyList<DisplayableLog>(this.allLogs);
 		this.LogFiles = ListExtensions.AsReadOnly(this.logFileInfoList);
-		this.SetValue(LogsProperty, this.AllLogs);
+		this.SetValue(LogsProp, this.AllLogs);
 		this.MarkedLogs = new SafeReadOnlyList<DisplayableLog>(this.markedLogs);
 
 		// setup delegates
@@ -1099,7 +1099,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.LogCategorizing = new LogCategorizingViewModel(this, internalAccessor).Also(it =>
 		{
 			this.AttachToComponent(it);
-			it.GetValueAsObservable(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty).Subscribe(_ =>
+			it.GetValueAsObservable(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProp).Subscribe(_ =>
 				this.checkAreAllPanelsHiddenAction?.Schedule());
 		});
 		this.LogChart = new LogChartViewModel(this, internalAccessor).Also(this.AttachToComponent);
@@ -1108,12 +1108,12 @@ class Session : ViewModel<IULogViewerApplication>
 			this.AttachToComponent(it);
 			(it.FilteredLogs as INotifyCollectionChanged)?.Let(it =>
 				it.CollectionChanged += this.OnFilteredLogsChanged);
-			it.GetValueAsObservable(LogFilteringViewModel.IsFilteringProperty).Subscribe(_ =>
+			it.GetValueAsObservable(LogFilteringViewModel.IsFilteringProp).Subscribe(_ =>
 				this.updateIsProcessingLogsAction?.Schedule());
-			it.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
+			it.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProp).Subscribe(_ =>
 			{
 				this.canShowAllLogsTemporarily.Update(this.LogProfile is not null && it.IsFilteringNeeded);
-				if (!this.canShowAllLogsTemporarily.Value && this.GetValue(IsShowingAllLogsTemporarilyProperty))
+				if (!this.canShowAllLogsTemporarily.Value && this.GetValue(IsShowingAllLogsTemporarilyProp))
 					this.ToggleShowingAllLogsTemporarily();
 				this.selectLogsToReportActions?.Schedule();
 			});
@@ -1121,13 +1121,13 @@ class Session : ViewModel<IULogViewerApplication>
 		this.LogAnalysis = new LogAnalysisViewModel(this, internalAccessor).Also(it =>
 		{
 			this.AttachToComponent(it);
-			it.GetValueAsObservable(LogAnalysisViewModel.IsPanelVisibleProperty).Subscribe(_ =>
+			it.GetValueAsObservable(LogAnalysisViewModel.IsPanelVisibleProp).Subscribe(_ =>
 				this.checkAreAllPanelsHiddenAction?.Schedule());
 		});
 		this.LogSelection = new LogSelectionViewModel(this, internalAccessor).Also(it =>
 		{
 			this.AttachToComponent(it);
-			it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProperty).Subscribe(value =>
+			it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProp).Subscribe(value =>
 				this.canSearchLogPropertyOnInternet.Update(!string.IsNullOrWhiteSpace(value?.ToString())));
 		});
 		this.AllComponentsCreated?.Invoke();
@@ -1156,7 +1156,7 @@ class Session : ViewModel<IULogViewerApplication>
 		// attach to self properties
 		this.isSpecifyingMaxLogReadingCountAllowedObserverToken = isSpecifyingMaxLogReadingCountAllowed.Subscribe(isAllowed =>
 		{
-			this.SetValue(IsSpecifyingMaxLogReadingCountAllowedProperty, isAllowed);
+			this.SetValue(IsSpecifyingMaxLogReadingCountAllowedProp, isAllowed);
 		});
 	
 		// attach to log profile manager
@@ -1169,7 +1169,7 @@ class Session : ViewModel<IULogViewerApplication>
 			if (SimulateDelayedProVersionActivation)
 				this.proVersionActivatedAction.Schedule(10000);
 			else
-				this.SetValue(IsProVersionActivatedProperty, true);
+				this.SetValue(IsProVersionActivatedProp, true);
 		}
 		app.ProductManager.ProductActivationChanged += this.productActivationChangedHandler;
 		
@@ -1182,19 +1182,19 @@ class Session : ViewModel<IULogViewerApplication>
 		if (this.PersistentState.GetRawValue(latestSidePanelSizeKey) is double sidePanelSize)
 		{
 			this.PersistentState.ResetValue(latestSidePanelSizeKey);
-			this.SetValue(LogFilesPanelSizeProperty, sidePanelSize);
-			this.SetValue(MarkedLogsPanelSizeProperty, sidePanelSize);
+			this.SetValue(LogFilesPanelSizeProp, sidePanelSize);
+			this.SetValue(MarkedLogsPanelSizeProp, sidePanelSize);
 		}
 		else
 		{
-			this.SetValue(LogFilesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestLogFilesPanelSizeKey));
-			this.SetValue(MarkedLogsPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
+			this.SetValue(LogFilesPanelSizeProp, this.PersistentState.GetValueOrDefault(latestLogFilesPanelSizeKey));
+			this.SetValue(MarkedLogsPanelSizeProp, this.PersistentState.GetValueOrDefault(latestMarkedLogsPanelSizeKey));
 		}
 #pragma warning restore CS0612
 		
 		// hide all panels if needed
 		if (this.PersistentState.GetValueOrDefault(areAllPanelsHiddenKey))
-			this.SetValue(IsMarkedLogsPanelVisibleProperty, false);
+			this.SetValue(IsMarkedLogsPanelVisibleProp, false);
 
 		// set initial log profile
 		if (initLogProfile is not null)
@@ -1227,7 +1227,7 @@ class Session : ViewModel<IULogViewerApplication>
 			if (this.activationTokens.Count > 1)
 				return;
 			this.Logger.LogWarning("Activate");
-			this.SetValue(IsActivatedProperty, true);
+			this.SetValue(IsActivatedProp, true);
 
 			// update log updating interval
 			if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
@@ -1243,7 +1243,7 @@ class Session : ViewModel<IULogViewerApplication>
 				this.Logger.LogWarning("Leave hibernation");
 
 				// update state
-				this.SetValue(IsHibernatedProperty, false);
+				this.SetValue(IsHibernatedProp, false);
 				
 				// start reading logs
 				this.StartReadingLogs();
@@ -1275,7 +1275,7 @@ class Session : ViewModel<IULogViewerApplication>
 			this.Logger.LogWarning("File '{fileName}' is already added", fileName);
 			return;
 		}
-		if (this.logFileInfoList.Count >= this.GetValue(MaxLogFileCountProperty))
+		if (this.logFileInfoList.Count >= this.GetValue(MaxLogFileCountProp))
 		{
 			this.Logger.LogError("Maximum log file count reached: {count}", this.MaxLogFileCount);
 			return;
@@ -1292,8 +1292,8 @@ class Session : ViewModel<IULogViewerApplication>
 		
 		// start reading logs
 		this.canClearLogFiles.Update(true);
-		this.SetValue(HasLogFilesProperty, true);
-		this.ResetValue(IsLogFileNeededProperty);
+		this.SetValue(HasLogFilesProp, true);
+		this.ResetValue(IsLogFileNeededProp);
 		this.UpdateCanAddLogFile(profile);
 		this.StartReadingLogs();
 	}
@@ -1315,7 +1315,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get number of all read logs.
 	/// </summary>
-	public int AllLogCount => this.GetValue(AllLogCountProperty);
+	public int AllLogCount => this.GetValue(AllLogCountProp);
 
 
 	/// <summary>
@@ -1333,31 +1333,31 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get duration of <see cref="AllLogs"/>.
 	/// </summary>
-	public TimeSpan? AllLogsDuration => this.GetValue(AllLogsDurationProperty);
+	public TimeSpan? AllLogsDuration => this.GetValue(AllLogsDurationProp);
 	
 	
 	/// <summary>
 	/// Get string to describe ending point of <see cref="AllLogsDuration"/>.
 	/// </summary>
-	public string? AllLogsDurationEndingString => this.GetValue(AllLogsDurationEndingStringProperty);
+	public string? AllLogsDurationEndingString => this.GetValue(AllLogsDurationEndingStringProp);
 
 
 	/// <summary>
 	/// Get string to describe starting point of <see cref="AllLogsDuration"/>.
 	/// </summary>
-	public string? AllLogsDurationStartingString => this.GetValue(AllLogsDurationStartingStringProperty);
+	public string? AllLogsDurationStartingString => this.GetValue(AllLogsDurationStartingStringProp);
 	
 	
 	/// <summary>
 	/// Check whether <see cref="DisplayLogProperties"/> are defined by log profile or not.
 	/// </summary>
-	public bool AreDisplayLogPropertiesDefinedByLogProfile => this.GetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
+	public bool AreDisplayLogPropertiesDefinedByLogProfile => this.GetValue(AreDisplayLogPropertiesDefinedByLogProfileProp);
 
 
 	/// <summary>
 	/// Check whether logs are sorted by one of <see cref="Log.BeginningTimestamp"/>, <see cref="Log.EndingTimestamp"/>, <see cref="Log.Timestamp"/> or not.
 	/// </summary>
-	public bool AreLogsSortedByTimestamp => this.GetValue(AreLogsSortedByTimestampProperty);
+	public bool AreLogsSortedByTimestamp => this.GetValue(AreLogsSortedByTimestampProp);
 
 
 	// Attach to given component.
@@ -1372,7 +1372,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 	// Bump LogsVersion to signal that pinned log IDs may have been invalidated.
 	void BumpLogsVersion() =>
-		this.SetValue(LogsVersionProperty, this.GetValue(LogsVersionProperty) + 1);
+		this.SetValue(LogsVersionProp, this.GetValue(LogsVersionProp) + 1);
 
 
 	/// <summary>
@@ -1433,61 +1433,61 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Check whether one or more log files can be added to session or not.
 	/// </summary>
-	public bool CanAddLogFile => this.GetValue(CanAddLogFileProperty);
+	public bool CanAddLogFile => this.GetValue(CanAddLogFileProp);
 	
 	
 	/// <summary>
 	/// Check whether command can be set to session or not.
 	/// </summary>
-	public bool CanSetCommand => this.GetValue(CanSetCommandProperty);
+	public bool CanSetCommand => this.GetValue(CanSetCommandProp);
 	
 	
 	/// <summary>
 	/// Check whether IP end point can be set to session or not.
 	/// </summary>
-	public bool CanSetIPEndPoint => this.GetValue(CanSetIPEndPointProperty);
+	public bool CanSetIPEndPoint => this.GetValue(CanSetIPEndPointProp);
 	
 	
 	/// <summary>
 	/// Check whether process ID can be set to session or not.
 	/// </summary>
-	public bool CanSetProcessId => this.GetValue(CanSetProcessIdProperty);
+	public bool CanSetProcessId => this.GetValue(CanSetProcessIdProp);
 	
 	
 	/// <summary>
 	/// Check whether process name can be set to session or not.
 	/// </summary>
-	public bool CanSetProcessName => this.GetValue(CanSetProcessNameProperty);
+	public bool CanSetProcessName => this.GetValue(CanSetProcessNameProp);
 	
 	
 	/// <summary>
 	/// Check whether URI can be set to session or not.
 	/// </summary>
-	public bool CanSetUri => this.GetValue(CanSetUriProperty);
+	public bool CanSetUri => this.GetValue(CanSetUriProp);
 	
 	
 	/// <summary>
 	/// Check whether working directory can be set to session or not.
 	/// </summary>
-	public bool CanSetWorkingDirectory => this.GetValue(CanSetWorkingDirectoryProperty);
+	public bool CanSetWorkingDirectory => this.GetValue(CanSetWorkingDirectoryProp);
 
 
 	// Check whether logs reading can be started in current state or not.
-	bool CanStartReadingLogs => !this.GetValue(IsCommandNeededProperty)
-	                            && !this.GetValue(IsHibernatedProperty)
-	                            && !this.GetValue(IsIPEndPointNeededProperty)
-	                            && !this.GetValue(IsLogFileNeededProperty)
-	                            && !this.GetValue(IsProcessIdNeededProperty)
-	                            && !this.GetValue(IsProcessNameNeededProperty)
-	                            && !this.GetValue(IsRestartAsAdministratorNeededProperty)
-	                            && !this.GetValue(IsUriNeededProperty)
-	                            && !this.GetValue(IsWorkingDirectoryNeededProperty);
+	bool CanStartReadingLogs => !this.GetValue(IsCommandNeededProp)
+	                            && !this.GetValue(IsHibernatedProp)
+	                            && !this.GetValue(IsIPEndPointNeededProp)
+	                            && !this.GetValue(IsLogFileNeededProp)
+	                            && !this.GetValue(IsProcessIdNeededProp)
+	                            && !this.GetValue(IsProcessNameNeededProp)
+	                            && !this.GetValue(IsRestartAsAdministratorNeededProp)
+	                            && !this.GetValue(IsUriNeededProp)
+	                            && !this.GetValue(IsWorkingDirectoryNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether logs reading can be stopped or not.
 	/// </summary>
-	public bool CanStopReadingLogs => this.GetValue(CanStopReadingLogsProperty);
+	public bool CanStopReadingLogs => this.GetValue(CanStopReadingLogsProp);
 
 
 	// Check whether memory usage of application is too high to stop reading logs or not.
@@ -1503,18 +1503,18 @@ class Session : ViewModel<IULogViewerApplication>
 		else if (percentage > SettingKeys.MaxPhysicalMemoryUsagePercentageToStopReadingLogs)
 			percentage = SettingKeys.MaxPhysicalMemoryUsagePercentageToStopReadingLogs;
 		var threshold = Math.Max(500L << 20, (long)(physicalMemorySize.Value * (percentage / 100.0) + 0.5));
-		if (!this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (!this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
 			if (privateMemoryUsage.Value >= threshold + (50L << 20))
 			{
 				// update state
 				this.Logger.LogWarning("Private memory usage ({privateMemoryUsage} MB) is too high, stop reading logs. Physical memory: {physicalMemorySize} MB", (privateMemoryUsage.Value >> 20), (physicalMemorySize.Value >> 20));
-				this.SetValue(IsHighMemoryUsageToStopReadingLogsProperty, true);
+				this.SetValue(IsHighMemoryUsageToStopReadingLogsProp, true);
 			
 				// stop or pause reading logs
-				if (!this.GetValue(IsReadingLogsContinuouslyProperty))
+				if (!this.GetValue(IsReadingLogsContinuouslyProp))
 					this.StopReadingLogs();
-				else if (!this.GetValue(IsLogsReadingPausedProperty))
+				else if (!this.GetValue(IsLogsReadingPausedProp))
 					this.PauseResumeLogsReading();
 			}
 		}
@@ -1523,7 +1523,7 @@ class Session : ViewModel<IULogViewerApplication>
 			if (privateMemoryUsage.Value <= threshold - (50L << 20))
 			{
 				this.Logger.LogWarning("Private memory usage becomes lower to allow reading logs");
-				this.ResetValue(IsHighMemoryUsageToStopReadingLogsProperty);
+				this.ResetValue(IsHighMemoryUsageToStopReadingLogsProp);
 			}
 		}
 	}
@@ -1534,8 +1534,8 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		if (this.IsDisposed)
 			return;
-		this.PersistentState.SetValue(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProperty)
-		                                                           && !this.GetValue(IsMarkedLogsPanelVisibleProperty)
+		this.PersistentState.SetValue(areAllPanelsHiddenKey, !this.GetValue(IsLogFilesPanelVisibleProp)
+		                                                           && !this.GetValue(IsMarkedLogsPanelVisibleProp)
 		                                                           && !this.LogCategorizing.IsTimestampCategoriesPanelVisible
 		                                                           && !this.LogAnalysis.IsPanelVisible);
 	}
@@ -1550,8 +1550,8 @@ class Session : ViewModel<IULogViewerApplication>
 		var errorCount = 0;
 		if (dataSourceCount == 0)
 		{
-			this.SetValue(HasAllDataSourceErrorsProperty, this.hasLogDataSourceCreationFailure);
-			this.SetValue(HasPartialDataSourceErrorsProperty, false);
+			this.SetValue(HasAllDataSourceErrorsProp, this.hasLogDataSourceCreationFailure);
+			this.SetValue(HasPartialDataSourceErrorsProp, false);
 			// ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 			this.checkIsWaitingForDataSourcesAction?.Schedule();
 			return;
@@ -1563,13 +1563,13 @@ class Session : ViewModel<IULogViewerApplication>
 		}
 		if (errorCount == 0)
 		{
-			this.SetValue(HasAllDataSourceErrorsProperty, false);
-			this.SetValue(HasPartialDataSourceErrorsProperty, false);
+			this.SetValue(HasAllDataSourceErrorsProp, false);
+			this.SetValue(HasPartialDataSourceErrorsProp, false);
 		}
 		else
 		{
-			this.SetValue(HasAllDataSourceErrorsProperty, errorCount >= dataSourceCount);
-			this.SetValue(HasPartialDataSourceErrorsProperty, errorCount < dataSourceCount);
+			this.SetValue(HasAllDataSourceErrorsProp, errorCount >= dataSourceCount);
+			this.SetValue(HasPartialDataSourceErrorsProp, errorCount < dataSourceCount);
 		}
 		this.checkIsWaitingForDataSourcesAction.Schedule();
 	}
@@ -1582,7 +1582,7 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		var profile = this.LogProfile;
 		if (profile is null || this.logReaders.IsEmpty() || this.HasAllDataSourceErrors)
-			this.SetValue(IsWaitingForDataSourcesProperty, false);
+			this.SetValue(IsWaitingForDataSourcesProp, false);
 		else
 		{
 			var isWaiting = false;
@@ -1594,7 +1594,7 @@ class Session : ViewModel<IULogViewerApplication>
 					break;
 				}
 			}
-			this.SetValue(IsWaitingForDataSourcesProperty, isWaiting);
+			this.SetValue(IsWaitingForDataSourcesProp, isWaiting);
 		}
 	}
 	
@@ -1637,9 +1637,9 @@ class Session : ViewModel<IULogViewerApplication>
 			this.GenerateDebugMessage("Memory usage of logs becomes negative.");
 #endif
 		}
-		this.SetValue(LogsMemoryUsageProperty, logsMemoryUsage);
+		this.SetValue(LogsMemoryUsageProp, logsMemoryUsage);
 		totalLogsMemoryUsage += logsMemoryUsage - prevLogsMemoryUsage;
-		this.SetValue(TotalLogsMemoryUsageProperty, totalLogsMemoryUsage + LogBuilder.SharedCachesMemorySize);
+		this.SetValue(TotalLogsMemoryUsageProp, totalLogsMemoryUsage + LogBuilder.SharedCachesMemorySize);
 
 		// hibernate sessions if needed
 		hibernateSessionsAction.Schedule();
@@ -1688,24 +1688,24 @@ class Session : ViewModel<IULogViewerApplication>
 			this.logFileInfoList.Clear();
 			this.TrackLogFileCount();
 		}
-		this.ResetValue(HasLogFilesProperty);
+		this.ResetValue(HasLogFilesProp);
 		this.UpdateCanAddLogFile();
-		this.ResetValue(CommandProperty);
-		this.ResetValue(IPEndPointProperty);
-		this.ResetValue(ProcessIdProperty);
-		this.ResetValue(ProcessNameProperty);
-		this.ResetValue(UriProperty);
-		this.ResetValue(HasWorkingDirectoryProperty);
-		this.ResetValue(UseTextShellToExecuteCommandProperty);
-		this.ResetValue(WorkingDirectoryNameProperty);
-		this.ResetValue(WorkingDirectoryPathProperty);
+		this.ResetValue(CommandProp);
+		this.ResetValue(IPEndPointProp);
+		this.ResetValue(ProcessIdProp);
+		this.ResetValue(ProcessNameProp);
+		this.ResetValue(UriProp);
+		this.ResetValue(HasWorkingDirectoryProp);
+		this.ResetValue(UseTextShellToExecuteCommandProp);
+		this.ResetValue(WorkingDirectoryNameProp);
+		this.ResetValue(WorkingDirectoryPathProp);
 	}
 
 
 	/// <summary>
 	/// Get command for reading logs.
 	/// </summary>
-	public string? Command => this.GetValue(CommandProperty);
+	public string? Command => this.GetValue(CommandProp);
 
 
 	// Compare displayable logs.
@@ -1929,7 +1929,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// start copying
 		this.Logger.LogDebug("Start copying logs");
-		this.SetValue(IsCopyingLogsProperty, true);
+		this.SetValue(IsCopyingLogsProp, true);
 		logWriter.Start();
 		await this.WaitForNecessaryTaskAsync(writingLogsTaskCompletionSource.Task);
 
@@ -1949,7 +1949,7 @@ class Session : ViewModel<IULogViewerApplication>
 		else
 			this.Logger.LogError("Logs copying failed");
 		if (!this.IsDisposed)
-			this.SetValue(IsCopyingLogsProperty, false);
+			this.SetValue(IsCopyingLogsProp, false);
 	}
 
 
@@ -2008,7 +2008,7 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 			
 			// check memory usage
-			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 			{
 				this.Logger.LogError("Cannot create log reader because of high private memory usage");
 				return false;
@@ -2028,7 +2028,7 @@ class Session : ViewModel<IULogViewerApplication>
 					};
 					it.DebugMessageGenerated += (_, e) =>
 						this.GenerateDebugMessage($"[DisplayableLogGroup] {e.Message}");
-					it.IsShowingRawLogsTemporarily = this.GetValue(IsShowingRawLogLinesTemporarilyProperty);
+					it.IsShowingRawLogsTemporarily = this.GetValue(IsShowingRawLogLinesTemporarilyProp);
 				});
 				this.DisplayableLogGroupCreated?.Invoke(this, EventArgs.Empty);
 			}
@@ -2042,7 +2042,7 @@ class Session : ViewModel<IULogViewerApplication>
 				it.IsContinuousReading = profile.IsContinuousReading;
 				it.LogLevelMap = profile.LogLevelMapForReading;
 				it.LogPatternMatchingMode = profile.LogPatternMatchingMode;
-				it.LogPatterns = profile.LogPatterns.IsNotEmpty() && !this.GetValue(IsShowingRawLogLinesTemporarilyProperty)
+				it.LogPatterns = profile.LogPatterns.IsNotEmpty() && !this.GetValue(IsShowingRawLogLinesTemporarilyProp)
 					? profile.LogPatterns 
 					: [ new LogPattern("^(?<Message>.*)", false, false, null) ];
 				it.LogStringEncoding = profile.LogStringEncodingForReading;
@@ -2121,7 +2121,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.UpdateCanMarkUnmarkLogs();
 		this.UpdateCanPauseResumeLogsReading();
 		this.UpdateCanReloadLogs();
-		this.SetValue(HasLogReadersProperty, true);
+		this.SetValue(HasLogReadersProp, true);
 		
 		// complete
 		return true;
@@ -2196,8 +2196,8 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public string? CustomTitle
     {
-		get => this.GetValue(CustomTitleProperty);
-		set => this.SetValue(CustomTitleProperty, value);
+		get => this.GetValue(CustomTitleProp);
+		set => this.SetValue(CustomTitleProp, value);
     }
 
 
@@ -2210,7 +2210,7 @@ class Session : ViewModel<IULogViewerApplication>
 		{
 			// update state
 			this.Logger.LogWarning("Deactivate");
-			this.SetValue(IsActivatedProperty, false);
+			this.SetValue(IsActivatedProp, false);
 
 			// update log updating interval
 			if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
@@ -2232,7 +2232,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get the set of the defined log property names in the current log profile.
 	/// </summary>
-	public ISet<string> DefinedLogPropertyNames => this.GetValue(DefinedLogPropertyNamesProperty);
+	public ISet<string> DefinedLogPropertyNames => this.GetValue(DefinedLogPropertyNamesProp);
 
 
 	// Raised when group of displayable log created.
@@ -2243,7 +2243,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get list of <see cref="DisplayableLog"/> needed to be shown on UI.
 	/// </summary>
 	public IList<DisplayableLogProperty> DisplayLogProperties => 
-		this.GetValue(DisplayLogPropertiesProperty);
+		this.GetValue(DisplayLogPropertiesProp);
 
 
 	// Dispose.
@@ -2389,8 +2389,8 @@ class Session : ViewModel<IULogViewerApplication>
 				this.UpdateCanPauseResumeLogsReading();
 				this.UpdateCanReloadLogs(profile);
 				this.updateCanStopReadingLogsAction.Execute();
-				this.ResetValue(HasLogReadersProperty);
-				this.ResetValue(IsLogsReadingPausedProperty);
+				this.ResetValue(HasLogReadersProp);
+				this.ResetValue(IsLogsReadingPausedProp);
 				this.AllLogReadersDisposed?.Invoke();
 			}
 		}
@@ -2432,13 +2432,13 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get the earliest timestamp of log in <see cref="AllLogs"/>.
 	/// </summary>
-	public DateTime? EarliestAllLogTimestamp => this.GetValue(EarliestAllLogTimestampProperty);
+	public DateTime? EarliestAllLogTimestamp => this.GetValue(EarliestAllLogTimestampProp);
 
 
 	/// <summary>
 	/// Get the earliest timestamp of log in <see cref="Logs"/>.
 	/// </summary>
-	public DateTime? EarliestLogTimestamp => this.GetValue(EarliestLogTimestampProperty);
+	public DateTime? EarliestLogTimestamp => this.GetValue(EarliestLogTimestampProp);
 
 
 	/// <summary>
@@ -2457,7 +2457,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get number of filtered logs.
 	/// </summary>
 	public int FilteredLogCount => 
-		this.GetValue(FilteredLogCountProperty);
+		this.GetValue(FilteredLogCountProp);
 
 
 	/// <summary>
@@ -2551,109 +2551,109 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Check whether errors are found in all data sources or not.
 	/// </summary>
-	public bool HasAllDataSourceErrors => this.GetValue(HasAllDataSourceErrorsProperty);
+	public bool HasAllDataSourceErrors => this.GetValue(HasAllDataSourceErrorsProp);
 	
 	
 	/// <summary>
 	/// Check whether <see cref="AllLogsDuration"/> is valid or not.
 	/// </summary>
-	public bool HasAllLogsDuration => this.GetValue(HasAllLogsDurationProperty);
+	public bool HasAllLogsDuration => this.GetValue(HasAllLogsDurationProp);
 
 
 	/// <summary>
 	/// Check whether <see cref="CustomTitle"/> has been set or not.
 	/// </summary>
-	public bool HasCustomTitle => this.GetValue(HasCustomTitleProperty);
+	public bool HasCustomTitle => this.GetValue(HasCustomTitleProp);
 
 
 	/// <summary>
 	/// Check whether <see cref="IPEndPoint"/> is non-null or not.
 	/// </summary>
-	public bool HasIPEndPoint => this.GetValue(HasIPEndPointProperty);
+	public bool HasIPEndPoint => this.GetValue(HasIPEndPointProp);
 
 
 	/// <summary>
 	/// Check whether <see cref="LastLogsReadingDuration"/> is valid or not.
 	/// </summary>
-	public bool HasLastLogsReadingDuration => this.GetValue(HasLastLogsReadingDurationProperty);
+	public bool HasLastLogsReadingDuration => this.GetValue(HasLastLogsReadingDurationProp);
 
 
 	/// <summary>
 	/// Check whether color indicator of log is needed or not.
 	/// </summary>
-	public bool HasLogColorIndicator => this.GetValue(HasLogColorIndicatorProperty);
+	public bool HasLogColorIndicator => this.GetValue(HasLogColorIndicatorProp);
 
 
 	/// <summary>
 	/// Check whether color indicator of log by file name is needed or not.
 	/// </summary>
-	public bool HasLogColorIndicatorByFileName => this.GetValue(HasLogColorIndicatorByFileNameProperty);
+	public bool HasLogColorIndicatorByFileName => this.GetValue(HasLogColorIndicatorByFileNameProp);
 
 
 	/// <summary>
 	/// Check whether at least one log file was added to session or not.
 	/// </summary>
-	public bool HasLogFiles => this.GetValue(HasLogFilesProperty);
+	public bool HasLogFiles => this.GetValue(HasLogFilesProp);
 	
 	
 	/// <summary>
 	/// Check whether at least one log pattern has been defined in log profile or not.
 	/// </summary>
-	public bool HasLogPatterns => this.GetValue(HasLogPatternsProperty);
+	public bool HasLogPatterns => this.GetValue(HasLogPatternsProp);
 
 
 	/// <summary>
 	/// Check whether <see cref="LogProfile"/> is valid or not.
 	/// </summary>
-	public bool HasLogProfile => this.GetValue(HasLogProfileProperty);
+	public bool HasLogProfile => this.GetValue(HasLogProfileProp);
 
 
 	/// <summary>
 	/// Check whether at least one log reader created or not.
 	/// </summary>
-	public bool HasLogReaders => this.GetValue(HasLogReadersProperty);
+	public bool HasLogReaders => this.GetValue(HasLogReadersProp);
 
 
 	/// <summary>
 	/// Check whether at least one log is read or not.
 	/// </summary>
-	public bool HasLogs => this.GetValue(HasLogsProperty);
+	public bool HasLogs => this.GetValue(HasLogsProp);
 
 
 	/// <summary>
 	/// Check whether <see cref="LogsDuration"/> is valid or not.
 	/// </summary>
-	public bool HasLogsDuration => this.GetValue(HasLogsDurationProperty);
+	public bool HasLogsDuration => this.GetValue(HasLogsDurationProp);
 
 
 	/// <summary>
 	/// Check whether at least one log has been marked or not.
 	/// </summary>
-	public bool HasMarkedLogs => this.GetValue(HasMarkedLogsProperty);
+	public bool HasMarkedLogs => this.GetValue(HasMarkedLogsProp);
 
 
 	/// <summary>
 	/// Check whether errors are found in some of data sources or not.
 	/// </summary>
-	public bool HasPartialDataSourceErrors => this.GetValue(HasPartialDataSourceErrorsProperty);
+	public bool HasPartialDataSourceErrors => this.GetValue(HasPartialDataSourceErrorsProp);
 
 
 	/// <summary>
 	/// Check whether URI has been set or not.
 	/// </summary>
-	public bool HasUri => this.GetValue(HasUriProperty);
+	public bool HasUri => this.GetValue(HasUriProp);
 
 
 	/// <summary>
 	/// Check whether at least one property of <see cref="DisplayableLog"/> which represents timestamp will be shown in UI or not.
 	/// </summary>
-	public bool HasTimestampDisplayableLogProperty => this.GetValue(HasTimestampDisplayableLogPropertyProperty);
+	public bool HasTimestampDisplayableLogProperty => this.GetValue(HasTimestampDisplayableLogPropertyProp);
 
 
 	/// <summary>
 	/// Check whether working directory has been set or not.
 	/// </summary>
-	public bool HasWorkingDirectory => this.GetValue(HasWorkingDirectoryProperty);
+	public bool HasWorkingDirectory => this.GetValue(HasWorkingDirectoryProp);
 
 
 	// Hibernate the session.
@@ -2673,7 +2673,7 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogWarning("Hibernate with {logReaderCount} log reader(s) and {allLogCount} log(s)", this.logReaders.Count, this.AllLogCount);
 
 		// update state
-		this.SetValue(IsHibernatedProperty, true);
+		this.SetValue(IsHibernatedProp, true);
 
 		// dispose log readers
 		this.DisposeLogReaders();
@@ -2686,79 +2686,79 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get icon of session.
 	/// </summary>
-	public IImage? Icon => this.GetValue(IconProperty);
+	public IImage? Icon => this.GetValue(IconProp);
 
 
 	/// <summary>
 	/// Get current <see cref="IPEndPoint"/> to read logs from.
 	/// </summary>
-	public IPEndPoint? IPEndPoint => this.GetValue(IPEndPointProperty);
+	public IPEndPoint? IPEndPoint => this.GetValue(IPEndPointProp);
 
 
 	/// <summary>
 	/// Check whether session has been activated or not.
 	/// </summary>
-	public bool IsActivated => this.GetValue(IsActivatedProperty);
+	public bool IsActivated => this.GetValue(IsActivatedProp);
 
 
 	/// <summary>
 	/// Check whether logs are being analyzed or not.
 	/// </summary>
-	public bool IsAnalyzingLogs => this.GetValue(IsAnalyzingLogsProperty);
+	public bool IsAnalyzingLogs => this.GetValue(IsAnalyzingLogsProp);
 
 
 	/// <summary>
 	/// Check whether current log profile is a built-in log profile or not.
 	/// </summary>
-	public bool IsBuiltInLogProfile => this.GetValue(IsBuiltInLogProfileProperty);
+	public bool IsBuiltInLogProfile => this.GetValue(IsBuiltInLogProfileProp);
 	
 	
 	/// <summary>
 	/// Check whether command is needed or not.
 	/// </summary>
-	public bool IsCommandNeeded => this.GetValue(IsCommandNeededProperty);
+	public bool IsCommandNeeded => this.GetValue(IsCommandNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether command is supported or not.
 	/// </summary>
-	public bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
+	public bool IsCommandSupported => this.GetValue(IsCommandSupportedProp);
 
 
 	/// <summary>
 	/// Check whether logs copying is on-going or not.
 	/// </summary>
-	public bool IsCopyingLogs => this.GetValue(IsCopyingLogsProperty);
+	public bool IsCopyingLogs => this.GetValue(IsCopyingLogsProp);
 	
 	
 	/// <summary>
 	/// Check whether current log data source provider is embedded <see cref="ScriptLogDataSourceProvider"/> or not.
 	/// </summary>
-	public bool IsEmbeddedScriptLogDataSourceProvider => this.GetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
+	public bool IsEmbeddedScriptLogDataSourceProvider => this.GetValue(IsEmbeddedScriptLogDataSourceProviderProp);
 
 
 	/// <summary>
 	/// Check whether session is hibernated or not.
 	/// </summary>
-	public bool IsHibernated => this.GetValue(IsHibernatedProperty);
+	public bool IsHibernated => this.GetValue(IsHibernatedProp);
 	
 	
 	/// <summary>
 	/// Check whether memory usage is too high to stop reading logs or not.
 	/// </summary>
-	public bool IsHighMemoryUsageToStopReadingLogs => this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty);
+	public bool IsHighMemoryUsageToStopReadingLogs => this.GetValue(IsHighMemoryUsageToStopReadingLogsProp);
 
 
 	/// <summary>
 	/// Check whether IP endpoint is needed or not.
 	/// </summary>
-	public bool IsIPEndPointNeeded => this.GetValue(IsIPEndPointNeededProperty);
+	public bool IsIPEndPointNeeded => this.GetValue(IsIPEndPointNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether IP endpoint is supported or not.
 	/// </summary>
-	public bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
+	public bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProp);
 
 
 	/// <summary>
@@ -2773,7 +2773,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Check whether logs file is needed or not.
 	/// </summary>
-	public bool IsLogFileNeeded => this.GetValue(IsLogFileNeededProperty);
+	public bool IsLogFileNeeded => this.GetValue(IsLogFileNeededProp);
 
 
 	/// <summary>
@@ -2781,21 +2781,21 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public bool IsLogFilesPanelVisible 
 	{
-		 get => this.GetValue(IsLogFilesPanelVisibleProperty);
-		 set => this.SetValue(IsLogFilesPanelVisibleProperty, value);
+		 get => this.GetValue(IsLogFilesPanelVisibleProp);
+		 set => this.SetValue(IsLogFilesPanelVisibleProp, value);
 	}
 
 
 	/// <summary>
 	/// Check whether logs file is supported or not.
 	/// </summary>
-	public bool IsLogFileSupported => this.GetValue(IsLogFileSupportedProperty);
+	public bool IsLogFileSupported => this.GetValue(IsLogFileSupportedProp);
 
 
 	/// <summary>
 	/// Check whether logs reading has been paused or not.
 	/// </summary>
-	public bool IsLogsReadingPaused => this.GetValue(IsLogsReadingPausedProperty);
+	public bool IsLogsReadingPaused => this.GetValue(IsLogsReadingPausedProp);
 
 
 	/// <summary>
@@ -2812,166 +2812,166 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public bool IsMarkedLogsPanelVisible 
 	{
-		 get => this.GetValue(IsMarkedLogsPanelVisibleProperty);
-		 set => this.SetValue(IsMarkedLogsPanelVisibleProperty, value);
+		 get => this.GetValue(IsMarkedLogsPanelVisibleProp);
+		 set => this.SetValue(IsMarkedLogsPanelVisibleProp, value);
 	}
 
 
 	/// <summary>
 	/// Check whether specifying max log reading count is allowed or not.
 	/// </summary>
-	public bool IsSpecifyingMaxLogReadingCountAllowed => this.GetValue(IsSpecifyingMaxLogReadingCountAllowedProperty);
+	public bool IsSpecifyingMaxLogReadingCountAllowed => this.GetValue(IsSpecifyingMaxLogReadingCountAllowedProp);
 	
 	
 	/// <summary>
 	/// Check whether PID is needed or not.
 	/// </summary>
-	public bool IsProcessIdNeeded => this.GetValue(IsProcessIdNeededProperty);
+	public bool IsProcessIdNeeded => this.GetValue(IsProcessIdNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether PID is supported or not.
 	/// </summary>
-	public bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProperty);
+	public bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProp);
 	
 	
 	/// <summary>
 	/// Check whether process name is needed or not.
 	/// </summary>
-	public bool IsProcessNameNeeded => this.GetValue(IsProcessNameNeededProperty);
+	public bool IsProcessNameNeeded => this.GetValue(IsProcessNameNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether process name is supported or not.
 	/// </summary>
-	public bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProperty);
+	public bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProp);
 
 
 	/// <summary>
 	/// Check whether logs are being processed or not.
 	/// </summary>
-	public bool IsProcessingLogs => this.GetValue(IsProcessingLogsProperty);
+	public bool IsProcessingLogs => this.GetValue(IsProcessingLogsProp);
 	
 
 	/// <summary>
 	/// Check whether Pro-version is activated or not.
 	/// </summary>
-	public bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
+	public bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProp);
 
 
 	/// <summary>
 	/// Check whether logs are being read or not.
 	/// </summary>
-	public bool IsReadingLogs => this.GetValue(IsReadingLogsProperty);
+	public bool IsReadingLogs => this.GetValue(IsReadingLogsProp);
 
 
 	/// <summary>
 	/// Check whether logs are being read continuously or not.
 	/// </summary>
-	public bool IsReadingLogsContinuously => this.GetValue(IsReadingLogsContinuouslyProperty);
+	public bool IsReadingLogsContinuously => this.GetValue(IsReadingLogsContinuouslyProp);
 
 
 	/// <summary>
 	/// Check whether one or more log files are being removed or not.
 	/// </summary>
-	public bool IsRemovingLogFiles => this.GetValue(IsRemovingLogFilesProperty);
+	public bool IsRemovingLogFiles => this.GetValue(IsRemovingLogFilesProp);
 
 
 	/// <summary>
 	/// Check whether restarting application as administrator is needed to use current log profile or not.
 	/// </summary>
-	public bool IsRestartAsAdministratorNeeded => this.GetValue(IsRestartAsAdministratorNeededProperty);
+	public bool IsRestartAsAdministratorNeeded => this.GetValue(IsRestartAsAdministratorNeededProp);
 
 
 	/// <summary>
 	/// Check whether logs saving is on-going or not.
 	/// </summary>
-	public bool IsSavingLogs => this.GetValue(IsSavingLogsProperty);
+	public bool IsSavingLogs => this.GetValue(IsSavingLogsProp);
 	
 	
 	/// <summary>
 	/// Check whether current log data source provider is <see cref="ScriptLogDataSourceProvider"/> or not.
 	/// </summary>
-	public bool IsScriptLogDataSourceProvider => this.GetValue(IsScriptLogDataSourceProviderProperty);
+	public bool IsScriptLogDataSourceProvider => this.GetValue(IsScriptLogDataSourceProviderProp);
 
 
 	/// <summary>
 	/// Check whether all logs are shown temporarily.
 	/// </summary>
-	public bool IsShowingAllLogsTemporarily => this.GetValue(IsShowingAllLogsTemporarilyProperty);
+	public bool IsShowingAllLogsTemporarily => this.GetValue(IsShowingAllLogsTemporarilyProp);
 
 
 	/// <summary>
 	/// Check whether showing marked logs temporarily or not.
 	/// </summary>
-	public bool IsShowingMarkedLogsTemporarily => this.GetValue(IsShowingMarkedLogsTemporarilyProperty);
+	public bool IsShowingMarkedLogsTemporarily => this.GetValue(IsShowingMarkedLogsTemporarilyProp);
 	
 	
 	/// <summary>
 	/// Check whether raw log lines are shown temporarily.
 	/// </summary>
-	public bool IsShowingRawLogLinesTemporarily => this.GetValue(IsShowingRawLogLinesTemporarilyProperty);
+	public bool IsShowingRawLogLinesTemporarily => this.GetValue(IsShowingRawLogLinesTemporarilyProp);
 
 
 	/// <summary>
 	/// Check whether URI is needed or not.
 	/// </summary>
-	public bool IsUriNeeded => this.GetValue(IsUriNeededProperty);
+	public bool IsUriNeeded => this.GetValue(IsUriNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether URI is supported or not.
 	/// </summary>
-	public bool IsUriSupported => this.GetValue(IsUriSupportedProperty);
+	public bool IsUriSupported => this.GetValue(IsUriSupportedProp);
 
 
 	/// <summary>
 	/// Check data sources are not ready for reading logs.
 	/// </summary>
-	public bool IsWaitingForDataSources => this.GetValue(IsWaitingForDataSourcesProperty);
+	public bool IsWaitingForDataSources => this.GetValue(IsWaitingForDataSourcesProp);
 
 
 	/// <summary>
 	/// Check whether working directory is needed or not.
 	/// </summary>
-	public bool IsWorkingDirectoryNeeded => this.GetValue(IsWorkingDirectoryNeededProperty);
+	public bool IsWorkingDirectoryNeeded => this.GetValue(IsWorkingDirectoryNeededProp);
 	
 	
 	/// <summary>
 	/// Check whether working directory is supported or not.
 	/// </summary>
-	public bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
+	public bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProp);
 
 
 	/// <summary>
 	/// Get the last precondition of log reading.
 	/// </summary>
-	public LogReadingPrecondition LastLogReadingPrecondition => this.GetValue(LastLogReadingPreconditionProperty);
+	public LogReadingPrecondition LastLogReadingPrecondition => this.GetValue(LastLogReadingPreconditionProp);
 
 
 	/// <summary>
 	/// Get the duration of last logs reading.
 	/// </summary>
-	public TimeSpan? LastLogsReadingDuration => this.GetValue(LastLogsReadingDurationProperty);
+	public TimeSpan? LastLogsReadingDuration => this.GetValue(LastLogsReadingDurationProp);
 	
 	
 	/// <summary>
 	/// Get the latest timestamp of log in <see cref="AllLogs"/>.
 	/// </summary>
-	public DateTime? LatestAllLogTimestamp => this.GetValue(LatestAllLogTimestampProperty);
+	public DateTime? LatestAllLogTimestamp => this.GetValue(LatestAllLogTimestampProp);
 
 
 	/// <summary>
 	/// Get the latest timestamp of log in <see cref="Logs"/>.
 	/// </summary>
-	public DateTime? LatestLogTimestamp => this.GetValue(LatestLogTimestampProperty);
+	public DateTime? LatestLogTimestamp => this.GetValue(LatestLogTimestampProp);
 
 
 	// Load marked logs from file.
 	async Task LoadMarkedLogs(string fileName)
 	{
 		// check state
-		if (this.GetValue(IsShowingRawLogLinesTemporarilyProperty))
+		if (this.GetValue(IsShowingRawLogLinesTemporarilyProp))
 		{
 			this.Logger.LogWarning("Skip loading marked log(s) of '{fileName}' because of showing raw log lines", fileName);
 			return;
@@ -3040,7 +3040,7 @@ class Session : ViewModel<IULogViewerApplication>
 		});
 
 		// check state
-		if (this.GetValue(IsShowingRawLogLinesTemporarilyProperty))
+		if (this.GetValue(IsShowingRawLogLinesTemporarilyProp))
 		{
 			this.Logger.LogWarning("Skip loaded marked log(s) of '{fileName}' because of showing raw log lines", fileName);
 			return;
@@ -3095,8 +3095,8 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public double LogFilesPanelSize
 	{
-		 get => this.GetValue(LogFilesPanelSizeProperty);
-		 set => this.SetValue(LogFilesPanelSizeProperty, value);
+		 get => this.GetValue(LogFilesPanelSizeProp);
+		 set => this.SetValue(LogFilesPanelSizeProp, value);
 	}
 
 
@@ -3110,21 +3110,21 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get current log profile.
 	/// </summary>
 	public LogProfile? LogProfile => 
-		this.GetValue(LogProfileProperty);
+		this.GetValue(LogProfileProp);
 	
 	
 	/// <summary>
 	/// Get name of current log profile.
 	/// </summary>
 	public string? LogProfileName => 
-		this.GetValue(LogProfileNameProperty);
+		this.GetValue(LogProfileNameProp);
 
 
 	/// <summary>
 	/// Get list of <see cref="DisplayableLog"/>s to display.
 	/// </summary>
 	public IList<DisplayableLog> Logs => 
-		this.GetValue(LogsProperty);
+		this.GetValue(LogsProp);
 
 
 	/// <summary>
@@ -3136,31 +3136,31 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get duration of <see cref="Logs"/>.
 	/// </summary>
-	public TimeSpan? LogsDuration => this.GetValue(LogsDurationProperty);
+	public TimeSpan? LogsDuration => this.GetValue(LogsDurationProp);
 
 
 	/// <summary>
 	/// Get string to describe ending point of <see cref="LogsDuration"/>.
 	/// </summary>
-	public string? LogsDurationEndingString => this.GetValue(LogsDurationEndingStringProperty);
+	public string? LogsDurationEndingString => this.GetValue(LogsDurationEndingStringProp);
 
 
 	/// <summary>
 	/// Get string to describe starting point of <see cref="LogsDuration"/>.
 	/// </summary>
-	public string? LogsDurationStartingString => this.GetValue(LogsDurationStartingStringProperty);
+	public string? LogsDurationStartingString => this.GetValue(LogsDurationStartingStringProp);
 
 
 	/// <summary>
 	/// Get size of memory usage of logs by the <see cref="Session"/> instance in bytes.
 	/// </summary>
-	public long LogsMemoryUsage => this.GetValue(LogsMemoryUsageProperty);
+	public long LogsMemoryUsage => this.GetValue(LogsMemoryUsageProp);
 
 
 	/// <summary>
 	/// Get monotonic counter that increments whenever <see cref="AllLogs"/> or filtered logs change in a way that invalidates pinned log IDs.
 	/// </summary>
-	public int LogsVersion => this.GetValue(LogsVersionProperty);
+	public int LogsVersion => this.GetValue(LogsVersionProp);
 
 
 	/// <summary>
@@ -3180,8 +3180,8 @@ class Session : ViewModel<IULogViewerApplication>
 	/// </summary>
 	public double MarkedLogsPanelSize
 	{
-		 get => this.GetValue(MarkedLogsPanelSizeProperty);
-		 set => this.SetValue(MarkedLogsPanelSizeProperty, value);
+		 get => this.GetValue(MarkedLogsPanelSizeProp);
+		 set => this.SetValue(MarkedLogsPanelSizeProp, value);
 	}
 
 
@@ -3327,36 +3327,36 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get maximum number of log files added to the session.
 	/// </summary>
-	public int MaxLogFileCount => this.GetValue(MaxLogFileCountProperty);
+	public int MaxLogFileCount => this.GetValue(MaxLogFileCountProp);
 
 
 	/// <summary>
 	/// Get maximum time span of log in <see cref="Logs"/>.
 	/// </summary>
 	public TimeSpan? MaxLogTimeSpan => 
-		this.GetValue(MaxLogTimeSpanProperty);
+		this.GetValue(MaxLogTimeSpanProp);
 
 
 	/// <summary>
 	/// Get minimum time span of log in <see cref="Logs"/>.
 	/// </summary>
 	public TimeSpan? MinLogTimeSpan => 
-		this.GetValue(MinLogTimeSpanProperty);
+		this.GetValue(MinLogTimeSpanProp);
 	
 	
 	// Called when all log files were cleared.
 	void OnAllLogFilesCleared()
 	{
 		this.canClearLogFiles.Update(false);
-		var profile = this.GetValue(LogProfileProperty);
+		var profile = this.GetValue(LogProfileProp);
 		if (!this.IsDisposed)
 		{
-			this.ResetValue(HasLogFilesProperty);
+			this.ResetValue(HasLogFilesProp);
 			if (profile is not null
 			    && profile.DataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName))
 			    && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 			{
-				this.SetValue(IsLogFileNeededProperty, true);
+				this.SetValue(IsLogFileNeededProp, true);
 			}
 		}
 		this.updateTitleAndIconAction.Schedule();
@@ -3388,10 +3388,10 @@ class Session : ViewModel<IULogViewerApplication>
 			// update log count properties
 			if ((!this.LogFiltering.IsFilteringNeeded && !this.IsShowingMarkedLogsTemporarily) || this.IsShowingAllLogsTemporarily)
 			{
-				this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+				this.SetValue(HasLogsProp, this.allLogs.IsNotEmpty());
 				this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 			}
-			this.SetValue(AllLogCountProperty, this.allLogs.Count);
+			this.SetValue(AllLogCountProp, this.allLogs.Count);
 
 			// bump LogsVersion if pinned log IDs were invalidated
 			if (ShouldUpdateLogsVersion(e.Action))
@@ -3426,10 +3426,10 @@ class Session : ViewModel<IULogViewerApplication>
 			// update log count properties
 			if (this.LogFiltering.IsFilteringNeeded && !this.IsShowingAllLogsTemporarily && !this.IsShowingMarkedLogsTemporarily)
 			{
-				this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
+				this.SetValue(HasLogsProp, this.LogFiltering.FilteredLogs.IsNotEmpty());
 				this.reportLogsTimeInfoAction.Schedule(LogsTimeInfoReportingInterval);
 			}
-			this.SetValue(FilteredLogCountProperty, this.LogFiltering.FilteredLogs.Count);
+			this.SetValue(FilteredLogCountProp, this.LogFiltering.FilteredLogs.Count);
 
 			// bump LogsVersion if pinned log IDs were invalidated
 			if (ShouldUpdateLogsVersion(e.Action))
@@ -3529,7 +3529,7 @@ class Session : ViewModel<IULogViewerApplication>
 		switch (e.PropertyName)
 		{
 			case nameof(LogProfile.AllowMultipleFiles):
-				if (this.GetValue(IsLogFileSupportedProperty))
+				if (this.GetValue(IsLogFileSupportedProp))
 				{
 					this.UpdateMaxLogFileCount(logProfile);
 					this.UpdateCanAddLogFile(logProfile);
@@ -3542,8 +3542,8 @@ class Session : ViewModel<IULogViewerApplication>
 				}
 				break;
 			case nameof(LogProfile.ColorIndicator):
-				this.SetValue(HasLogColorIndicatorProperty, this.LogProfile?.ColorIndicator != LogColorIndicator.None);
-				this.SetValue(HasLogColorIndicatorByFileNameProperty, this.LogProfile?.ColorIndicator == LogColorIndicator.FileName);
+				this.SetValue(HasLogColorIndicatorProp, this.LogProfile?.ColorIndicator != LogColorIndicator.None);
+				this.SetValue(HasLogColorIndicatorByFileNameProp, this.LogProfile?.ColorIndicator == LogColorIndicator.FileName);
 				this.ScheduleReloadingLogs(false, true);
 				break;
 			case nameof(LogProfile.DataSourceOptions):
@@ -3583,10 +3583,10 @@ class Session : ViewModel<IULogViewerApplication>
 				this.updateTitleAndIconAction.Schedule();
 				break;
 			case nameof(LogProfile.IsAdministratorNeeded):
-				this.SetValue(IsRestartAsAdministratorNeededProperty, logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator);
+				this.SetValue(IsRestartAsAdministratorNeededProp, logProfile.IsAdministratorNeeded && !this.Application.IsRunningAsAdministrator);
 				goto case nameof(LogProfile.DefaultLogLevel);
 			case nameof(LogProfile.IsContinuousReading):
-				this.SetValue(IsReadingLogsContinuouslyProperty, this.LogProfile.AsNonNull().IsContinuousReading);
+				this.SetValue(IsReadingLogsContinuouslyProp, this.LogProfile.AsNonNull().IsContinuousReading);
 				goto case nameof(LogProfile.DefaultLogLevel);
 			case nameof(LogProfile.IsTemplate):
 				if (logProfile.IsTemplate)
@@ -3613,7 +3613,7 @@ class Session : ViewModel<IULogViewerApplication>
 					goto case nameof(LogProfile.DefaultLogLevel);
 				break;
 			case nameof(LogProfile.Name):
-				this.SetValue(LogProfileNameProperty, logProfile.Name);
+				this.SetValue(LogProfileNameProp, logProfile.Name);
 				this.updateTitleAndIconAction.Schedule();
 				break;
 			case nameof(LogProfile.RestartReadingDelay):
@@ -3657,7 +3657,7 @@ class Session : ViewModel<IULogViewerApplication>
 				});
 				break;
 			case NotifyCollectionChangedAction.Remove:
-				if (this.GetValue(IsReadingLogsContinuouslyProperty) && this.GetValue(HasLogProfileProperty))
+				if (this.GetValue(IsReadingLogsContinuouslyProp) && this.GetValue(HasLogProfileProp))
 					this.TrackAllLogCount();
 				e.OldItems.AsNonNull().Let(oldItems =>
 				{
@@ -3690,7 +3690,7 @@ class Session : ViewModel<IULogViewerApplication>
 				});
 				break;
 			case NotifyCollectionChangedAction.Reset:
-				if (this.GetValue(IsReadingLogsContinuouslyProperty) && this.GetValue(HasLogProfileProperty))
+				if (this.GetValue(IsReadingLogsContinuouslyProp) && this.GetValue(HasLogProfileProp))
 					this.TrackAllLogCount();
 				if (this.logReaders.Count == 1 && this.logReaders.First() == logReader)
 				{
@@ -3770,12 +3770,12 @@ class Session : ViewModel<IULogViewerApplication>
 		if (!this.IsDisposed)
 		{
 			var hasLogs = this.markedLogs.IsNotEmpty();
-			this.SetValue(HasMarkedLogsProperty, hasLogs);
+			this.SetValue(HasMarkedLogsProp, hasLogs);
 			if (this.IsShowingMarkedLogsTemporarily)
 			{
-				this.SetValue(HasLogsProperty, hasLogs);
+				this.SetValue(HasLogsProp, hasLogs);
 				if (!hasLogs)
-					this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+					this.SetValue(IsShowingMarkedLogsTemporarilyProp, false);
 			}
 		}
 	}
@@ -3795,7 +3795,7 @@ class Session : ViewModel<IULogViewerApplication>
 			if (productId == Products.Professional)
 			{
 				// update state
-				this.SetValue(IsProVersionActivatedProperty, isActivated);
+				this.SetValue(IsProVersionActivatedProp, isActivated);
 				isSpecifyingMaxLogReadingCountAllowed.Update(true);
 			}
 		}
@@ -3805,38 +3805,38 @@ class Session : ViewModel<IULogViewerApplication>
 	protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 	{
 		base.OnPropertyChanged(property, oldValue, newValue);
-		if (property == AllLogCountProperty)
+		if (property == AllLogCountProp)
 		{
 			this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			if ((int)newValue! <= 0)
 				this.reportLogsTimeInfoAction.Execute();
 		}
-		else if (property == AllLogsDurationProperty)
-			this.SetValue(HasAllLogsDurationProperty, newValue is not null);
-		else if (property == CanAddLogFileProperty)
+		else if (property == AllLogsDurationProp)
+			this.SetValue(HasAllLogsDurationProp, newValue is not null);
+		else if (property == CanAddLogFileProp)
 			this.Logger.LogTrace("Can add log file: {canAdd}", newValue);
-		else if (property == CustomTitleProperty)
+		else if (property == CustomTitleProp)
 		{
 			if (newValue is not null)
 			{
-				this.SetValue(HasCustomTitleProperty, true);
+				this.SetValue(HasCustomTitleProp, true);
 				this.Application.UsageManager.TrackEvent(UsageEvents.SetCustomTitle, this.PrepareUsageTrackingProperties());
 			}
 			else
 			{
-				this.SetValue(HasCustomTitleProperty, false);
+				this.SetValue(HasCustomTitleProp, false);
 				this.Application.UsageManager.TrackEvent(UsageEvents.ClearCustomTitle, this.PrepareUsageTrackingProperties());
 			}
 			this.updateTitleAndIconAction.Schedule();
 		}
-		else if (property == HasLogsProperty
-			|| property == IsCopyingLogsProperty)
+		else if (property == HasLogsProp
+			|| property == IsCopyingLogsProp)
 		{
 			this.UpdateIsLogsWritingAvailable(this.LogProfile);
 		}
-		else if (property == IPEndPointProperty)
-			this.SetValue(HasIPEndPointProperty, newValue is not null);
-		else if (property == IsHighMemoryUsageToStopReadingLogsProperty)
+		else if (property == IPEndPointProp)
+			this.SetValue(HasIPEndPointProp, newValue is not null);
+		else if (property == IsHighMemoryUsageToStopReadingLogsProp)
 		{
 			var profile = this.LogProfile;
 			this.UpdateCanAddLogFile(profile);
@@ -3849,36 +3849,36 @@ class Session : ViewModel<IULogViewerApplication>
 			this.UpdateCanSetUri(profile);
 			this.UpdateCanSetWorkingDirectory(profile);
 		}
-		else if (property == IsLogFilesPanelVisibleProperty
-			|| property == IsMarkedLogsPanelVisibleProperty)
+		else if (property == IsLogFilesPanelVisibleProp
+			|| property == IsMarkedLogsPanelVisibleProp)
 		{
 			this.checkAreAllPanelsHiddenAction.Schedule();
 		}
-		else if (property == IsReadingLogsProperty
-			|| property == IsRemovingLogFilesProperty)
+		else if (property == IsReadingLogsProp
+			|| property == IsRemovingLogFilesProp)
 		{
-			if (!(bool)newValue! && this.GetValue(HasLogProfileProperty))
+			if (!(bool)newValue! && this.GetValue(HasLogProfileProp))
 				this.TrackAllLogCount();
 			this.updateIsProcessingLogsAction.Schedule();
 		}
-		else if (property == IsSavingLogsProperty)
+		else if (property == IsSavingLogsProp)
 		{
 			this.UpdateIsLogsWritingAvailable(this.LogProfile);
 			this.updateIsProcessingLogsAction.Schedule();
 		}
-		else if (property == IsShowingAllLogsTemporarilyProperty)
+		else if (property == IsShowingAllLogsTemporarilyProp)
 		{
 			if ((bool)newValue!)
 				this.Application.UsageManager.TrackEvent(UsageEvents.ShowAllLogsTemporarily, this.PrepareUsageTrackingProperties());
 			this.selectLogsToReportActions.Schedule();
 		}
-		else if (property == IsShowingMarkedLogsTemporarilyProperty)
+		else if (property == IsShowingMarkedLogsTemporarilyProp)
 		{
 			if ((bool)newValue!)
 				this.Application.UsageManager.TrackEvent(UsageEvents.ShowMarkedLogsTemporarily, this.PrepareUsageTrackingProperties());
 			this.selectLogsToReportActions.Schedule();
 		}
-		else if (property == IsShowingRawLogLinesTemporarilyProperty)
+		else if (property == IsShowingRawLogLinesTemporarilyProp)
 		{
 			var isShowing = (bool)newValue!;
 			if (this.displayableLogGroup is not null)
@@ -3890,23 +3890,23 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 			this.UpdateCanMarkUnmarkLogs();
 		}
-		else if (property == LastLogsReadingDurationProperty)
-			this.SetValue(HasLastLogsReadingDurationProperty, this.LastLogsReadingDuration is not null);
-		else if (property == LogFilesPanelSizeProperty)
+		else if (property == LastLogsReadingDurationProp)
+			this.SetValue(HasLastLogsReadingDurationProp, this.LastLogsReadingDuration is not null);
+		else if (property == LogFilesPanelSizeProp)
 		{
 			if (!this.isRestoringState)
 				this.PersistentState.SetValue(latestLogFilesPanelSizeKey, (double)newValue.AsNonNull());
 		}
-		else if (property == LogsDurationProperty)
-			this.SetValue(HasLogsDurationProperty, newValue is not null);
-		else if (property == LogProfileProperty)
+		else if (property == LogsDurationProp)
+			this.SetValue(HasLogsDurationProp, newValue is not null);
+		else if (property == LogProfileProp)
 		{
-			this.SetValue(HasLogProfileProperty, newValue is not null);
-			this.SetValue(IsBuiltInLogProfileProperty, (newValue as LogProfile)?.IsBuiltIn == true);
-			this.SetValue(IsRestartAsAdministratorNeededProperty, (newValue as LogProfile)?.IsAdministratorNeeded == true && !this.Application.IsRunningAsAdministrator);
-			this.SetValue(LogProfileNameProperty, (newValue as LogProfile)?.Name);
+			this.SetValue(HasLogProfileProp, newValue is not null);
+			this.SetValue(IsBuiltInLogProfileProp, (newValue as LogProfile)?.IsBuiltIn == true);
+			this.SetValue(IsRestartAsAdministratorNeededProp, (newValue as LogProfile)?.IsAdministratorNeeded == true && !this.Application.IsRunningAsAdministrator);
+			this.SetValue(LogProfileNameProp, (newValue as LogProfile)?.Name);
 		}
-		else if (property == LogsProperty)
+		else if (property == LogsProp)
 		{
 			// ReSharper disable ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 			if ((newValue as IList<DisplayableLog>).IsNullOrEmpty())
@@ -3915,15 +3915,15 @@ class Session : ViewModel<IULogViewerApplication>
 				this.reportLogsTimeInfoAction?.Reschedule();
 			// ReSharper restore ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
 		}
-		else if (property == MarkedLogsPanelSizeProperty)
+		else if (property == MarkedLogsPanelSizeProp)
 		{
 			if (!this.isRestoringState)
 				this.PersistentState.SetValue(latestMarkedLogsPanelSizeKey, (double)newValue.AsNonNull());
 		}
-		else if (property == MaxLogFileCountProperty)
+		else if (property == MaxLogFileCountProp)
 			this.UpdateCanAddLogFile();
-		else if (property == UriProperty)
-			this.SetValue(HasUriProperty, newValue is not null);
+		else if (property == UriProp)
+			this.SetValue(HasUriProp, newValue is not null);
 	}
 
 
@@ -3967,20 +3967,20 @@ class Session : ViewModel<IULogViewerApplication>
 		// pause or resume
 		if (this.IsLogsReadingPaused)
 		{
-			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+			if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 			{
 				this.Logger.LogError("Cannot resume reading logs because of high private memory usage");
 				return;
 			}
 			foreach (var logReader in this.logReaders)
 				logReader.Resume();
-			this.SetValue(IsLogsReadingPausedProperty, false);
+			this.SetValue(IsLogsReadingPausedProp, false);
 		}
 		else
 		{
 			foreach (var logReader in this.logReaders)
 				logReader.Pause();
-			this.SetValue(IsLogsReadingPausedProperty, true);
+			this.SetValue(IsLogsReadingPausedProp, true);
 		}
 	}
 
@@ -4001,13 +4001,13 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get process ID to read logs.
 	/// </summary>
-	public int? ProcessId => this.GetValue(ProcessIdProperty);
+	public int? ProcessId => this.GetValue(ProcessIdProp);
 
 
 	/// <summary>
 	/// Get process name to read logs.
 	/// </summary>
-	public string? ProcessName => this.GetValue(ProcessNameProperty);
+	public string? ProcessName => this.GetValue(ProcessNameProp);
 
 
 	// Reload log file.
@@ -4091,8 +4091,8 @@ class Session : ViewModel<IULogViewerApplication>
 			                    return true;
 		                    })
 		                    && !recreateLogReaders
-		                    && !this.GetValue(HasAllDataSourceErrorsProperty)
-		                    && !this.GetValue(HasPartialDataSourceErrorsProperty);
+		                    && !this.GetValue(HasAllDataSourceErrorsProp)
+		                    && !this.GetValue(HasPartialDataSourceErrorsProp);
 		if (clearLogsOnly)
 		{
 			foreach (var logReader in this.logReaders)
@@ -4234,9 +4234,9 @@ class Session : ViewModel<IULogViewerApplication>
 			{
 				this.isReplacingVisibleLogProperty = false;
 			}
-			var displayLogProperties = this.GetValue(DisplayLogPropertiesProperty).ToArray();
+			var displayLogProperties = this.GetValue(DisplayLogPropertiesProp).ToArray();
 			displayLogProperties[index] = new(this.Application, logProperty);
-			this.SetValue(DisplayLogPropertiesProperty, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
+			this.SetValue(DisplayLogPropertiesProp, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
 		}
 		else
 			logProfile.VisibleLogProperties = visibleLogProperties;
@@ -4257,9 +4257,9 @@ class Session : ViewModel<IULogViewerApplication>
 			var duration = profile.SortDirection == SortDirection.Ascending
 				? CalculateDurationBetweenLogs(firstLog, lastLog, out _, out _, out var earliestTimestamp, out var latestTimestamp)
 				: CalculateDurationBetweenLogs(lastLog, firstLog, out _, out _, out earliestTimestamp, out latestTimestamp);
-			this.SetValue(AllLogsDurationProperty, duration);
-			this.SetValue(EarliestAllLogTimestampProperty, earliestTimestamp);
-			this.SetValue(LatestAllLogTimestampProperty, latestTimestamp);
+			this.SetValue(AllLogsDurationProp, duration);
+			this.SetValue(EarliestAllLogTimestampProp, earliestTimestamp);
+			this.SetValue(LatestAllLogTimestampProp, latestTimestamp);
 			try
 			{
 				if (earliestTimestamp.HasValue && latestTimestamp.HasValue)
@@ -4267,35 +4267,35 @@ class Session : ViewModel<IULogViewerApplication>
 					var format = profile.TimestampFormatForDisplaying;
 					if (format is not null)
 					{
-						this.SetValue(AllLogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
-						this.SetValue(AllLogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
+						this.SetValue(AllLogsDurationStartingStringProp, earliestTimestamp.Value.ToString(format));
+						this.SetValue(AllLogsDurationEndingStringProp, latestTimestamp.Value.ToString(format));
 					}
 					else
 					{
-						this.SetValue(AllLogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(Application.CultureInfo));
-						this.SetValue(AllLogsDurationEndingStringProperty, latestTimestamp.Value.ToString(Application.CultureInfo));
+						this.SetValue(AllLogsDurationStartingStringProp, earliestTimestamp.Value.ToString(Application.CultureInfo));
+						this.SetValue(AllLogsDurationEndingStringProp, latestTimestamp.Value.ToString(Application.CultureInfo));
 					}
 				}
 				else
 				{
-					this.ResetValue(AllLogsDurationEndingStringProperty);
-					this.ResetValue(AllLogsDurationStartingStringProperty);
+					this.ResetValue(AllLogsDurationEndingStringProp);
+					this.ResetValue(AllLogsDurationStartingStringProp);
 				}
 			}
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Error occurred while formatting logs time information");
-				this.ResetValue(AllLogsDurationEndingStringProperty);
-				this.ResetValue(AllLogsDurationStartingStringProperty);
+				this.ResetValue(AllLogsDurationEndingStringProp);
+				this.ResetValue(AllLogsDurationStartingStringProp);
 			}
 		}
 		else
 		{
-			this.ResetValue(AllLogsDurationProperty);
-			this.ResetValue(EarliestAllLogTimestampProperty);
-			this.ResetValue(LatestAllLogTimestampProperty);
-			this.ResetValue(AllLogsDurationEndingStringProperty);
-			this.ResetValue(AllLogsDurationStartingStringProperty);
+			this.ResetValue(AllLogsDurationProp);
+			this.ResetValue(EarliestAllLogTimestampProp);
+			this.ResetValue(LatestAllLogTimestampProp);
+			this.ResetValue(AllLogsDurationEndingStringProp);
+			this.ResetValue(AllLogsDurationStartingStringProp);
 		}
 		var logs = this.Logs;
 		if (logs.IsNotEmpty() && profile is not null && this.logReaders.IsNotEmpty())
@@ -4305,11 +4305,11 @@ class Session : ViewModel<IULogViewerApplication>
 			var duration = profile.SortDirection == SortDirection.Ascending
 				? CalculateDurationBetweenLogs(firstLog, lastLog, out var minTimeSpan, out var maxTimeSpan, out var earliestTimestamp, out var latestTimestamp)
 				: CalculateDurationBetweenLogs(lastLog, firstLog, out minTimeSpan, out maxTimeSpan, out earliestTimestamp, out latestTimestamp);
-			this.SetValue(LogsDurationProperty, duration);
-			this.SetValue(MinLogTimeSpanProperty, minTimeSpan);
-			this.SetValue(MaxLogTimeSpanProperty, maxTimeSpan);
-			this.SetValue(EarliestLogTimestampProperty, earliestTimestamp);
-			this.SetValue(LatestLogTimestampProperty, latestTimestamp);
+			this.SetValue(LogsDurationProp, duration);
+			this.SetValue(MinLogTimeSpanProp, minTimeSpan);
+			this.SetValue(MaxLogTimeSpanProp, maxTimeSpan);
+			this.SetValue(EarliestLogTimestampProp, earliestTimestamp);
+			this.SetValue(LatestLogTimestampProp, latestTimestamp);
 			try
 			{
 				if (earliestTimestamp.HasValue && latestTimestamp.HasValue)
@@ -4317,13 +4317,13 @@ class Session : ViewModel<IULogViewerApplication>
 					var format = profile.TimestampFormatForDisplaying;
 					if (format is not null)
 					{
-						this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(format));
-						this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(format));
+						this.SetValue(LogsDurationStartingStringProp, earliestTimestamp.Value.ToString(format));
+						this.SetValue(LogsDurationEndingStringProp, latestTimestamp.Value.ToString(format));
 					}
 					else
 					{
-						this.SetValue(LogsDurationStartingStringProperty, earliestTimestamp.Value.ToString(Application.CultureInfo));
-						this.SetValue(LogsDurationEndingStringProperty, latestTimestamp.Value.ToString(Application.CultureInfo));
+						this.SetValue(LogsDurationStartingStringProp, earliestTimestamp.Value.ToString(Application.CultureInfo));
+						this.SetValue(LogsDurationEndingStringProp, latestTimestamp.Value.ToString(Application.CultureInfo));
 					}
 				}
 				else if (minTimeSpan.HasValue && maxTimeSpan.HasValue)
@@ -4331,35 +4331,35 @@ class Session : ViewModel<IULogViewerApplication>
 					var format = profile.TimeSpanFormatForDisplaying;
 					if (format is not null)
 					{
-						this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString(format));
-						this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString(format));
+						this.SetValue(LogsDurationStartingStringProp, minTimeSpan.Value.ToString(format));
+						this.SetValue(LogsDurationEndingStringProp, maxTimeSpan.Value.ToString(format));
 					}
 					else
 					{
-						this.SetValue(LogsDurationStartingStringProperty, minTimeSpan.Value.ToString());
-						this.SetValue(LogsDurationEndingStringProperty, maxTimeSpan.Value.ToString());
+						this.SetValue(LogsDurationStartingStringProp, minTimeSpan.Value.ToString());
+						this.SetValue(LogsDurationEndingStringProp, maxTimeSpan.Value.ToString());
 					}
 				}
 				else
 				{
-					this.SetValue(LogsDurationStartingStringProperty, null);
-					this.SetValue(LogsDurationEndingStringProperty, null);
+					this.SetValue(LogsDurationStartingStringProp, null);
+					this.SetValue(LogsDurationEndingStringProp, null);
 				}
 			}
 			catch (Exception ex)
 			{
 				this.Logger.LogError(ex, "Error occurred while formatting logs time information");
-				this.SetValue(LogsDurationStartingStringProperty, null);
-				this.SetValue(LogsDurationEndingStringProperty, null);
+				this.SetValue(LogsDurationStartingStringProp, null);
+				this.SetValue(LogsDurationEndingStringProp, null);
 			}
 		}
 		else
 		{
-			this.SetValue(LogsDurationProperty, null);
-			this.SetValue(EarliestLogTimestampProperty, null);
-			this.SetValue(LatestLogTimestampProperty, null);
-			this.SetValue(LogsDurationStartingStringProperty, null);
-			this.SetValue(LogsDurationEndingStringProperty, null);
+			this.SetValue(LogsDurationProp, null);
+			this.SetValue(EarliestLogTimestampProp, null);
+			this.SetValue(LatestLogTimestampProp, null);
+			this.SetValue(LogsDurationStartingStringProp, null);
+			this.SetValue(LogsDurationEndingStringProp, null);
 		}
 	}
 
@@ -4403,8 +4403,8 @@ class Session : ViewModel<IULogViewerApplication>
 		this.ClearLogsReadingParameters();
 
 		// update state
-		this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
-		this.ResetValue(AreLogsSortedByTimestampProperty);
+		this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProp);
+		this.ResetValue(AreLogsSortedByTimestampProp);
 		this.canResetLogProfile.Update(false);
 		this.canShowAllLogsTemporarily.Update(false);
 		this.UpdateCanAddLogFile(null);
@@ -4414,28 +4414,28 @@ class Session : ViewModel<IULogViewerApplication>
 		this.UpdateCanSetProcessName(null);
 		this.UpdateCanSetUri(null);
 		this.UpdateCanSetWorkingDirectory(null);
-		this.ResetValue(HasLogColorIndicatorProperty);
-		this.ResetValue(HasLogColorIndicatorByFileNameProperty);
-		this.ResetValue(HasLogPatternsProperty);
-		this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
-		this.ResetValue(IsIPEndPointNeededProperty);
-		this.ResetValue(IsIPEndPointSupportedProperty);
-		this.ResetValue(IsLogFileNeededProperty);
-		this.ResetValue(IsLogFileSupportedProperty);
-		this.ResetValue(IsReadingLogsContinuouslyProperty);
-		this.ResetValue(IsScriptLogDataSourceProviderProperty);
-		this.ResetValue(IsShowingRawLogLinesTemporarilyProperty);
-		this.ResetValue(IsUriNeededProperty);
-		this.ResetValue(IsUriSupportedProperty);
-		this.ResetValue(IsWorkingDirectoryNeededProperty);
-		this.ResetValue(IsWorkingDirectorySupportedProperty);
-		this.ResetValue(LastLogReadingPreconditionProperty);
-		this.ResetValue(MaxLogFileCountProperty);
+		this.ResetValue(HasLogColorIndicatorProp);
+		this.ResetValue(HasLogColorIndicatorByFileNameProp);
+		this.ResetValue(HasLogPatternsProp);
+		this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProp);
+		this.ResetValue(IsIPEndPointNeededProp);
+		this.ResetValue(IsIPEndPointSupportedProp);
+		this.ResetValue(IsLogFileNeededProp);
+		this.ResetValue(IsLogFileSupportedProp);
+		this.ResetValue(IsReadingLogsContinuouslyProp);
+		this.ResetValue(IsScriptLogDataSourceProviderProp);
+		this.ResetValue(IsShowingRawLogLinesTemporarilyProp);
+		this.ResetValue(IsUriNeededProp);
+		this.ResetValue(IsUriSupportedProp);
+		this.ResetValue(IsWorkingDirectoryNeededProp);
+		this.ResetValue(IsWorkingDirectorySupportedProp);
+		this.ResetValue(LastLogReadingPreconditionProp);
+		this.ResetValue(MaxLogFileCountProp);
 		this.UpdateIsLogsWritingAvailable(null);
 
 		// clear profile
 		this.Logger.LogWarning("Reset log profile '{profileName}'", profile.Name);
-		this.SetValue(LogProfileProperty, null);
+		this.SetValue(LogProfileProp, null);
 		
 		// clear defined log property names
 		this.UpdateDefinedLogPropertyNames();
@@ -4468,8 +4468,8 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		this.VerifyAccess();
 		this.VerifyDisposed();
-		this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
-		this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+		this.SetValue(IsShowingAllLogsTemporarilyProp, false);
+		this.SetValue(IsShowingMarkedLogsTemporarilyProp, false);
 	}
 	
 	
@@ -4502,11 +4502,11 @@ class Session : ViewModel<IULogViewerApplication>
 
 			// restore hibernation state
 			if (jsonState.TryGetProperty(nameof(IsHibernated), out var jsonValue) && jsonValue.ValueKind == JsonValueKind.True)
-				this.SetValue(IsHibernatedProperty, true);
+				this.SetValue(IsHibernatedProp, true);
 			
 			// restore custom title
 			if (jsonState.TryGetProperty(nameof(CustomTitle), out jsonValue) && jsonValue.ValueKind == JsonValueKind.String)
-				this.SetValue(CustomTitleProperty, jsonValue.GetString());
+				this.SetValue(CustomTitleProp, jsonValue.GetString());
 
 			// restore showing raw log lines
 			var showRawLogLines = jsonState.TryGetProperty(nameof(this.IsShowingRawLogLinesTemporarily), out jsonValue) && jsonValue.ValueKind == JsonValueKind.True;
@@ -4525,12 +4525,12 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 			var isInitLogProfile = jsonState.TryGetProperty("IsInitLogProfile", out jsonValue)
 				&& jsonValue.ValueKind == JsonValueKind.True;
-			this.SetValue(IsShowingRawLogLinesTemporarilyProperty, showRawLogLines);
+			this.SetValue(IsShowingRawLogLinesTemporarilyProp, showRawLogLines);
 			this.SetLogProfile(profile, isInitLogProfile, false);
 
 			// restore log reading precondition
 			if (jsonState.TryGetProperty(nameof(LastLogReadingPrecondition), out jsonValue))
-				this.SetValue(LastLogReadingPreconditionProperty, LogReadingPrecondition.Load(jsonValue));
+				this.SetValue(LastLogReadingPreconditionProp, LogReadingPrecondition.Load(jsonValue));
 			
 			// restore parameters for reading logs
 			if (jsonState.TryGetProperty(nameof(LogFiles), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Array)
@@ -4557,7 +4557,7 @@ class Session : ViewModel<IULogViewerApplication>
 				                             && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)));
 			}
 			if (jsonState.TryGetProperty(nameof(Command), out jsonValue) && jsonValue.ValueKind == JsonValueKind.String)
-				this.SetValue(CommandProperty, jsonValue.GetString());
+				this.SetValue(CommandProp, jsonValue.GetString());
 			if (jsonState.TryGetProperty(nameof(IPEndPoint), out jsonValue) && jsonValue.ValueKind == JsonValueKind.Object
 			    && jsonValue.TryGetProperty(nameof(IPEndPoint.Address), out var jsonAddress) 
 			    && jsonAddress.ValueKind == JsonValueKind.String
@@ -4565,31 +4565,31 @@ class Session : ViewModel<IULogViewerApplication>
 			    && jsonPort.ValueKind == JsonValueKind.Number
 			    && jsonPort.TryGetInt32(out var port))
 			{
-				this.SetValue(IPEndPointProperty, Global.RunOrDefault(() => new IPEndPoint(new IPAddress(Convert.FromBase64String(jsonAddress.GetString()!)), port)));
+				this.SetValue(IPEndPointProp, Global.RunOrDefault(() => new IPEndPoint(new IPAddress(Convert.FromBase64String(jsonAddress.GetString()!)), port)));
 			}
 			if (jsonState.TryGetProperty(nameof(ProcessId), out var jsonPid)
 			    && jsonPid.ValueKind == JsonValueKind.Number
 			    && jsonPid.TryGetInt32(out var pid))
 			{
-				this.SetValue(ProcessIdProperty, pid);
+				this.SetValue(ProcessIdProp, pid);
 			}
 			if (jsonState.TryGetProperty(nameof(ProcessName), out var jsonProcessName)
 			    && jsonProcessName.ValueKind == JsonValueKind.String)
 			{
-				this.SetValue(ProcessNameProperty, jsonProcessName.GetString());
+				this.SetValue(ProcessNameProp, jsonProcessName.GetString());
 			}
 			if (jsonState.TryGetProperty(nameof(Uri), out var jsonUri)
 			    && jsonUri.ValueKind == JsonValueKind.String
 			    && Uri.TryCreate(jsonUri.GetString(), UriKind.Absolute, out var uri))
 			{
-				this.SetValue(UriProperty, uri);
+				this.SetValue(UriProp, uri);
 			}
 			if (jsonState.TryGetProperty(nameof(UseTextShellToExecuteCommand), out jsonValue))
 			{
 				if (jsonValue.ValueKind == JsonValueKind.False)
-					this.SetValue(UseTextShellToExecuteCommandProperty, false);
+					this.SetValue(UseTextShellToExecuteCommandProp, false);
 				else if (jsonValue.ValueKind == JsonValueKind.True)
-					this.SetValue(UseTextShellToExecuteCommandProperty, true);
+					this.SetValue(UseTextShellToExecuteCommandProp, true);
 			}
 			if (jsonState.TryGetProperty(nameof(WorkingDirectoryPath), out var jsonWorkingDir)
 			    && jsonWorkingDir.ValueKind == JsonValueKind.String)
@@ -4597,31 +4597,31 @@ class Session : ViewModel<IULogViewerApplication>
 				var dir = jsonWorkingDir.GetString()!;
 				if (dir.IsValidFilePath() && Path.IsPathRooted(dir))
 				{
-					this.SetValue(WorkingDirectoryPathProperty, dir);
+					this.SetValue(WorkingDirectoryPathProp, dir);
 					if (dir.Length > 0 && dir[^1] == Path.DirectorySeparatorChar)
-						this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dir[..^1]));
+						this.SetValue(WorkingDirectoryNameProp, Path.GetFileName(dir[..^1]));
 					else
-						this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(dir));
-					this.SetValue(HasWorkingDirectoryProperty, true);
+						this.SetValue(WorkingDirectoryNameProp, Path.GetFileName(dir));
+					this.SetValue(HasWorkingDirectoryProp, true);
 				}
 			}
 
 			// restore panel state
 			if (jsonState.TryGetProperty(nameof(IsLogFilesPanelVisible), out jsonValue))
-				this.SetValue(IsLogFilesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+				this.SetValue(IsLogFilesPanelVisibleProp, jsonValue.ValueKind != JsonValueKind.False);
 			if (jsonState.TryGetProperty(nameof(IsMarkedLogsPanelVisible), out jsonValue))
-				this.SetValue(IsMarkedLogsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+				this.SetValue(IsMarkedLogsPanelVisibleProp, jsonValue.ValueKind != JsonValueKind.False);
 			if (jsonState.TryGetProperty(nameof(LogFilesPanelSize), out jsonValue) 
 				&& jsonValue.TryGetDouble(out var doubleValue)
-				&& LogFilesPanelSizeProperty.ValidationFunction(doubleValue))
+				&& LogFilesPanelSizeProp.ValidationFunction(doubleValue))
 			{
-				this.SetValue(LogFilesPanelSizeProperty, doubleValue);
+				this.SetValue(LogFilesPanelSizeProp, doubleValue);
 			}
 			if (jsonState.TryGetProperty(nameof(MarkedLogsPanelSize), out jsonValue) 
 				&& jsonValue.TryGetDouble(out doubleValue)
-				&& MarkedLogsPanelSizeProperty.ValidationFunction(doubleValue))
+				&& MarkedLogsPanelSizeProp.ValidationFunction(doubleValue))
 			{
-				this.SetValue(MarkedLogsPanelSizeProperty, doubleValue);
+				this.SetValue(MarkedLogsPanelSizeProp, doubleValue);
 			}
 			
 			// update state
@@ -4723,7 +4723,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// start saving
 		this.Logger.LogDebug("Start saving logs");
-		this.SetValue(IsSavingLogsProperty, true);
+		this.SetValue(IsSavingLogsProp, true);
 		this.Application.UsageManager.TrackEvent(UsageEvents.SaveLogs, this.PrepareUsageTrackingProperties());
 		logWriter.Start();
 		await this.WaitForNecessaryTaskAsync(writingLogsTaskCompletionSource.Task);
@@ -4731,7 +4731,7 @@ class Session : ViewModel<IULogViewerApplication>
 		// complete
 		if (this.IsDisposed)
 			return;
-		this.SetValue(IsSavingLogsProperty, false);
+		this.SetValue(IsSavingLogsProp, false);
 		if (logWriter.State == LogWriterState.Stopped)
 		{
 			if (logWriter is RawLogWriter rawLogWriter && options.HasFileName)
@@ -4783,7 +4783,7 @@ class Session : ViewModel<IULogViewerApplication>
 	// Save marked logs.
 	void SaveMarkedLogs(string logFileName)
 	{
-		if (this.GetValue(IsShowingRawLogLinesTemporarilyProperty))
+		if (this.GetValue(IsShowingRawLogLinesTemporarilyProp))
 			return;
 		var markedLogs = this.markedLogs.Where(it => it.FileName?.ToString() == logFileName);
 		var markedLogInfos = new List<MarkedLogInfo>().Also(markedLogInfos =>
@@ -4953,23 +4953,23 @@ class Session : ViewModel<IULogViewerApplication>
 			{
 				if (this.Application.IsDebugMode)
 					this.Logger.LogTrace("Show marked logs");
-				this.SetValue(LogsProperty, this.MarkedLogs);
-				this.SetValue(HasLogsProperty, this.markedLogs.IsNotEmpty());
+				this.SetValue(LogsProp, this.MarkedLogs);
+				this.SetValue(HasLogsProp, this.markedLogs.IsNotEmpty());
 				return;
 			}
 			if (this.LogFiltering.IsFilteringNeeded)
 			{
 				if (this.Application.IsDebugMode)
 					this.Logger.LogTrace("Show filtered logs");
-				this.SetValue(LogsProperty, this.LogFiltering.FilteredLogs);
-				this.SetValue(HasLogsProperty, this.LogFiltering.FilteredLogs.IsNotEmpty());
+				this.SetValue(LogsProp, this.LogFiltering.FilteredLogs);
+				this.SetValue(HasLogsProp, this.LogFiltering.FilteredLogs.IsNotEmpty());
 				return;
 			}
 		}
 		if (this.Application.IsDebugMode)
 			this.Logger.LogTrace("Show all logs");
-		this.SetValue(LogsProperty, this.AllLogs);
-		this.SetValue(HasLogsProperty, this.allLogs.IsNotEmpty());
+		this.SetValue(LogsProp, this.AllLogs);
+		this.SetValue(HasLogsProp, this.allLogs.IsNotEmpty());
 		if (!this.LogFiltering.IsFilteringNeeded)
 		{
 			this.Logger.LogDebug("Trigger GC after clearing log filters");
@@ -5000,7 +5000,7 @@ class Session : ViewModel<IULogViewerApplication>
 			if (currentDataSourceOptions.Command == command)
 			{
 				if (!isUsingTextShellSupported 
-				    || (param.UseTextShell ?? this.GetValue(UseTextShellToExecuteCommandProperty) ?? currentDataSourceOptions.UseTextShell) == currentDataSourceOptions.UseTextShell)
+				    || (param.UseTextShell ?? this.GetValue(UseTextShellToExecuteCommandProp) ?? currentDataSourceOptions.UseTextShell) == currentDataSourceOptions.UseTextShell)
 				{
 					this.Logger.LogDebug("Set to same command");
 					return;
@@ -5014,9 +5014,9 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Set command to '{command}'", command);
 
 		// start reading logs
-		this.SetValue(CommandProperty, command);
+		this.SetValue(CommandProp, command);
 		if (isUsingTextShellSupported && param.UseTextShell.HasValue)
-			this.SetValue(UseTextShellToExecuteCommandProperty, param.UseTextShell);
+			this.SetValue(UseTextShellToExecuteCommandProp, param.UseTextShell);
 		this.StartReadingLogs();
 	}
 
@@ -5038,7 +5038,7 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		this.VerifyAccess();
 		this.VerifyDisposed();
-		if (this.GetValue(LogProfileProperty) is not { } logProfile)
+		if (this.GetValue(LogProfileProp) is not { } logProfile)
 		{
 			this.Logger.LogError("No log profile to set width of displayed log property");
 			return false;
@@ -5110,8 +5110,8 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Set IP endpoint to {address} ({port})", endPoint.Address, endPoint.Port);
 		
 		// start reading logs
-		this.SetValue(IPEndPointProperty, endPoint);
-		this.ResetValue(IsIPEndPointNeededProperty);
+		this.SetValue(IPEndPointProp, endPoint);
+		this.ResetValue(IsIPEndPointNeededProp);
 		this.StartReadingLogs();
 	}
 
@@ -5150,8 +5150,8 @@ class Session : ViewModel<IULogViewerApplication>
 		// set profile
 		this.Logger.LogWarning("Set profile '{profileName}'", profile.Name);
 		this.canSetLogProfile.Update(false);
-		this.SetValue(IsReadingLogsContinuouslyProperty, profile.IsContinuousReading);
-		this.SetValue(LogProfileProperty, profile);
+		this.SetValue(IsReadingLogsContinuouslyProp, profile.IsContinuousReading);
+		this.SetValue(LogProfileProp, profile);
 		this.isInitLogProfile = isInit;
 		if (!isInit)
 			LogProfileManager.Default.SetAsRecentlyUsed(profile);
@@ -5176,10 +5176,10 @@ class Session : ViewModel<IULogViewerApplication>
 		this.UpdateValidLogLevels();
 
 		// update state
-		this.SetValue(HasLogColorIndicatorProperty, profile.ColorIndicator != LogColorIndicator.None);
-		this.SetValue(HasLogColorIndicatorByFileNameProperty, profile.ColorIndicator == LogColorIndicator.FileName);
-		this.SetValue(HasLogPatternsProperty, profile.LogPatterns.IsNotEmpty());
-		this.ResetValue(LastLogReadingPreconditionProperty);
+		this.SetValue(HasLogColorIndicatorProp, profile.ColorIndicator != LogColorIndicator.None);
+		this.SetValue(HasLogColorIndicatorByFileNameProp, profile.ColorIndicator == LogColorIndicator.FileName);
+		this.SetValue(HasLogPatternsProp, profile.LogPatterns.IsNotEmpty());
+		this.ResetValue(LastLogReadingPreconditionProp);
 		
 		// track event
 		LogProfileManager.Default.TrackLogProfileSelectedEvent(profile);
@@ -5223,8 +5223,8 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Set process ID to {pid}", processId.Value);
 
 		// start reading logs
-		this.SetValue(ProcessIdProperty, processId);
-		this.ResetValue(IsProcessIdNeededProperty);
+		this.SetValue(ProcessIdProp, processId);
+		this.ResetValue(IsProcessIdNeededProp);
 		this.StartReadingLogs();
 	}
 	
@@ -5261,8 +5261,8 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Set process name to {name}", processName);
 
 		// start reading logs
-		this.SetValue(ProcessNameProperty, processName);
-		this.ResetValue(IsProcessNameNeededProperty);
+		this.SetValue(ProcessNameProp, processName);
+		this.ResetValue(IsProcessNameNeededProp);
 		this.StartReadingLogs();
 	}
 	
@@ -5302,7 +5302,7 @@ class Session : ViewModel<IULogViewerApplication>
 				jsonWriter.WriteBoolean("IsInitLogProfile", true);
 			
 			// save showing raw log lines
-			if (this.GetValue(IsShowingRawLogLinesTemporarilyProperty))
+			if (this.GetValue(IsShowingRawLogLinesTemporarilyProp))
 				jsonWriter.WriteBoolean(nameof(this.IsShowingRawLogLinesTemporarily), true);
 			
 			// save logs reading parameters
@@ -5324,12 +5324,12 @@ class Session : ViewModel<IULogViewerApplication>
 				}
 				jsonWriter.WriteEndArray();
 			}
-			this.GetValue(CommandProperty).Let(it =>
+			this.GetValue(CommandProp).Let(it =>
 			{
 				if (!string.IsNullOrEmpty(it))
 					jsonWriter.WriteString(nameof(Command), it);
 			});
-			this.GetValue(IPEndPointProperty)?.Let(it =>
+			this.GetValue(IPEndPointProp)?.Let(it =>
 			{
 				jsonWriter.WritePropertyName(nameof(IPEndPoint));
 				jsonWriter.WriteStartObject();
@@ -5337,15 +5337,15 @@ class Session : ViewModel<IULogViewerApplication>
 				jsonWriter.WriteNumber(nameof(IPEndPoint.Port), it.Port);
 				jsonWriter.WriteEndObject();
 			});
-			this.GetValue(ProcessIdProperty)?.Let(it => jsonWriter.WriteNumber(nameof(ProcessId), it));
-			this.GetValue(ProcessNameProperty).Let(it =>
+			this.GetValue(ProcessIdProp)?.Let(it => jsonWriter.WriteNumber(nameof(ProcessId), it));
+			this.GetValue(ProcessNameProp).Let(it =>
 			{
 				if (!string.IsNullOrEmpty(it))
 					jsonWriter.WriteString(nameof(ProcessName), it);
 			});
-			this.GetValue(UriProperty)?.Let(it => jsonWriter.WriteString(nameof(Uri), it.ToString()));
-			this.GetValue(UseTextShellToExecuteCommandProperty)?.Let(it => jsonWriter.WriteBoolean(nameof(UseTextShellToExecuteCommand), it));
-			this.GetValue(WorkingDirectoryPathProperty).Let(it =>
+			this.GetValue(UriProp)?.Let(it => jsonWriter.WriteString(nameof(Uri), it.ToString()));
+			this.GetValue(UseTextShellToExecuteCommandProp)?.Let(it => jsonWriter.WriteBoolean(nameof(UseTextShellToExecuteCommand), it));
+			this.GetValue(WorkingDirectoryPathProp).Let(it =>
 			{
 				if (!string.IsNullOrEmpty(it))
 					jsonWriter.WriteString(nameof(WorkingDirectoryPath), it);
@@ -5353,7 +5353,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 			// save log reading precondition
 			jsonWriter.WritePropertyName(nameof(LastLogReadingPrecondition));
-			this.GetValue(LastLogReadingPreconditionProperty).Save(jsonWriter);
+			this.GetValue(LastLogReadingPreconditionProp).Save(jsonWriter);
 
 			// save side panel state
 			jsonWriter.WriteBoolean(nameof(IsLogFilesPanelVisible), this.IsLogFilesPanelVisible);
@@ -5449,8 +5449,8 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Set URI to '{uri}'", uri);
 
 		// start reading logs
-		this.SetValue(UriProperty, uri);
-		this.ResetValue(IsUriNeededProperty);
+		this.SetValue(UriProp, uri);
+		this.ResetValue(IsUriNeededProp);
 		this.StartReadingLogs();
 	}
 
@@ -5489,12 +5489,12 @@ class Session : ViewModel<IULogViewerApplication>
 		this.Logger.LogDebug("Set working directory to '{directory}'", directory);
 
 		// start reading logs
-		this.SetValue(WorkingDirectoryPathProperty, directory);
+		this.SetValue(WorkingDirectoryPathProp, directory);
 		if (directory.Length > 0 && directory[^1] == Path.DirectorySeparatorChar)
-			this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory[..^1]));
+			this.SetValue(WorkingDirectoryNameProp, Path.GetFileName(directory[..^1]));
 		else
-			this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(directory));
-		this.SetValue(HasWorkingDirectoryProperty, true);
+			this.SetValue(WorkingDirectoryNameProp, Path.GetFileName(directory));
+		this.SetValue(HasWorkingDirectoryProp, true);
 		this.StartReadingLogs();
 	}
 
@@ -5525,10 +5525,10 @@ class Session : ViewModel<IULogViewerApplication>
 		this.VerifyDisposed();
 
 		// enable, and synchronously flush the Logs swap so the change is visible to immediate callers
-		if (!this.GetValue(IsShowingAllLogsTemporarilyProperty))
+		if (!this.GetValue(IsShowingAllLogsTemporarilyProp))
 		{
-			this.SetValue(IsShowingAllLogsTemporarilyProperty, true);
-			this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+			this.SetValue(IsShowingAllLogsTemporarilyProp, true);
+			this.SetValue(IsShowingMarkedLogsTemporarilyProp, false);
 			this.selectLogsToReportActions.ExecuteIfScheduled();
 		}
 	}
@@ -5550,10 +5550,10 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 
 		// enable
-		if (!this.GetValue(IsShowingMarkedLogsTemporarilyProperty))
+		if (!this.GetValue(IsShowingMarkedLogsTemporarilyProp))
 		{
-			this.SetValue(IsShowingMarkedLogsTemporarilyProperty, true);
-			this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
+			this.SetValue(IsShowingMarkedLogsTemporarilyProp, true);
+			this.SetValue(IsShowingAllLogsTemporarilyProp, false);
 		}
 	}
 
@@ -5582,24 +5582,24 @@ class Session : ViewModel<IULogViewerApplication>
 		// update state
 		if (dataSourceProvider is ScriptLogDataSourceProvider)
 		{
-			this.SetValue(IsEmbeddedScriptLogDataSourceProviderProperty, dataSourceProvider == profile.EmbeddedScriptLogDataSourceProvider);
-			this.SetValue(IsScriptLogDataSourceProviderProperty, true);
+			this.SetValue(IsEmbeddedScriptLogDataSourceProviderProp, dataSourceProvider == profile.EmbeddedScriptLogDataSourceProvider);
+			this.SetValue(IsScriptLogDataSourceProviderProp, true);
 		}
 		else
 		{
-			this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProperty);
-			this.ResetValue(IsScriptLogDataSourceProviderProperty);
+			this.ResetValue(IsEmbeddedScriptLogDataSourceProviderProp);
+			this.ResetValue(IsScriptLogDataSourceProviderProp);
 		}
 
 		// check log file
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)))
 		{
-			this.SetValue(IsLogFileSupportedProperty, true);
+			this.SetValue(IsLogFileSupportedProp, true);
 			if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.canClearLogFiles.Update(false);
-				this.SetValue(HasLogFilesProperty, true);
-				this.ResetValue(IsLogFileNeededProperty);
+				this.SetValue(HasLogFilesProp, true);
+				this.ResetValue(IsLogFileNeededProp);
 				this.logFileInfoList.Clear();
 				this.logFileInfoList.Add(new LogFileInfoImpl(this, defaultDataSourceOptions.FileName.AsNonNull(), new(), null, null, true));
 				this.TrackLogFileCount();
@@ -5608,14 +5608,14 @@ class Session : ViewModel<IULogViewerApplication>
 			{
 				if (this.logFileInfoList.FirstOrDefault(it => it.IsPredefined) is null)
 				{
-					this.SetValue(HasLogFilesProperty, true);
-					this.ResetValue(IsLogFileNeededProperty);
+					this.SetValue(HasLogFilesProp, true);
+					this.ResetValue(IsLogFileNeededProp);
 				}
 				else
 				{
 					this.Logger.LogWarning("Clear predefined log file");
-					this.ResetValue(HasLogFilesProperty);
-					this.SetValue(IsLogFileNeededProperty, true);
+					this.ResetValue(HasLogFilesProp);
+					this.SetValue(IsLogFileNeededProp, true);
 					this.logFileInfoList.Clear();
 					this.TrackLogFileCount();
 				}
@@ -5623,15 +5623,15 @@ class Session : ViewModel<IULogViewerApplication>
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.FileName)))
 			{
 				this.Logger.LogDebug("No file name specified, wait for adding file");
-				this.SetValue(IsLogFileNeededProperty, true);
+				this.SetValue(IsLogFileNeededProp, true);
 			}
 			else
-				this.ResetValue(IsLogFileNeededProperty);
+				this.ResetValue(IsLogFileNeededProp);
 		}
 		else
 		{
-			this.ResetValue(IsLogFileNeededProperty);
-			this.ResetValue(IsLogFileSupportedProperty);
+			this.ResetValue(IsLogFileNeededProp);
+			this.ResetValue(IsLogFileSupportedProp);
 		}
 		this.UpdateCanAddLogFile(profile);
 		
@@ -5639,152 +5639,152 @@ class Session : ViewModel<IULogViewerApplication>
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command)))
 		{
 			// command
-			this.SetValue(IsCommandSupportedProperty, true);
+			this.SetValue(IsCommandSupportedProp, true);
 			if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)))
 			{
-				this.ResetValue(IsCommandNeededProperty);
-				this.SetValue(CommandProperty, defaultDataSourceOptions.Command);
+				this.ResetValue(IsCommandNeededProp);
+				this.SetValue(CommandProp, defaultDataSourceOptions.Command);
 			}
-			else if (!string.IsNullOrEmpty(this.GetValue(CommandProperty)))
+			else if (!string.IsNullOrEmpty(this.GetValue(CommandProp)))
 			{
-				this.ResetValue(IsCommandNeededProperty);
-				defaultDataSourceOptions.Command = this.GetValue(CommandProperty);
+				this.ResetValue(IsCommandNeededProp);
+				defaultDataSourceOptions.Command = this.GetValue(CommandProp);
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Command)))
 			{
 				this.Logger.LogDebug("No command specified, wait for setting command");
-				this.SetValue(IsCommandNeededProperty, true);
+				this.SetValue(IsCommandNeededProp, true);
 			}
 			else
-				this.ResetValue(IsCommandNeededProperty);
+				this.ResetValue(IsCommandNeededProp);
 			
 			// use text-shell
 			if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.UseTextShell)))
 			{
-				this.GetValue(UseTextShellToExecuteCommandProperty)?.Let(it =>
+				this.GetValue(UseTextShellToExecuteCommandProp)?.Let(it =>
 					defaultDataSourceOptions.UseTextShell = it);
 			}
 		}
 		else
 		{
-			this.ResetValue(IsCommandNeededProperty);
-			this.ResetValue(IsCommandSupportedProperty);
+			this.ResetValue(IsCommandNeededProp);
+			this.ResetValue(IsCommandSupportedProp);
 		}
 		this.UpdateCanSetCommand(profile);
 
 		// check IP end point
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)))
 		{
-			this.SetValue(IsIPEndPointSupportedProperty, true);
+			this.SetValue(IsIPEndPointSupportedProp, true);
 			if (defaultDataSourceOptions.IPEndPoint is not null)
 			{
-				this.ResetValue(IsIPEndPointNeededProperty);
-				this.SetValue(IPEndPointProperty, defaultDataSourceOptions.IPEndPoint);
+				this.ResetValue(IsIPEndPointNeededProp);
+				this.SetValue(IPEndPointProp, defaultDataSourceOptions.IPEndPoint);
 			}
-			else if (this.GetValue(IPEndPointProperty) is not null)
+			else if (this.GetValue(IPEndPointProp) is not null)
 			{
-				this.ResetValue(IsIPEndPointNeededProperty);
-				defaultDataSourceOptions.IPEndPoint = this.GetValue(IPEndPointProperty);
+				this.ResetValue(IsIPEndPointNeededProp);
+				defaultDataSourceOptions.IPEndPoint = this.GetValue(IPEndPointProp);
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				this.Logger.LogDebug("No IP endpoint specified, wait for setting IP endpoint");
-				this.SetValue(IsIPEndPointNeededProperty, true);
+				this.SetValue(IsIPEndPointNeededProp, true);
 			}
 			else
-				this.ResetValue(IsIPEndPointNeededProperty);
+				this.ResetValue(IsIPEndPointNeededProp);
 		}
 		else
 		{
-			this.ResetValue(IsIPEndPointNeededProperty);
-			this.ResetValue(IsIPEndPointSupportedProperty);
+			this.ResetValue(IsIPEndPointNeededProp);
+			this.ResetValue(IsIPEndPointSupportedProp);
 		}
 		this.UpdateCanSetIPEndPoint(profile);
 
 		// check process ID
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId)))
 		{
-			this.SetValue(IsProcessIdSupportedProperty, true);
+			this.SetValue(IsProcessIdSupportedProp, true);
 			if (defaultDataSourceOptions.ProcessId.HasValue)
 			{
-				this.ResetValue(IsProcessIdNeededProperty);
-				this.SetValue(ProcessIdProperty, defaultDataSourceOptions.ProcessId);
+				this.ResetValue(IsProcessIdNeededProp);
+				this.SetValue(ProcessIdProp, defaultDataSourceOptions.ProcessId);
 			}
-			else if (this.GetValue(ProcessIdProperty).HasValue)
+			else if (this.GetValue(ProcessIdProp).HasValue)
 			{
-				this.ResetValue(IsProcessIdNeededProperty);
-				defaultDataSourceOptions.ProcessId = this.GetValue(ProcessIdProperty);
+				this.ResetValue(IsProcessIdNeededProp);
+				defaultDataSourceOptions.ProcessId = this.GetValue(ProcessIdProp);
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ProcessId)))
 			{
 				this.Logger.LogDebug("No process ID specified, wait for setting process ID");
-				this.SetValue(IsProcessIdNeededProperty, true);
+				this.SetValue(IsProcessIdNeededProp, true);
 			}
 			else
-				this.ResetValue(IsProcessIdNeededProperty);
+				this.ResetValue(IsProcessIdNeededProp);
 		}
 		else
 		{
-			this.ResetValue(IsProcessIdNeededProperty);
-			this.ResetValue(IsProcessIdSupportedProperty);
+			this.ResetValue(IsProcessIdNeededProp);
+			this.ResetValue(IsProcessIdSupportedProp);
 		}
 		this.UpdateCanSetProcessId(profile);
 
 		// check process name
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName)))
 		{
-			this.SetValue(IsProcessNameSupportedProperty, true);
+			this.SetValue(IsProcessNameSupportedProp, true);
 			if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
 			{
-				this.ResetValue(IsProcessNameNeededProperty);
-				this.SetValue(ProcessNameProperty, defaultDataSourceOptions.ProcessName);
+				this.ResetValue(IsProcessNameNeededProp);
+				this.SetValue(ProcessNameProp, defaultDataSourceOptions.ProcessName);
 			}
-			else if (!string.IsNullOrEmpty(this.GetValue(ProcessNameProperty)))
+			else if (!string.IsNullOrEmpty(this.GetValue(ProcessNameProp)))
 			{
-				this.ResetValue(IsProcessNameNeededProperty);
-				defaultDataSourceOptions.ProcessName = this.GetValue(ProcessNameProperty);
+				this.ResetValue(IsProcessNameNeededProp);
+				defaultDataSourceOptions.ProcessName = this.GetValue(ProcessNameProp);
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.ProcessName)))
 			{
 				this.Logger.LogDebug("No process name specified, wait for setting process name");
-				this.SetValue(IsProcessNameNeededProperty, true);
+				this.SetValue(IsProcessNameNeededProp, true);
 			}
 			else
-				this.ResetValue(IsProcessNameNeededProperty);
+				this.ResetValue(IsProcessNameNeededProp);
 		}
 		else
 		{
-			this.ResetValue(IsProcessNameNeededProperty);
-			this.ResetValue(IsProcessNameSupportedProperty);
+			this.ResetValue(IsProcessNameNeededProp);
+			this.ResetValue(IsProcessNameSupportedProp);
 		}
 		this.UpdateCanSetProcessName(profile);
 
 		// check URI
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri)))
 		{
-			this.SetValue(IsUriSupportedProperty, true);
+			this.SetValue(IsUriSupportedProp, true);
 			if (defaultDataSourceOptions.Uri is not null)
 			{
-				this.ResetValue(IsUriNeededProperty);
-				this.SetValue(UriProperty, defaultDataSourceOptions.Uri);
+				this.ResetValue(IsUriNeededProp);
+				this.SetValue(UriProp, defaultDataSourceOptions.Uri);
 			}
-			else if (this.GetValue(UriProperty) is not null)
+			else if (this.GetValue(UriProp) is not null)
 			{
-				this.ResetValue(IsUriNeededProperty);
-				defaultDataSourceOptions.Uri = this.GetValue(UriProperty);
+				this.ResetValue(IsUriNeededProp);
+				defaultDataSourceOptions.Uri = this.GetValue(UriProp);
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Uri)))
 			{
 				this.Logger.LogDebug("No URI specified, wait for setting URI");
-				this.SetValue(IsUriNeededProperty, true);
+				this.SetValue(IsUriNeededProp, true);
 			}
 			else
-				this.ResetValue(IsUriNeededProperty);
+				this.ResetValue(IsUriNeededProp);
 		}
 		else
 		{
-			this.ResetValue(IsUriNeededProperty);
-			this.ResetValue(IsUriSupportedProperty);
+			this.ResetValue(IsUriNeededProp);
+			this.ResetValue(IsUriSupportedProp);
 		}
 		this.UpdateCanSetUri(profile);
 		
@@ -5792,32 +5792,32 @@ class Session : ViewModel<IULogViewerApplication>
 		if (dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory)) 
 		    && profile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored)
 		{
-			this.SetValue(IsWorkingDirectorySupportedProperty, true);
+			this.SetValue(IsWorkingDirectorySupportedProp, true);
 			if (defaultDataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 			{
-				this.ResetValue(IsWorkingDirectoryNeededProperty);
-				this.SetValue(WorkingDirectoryPathProperty, defaultDataSourceOptions.WorkingDirectory);
-				this.SetValue(WorkingDirectoryNameProperty, Path.GetFileName(defaultDataSourceOptions.WorkingDirectory));
-				this.SetValue(HasWorkingDirectoryProperty, true);
+				this.ResetValue(IsWorkingDirectoryNeededProp);
+				this.SetValue(WorkingDirectoryPathProp, defaultDataSourceOptions.WorkingDirectory);
+				this.SetValue(WorkingDirectoryNameProp, Path.GetFileName(defaultDataSourceOptions.WorkingDirectory));
+				this.SetValue(HasWorkingDirectoryProp, true);
 			}
-			else if (!string.IsNullOrEmpty(this.GetValue(WorkingDirectoryPathProperty)))
+			else if (!string.IsNullOrEmpty(this.GetValue(WorkingDirectoryPathProp)))
 			{
-				this.ResetValue(IsWorkingDirectoryNeededProperty);
-				defaultDataSourceOptions.WorkingDirectory = this.GetValue(WorkingDirectoryPathProperty);
+				this.ResetValue(IsWorkingDirectoryNeededProp);
+				defaultDataSourceOptions.WorkingDirectory = this.GetValue(WorkingDirectoryPathProp);
 			}
 			else if (dataSourceProvider.IsSourceOptionRequired(nameof(LogDataSourceOptions.WorkingDirectory)) 
 			         || profile.WorkingDirectoryRequirement == LogProfilePropertyRequirement.Required)
 			{
 				this.Logger.LogDebug("No working directory specified, wait for setting working directory");
-				this.SetValue(IsWorkingDirectoryNeededProperty, true);
+				this.SetValue(IsWorkingDirectoryNeededProp, true);
 			}
 			else
-				this.ResetValue(IsWorkingDirectoryNeededProperty);
+				this.ResetValue(IsWorkingDirectoryNeededProp);
 		}
 		else
 		{
-			this.ResetValue(IsWorkingDirectoryNeededProperty);
-			this.ResetValue(IsWorkingDirectorySupportedProperty);
+			this.ResetValue(IsWorkingDirectoryNeededProp);
+			this.ResetValue(IsWorkingDirectorySupportedProp);
 		}
 		this.UpdateCanSetWorkingDirectory(profile);
 		
@@ -5869,7 +5869,7 @@ class Session : ViewModel<IULogViewerApplication>
 					}
 				}
 			}
-			else if (this.GetValue(IsRestartAsAdministratorNeededProperty))
+			else if (this.GetValue(IsRestartAsAdministratorNeededProp))
 				this.Logger.LogWarning("Wait for running application as administrator");
 			else
 				this.Logger.LogWarning("Wait for all parameters ready to start reading logs");
@@ -5890,7 +5890,7 @@ class Session : ViewModel<IULogViewerApplication>
 			reader.Stop();
 		
 		// update state
-		this.SetValue(IsLogsReadingPausedProperty, false);
+		this.SetValue(IsLogsReadingPausedProp, false);
 	}
 	
 	
@@ -5903,7 +5903,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// <summary>
 	/// Get title of session.
 	/// </summary>
-	public string? Title => this.GetValue(TitleProperty);
+	public string? Title => this.GetValue(TitleProp);
 
 
 	// Enable or disable showing all logs temporarily.
@@ -5914,9 +5914,9 @@ class Session : ViewModel<IULogViewerApplication>
 		this.VerifyDisposed();
 
 		// toggle
-		this.SetValue(IsShowingAllLogsTemporarilyProperty, !this.GetValue(IsShowingAllLogsTemporarilyProperty));
+		this.SetValue(IsShowingAllLogsTemporarilyProp, !this.GetValue(IsShowingAllLogsTemporarilyProp));
 		if (this.IsShowingAllLogsTemporarily)
-			this.SetValue(IsShowingMarkedLogsTemporarilyProperty, false);
+			this.SetValue(IsShowingMarkedLogsTemporarilyProp, false);
     }
 
 
@@ -5936,9 +5936,9 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 
 		// toggle
-		this.SetValue(IsShowingMarkedLogsTemporarilyProperty, !this.GetValue(IsShowingMarkedLogsTemporarilyProperty));
+		this.SetValue(IsShowingMarkedLogsTemporarilyProp, !this.GetValue(IsShowingMarkedLogsTemporarilyProp));
 		if (this.IsShowingMarkedLogsTemporarily)
-			this.SetValue(IsShowingAllLogsTemporarilyProperty, false);
+			this.SetValue(IsShowingAllLogsTemporarilyProp, false);
 	}
 
 
@@ -5954,11 +5954,11 @@ class Session : ViewModel<IULogViewerApplication>
 		// check state
 		this.VerifyAccess();
 		this.VerifyDisposed();
-		if (!this.GetValue(HasLogPatternsProperty))
+		if (!this.GetValue(HasLogPatternsProp))
 			return;
 
 		// toggle
-		this.SetValue(IsShowingRawLogLinesTemporarilyProperty, !this.GetValue(IsShowingRawLogLinesTemporarilyProperty));
+		this.SetValue(IsShowingRawLogLinesTemporarilyProp, !this.GetValue(IsShowingRawLogLinesTemporarilyProp));
 		
 		// reload logs
 		this.ScheduleReloadingLogs(true, true);
@@ -5975,7 +5975,7 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get size of total memory usage of logs by all <see cref="Session"/> instances in bytes.
 	/// </summary>
 	public long TotalLogsMemoryUsage => 
-		this.GetValue(TotalLogsMemoryUsageProperty);
+		this.GetValue(TotalLogsMemoryUsageProp);
 	
 	
 	// Track all log count metric.
@@ -6000,7 +6000,7 @@ class Session : ViewModel<IULogViewerApplication>
 		var app = IAppSuiteApplication.CurrentOrNull;
 		if (app is null)
 			return;
-		var isHighMemoryUsage = instances.FirstOrDefault(it => it.GetValue(IsHighMemoryUsageToStopReadingLogsProperty)) is not null;
+		var isHighMemoryUsage = instances.FirstOrDefault(it => it.GetValue(IsHighMemoryUsageToStopReadingLogsProp)) is not null;
 		if (isHighMemoryUsage)
 		{
 			staticLogger?.LogWarning("Force GC because of high private memory usage");
@@ -6063,27 +6063,27 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanAddLogFileProperty);
+			this.ResetValue(CanAddLogFileProp);
 			return;
 		}
 		var dataSourceProvider = profile.DataSourceProvider;
 		if (!dataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FileName)))
 		{
-			this.ResetValue(CanAddLogFileProperty);
+			this.ResetValue(CanAddLogFileProp);
 			return;
 		}
 		var dataSourceOptions = profile.DataSourceOptions;
 		if (dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.FileName)))
 		{
-			this.ResetValue(CanAddLogFileProperty);
+			this.ResetValue(CanAddLogFileProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanAddLogFileProperty);
+			this.ResetValue(CanAddLogFileProp);
 			return;
 		}
-		this.SetValue(CanAddLogFileProperty, this.logFileInfoList.Count < this.GetValue(MaxLogFileCountProperty));
+		this.SetValue(CanAddLogFileProp, this.logFileInfoList.Count < this.GetValue(MaxLogFileCountProp));
 	}
 	
 	
@@ -6092,7 +6092,7 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		if (this.IsDisposed)
 			return;
-		this.canMarkUnmarkLogs.Update(this.logReaders.IsNotEmpty() && !this.GetValue(IsShowingRawLogLinesTemporarilyProperty));
+		this.canMarkUnmarkLogs.Update(this.logReaders.IsNotEmpty() && !this.GetValue(IsShowingRawLogLinesTemporarilyProp));
 	}
 
 
@@ -6103,7 +6103,7 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		this.canPauseResumeLogsReading.Update(this.LogProfile?.IsContinuousReading == true 
 		                                      && this.logReaders.IsNotEmpty()
-		                                      && !this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty));
+		                                      && !this.GetValue(IsHighMemoryUsageToStopReadingLogsProp));
 	}
 	
 	
@@ -6119,7 +6119,7 @@ class Session : ViewModel<IULogViewerApplication>
 			this.canReloadLogs.Update(false);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
 			this.canReloadLogs.Update(false);
 			return;
@@ -6135,15 +6135,15 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanSetCommandProperty);
+			this.ResetValue(CanSetCommandProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanSetCommandProperty);
+			this.ResetValue(CanSetCommandProp);
 			return;
 		}
-		this.SetValue(CanSetCommandProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command))
+		this.SetValue(CanSetCommandProp, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Command))
 		                                     && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)));
 	}
 	
@@ -6155,15 +6155,15 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanSetIPEndPointProperty);
+			this.ResetValue(CanSetIPEndPointProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanSetIPEndPointProperty);
+			this.ResetValue(CanSetIPEndPointProp);
 			return;
 		}
-		this.SetValue(CanSetIPEndPointProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint))
+		this.SetValue(CanSetIPEndPointProp, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint))
 		                                        && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)));
 	}
 	
@@ -6175,15 +6175,15 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanSetProcessIdProperty);
+			this.ResetValue(CanSetProcessIdProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanSetProcessIdProperty);
+			this.ResetValue(CanSetProcessIdProp);
 			return;
 		}
-		this.SetValue(CanSetProcessIdProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId))
+		this.SetValue(CanSetProcessIdProp, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId))
 		                                       && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)));
 	}
 	
@@ -6195,15 +6195,15 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanSetProcessNameProperty);
+			this.ResetValue(CanSetProcessNameProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanSetProcessNameProperty);
+			this.ResetValue(CanSetProcessNameProp);
 			return;
 		}
-		this.SetValue(CanSetProcessNameProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName))
+		this.SetValue(CanSetProcessNameProp, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessName))
 		                                         && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)));
 	}
 	
@@ -6215,15 +6215,15 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanSetUriProperty);
+			this.ResetValue(CanSetUriProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanSetUriProperty);
+			this.ResetValue(CanSetUriProp);
 			return;
 		}
-		this.SetValue(CanSetUriProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri))
+		this.SetValue(CanSetUriProp, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Uri))
 		                                 && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)));
 	}
 	
@@ -6235,15 +6235,15 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (profile is null)
 		{
-			this.ResetValue(CanSetWorkingDirectoryProperty);
+			this.ResetValue(CanSetWorkingDirectoryProp);
 			return;
 		}
-		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProperty))
+		if (this.GetValue(IsHighMemoryUsageToStopReadingLogsProp))
 		{
-			this.ResetValue(CanSetWorkingDirectoryProperty);
+			this.ResetValue(CanSetWorkingDirectoryProp);
 			return;
 		}
-		this.SetValue(CanSetWorkingDirectoryProperty, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
+		this.SetValue(CanSetWorkingDirectoryProp, profile.DataSourceProvider.IsSourceOptionSupported(nameof(LogDataSourceOptions.WorkingDirectory))
 		                                              && profile.WorkingDirectoryRequirement != LogProfilePropertyRequirement.Ignored
 		                                              && !profile.DataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)));
 	}
@@ -6261,28 +6261,28 @@ class Session : ViewModel<IULogViewerApplication>
 				case LogReaderState.Starting: 
 				case LogReaderState.ReadingLogs:
 				case LogReaderState.Paused:
-					this.SetValue(CanStopReadingLogsProperty, true);
+					this.SetValue(CanStopReadingLogsProp, true);
 					return;
 			}
 		}
-		this.ResetValue(CanStopReadingLogsProperty);
+		this.ResetValue(CanStopReadingLogsProp);
 	}
 	
 	
 	// Update defined log property names.
 	void UpdateDefinedLogPropertyNames()
 	{
-		if (this.GetValue(LogProfileProperty) is { } logProfile)
+		if (this.GetValue(LogProfileProp) is { } logProfile)
 		{
 			var propertyNames = ImmutableHashSet.CreateBuilder<string>().Also(builder =>
 			{
 				foreach (var logPattern in logProfile.LogPatterns)
 					builder.AddAll(logPattern.DefinedLogPropertyNames);
 			}).ToImmutable();
-			this.SetValue(DefinedLogPropertyNamesProperty, propertyNames);
+			this.SetValue(DefinedLogPropertyNamesProp, propertyNames);
 		}
 		else
-			this.ResetValue(DefinedLogPropertyNamesProperty);
+			this.ResetValue(DefinedLogPropertyNamesProp);
 	}
 
 
@@ -6291,7 +6291,7 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		var profile = this.LogProfile.AsNonNull();
 		var sortedByTimestamp = true;
-		this.compareDisplayableLogsDelegate = GetValue(IsShowingRawLogLinesTemporarilyProperty)
+		this.compareDisplayableLogsDelegate = GetValue(IsShowingRawLogLinesTemporarilyProp)
 			? ((Comparison<DisplayableLog?>)CompareDisplayableLogsById).Also(_ => sortedByTimestamp = false) 
 			: profile.SortKey switch
 			{
@@ -6306,7 +6306,7 @@ class Session : ViewModel<IULogViewerApplication>
 			};
 		if (profile.SortDirection == SortDirection.Descending)
 			this.compareDisplayableLogsDelegate = this.compareDisplayableLogsDelegate.Invert();
-		this.SetValue(AreLogsSortedByTimestampProperty, sortedByTimestamp);
+		this.SetValue(AreLogsSortedByTimestampProp, sortedByTimestamp);
 	}
 
 
@@ -6316,9 +6316,9 @@ class Session : ViewModel<IULogViewerApplication>
 		var profile = this.LogProfile;
 		if (profile is null)
 		{
-			this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
-			this.ResetValue(HasTimestampDisplayableLogPropertyProperty);
-			this.SetValue(DisplayLogPropertiesProperty, DisplayLogPropertiesProperty.DefaultValue);
+			this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProp);
+			this.ResetValue(HasTimestampDisplayableLogPropertyProp);
+			this.SetValue(DisplayLogPropertiesProp, DisplayLogPropertiesProp.DefaultValue);
 		}
 		else
 		{
@@ -6326,7 +6326,7 @@ class Session : ViewModel<IULogViewerApplication>
 			var visibleLogProperties = profile.VisibleLogProperties;
 			var displayLogProperties = new List<DisplayableLogProperty>();
 			var hasTimestamp = false;
-			if (!this.GetValue(IsShowingRawLogLinesTemporarilyProperty))
+			if (!this.GetValue(IsShowingRawLogLinesTemporarilyProp))
 			{
 				foreach (var logProperty in visibleLogProperties)
 				{
@@ -6340,13 +6340,13 @@ class Session : ViewModel<IULogViewerApplication>
 				this.Logger.LogWarning("Ignore visible log properties because log patterns have been disabled");
 			if (displayLogProperties.IsEmpty())
 			{
-				this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty);
+				this.ResetValue(AreDisplayLogPropertiesDefinedByLogProfileProp);
 				displayLogProperties.Add(new DisplayableLogProperty(app, nameof(DisplayableLog.Message), "RawData", null));
 			}
 			else
-				this.SetValue(AreDisplayLogPropertiesDefinedByLogProfileProperty, true);
-			this.SetValue(DisplayLogPropertiesProperty, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
-			this.SetValue(HasTimestampDisplayableLogPropertyProperty, hasTimestamp);
+				this.SetValue(AreDisplayLogPropertiesDefinedByLogProfileProp, true);
+			this.SetValue(DisplayLogPropertiesProp, new SafeReadOnlyList<DisplayableLogProperty>(displayLogProperties));
+			this.SetValue(HasTimestampDisplayableLogPropertyProp, hasTimestamp);
 		}
 	}
 
@@ -6376,8 +6376,8 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (this.logReaders.IsEmpty())
 		{
-			this.SetValue(IsReadingLogsProperty, false);
-			this.SetValue(LastLogsReadingDurationProperty, null);
+			this.SetValue(IsReadingLogsProp, false);
+			this.SetValue(LastLogsReadingDurationProp, null);
 			this.logsReadingWatch.Reset();
 		}
 		else
@@ -6390,17 +6390,17 @@ class Session : ViewModel<IULogViewerApplication>
 					case LogReaderState.ReadingLogs:
 						if (!this.logsReadingWatch.IsRunning)
 							this.logsReadingWatch.Restart();
-						this.SetValue(IsReadingLogsProperty, true);
+						this.SetValue(IsReadingLogsProp, true);
 						return;
 				}
 			}
 			bool wasReadingLogs = this.IsReadingLogs;
-			this.SetValue(IsReadingLogsProperty, false);
+			this.SetValue(IsReadingLogsProp, false);
 			if (this.logsReadingWatch.IsRunning)
 			{
 				this.logsReadingWatch.Stop();
 				if (this.LogProfile?.IsContinuousReading != true)
-					this.SetValue(LastLogsReadingDurationProperty, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
+					this.SetValue(LastLogsReadingDurationProp, TimeSpan.FromMilliseconds(this.logsReadingWatch.ElapsedMilliseconds));
 			}
 			if (wasReadingLogs)
 			{
@@ -6417,7 +6417,7 @@ class Session : ViewModel<IULogViewerApplication>
 		if (this.IsDisposed)
 			return;
 		if (this.logReaders.IsEmpty())
-			this.ResetValue(IsRemovingLogFilesProperty);
+			this.ResetValue(IsRemovingLogFilesProp);
 		else
 		{
 			var isRemovingLogFiles = false;
@@ -6431,7 +6431,7 @@ class Session : ViewModel<IULogViewerApplication>
 					break;
 				}
 			}
-			this.SetValue(IsRemovingLogFilesProperty, isRemovingLogFiles);
+			this.SetValue(IsRemovingLogFilesProp, isRemovingLogFiles);
 		}
 	}
 	
@@ -6443,16 +6443,16 @@ class Session : ViewModel<IULogViewerApplication>
 			return;
 		if (this.IsSavingLogs)
 		{
-			this.SetValue(IsProcessingLogsProperty, true);
+			this.SetValue(IsProcessingLogsProp, true);
 			return;
 		}
 		var logProfile = this.LogProfile;
 		if (logProfile is null)
-			this.SetValue(IsProcessingLogsProperty, false);
+			this.SetValue(IsProcessingLogsProp, false);
 		else if (this.LogFiltering.IsFiltering || this.IsReadingLogs || this.IsRemovingLogFiles)
-			this.SetValue(IsProcessingLogsProperty, true);
+			this.SetValue(IsProcessingLogsProp, true);
 		else
-			this.SetValue(IsProcessingLogsProperty, false);
+			this.SetValue(IsProcessingLogsProp, false);
 	}
 
 
@@ -6474,7 +6474,7 @@ class Session : ViewModel<IULogViewerApplication>
 
 		// update state
 		this.Logger.LogTrace("Max log file count: {count}", maxLogFileCount);
-		this.SetValue(MaxLogFileCountProperty, maxLogFileCount);
+		this.SetValue(MaxLogFileCountProp, maxLogFileCount);
 	}
 	
 	
@@ -6522,7 +6522,7 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 
 			// command
-			if (this.GetValue(CommandProperty) is { } command 
+			if (this.GetValue(CommandProp) is { } command 
 			    && !string.IsNullOrEmpty(command)
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Command)))
 			{
@@ -6533,19 +6533,19 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 
 			// IP end point
-			if (this.GetValue(IPEndPointProperty) is { } ipEndPoint
+			if (this.GetValue(IPEndPointProp) is { } ipEndPoint
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.IPEndPoint)))
 			{
 				return ipEndPoint.ToString();
 			}
 			
 			// process ID and name
-			if (this.GetValue(ProcessIdProperty) is { } pid
+			if (this.GetValue(ProcessIdProp) is { } pid
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessId)))
 			{
 				return pid.ToString();
 			}
-			if (this.GetValue(ProcessNameProperty) is { } processName
+			if (this.GetValue(ProcessNameProp) is { } processName
 			    && !string.IsNullOrEmpty(processName)
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.ProcessName)))
 			{
@@ -6553,14 +6553,14 @@ class Session : ViewModel<IULogViewerApplication>
 			}
 
 			// URI
-			if (this.GetValue(UriProperty) is { } uri
+			if (this.GetValue(UriProp) is { } uri
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.Uri)))
 			{
 				return uri.ToString();
 			}
 
 			// working directory
-			if (this.GetValue(WorkingDirectoryNameProperty) is { } workingDirName 
+			if (this.GetValue(WorkingDirectoryNameProp) is { } workingDirName 
 			    && !string.IsNullOrEmpty(workingDirName)
 			    && !dataSourceOptions.IsOptionSet(nameof(LogDataSourceOptions.WorkingDirectory)))
 			{
@@ -6574,8 +6574,8 @@ class Session : ViewModel<IULogViewerApplication>
 		});
 
 		// update properties
-		this.SetValue(IconProperty, icon);
-		this.SetValue(TitleProperty, title);
+		this.SetValue(IconProp, icon);
+		this.SetValue(TitleProp, title);
 	}
 
 
@@ -6584,13 +6584,13 @@ class Session : ViewModel<IULogViewerApplication>
 	{
 		var profile = this.LogProfile;
 		if (profile is null)
-			this.SetValue(ValidLogLevelsProperty, Array.Empty<Logs.LogLevel>());
+			this.SetValue(ValidLogLevelsProp, Array.Empty<Logs.LogLevel>());
 		else
 		{
 			IList<Logs.LogLevel> logLevels = profile.LogLevelMapForReading.IsNotEmpty()
 				? new HashSet<Logs.LogLevel>(profile.LogLevelMapForReading.Values).Also(it => it.Add(ULogViewer.Logs.LogLevel.Undefined)).ToList()
 				: Enum.GetValues<Logs.LogLevel>();
-			this.SetValue(ValidLogLevelsProperty, new SafeReadOnlyList<Logs.LogLevel>(logLevels));
+			this.SetValue(ValidLogLevelsProp, new SafeReadOnlyList<Logs.LogLevel>(logLevels));
 		}
 	}
 
@@ -6599,20 +6599,20 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get current URI to read logs from.
 	/// </summary>
 	public Uri? Uri =>
-		this.GetValue(UriProperty);
+		this.GetValue(UriProp);
 	
 	
 	/// <summary>
 	/// Check whether text-shell should be used for executing command for reading logs or not.
 	/// </summary>
-	public bool? UseTextShellToExecuteCommand => this.GetValue(UseTextShellToExecuteCommandProperty);
+	public bool? UseTextShellToExecuteCommand => this.GetValue(UseTextShellToExecuteCommandProp);
 
 
 	/// <summary>
 	/// Get list of valid <see cref="ULogViewer.Logs.LogLevel"/> defined by log profile including <see cref="ULogViewer.Logs.LogLevel.Undefined"/>.
 	/// </summary>
 	public IList<Logs.LogLevel> ValidLogLevels =>
-		this.GetValue(ValidLogLevelsProperty);
+		this.GetValue(ValidLogLevelsProp);
 
 
 	// Wait for all necessary tasks.
@@ -6631,12 +6631,12 @@ class Session : ViewModel<IULogViewerApplication>
 	/// Get name of current working directory.
 	/// </summary>
 	public string? WorkingDirectoryName =>
-		this.GetValue(WorkingDirectoryNameProperty);
+		this.GetValue(WorkingDirectoryNameProp);
 
 
 	/// <summary>
 	/// Get path of current working directory.
 	/// </summary>
 	public string? WorkingDirectoryPath =>
-		this.GetValue(WorkingDirectoryPathProperty);
+		this.GetValue(WorkingDirectoryPathProp);
 }

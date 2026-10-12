@@ -25,7 +25,6 @@
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CarinaStudio.ULogViewer.Controls.SessionView"
-             x:CompileBindings="False"
              x:DataType="appViewModels:Session"
 			 Name="root">
 
@@ -205,7 +204,7 @@
 		<ContextMenu x:Key="logChartTypeMenu" Placement="Top"/>
 
 		<!-- Log file action menu -->
-		<ContextMenu x:Key="logFileActionMenu" IsEnabled="{Binding $self.DataContext, Converter={x:Static ObjectConverters.IsNotNull}}">
+		<ContextMenu x:Key="logFileActionMenu" x:DataType="appViewModels:Session+LogFileInfo" IsEnabled="{Binding $self.DataContext, Converter={x:Static ObjectConverters.IsNotNull}}">
 			<MenuItem Command="{Binding #root.CopyLogFileNameCommand}" 
 			          CommandParameter="{Binding FileName}" 
 			          Header="{asXaml:StringResource SessionView.CopyLogFileName}">
@@ -267,11 +266,11 @@
 		</ContextMenu>
 
 		<!-- Log header template-->
-		<DataTemplate x:Key="logHeaderTemplate" x:CompileBindings="True" x:DataType="appViewModels:DisplayableLogProperty">
+		<DataTemplate x:Key="logHeaderTemplate" x:DataType="appViewModels:DisplayableLogProperty">
 			<Border Name="border" Background="{x:Static Brushes.Transparent}" HorizontalAlignment="Stretch" Margin="{StaticResource Thickness/SessionView.LogHeader.Margin}">
 				<ToolTip.Tip>
 					<StackPanel>
-						<TextBlock IsVisible="{ReflectionBinding #textBlock.IsTextTrimmed}" TextTrimming="CharacterEllipsis">
+						<TextBlock IsVisible="{Binding #textBlock.IsTextTrimmed}" TextTrimming="CharacterEllipsis">
 							<TextBlock.Inlines>
 								<Run Text="{Binding DisplayName}"/>
 								<Run Text="{Binding SecondaryDisplayName, Converter={x:Static appControls:SessionView.LogSecondaryDisplayNameConverter}}"/>
@@ -433,7 +432,7 @@
 		<appControls:LogProfileSelectionContextMenu x:Key="logProfileSelectionMenu" Placement="Bottom"/>
 
 		<!-- Log property tool tip template -->
-		<DataTemplate x:Key="logPropertyToolTipTemplate" x:CompileBindings="True" x:DataType="{x:Type sys:Object}">
+		<DataTemplate x:Key="logPropertyToolTipTemplate" x:DataType="{x:Type sys:Object}">
 			<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" MaxLines="8" Text="{Binding}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
 		</DataTemplate>
 
@@ -445,7 +444,7 @@
 
 		<!-- Other actions menu -->
 		<ContextMenu x:Key="otherActionsMenu" Placement="Bottom">
-			<MenuItem Command="{Binding #root.Application.ShowApplicationOptionsDialog}" 
+			<MenuItem Command="{Binding #root.((app:App)Application).ShowApplicationOptionsDialog}" 
 			          Header="{asXaml:StringResource SessionView.AppOptions}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Settings.Outline}"/>
@@ -458,28 +457,28 @@
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].CreateMainWindow}" 
+			<MenuItem Command="{Binding $parent[app:MainWindow].CreateMainWindow}" 
 			          Header="{asXaml:StringResource Common.CreateWindow}" InputGesture="{x:Static appInput:KeyGestures.NewWindow}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.AddWindow}"/>
 				</MenuItem.Icon>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" 
+			<MenuItem Command="{Binding $parent[app:MainWindow].LayoutMainWindowsCommand}" 
 			          CommandParameter="{x:Static asControls:MultiWindowLayout.Horizontal}" 
 			          Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Horizontal}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Horizontal}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" 
+			<MenuItem Command="{Binding $parent[app:MainWindow].LayoutMainWindowsCommand}" 
 			          CommandParameter="{x:Static asControls:MultiWindowLayout.Vertical}" 
 			          Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Vertical}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Layout.Vertical}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[Window].LayoutMainWindowsCommand}" 
+			<MenuItem Command="{Binding $parent[app:MainWindow].LayoutMainWindowsCommand}" 
 			          CommandParameter="{x:Static asControls:MultiWindowLayout.Tile}" 
 			          Header="{asXaml:StringResource MainWindow.LayoutMainWindows.Tile}">
 				<MenuItem.Icon>
@@ -501,21 +500,21 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<Separator IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}"/>
-				<MenuItem Command="{Binding $parent[Window].EditConfiguration}" 
+				<MenuItem Command="{Binding $parent[app:MainWindow].EditConfiguration}" 
 				          Header="{asXaml:StringResource SessionView.EditConfiguration}" 
 				          IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[Window].EditPersistentState}" 
+				<MenuItem Command="{Binding $parent[app:MainWindow].EditPersistentState}" 
 				          Header="{asXaml:StringResource SessionView.EditPersistentState}" 
 				          IsVisible="{Binding #root.Application.IsDebugMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 					</MenuItem.Icon>
 				</MenuItem>
-				<MenuItem Command="{Binding $parent[Window].Application.ShowSelfTestingWindow}" 
+				<MenuItem Command="{Binding $parent[app:MainWindow].((app:App)Application).ShowSelfTestingWindow}" 
 				          Header="{asXaml:StringResource Common.SelfTesting}" 
 				          IsVisible="{Binding #root.Application.IsTestingMode}">
 					<MenuItem.Icon>
@@ -531,19 +530,19 @@
 				</MenuItem>
 			</MenuItem>
 			<Separator/>
-			<MenuItem Command="{Binding #root.Application.ShowQuickStartGuideWindow}" 
+			<MenuItem Command="{Binding #root.((app:App)Application).ShowQuickStartGuideWindow}" 
 			          Header="{asXaml:StringResource SessionView.QuickStartGuide}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Lightbulb.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.Application.OpenFeedbackPage}" 
+			<MenuItem Command="{Binding #root.((app:App)Application).OpenFeedbackPage}" 
 			          Header="{asXaml:StringResource Common.Feedback}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Chat.Outline}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding #root.Application.ShowApplicationInfoDialog}" 
+			<MenuItem Command="{Binding #root.((app:App)Application).ShowApplicationInfoDialog}" 
 			          Header="{asXaml:StringResource SessionView.AppInfo}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Information.Outline}"/>
@@ -732,7 +731,7 @@
 						              asControls:ToolbarElement.Role="Button"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.SaveLogs}">
 							<ia:Interaction.Behaviors>
-								<iaCore:DataTriggerBehavior Binding="{Binding $self.IsChecked}" Value="True">
+								<iaCore:DataTriggerBehavior Binding="{Binding #logsSavingButton.IsChecked}" Value="True">
 									<iaCore:ChangePropertyAction PropertyName="ToolTip.Tip" Value="{x:Null}"/>
 								</iaCore:DataTriggerBehavior>
 							</ia:Interaction.Behaviors>
@@ -813,7 +812,6 @@
 						<ToggleButton Name="logLevelFiltersButton" 
 						              Command="{Binding #root.ShowLogLevelFiltersMenu}"
 						              IsEnabled="{Binding #root.HasLogProfile}"
-						              IsVisible="{Binding $self.ItemCount}" 
 						              asControls:ToolbarElement.Role="ButtonWithDropDownIcon"
 						              ToolTip.Tip="{asXaml:StringResource SessionView.LogLevelFilters.Description}">
 							<Grid>
@@ -967,7 +965,7 @@
 										<ScrollViewer MaxHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MaxHeight}" MinHeight="{StaticResource Double/SessionView.PredefinedLogTextFilterListBox.MinHeight}">
 											<StackPanel Name="predefinedLogTextFiltersAndGroupsPanel">
 												<StackPanel.DataTemplates>
-													<DataTemplate x:CompileBindings="True" DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
+													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilter}">
 														<Border Background="{x:Static Brushes.Transparent}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterListBox.Item.Padding}">
 															<ToolTip.Tip>
 																<asControls:SyntaxHighlightingTextBlock DefinitionSet="{Binding #root.RegexSyntaxHighlightingDefinitionSet}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Text="{Binding Regex}"/>
@@ -1005,7 +1003,7 @@
 															</Grid>
 														</Border>
 													</DataTemplate>
-													<DataTemplate x:CompileBindings="True" DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
+													<DataTemplate DataType="{x:Type appViewModels:PredefinedLogTextFilterGroup}">
 														<Expander Background="{x:Null}" HorizontalAlignment="Stretch" IsExpanded="False" Margin="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Margin}" Padding="{StaticResource Thickness/SessionView.PredefinedLogTextFilterGroup.Padding}">
 															<Expander.Header>
 																<Grid Name="rootGrid" Background="{x:Static Brushes.Transparent}" ColumnDefinitions="Auto,*,Auto" HorizontalAlignment="Stretch">
@@ -1123,7 +1121,7 @@
 						<!-- Update application -->
 						<Button Name="updateAppButton"
 						        BorderThickness="1"
-						        Command="{Binding #root.Application.CheckForApplicationUpdate}"
+						        Command="{Binding #root.((app:App)Application).CheckForApplicationUpdate}"
 						        IsVisible="{asXaml:AndBindings
 						            {Binding #root.Application.UpdateInfo, Converter={x:Static ObjectConverters.IsNotNull}},
 						            {Binding #root.IsApplicationUpdateNotificationEnabled}
@@ -1545,7 +1543,7 @@
 
 		<!-- Status bar -->
 		<Panel Grid.ColumnSpan="4" Grid.Row="2">
-			<Border x:CompileBindings="False" Classes="StatusBar" Background="{Binding #root.StatusBarState, Converter={x:Static appControls:SessionView.StatusBarBackgroundConverter}}">
+			<Border Classes="StatusBar" Background="{Binding #root.StatusBarState, Converter={x:Static appControls:SessionView.StatusBarBackgroundConverter}}">
 				
 				<DockPanel>
 
@@ -1838,7 +1836,7 @@
 							                               VerticalAlignment="Center"/>
 							<abControls:FormattedTextBlock Arg1="0000000" 
 							                               Format="{asXaml:StringResource SessionView.FilteredLogCount}" 
-							                               IsVisible="{Binding IsFilteringLogsNeeded}"
+							                               IsVisible="{Binding LogFiltering.IsFilteringNeeded}"
 							                               asControls:StatusBarElement.Role="Label"
 							                               VerticalAlignment="Center"/>
 							<Separator asControls:StatusBarElement.Role="Separator"/>
@@ -1987,7 +1985,7 @@
 		        Grid.Column="2" 
 		        Grid.Row="1" 
 		        HorizontalAlignment="Stretch" 
-		        IsEnabled="{Binding #root.HasProfile}"
+		        IsEnabled="{Binding #root.HasLogProfile}"
 		        IsVisible="{asXaml:OrBindings
 		            {Binding LogAnalysis.IsPanelVisible},
 		            {Binding IsLogFilesPanelVisible},
@@ -2047,9 +2045,9 @@
 					                    Grid.Row="1" 
 					                    ItemsSource="{Binding LogCategorizing.TimestampCategories}">
 						<asControls:ListBox.ItemTemplate>
-							<DataTemplate x:CompileBindings="True" x:DataType="appCategorizing:DisplayableLogCategory">
+							<DataTemplate x:DataType="appCategorizing:DisplayableLogCategory">
 								<Grid ColumnDefinitions="Auto,*">
-									<Border Background="{Binding Log.ColorIndicatorBrush, FallbackValue={x:Null}}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{ReflectionBinding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding Log.ColorIndicatorBrush, FallbackValue={x:Null}}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" IsVisible="{Binding #root.DataContext.HasLogColorIndicator, FallbackValue=False}" ToolTip.Tip="{Binding Log.ColorIndicatorTip}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<TextBlock FontFamily="{Binding LogFontFamily, Source={x:Static appControls:ControlFonts.Default}}" FontSize="{Binding LogFontSize, Source={x:Static appControls:ControlFonts.Default}}" Grid.Column="1" Margin="{StaticResource Thickness/SessionView.MarkedLogListBox.Item.Padding}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 								</Grid>
 							</DataTemplate>
@@ -2205,7 +2203,7 @@
 															</Expander.Header>
 															<ListBox Name="keyLogAnalysisRuleSetListBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:KeyLogAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
-																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
+																	<DataTemplate x:DataType="appAnalysis:KeyLogAnalysisRuleSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" 
@@ -2277,7 +2275,7 @@
 															</Expander.Header>
 															<ListBox Name="operationDurationAnalysisRuleSetListBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding RuleSets, Source={x:Static appCtxlBased:OperationDurationAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
-																	<DataTemplate x:CompileBindings="True" x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
+																	<DataTemplate x:DataType="appCtxlBased:OperationDurationAnalysisRuleSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" 
@@ -2349,7 +2347,7 @@
 															</Expander.Header>
 															<ListBox Name="operationCountingAnalysisRuleSetListBox" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding RuleSets, Source={x:Static appAnalysis:OperationCountingAnalysisRuleSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
-																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
+																	<DataTemplate x:DataType="appAnalysis:OperationCountingAnalysisRuleSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" 
@@ -2424,7 +2422,7 @@
 															</Expander.Header>
 															<ListBox Name="logAnalysisScriptSetListBox" IsEnabled="{Binding #root.IsScriptRunningEnabled}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding ScriptSets, Source={x:Static appAnalysisScripting:LogAnalysisScriptSetManager.Default}}" SelectionMode="Multiple">
 																<ListBox.ItemTemplate>
-																	<DataTemplate x:CompileBindings="True" x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
+																	<DataTemplate x:DataType="appAnalysisScripting:LogAnalysisScriptSet">
 																		<Grid Name="itemRoot" ColumnDefinitions="Auto,*,Auto">
 																			<Panel Height="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogAnalysisRuleSetListBox.Icon.Margin}" VerticalAlignment="Center" Width="{StaticResource Double/SessionView.LogAnalysisRuleSetListBox.Icon.Size}">
 																				<Image Classes="Icon" 
@@ -2559,11 +2557,11 @@
 							</ContextMenu>
 						</asControls:ListBox.ContextMenu>
 						<asControls:ListBox.ItemTemplate>
-							<DataTemplate x:CompileBindings="True" x:DataType="appAnalysis:DisplayableLogAnalysisResult">
+							<DataTemplate x:DataType="appAnalysis:DisplayableLogAnalysisResult">
 								<Grid ColumnDefinitions="Auto,*" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									
 									<!-- Color indicator -->
-									<Border x:CompileBindings="False" 
+									<Border 
 									        Background="{Binding ColorIndicatorBrush}" 
 									        BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" 
 									        BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" 
@@ -2595,8 +2593,8 @@
 												<StaticResourceExtension x:Key="ToolTipContentMaxWidth" ResourceKey="Double/SessionView.LogAnalysisResult.ToolTip.MaxWidth"/>
 											</abControls:TextBlock.Resources>
 											<abControls:TextBlock.ToolTipTemplate>
-												<DataTemplate x:CompileBindings="True" x:DataType="{x:Type appAnalysis:DisplayableLogAnalysisResult}">
-													<TextBlock FontFamily="{ReflectionBinding $parent[TextBlock].FontFamily}" 
+												<DataTemplate x:DataType="{x:Type appAnalysis:DisplayableLogAnalysisResult}">
+													<TextBlock FontFamily="{Binding $parent[TextBlock].FontFamily}" 
 													           Text="{Binding}" 
 													           TextTrimming="CharacterEllipsis"
 													           TextWrapping="Wrap" />
@@ -2605,7 +2603,7 @@
 										</abControls:TextBlock>
 										
 										<!-- Icon -->
-										<Image x:CompileBindings="False" 
+										<Image 
 										       Classes="Icon"
 										       Height="{StaticResource Double/SessionView.LogAnalysisResult.Icon.Size}" 
 										       Margin="{StaticResource Thickness/SessionView.LogAnalysisResult.Icon.Margin}"
@@ -2637,7 +2635,7 @@
 											                  VerticalAlignment="Center" 
 											                  Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
 												<DrawingImage>
-													<GeometryDrawing Brush="{ReflectionBinding #durationIcon.(TextElement.Foreground)}" 
+													<GeometryDrawing Brush="{Binding #durationIcon.(TextElement.Foreground)}" 
 													                 Geometry="{StaticResource Geometry/Timer.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
@@ -2661,7 +2659,7 @@
 											                  VerticalAlignment="Center" 
 											                  Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
 												<DrawingImage>
-													<GeometryDrawing Brush="{ReflectionBinding #byteSizeIcon.(TextElement.Foreground)}" 
+													<GeometryDrawing Brush="{Binding #byteSizeIcon.(TextElement.Foreground)}" 
 													                 Geometry="{DynamicResource Geometry/Icon.Memory.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
@@ -2688,7 +2686,7 @@
 											                  VerticalAlignment="Center" 
 											                  Width="{StaticResource Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size}">
 												<DrawingImage>
-													<GeometryDrawing Brush="{ReflectionBinding #quantityIcon.(TextElement.Foreground)}" 
+													<GeometryDrawing Brush="{Binding #quantityIcon.(TextElement.Foreground)}" 
 													                 Geometry="{StaticResource Geometry/Layers.Outline}"/>
 												</DrawingImage>
 											</asControls:Image>
@@ -2824,9 +2822,9 @@
 					<Border BorderBrush="{DynamicResource Brush/SessionView.LogHeader.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False"/>
 					<asControls:ListBox Classes="Log" Name="logFileListBox" Background="{x:Static Brushes.Transparent}" BorderThickness="0" ContextMenu="{StaticResource logFileActionMenu}" Focusable="False" Grid.Row="1" IsEnabled="{Binding IsProVersionActivated}" ItemsPanel="{StaticResource ItemsPanelTemplate/StackPanel}" ItemsSource="{Binding LogFiles}">
 						<asControls:ListBox.ItemTemplate>
-							<DataTemplate x:CompileBindings="True" x:DataType="{x:Type appViewModels:Session+LogFileInfo}">
+							<DataTemplate x:DataType="{x:Type appViewModels:Session+LogFileInfo}">
 								<DockPanel>
-									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{ReflectionBinding #root.DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
+									<Border Background="{Binding ColorIndicatorBrush}" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Background}" BorderThickness="{StaticResource Thickness/SessionView.LogListBox.ColorIndicator.Border}" DockPanel.Dock="Left" IsVisible="{Binding #root.DataContext.HasLogColorIndicatorByFileName, FallbackValue=False}" Width="{StaticResource Double/SessionView.LogListBox.ColorIndicator.Width}"/>
 									<Grid ColumnDefinitions="Auto,*,Auto" Margin="{StaticResource Thickness/SessionView.LogFileListBox.Item.Padding}">
 										<Panel Grid.Column="0" Height="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}" Margin="{StaticResource Thickness/SessionView.LogFileInfo.Icon.Margin}" VerticalAlignment="Top" Width="{StaticResource Double/SessionView.LogFileInfo.Icon.Size}">
 											<Panel IsVisible="{Binding !#lightLogFileIconsContainer.IsVisible}">

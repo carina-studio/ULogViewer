@@ -31,79 +31,79 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="BeginningTimestamp"/>.
     /// </summary>
-    public static readonly ObservableProperty<DateTime?> BeginningTimestampProperty = ObservableProperty.Register<LogFilteringViewModel, DateTime?>(nameof(BeginningTimestamp));
+    public static readonly ObservableProperty<DateTime?> BeginningTimestampProp = ObservableProperty.Register<LogFilteringViewModel, DateTime?>(nameof(BeginningTimestamp));
     /// <summary>
     /// Property of <see cref="EndingTimestamp"/>.
     /// </summary>
-    public static readonly ObservableProperty<DateTime?> EndingTimestampProperty = ObservableProperty.Register<LogFilteringViewModel, DateTime?>(nameof(EndingTimestamp));
+    public static readonly ObservableProperty<DateTime?> EndingTimestampProp = ObservableProperty.Register<LogFilteringViewModel, DateTime?>(nameof(EndingTimestamp));
     /// <summary>
     /// Property of <see cref="FilteringProgress"/>.
     /// </summary>
-    public static readonly ObservableProperty<double> FilteringProgressProperty = ObservableProperty.Register<LogFilteringViewModel, double>(nameof(FilteringProgress), double.NaN);
+    public static readonly ObservableProperty<double> FilteringProgressProp = ObservableProperty.Register<LogFilteringViewModel, double>(nameof(FilteringProgress), double.NaN);
     /// <summary>
     /// Property of <see cref="FiltersCombinationMode"/>.
     /// </summary>
-    public static readonly ObservableProperty<FilterCombinationMode> FiltersCombinationModeProperty = ObservableProperty.Register<LogFilteringViewModel, FilterCombinationMode>(nameof(FiltersCombinationMode), FilterCombinationMode.Auto);
+    public static readonly ObservableProperty<FilterCombinationMode> FiltersCombinationModeProp = ObservableProperty.Register<LogFilteringViewModel, FilterCombinationMode>(nameof(FiltersCombinationMode), FilterCombinationMode.Auto);
     /// <summary>
     /// Property of <see cref="HasGlobalTextFilterHistory"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasGlobalTextFilterHistoryProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasGlobalTextFilterHistory), false);
+    public static readonly ObservableProperty<bool> HasGlobalTextFilterHistoryProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasGlobalTextFilterHistory), false);
     /// <summary>
     /// Property of <see cref="HasLevelFilters"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasLevelFiltersProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasLevelFilters), false);
+    public static readonly ObservableProperty<bool> HasLevelFiltersProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasLevelFilters), false);
     /// <summary>
     /// Property of <see cref="HasTimestampRange"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasTimestampRangeProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasTimestampRange), false);
+    public static readonly ObservableProperty<bool> HasTimestampRangeProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasTimestampRange), false);
     /// <summary>
     /// Property of <see cref="HasTextFilterHistory"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasTextFilterHistoryProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasTextFilterHistory), false);
+    public static readonly ObservableProperty<bool> HasTextFilterHistoryProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(HasTextFilterHistory), false);
     /// <summary>
     /// Property of <see cref="IgnoreTextFilterCase"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IgnoreTextFilterCaseProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IgnoreTextFilterCase), true);
+    public static readonly ObservableProperty<bool> IgnoreTextFilterCaseProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IgnoreTextFilterCase), true);
     /// <summary>
     /// Property of <see cref="IndexOfTextFilterInHistory"/>.
     /// </summary>
-    public static readonly ObservableProperty<int> IndexOfTextFilterInHistoryProperty = ObservableProperty.Register<LogFilteringViewModel, int>(nameof(IndexOfTextFilterInHistory), -1);
+    public static readonly ObservableProperty<int> IndexOfTextFilterInHistoryProp = ObservableProperty.Register<LogFilteringViewModel, int>(nameof(IndexOfTextFilterInHistory), -1);
     /// <summary>
     /// Property of <see cref="IsFiltering"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsFilteringProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFiltering));
+    public static readonly ObservableProperty<bool> IsFilteringProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFiltering));
     /// <summary>
     /// Property of <see cref="IsFilteringNeeded"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsFilteringNeededProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFilteringNeeded));
+    public static readonly ObservableProperty<bool> IsFilteringNeededProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsFilteringNeeded));
     /// <summary>
     /// Property of <see cref="IsProcessIdFilterEnabled"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsProcessIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsProcessIdFilterEnabled), false);
+    public static readonly ObservableProperty<bool> IsProcessIdFilterEnabledProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsProcessIdFilterEnabled), false);
     /// <summary>
     /// Property of <see cref="IsTemporaryTextFilter"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsTemporaryTextFilterProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsTemporaryTextFilter), false);
+    public static readonly ObservableProperty<bool> IsTemporaryTextFilterProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsTemporaryTextFilter), false);
     /// <summary>
     /// Property of <see cref="IsThreadIdFilterEnabled"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsThreadIdFilterEnabledProperty = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsThreadIdFilterEnabled), false);
+    public static readonly ObservableProperty<bool> IsThreadIdFilterEnabledProp = ObservableProperty.Register<LogFilteringViewModel, bool>(nameof(IsThreadIdFilterEnabled), false);
     /// <summary>
     /// Property of <see cref="LastFilteringDuration"/>.
     /// </summary>
-    public static readonly ObservableProperty<TimeSpan?> LastFilteringDurationProperty = ObservableProperty.Register<LogFilteringViewModel, TimeSpan?>(nameof(LastFilteringDuration));
+    public static readonly ObservableProperty<TimeSpan?> LastFilteringDurationProp = ObservableProperty.Register<LogFilteringViewModel, TimeSpan?>(nameof(LastFilteringDuration));
     /// <summary>
     /// Property of <see cref="ProcessIdFilter"/>.
     /// </summary>
-    public static readonly ObservableProperty<int?> ProcessIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ProcessIdFilter));
+    public static readonly ObservableProperty<int?> ProcessIdFilterProp = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ProcessIdFilter));
     /// <summary>
     /// Property of <see cref="TextFilter"/>.
     /// </summary>
-    public static readonly ObservableProperty<Regex?> TextFilterProperty = ObservableProperty.Register<LogFilteringViewModel, Regex?>(nameof(TextFilter));
+    public static readonly ObservableProperty<Regex?> TextFilterProp = ObservableProperty.Register<LogFilteringViewModel, Regex?>(nameof(TextFilter));
     /// <summary>
     /// Property of <see cref="ThreadIdFilter"/>.
     /// </summary>
-    public static readonly ObservableProperty<int?> ThreadIdFilterProperty = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
+    public static readonly ObservableProperty<int?> ThreadIdFilterProp = ObservableProperty.Register<LogFilteringViewModel, int?>(nameof(ThreadIdFilter));
     
     
     // Constants for usage tracking events.
@@ -183,7 +183,7 @@ class LogFilteringViewModel : SessionComponent
     public LogFilteringViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // create command
-        var hasLevelFiltersObservable = this.GetValueAsObservable(HasLevelFiltersProperty);
+        var hasLevelFiltersObservable = this.GetValueAsObservable(HasLevelFiltersProp);
         this.AddLevelFilterCommand = new Command<Logs.LogLevel>(level => this.AddLevelFilter(level));
         this.ClearGlobalTextFilterHistoryCommand = new Command(this.ClearGlobalTextFilterHistory, this.canClearGlobalTextFilterHistory);
         this.ClearLevelFiltersCommand = new Command(this.ClearLevelFilters, hasLevelFiltersObservable);
@@ -193,7 +193,7 @@ class LogFilteringViewModel : SessionComponent
         this.FilterBySelectedThreadIdCommand = new Command<bool>(this.FilterBySelectedThreadId, this.canFilterBySelectedTid);
         this.RemoveLevelFilterCommand = new Command<Logs.LogLevel>(level => this.RemoveLevelFilter(level), hasLevelFiltersObservable);
         this.ResetFiltersCommand = new Command(() => this.ResetFilters(true), this.canResetFilters);
-        this.ResetTimestampRangeCommand = new Command(this.ResetTimestampRange, this.GetValueAsObservable(HasTimestampRangeProperty));
+        this.ResetTimestampRangeCommand = new Command(this.ResetTimestampRange, this.GetValueAsObservable(HasTimestampRangeProp));
         this.SetFilterCombinationModeCommand = new Command<FilterCombinationMode>(mode => this.FiltersCombinationMode = mode);
         this.ToggleLevelFilterCommand = new Command<Logs.LogLevel>(this.ToggleLevelFilter);
         this.UseNextTextFilterInHistoryCommand = new Command(this.UseNextTextFilterInHistory, this.canUseNextTextFilterInHistory);
@@ -210,13 +210,13 @@ class LogFilteringViewModel : SessionComponent
             it.CollectionChanged += (_, _) =>
             {
                 if (!this.IsDisposed)
-                    this.SetValue(HasTextFilterHistoryProperty, it.IsNotEmpty());
+                    this.SetValue(HasTextFilterHistoryProp, it.IsNotEmpty());
                 this.UpdateCanUseTextFilterInHistory();
             };
         }).ReverseAsReadOnly();
 
         // setup properties
-        this.SetValue(IgnoreTextFilterCaseProperty, this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter));
+        this.SetValue(IgnoreTextFilterCaseProp, this.Settings.GetValueOrDefault(SettingKeys.IgnoreCaseOfLogTextFilter));
 
         // create log filter
         this.logFilter = new DisplayableLogFilter(this.Application, this.AllLogs, new DisplayableLogComparer(this.CompareLogs, default)).Also(it =>
@@ -240,22 +240,22 @@ class LogFilteringViewModel : SessionComponent
         // attach to session
         session.AllLogReadersDisposed += this.OnAllLogReaderDisposed;
         this.AddResources(
-            session.GetValueAsObservable(Session.AreLogsSortedByTimestampProperty).Subscribe(this.ResetTimestampRange, true),
-            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
+            session.GetValueAsObservable(Session.AreLogsSortedByTimestampProp).Subscribe(this.ResetTimestampRange, true),
+            session.GetValueAsObservable(Session.DisplayLogPropertiesProp).Subscribe(properties =>
             {
                 this.logFilter.FilteringLogProperties = properties;
             }, true),
-            session.GetValueAsObservable(Session.EarliestAllLogTimestampProperty).Subscribe(timestamp =>
+            session.GetValueAsObservable(Session.EarliestAllLogTimestampProp).Subscribe(timestamp =>
             {
                 if (timestamp.HasValue)
-                    this.BeginningTimestamp = this.GetValue(BeginningTimestampProperty); // to correct value
+                    this.BeginningTimestamp = this.GetValue(BeginningTimestampProp); // to correct value
                 else
                     this.ResetTimestampRange();
             }, true),
-            session.GetValueAsObservable(Session.LatestAllLogTimestampProperty).Subscribe(timestamp =>
+            session.GetValueAsObservable(Session.LatestAllLogTimestampProp).Subscribe(timestamp =>
             {
                 if (timestamp.HasValue)
-                    this.EndingTimestamp = this.GetValue(EndingTimestampProperty); // to correct value
+                    this.EndingTimestamp = this.GetValue(EndingTimestampProp); // to correct value
                 else
                     this.ResetTimestampRange();
             }, true)
@@ -311,7 +311,7 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public DateTime? BeginningTimestamp
     {
-        get => this.GetValue(BeginningTimestampProperty);
+        get => this.GetValue(BeginningTimestampProp);
         set
         {
             if (value.HasValue)
@@ -323,11 +323,11 @@ class LogFilteringViewModel : SessionComponent
                     return;
                 if (earliestTimestamp.Value > value.Value)
                     value = earliestTimestamp;
-                var endingTimestamp = this.GetValue(EndingTimestampProperty);
+                var endingTimestamp = this.GetValue(EndingTimestampProp);
                 if (endingTimestamp.HasValue && endingTimestamp.Value < value.Value)
                     value = endingTimestamp;
             }
-            this.SetValue(BeginningTimestampProperty, value);
+            this.SetValue(BeginningTimestampProp, value);
         }
     }
 
@@ -348,18 +348,18 @@ class LogFilteringViewModel : SessionComponent
             }
         });
         if (hasPid)
-            this.SetValue(IsProcessIdFilterEnabledProperty, true);
+            this.SetValue(IsProcessIdFilterEnabledProp, true);
         else
         {
-            this.ResetValue(IsProcessIdFilterEnabledProperty);
-            this.ResetValue(ProcessIdFilterProperty);
+            this.ResetValue(IsProcessIdFilterEnabledProp);
+            this.ResetValue(ProcessIdFilterProp);
         }
         if (hasTid)
-            this.SetValue(IsThreadIdFilterEnabledProperty, true);
+            this.SetValue(IsThreadIdFilterEnabledProp, true);
         else
         {
-            this.ResetValue(IsThreadIdFilterEnabledProperty);
-            this.ResetValue(ThreadIdFilterProperty);
+            this.ResetValue(IsThreadIdFilterEnabledProp);
+            this.ResetValue(ThreadIdFilterProp);
         }
     }
 
@@ -420,8 +420,8 @@ class LogFilteringViewModel : SessionComponent
         // setup timestamp range
         if (this.Session.AreLogsSortedByTimestamp && this.IsProVersionActivated)
         {
-            this.logFilter.BeginningTimestamp = this.GetValue(BeginningTimestampProperty);
-            this.logFilter.EndTimestamp = this.GetValue(EndingTimestampProperty);
+            this.logFilter.BeginningTimestamp = this.GetValue(BeginningTimestampProp);
+            this.logFilter.EndTimestamp = this.GetValue(EndingTimestampProp);
             this.logFilter.TimestampLogProperty = this.LogProfile?.SortKey switch
             {
                 LogSortKey.BeginningTimestamp => nameof(DisplayableLog.BeginningTimestamp),
@@ -435,15 +435,15 @@ class LogFilteringViewModel : SessionComponent
         this.logFilter.Levels = this.levelFilters;
 
         // setup PID and TID
-        this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProperty) 
-            ? this.GetValue(ProcessIdFilterProperty) 
+        this.logFilter.ProcessId = this.GetValue(IsProcessIdFilterEnabledProp) 
+            ? this.GetValue(ProcessIdFilterProp) 
             : null;
-        this.logFilter.ThreadId = this.GetValue(IsThreadIdFilterEnabledProperty) 
-            ? this.GetValue(ThreadIdFilterProperty)
+        this.logFilter.ThreadId = this.GetValue(IsThreadIdFilterEnabledProp) 
+            ? this.GetValue(ThreadIdFilterProp)
             : null;
 
         // setup combination mode
-        this.logFilter.CombinationMode = this.GetValue(FiltersCombinationModeProperty);
+        this.logFilter.CombinationMode = this.GetValue(FiltersCombinationModeProp);
 
         // setup text regex
         var inclusionTextRegexList = new List<Regex>();
@@ -454,19 +454,19 @@ class LogFilteringViewModel : SessionComponent
             var options = textFilter.Options;
             if ((options & RegexOptions.IgnoreCase) == 0)
             {
-                if (this.GetValue(IgnoreTextFilterCaseProperty))
+                if (this.GetValue(IgnoreTextFilterCaseProp))
                 {
                     textFilter = new(textFilter.ToString(), options | RegexOptions.IgnoreCase);
-                    this.SetValue(TextFilterProperty, textFilter);
+                    this.SetValue(TextFilterProp, textFilter);
                     this.commitFiltersAction.Cancel();
                 }
             }
             else
             {
-                if (!this.GetValue(IgnoreTextFilterCaseProperty))
+                if (!this.GetValue(IgnoreTextFilterCaseProp))
                 {
                     textFilter = new(textFilter.ToString(), options & ~RegexOptions.IgnoreCase);
-                    this.SetValue(TextFilterProperty, textFilter);
+                    this.SetValue(TextFilterProp, textFilter);
                     this.commitFiltersAction.Cancel();
                 }
             }
@@ -563,7 +563,7 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public DateTime? EndingTimestamp
     {
-        get => this.GetValue(EndingTimestampProperty);
+        get => this.GetValue(EndingTimestampProp);
         set
         {
             if (value.HasValue)
@@ -575,11 +575,11 @@ class LogFilteringViewModel : SessionComponent
                     return;
                 if (latestTimestamp.Value < value.Value)
                     value = latestTimestamp;
-                var beginningTimestamp = this.GetValue(BeginningTimestampProperty);
+                var beginningTimestamp = this.GetValue(BeginningTimestampProp);
                 if (beginningTimestamp.HasValue && beginningTimestamp.Value > value.Value)
                     value = beginningTimestamp;
             }
-            this.SetValue(EndingTimestampProperty, value); 
+            this.SetValue(EndingTimestampProp, value); 
         }
     }
 
@@ -594,7 +594,7 @@ class LogFilteringViewModel : SessionComponent
             return;
         if (resetOtherFilters)
             this.ResetFilters(false);
-        this.SetValue(ProcessIdFilterProperty, pid);
+        this.SetValue(ProcessIdFilterProp, pid);
     }
 
 
@@ -713,9 +713,9 @@ class LogFilteringViewModel : SessionComponent
                 prevToken = value;
             }
         }
-        //var prevTextFilter = this.GetValue(TextFilterProperty);
+        //var prevTextFilter = this.GetValue(TextFilterProp);
         //var textFilter = new Regex(patternBuffer.ToString(), RegexOptions.IgnoreCase);
-        this.SetValue(IgnoreTextFilterCaseProperty, true);
+        this.SetValue(IgnoreTextFilterCaseProp, true);
         this.ResetFilters(false);
         this.TextFilter = new Regex(patternBuffer.ToString(), RegexOptions.IgnoreCase);
         /*
@@ -723,7 +723,7 @@ class LogFilteringViewModel : SessionComponent
             this.TextFilter = textFilter; // Use setter to update history of text filter
         else
         {
-            this.SetValue(TextFilterProperty, textFilter);
+            this.SetValue(TextFilterProp, textFilter);
             if (this.textFilterHistory.IsNotEmpty()) // Need to replace empty text filter on top of history queue
                 this.textFilterHistory[0] = textFilter.ToString();
         }
@@ -748,7 +748,7 @@ class LogFilteringViewModel : SessionComponent
             return;
         if (resetOtherFilters)
             this.ResetFilters(false);
-        this.SetValue(ThreadIdFilterProperty, tid);
+        this.SetValue(ThreadIdFilterProp, tid);
     }
 
 
@@ -768,7 +768,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Get progress of log filtering.
     /// </summary>
-    public double FilteringProgress => this.GetValue(FilteringProgressProperty);
+    public double FilteringProgress => this.GetValue(FilteringProgressProp);
 
 
     /// <summary>
@@ -782,8 +782,8 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public FilterCombinationMode FiltersCombinationMode 
     {
-        get => this.GetValue(FiltersCombinationModeProperty);
-        set => this.SetValue(FiltersCombinationModeProperty, value);
+        get => this.GetValue(FiltersCombinationModeProp);
+        set => this.SetValue(FiltersCombinationModeProp, value);
     }
     
     
@@ -796,7 +796,7 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Check whether <see cref="GlobalTextFilterHistory"/> is empty or not.
     /// </summary>
-    public bool HasGlobalTextFilterHistory => this.GetValue(HasGlobalTextFilterHistoryProperty);
+    public bool HasGlobalTextFilterHistory => this.GetValue(HasGlobalTextFilterHistoryProp);
 
 
     /// <summary>
@@ -814,19 +814,19 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Check whether at least one log level filter has been added or not.
     /// </summary>
-    public bool HasLevelFilters => this.GetValue(HasLevelFiltersProperty);
+    public bool HasLevelFilters => this.GetValue(HasLevelFiltersProp);
     
     
     /// <summary>
     /// Check whether <see cref="TextFilterHistory"/> is empty or not.
     /// </summary>
-    public bool HasTextFilterHistory => this.GetValue(HasTextFilterHistoryProperty);
+    public bool HasTextFilterHistory => this.GetValue(HasTextFilterHistoryProp);
 
 
     /// <summary>
     /// Check whether timestamp range has been set to filter logs or not.
     /// </summary>
-    public bool HasTimestampRange => this.GetValue(HasTimestampRangeProperty);
+    public bool HasTimestampRange => this.GetValue(HasTimestampRangeProp);
 
 
     /// <summary>
@@ -834,15 +834,15 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public bool IgnoreTextFilterCase
     {
-        get => this.GetValue(IgnoreTextFilterCaseProperty);
-        set => this.SetValue(IgnoreTextFilterCaseProperty, value);
+        get => this.GetValue(IgnoreTextFilterCaseProp);
+        set => this.SetValue(IgnoreTextFilterCaseProp, value);
     }
 
 
     /// <summary>
     /// Get index of current text filter in <see cref="TextFilterHistory"/>.
     /// </summary>
-    public int IndexOfTextFilterInHistory => this.GetValue(IndexOfTextFilterInHistoryProperty);
+    public int IndexOfTextFilterInHistory => this.GetValue(IndexOfTextFilterInHistoryProp);
 
 
     /// <summary>
@@ -856,19 +856,19 @@ class LogFilteringViewModel : SessionComponent
     /// <summary>
     /// Check whether there is on-going log filtering or not.
     /// </summary>
-    public bool IsFiltering => this.GetValue(IsFilteringProperty);
+    public bool IsFiltering => this.GetValue(IsFilteringProp);
 
 
     /// <summary>
     /// Check whether log filtering is needed or not.
     /// </summary>
-    public bool IsFilteringNeeded => this.GetValue(IsFilteringNeededProperty);
+    public bool IsFilteringNeeded => this.GetValue(IsFilteringNeededProp);
 
 
     /// <summary>
     /// Check whether <see cref="ProcessIdFilter"/> is valid to filter logs in current log profile or not.
     /// </summary>
-    public bool IsProcessIdFilterEnabled => this.GetValue(IsProcessIdFilterEnabledProperty);
+    public bool IsProcessIdFilterEnabled => this.GetValue(IsProcessIdFilterEnabledProp);
 
 
     /// <summary>
@@ -876,21 +876,21 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public bool IsTemporaryTextFilter
     {
-        get => this.GetValue(IsTemporaryTextFilterProperty);
-        set => this.SetValue(IsTemporaryTextFilterProperty, value);
+        get => this.GetValue(IsTemporaryTextFilterProp);
+        set => this.SetValue(IsTemporaryTextFilterProp, value);
     }
     
 
     /// <summary>
     /// Check whether <see cref="ThreadIdFilter"/> is valid to filter logs in current log profile or not.
     /// </summary>
-    public bool IsThreadIdFilterEnabled => this.GetValue(IsThreadIdFilterEnabledProperty);
+    public bool IsThreadIdFilterEnabled => this.GetValue(IsThreadIdFilterEnabledProp);
 
 
     /// <summary>
     /// Get duration of last log filtering.
     /// </summary>
-    public TimeSpan? LastFilteringDuration => this.GetValue(LastFilteringDurationProperty);
+    public TimeSpan? LastFilteringDuration => this.GetValue(LastFilteringDurationProp);
 
 
     /// <summary>
@@ -913,11 +913,11 @@ class LogFilteringViewModel : SessionComponent
         this.Session.LogSelection.Let(it =>
         {
             this.AddResources(
-                it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProperty).Subscribe(value =>
+                it.GetValueAsObservable(LogSelectionViewModel.SelectedLogStringPropertyValueProp).Subscribe(value =>
                     this.canFilterBySelectedProperty.Update(!string.IsNullOrWhiteSpace(value?.ToString()))),
-                it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProperty).Subscribe(pid =>
+                it.GetValueAsObservable(LogSelectionViewModel.SelectedProcessIdProp).Subscribe(pid =>
                     this.canFilterBySelectedPid.Update(pid.HasValue)),
-                it.GetValueAsObservable(LogSelectionViewModel.SelectedThreadIdProperty).Subscribe(tid =>
+                it.GetValueAsObservable(LogSelectionViewModel.SelectedThreadIdProp).Subscribe(tid =>
                     this.canFilterBySelectedTid.Update(tid.HasValue))
             );
         });
@@ -928,7 +928,7 @@ class LogFilteringViewModel : SessionComponent
     void OnAllLogReaderDisposed()
     {
         if (!this.IsDisposed)
-            this.SetValue(LastFilteringDurationProperty, null);
+            this.SetValue(LastFilteringDurationProp, null);
     }
 
 
@@ -972,7 +972,7 @@ class LogFilteringViewModel : SessionComponent
             this.canResetFilters.Update(true);
         else
             this.UpdateCanResetFilters();
-        this.SetValue(HasLevelFiltersProperty, this.levelFilters.IsNotEmpty());
+        this.SetValue(HasLevelFiltersProp, this.levelFilters.IsNotEmpty());
         this.LevelFiltersChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -987,20 +987,20 @@ class LogFilteringViewModel : SessionComponent
                 {
                     if (!this.logFilteringWatch.IsRunning)
                         this.logFilteringWatch.Restart();
-                    this.SetValue(IsFilteringProperty, true);
+                    this.SetValue(IsFilteringProp, true);
                 }
                 else
                 {
                     this.logFilteringWatch.Stop();
-                    this.SetValue(IsFilteringProperty, false);
-                    this.SetValue(LastFilteringDurationProperty, TimeSpan.FromMilliseconds(this.logFilteringWatch.ElapsedMilliseconds));
+                    this.SetValue(IsFilteringProp, false);
+                    this.SetValue(LastFilteringDurationProp, TimeSpan.FromMilliseconds(this.logFilteringWatch.ElapsedMilliseconds));
                 }
                 break;
             case nameof(DisplayableLogFilter.IsProcessingNeeded):
-                this.SetValue(IsFilteringNeededProperty, this.logFilter.IsProcessingNeeded);
+                this.SetValue(IsFilteringNeededProp, this.logFilter.IsProcessingNeeded);
                 break;
             case nameof(DisplayableLogFilter.Progress):
-                this.SetValue(FilteringProgressProperty, this.logFilter.Progress);
+                this.SetValue(FilteringProgressProp, this.logFilter.Progress);
                 break;
         }
     }
@@ -1012,10 +1012,10 @@ class LogFilteringViewModel : SessionComponent
         base.OnLogProfileChanged(prevLogProfile, newLogProfile);
         if (newLogProfile is null)
         {
-            this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProperty.DefaultValue;
+            this.logFilter.FilteringLogProperties = Session.DisplayLogPropertiesProp.DefaultValue;
             this.commitFiltersAction.Cancel();
-            this.ResetValue(IsProcessIdFilterEnabledProperty);
-            this.ResetValue(IsThreadIdFilterEnabledProperty);
+            this.ResetValue(IsProcessIdFilterEnabledProp);
+            this.ResetValue(IsThreadIdFilterEnabledProp);
         }
         else
         {
@@ -1121,28 +1121,28 @@ class LogFilteringViewModel : SessionComponent
     protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
     {
         base.OnPropertyChanged(property, oldValue, newValue);
-        if (property == BeginningTimestampProperty)
+        if (property == BeginningTimestampProp)
         {
             this.Logger.LogTrace("Change beginning timestamp to {timestamp}", newValue);
-            this.SetValue(HasTimestampRangeProperty, newValue is not null || this.GetValue(EndingTimestampProperty).HasValue);
+            this.SetValue(HasTimestampRangeProp, newValue is not null || this.GetValue(EndingTimestampProp).HasValue);
             this.commitFiltersAction.Schedule();
             this.UpdateCanResetFilters();
         }
-        else if (property == EndingTimestampProperty)
+        else if (property == EndingTimestampProp)
         {
             this.Logger.LogTrace("Change ending timestamp to {timestamp}", newValue);
-            this.SetValue(HasTimestampRangeProperty, newValue is not null || this.GetValue(BeginningTimestampProperty).HasValue);
+            this.SetValue(HasTimestampRangeProp, newValue is not null || this.GetValue(BeginningTimestampProp).HasValue);
             this.commitFiltersAction.Schedule();
             this.UpdateCanResetFilters();
         }
-        else if (property == FiltersCombinationModeProperty)
+        else if (property == FiltersCombinationModeProp)
         {
             this.Logger.LogTrace("Change filters combination mode to {mode}", newValue);
             this.commitFiltersAction.Schedule();
         }
-        else if (property == IgnoreTextFilterCaseProperty)
+        else if (property == IgnoreTextFilterCaseProp)
         {
-            if (this.GetValue(TextFilterProperty) is not null)
+            if (this.GetValue(TextFilterProp) is not null)
             {
                 this.Logger.LogTrace("Change ignoring case to {ignoreCase} with text filter", newValue);
                 this.commitFiltersAction.Execute();
@@ -1150,16 +1150,16 @@ class LogFilteringViewModel : SessionComponent
             else
                 this.Logger.LogTrace("Change ignoring case to {ignoreCase} without text filter", newValue);
         }
-        else if (property == IndexOfTextFilterInHistoryProperty)
+        else if (property == IndexOfTextFilterInHistoryProp)
             this.UpdateCanUseTextFilterInHistory();
-        else if (property == IsTemporaryTextFilterProperty)
+        else if (property == IsTemporaryTextFilterProp)
         {
             if ((bool)newValue!)
                 this.updateTextFilterPhrasesDatabaseAction.Cancel();
             else
                 this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
         }
-        else if (property == ProcessIdFilterProperty)
+        else if (property == ProcessIdFilterProp)
         {
             var pid = (int?)newValue;
             if (pid.HasValue)
@@ -1172,7 +1172,7 @@ class LogFilteringViewModel : SessionComponent
             else
                 this.UpdateCanResetFilters();
         }
-        else if (property == TextFilterProperty)
+        else if (property == TextFilterProp)
         {
             var pattern = newValue as Regex;
             this.commitFiltersAction.Schedule();
@@ -1187,7 +1187,7 @@ class LogFilteringViewModel : SessionComponent
                 this.UpdateCanResetFilters();
             }
         } 
-        else if (property == ThreadIdFilterProperty)
+        else if (property == ThreadIdFilterProp)
         {
             var tid = (int?)newValue;
             if (tid.HasValue)
@@ -1226,13 +1226,13 @@ class LogFilteringViewModel : SessionComponent
                 && jsonValue.ValueKind == JsonValueKind.String
                 && DateTime.TryParseExact(jsonValue.GetString(), SavedTimestampFormat, null, DateTimeStyles.AssumeLocal, out var beginningTimestamp))
             {
-                this.SetValue(BeginningTimestampProperty, beginningTimestamp);
+                this.SetValue(BeginningTimestampProp, beginningTimestamp);
             }
             if (element.TryGetProperty($"LogFiltering.{nameof(EndingTimestamp)}", out jsonValue)
                 && jsonValue.ValueKind == JsonValueKind.String
                 && DateTime.TryParseExact(jsonValue.GetString(), SavedTimestampFormat, null, DateTimeStyles.AssumeLocal, out var endingTimestamp))
             {
-                this.SetValue(EndingTimestampProperty, endingTimestamp);
+                this.SetValue(EndingTimestampProp, endingTimestamp);
             }
         }
         if ((element.TryGetProperty("LogFiltersCombinationMode", out jsonValue) // Upgrade case
@@ -1240,10 +1240,10 @@ class LogFilteringViewModel : SessionComponent
             && jsonValue.ValueKind == JsonValueKind.String
             && Enum.TryParse<FilterCombinationMode>(jsonValue.GetString(), out var combinationMode))
         {
-            this.SetValue(FiltersCombinationModeProperty, combinationMode);
+            this.SetValue(FiltersCombinationModeProp, combinationMode);
         }
         if (element.TryGetProperty($"LogFiltering.{nameof(IgnoreTextFilterCase)}", out jsonValue))
-            this.SetValue(IgnoreTextFilterCaseProperty, jsonValue.ValueKind != JsonValueKind.False);
+            this.SetValue(IgnoreTextFilterCaseProp, jsonValue.ValueKind != JsonValueKind.False);
         if (element.TryGetProperty("LogFiltering.LevelFilters", out jsonValue)
             && jsonValue.ValueKind == JsonValueKind.Array)
         {
@@ -1270,7 +1270,7 @@ class LogFilteringViewModel : SessionComponent
             || element.TryGetProperty($"LogFiltering.{nameof(ProcessIdFilter)}", out jsonValue))
                 && jsonValue.TryGetInt32(out var pid))
         {
-            this.SetValue(ProcessIdFilterProperty, pid);
+            this.SetValue(ProcessIdFilterProp, pid);
         }
         if ((element.TryGetProperty("LogTextFilter", out jsonValue) // Upgrade case
             || element.TryGetProperty($"LogFiltering.{nameof(TextFilter)}", out jsonValue))
@@ -1284,7 +1284,7 @@ class LogFilteringViewModel : SessionComponent
                 options = (RegexOptions)optionsValue;
             try
             {
-                this.SetValue(TextFilterProperty, new Regex(jsonPattern.GetString().AsNonNull(), options));
+                this.SetValue(TextFilterProp, new Regex(jsonPattern.GetString().AsNonNull(), options));
             }
             catch (Exception ex)
             {
@@ -1295,7 +1295,7 @@ class LogFilteringViewModel : SessionComponent
             || element.TryGetProperty($"LogFiltering.{nameof(ThreadIdFilter)}", out jsonValue))
                 && jsonValue.TryGetInt32(out var tid))
         {
-            this.SetValue(ThreadIdFilterProperty, tid);
+            this.SetValue(ThreadIdFilterProp, tid);
         }
         if ((element.TryGetProperty("PredefinedLogTextFilters", out jsonValue) // Upgrade case
             || element.TryGetProperty($"LogFiltering.{nameof(PredefinedTextFilters)}", out jsonValue))
@@ -1321,7 +1321,7 @@ class LogFilteringViewModel : SessionComponent
             && jsonValue.ValueKind == JsonValueKind.Number
             && jsonValue.TryGetInt32(out var index))
         {
-            this.SetValue(IndexOfTextFilterInHistoryProperty, index);
+            this.SetValue(IndexOfTextFilterInHistoryProp, index);
         }
         this.UpdateCanUseTextFilterInHistory();
     }
@@ -1334,10 +1334,10 @@ class LogFilteringViewModel : SessionComponent
         base.OnSaveState(writer);
 
         // save filtering parameters
-        this.GetValue(BeginningTimestampProperty)?.Let(it => writer.WriteString($"LogFiltering.{nameof(BeginningTimestamp)}", it.ToString(SavedTimestampFormat)));
-        this.GetValue(EndingTimestampProperty)?.Let(it => writer.WriteString($"LogFiltering.{nameof(EndingTimestamp)}", it.ToString(SavedTimestampFormat)));
+        this.GetValue(BeginningTimestampProp)?.Let(it => writer.WriteString($"LogFiltering.{nameof(BeginningTimestamp)}", it.ToString(SavedTimestampFormat)));
+        this.GetValue(EndingTimestampProp)?.Let(it => writer.WriteString($"LogFiltering.{nameof(EndingTimestamp)}", it.ToString(SavedTimestampFormat)));
         writer.WriteString($"LogFiltering.{nameof(FiltersCombinationMode)}", this.FiltersCombinationMode.ToString());
-        if (!this.GetValue(IgnoreTextFilterCaseProperty))
+        if (!this.GetValue(IgnoreTextFilterCaseProp))
             writer.WriteBoolean($"LogFiltering.{nameof(IgnoreTextFilterCase)}", false);
         if (this.levelFilters.IsNotEmpty())
         {
@@ -1347,8 +1347,8 @@ class LogFilteringViewModel : SessionComponent
                 writer.WriteStringValue(level.ToString());
             writer.WriteEndArray();
         }
-        this.GetValue(ProcessIdFilterProperty)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ProcessIdFilter)}", it));
-        this.GetValue(TextFilterProperty)?.Let(it =>
+        this.GetValue(ProcessIdFilterProp)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ProcessIdFilter)}", it));
+        this.GetValue(TextFilterProp)?.Let(it =>
         {
             writer.WritePropertyName($"LogFiltering.{nameof(TextFilter)}");
             writer.WriteStartObject();
@@ -1356,7 +1356,7 @@ class LogFilteringViewModel : SessionComponent
             writer.WriteNumber("Options", (int)it.Options);
             writer.WriteEndObject();
         });
-        this.GetValue(ThreadIdFilterProperty)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ThreadIdFilter)}", it));
+        this.GetValue(ThreadIdFilterProp)?.Let(it => writer.WriteNumber($"LogFiltering.{nameof(ThreadIdFilter)}", it));
         if (this.predefinedTextFilters.IsNotEmpty())
         {
             writer.WritePropertyName($"LogFiltering.{nameof(PredefinedTextFilters)}");
@@ -1373,7 +1373,7 @@ class LogFilteringViewModel : SessionComponent
                 writer.WriteStringValue(filter);
             writer.WriteEndArray();
         }
-        this.GetValue(IndexOfTextFilterInHistoryProperty).Let(index =>
+        this.GetValue(IndexOfTextFilterInHistoryProp).Let(index =>
         {
             if (index >= 0)
                 writer.WriteNumber($"LogFiltering.{IndexOfTextFilterInHistory}", index);
@@ -1392,8 +1392,8 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public int? ProcessIdFilter
     {
-        get => this.GetValue(ProcessIdFilterProperty);
-        set => this.SetValue(ProcessIdFilterProperty, value);
+        get => this.GetValue(ProcessIdFilterProp);
+        set => this.SetValue(ProcessIdFilterProp, value);
     }
     
     
@@ -1428,16 +1428,16 @@ class LogFilteringViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        this.ResetValue(BeginningTimestampProperty);
-        this.ResetValue(EndingTimestampProperty);
+        this.ResetValue(BeginningTimestampProp);
+        this.ResetValue(EndingTimestampProp);
         if (this.levelFilters.IsNotEmpty())
         {
             this.levelFilters.Clear();
             this.TrackLogLevelFilterCount();
             this.OnLevelFiltersChanged();
         }
-        this.ResetValue(ProcessIdFilterProperty);
-        this.ResetValue(ThreadIdFilterProperty);
+        this.ResetValue(ProcessIdFilterProp);
+        this.ResetValue(ThreadIdFilterProp);
         this.TextFilter = null; // Need to use setter to update history of text filter
         this.predefinedTextFilters.Clear();
         if (updateImmediately)
@@ -1456,8 +1456,8 @@ class LogFilteringViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        this.SetValue(BeginningTimestampProperty, null);
-        this.SetValue(EndingTimestampProperty, null);
+        this.SetValue(BeginningTimestampProp, null);
+        this.SetValue(EndingTimestampProp, null);
     }
     
     
@@ -1495,14 +1495,14 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public Regex? TextFilter
     {
-        get => this.GetValue(TextFilterProperty);
+        get => this.GetValue(TextFilterProp);
         set 
         {
             // get current filter
-            var prevPattern = this.GetValue(TextFilterProperty)?.ToString();
+            var prevPattern = this.GetValue(TextFilterProp)?.ToString();
 
             // update filter
-            this.SetValue(TextFilterProperty, value);
+            this.SetValue(TextFilterProp, value);
 
             // update filter history
             var pattern = value?.ToString();
@@ -1518,14 +1518,14 @@ class LogFilteringViewModel : SessionComponent
                             this.textFilterHistory.RemoveRange(0, this.textFilterHistory.Count - maxCount + 1);
                         this.textFilterHistory.Add(pattern);
                     }
-                    this.SetValue(IndexOfTextFilterInHistoryProperty, this.textFilterHistory.Count - 1);
+                    this.SetValue(IndexOfTextFilterInHistoryProp, this.textFilterHistory.Count - 1);
                     
                     // add to global history
                     this.AddToGlobalTextFilterHistory(pattern);
                 }
                 else
-                    this.ResetValue(IndexOfTextFilterInHistoryProperty);
-                if (!this.GetValue(IsTemporaryTextFilterProperty))
+                    this.ResetValue(IndexOfTextFilterInHistoryProp);
+                if (!this.GetValue(IsTemporaryTextFilterProp))
                     this.updateTextFilterPhrasesDatabaseAction.Reschedule(this.Application.Configuration.GetValueOrDefault(ConfigurationKeys.LogTextFilterPhrasesDatabaseUpdateDelay));
             }
         }
@@ -1543,8 +1543,8 @@ class LogFilteringViewModel : SessionComponent
     /// </summary>
     public int? ThreadIdFilter
     {
-        get => this.GetValue(ThreadIdFilterProperty);
-        set => this.SetValue(ThreadIdFilterProperty, value);
+        get => this.GetValue(ThreadIdFilterProp);
+        set => this.SetValue(ThreadIdFilterProp, value);
     }
     
     
@@ -1611,10 +1611,10 @@ class LogFilteringViewModel : SessionComponent
     void UpdateCanResetFilters()
     {
         this.canResetFilters.Update(this.levelFilters.IsNotEmpty()
-            || this.GetValue(HasTimestampRangeProperty)
-            || this.GetValue(ProcessIdFilterProperty).HasValue
-            || this.GetValue(ThreadIdFilterProperty).HasValue
-            || this.GetValue(TextFilterProperty) is not null
+            || this.GetValue(HasTimestampRangeProp)
+            || this.GetValue(ProcessIdFilterProp).HasValue
+            || this.GetValue(ThreadIdFilterProp).HasValue
+            || this.GetValue(TextFilterProp) is not null
             || this.predefinedTextFilters.IsNotEmpty()
         );
     }
@@ -1628,11 +1628,11 @@ class LogFilteringViewModel : SessionComponent
             this.canUseNextTextFilterInHistory.Update(false);
             this.canUsePreviousTextFilterInHistory.Update(false);
             this.canUseTextFilterInHistory.Update(false);
-            this.ResetValue(IndexOfTextFilterInHistoryProperty);
+            this.ResetValue(IndexOfTextFilterInHistoryProp);
         }
         else
         {
-            this.GetValue(IndexOfTextFilterInHistoryProperty).Let(it =>
+            this.GetValue(IndexOfTextFilterInHistoryProp).Let(it =>
             {
                 this.canUseNextTextFilterInHistory.Update(it >= 0 && it < this.textFilterHistory.Count - 1);
                 this.canUsePreviousTextFilterInHistory.Update(it != 0);
@@ -1645,7 +1645,7 @@ class LogFilteringViewModel : SessionComponent
     // Update database of text filter phrases.
     void UpdateTextFilterPhrasesDatabase()
     {
-        if (this.IsDisposed || this.GetValue(IsTemporaryTextFilterProperty))
+        if (this.IsDisposed || this.GetValue(IsTemporaryTextFilterProp))
             return;
         this.TextFilter?.Let(it => LogTextFilterPhrasesDatabase.UpdatePhrasesAsync(it, CancellationToken.None));
     }
@@ -1656,17 +1656,17 @@ class LogFilteringViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        var index = this.GetValue(IndexOfTextFilterInHistoryProperty);
+        var index = this.GetValue(IndexOfTextFilterInHistoryProp);
         ++index;
         if (index >= this.textFilterHistory.Count)
         {
-            this.SetValue(IndexOfTextFilterInHistoryProperty, this.textFilterHistory.Count - 1);
+            this.SetValue(IndexOfTextFilterInHistoryProp, this.textFilterHistory.Count - 1);
             return;
         }
-        this.SetValue(IndexOfTextFilterInHistoryProperty, index);
-        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+        this.SetValue(IndexOfTextFilterInHistoryProp, index);
+        var options = this.GetValue(IgnoreTextFilterCaseProp) ? RegexOptions.IgnoreCase : RegexOptions.None;
         var pattern = this.textFilterHistory[index];
-        this.SetValue(TextFilterProperty, new(pattern, options));
+        this.SetValue(TextFilterProp, new(pattern, options));
         this.AddToGlobalTextFilterHistory(pattern);
     }
 
@@ -1682,13 +1682,13 @@ class LogFilteringViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        var index = this.GetValue(IndexOfTextFilterInHistoryProperty);
+        var index = this.GetValue(IndexOfTextFilterInHistoryProp);
         if (index >= 0)
         {
             --index;
             if (index < 0)
             {
-                this.SetValue(IndexOfTextFilterInHistoryProperty, 0);
+                this.SetValue(IndexOfTextFilterInHistoryProp, 0);
                 return;
             }
         }
@@ -1698,10 +1698,10 @@ class LogFilteringViewModel : SessionComponent
                 return;
             index = this.textFilterHistory.Count - 1;
         }
-        this.SetValue(IndexOfTextFilterInHistoryProperty, index);
-        var options = this.GetValue(IgnoreTextFilterCaseProperty) ? RegexOptions.IgnoreCase : RegexOptions.None;
+        this.SetValue(IndexOfTextFilterInHistoryProp, index);
+        var options = this.GetValue(IgnoreTextFilterCaseProp) ? RegexOptions.IgnoreCase : RegexOptions.None;
         var pattern = this.textFilterHistory[index];
-        this.SetValue(TextFilterProperty, new(pattern, options));
+        this.SetValue(TextFilterProp, new(pattern, options));
         this.AddToGlobalTextFilterHistory(pattern);
     }
 

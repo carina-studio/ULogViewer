@@ -93,7 +93,7 @@ partial class SessionView
 	static readonly StyledProperty<bool> CanFilterLogsByNonTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(CanFilterLogsByNonTextFilters), false);
     static readonly StyledProperty<bool> HasSelectedPredefinedLogTextFiltersProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(HasSelectedPredefinedLogTextFilters), false);
     static readonly SettingKey<bool> IsShowingHelpButtonOnLogTextFilterConfirmedKey = new("SessionView.IsShowingHelpButtonOnLogTextFilterConfirmed");
-    static readonly StyledProperty<bool> ShowHelpButtonOnLogTextFilterProperty = AvaloniaProperty.Register<SessionView, bool>("ShowHelpButtonOnLogTextFilter");
+    static readonly StyledProperty<bool> ShowHelpButtonOnLogTextFilterProperty = AvaloniaProperty.Register<SessionView, bool>(nameof(ShowHelpButtonOnLogTextFilter));
 
 
     // Fields.
@@ -660,6 +660,10 @@ partial class SessionView
     /// Command to rename given group of predefined text filter.
     /// </summary>
     public ICommand RenamePredefinedLogTextFilterGroupCommand { get; }
+
+
+    // Whether help button on log text filter should be shown or not.
+    bool ShowHelpButtonOnLogTextFilter => this.GetValue(ShowHelpButtonOnLogTextFilterProperty);
 
 
     /// <summary>

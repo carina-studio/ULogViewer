@@ -18,15 +18,15 @@ class LogCategorizingViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="IsTimestampCategoriesPanelVisible"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsTimestampCategoriesPanelVisibleProperty = ObservableProperty.Register<LogCategorizingViewModel, bool>(nameof(IsTimestampCategoriesPanelVisible), false);
+    public static readonly ObservableProperty<bool> IsTimestampCategoriesPanelVisibleProp = ObservableProperty.Register<LogCategorizingViewModel, bool>(nameof(IsTimestampCategoriesPanelVisible), false);
     /// <summary>
     /// Property of <see cref="TimestampCategories"/>.
     /// </summary>
-    public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProperty = ObservableProperty.Register<LogCategorizingViewModel, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), Array.Empty<TimestampDisplayableLogCategory>());
+    public static readonly ObservableProperty<IReadOnlyList<TimestampDisplayableLogCategory>> TimestampCategoriesProp = ObservableProperty.Register<LogCategorizingViewModel, IReadOnlyList<TimestampDisplayableLogCategory>>(nameof(TimestampCategories), Array.Empty<TimestampDisplayableLogCategory>());
     /// <summary>
     /// Property of <see cref="TimestampCategoriesPanelSize"/>.
     /// </summary>
-    public static readonly ObservableProperty<double> TimestampCategoriesPanelSizeProperty = ObservableProperty.Register<LogCategorizingViewModel, double>(nameof(TimestampCategoriesPanelSize), Session.DefaultSidePanelSize, 
+    public static readonly ObservableProperty<double> TimestampCategoriesPanelSizeProp = ObservableProperty.Register<LogCategorizingViewModel, double>(nameof(TimestampCategoriesPanelSize), Session.DefaultSidePanelSize, 
         coerce: (_, it) =>
         {
             if (it >= Session.MaxSidePanelSize)
@@ -40,8 +40,8 @@ class LogCategorizingViewModel : SessionComponent
 
     // Static fields.
     [Obsolete]
-	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProperty.DefaultValue);
-    static readonly SettingKey<double> latestTimestampCategoriesPanelSizeKey = new("Session.LatestTimestampCategoriesPanelSize", TimestampCategoriesPanelSizeProperty.DefaultValue);
+	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProp.DefaultValue);
+    static readonly SettingKey<double> latestTimestampCategoriesPanelSizeKey = new("Session.LatestTimestampCategoriesPanelSize", TimestampCategoriesPanelSizeProp.DefaultValue);
         
     
     // Fields.
@@ -63,7 +63,7 @@ class LogCategorizingViewModel : SessionComponent
         var logComparer = new DisplayableLogComparer(this.CompareLogs, default);
         this.allLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.AllLogs, logComparer);
         this.markedLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, session.MarkedLogs, logComparer);
-        this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
+        this.SetValue(TimestampCategoriesProp, this.allLogsTimestampCategorizer.Categories);
 
         // setup scheduled actions
         this.reportTimestampCategoriesAction = new(() =>
@@ -74,33 +74,33 @@ class LogCategorizingViewModel : SessionComponent
             {
                 if (this.Session.IsShowingMarkedLogsTemporarily)
                 {
-                    this.SetValue(TimestampCategoriesProperty, this.markedLogsTimestampCategorizer.Categories);
+                    this.SetValue(TimestampCategoriesProp, this.markedLogsTimestampCategorizer.Categories);
                     return;
                 }
                 else if (this.Session.LogFiltering.IsFilteringNeeded)
                 {
-                    this.SetValue(TimestampCategoriesProperty, this.filteredLogsTimestampCategorizer!.Categories);
+                    this.SetValue(TimestampCategoriesProp, this.filteredLogsTimestampCategorizer!.Categories);
                     return;
                 }
             }
-            this.SetValue(TimestampCategoriesProperty, this.allLogsTimestampCategorizer.Categories);
+            this.SetValue(TimestampCategoriesProp, this.allLogsTimestampCategorizer.Categories);
         });
 
         // attach to session
         this.AddResources(
-            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(this.UpdateTimestampLogPropertyName, true),
-            session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.DisplayLogPropertiesProp).Subscribe(this.UpdateTimestampLogPropertyName, true),
+            session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProp).Subscribe(_ =>
                 this.reportTimestampCategoriesAction.Schedule()),
-            session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProp).Subscribe(_ =>
                 this.reportTimestampCategoriesAction.Schedule())
         );
         
         // restore state
 #pragma warning disable CS0612
         if (this.PersistentState.GetRawValue(latestSidePanelSizeKey) is double sidePanelSize)
-            this.SetValue(TimestampCategoriesPanelSizeProperty, sidePanelSize);
+            this.SetValue(TimestampCategoriesPanelSizeProp, sidePanelSize);
         else
-            this.SetValue(TimestampCategoriesPanelSizeProperty, this.PersistentState.GetValueOrDefault(latestTimestampCategoriesPanelSizeKey));
+            this.SetValue(TimestampCategoriesPanelSizeProp, this.PersistentState.GetValueOrDefault(latestTimestampCategoriesPanelSizeKey));
 #pragma warning restore CS0612
     }
 
@@ -123,8 +123,8 @@ class LogCategorizingViewModel : SessionComponent
     /// </summary>
     public bool IsTimestampCategoriesPanelVisible 
     {
-        get => this.GetValue(IsTimestampCategoriesPanelVisibleProperty);
-        set => this.SetValue(IsTimestampCategoriesPanelVisibleProperty, value);
+        get => this.GetValue(IsTimestampCategoriesPanelVisibleProp);
+        set => this.SetValue(IsTimestampCategoriesPanelVisibleProp, value);
     }
 
 
@@ -140,7 +140,7 @@ class LogCategorizingViewModel : SessionComponent
     {
         base.OnAllComponentsCreated();
         this.filteredLogsTimestampCategorizer = new TimestampDisplayableLogCategorizer(this.Application, this.Session.LogFiltering.FilteredLogs, new DisplayableLogComparer(this.CompareLogs, default));
-        this.AddResource(this.Session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ =>
+        this.AddResource(this.Session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProp).Subscribe(_ =>
             this.reportTimestampCategoriesAction.Schedule())
         );
     }
@@ -209,7 +209,7 @@ class LogCategorizingViewModel : SessionComponent
     protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
     {
         base.OnPropertyChanged(property, oldValue, newValue);
-        if (property == TimestampCategoriesPanelSizeProperty)
+        if (property == TimestampCategoriesPanelSizeProp)
         {
             if (!this.isRestoringState)
                 this.PersistentState.SetValue(latestTimestampCategoriesPanelSizeKey, (double)newValue!);
@@ -230,14 +230,14 @@ class LogCategorizingViewModel : SessionComponent
             if (element.TryGetProperty(nameof(IsTimestampCategoriesPanelVisible), out var jsonValue) // For upgrade case
                 || element.TryGetProperty($"LogCategorizing.{nameof(IsTimestampCategoriesPanelVisible)}", out jsonValue))
             {
-                this.SetValue(IsTimestampCategoriesPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+                this.SetValue(IsTimestampCategoriesPanelVisibleProp, jsonValue.ValueKind != JsonValueKind.False);
             }
             if ((element.TryGetProperty(nameof(TimestampCategoriesPanelSize), out jsonValue) // For upgrade case
                 || element.TryGetProperty($"LogCategorizing.{nameof(TimestampCategoriesPanelSize)}", out jsonValue))
                     && jsonValue.TryGetDouble(out var doubleValue)
-                    && TimestampCategoriesPanelSizeProperty.ValidationFunction(doubleValue))
+                    && TimestampCategoriesPanelSizeProp.ValidationFunction(doubleValue))
             {
-                this.SetValue(TimestampCategoriesPanelSizeProperty, doubleValue);
+                this.SetValue(TimestampCategoriesPanelSizeProp, doubleValue);
             }
         }
         finally
@@ -262,7 +262,7 @@ class LogCategorizingViewModel : SessionComponent
     /// <summary>
     /// Get list of log categories by timestamp.
     /// </summary>
-    public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories => this.GetValue(TimestampCategoriesProperty);
+    public IReadOnlyList<TimestampDisplayableLogCategory> TimestampCategories => this.GetValue(TimestampCategoriesProp);
 
 
     /// <summary>
@@ -270,8 +270,8 @@ class LogCategorizingViewModel : SessionComponent
     /// </summary>
     public double TimestampCategoriesPanelSize
     {
-        get => this.GetValue(TimestampCategoriesPanelSizeProperty);
-        set => this.SetValue(TimestampCategoriesPanelSizeProperty, value);
+        get => this.GetValue(TimestampCategoriesPanelSizeProp);
+        set => this.SetValue(TimestampCategoriesPanelSizeProp, value);
     }
 
 

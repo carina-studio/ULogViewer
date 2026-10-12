@@ -250,7 +250,7 @@ namespace CarinaStudio.ULogViewer
 				return;
 			this.DetachFromActiveSession();
 			session.PropertyChanged += this.OnActiveSessionPropertyChanged;
-			this.activeFilteringProgressObserverToken = session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.FilteringProgressProperty).Subscribe(_ =>
+			this.activeFilteringProgressObserverToken = session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.FilteringProgressProp).Subscribe(_ =>
 				this.updateSysTaskBarAction.Schedule());
 			this.attachedActiveSession = session;
 			this.updateSysTaskBarAction.Schedule();

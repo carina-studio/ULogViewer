@@ -37,8 +37,8 @@ abstract class SessionComponent : ViewModel<IULogViewerApplication>
             it.CollectionChanged += this.OnAllLogsChanged);
         internalAccessor.DisplayableLogGroupCreated += this.OnDisplayableLogGroupCreated;
         this.AddResources(
-            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(this.OnProVersionActivationChanged, true),
-            session.GetValueAsObservable(Session.LogProfileProperty).Subscribe(logProfile =>
+            session.GetValueAsObservable(Session.IsProVersionActivatedProp).Subscribe(this.OnProVersionActivationChanged, true),
+            session.GetValueAsObservable(Session.LogProfileProp).Subscribe(logProfile =>
             {
                 var prevLogProfile = this.attachedLogProfile;
                 if (ReferenceEquals(prevLogProfile, logProfile))

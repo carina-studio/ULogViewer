@@ -21,23 +21,23 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="EarliestSelectedLogTimestamp"/>.
     /// </summary>
-    public static readonly ObservableProperty<DateTime?> EarliestSelectedLogTimestampProperty = ObservableProperty.Register<LogSelectionViewModel, DateTime?>(nameof(EarliestSelectedLogTimestamp));
+    public static readonly ObservableProperty<DateTime?> EarliestSelectedLogTimestampProp = ObservableProperty.Register<LogSelectionViewModel, DateTime?>(nameof(EarliestSelectedLogTimestamp));
     /// <summary>
     /// Property of <see cref="HasSelectedLogs"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasSelectedLogsProperty = ObservableProperty.Register<LogSelectionViewModel, bool>(nameof(HasSelectedLogs));
+    public static readonly ObservableProperty<bool> HasSelectedLogsProp = ObservableProperty.Register<LogSelectionViewModel, bool>(nameof(HasSelectedLogs));
     /// <summary>
     /// Property of <see cref="IsAllLogsSelectionRequested"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsAllLogsSelectionRequestedProperty = ObservableProperty.Register<LogSelectionViewModel, bool>(nameof(IsAllLogsSelectionRequested));
+    public static readonly ObservableProperty<bool> IsAllLogsSelectionRequestedProp = ObservableProperty.Register<LogSelectionViewModel, bool>(nameof(IsAllLogsSelectionRequested));
     /// <summary>
     /// Property of <see cref="LatestSelectedLogTimestamp"/>.
     /// </summary>
-    public static readonly ObservableProperty<DateTime?> LatestSelectedLogTimestampProperty = ObservableProperty.Register<LogSelectionViewModel, DateTime?>(nameof(LatestSelectedLogTimestamp));
+    public static readonly ObservableProperty<DateTime?> LatestSelectedLogTimestampProp = ObservableProperty.Register<LogSelectionViewModel, DateTime?>(nameof(LatestSelectedLogTimestamp));
     /// <summary>
     /// Property of <see cref="SelectedLogProperty"/>.
     /// </summary>
-    public static readonly ObservableProperty<DisplayableLogProperty?> SelectedLogPropertyProperty = ObservableProperty.Register<LogSelectionViewModel, DisplayableLogProperty?>(nameof(SelectedLogProperty), coerce: (vm, p) =>
+    public static readonly ObservableProperty<DisplayableLogProperty?> SelectedLogPropertyProp = ObservableProperty.Register<LogSelectionViewModel, DisplayableLogProperty?>(nameof(SelectedLogProperty), coerce: (vm, p) =>
     {
         if (p is null)
             return null;
@@ -46,23 +46,23 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Property of <see cref="SelectedLogPropertyValue"/>.
     /// </summary>
-    public static readonly ObservableProperty<object?> SelectedLogPropertyValueProperty = ObservableProperty.Register<LogSelectionViewModel, object?>(nameof(SelectedLogPropertyValue));
+    public static readonly ObservableProperty<object?> SelectedLogPropertyValueProp = ObservableProperty.Register<LogSelectionViewModel, object?>(nameof(SelectedLogPropertyValue));
     /// <summary>
     /// Property of <see cref="SelectedLogsDuration"/>.
     /// </summary>
-    public static readonly ObservableProperty<TimeSpan?> SelectedLogsDurationProperty = ObservableProperty.Register<LogSelectionViewModel, TimeSpan?>(nameof(SelectedLogsDuration));
+    public static readonly ObservableProperty<TimeSpan?> SelectedLogsDurationProp = ObservableProperty.Register<LogSelectionViewModel, TimeSpan?>(nameof(SelectedLogsDuration));
     /// <summary>
     /// Property of <see cref="SelectedLogStringPropertyValue"/>.
     /// </summary>
-    public static readonly ObservableProperty<IStringSource?> SelectedLogStringPropertyValueProperty = ObservableProperty.Register<LogSelectionViewModel, IStringSource?>(nameof(SelectedLogStringPropertyValue));
+    public static readonly ObservableProperty<IStringSource?> SelectedLogStringPropertyValueProp = ObservableProperty.Register<LogSelectionViewModel, IStringSource?>(nameof(SelectedLogStringPropertyValue));
     /// <summary>
     /// Property of <see cref="SelectedProcessId"/>.
     /// </summary>
-    public static readonly ObservableProperty<int?> SelectedProcessIdProperty = ObservableProperty.Register<LogSelectionViewModel, int?>(nameof(SelectedProcessId));
+    public static readonly ObservableProperty<int?> SelectedProcessIdProp = ObservableProperty.Register<LogSelectionViewModel, int?>(nameof(SelectedProcessId));
     /// <summary>
     /// Property of <see cref="SelectedThreadId"/>.
     /// </summary>
-    public static readonly ObservableProperty<int?> SelectedThreadIdProperty = ObservableProperty.Register<LogSelectionViewModel, int?>(nameof(SelectedThreadId));
+    public static readonly ObservableProperty<int?> SelectedThreadIdProp = ObservableProperty.Register<LogSelectionViewModel, int?>(nameof(SelectedThreadId));
 
 
     // Constant.
@@ -90,17 +90,17 @@ class LogSelectionViewModel : SessionComponent
     public LogSelectionViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // create command
-        var hasSelectedLogsObservable = this.GetValueAsObservable(HasSelectedLogsProperty);
+        var hasSelectedLogsObservable = this.GetValueAsObservable(HasSelectedLogsProp);
         this.ClearSelectedLogsCommand = new Command(this.ClearSelectedLogs, hasSelectedLogsObservable);
         this.CopySelectedLogsCommand = new Command(this.CopySelectedLogs, hasSelectedLogsObservable);
         this.CopySelectedLogsWithFileNamesCommand = new Command(this.CopySelectedLogsWithFileNames, new ForwardedObservableBoolean(ForwardedObservableBoolean.CombinationMode.And,
             false, 
             hasSelectedLogsObservable, 
-            session.GetValueAsObservable(Session.IsLogFileSupportedProperty)));
-        this.SelectAllLogsCommand = new Command(this.SelectAllLogs, session.GetValueAsObservable(Session.HasLogsProperty));
+            session.GetValueAsObservable(Session.IsLogFileSupportedProp)));
+        this.SelectAllLogsCommand = new Command(this.SelectAllLogs, session.GetValueAsObservable(Session.HasLogsProp));
         this.SelectLogDurationEndingLogCommand = new Command(this.SelectLogDurationEndingLog, this.canSelectLogsDurationEndingLog);
         this.SelectLogDurationStartingLogCommand = new Command(this.SelectLogDurationStartingLog, this.canSelectLogsDurationStartingLog);
-        this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, session.GetValueAsObservable(Session.HasMarkedLogsProperty));
+        this.SelectMarkedLogsCommand = new Command(this.SelectMarkedLogs, session.GetValueAsObservable(Session.HasMarkedLogsProp));
 
         // create collection
         this.selectedLogs = new SortedObservableList<DisplayableLog>(this.CompareLogs).Also(it =>
@@ -132,23 +132,23 @@ class LogSelectionViewModel : SessionComponent
             var lastLog = this.selectedLogs.LastOrDefault();
             if (firstLog is null || lastLog is null || firstLog == lastLog)
             {
-                this.ResetValue(SelectedLogsDurationProperty);
-                this.ResetValue(EarliestSelectedLogTimestampProperty);
-                this.ResetValue(LatestSelectedLogTimestampProperty);
+                this.ResetValue(SelectedLogsDurationProp);
+                this.ResetValue(EarliestSelectedLogTimestampProp);
+                this.ResetValue(LatestSelectedLogTimestampProp);
                 return;
             }
             var duration = Session.CalculateDurationBetweenLogs(firstLog, lastLog, out _, out _, out var earliestTimestamp, out var latestTimestamp);
             if (duration.HasValue)
             {
-                this.SetValue(SelectedLogsDurationProperty, duration);
-                this.SetValue(EarliestSelectedLogTimestampProperty, earliestTimestamp);
-                this.SetValue(LatestSelectedLogTimestampProperty, latestTimestamp);
+                this.SetValue(SelectedLogsDurationProp, duration);
+                this.SetValue(EarliestSelectedLogTimestampProp, earliestTimestamp);
+                this.SetValue(LatestSelectedLogTimestampProp, latestTimestamp);
             }
             else
             {
-                this.ResetValue(SelectedLogsDurationProperty);
-                this.ResetValue(EarliestSelectedLogTimestampProperty);
-                this.ResetValue(LatestSelectedLogTimestampProperty);
+                this.ResetValue(SelectedLogsDurationProp);
+                this.ResetValue(EarliestSelectedLogTimestampProp);
+                this.ResetValue(LatestSelectedLogTimestampProp);
             }
         });
         this.updateCanSelectLogsDurationStartingEndingLogsAction = new(() =>
@@ -159,17 +159,17 @@ class LogSelectionViewModel : SessionComponent
         
         // attach to session
         this.AddResources(
-            session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
+            session.GetValueAsObservable(Session.DisplayLogPropertiesProp).Subscribe(properties =>
             {
-                var selectedProperty = this.GetValue(SelectedLogPropertyProperty);
+                var selectedProperty = this.GetValue(SelectedLogPropertyProp);
                 if (selectedProperty is not null && !properties.Contains(selectedProperty))
-                    this.ResetValue(SelectedLogPropertyProperty);
+                    this.ResetValue(SelectedLogPropertyProp);
             }),
-            session.GetValueAsObservable(Session.EarliestLogTimestampProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.EarliestLogTimestampProp).Subscribe(_ =>
                 this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule()),
-            session.GetValueAsObservable(Session.LatestLogTimestampProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.LatestLogTimestampProp).Subscribe(_ =>
                 this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule()),
-            session.GetValueAsObservable(Session.LogsProperty).Subscribe(logs =>
+            session.GetValueAsObservable(Session.LogsProp).Subscribe(logs =>
             {
                 if (this.attachedLogs is not null)
                     this.attachedLogs.CollectionChanged -= this.OnLogsChanged;
@@ -178,14 +178,14 @@ class LogSelectionViewModel : SessionComponent
                 if (this.attachedLogs is not null)
                     this.attachedLogs.CollectionChanged += this.OnLogsChanged;
             }),
-            session.GetValueAsObservable(Session.MaxLogTimeSpanProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.MaxLogTimeSpanProp).Subscribe(_ =>
                 this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule()),
-            session.GetValueAsObservable(Session.MinLogTimeSpanProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.MinLogTimeSpanProp).Subscribe(_ =>
                 this.updateCanSelectLogsDurationStartingEndingLogsAction.Schedule())
         );
         
         // attach to self
-        this.GetValueAsObservable(IsAllLogsSelectionRequestedProperty).Subscribe(requested =>
+        this.GetValueAsObservable(IsAllLogsSelectionRequestedProp).Subscribe(requested =>
         {
             if (!requested)
             {
@@ -193,7 +193,7 @@ class LogSelectionViewModel : SessionComponent
                 this.commitPendingSelectedLogsAction.Cancel();
             }
         });
-        this.GetValueAsObservable(SelectedLogPropertyProperty).Subscribe(this.ReportSelectedLogPropertyValue);
+        this.GetValueAsObservable(SelectedLogPropertyProp).Subscribe(this.ReportSelectedLogPropertyValue);
     }
 
 
@@ -204,7 +204,7 @@ class LogSelectionViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        this.SetValue(IsAllLogsSelectionRequestedProperty, false);
+        this.SetValue(IsAllLogsSelectionRequestedProp, false);
         this.pendingSelectedLogs.Clear();
         this.commitPendingSelectedLogsAction.Cancel();
         this.selectedLogs.Clear();
@@ -261,25 +261,25 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Get earliest timestamp of selected log.
     /// </summary>
-	public DateTime? EarliestSelectedLogTimestamp => this.GetValue(EarliestSelectedLogTimestampProperty);
+	public DateTime? EarliestSelectedLogTimestamp => this.GetValue(EarliestSelectedLogTimestampProp);
 
 
     /// <summary>
     /// Check whether at least one log has been selected or not.
     /// </summary>
-    public bool HasSelectedLogs => this.GetValue(HasSelectedLogsProperty);
+    public bool HasSelectedLogs => this.GetValue(HasSelectedLogsProp);
 
 
     /// <summary>
     /// Check whether selecting all logs has been requested or not.
     /// </summary>
-    public bool IsAllLogsSelectionRequested => this.GetValue(IsAllLogsSelectionRequestedProperty);
+    public bool IsAllLogsSelectionRequested => this.GetValue(IsAllLogsSelectionRequestedProp);
 
 
     /// <summary>
     /// Get latest timestamp of selected log.
     /// </summary>
-	public DateTime? LatestSelectedLogTimestamp => this.GetValue(LatestSelectedLogTimestampProperty);
+	public DateTime? LatestSelectedLogTimestamp => this.GetValue(LatestSelectedLogTimestampProp);
 
 
     /// <inheritdoc/>
@@ -293,8 +293,8 @@ class LogSelectionViewModel : SessionComponent
         base.OnDisplayableLogGroupCreated();
         this.DisplayableLogGroup?.Let(it =>
         {
-            it.SelectedProcessId = this.GetValue(SelectedProcessIdProperty);
-            it.SelectedThreadId = this.GetValue(SelectedThreadIdProperty);
+            it.SelectedProcessId = this.GetValue(SelectedProcessIdProp);
+            it.SelectedThreadId = this.GetValue(SelectedThreadIdProp);
         });
     }
     
@@ -305,7 +305,7 @@ class LogSelectionViewModel : SessionComponent
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
-                if (this.GetValue(IsAllLogsSelectionRequestedProperty))
+                if (this.GetValue(IsAllLogsSelectionRequestedProp))
                 {
                     this.pendingSelectedLogs.AddAll(e.NewItems!.Cast<DisplayableLog>());
                     this.commitPendingSelectedLogsAction.Schedule();
@@ -338,14 +338,14 @@ class LogSelectionViewModel : SessionComponent
         // update state
         var selectionCount = this.selectedLogs.Count;
         if (selectionCount == 0)
-            this.ResetValue(HasSelectedLogsProperty);
+            this.ResetValue(HasSelectedLogsProp);
         else if (e.Action == NotifyCollectionChangedAction.Add && selectionCount == e.NewItems!.Count)
-            this.SetValue(HasSelectedLogsProperty, true);
+            this.SetValue(HasSelectedLogsProp, true);
 
         // raise event and report time information
         if (e.Action == NotifyCollectionChangedAction.Reset)
         {
-            this.ResetValue(IsAllLogsSelectionRequestedProperty);
+            this.ResetValue(IsAllLogsSelectionRequestedProp);
             this.notifySelectedLogsChangedAction.Execute();
             this.reportSelectedLogsTimeInfoAction.Reschedule();
         }
@@ -395,8 +395,8 @@ class LogSelectionViewModel : SessionComponent
                 }
             }
         }
-        this.SetValue(SelectedProcessIdProperty, selectedPid);
-        this.SetValue(SelectedThreadIdProperty, selectedTid);
+        this.SetValue(SelectedProcessIdProp, selectedPid);
+        this.SetValue(SelectedThreadIdProp, selectedTid);
         this.DisplayableLogGroup?.Let(it =>
         {
             it.SelectedProcessId = selectedPid;
@@ -413,25 +413,25 @@ class LogSelectionViewModel : SessionComponent
     {
         if (this.IsDisposed)
             return;
-        var property = this.GetValue(SelectedLogPropertyProperty);
+        var property = this.GetValue(SelectedLogPropertyProp);
         this.Logger.LogInformation("Selection count: {count}, selected property: {property}", this.selectedLogs.Count, property?.Name);
         if (this.selectedLogs.Count != 1 || property is null)
         {
-            this.ResetValue(SelectedLogPropertyValueProperty);
-            this.ResetValue(SelectedLogStringPropertyValueProperty);
+            this.ResetValue(SelectedLogPropertyValueProp);
+            this.ResetValue(SelectedLogStringPropertyValueProp);
             return;
         }
         if (DisplayableLog.HasStringProperty(property.Name) && !property.Name.EndsWith("String"))
         {
             this.selectedLogs[0].TryGetProperty<IStringSource?>(property.Name, out var value);
-            this.SetValue(SelectedLogPropertyValueProperty, value);
-            this.SetValue(SelectedLogStringPropertyValueProperty, value);
+            this.SetValue(SelectedLogPropertyValueProp, value);
+            this.SetValue(SelectedLogStringPropertyValueProp, value);
         }
         else
         {
             this.selectedLogs[0].TryGetProperty<object?>(property.Name, out var value);
-            this.SetValue(SelectedLogPropertyValueProperty, value);
-            this.ResetValue(SelectedLogStringPropertyValueProperty);
+            this.SetValue(SelectedLogPropertyValueProp, value);
+            this.ResetValue(SelectedLogStringPropertyValueProp);
         }
     }
 
@@ -443,13 +443,13 @@ class LogSelectionViewModel : SessionComponent
     {
         this.VerifyAccess();
         this.VerifyDisposed();
-        if (this.GetValue(IsAllLogsSelectionRequestedProperty))
+        if (this.GetValue(IsAllLogsSelectionRequestedProp))
             return;
         var logs = this.Session.Logs;
         this.selectedLogs.Clear();
         if (logs.IsNotEmpty())
         {
-            this.SetValue(IsAllLogsSelectionRequestedProperty, true);
+            this.SetValue(IsAllLogsSelectionRequestedProp, true);
             this.selectedLogs.AddAll(logs, true);
         }
     }
@@ -466,15 +466,15 @@ class LogSelectionViewModel : SessionComponent
     /// </summary>
     public DisplayableLogProperty? SelectedLogProperty
     {
-        get => this.GetValue(SelectedLogPropertyProperty);
-        set => this.SetValue(SelectedLogPropertyProperty, value);
+        get => this.GetValue(SelectedLogPropertyProp);
+        set => this.SetValue(SelectedLogPropertyProp, value);
     }
 
 
     /// <summary>
     /// Get value of selected log property.
     /// </summary>
-    public object? SelectedLogPropertyValue => this.GetValue(SelectedLogPropertyValueProperty);
+    public object? SelectedLogPropertyValue => this.GetValue(SelectedLogPropertyValueProp);
 
 
     /// <summary>
@@ -492,13 +492,13 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Get duration between selected logs.
     /// </summary>
-    public TimeSpan? SelectedLogsDuration => this.GetValue(SelectedLogsDurationProperty);
+    public TimeSpan? SelectedLogsDuration => this.GetValue(SelectedLogsDurationProp);
 
 
     /// <summary>
     /// Get value of selected log property with string value.
     /// </summary>
-    public IStringSource? SelectedLogStringPropertyValue => this.GetValue(SelectedLogStringPropertyValueProperty);
+    public IStringSource? SelectedLogStringPropertyValue => this.GetValue(SelectedLogStringPropertyValueProp);
 
 
     // Select the log which represents the ending point of total duration of logs.
@@ -600,11 +600,11 @@ class LogSelectionViewModel : SessionComponent
     /// <summary>
     /// Get process ID of logs which has been selected by user.
     /// </summary>
-    public int? SelectedProcessId => this.GetValue(SelectedProcessIdProperty);
+    public int? SelectedProcessId => this.GetValue(SelectedProcessIdProp);
 
 
     /// <summary>
     /// Get thread ID of logs which has been selected by user.
     /// </summary>
-    public int? SelectedThreadId => this.GetValue(SelectedThreadIdProperty);
+    public int? SelectedThreadId => this.GetValue(SelectedThreadIdProp);
 }

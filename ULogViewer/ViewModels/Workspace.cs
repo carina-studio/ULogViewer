@@ -25,7 +25,7 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 	/// <summary>
 	/// Property of <see cref="ActiveSession"/>.
 	/// </summary>
-	public static readonly ObservableProperty<Session?> ActiveSessionProperty = ObservableProperty.Register<Workspace, Session?>(nameof(ActiveSession));
+	public static readonly ObservableProperty<Session?> ActiveSessionProp = ObservableProperty.Register<Workspace, Session?>(nameof(ActiveSession));
 	
 	
 	// Constants for usage tracking metrics.
@@ -99,8 +99,8 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 	/// </summary>
 	public Session? ActiveSession 
 	{
-		get => this.GetValue(ActiveSessionProperty);
-		set => this.SetValue(ActiveSessionProperty, value);
+		get => this.GetValue(ActiveSessionProp);
+		set => this.SetValue(ActiveSessionProp, value);
 	}
 
 
@@ -353,7 +353,7 @@ class Workspace : AppSuite.ViewModels.MainWindowViewModel<IULogViewerApplication
 	protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
 	{
 		base.OnPropertyChanged(property, oldValue, newValue);
-		if (property == ActiveSessionProperty)
+		if (property == ActiveSessionProp)
 		{
 			var session = (newValue as Session);
 			if (session is not null && !this.sessions.Contains(session))

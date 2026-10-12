@@ -1315,25 +1315,25 @@ namespace CarinaStudio.ULogViewer.Controls
 			
 			// attach to properties
 			var isAttaching = true;
-			this.logAnalysisPanelVisibilityObserverToken = session.LogAnalysis.GetValueAsObservable(LogAnalysisViewModel.IsPanelVisibleProperty).Subscribe(_ =>
+			this.logAnalysisPanelVisibilityObserverToken = session.LogAnalysis.GetValueAsObservable(LogAnalysisViewModel.IsPanelVisibleProp).Subscribe(_ =>
 			{
 				if (!isAttaching)
-					this.UpdateSidePanelState(LogAnalysisViewModel.IsPanelVisibleProperty);
+					this.UpdateSidePanelState(LogAnalysisViewModel.IsPanelVisibleProp);
 			});
-			this.logFilesPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsLogFilesPanelVisibleProperty).Subscribe(_ =>
+			this.logFilesPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsLogFilesPanelVisibleProp).Subscribe(_ =>
 			{
 				if (!isAttaching)
-					this.UpdateSidePanelState(Session.IsLogFilesPanelVisibleProperty);
+					this.UpdateSidePanelState(Session.IsLogFilesPanelVisibleProp);
 			});
-			this.markedLogsPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsMarkedLogsPanelVisibleProperty).Subscribe(_ =>
+			this.markedLogsPanelVisibilityObserverToken = session.GetValueAsObservable(Session.IsMarkedLogsPanelVisibleProp).Subscribe(_ =>
 			{
 				if (!isAttaching)
-					this.UpdateSidePanelState(Session.IsMarkedLogsPanelVisibleProperty);
+					this.UpdateSidePanelState(Session.IsMarkedLogsPanelVisibleProp);
 			});
-			this.timestampCategoryPanelVisibilityObserverToken = session.LogCategorizing.GetValueAsObservable(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty).Subscribe(_ =>
+			this.timestampCategoryPanelVisibilityObserverToken = session.LogCategorizing.GetValueAsObservable(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProp).Subscribe(_ =>
 			{
 				if (!isAttaching)
-					this.UpdateSidePanelState(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty);
+					this.UpdateSidePanelState(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProp);
 			});
 			isAttaching = false;
 
@@ -6283,7 +6283,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				|| session.IsMarkedLogsPanelVisible
 				|| session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 			{
-				if (changedProperty == LogAnalysisViewModel.IsPanelVisibleProperty)
+				if (changedProperty == LogAnalysisViewModel.IsPanelVisibleProp)
 				{
 					if (session.LogAnalysis.IsPanelVisible)
 					{
@@ -6295,7 +6295,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						this.ShowLogAnalysisRuleSetsTutorial();
 					}
 				}
-				else if (changedProperty == Session.IsLogFilesPanelVisibleProperty)
+				else if (changedProperty == Session.IsLogFilesPanelVisibleProp)
 				{
 					if (session.IsLogFilesPanelVisible)
 					{
@@ -6304,7 +6304,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 					}
 				}
-				else if (changedProperty == Session.IsMarkedLogsPanelVisibleProperty)
+				else if (changedProperty == Session.IsMarkedLogsPanelVisibleProp)
 				{
 					if (session.IsMarkedLogsPanelVisible)
 					{
@@ -6313,7 +6313,7 @@ namespace CarinaStudio.ULogViewer.Controls
 						session.LogCategorizing.IsTimestampCategoriesPanelVisible = false;
 					}
 				}
-				else if (changedProperty == LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProperty)
+				else if (changedProperty == LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProp)
 				{
 					if (session.LogCategorizing.IsTimestampCategoriesPanelVisible)
 					{

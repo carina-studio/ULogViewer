@@ -33,35 +33,35 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Property of <see cref="AnalysisProgress"/>.
     /// </summary>
-    public static readonly ObservableProperty<double> AnalysisProgressProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(AnalysisProgress));
+    public static readonly ObservableProperty<double> AnalysisProgressProp = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(AnalysisProgress));
     /// <summary>
     /// Property of <see cref="HasCooperativeLogAnalysisScriptSet"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasCooperativeLogAnalysisScriptSet));
+    public static readonly ObservableProperty<bool> HasCooperativeLogAnalysisScriptSetProp = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasCooperativeLogAnalysisScriptSet));
     /// <summary>
     /// Property of <see cref="HasNewAnalysisResultsInBackground"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasNewAnalysisResultsInBackgroundProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasNewAnalysisResultsInBackground));
+    public static readonly ObservableProperty<bool> HasNewAnalysisResultsInBackgroundProp = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasNewAnalysisResultsInBackground));
     /// <summary>
     /// Property of <see cref="HasSelectedAnalysisResults"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> HasSelectedAnalysisResultsProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasSelectedAnalysisResults));
+    public static readonly ObservableProperty<bool> HasSelectedAnalysisResultsProp = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(HasSelectedAnalysisResults));
     /// <summary>
     /// Property of <see cref="IsAnalyzing"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsAnalyzingProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsAnalyzing));
+    public static readonly ObservableProperty<bool> IsAnalyzingProp = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsAnalyzing));
     /// <summary>
     /// Property of <see cref="IsCooperativeLogAnalysisScriptSetEnabled"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsCooperativeLogAnalysisScriptSetEnabledProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsCooperativeLogAnalysisScriptSetEnabled), true);
+    public static readonly ObservableProperty<bool> IsCooperativeLogAnalysisScriptSetEnabledProp = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsCooperativeLogAnalysisScriptSetEnabled), true);
     /// <summary>
     /// Property of <see cref="IsPanelVisible"/>.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsPanelVisibleProperty = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsPanelVisible), false);
+    public static readonly ObservableProperty<bool> IsPanelVisibleProp = ObservableProperty.Register<LogAnalysisViewModel, bool>(nameof(IsPanelVisible), false);
     /// <summary>
     /// Property of <see cref="PanelSize"/>.
     /// </summary>
-    public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(PanelSize), Session.DefaultSidePanelSize, 
+    public static readonly ObservableProperty<double> PanelSizeProp = ObservableProperty.Register<LogAnalysisViewModel, double>(nameof(PanelSize), Session.DefaultSidePanelSize, 
         coerce: (_, it) =>
         {
             if (it >= Session.MaxSidePanelSize)
@@ -74,27 +74,27 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsAverageByteSize"/>.
     /// </summary>
-    public static readonly ObservableProperty<long?> SelectedAnalysisResultsAverageByteSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsAverageByteSize));
+    public static readonly ObservableProperty<long?> SelectedAnalysisResultsAverageByteSizeProp = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsAverageByteSize));
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsAverageDuration"/>.
     /// </summary>
-    public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsAverageDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsAverageDuration));
+    public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsAverageDurationProp = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsAverageDuration));
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsAverageQuantity"/>.
     /// </summary>
-    public static readonly ObservableProperty<double?> SelectedAnalysisResultsAverageQuantityProperty = ObservableProperty.Register<LogAnalysisViewModel, double?>(nameof(SelectedAnalysisResultsAverageQuantity));
+    public static readonly ObservableProperty<double?> SelectedAnalysisResultsAverageQuantityProp = ObservableProperty.Register<LogAnalysisViewModel, double?>(nameof(SelectedAnalysisResultsAverageQuantity));
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsTotalByteSize"/>.
     /// </summary>
-    public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalByteSizeProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalByteSize));
+    public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalByteSizeProp = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalByteSize));
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsTotalDuration"/>.
     /// </summary>
-    public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsTotalDurationProperty = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsTotalDuration));
+    public static readonly ObservableProperty<TimeSpan?> SelectedAnalysisResultsTotalDurationProp = ObservableProperty.Register<LogAnalysisViewModel, TimeSpan?>(nameof(SelectedAnalysisResultsTotalDuration));
     /// <summary>
     /// Property of <see cref="SelectedAnalysisResultsTotalQuantity"/>.
     /// </summary>
-    public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalQuantityProperty = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalQuantity));
+    public static readonly ObservableProperty<long?> SelectedAnalysisResultsTotalQuantityProp = ObservableProperty.Register<LogAnalysisViewModel, long?>(nameof(SelectedAnalysisResultsTotalQuantity));
     
     
     // Constants for usage tracking events.
@@ -133,9 +133,9 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
 
     // Static fields.
-    static readonly SettingKey<double> latestPanelSizeKey = new("Session.LatestLogAnalysisPanelSize", PanelSizeProperty.DefaultValue);
+    static readonly SettingKey<double> latestPanelSizeKey = new("Session.LatestLogAnalysisPanelSize", PanelSizeProp.DefaultValue);
     [Obsolete]
-	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProperty.DefaultValue);
+	static readonly SettingKey<double> latestSidePanelSizeKey = new("Session.LatestSidePanelSize", Session.MarkedLogsPanelSizeProp.DefaultValue);
 
     
     // Fields.
@@ -180,8 +180,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         {
             this.selectedAnalysisResults!.Clear();
             this.Application.UsageManager.TrackEvent(UsageEvents.ClearSelectedLogAnalysisResults, this.PrepareUsageTrackingProperties());
-        }, this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
-        this.CopySelectedAnalysisResultsCommand = new Command(this.CopySelectedAnalysisResults, this.GetValueAsObservable(HasSelectedAnalysisResultsProperty));
+        }, this.GetValueAsObservable(HasSelectedAnalysisResultsProp));
+        this.CopySelectedAnalysisResultsCommand = new Command(this.CopySelectedAnalysisResults, this.GetValueAsObservable(HasSelectedAnalysisResultsProp));
 
         // create collections
         this.analysisResults = new SortedObservableList<DisplayableLogAnalysisResult>(this.CompareAnalysisResults).Also(it =>
@@ -277,33 +277,33 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             }
             if (byteSizeCount == 0)
             {
-                this.SetValue(SelectedAnalysisResultsAverageByteSizeProperty, null);
-                this.SetValue(SelectedAnalysisResultsTotalByteSizeProperty, null);
+                this.SetValue(SelectedAnalysisResultsAverageByteSizeProp, null);
+                this.SetValue(SelectedAnalysisResultsTotalByteSizeProp, null);
             }
             else
             {
-                this.SetValue(SelectedAnalysisResultsAverageByteSizeProperty, byteSizeCount > 1 ? totalByteSize / byteSizeCount : null);
-                this.SetValue(SelectedAnalysisResultsTotalByteSizeProperty, totalByteSize);
+                this.SetValue(SelectedAnalysisResultsAverageByteSizeProp, byteSizeCount > 1 ? totalByteSize / byteSizeCount : null);
+                this.SetValue(SelectedAnalysisResultsTotalByteSizeProp, totalByteSize);
             }
             if (durationResultCount == 0)
             {
-                this.SetValue(SelectedAnalysisResultsAverageDurationProperty, null);
-                this.SetValue(SelectedAnalysisResultsTotalDurationProperty, null);
+                this.SetValue(SelectedAnalysisResultsAverageDurationProp, null);
+                this.SetValue(SelectedAnalysisResultsTotalDurationProp, null);
             }
             else
             {
-                this.SetValue(SelectedAnalysisResultsAverageDurationProperty, durationResultCount > 1 ? totalDuration / durationResultCount : null);
-                this.SetValue(SelectedAnalysisResultsTotalDurationProperty, totalDuration);
+                this.SetValue(SelectedAnalysisResultsAverageDurationProp, durationResultCount > 1 ? totalDuration / durationResultCount : null);
+                this.SetValue(SelectedAnalysisResultsTotalDurationProp, totalDuration);
             }
             if (quantityCount == 0)
             {
-                this.SetValue(SelectedAnalysisResultsAverageQuantityProperty, null);
-                this.SetValue(SelectedAnalysisResultsTotalQuantityProperty, null);
+                this.SetValue(SelectedAnalysisResultsAverageQuantityProp, null);
+                this.SetValue(SelectedAnalysisResultsTotalQuantityProp, null);
             }
             else
             {
-                this.SetValue(SelectedAnalysisResultsAverageQuantityProperty, quantityCount > 1 ? totalQuantity / (double)quantityCount : null);
-                this.SetValue(SelectedAnalysisResultsTotalQuantityProperty, totalQuantity);
+                this.SetValue(SelectedAnalysisResultsAverageQuantityProp, quantityCount > 1 ? totalQuantity / (double)quantityCount : null);
+                this.SetValue(SelectedAnalysisResultsTotalQuantityProp, totalQuantity);
             }
         });
         this.updateCoopScriptLogAnalysisAction = new(() =>
@@ -311,7 +311,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             if (this.IsDisposed)
                 return;
             this.coopScriptLogAnalyzer.ScriptSets.Clear();
-            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty) 
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp) 
                 && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
                 && this.IsProVersionActivated)
             {
@@ -358,13 +358,13 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
             }
             if (isAnalyzing)
             {
-                this.SetValue(IsAnalyzingProperty, true);
-                this.SetValue(AnalysisProgressProperty, progress);
+                this.SetValue(IsAnalyzingProp, true);
+                this.SetValue(AnalysisProgressProp, progress);
             }
             else
             {
-                this.SetValue(IsAnalyzingProperty, false);
-                this.SetValue(AnalysisProgressProperty, 0);
+                this.SetValue(IsAnalyzingProp, false);
+                this.SetValue(AnalysisProgressProp, 0);
             }
         });
         this.updateOperationCountingAnalysisAction = new(() =>
@@ -425,7 +425,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         
         // attach to session
         session.AllLogReadersDisposed += this.OnAllLogReadersDisposed;
-        this.AddResources(session.GetValueAsObservable(Session.DisplayLogPropertiesProperty).Subscribe(properties =>
+        this.AddResources(session.GetValueAsObservable(Session.DisplayLogPropertiesProp).Subscribe(properties =>
             {
                 this.coopScriptLogAnalyzer.LogProperties.Clear();
                 this.coopScriptLogAnalyzer.LogProperties.AddAll(properties);
@@ -438,7 +438,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 this.scriptLogAnalyzer.LogProperties.Clear();
                 this.scriptLogAnalyzer.LogProperties.AddAll(properties);
             }),
-            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(isActivated =>
+            session.GetValueAsObservable(Session.IsProVersionActivatedProp).Subscribe(isActivated =>
             {
                 if (isActivated)
                 {
@@ -446,20 +446,20 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                     this.updateScriptLogAnalysisAction.Schedule();
                 }
             }),
-            session.GetValueAsObservable(Session.IsReadingLogsContinuouslyProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.IsReadingLogsContinuouslyProp).Subscribe(_ =>
                 updateScriptLogAnalysisPriorityAction.Schedule()),
-            session.GetValueAsObservable(Session.IsReadingLogsProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.IsReadingLogsProp).Subscribe(_ =>
                 updateScriptLogAnalysisPriorityAction.Schedule()),
-            session.GetValueAsObservable(Session.IsRemovingLogFilesProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.IsRemovingLogFilesProp).Subscribe(_ =>
                 updateScriptLogAnalysisPriorityAction.Schedule())
         );
 
         // restore state
 #pragma warning disable CS0612
         if (this.PersistentState.GetRawValue(latestSidePanelSizeKey) is double sidePanelSize)
-            this.SetValue(PanelSizeProperty, sidePanelSize);
+            this.SetValue(PanelSizeProp, sidePanelSize);
         else
-            this.SetValue(PanelSizeProperty, this.PersistentState.GetValueOrDefault(latestPanelSizeKey));
+            this.SetValue(PanelSizeProp, this.PersistentState.GetValueOrDefault(latestPanelSizeKey));
 #pragma warning restore CS0612
     }
 
@@ -467,7 +467,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get progress of logs analysis.
     /// </summary>
-    public double AnalysisProgress => this.GetValue(AnalysisProgressProperty);
+    public double AnalysisProgress => this.GetValue(AnalysisProgressProp);
 
 
     /// <summary>
@@ -681,25 +681,25 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Check whether cooperative log analysis script set has been set to current log profile or not.
     /// </summary>
-    public bool HasCooperativeLogAnalysisScriptSet => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty);
+    public bool HasCooperativeLogAnalysisScriptSet => this.GetValue(HasCooperativeLogAnalysisScriptSetProp);
 
 
     /// <summary>
     /// Check whether at least one new analysis result has been generated in background or not.
     /// </summary>
-    public bool HasNewAnalysisResultsInBackground => this.GetValue(HasNewAnalysisResultsInBackgroundProperty);
+    public bool HasNewAnalysisResultsInBackground => this.GetValue(HasNewAnalysisResultsInBackgroundProp);
 
 
     /// <summary>
     /// Check whether at least one analysis result is selected or not.
     /// </summary>
-    public bool HasSelectedAnalysisResults => this.GetValue(HasSelectedAnalysisResultsProperty);
+    public bool HasSelectedAnalysisResults => this.GetValue(HasSelectedAnalysisResultsProp);
 
 
     /// <summary>
     /// Check whether logs are being analyzed or not.
     /// </summary>
-    public bool IsAnalyzing => this.GetValue(IsAnalyzingProperty);
+    public bool IsAnalyzing => this.GetValue(IsAnalyzingProp);
 
 
     /// <summary>
@@ -707,8 +707,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// </summary>
     public bool IsCooperativeLogAnalysisScriptSetEnabled 
     { 
-        get => this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty); 
-        set => this.SetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty, value);
+        get => this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp); 
+        set => this.SetValue(IsCooperativeLogAnalysisScriptSetEnabledProp, value);
     }
 
 
@@ -717,8 +717,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// </summary>
     public bool IsPanelVisible 
     {
-        get => this.GetValue(IsPanelVisibleProperty);
-        set => this.SetValue(IsPanelVisibleProperty, value);
+        get => this.GetValue(IsPanelVisibleProp);
+        set => this.SetValue(IsPanelVisibleProp, value);
     }
 
 
@@ -800,8 +800,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 e.NewItems!.Cast<DisplayableLogAnalysisResult>().Let(addedResults =>
                 {
                     this.analysisResults.AddAll(e.NewItems!.Cast<DisplayableLogAnalysisResult>());
-                    if (addedResults.IsNotEmpty() && !this.GetValue(IsPanelVisibleProperty))
-                        this.SetValue(HasNewAnalysisResultsInBackgroundProperty, true);
+                    if (addedResults.IsNotEmpty() && !this.GetValue(IsPanelVisibleProp))
+                        this.SetValue(HasNewAnalysisResultsInBackgroundProp, true);
                 });
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -833,8 +833,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 #endif
         }
         if (this.analysisResults.IsEmpty())
-            this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
-        if (!this.GetValue(IsAnalyzingProperty))
+            this.ResetValue(HasNewAnalysisResultsInBackgroundProp);
+        if (!this.GetValue(IsAnalyzingProp))
             this.TrackLogAnalysisResultCount();
     }
 
@@ -877,15 +877,15 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         {
             if (newLogProfile is not null)
                 this.Logger.LogDebug("No cooperative log analysis script set found in log profile '{name}' ({id})", newLogProfile.Name, newLogProfile.Id);
-            this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
-            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+            this.ResetValue(HasCooperativeLogAnalysisScriptSetProp);
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp))
                 this.updateCoopScriptLogAnalysisAction.Execute();
         }
         else
         {
             this.Logger.LogDebug("Cooperative log analysis script set found in log profile '{name}' ({id})", newLogProfile.Name, newLogProfile.Id);
-            this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
-            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+            this.SetValue(HasCooperativeLogAnalysisScriptSetProp, true);
+            if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp))
                 this.updateCoopScriptLogAnalysisAction.Schedule();
         }
 
@@ -926,20 +926,20 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
                 if (logProfile?.CooperativeLogAnalysisScriptSet is null)
                 {
                     this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been cleared", logProfile?.Name, logProfile?.Id);
-                    this.ResetValue(HasCooperativeLogAnalysisScriptSetProperty);
-                    if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                    this.ResetValue(HasCooperativeLogAnalysisScriptSetProp);
+                    if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp))
                         this.updateCoopScriptLogAnalysisAction.Execute();
                 }
                 else
                 {
-                    if (this.GetValue(HasCooperativeLogAnalysisScriptSetProperty))
+                    if (this.GetValue(HasCooperativeLogAnalysisScriptSetProp))
                         this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been changed", logProfile.Name, logProfile.Id);
                     else
                     {
                         this.Logger.LogDebug("Cooperative log analysis script set of log profile '{name}' ({id}) has been set", logProfile.Name, logProfile.Id);
-                        this.SetValue(HasCooperativeLogAnalysisScriptSetProperty, true);
+                        this.SetValue(HasCooperativeLogAnalysisScriptSetProp, true);
                     }
-                    if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty))
+                    if (this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp))
                         this.updateCoopScriptLogAnalysisAction.Schedule();
                 }
                 break;
@@ -972,24 +972,24 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
     {
         base.OnPropertyChanged(property, oldValue, newValue);
-        if (property == IsAnalyzingProperty)
+        if (property == IsAnalyzingProp)
         {
             if (!(bool)newValue!)
                 this.TrackLogAnalysisResultCount();
         }
-        else if (property == IsCooperativeLogAnalysisScriptSetEnabledProperty)
+        else if (property == IsCooperativeLogAnalysisScriptSetEnabledProp)
         {
             if ((bool)newValue!)
                 this.updateCoopScriptLogAnalysisAction.Schedule();
             else
                 this.updateCoopScriptLogAnalysisAction.Execute();
         }
-        else if (property == IsPanelVisibleProperty)
+        else if (property == IsPanelVisibleProp)
         {
             if ((bool)newValue!)
-                this.ResetValue(HasNewAnalysisResultsInBackgroundProperty);
+                this.ResetValue(HasNewAnalysisResultsInBackgroundProp);
         }
-        else if (property == PanelSizeProperty)
+        else if (property == PanelSizeProp)
         {
             if (!this.isRestoringState)
                 this.PersistentState.SetValue(latestPanelSizeKey, (double)newValue!);
@@ -1006,7 +1006,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
 
         // restore cooperative log analysis script set state
         if (element.TryGetProperty($"LogAnalysis.{nameof(IsCooperativeLogAnalysisScriptSetEnabled)}", out var jsonValue))
-            this.SetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty, jsonValue.ValueKind != JsonValueKind.False);
+            this.SetValue(IsCooperativeLogAnalysisScriptSetEnabledProp, jsonValue.ValueKind != JsonValueKind.False);
 
         // restore rule sets
         this.keyLogAnalysisRuleSets.Clear();
@@ -1069,14 +1069,14 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         if (element.TryGetProperty("IsLogAnalysisPanelVisible", out jsonValue) // for upgrade case
             || element.TryGetProperty($"LogAnalysis.{nameof(IsPanelVisible)}", out jsonValue))
         {
-            this.SetValue(IsPanelVisibleProperty, jsonValue.ValueKind != JsonValueKind.False);
+            this.SetValue(IsPanelVisibleProp, jsonValue.ValueKind != JsonValueKind.False);
         }
         if ((element.TryGetProperty("LogAnalysisPanelSize", out jsonValue) // for upgrade case
             || element.TryGetProperty($"LogAnalysis.{nameof(PanelSize)}", out jsonValue))
                 && jsonValue.TryGetDouble(out var doubleValue)
-                && PanelSizeProperty.ValidationFunction(doubleValue))
+                && PanelSizeProp.ValidationFunction(doubleValue))
         {
-            this.SetValue(PanelSizeProperty, doubleValue);
+            this.SetValue(PanelSizeProp, doubleValue);
         }
 
         // complete
@@ -1088,7 +1088,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     protected override void OnSaveState(Utf8JsonWriter writer)
     {
         // save cooperative log analysis script set state
-        writer.WriteBoolean($"LogAnalysis.{nameof(IsCooperativeLogAnalysisScriptSetEnabled)}", this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty));
+        writer.WriteBoolean($"LogAnalysis.{nameof(IsCooperativeLogAnalysisScriptSetEnabled)}", this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp));
 
         // save rule sets
         if (this.keyLogAnalysisRuleSets.IsNotEmpty())
@@ -1155,7 +1155,7 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
         this.reportSelectedAnalysisResultsInfoAction.Schedule();
         if (!this.IsDisposed)
         {
-            this.SetValue(HasSelectedAnalysisResultsProperty, this.selectedAnalysisResults.IsNotEmpty());
+            this.SetValue(HasSelectedAnalysisResultsProp, this.selectedAnalysisResults.IsNotEmpty());
             if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems!.Count == this.selectedAnalysisResults.Count)
                 this.Application.UsageManager.TrackEvent(UsageEvents.SelectLogAnalysisResult, this.PrepareUsageTrackingProperties());
         }
@@ -1197,8 +1197,8 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// </summary>
     public double PanelSize
     {
-        get => this.GetValue(PanelSizeProperty);
-        set => this.SetValue(PanelSizeProperty, value);
+        get => this.GetValue(PanelSizeProp);
+        set => this.SetValue(PanelSizeProp, value);
     }
     
     
@@ -1226,45 +1226,45 @@ class LogAnalysisViewModel : SessionComponent, IScriptRunningHost
     /// <summary>
     /// Get average byte size of selected analysis results.
     /// </summary>
-    public long? SelectedAnalysisResultsAverageByteSize => this.GetValue(SelectedAnalysisResultsAverageByteSizeProperty);
+    public long? SelectedAnalysisResultsAverageByteSize => this.GetValue(SelectedAnalysisResultsAverageByteSizeProp);
 
 
     /// <summary>
     /// Get average duration of selected analysis results.
     /// </summary>
-    public TimeSpan? SelectedAnalysisResultsAverageDuration => this.GetValue(SelectedAnalysisResultsAverageDurationProperty);
+    public TimeSpan? SelectedAnalysisResultsAverageDuration => this.GetValue(SelectedAnalysisResultsAverageDurationProp);
 
 
     /// <summary>
     /// Get average quantity of selected analysis results.
     /// </summary>
-    public double? SelectedAnalysisResultsAverageQuantity => this.GetValue(SelectedAnalysisResultsAverageQuantityProperty);
+    public double? SelectedAnalysisResultsAverageQuantity => this.GetValue(SelectedAnalysisResultsAverageQuantityProp);
 
 
     /// <summary>
     /// Get total byte size of selected analysis results.
     /// </summary>
-    public long? SelectedAnalysisResultsTotalByteSize => this.GetValue(SelectedAnalysisResultsTotalByteSizeProperty);
+    public long? SelectedAnalysisResultsTotalByteSize => this.GetValue(SelectedAnalysisResultsTotalByteSizeProp);
 
 
     /// <summary>
     /// Get total duration of selected analysis results.
     /// </summary>
-    public TimeSpan? SelectedAnalysisResultsTotalDuration => this.GetValue(SelectedAnalysisResultsTotalDurationProperty);
+    public TimeSpan? SelectedAnalysisResultsTotalDuration => this.GetValue(SelectedAnalysisResultsTotalDurationProp);
 
 
     /// <summary>
     /// Get total quantity of selected analysis results.
     /// </summary>
-    public long? SelectedAnalysisResultsTotalQuantity => this.GetValue(SelectedAnalysisResultsTotalQuantityProperty);
+    public long? SelectedAnalysisResultsTotalQuantity => this.GetValue(SelectedAnalysisResultsTotalQuantityProp);
     
     
     // Track applying log analysis usage event.
     void TrackApplyingLogAnalysis()
     {
         var analysisScriptSetCount = this.logAnalysisScriptSets.Count;
-        var hasCoopAnalysisScriptSet = this.GetValue(HasCooperativeLogAnalysisScriptSetProperty) 
-                                       && this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProperty)
+        var hasCoopAnalysisScriptSet = this.GetValue(HasCooperativeLogAnalysisScriptSetProp) 
+                                       && this.GetValue(IsCooperativeLogAnalysisScriptSetEnabledProp)
                                        && this.Settings.GetValueOrDefault(AppSuite.SettingKeys.EnableRunningScript)
                                        && this.IsProVersionActivated;
         var keyLogAnalysisRuleSetCount = this.keyLogAnalysisRuleSets.Count;

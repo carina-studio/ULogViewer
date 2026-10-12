@@ -33,65 +33,65 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Define <see cref="AreAllSeriesSourcesVisible"/> property.
     /// </summary>
-    public static readonly ObservableProperty<bool> AreAllSeriesSourcesVisibleProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(AreAllSeriesSourcesVisible), true);
+    public static readonly ObservableProperty<bool> AreAllSeriesSourcesVisibleProp = ObservableProperty.Register<LogChartViewModel, bool>(nameof(AreAllSeriesSourcesVisible), true);
     /// <summary>
     /// Define <see cref="ChartType"/> property.
     /// </summary>
-    public static readonly ObservableProperty<LogChartType> ChartTypeProperty = ObservableProperty.Register<LogChartViewModel, LogChartType>(nameof(ChartType), LogChartType.None);
+    public static readonly ObservableProperty<LogChartType> ChartTypeProp = ObservableProperty.Register<LogChartViewModel, LogChartType>(nameof(ChartType), LogChartType.None);
     /// <summary>
     /// Define <see cref="ChartValueGranularity"/> property.
     /// </summary>
-    public static readonly ObservableProperty<LogChartValueGranularity> ChartValueGranularityProperty = ObservableProperty.Register<LogChartViewModel, LogChartValueGranularity>(nameof(ChartValueGranularity), LogChartValueGranularity.Default);
+    public static readonly ObservableProperty<LogChartValueGranularity> ChartValueGranularityProp = ObservableProperty.Register<LogChartViewModel, LogChartValueGranularity>(nameof(ChartValueGranularity), LogChartValueGranularity.Default);
     /// <summary>
     /// Define <see cref="IsChartDefined"/> property.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsChartDefinedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsChartDefined), false);
+    public static readonly ObservableProperty<bool> IsChartDefinedProp = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsChartDefined), false);
     /// <summary>
     /// Define <see cref="IsPanelVisible"/> property.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsPanelVisibleProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsPanelVisible), false);
+    public static readonly ObservableProperty<bool> IsPanelVisibleProp = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsPanelVisible), false);
     /// <summary>
     /// Define <see cref="IsXAxisInverted"/> property.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsXAxisInvertedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsXAxisInverted), false);
+    public static readonly ObservableProperty<bool> IsXAxisInvertedProp = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsXAxisInverted), false);
     /// <summary>
     /// Define <see cref="IsYAxisInverted"/> property.
     /// </summary>
-    public static readonly ObservableProperty<bool> IsYAxisInvertedProperty = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsYAxisInverted), false);
+    public static readonly ObservableProperty<bool> IsYAxisInvertedProp = ObservableProperty.Register<LogChartViewModel, bool>(nameof(IsYAxisInverted), false);
     /// <summary>
     /// Define <see cref="MaxSeriesValue"/> property.
     /// </summary>
-    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxSeriesValue), null);
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxSeriesValueProp = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxSeriesValue), null);
     /// <summary>
     /// Define <see cref="MaxVisibleSeriesValue"/> property.
     /// </summary>
-    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxVisibleSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxVisibleSeriesValue), null);
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MaxVisibleSeriesValueProp = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MaxVisibleSeriesValue), null);
     /// <summary>
     /// Define <see cref="MinSeriesValue"/> property.
     /// </summary>
-    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinSeriesValue), null);
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinSeriesValueProp = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinSeriesValue), null);
     /// <summary>
     /// Define <see cref="MinVisibleSeriesValue"/> property.
     /// </summary>
-    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinVisibleSeriesValueProperty = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinVisibleSeriesValue), null);
+    public static readonly ObservableProperty<DisplayableLogChartSeriesValue?> MinVisibleSeriesValueProp = ObservableProperty.Register<LogChartViewModel, DisplayableLogChartSeriesValue?>(nameof(MinVisibleSeriesValue), null);
     /// <summary>
     /// Define <see cref="PanelSize"/> property.
     /// </summary>
-    public static readonly ObservableProperty<double> PanelSizeProperty = ObservableProperty.Register<LogChartViewModel, double>(nameof(PanelSize), 300,
+    public static readonly ObservableProperty<double> PanelSizeProp = ObservableProperty.Register<LogChartViewModel, double>(nameof(PanelSize), 300,
         coerce: (_, d) => Math.Max(MinPanelSize, d),
         validate: double.IsFinite);
     /// <summary>
     /// Define <see cref="XAxisName"/> property.
     /// </summary>
-    public static readonly ObservableProperty<string?> XAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(XAxisName), null);
+    public static readonly ObservableProperty<string?> XAxisNameProp = ObservableProperty.Register<LogChartViewModel, string?>(nameof(XAxisName), null);
     /// <summary>
     /// Define <see cref="XAxisType"/> property.
     /// </summary>
-    public static readonly ObservableProperty<LogChartXAxisType> XAxisTypeProperty = ObservableProperty.Register<LogChartViewModel, LogChartXAxisType>(nameof(XAxisType), LogChartXAxisType.None);
+    public static readonly ObservableProperty<LogChartXAxisType> XAxisTypeProp = ObservableProperty.Register<LogChartViewModel, LogChartXAxisType>(nameof(XAxisType), LogChartXAxisType.None);
     /// <summary>
     /// Define <see cref="YAxisName"/> property.
     /// </summary>
-    public static readonly ObservableProperty<string?> YAxisNameProperty = ObservableProperty.Register<LogChartViewModel, string?>(nameof(YAxisName), null);
+    public static readonly ObservableProperty<string?> YAxisNameProp = ObservableProperty.Register<LogChartViewModel, string?>(nameof(YAxisName), null);
     
     
     // Constants for usage tracking events.
@@ -122,7 +122,7 @@ class LogChartViewModel : SessionComponent
 
     // Static fields.
     static readonly IValueConverter ChartValueGranularityConverter = new AppSuite.Converters.EnumConverter(IAppSuiteApplication.CurrentOrNull, typeof(LogChartValueGranularity));
-    static readonly SettingKey<int> LatestPanelSizeKey = new("LogChartViewModel.LatestPanelSize", (int)(PanelSizeProperty.DefaultValue + 0.5));
+    static readonly SettingKey<int> LatestPanelSizeKey = new("LogChartViewModel.LatestPanelSize", (int)(PanelSizeProp.DefaultValue + 0.5));
 
 
     // Fields.
@@ -152,9 +152,9 @@ class LogChartViewModel : SessionComponent
     public LogChartViewModel(Session session, ISessionInternalAccessor internalAccessor) : base(session, internalAccessor)
     {
         // create commands
-        this.ResetVisibleSeriesSourcesCommand = new Command(this.ResetVisibleSeriesSources, this.GetValueAsObservable(IsChartDefinedProperty));
+        this.ResetVisibleSeriesSourcesCommand = new Command(this.ResetVisibleSeriesSources, this.GetValueAsObservable(IsChartDefinedProp));
         this.SetChartTypeCommand = new Command<LogChartType>(this.SetChartType, this.canSetChartType);
-        this.ToggleVisibleSeriesSourceCommand = new Command<DisplayableLogChartSeriesSource>(this.ToggleVisibleSeriesSource, this.GetValueAsObservable(IsChartDefinedProperty));
+        this.ToggleVisibleSeriesSourceCommand = new Command<DisplayableLogChartSeriesSource>(this.ToggleVisibleSeriesSource, this.GetValueAsObservable(IsChartDefinedProp));
         
         // setup collections
         this.SeriesSources = ListExtensions.AsReadOnly(this.seriesSources);
@@ -211,21 +211,21 @@ class LogChartViewModel : SessionComponent
                 case LogChartValueGranularity.Megabytes:
                 case LogChartValueGranularity.Gigabytes:
                 case LogChartValueGranularity.Ten:
-                    this.SetValue(YAxisNameProperty, null);
+                    this.SetValue(YAxisNameProp, null);
                     break;
                 default:
-                    this.SetValue(YAxisNameProperty, ChartValueGranularityConverter.Convert<string?>(valueGranularity));
+                    this.SetValue(YAxisNameProp, ChartValueGranularityConverter.Convert<string?>(valueGranularity));
                     break;
             }
         });
         
         // restore panel state
-        this.SetValue(PanelSizeProperty, this.PersistentState.GetValueOrDefault(LatestPanelSizeKey));
+        this.SetValue(PanelSizeProp, this.PersistentState.GetValueOrDefault(LatestPanelSizeKey));
         
         // attach to session
         var isAttachingToSession = true;
         this.AddResources(
-            session.GetValueAsObservable(Session.IsProVersionActivatedProperty).Subscribe(_ =>
+            session.GetValueAsObservable(Session.IsProVersionActivatedProp).Subscribe(_ =>
             {
                 if (!isAttachingToSession)
                 {
@@ -261,7 +261,7 @@ class LogChartViewModel : SessionComponent
                 this.filteredLogsSeriesGenerator.LogChartSeriesSources = emptySources;
             this.markedLogsSeriesGenerator.LogChartSeriesSources = emptySources;
         }
-        this.SetValue(IsChartDefinedProperty, sources.IsNotEmpty() && this.LogProfile?.LogChartType != LogChartType.None);
+        this.SetValue(IsChartDefinedProp, sources.IsNotEmpty() && this.LogProfile?.LogChartType != LogChartType.None);
         
         // dispose old sources
         foreach (var source in sourcesToDispose)
@@ -283,7 +283,7 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Check whether all source of series of log chart are visible or not.
     /// </summary>
-    public bool AreAllSeriesSourcesVisible => this.GetValue(AreAllSeriesSourcesVisibleProperty);
+    public bool AreAllSeriesSourcesVisible => this.GetValue(AreAllSeriesSourcesVisibleProp);
 
 
     // Attach to given generator.
@@ -315,13 +315,13 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Get type of chart.
     /// </summary>
-    public LogChartType ChartType => this.GetValue(ChartTypeProperty);
+    public LogChartType ChartType => this.GetValue(ChartTypeProp);
 
 
     /// <summary>
     /// Get granularity of values of chart.
     /// </summary>
-    public LogChartValueGranularity ChartValueGranularity => this.GetValue(ChartValueGranularityProperty);
+    public LogChartValueGranularity ChartValueGranularity => this.GetValue(ChartValueGranularityProp);
 
 
     // Convert list of LogChartSeriesSource to list of DisplayableLogChartSeriesSource.
@@ -390,7 +390,7 @@ class LogChartViewModel : SessionComponent
     /// <returns>Text of label on Y axis.</returns>
     public string GetYAxisLabel(double value)
     {
-        if (!this.GetValue(ChartTypeProperty).IsDirectNumberValueSeriesType())
+        if (!this.GetValue(ChartTypeProp).IsDirectNumberValueSeriesType())
             return value.ToString(CultureInfo.InvariantCulture);
         switch (this.LogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default)
         {
@@ -428,7 +428,7 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Check whether log chart is defined in current log profile or not.
     /// </summary>
-    public bool IsChartDefined => this.GetValue(IsChartDefinedProperty);
+    public bool IsChartDefined => this.GetValue(IsChartDefinedProp);
 
 
     /// <summary>
@@ -442,8 +442,8 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public bool IsPanelVisible
     {
-        get => this.GetValue(IsPanelVisibleProperty);
-        set => this.SetValue(IsPanelVisibleProperty, value);
+        get => this.GetValue(IsPanelVisibleProp);
+        set => this.SetValue(IsPanelVisibleProp, value);
     }
 
 
@@ -456,25 +456,25 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Check whether X-axis is needed to be inverted or not.
     /// </summary>
-    public bool IsXAxisInverted => this.GetValue(IsXAxisInvertedProperty);
+    public bool IsXAxisInverted => this.GetValue(IsXAxisInvertedProp);
     
     
     /// <summary>
     /// Check whether Y-axis is needed to be inverted or not.
     /// </summary>
-    public bool IsYAxisInverted => this.GetValue(IsYAxisInvertedProperty);
+    public bool IsYAxisInverted => this.GetValue(IsYAxisInvertedProp);
 
 
     /// <summary>
     /// Get known maximum value of all series.
     /// </summary>
-    public DisplayableLogChartSeriesValue? MaxSeriesValue => this.GetValue(MaxSeriesValueProperty);
+    public DisplayableLogChartSeriesValue? MaxSeriesValue => this.GetValue(MaxSeriesValueProp);
     
     
     /// <summary>
     /// Get known maximum value of visible series.
     /// </summary>
-    public DisplayableLogChartSeriesValue? MaxVisibleSeriesValue => this.GetValue(MaxVisibleSeriesValueProperty);
+    public DisplayableLogChartSeriesValue? MaxVisibleSeriesValue => this.GetValue(MaxVisibleSeriesValueProp);
 
 
     /// <summary>
@@ -493,13 +493,13 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Get known minimum value of all series.
     /// </summary>
-    public DisplayableLogChartSeriesValue? MinSeriesValue => this.GetValue(MinSeriesValueProperty);
+    public DisplayableLogChartSeriesValue? MinSeriesValue => this.GetValue(MinSeriesValueProp);
     
     
     /// <summary>
     /// Get known minimum value of visible series.
     /// </summary>
-    public DisplayableLogChartSeriesValue? MinVisibleSeriesValue => this.GetValue(MinVisibleSeriesValueProperty);
+    public DisplayableLogChartSeriesValue? MinVisibleSeriesValue => this.GetValue(MinVisibleSeriesValueProp);
 
 
     /// <inheritdoc/>
@@ -514,13 +514,13 @@ class LogChartViewModel : SessionComponent
         
         // attach to session
         this.AddResources(
-            session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()),
-            session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule()),
-            session.GetValueAsObservable(Session.IsShowingRawLogLinesTemporarilyProperty).Subscribe(_ => this.reportSeriesAction.Schedule())
+            session.GetValueAsObservable(Session.IsShowingAllLogsTemporarilyProp).Subscribe(_ => this.reportSeriesAction.Schedule()),
+            session.GetValueAsObservable(Session.IsShowingMarkedLogsTemporarilyProp).Subscribe(_ => this.reportSeriesAction.Schedule()),
+            session.GetValueAsObservable(Session.IsShowingRawLogLinesTemporarilyProp).Subscribe(_ => this.reportSeriesAction.Schedule())
         );
         
         // attach to components
-        this.AddResource(session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProperty).Subscribe(_ => this.reportSeriesAction.Schedule()));
+        this.AddResource(session.LogFiltering.GetValueAsObservable(LogFilteringViewModel.IsFilteringNeededProp).Subscribe(_ => this.reportSeriesAction.Schedule()));
         
         // setup initial series
         this.reportSeriesAction.Execute();
@@ -544,11 +544,11 @@ class LogChartViewModel : SessionComponent
         // setup properties to generate series
         var logChartType = newLogProfile?.LogChartType ?? LogChartType.None;
         this.ApplyLogChartType(logChartType);
-        this.SetValue(ChartTypeProperty, logChartType);
-        this.SetValue(ChartValueGranularityProperty, newLogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default);
+        this.SetValue(ChartTypeProp, logChartType);
+        this.SetValue(ChartValueGranularityProp, newLogProfile?.LogChartValueGranularity ?? LogChartValueGranularity.Default);
         this.ApplyLogChartSeriesSources();
-        if (this.GetValue(IsChartDefinedProperty) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
-            this.SetValue(IsPanelVisibleProperty, true);
+        if (this.GetValue(IsChartDefinedProp) && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
+            this.SetValue(IsPanelVisibleProp, true);
         (newLogProfile?.SortDirection)?.Let(it =>
         {
             var logComparer = new DisplayableLogComparer(this.CompareLogs, it);
@@ -559,7 +559,7 @@ class LogChartViewModel : SessionComponent
         });
         
         // setup properties of axes
-        this.SetValue(XAxisTypeProperty, newLogProfile?.LogChartXAxisType ?? LogChartXAxisType.None);
+        this.SetValue(XAxisTypeProp, newLogProfile?.LogChartXAxisType ?? LogChartXAxisType.None);
 
         // report sources
         var seriesSources = newLogProfile?.LogChartSeriesSources.Let(it =>
@@ -592,13 +592,13 @@ class LogChartViewModel : SessionComponent
             case nameof(LogProfile.LogChartSeriesSources):
             {
                 // show the panel
-                var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
+                var isPrevChartDefined = this.GetValue(IsChartDefinedProp);
                 this.ApplyLogChartSeriesSources();
                 if (!isPrevChartDefined 
-                    && this.GetValue(IsChartDefinedProperty) 
+                    && this.GetValue(IsChartDefinedProp) 
                     && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
                 {
-                    this.SetValue(IsPanelVisibleProperty, true);
+                    this.SetValue(IsPanelVisibleProp, true);
                 }
                 
                 // report sources
@@ -619,25 +619,25 @@ class LogChartViewModel : SessionComponent
             }
             case nameof(LogProfile.LogChartType):
             {
-                var isPrevChartDefined = this.GetValue(IsChartDefinedProperty);
+                var isPrevChartDefined = this.GetValue(IsChartDefinedProp);
                 var logChartType = profile.LogChartType;
                 this.ApplyLogChartType(logChartType);
-                this.SetValue(ChartTypeProperty, logChartType);
-                this.SetValue(IsChartDefinedProperty, profile.LogChartType != LogChartType.None && this.allLogsSeriesGenerator.LogChartSeriesSources.IsNotEmpty());
+                this.SetValue(ChartTypeProp, logChartType);
+                this.SetValue(IsChartDefinedProp, profile.LogChartType != LogChartType.None && this.allLogsSeriesGenerator.LogChartSeriesSources.IsNotEmpty());
                 if (!isPrevChartDefined 
-                    && this.GetValue(IsChartDefinedProperty) 
+                    && this.GetValue(IsChartDefinedProp) 
                     && this.Settings.GetValueOrDefault(SettingKeys.ShowLogChartPanelIfDefined))
                 {
-                    this.SetValue(IsPanelVisibleProperty, true);
+                    this.SetValue(IsPanelVisibleProp, true);
                 }
                 break;
             }
             case nameof(LogProfile.LogChartValueGranularity):
-                this.SetValue(ChartValueGranularityProperty, profile.LogChartValueGranularity);
+                this.SetValue(ChartValueGranularityProp, profile.LogChartValueGranularity);
                 this.updateAxisNamesAction.Schedule();
                 break;
             case nameof(LogProfile.LogChartXAxisType):
-                this.SetValue(XAxisTypeProperty, profile.LogChartXAxisType);
+                this.SetValue(XAxisTypeProp, profile.LogChartXAxisType);
                 break;
             case nameof(LogProfile.SortDirection):
                 (this.LogProfile?.SortDirection)?.Let(it =>
@@ -647,7 +647,7 @@ class LogChartViewModel : SessionComponent
                     if (this.filteredLogsSeriesGenerator is not null)
                         this.filteredLogsSeriesGenerator.SourceLogComparer = logComparer;
                     this.markedLogsSeriesGenerator.SourceLogComparer = logComparer;
-                    this.UpdateAxisInversionState(this.GetValue(ChartTypeProperty));
+                    this.UpdateAxisInversionState(this.GetValue(ChartTypeProp));
                 });
                 break;
         }
@@ -658,13 +658,13 @@ class LogChartViewModel : SessionComponent
     protected override void OnPropertyChanged(ObservableProperty property, object? oldValue, object? newValue)
     {
         base.OnPropertyChanged(property, oldValue, newValue);
-        if (property == IsChartDefinedProperty)
+        if (property == IsChartDefinedProp)
         {
             if (!(bool)newValue!)
-                this.ResetValue(IsPanelVisibleProperty);
+                this.ResetValue(IsPanelVisibleProp);
             this.UpdateCanSetChartType();
         }
-        else if (property == PanelSizeProperty)
+        else if (property == PanelSizeProp)
             this.PersistentState.SetValue(LatestPanelSizeKey, (int)((double)newValue! + 0.5));
     }
 
@@ -678,7 +678,7 @@ class LogChartViewModel : SessionComponent
             && Enum.TryParse<LogChartType>(jsonProperty.GetString(), out var chartType))
         {
             this.ApplyLogChartType(chartType);
-            this.SetValue(ChartTypeProperty, chartType);
+            this.SetValue(ChartTypeProp, chartType);
         }
         if (element.TryGetProperty(VisibleSeriesSourcesStateKey, out jsonProperty)
             && jsonProperty.ValueKind == JsonValueKind.Array)
@@ -695,7 +695,7 @@ class LogChartViewModel : SessionComponent
             
             this.Logger.LogDebug("{count} visible series source(s) restored", this.visibleSeriesSources.Count);
             
-            this.SetValue(AreAllSeriesSourcesVisibleProperty, this.visibleSeriesSources.Count == this.seriesSources.Count);
+            this.SetValue(AreAllSeriesSourcesVisibleProp, this.visibleSeriesSources.Count == this.seriesSources.Count);
             this.RefreshVisibleSeries();
         }
     }
@@ -707,8 +707,8 @@ class LogChartViewModel : SessionComponent
         base.OnSaveState(writer);
         this.LogProfile?.Let(it =>
         {
-            if (it.IsBuiltIn && it.LogChartType != this.GetValue(ChartTypeProperty))
-                writer.WriteString(TempChartTypeStateKey, this.GetValue(ChartTypeProperty).ToString());
+            if (it.IsBuiltIn && it.LogChartType != this.GetValue(ChartTypeProp))
+                writer.WriteString(TempChartTypeStateKey, this.GetValue(ChartTypeProp).ToString());
             if (this.visibleSeriesSources.IsNotEmpty())
             {
                 writer.WritePropertyName(VisibleSeriesSourcesStateKey);
@@ -869,7 +869,7 @@ class LogChartViewModel : SessionComponent
     // Prepare the properties for usage tracking.
     protected override IDictionary<string, string> PrepareUsageTrackingProperties() => base.PrepareUsageTrackingProperties().Also(properties =>
     {
-        properties[UsageProperties.ChartType] = this.GetValue(ChartTypeProperty).ToString();
+        properties[UsageProperties.ChartType] = this.GetValue(ChartTypeProp).ToString();
     });
 
 
@@ -896,12 +896,12 @@ class LogChartViewModel : SessionComponent
         this.Logger.LogDebug("Reset visible series source(s): {count}", this.seriesSources.Count);
         if (this.visibleSeriesSources.Count == this.seriesSources.Count)
         {
-            this.ResetValue(AreAllSeriesSourcesVisibleProperty);
+            this.ResetValue(AreAllSeriesSourcesVisibleProp);
             return;
         }
         this.visibleSeriesSources.Clear();
         this.visibleSeriesSources.AddAll(this.seriesSources);
-        this.ResetValue(AreAllSeriesSourcesVisibleProperty);
+        this.ResetValue(AreAllSeriesSourcesVisibleProp);
         this.RefreshVisibleSeries();
         this.Application.UsageManager.TrackEvent(UsageEvents.ResetVisibleSeriesSources, this.PrepareUsageTrackingProperties().Also(properties =>
         {
@@ -921,8 +921,8 @@ class LogChartViewModel : SessionComponent
     /// </summary>
     public double PanelSize
     {
-        get => this.GetValue(PanelSizeProperty);
-        set => this.SetValue(PanelSizeProperty, value);
+        get => this.GetValue(PanelSizeProp);
+        set => this.SetValue(PanelSizeProp, value);
     }
 
 
@@ -1003,8 +1003,8 @@ class LogChartViewModel : SessionComponent
                 }
             }
         }
-        this.SetValue(MaxSeriesValueProperty, maxValue);
-        this.SetValue(MaxVisibleSeriesValueProperty, maxVisibleValue);
+        this.SetValue(MaxSeriesValueProp, maxValue);
+        this.SetValue(MaxVisibleSeriesValueProp, maxVisibleValue);
     }
     
     
@@ -1085,8 +1085,8 @@ class LogChartViewModel : SessionComponent
                 }
             }
         }
-        this.SetValue(MinSeriesValueProperty, minValue);
-        this.SetValue(MinVisibleSeriesValueProperty, minVisibleValue);
+        this.SetValue(MinSeriesValueProp, minValue);
+        this.SetValue(MinVisibleSeriesValueProp, minVisibleValue);
     }
 
 
@@ -1114,7 +1114,7 @@ class LogChartViewModel : SessionComponent
             else if (chartType != LogChartType.None)
             {
                 this.ApplyLogChartType(chartType);
-                this.SetValue(ChartTypeProperty, chartType);
+                this.SetValue(ChartTypeProp, chartType);
             }
             else
                 return;
@@ -1154,7 +1154,7 @@ class LogChartViewModel : SessionComponent
                     break;
                 }
             }
-            this.SetValue(AreAllSeriesSourcesVisibleProperty, false);
+            this.SetValue(AreAllSeriesSourcesVisibleProp, false);
         }
         else if (!this.visibleSeriesSources.Contains(source))
         {
@@ -1170,7 +1170,7 @@ class LogChartViewModel : SessionComponent
                 }
             }
             if (this.seriesSources.Count == this.visibleSeriesSources.Count)
-                this.ResetValue(AreAllSeriesSourcesVisibleProperty);
+                this.ResetValue(AreAllSeriesSourcesVisibleProp);
         }
         else
             return;
@@ -1200,10 +1200,10 @@ class LogChartViewModel : SessionComponent
     {
         if (this.LogProfile is not { } logProfile || logProfile.SortDirection == SortDirection.Ascending)
         {
-            this.ResetValue(IsXAxisInvertedProperty);
+            this.ResetValue(IsXAxisInvertedProp);
             return;
         }
-        this.SetValue(IsXAxisInvertedProperty, chartType switch
+        this.SetValue(IsXAxisInvertedProp, chartType switch
         {
             LogChartType.None
                 or LogChartType.ValueStatisticBars => false,
@@ -1234,17 +1234,17 @@ class LogChartViewModel : SessionComponent
     /// <summary>
     /// Get name of X-axis.
     /// </summary>
-    public string? XAxisName => this.GetValue(XAxisNameProperty);
+    public string? XAxisName => this.GetValue(XAxisNameProp);
 
 
     /// <summary>
     /// Get type of X axis of log chart.
     /// </summary>
-    public LogChartXAxisType XAxisType => this.GetValue(XAxisTypeProperty);
+    public LogChartXAxisType XAxisType => this.GetValue(XAxisTypeProp);
 
 
     /// <summary>
     /// Get name of Y-axis.
     /// </summary>
-    public string? YAxisName => this.GetValue(YAxisNameProperty);
+    public string? YAxisName => this.GetValue(YAxisNameProp);
 }
