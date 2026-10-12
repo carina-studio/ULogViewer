@@ -149,7 +149,7 @@ static partial class Utility
             });
 
             // save to file
-            await Task.Run(() => bitmap.Save(fileName));
+            await Task.Run(() => bitmap.Save(fileName, PngBitmapEncoderOptions.Default));
 
             // complete
             return true;

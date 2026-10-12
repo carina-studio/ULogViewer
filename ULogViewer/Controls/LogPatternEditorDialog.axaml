@@ -43,7 +43,7 @@
 						</StackPanel>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
+					<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsCapturingLogPropertiesEnabled="True" MinHeight="{DynamicResource Double/LogPatternEditorDialog.RegexInput.Height}" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 					<SelectableTextBlock Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingLogProperties}" asControls:DialogElement.TextRole="Description"/>
 					<Separator asControls:DialogElement.SeparatorType="Item"/>
@@ -51,7 +51,7 @@
 					<!-- Description -->
 					<asControls:DialogItem ItemSize="Small">
 						<TextBlock Text="{asXaml:StringResource LogPatternEditorDialog.Description}" asControls:DialogElement.TextRole="Label"/>
-						<TextBox Name="descriptionTextBox" asControls:DialogElement.IsDialogItemInput="True" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBox Name="descriptionTextBox" asControls:DialogElement.IsDialogItemInput="True" PlaceholderText="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="Item"/>
 		

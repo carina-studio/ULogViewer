@@ -502,7 +502,7 @@
 				<Separator IsVisible="{x:Static asControls:PathEnvVarEditorDialog.IsSupported}"/>
 				<MenuItem Command="{Binding $parent[app:MainWindow].EditConfiguration}" 
 				          Header="{asXaml:StringResource SessionView.EditConfiguration}" 
-				          IsVisible="{Binding $parent[UserControl].Application.IsDebugMode}">
+				          IsVisible="{Binding #root.Application.IsDebugMode}">
 					<MenuItem.Icon>
 						<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Icon.Tool.Outline}"/>
 					</MenuItem.Icon>
@@ -844,7 +844,7 @@
 						                           ToolTip.Tip="{asXaml:StringResource SessionView.LogProcessIdFilter.Description}" 
 						                           Value="{Binding LogFiltering.ProcessIdFilter, Mode=TwoWay}" 
 						                           VerticalAlignment="Center" 
-						                           Watermark="{asXaml:StringResource LogProperty.ProcessId}"
+						                           PlaceholderText="{asXaml:StringResource LogProperty.ProcessId}"
 						                           Width="{StaticResource Double/SessionView.Toolbar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox.InnerRightContent>
 								<Panel Classes="TextBox_InPlaceActions">
@@ -864,7 +864,7 @@
 						                           asControls:ToolbarElement.Role="Input"
 						                           ToolTip.Tip="{asXaml:StringResource SessionView.LogThreadIdFilter.Description}" 
 						                           Value="{Binding LogFiltering.ThreadIdFilter, Mode=TwoWay}" 
-						                           Watermark="{asXaml:StringResource LogProperty.ThreadId}"
+						                           PlaceholderText="{asXaml:StringResource LogProperty.ThreadId}"
 						                           Width="{StaticResource Double/SessionView.Toolbar.LogProcessIdFilter.Width}">
 							<abControls:IntegerTextBox.InnerRightContent>
 								<Panel Classes="TextBox_InPlaceActions">
@@ -913,7 +913,7 @@
 						                         asControls:ToolbarElement.Role="Input"
 						                         TextWrapping="NoWrap"
 						                         ToolTip.Tip="{asXaml:StringResource SessionView.LogTextFilter.ToolTip}"
-						                         Watermark="{asXaml:StringResource SessionView.LogTextFilter.Watermark}">
+						                         PlaceholderText="{asXaml:StringResource SessionView.LogTextFilter.Watermark}">
 							<asControls:RegexTextBox.InnerRightContent>
 								<StackPanel Classes="TextBox_InPlaceActions">
 									<Button Name="clearLogTextFilterButton" Classes="TextBox_InPlaceAction" Command="{Binding #logTextFilterTextBox.Clear}" IsVisible="{Binding #logTextFilterTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" ToolTip.Tip="{asXaml:StringResource Common.Clear}">

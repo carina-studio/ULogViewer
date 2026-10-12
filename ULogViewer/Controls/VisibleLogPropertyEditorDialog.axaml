@@ -77,7 +77,7 @@
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
-							<TextBox Name="customDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" Watermark="{asXaml:StringResource Common.None}"/>
+							<TextBox Name="customDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" MaxLength="256" PropertyChanged="OnEditorControlPropertyChanged" PlaceholderText="{asXaml:StringResource Common.None}"/>
 						</Panel>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
@@ -92,7 +92,7 @@
 					<!-- Secondary display name -->
 					<asControls:DialogItem ItemSize="Small">
 						<TextBlock Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.SecondaryDisplayName}" asControls:DialogElement.TextRole="Label"/>
-						<TextBox Name="secondaryDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBox Name="secondaryDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="Item"/>
 					
@@ -102,7 +102,7 @@
 							<TextBlock Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.Quantifier}" asControls:DialogElement.TextRole="Label"/>
 							<TextBlock Text="{asXaml:StringResource VisibleLogPropertyEditorDialog.Quantifier.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 						</StackPanel>
-						<TextBox Name="quantifierTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="32" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBox Name="quantifierTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="32" PlaceholderText="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="Item"/>
 

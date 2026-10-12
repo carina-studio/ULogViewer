@@ -75,7 +75,7 @@
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
-							<TextBox Name="customDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" Watermark="{asXaml:StringResource Common.Required}"/>
+							<TextBox Name="customDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" IsVisible="{Binding #customDisplayNameSwitch.IsChecked}" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 						</Panel>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
@@ -90,7 +90,7 @@
 					<!-- Secondary display name -->
 					<asControls:DialogItem ItemSize="Small">
 						<TextBlock Text="{asXaml:StringResource LogChartSeriesSourceEditorDialog.SecondaryPropertyDisplayName}" asControls:DialogElement.TextRole="Label"/>
-						<TextBox Name="secondaryDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBox Name="secondaryDisplayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator asControls:DialogElement.SeparatorType="Item"/>
 					
@@ -100,7 +100,7 @@
 							<TextBlock Text="{asXaml:StringResource LogChartSeriesSourceEditorDialog.Quantifier}" asControls:DialogElement.TextRole="Label"/>
 							<TextBlock Text="{asXaml:StringResource LogChartSeriesSourceEditorDialog.Quantifier.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 						</StackPanel>
-						<TextBox Name="quantifierTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="32" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBox Name="quantifierTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="32" PlaceholderText="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					
 					<!-- Properties for direct number value -->
@@ -114,7 +114,7 @@
 								<TextBlock IsVisible="{Binding #defaultValueTextBox.IsTextValid}" Text="{asXaml:StringResource LogChartSeriesSourceEditorDialog.DefaultValue.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 								<TextBlock IsVisible="{Binding !#defaultValueTextBox.IsTextValid}" Text="{asXaml:StringResource Common.InvalidFormat}" asControls:DialogElement.TextRole="ErrorDescriptionBelowLabel"/>
 							</StackPanel>
-							<abControls:RealNumberTextBox Name="defaultValueTextBox" asControls:DialogElement.IsDialogItemInput="True" IsNullValueAllowed="True" MaxLength="20" Watermark="{asXaml:StringResource Common.None}"/>
+							<abControls:RealNumberTextBox Name="defaultValueTextBox" asControls:DialogElement.IsDialogItemInput="True" IsNullValueAllowed="True" MaxLength="20" PlaceholderText="{asXaml:StringResource Common.None}"/>
 						</asControls:DialogItem>
 						
 						<!-- Value scaling -->

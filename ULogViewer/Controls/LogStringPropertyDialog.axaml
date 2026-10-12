@@ -34,7 +34,7 @@
 				<Grid ColumnDefinitions="*,Auto,Auto">
 
 					<!-- Find text -->
-					<asControls:RegexTextBox Name="findTextTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnFindTextTextBoxPropertyChanged" asControls:ToolbarElement.Role="Input" Watermark="{asXaml:StringResource LogStringPropertyDialog.FindText}"/>
+					<asControls:RegexTextBox Name="findTextTextBox" HorizontalAlignment="Stretch" PropertyChanged="OnFindTextTextBoxPropertyChanged" asControls:ToolbarElement.Role="Input" PlaceholderText="{asXaml:StringResource LogStringPropertyDialog.FindText}"/>
 					<Separator asControls:DialogElement.SeparatorType="Small" Grid.Column="1"/>
 
 					<!-- Wrap text -->

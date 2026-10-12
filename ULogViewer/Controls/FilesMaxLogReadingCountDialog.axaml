@@ -95,7 +95,7 @@
 								</TextBlock.IsVisible>
 							</TextBlock>
 						</StackPanel>
-						<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}" IsNullValueAllowed="True" Watermark="{asXaml:StringResource Common.None}"/>
+						<abControls:IntegerTextBox Name="maxLogReadingCountTextBox" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding #window.CanSpecifyMaxLogReadingCount}" IsNullValueAllowed="True" PlaceholderText="{asXaml:StringResource Common.None}"/>
 					</asControls:DialogItem>
 					<Separator IsVisible="{Binding #maxLogReadingCountOfLogProfileTextBlock.IsVisible}" asControls:DialogElement.SeparatorType="InnerItem"/>
 

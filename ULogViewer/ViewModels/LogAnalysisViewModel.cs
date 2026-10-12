@@ -1,3 +1,4 @@
+using Avalonia.Input.Platform;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Scripting;
 using CarinaStudio.Collections;

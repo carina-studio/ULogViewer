@@ -47,7 +47,7 @@
 							</StackPanel>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<asControls:RegexTextBox Name="regexTextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" TextWrapping="Wrap" Watermark="{asXaml:StringResource Common.Required}"/>
+						<asControls:RegexTextBox Name="regexTextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" Height="{DynamicResource Double/RegexEditorDialog.RegexInput.Height}" IgnoreCase="False" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Left" TextWrapping="Wrap" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem" IsVisible="{Binding #window.IsCapturingGroupsEnabled}"/>
 						<Panel IsVisible="{Binding #window.IsCapturingGroupsEnabled}">
 							<SelectableTextBlock IsVisible="{Binding !#window.IsCapturingLogPropertiesEnabled}" Text="{asXaml:StringResource RegexEditorDialog.Regex.Description.CapturingGroups}" asControls:DialogElement.TextRole="Description"/>
@@ -77,7 +77,7 @@
 							</StackPanel>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<TextBox Name="testLogLineTextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" Height="{DynamicResource Double/RegexEditorDialog.TestLogLine.Height}" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding #window.TestLogLine, Mode=TwoWay}" TextAlignment="Left" TextWrapping="Wrap" Watermark="{asXaml:StringResource Common.None}"/>
+						<TextBox Name="testLogLineTextBox" Background="{x:Static Brushes.Transparent}" BorderBrush="{x:Static Brushes.Transparent}" Height="{DynamicResource Double/RegexEditorDialog.TestLogLine.Height}" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Text="{Binding #window.TestLogLine, Mode=TwoWay}" TextAlignment="Left" TextWrapping="Wrap" PlaceholderText="{asXaml:StringResource Common.None}"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Test result -->

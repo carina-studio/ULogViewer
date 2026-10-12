@@ -63,7 +63,7 @@
 						<!-- Operation name -->
 						<asControls:DialogItem Name="operationNameItem" ItemSize="Small">
 							<TextBlock Text="{asXaml:StringResource OperationDurationAnalysisRuleEditorDialog.OperationName}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="operationNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+							<TextBox Name="operationNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 						</asControls:DialogItem>
 
 					</StackPanel>
@@ -88,7 +88,7 @@
 							</StackPanel>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<appControls:PatternEditor Name="beginningPatternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
+						<appControls:PatternEditor Name="beginningPatternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Beginning pre-actions -->
@@ -148,7 +148,7 @@
 							</StackPanel>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<appControls:PatternEditor Name="endingPatternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
+						<appControls:PatternEditor Name="endingPatternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/OperationDurationAnalysisRuleEditorDialog.PatternTextBox.Height}" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
 						<!-- Ending pre-actions -->
@@ -308,7 +308,7 @@
 							</WrapPanel>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<asControls:StringInterpolationFormatTextBox Name="customMessageTextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height}" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" Watermark="{asXaml:StringResource Common.None}"/>
+						<asControls:StringInterpolationFormatTextBox Name="customMessageTextBox" Height="{StaticResource Double/OperationDurationAnalysisRuleEditorDialog.CustomMessageTextBox.Height}" asControls:DialogElement.IsDialogItemInput="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" PlaceholderText="{asXaml:StringResource Common.None}"/>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 						<SelectableTextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Message.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
@@ -316,7 +316,7 @@
 						<!-- Byte size variable -->
 						<asControls:DialogItem ItemSize="Small">
 							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ByteSizeVariableName}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="byteSizeVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+							<TextBox Name="byteSizeVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.None}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 
@@ -330,7 +330,7 @@
 						<!-- Quantity variable -->
 						<asControls:DialogItem ItemSize="Small">
 							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.QuantityVariableName}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="quantityVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.None}"/>
+							<TextBox Name="quantityVarNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.None}"/>
 						</asControls:DialogItem>
 
 					</StackPanel>

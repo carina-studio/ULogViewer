@@ -87,13 +87,13 @@
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<TextBox Name="categoryTextBox" asControls:DialogElement.IsDialogItemInput="True" Watermark="{asXaml:StringResource Common.None}">
+							<TextBox Name="categoryTextBox" asControls:DialogElement.IsDialogItemInput="True" PlaceholderText="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsCategoryRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
+										<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.Required}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsCategoryRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
+										<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.None}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</TextBox>
@@ -123,10 +123,10 @@
 							                                      TextAlignment="Left" 
 							                                      TextWrapping="Wrap" 
 							                                      VerticalAlignment="Center" 
-							                                      Watermark="{asXaml:StringResource Common.None}"/>
+							                                      PlaceholderText="{asXaml:StringResource Common.None}"/>
 							<Separator IsVisible="{Binding #window.IsAzureRelatedDataSourceProvider}" asControls:DialogElement.SeparatorType="Small"/>
 							<Button Name="selectAzureResourcesButton" 
-							        Command="{Binding #window.SelectAzureResources}" 
+							        Command="{ReflectionBinding #window.SelectAzureResources}" 
 							        Content="{asXaml:StringResource LogDataSourceOptionsDialog.SelectAzureResources}" 
 							        HorizontalAlignment="Right"
 							        asControls:DialogElement.IsDialogItemInput="True"
@@ -159,7 +159,7 @@
 						<StackPanel IsVisible="{Binding #window.IsFileNameSupported}">
 							<asControls:DialogItem ItemSize="Small">
 								<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.FileName}" asControls:DialogElement.TextRole="Label"/>
-								<TextBox Name="fileNameTextBox" asControls:DialogElement.IsDialogItemInput="True" Watermark="{asXaml:StringResource Common.None}"/>
+								<TextBox Name="fileNameTextBox" asControls:DialogElement.IsDialogItemInput="True" PlaceholderText="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Default"/>
 							<Button Command="{Binding #window.SelectFileName}" 
@@ -174,7 +174,7 @@
 						<StackPanel IsVisible="{Binding #window.IsWorkingDirectorySupported}">
 							<asControls:DialogItem ItemSize="Small">
 								<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.WorkingDirectory}" asControls:DialogElement.TextRole="Label"/>
-								<TextBox Name="workingDirectoryTextBox" asControls:DialogElement.IsDialogItemInput="True" Watermark="{asXaml:StringResource Common.None}"/>
+								<TextBox Name="workingDirectoryTextBox" asControls:DialogElement.IsDialogItemInput="True" PlaceholderText="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Default"/>
 							<Button Command="{Binding #window.SelectWorkingDirectory}" 
@@ -191,7 +191,7 @@
 								<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.IPEndPoint.Address}" asControls:DialogElement.TextRole="Label"/>
 								<abControls:IPAddressTextBox Name="ipAddressTextBox" 
 								                             asControls:DialogElement.IsDialogItemInput="True"
-								                             Watermark="{asXaml:StringResource Common.None}"/>
+								                             PlaceholderText="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 							<asControls:DialogItem ItemSize="Small">
@@ -212,7 +212,7 @@
 								<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.Uri}" asControls:DialogElement.TextRole="Label"/>
 								<abControls:UriTextBox Name="uriTextBox" 
 								                       asControls:DialogElement.IsDialogItemInput="True" 
-								                       Watermark="{asXaml:StringResource Common.None}"/>
+								                       PlaceholderText="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
 						</StackPanel>
@@ -226,7 +226,7 @@
 								                           IsNullValueAllowed="True"
 								                           Maximum="2147483647" 
 								                           Minimum="0" 
-								                           Watermark="{asXaml:StringResource Common.None}"/>
+								                           PlaceholderText="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
 						</StackPanel>
@@ -238,7 +238,7 @@
 								<TextBox Name="processNameTextBox" 
 								         asControls:DialogElement.IsDialogItemInput="True" 
 								         MaxLength="128" 
-								         Watermark="{asXaml:StringResource Common.None}"/>
+								         PlaceholderText="{asXaml:StringResource Common.None}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
 						</StackPanel>
@@ -324,13 +324,13 @@
 							         asControls:DialogElement.IsDialogItemInput="True"
 							         ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" 
 							         TextAlignment="Left" 
-							         Watermark="{asXaml:StringResource Common.None}">
+							         PlaceholderText="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsConnectionStringRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
+										<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.Required}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsConnectionStringRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
+										<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.None}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</TextBox>
@@ -375,13 +375,13 @@
 							                                      ScrollViewer.HorizontalScrollBarVisibility="Auto" 
 							                                      ScrollViewer.VerticalScrollBarVisibility="Auto" 
 							                                      TextAlignment="Left" 
-							                                      Watermark="{asXaml:StringResource Common.None}">
+							                                      PlaceholderText="{asXaml:StringResource Common.None}">
 								<ia:Interaction.Behaviors>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsQueryStringRequired}" ComparisonCondition="Equal" Value="True">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
+										<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.Required}"/>
 									</iaCore:DataTriggerBehavior>
 									<iaCore:DataTriggerBehavior Binding="{Binding #window.IsQueryStringRequired}" ComparisonCondition="Equal" Value="False">
-										<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
+										<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.None}"/>
 									</iaCore:DataTriggerBehavior>
 								</ia:Interaction.Behaviors>
 							</asControls:SyntaxHighlightingTextBox>
@@ -395,13 +395,13 @@
 								           asControls:DialogElement.TextRole="Label"/>
 								<TextBox Name="userNameTextBox" 
 								         asControls:DialogElement.IsDialogItemInput="True" 
-								         Watermark="{asXaml:StringResource Common.None}">
+								         PlaceholderText="{asXaml:StringResource Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsUserNameRequired}" ComparisonCondition="Equal" Value="True">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
+											<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.Required}"/>
 										</iaCore:DataTriggerBehavior>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsUserNameRequired}" ComparisonCondition="Equal" Value="False">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
+											<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.None}"/>
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</TextBox>
@@ -417,13 +417,13 @@
 								<TextBox Name="passwordTextBox" 
 								         asControls:DialogElement.IsDialogItemInput="True"
 								         PasswordChar="●" 
-								         Watermark="{asXaml:StringResource Common.None}">
+								         PlaceholderText="{asXaml:StringResource Common.None}">
 									<ia:Interaction.Behaviors>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsPasswordRequired}" ComparisonCondition="Equal" Value="True">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.Required}"/>
+											<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.Required}"/>
 										</iaCore:DataTriggerBehavior>
 										<iaCore:DataTriggerBehavior Binding="{Binding #window.IsPasswordRequired}" ComparisonCondition="Equal" Value="False">
-											<iaCore:ChangePropertyAction PropertyName="Watermark" Value="{asXaml:StringResource Common.None}"/>
+											<iaCore:ChangePropertyAction PropertyName="PlaceholderText" Value="{asXaml:StringResource Common.None}"/>
 										</iaCore:DataTriggerBehavior>
 									</ia:Interaction.Behaviors>
 								</TextBox>

@@ -14,6 +14,7 @@ using CarinaStudio.AppSuite.Media;
 using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
+using CarinaStudio.Input;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
 using CarinaStudio.VisualTree;
@@ -768,7 +769,7 @@ namespace CarinaStudio.ULogViewer
 			e.Handled = true;
 
 			// handle file dragging
-			if(e.DataTransfer.HasFiles()) // [Workaround] Prevent NRE when dragging without files on macOS
+			if(e.DataTransfer.HasFiles) // [Workaround] Prevent NRE when dragging without files on macOS
 			{
 				// select tab item
 				if (e.ItemIndex < this.tabItems.Count - 1)
@@ -830,7 +831,7 @@ namespace CarinaStudio.ULogViewer
 			ItemInsertionIndicator.SetInsertingItemBefore(tabItem, false);
 			
 			// drop files
-			if (e.DataTransfer.HasFiles()) // [Workaround] Prevent NRE when dragging without files on macOS
+			if (e.DataTransfer.HasFiles) // [Workaround] Prevent NRE when dragging without files on macOS
 			{
 				// find tab and session view
 				var sessionView = Global.Run(() =>
@@ -1179,7 +1180,7 @@ namespace CarinaStudio.ULogViewer
 			data.Add(DraggingSessionFormat, sessionHandle);
 
 			// start dragging session
-			DragDrop.DoDragDropAsync(e.PointerEventArgs, data, DragDropEffects.Move).GetAwaiter().UnsafeOnCompleted(() => sessionHandle.Free());
+			DragDrop.DoDragDropAsync(e.PointerPressedEventArgs, data, DragDropEffects.Move).GetAwaiter().UnsafeOnCompleted(() => sessionHandle.Free());
 		}
 
 

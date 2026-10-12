@@ -40,7 +40,7 @@
 					                                      HorizontalAlignment="Stretch"
 					                                      asControls:DialogElement.IsDialogItemInput="True"
 					                                      TextAlignment="Left"
-					                                      Watermark="{asXaml:StringResource Common.None}"/>
+					                                      PlaceholderText="{asXaml:StringResource Common.None}"/>
 					
 					<!-- Use text shell -->
 					<StackPanel IsVisible="{Binding #window.UseTextShell, Converter={x:Static ObjectConverters.IsNotNull}}">

@@ -1,5 +1,7 @@
 //#define ALWAYS_SHOW_TUTORIALS
 
+using Avalonia.Input.Platform;
+using CarinaStudio.Input;
 using System.Threading;
 using AsControls = CarinaStudio.AppSuite.Controls;
 using Avalonia;
@@ -587,7 +589,7 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerMovedEvent, this.OnLogChartPointerMoved, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerPressedEvent, this.OnLogChartPointerPressed, RoutingStrategies.Tunnel);
 				it.AddHandler(PointerReleasedEvent, this.OnLogChartPointerReleased, RoutingStrategies.Tunnel);
-				it.AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, this.OnLogChartPointerTouchPadGestureMagnify, RoutingStrategies.Bubble);
+				it.AddHandler(PointerTouchPadGestureMagnifyEvent, this.OnLogChartPointerTouchPadGestureMagnify, RoutingStrategies.Bubble);
 				it.AddHandler(PointerWheelChangedEvent, this.OnLogChartPointerWheelChanged, RoutingStrategies.Tunnel);
 				it.PropertyChanged += (_, e) => this.OnLogChartPropertyChanged(e);
 				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
@@ -2526,7 +2528,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// <returns>True if dragged data is accepted by this view.</returns>
 		public Task<bool> DropAsync(KeyModifiers keyModifiers, IDataTransfer data)
 		{
-			if (!data.HasFiles() || this.IsHandlingSelectedFiles)
+			if (!data.HasFiles || this.IsHandlingSelectedFiles)
 				return Task.FromResult(false);
 			var dropFilePaths = data.TryGetLocalFilePaths();
 			if (dropFilePaths.IsNotEmpty())
@@ -3542,7 +3544,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			}
 
 			// check data
-			e.DragEffects = Global.RunOrDefault(() => e.DataTransfer.HasFiles()) // [Workaround] Prevent NRE when dragging without files on macOS
+			e.DragEffects = Global.RunOrDefault(() => e.DataTransfer.HasFiles) // [Workaround] Prevent NRE when dragging without files on macOS
 				? DragDropEffects.Copy
 				: DragDropEffects.None;
 		}
@@ -3588,7 +3590,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when got focus.
-        protected override void OnGotFocus(GotFocusEventArgs e)
+        protected override void OnGotFocus(FocusChangedEventArgs e)
         {
             base.OnGotFocus(e);
 			this.Logger.LogTrace("Got focus");
@@ -3999,7 +4001,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Called when lost focus.
-        protected override void OnLostFocus(RoutedEventArgs e)
+        protected override void OnLostFocus(FocusChangedEventArgs e)
         {
 			this.Logger.LogTrace("Lost focus");
 			if (this.pressedKeys.IsNotEmpty())

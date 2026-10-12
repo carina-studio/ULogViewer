@@ -47,9 +47,9 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	/// </summary>
 	public static readonly DirectProperty<PatternEditor, Regex?> PatternProperty = AvaloniaProperty.RegisterDirect<PatternEditor, Regex?>(nameof(Pattern), e => e.pattern, (e, p) => e.Pattern = p);
 	/// <summary>
-	/// Property of <see cref="Watermark"/>.
+	/// Property of <see cref="PlaceholderText"/>.
 	/// </summary>
-	public static readonly StyledProperty<string?> WatermarkProperty = AvaloniaProperty.Register<PatternEditor, string?>(nameof(Watermark));
+	public static readonly StyledProperty<string?> PlaceholderTextProperty = AvaloniaProperty.Register<PatternEditor, string?>(nameof(PlaceholderText));
 	
 	
 	// Provider for assistance of phrase input.
@@ -169,8 +169,11 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 			var data = BitConverter.GetBytes((int)options);
 			var dataTransfer = new DataTransfer().Also(it =>
 			{
-				it.Add(DataFormat.Text, patternText);
-				it.Add(RegexOptionsFormat, data);
+				it.Add(new DataTransferItem().Also(item =>
+				{
+					item.SetText(patternText);
+					item.Set(RegexOptionsFormat, data);
+				}));
 			});
 			_ = TopLevel.GetTopLevel(this)?.Clipboard?.SetDataAsync(dataTransfer);
 		}
@@ -301,7 +304,7 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 
 
 	/// <inheritdoc/>
-	protected override void OnGotFocus(GotFocusEventArgs e)
+	protected override void OnGotFocus(FocusChangedEventArgs e)
 	{
 		base.OnGotFocus(e);
 		if (e.Source is not Button)
@@ -405,6 +408,16 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 	}
 
 	
+	/// <summary>
+	/// Get or set placeholder text to be shown in editor.
+	/// </summary>
+	public string? PlaceholderText
+	{
+		get => this.GetValue(PlaceholderTextProperty);
+		set => this.SetValue(PlaceholderTextProperty, value);
+	}
+
+
 #pragma warning disable CA1822
 #pragma warning disable IDE0060
 	/// <summary>
@@ -417,14 +430,4 @@ class PatternEditor : CarinaStudio.Controls.UserControl<IULogViewerApplication>
 		false;
 #pragma warning restore CA1822
 #pragma warning restore IDE0060
-
-
-	/// <summary>
-	/// Get or set watermark to be shown in editor.
-	/// </summary>
-	public string? Watermark
-	{
-		get => this.GetValue(WatermarkProperty);
-		set => this.SetValue(WatermarkProperty, value);
-	}
 }

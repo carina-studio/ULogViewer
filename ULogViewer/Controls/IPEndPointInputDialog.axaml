@@ -35,7 +35,7 @@
 
 			<!-- Address -->
 			<TextBlock Text="{asXaml:StringResource IPEndPointInputDialog.Address}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
-			<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" FontFamily="{x:Static asMedia:BuiltInFonts.RobotoMono}" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged" Watermark="{x:Null}">
+			<abControls:IPAddressTextBox Name="ipAddressTextBox" Classes="Dialog_TextBox" FontFamily="{x:Static asMedia:BuiltInFonts.RobotoMono}" MaxLength="1024" PropertyChanged="OnIPAddressTextBoxPropertyChanged" PlaceholderText="{x:Null}">
 				<abControls:IPAddressTextBox.InnerRightContent>
 					<StackPanel Classes="TextBox_InPlaceActions">
 						<ToggleButton Name="commonIPAddressesButton" Classes="TextBox_InPlaceAction" Command="{Binding #window.ShowCommonIPAddressesMenu}" ToolTip.Tip="{asXaml:StringResource IPEndPointInputDialog.CommonAddresses}">

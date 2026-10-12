@@ -24,7 +24,7 @@
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Enter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[appControls:ContextualBasedAnalysisActionsEditor].AddPeekQueueToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog}">
+			<MenuItem Command="{ReflectionBinding $parent[appControls:ContextualBasedAnalysisActionsEditor].AddPeekQueueToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PeekQueueToVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Peek.Outline}"/>
 				</MenuItem.Icon>
@@ -40,7 +40,7 @@
 					<Image Classes="MenuItem_Icon" Source="{DynamicResource Image/Icon.Enter}"/>
 				</MenuItem.Icon>
 			</MenuItem>
-			<MenuItem Command="{Binding $parent[appControls:ContextualBasedAnalysisActionsEditor].AddPeekStackToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog}">
+			<MenuItem Command="{ReflectionBinding $parent[appControls:ContextualBasedAnalysisActionsEditor].AddPeekStackToVarAction}" Header="{asXaml:StringResource ContextualBasedAnalysisActionsEditor.PeekStackToVariableAction.WithDialog}">
 				<MenuItem.Icon>
 					<Image Classes="MenuItem_Icon" Source="{StaticResource Image/Peek.Outline}"/>
 				</MenuItem.Icon>

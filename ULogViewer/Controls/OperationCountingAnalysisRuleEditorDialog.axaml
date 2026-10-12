@@ -55,7 +55,7 @@
 							<!-- Operation name -->
 							<asControls:DialogItem Name="operationNameItem" ItemSize="Small">
 								<TextBlock Text="{asXaml:StringResource OperationCountingAnalysisRuleEditorDialog.OperationName}" asControls:DialogElement.TextRole="Label"/>
-								<TextBox Name="operationNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+								<TextBox Name="operationNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
 
@@ -73,7 +73,7 @@
 								</StackPanel>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-							<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" Watermark="{asXaml:StringResource Common.Required}"/>
+							<appControls:PatternEditor Name="patternEditor" IsCapturingGroupsEnabled="True" IsPhraseInputAssistanceEnabled="True" MinHeight="{DynamicResource Double/KeyLogAnalysisRuleEditorDialog.PatternInput.Height}" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 							<SelectableTextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Pattern.Description.Detailed}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
@@ -118,7 +118,7 @@
 							<!-- Interval -->
 							<asControls:DialogItem Name="intervalItem" ItemSize="Small">
 								<TextBlock Text="{asXaml:StringResource OperationCountingAnalysisRuleEditorDialog.Interval}" asControls:DialogElement.TextRole="Label"/>
-								<abControls:TimeSpanTextBox Name="intervalTextBox" asControls:DialogElement.IsDialogItemInput="True" Watermark="{asXaml:StringResource Common.Required}"/>
+								<abControls:TimeSpanTextBox Name="intervalTextBox" asControls:DialogElement.IsDialogItemInput="True" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 							<SelectableTextBlock Text="{asXaml:StringResource TimeSpanTextBox.FormatDescription}" asControls:DialogElement.TextRole="DescriptionBelowLabel" TextWrapping="Wrap"/>

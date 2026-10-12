@@ -1,4 +1,5 @@
 ﻿using Avalonia.Data.Converters;
+using Avalonia.Input.Platform;
 using Avalonia.Media;
 using CarinaStudio.AppSuite;
 using CarinaStudio.AppSuite.Product;

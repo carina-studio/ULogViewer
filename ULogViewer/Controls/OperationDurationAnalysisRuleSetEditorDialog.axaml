@@ -48,7 +48,7 @@
 						<!-- Name -->
 						<asControls:DialogItem Name="nameItem" ItemSize="Small">
 							<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleSetEditorDialog.Name}" asControls:DialogElement.TextRole="Label"/>
-							<TextBox Name="nameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+							<TextBox Name="nameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="Item"/>
 

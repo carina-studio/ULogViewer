@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:app="using:CarinaStudio.ULogViewer"
+		xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
 		xmlns:appConverters="using:CarinaStudio.ULogViewer.Converters"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
 		xmlns:asScripting="using:CarinaStudio.AppSuite.Scripting"
@@ -56,7 +57,7 @@
 						<StackPanel IsVisible="{Binding !$parent[appControls:ScriptLogDataSourceProviderEditorDialog].IsEmbeddedProvider}">
 							<asControls:DialogItem Name="displayNameItem" ItemSize="Small">
 								<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.DisplayName}" asControls:DialogElement.TextRole="Label"/>
-								<TextBox Name="displayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
+								<TextBox Name="displayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" PlaceholderText="{asXaml:StringResource Common.Required}"/>
 							</asControls:DialogItem>
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
 						</StackPanel>
@@ -120,7 +121,7 @@
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{ReflectionBinding #openingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.OpeningReaderScript.Description}" asControls:DialogElement.TextRole="Description"/>
@@ -134,7 +135,7 @@
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{ReflectionBinding #readingLineScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ReadingLineScript.Description}" asControls:DialogElement.TextRole="Description"/>
@@ -148,7 +149,7 @@
 									<Image Classes="Icon" Source="{DynamicResource Image/Icon.Question.Outline}"/>
 								</Button>
 							</WrapPanel>
-							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{Binding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
+							<asControls:EnumComboBox EnumType="{x:Type asScripting:ScriptLanguage}" asControls:DialogElement.IsDialogItemInput="True" SelectedItem="{ReflectionBinding #closingReaderScriptEditor.ScriptLanguage, Mode=TwoWay}"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
 						<SelectableTextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.ClosingReaderScript.Description}" asControls:DialogElement.TextRole="Description"/>
