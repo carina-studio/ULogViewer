@@ -18,7 +18,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 {
 	// Static fields.
 	static readonly StyledProperty<bool> CanSpecifyMaxLogReadingCountProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(CanSpecifyMaxLogReadingCount), true);
-	static readonly StyledProperty<bool> ConfirmMaxLogReadingCountForLargeFilesProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>("ConfirmMaxLogReadingCountForLargeFiles");
+	static readonly StyledProperty<bool> ConfirmMaxLogReadingCountForLargeFilesProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(ConfirmMaxLogReadingCountForLargeFiles));
 	static readonly StyledProperty<bool> IsCancellationAllowedProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(IsCancellationAllowed), true);
 	static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, bool>(nameof(IsProVersionActivated), false);
 	static readonly StyledProperty<int?> MaxLogReadingCountOfLogProfileProperty = AvaloniaProperty.Register<FilesMaxLogReadingCountDialog, int?>(nameof(MaxLogReadingCountOfLogProfile));
@@ -55,6 +55,14 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 	{
 		get => this.GetValue(CanSpecifyMaxLogReadingCountProperty);
 		set => this.SetValue(CanSpecifyMaxLogReadingCountProperty, value);
+	}
+
+
+	// Whether maximum log reading count should be confirmed for large files or not.
+	bool ConfirmMaxLogReadingCountForLargeFiles
+	{
+		get => this.GetValue(ConfirmMaxLogReadingCountForLargeFilesProperty);
+		set => this.SetValue(ConfirmMaxLogReadingCountForLargeFilesProperty, value);
 	}
 
 

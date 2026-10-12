@@ -53,7 +53,7 @@
 					<StackPanel>
 
 						<!-- Display Name -->
-						<StackPanel IsVisible="{Binding !$parent[Window].IsEmbeddedProvider}">
+						<StackPanel IsVisible="{Binding !$parent[appControls:ScriptLogDataSourceProviderEditorDialog].IsEmbeddedProvider}">
 							<asControls:DialogItem Name="displayNameItem" ItemSize="Small">
 								<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.DisplayName}" asControls:DialogElement.TextRole="Label"/>
 								<TextBox Name="displayNameTextBox" asControls:DialogElement.IsDialogItemInput="True" MaxLength="256" Watermark="{asXaml:StringResource Common.Required}"/>
@@ -64,17 +64,17 @@
 						<!-- Supported source options -->
 						<asControls:DialogItem ItemSize="Small">
 							<TextBlock Text="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions}" asControls:DialogElement.TextRole="Label"/>
-							<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !$parent[Window].SupportedSourceOptions.Count}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
+							<TextBlock HorizontalAlignment="Right" IsVisible="{Binding !$parent[appControls:ScriptLogDataSourceProviderEditorDialog].SupportedSourceOptions.Count}" Text="{asXaml:StringResource Common.None}" asControls:DialogElement.TextRole="Default"/>
 						</asControls:DialogItem>
 						<Separator asControls:DialogElement.SeparatorType="InnerItem"/>
-						<ListBox Name="supportedSourceOptionListBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding $parent[Window].SupportedSourceOptions}">
+						<ListBox Name="supportedSourceOptionListBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding $parent[appControls:ScriptLogDataSourceProviderEditorDialog].SupportedSourceOptions}">
 							<ListBox.ItemsPanel>
 								<ItemsPanelTemplate>
 									<StackPanel/>
 								</ItemsPanelTemplate>
 							</ListBox.ItemsPanel>
 							<ListBox.ItemTemplate>
-								<DataTemplate>
+								<DataTemplate x:DataType="appControls:ScriptLogDataSourceProviderEditorDialog+SupportedSourceOption">
 									<Grid ColumnDefinitions="*,*">
 										<TextBlock Classes="ListBoxItem_TextBlock" Text="{Binding Name, Converter={x:Static appConverters:LogDataSourceOptionConverter.Default}}"/>
 										<Border Classes="InPlaceAction_Reserved"/>
@@ -83,7 +83,7 @@
 												<CheckBox Content="{asXaml:StringResource ScriptLogDataSourceProviderEditorDialog.SupportedSourceOptions.Required}" IsChecked="{Binding IsRequired}" IsEnabled="{Binding CanBeRequired}" MinHeight="0" VerticalAlignment="Center"/>
 											</Border>
 											<StackPanel Grid.Column="1" IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" Orientation="Horizontal">
-												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[Window].RemoveSupportedSourceOptionCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
+												<Button Classes="InPlaceAction_Button" Command="{Binding $parent[appControls:ScriptLogDataSourceProviderEditorDialog].RemoveSupportedSourceOptionCommand}" CommandParameter="{Binding $parent[ListBoxItem].DataContext}" ToolTip.Tip="{asXaml:StringResource Common.Delete}">
 													<asControls:Image Classes="InPlaceAction_Icon">
 														<DrawingImage>
 															<GeometryDrawing Brush="{Binding $parent[ListBoxItem].Foreground}" Geometry="{StaticResource Geometry/Icon.Delete.Outline}"/>
@@ -96,8 +96,8 @@
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 						</ListBox>
-						<Separator IsVisible="{Binding $parent[Window].SupportedSourceOptions.Count}" asControls:DialogElement.SeparatorType="Small"/>
-						<ToggleButton Name="addSupportedSourceOptionButton" Command="{Binding $parent[Window].ShowAddSupportedSourceOptionMenu}" HorizontalAlignment="Right" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding $parent[Window].UnsupportedSourceOptions.Count}">
+						<Separator IsVisible="{Binding $parent[appControls:ScriptLogDataSourceProviderEditorDialog].SupportedSourceOptions.Count}" asControls:DialogElement.SeparatorType="Small"/>
+						<ToggleButton Name="addSupportedSourceOptionButton" Command="{Binding $parent[appControls:ScriptLogDataSourceProviderEditorDialog].ShowAddSupportedSourceOptionMenu}" HorizontalAlignment="Right" asControls:DialogElement.IsDialogItemInput="True" IsEnabled="{Binding $parent[appControls:ScriptLogDataSourceProviderEditorDialog].UnsupportedSourceOptions.Count}">
 							<Grid ColumnDefinitions="*,Auto">
 								<TextBlock Classes="Button_TextBlock" Text="{asXaml:StringResource Common.Add}"/>
 								<Image Classes="Button_DropDownIcon" Grid.Column="1" IsVisible="{Binding !#addSupportedSourceOptionButton.IsChecked}" Source="{StaticResource Image/Icon.DropDown.Down}"/>

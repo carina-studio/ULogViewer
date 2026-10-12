@@ -14,14 +14,14 @@
 		VerticalContentAlignment="Stretch">
 
 	<Grid RowDefinitions="*,Auto,Auto">
-		<asControls:RegexTextBox Name="patternTextBox" Classes="Dialog_Item_TextBox" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Stretch" Watermark="{Binding $parent[UserControl].Watermark}"/>
+		<asControls:RegexTextBox Name="patternTextBox" Classes="Dialog_Item_TextBox" FontFamily="{Binding PatternFontFamily, Source={x:Static appControls:ControlFonts.Default}}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Stretch" Watermark="{Binding $parent[appControls:PatternEditor].Watermark}"/>
 		<Separator Classes="Dialog_Separator_Small" Grid.Row="1"/>
 		<StackPanel HorizontalAlignment="Right" Grid.Row="2" Orientation="Horizontal">
-			<Button Name="editPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].EditPatternAsync}" Content="{asXaml:StringResource PatternEditor.EditDetailedly}"/>
+			<Button Name="editPatternButton" Classes="Dialog_Item_Button" Command="{Binding $parent[appControls:PatternEditor].EditPatternAsync}" Content="{asXaml:StringResource PatternEditor.EditDetailedly}"/>
 			<Separator Classes="Dialog_Separator_Small"/>
-			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].CopyPattern}" IsEnabled="{Binding #patternTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" Content="{asXaml:StringResource Common.Copy}"/>
+			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[appControls:PatternEditor].CopyPattern}" IsEnabled="{Binding #patternTextBox.Text, Converter={x:Static aConverters:StringConverters.IsNotNullOrEmpty}}" Content="{asXaml:StringResource Common.Copy}"/>
 			<Separator Classes="Dialog_Separator_Small"/>
-			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[UserControl].PastePatternAsync}" Content="{asXaml:StringResource Common.Paste}"/>
+			<Button Classes="Dialog_Item_Button" Command="{Binding $parent[appControls:PatternEditor].PastePatternAsync}" Content="{asXaml:StringResource Common.Paste}"/>
 		</StackPanel>
 	</Grid>
 	

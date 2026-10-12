@@ -55,13 +55,13 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 
 	// Static fields.
 	static readonly SettingKey<bool> DoNotShowDialogForLogPatternsWithoutLogLevelMapKey = new("LogProfileEditorDialog.DoNotShowDialogForLogPatternsWithoutLogLevelMap", false);
-	static readonly StyledProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasCooperativeLogAnalysisScriptSet");
-	static readonly StyledProperty<bool> HasEmbeddedScriptLogDataSourceProviderProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("HasEmbeddedScriptLogDataSourceProvider");
+	static readonly StyledProperty<bool> HasCooperativeLogAnalysisScriptSetProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(HasCooperativeLogAnalysisScriptSet));
+	static readonly StyledProperty<bool> HasEmbeddedScriptLogDataSourceProviderProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(HasEmbeddedScriptLogDataSourceProvider));
 	static readonly StyledProperty<bool> HasDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(HasDataSourceOptions));
 	static readonly SettingKey<bool> HasLearnAboutLogsReadingAndParsingHintShown = new($"{nameof(LogProfileEditorDialog)}.{nameof(HasLearnAboutLogsReadingAndParsingHintShown)}");
 	static readonly StyledProperty<bool> IsProVersionActivatedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsProVersionActivated));
 	static readonly StyledProperty<bool> IsValidDataSourceOptionsProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsValidDataSourceOptions), true);
-	static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>("IsWorkingDirectorySupported");
+	static readonly StyledProperty<bool> IsWorkingDirectorySupportedProperty = AvaloniaProperty.Register<LogProfileEditorDialog, bool>(nameof(IsWorkingDirectorySupported));
 	static readonly Dictionary<LogProfile, LogProfileEditorDialog> NonBlockingDialogs = new();
 	
 
@@ -889,10 +889,18 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 	}
 
 
+	// Whether cooperative log analysis script set has been set or not.
+	bool HasCooperativeLogAnalysisScriptSet => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty);
+
+
 	/// <summary>
 	/// Check whether options of log data source is supported or not.
 	/// </summary>
 	public bool HasDataSourceOptions => this.GetValue(HasDataSourceOptionsProperty);
+
+
+	// Whether embedded script log data source provider has been set or not.
+	bool HasEmbeddedScriptLogDataSourceProvider => this.GetValue(HasEmbeddedScriptLogDataSourceProviderProperty);
 
 
 	// Whether Pro-version is activated or not.
@@ -901,6 +909,10 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 
 	// Check whether log data source options is valid or not.
 	bool IsValidDataSourceOptions => this.GetValue(IsValidDataSourceOptionsProperty);
+	
+	
+	// Whether working directory is supported by selected log data source or not.
+	bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
 
 
 	/// <summary>

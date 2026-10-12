@@ -35,7 +35,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	
 	
 	// Static fields.
-	static readonly StyledProperty<bool> IsDirectNumberValueSeriesProperty = AvaloniaProperty.Register<LogChartSeriesSourceEditorDialog, bool>("IsDirectNumberValueSeries", false);
+	static readonly StyledProperty<bool> IsDirectNumberValueSeriesProperty = AvaloniaProperty.Register<LogChartSeriesSourceEditorDialog, bool>(nameof(IsDirectNumberValueSeries), false);
 
 
 	// Fields.
@@ -145,6 +145,10 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	}
 	
 	
+	// Whether values of series are taken from log property directly or not.
+	bool IsDirectNumberValueSeries => this.GetValue(IsDirectNumberValueSeriesProperty);
+
+
 	/// <summary>
 	/// Get all valid name of log properties.
 	/// </summary>

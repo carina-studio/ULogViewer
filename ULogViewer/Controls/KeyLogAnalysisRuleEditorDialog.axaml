@@ -11,6 +11,7 @@
 		xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
+        xmlns:sys="using:System"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.KeyLogAnalysisRuleEditorDialog"
         Name="dialog"
@@ -73,7 +74,7 @@
 									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Level}" asControls:DialogElement.TextRole="Label"/>
 									<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.Level.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
 								</StackPanel>
-								<ComboBox Name="levelComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appLogs:LogLevel}, Converter={x:Static abConverters:EnumConverters.Values}}">
+								<ComboBox Name="levelComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appLogs:LogLevel}, DataType=sys:Type, Converter={x:Static abConverters:EnumConverters.Values}}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<Grid ColumnDefinitions="Auto,*">
@@ -114,7 +115,7 @@
 							<!-- Result type -->
 							<asControls:DialogItem>
 								<TextBlock Text="{asXaml:StringResource DisplayableLogAnalysisRuleEditorDialog.ResultType}" asControls:DialogElement.TextRole="Label"/>
-								<ComboBox Name="resultTypeComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, Converter={x:Static abConverters:EnumConverters.Values}}">
+								<ComboBox Name="resultTypeComboBox" asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding Source={x:Type appAnalysis:DisplayableLogAnalysisResultType}, DataType=sys:Type, Converter={x:Static abConverters:EnumConverters.Values}}">
 									<ComboBox.ItemTemplate>
 										<DataTemplate>
 											<Grid ColumnDefinitions="Auto,*">

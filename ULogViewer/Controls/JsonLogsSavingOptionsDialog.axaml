@@ -5,6 +5,7 @@
 		xmlns:abControls="using:CarinaStudio.Controls"
 		xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
+        xmlns:sysCollections="using:System.Collections.Generic"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.JsonLogsSavingOptionsDialog"
         Name="dialog"
@@ -35,7 +36,7 @@
 			<TextBlock Text="{asXaml:StringResource JsonLogsSavingOptionsDialog.LogProperties}" asControls:DialogElement.TextRole="LabelAboveInputControl"/>
 			<asControls:ListBox Name="logPropertyMapListBox" Background="{DynamicResource TextControlBackground}" DoubleClickOnItem="OnListBoxDoubleClickOnItem" Height="{DynamicResource Double/JsonLogsSavingOptionsDialog.ListBox.Height}" Grid.IsSharedSizeScope="True" ItemsSource="{Binding #dialog.LogPropertyMap}" LostFocus="OnListBoxLostFocus" SelectionChanged="OnListBoxSelectionChanged">
 				<ListBox.ItemTemplate>
-					<DataTemplate>
+					<DataTemplate x:DataType="{x:Type sysCollections:KeyValuePair, x:TypeArguments='x:String, x:String'}">
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" SharedSizeGroup="Value"/>

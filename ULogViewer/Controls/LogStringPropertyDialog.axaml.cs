@@ -27,7 +27,7 @@ namespace CarinaStudio.ULogViewer.Controls;
 partial class LogStringPropertyDialog : AppSuite.Controls.Dialog<IULogViewerApplication>
 {
 	// Static fields.
-	static readonly StyledProperty<bool> CanSearchOnInternetProperty = AvaloniaProperty.Register<LogStringPropertyDialog, bool>("CanSearchOnInternet", false);
+	static readonly StyledProperty<bool> CanSearchOnInternetProperty = AvaloniaProperty.Register<LogStringPropertyDialog, bool>(nameof(CanSearchOnInternet), false);
 	static readonly StyledProperty<string> LogPropertyDisplayNameProperty = AvaloniaProperty.Register<LogStringPropertyDialog, string>(nameof(LogPropertyDisplayName), "");
 
 
@@ -137,6 +137,10 @@ partial class LogStringPropertyDialog : AppSuite.Controls.Dialog<IULogViewerAppl
 			return;
 		this.Resources["Brush/TextArea.Selection.Background"] = new SolidColorBrush(Color.FromArgb(0x70, accentColor.R, accentColor.G, accentColor.B));
     }
+
+
+	// Whether searching selected text on Internet is available or not.
+	bool CanSearchOnInternet => this.GetValue(CanSearchOnInternetProperty);
 
 
 	// Generate regex to split text into keywords.

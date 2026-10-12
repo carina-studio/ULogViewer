@@ -48,11 +48,11 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	// Static fields.
 	static readonly StyledProperty<IList<RegexGroup>?> CustomGroupsProperty = AvaloniaProperty.Register<RegexEditorDialog, IList<RegexGroup>?>(nameof(CustomGroups));
 	static readonly Regex DefaultRegexGroupNameRegex = new("^[\\d]+$");
-	static readonly StyledProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("HasTestResult");
+	static readonly StyledProperty<bool> HasTestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(HasTestResult));
 	static readonly StyledProperty<bool> IsCapturingGroupsEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingGroupsEnabled));
 	static readonly StyledProperty<bool> IsCapturingLogPropertiesEnabledProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(IsCapturingLogPropertiesEnabled));
-	static readonly StyledProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<RegexEditorDialog, string?>("TestLogLine");
-	static readonly StyledProperty<bool> TestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>("TestResult");
+	static readonly StyledProperty<string?> TestLogLineProperty = AvaloniaProperty.Register<RegexEditorDialog, string?>(nameof(TestLogLine));
+	static readonly StyledProperty<bool> TestResultProperty = AvaloniaProperty.Register<RegexEditorDialog, bool>(nameof(TestResult));
 
 
 	// Fields.
@@ -157,6 +157,10 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 		return Task.FromResult<object?>(this.regexTextBox.Object);
 	}
 	
+
+	// Whether result of testing log line is available or not.
+	bool HasTestResult => this.GetValue(HasTestResultProperty);
+
 
 	// Ignore case of pattern.
 	public bool? IgnoreCase { get; set; }
@@ -289,4 +293,16 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 		if (change.Property == TestLogLineProperty)
 			this.testAction.Schedule();
     }
+
+
+	// Log line for testing.
+	string? TestLogLine
+	{
+		get => this.GetValue(TestLogLineProperty);
+		set => this.SetValue(TestLogLineProperty, value);
+	}
+
+
+	// Whether log line for testing matches the pattern or not.
+	bool TestResult => this.GetValue(TestResultProperty);
 }

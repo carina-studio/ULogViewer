@@ -15,7 +15,6 @@
         xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.AppOptionsDialog"
-        x:CompileBindings="True"
         x:DataType="appViewModels:AppOptions"
 		Name="window">
 
@@ -117,29 +116,6 @@
 									</ComboBox>
 								</asControls:DialogItem>
 								<Separator asControls:DialogElement.SeparatorType="Item"/>
-
-								<!-- Custom screen scale factor -->
-								<StackPanel IsVisible="{Binding IsCustomScreenScaleFactorSupported}">
-									<asControls:DialogItem>
-										<StackPanel>
-											<StackPanel Orientation="Horizontal">
-												<TextBlock Text="{asXaml:StringResource ApplicationOptions.CustomScreenScaleFactor}" asControls:DialogElement.TextRole="Label" VerticalAlignment="Center"/>
-												<Separator asControls:DialogElement.SeparatorType="Small"/>
-												<TextBlock Text="{Binding CustomScreenScaleFactor, Converter={x:Static asConverters:RatioToPercentageConverter.Default}, StringFormat={}({0})}" asControls:DialogElement.TextRole="Label" VerticalAlignment="Center"/>
-											</StackPanel>
-											<TextBlock Foreground="{DynamicResource Brush/Dialog.TextBlock.Foreground.Warning}" IsVisible="{Binding IsCustomScreenScaleFactorAdjusted}" Text="{asXaml:StringResource ApplicationOptions.WillRestartApplicationToTakeEffect}" asControls:DialogElement.TextRole="WarningDescriptionBelowLabel"/>
-										</StackPanel>
-										<Slider HorizontalAlignment="Stretch" Maximum="{Binding MaxCustomScreenScaleFactor, Mode=OneTime}" asControls:DialogElement.IsDialogItemInput="True" Minimum="1" TickPlacement="None" TickFrequency="{Binding CustomScreenScaleFactorGranularity, Mode=OneTime}" Value="{Binding CustomScreenScaleFactor, Mode=TwoWay}">
-											<Slider.IsEnabled>
-												<MultiBinding Converter="{x:Static BoolConverters.And}">
-													<Binding Path="!IsCheckingXRandR"/>
-													<Binding Path="IsXRandRInstalled"/>
-												</MultiBinding>
-											</Slider.IsEnabled>
-										</Slider>
-									</asControls:DialogItem>
-									<Separator asControls:DialogElement.SeparatorType="Item"/>
-								</StackPanel>
 								
 								<!-- Apply system text scale factor -->
 								<StackPanel IsVisible="{Binding IsApplyingSystemTextScaleFactorSupported}">
@@ -409,7 +385,7 @@
 									<TextBlock Text="{asXaml:StringResource AppOptionsDialog.DefaultTextShell}" asControls:DialogElement.TextRole="Label"/>
 									<ComboBox asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{ReflectionBinding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
 										<ComboBox.ItemTemplate>
-											<DataTemplate x:CompileBindings="True" x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
+											<DataTemplate x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
 												<TextBlock Text="{ReflectionBinding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>
 											</DataTemplate>
 										</ComboBox.ItemTemplate>

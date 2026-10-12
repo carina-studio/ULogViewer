@@ -87,7 +87,6 @@
 	<ItemGroup Condition="'$(AvaloniaVersion)'!=''">
 		<PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
 	</ItemGroup>
 
@@ -96,7 +95,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="$(AvaloniaXamlBehaviorsVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Core" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.Fonts" Version="$(AppSuiteVersion)" />
 		<PackageReference Include="CarinaStudio.AppSuite.SyntaxHighlighting" Version="$(AppSuiteVersion)" />
@@ -114,6 +112,7 @@
 		</PackageReference>
 		<PackageReference Include="System.Diagnostics.EventLog" Version="$(DotNetLibVersion)" />
 		<PackageReference Include="System.Drawing.Common" Version="$(DotNetLibVersion)" />
+		<PackageReference Include="Xaml.Behaviors" Version="$(AvaloniaXamlBehaviorsVersion)" />
 	</ItemGroup>
 	
 	<!-- Trimming options -->

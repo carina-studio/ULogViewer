@@ -6,6 +6,7 @@
         xmlns:appControls="using:CarinaStudio.ULogViewer.Controls"
         xmlns:asControls="using:CarinaStudio.AppSuite.Controls"
         xmlns:asXaml="using:CarinaStudio.AppSuite.Xaml"
+        xmlns:sys="using:System"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CarinaStudio.ULogViewer.Controls.RegexEditorDialog"
         Classes="Dialog"
@@ -109,7 +110,7 @@
 									</ItemsPanelTemplate>
 								</ListBox.ItemsPanel>
 								<ListBox.ItemTemplate>
-									<DataTemplate>
+									<DataTemplate x:DataType="{x:Type sys:Tuple, x:TypeArguments='x:String, x:String'}">
 										<Grid>
 											<Grid.ColumnDefinitions>
 												<ColumnDefinition SharedSizeGroup="name" Width="Auto"/>
