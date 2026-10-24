@@ -134,7 +134,7 @@
 			<NativeMenuItem Header="{asXaml:StringResource Common.Tab}">
 				<NativeMenuItem.Menu>
 					<NativeMenu>
-						<NativeMenuItem Command="{Binding #window.CreateSessionTabItem}" Header="{asXaml:StringResource Common.CreateTab}" Gesture="Cmd+T"/>
+						<NativeMenuItem Command="{Binding #window.CreateTabItem}" Header="{asXaml:StringResource Common.CreateTab}" Gesture="Cmd+T"/>
 						<NativeMenuItemSeparator/>
 						<NativeMenuItem Command="{Binding #window.SetCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.SetCustomSessionTitle}"/>
 						<NativeMenuItem Command="{Binding #window.ClearCurrentCustomSessionTitle}" Header="{asXaml:StringResource MainWindow.ClearCustomSessionTitle}" IsEnabled="{Binding ActiveSession.CustomTitle, Converter={x:Static aConverters:ObjectConverters.IsNotNull}}"/>
@@ -171,7 +171,7 @@
 			<!-- Add new tab -->
 			<asControls:TabItem Classes="EmptyWithSeparator">
 				<TabItem.Header>
-					<Button Classes="AddTabItem" Command="{Binding #window.CreateSessionTabItem}">
+					<Button Classes="AddTabItem" Command="{Binding #window.CreateTabItem}">
 						<Button.ContextMenu>
 							<appControls:LogProfileSelectionContextMenu LogProfileSelected="OnLogProfileSelected"/>
 						</Button.ContextMenu>

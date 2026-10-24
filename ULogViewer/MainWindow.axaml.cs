@@ -340,9 +340,9 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <summary>
-		/// Create new TabItem for given session.
+		/// Create new TabItem with new session.
 		/// </summary>
-		public void CreateSessionTabItem()
+		public void CreateTabItem()
 		{
 			if (this.DataContext is not Workspace workspace)
 				return;
@@ -352,7 +352,7 @@ namespace CarinaStudio.ULogViewer
 
 
 		// Create new TabItem for given session.
-		TabItem CreateSessionTabItem(Session session)
+		TabItem CreateTabItemForSession(Session session)
 		{
 			// create header
 			var header = this.sessionTabItemHeaderTemplate.Build(session).AsNonNull();
@@ -650,7 +650,7 @@ namespace CarinaStudio.ULogViewer
 			// create session tabs
 			for (int i = 0, count = workspace.Sessions.Count; i < count; ++i)
 			{
-				var tabItem = this.CreateSessionTabItem(workspace.Sessions[i]);
+				var tabItem = this.CreateTabItemForSession(workspace.Sessions[i]);
 				this.tabItems.Insert(i, tabItem);
 			}
 
@@ -1029,7 +1029,7 @@ namespace CarinaStudio.ULogViewer
 					case Key.T:
 						if (Platform.IsNotMacOS) // Will be handled by native menu
 						{
-							this.CreateSessionTabItem();
+							this.CreateTabItem();
 							e.Handled = true;
 						}
 						break;
@@ -1109,7 +1109,7 @@ namespace CarinaStudio.ULogViewer
 						var startIndex = e.NewStartingIndex;
 						var newSessions = e.NewItems.AsNonNull();
 						for (var i = 0; i < newSessions.Count; ++i)
-							this.tabItems.Insert(startIndex + i, this.CreateSessionTabItem((Session)newSessions[i].AsNonNull()));
+							this.tabItems.Insert(startIndex + i, this.CreateTabItemForSession((Session)newSessions[i].AsNonNull()));
 					}
 					break;
 				case NotifyCollectionChangedAction.Move:
@@ -1150,7 +1150,7 @@ namespace CarinaStudio.ULogViewer
 				return;
 			var index = this.tabControl.SelectedIndex;
 			if (index == this.tabItems.Count - 1)
-				this.CreateSessionTabItem();
+				this.CreateTabItem();
 			else
 			{
 				this.Logger.LogTrace("Switch to session at position {index}", index);

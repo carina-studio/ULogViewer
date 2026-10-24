@@ -2941,7 +2941,7 @@ namespace CarinaStudio.ULogViewer.Controls
 
 
 		// Check whether process info should be shown or not.
-		bool IsProcessInfoVisible => this.GetValue(IsProcessInfoVisibleProperty);
+		internal bool IsProcessInfoVisible => this.GetValue(IsProcessInfoVisibleProperty);
 
 
 		/// <summary>

@@ -59,7 +59,7 @@ class FilesMaxLogReadingCountDialog : AppSuite.Controls.InputDialog<IULogViewerA
 
 
 	// Whether maximum log reading count should be confirmed for large files or not.
-	bool ConfirmMaxLogReadingCountForLargeFiles
+	internal bool ConfirmMaxLogReadingCountForLargeFiles
 	{
 		get => this.GetValue(ConfirmMaxLogReadingCountForLargeFilesProperty);
 		set => this.SetValue(ConfirmMaxLogReadingCountForLargeFilesProperty, value);

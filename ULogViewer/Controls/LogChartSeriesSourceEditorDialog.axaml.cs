@@ -146,7 +146,7 @@ class LogChartSeriesSourceEditorDialog : AppSuite.Controls.InputDialog<IULogView
 	
 	
 	// Whether values of series are taken from log property directly or not.
-	bool IsDirectNumberValueSeries => this.GetValue(IsDirectNumberValueSeriesProperty);
+	internal bool IsDirectNumberValueSeries => this.GetValue(IsDirectNumberValueSeriesProperty);
 
 
 	/// <summary>

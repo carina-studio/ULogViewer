@@ -271,11 +271,11 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// URI of reference of category.
-	Uri? CategoryReferenceUri => this.GetValue(CategoryReferenceUriProperty);
+	internal Uri? CategoryReferenceUri => this.GetValue(CategoryReferenceUriProperty);
 
 
 	// URI of reference of command.
-	Uri? CommandReferenceUri => this.GetValue(CommandReferenceUriProperty);
+	internal Uri? CommandReferenceUri => this.GetValue(CommandReferenceUriProperty);
 
 
 	/// <summary>
@@ -285,7 +285,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// URI of reference of connection string.
-	Uri? ConnectionStringReferenceUri => this.GetValue(ConnectionStringReferenceUriProperty);
+	internal Uri? ConnectionStringReferenceUri => this.GetValue(ConnectionStringReferenceUriProperty);
 
 
 	/// <summary>
@@ -526,36 +526,36 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// Whether the log data source provider is related to Azure or not.
-	bool IsAzureRelatedDataSourceProvider => this.GetValue(IsAzureRelatedDataSourceProviderProperty);
+	internal bool IsAzureRelatedDataSourceProvider => this.GetValue(IsAzureRelatedDataSourceProviderProperty);
 
 
 	// Data source options states.
-	bool IsCategoryRequired => this.GetValue(IsCategoryRequiredProperty);
-	bool IsCategorySupported => this.GetValue(IsCategorySupportedProperty);
-	bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
-	bool IsConnectionStringRequired => this.GetValue(IsConnectionStringRequiredProperty);
-	bool IsConnectionStringSupported => this.GetValue(IsConnectionStringSupportedProperty);
-	bool IsFileNameSupported => this.GetValue(IsFileNameSupportedProperty);
-	bool IsEncodingSupported => this.GetValue(IsEncodingSupportedProperty);
-	bool IsEnvironmentVariablesSupported => this.GetValue(IsEnvironmentVariablesSupportedProperty);
-	bool IsFormatJsonDataSupported => this.GetValue(IsFormatJsonDataSupportedProperty);
-	bool IsFormatXmlDataSupported => this.GetValue(IsFormatXmlDataSupportedProperty);
-	bool IsIncludeStandardErrorSupported => this.GetValue(IsIncludeStandardErrorSupportedProperty);
-	bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
-	bool IsPasswordRequired => this.GetValue(IsPasswordRequiredProperty);
-	bool IsPasswordSupported => this.GetValue(IsPasswordSupportedProperty);
-	bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProperty);
-	bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProperty);
-	bool IsQueryStringRequired => this.GetValue(IsQueryStringRequiredProperty);
-	bool IsQueryStringSupported => this.GetValue(IsQueryStringSupportedProperty);
-	bool IsResourceOnAzureSupported => this.GetValue(IsResourceOnAzureSupportedProperty);
-	bool IsSetupCommandsSupported => this.GetValue(IsSetupCommandsSupportedProperty);
-	bool IsTeardownCommandsSupported => this.GetValue(IsTeardownCommandsSupportedProperty);
-	bool IsUserNameRequired => this.GetValue(IsUserNameRequiredProperty);
-	bool IsUserNameSupported => this.GetValue(IsUserNameSupportedProperty);
-	bool IsUriSupported => this.GetValue(IsUriSupportedProperty);
-	bool IsUseTextShellSupported => this.GetValue(IsUseTextShellSupportedProperty);
-	bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
+	internal bool IsCategoryRequired => this.GetValue(IsCategoryRequiredProperty);
+	internal bool IsCategorySupported => this.GetValue(IsCategorySupportedProperty);
+	internal bool IsCommandSupported => this.GetValue(IsCommandSupportedProperty);
+	internal bool IsConnectionStringRequired => this.GetValue(IsConnectionStringRequiredProperty);
+	internal bool IsConnectionStringSupported => this.GetValue(IsConnectionStringSupportedProperty);
+	internal bool IsFileNameSupported => this.GetValue(IsFileNameSupportedProperty);
+	internal bool IsEncodingSupported => this.GetValue(IsEncodingSupportedProperty);
+	internal bool IsEnvironmentVariablesSupported => this.GetValue(IsEnvironmentVariablesSupportedProperty);
+	internal bool IsFormatJsonDataSupported => this.GetValue(IsFormatJsonDataSupportedProperty);
+	internal bool IsFormatXmlDataSupported => this.GetValue(IsFormatXmlDataSupportedProperty);
+	internal bool IsIncludeStandardErrorSupported => this.GetValue(IsIncludeStandardErrorSupportedProperty);
+	internal bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
+	internal bool IsPasswordRequired => this.GetValue(IsPasswordRequiredProperty);
+	internal bool IsPasswordSupported => this.GetValue(IsPasswordSupportedProperty);
+	internal bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProperty);
+	internal bool IsProcessNameSupported => this.GetValue(IsProcessNameSupportedProperty);
+	internal bool IsQueryStringRequired => this.GetValue(IsQueryStringRequiredProperty);
+	internal bool IsQueryStringSupported => this.GetValue(IsQueryStringSupportedProperty);
+	internal bool IsResourceOnAzureSupported => this.GetValue(IsResourceOnAzureSupportedProperty);
+	internal bool IsSetupCommandsSupported => this.GetValue(IsSetupCommandsSupportedProperty);
+	internal bool IsTeardownCommandsSupported => this.GetValue(IsTeardownCommandsSupportedProperty);
+	internal bool IsUserNameRequired => this.GetValue(IsUserNameRequiredProperty);
+	internal bool IsUserNameSupported => this.GetValue(IsUserNameSupportedProperty);
+	internal bool IsUriSupported => this.GetValue(IsUriSupportedProperty);
+	internal bool IsUseTextShellSupported => this.GetValue(IsUseTextShellSupportedProperty);
+	internal bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
 
 
 	/// <summary>
@@ -850,7 +850,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 
 
 	// URI of reference of query string.
-	Uri? QueryStringReferenceUri => this.GetValue(QueryStringReferenceUriProperty);
+	internal Uri? QueryStringReferenceUri => this.GetValue(QueryStringReferenceUriProperty);
 
 
 	// Refresh state of all options.

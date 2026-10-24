@@ -159,7 +159,7 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 	
 
 	// Whether result of testing log line is available or not.
-	bool HasTestResult => this.GetValue(HasTestResultProperty);
+	internal bool HasTestResult => this.GetValue(HasTestResultProperty);
 
 
 	// Ignore case of pattern.
@@ -296,7 +296,7 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 
 
 	// Log line for testing.
-	string? TestLogLine
+	internal string? TestLogLine
 	{
 		get => this.GetValue(TestLogLineProperty);
 		set => this.SetValue(TestLogLineProperty, value);
@@ -304,5 +304,5 @@ class RegexEditorDialog : InputDialog<IULogViewerApplication>
 
 
 	// Whether log line for testing matches the pattern or not.
-	bool TestResult => this.GetValue(TestResultProperty);
+	internal bool TestResult => this.GetValue(TestResultProperty);
 }

@@ -88,7 +88,7 @@ class LogReadingPreconditionDialog : AppSuite.Controls.InputDialog
 
 
     // Check whether timestamp range is valid or not.
-    bool IsTimestampRangeValid => this.GetValue(IsTimestampRangeValidProperty);
+    internal bool IsTimestampRangeValid => this.GetValue(IsTimestampRangeValidProperty);
 
 
     // Called when closing.

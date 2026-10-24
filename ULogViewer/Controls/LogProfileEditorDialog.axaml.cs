@@ -890,7 +890,7 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 
 
 	// Whether cooperative log analysis script set has been set or not.
-	bool HasCooperativeLogAnalysisScriptSet => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty);
+	internal bool HasCooperativeLogAnalysisScriptSet => this.GetValue(HasCooperativeLogAnalysisScriptSetProperty);
 
 
 	/// <summary>
@@ -900,19 +900,19 @@ class LogProfileEditorDialog : AppSuite.Controls.InputDialog<IULogViewerApplicat
 
 
 	// Whether embedded script log data source provider has been set or not.
-	bool HasEmbeddedScriptLogDataSourceProvider => this.GetValue(HasEmbeddedScriptLogDataSourceProviderProperty);
+	internal bool HasEmbeddedScriptLogDataSourceProvider => this.GetValue(HasEmbeddedScriptLogDataSourceProviderProperty);
 
 
 	// Whether Pro-version is activated or not.
-	bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
+	internal bool IsProVersionActivated => this.GetValue(IsProVersionActivatedProperty);
 
 
 	// Check whether log data source options is valid or not.
-	bool IsValidDataSourceOptions => this.GetValue(IsValidDataSourceOptionsProperty);
+	internal bool IsValidDataSourceOptions => this.GetValue(IsValidDataSourceOptionsProperty);
 	
 	
 	// Whether working directory is supported by selected log data source or not.
-	bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
+	internal bool IsWorkingDirectorySupported => this.GetValue(IsWorkingDirectorySupportedProperty);
 
 
 	/// <summary>

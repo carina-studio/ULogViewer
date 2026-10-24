@@ -140,7 +140,7 @@ partial class LogStringPropertyDialog : AppSuite.Controls.Dialog<IULogViewerAppl
 
 
 	// Whether searching selected text on Internet is available or not.
-	bool CanSearchOnInternet => this.GetValue(CanSearchOnInternetProperty);
+	internal bool CanSearchOnInternet => this.GetValue(CanSearchOnInternetProperty);
 
 
 	// Generate regex to split text into keywords.
