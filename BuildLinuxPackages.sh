@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APP_NAME="ULogViewer"
-FRAMEWORK="net10.0"
+FRAMEWORK="net11.0"
 DEFAULT_RID_LIST=("linux-x64" "linux-arm64")
 RID_LIST=()
 CONFIG="Release"

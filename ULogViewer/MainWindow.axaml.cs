@@ -879,11 +879,15 @@ namespace CarinaStudio.ULogViewer
 						if (srcIndex < targetIndex)
 						{
 							this.Logger.LogTrace("Move session from position {src} to {dest} in same workspace", srcIndex, targetIndex - 1);
+							using var _ = this.tabControl.EnterMovingItemScope(srcIndex, targetIndex - 1);
+							this.tabControl.SelectedIndex = targetIndex - 1; // [Workaround] prevent unexpected content flickering in tab
 							srcWorkspace.MoveSession(srcIndex, targetIndex - 1);
 						}
 						else
 						{
 							this.Logger.LogTrace("Move session from position {src} to {dest} in same workspace", srcIndex, targetIndex);
+							using var _ = this.tabControl.EnterMovingItemScope(srcIndex, targetIndex);
+							this.tabControl.SelectedIndex = targetIndex; // [Workaround] prevent unexpected content flickering in tab
 							srcWorkspace.MoveSession(srcIndex, targetIndex);
 						}
 					}
@@ -892,6 +896,8 @@ namespace CarinaStudio.ULogViewer
 				{
 					// attach to target workspace
 					this.Logger.LogTrace("Move session from position {src} to {dest} between workspaces", srcIndex, targetIndex - 1);
+					using var _ = this.tabControl.EnterMovingItemScope(srcIndex, targetIndex);
+					this.tabControl.SelectedIndex = targetIndex; // [Workaround] prevent unexpected content flickering in tab
 					targetWorkspace.AttachSession(targetIndex, session);
 					targetWorkspace.ActiveSession = session;
 				}

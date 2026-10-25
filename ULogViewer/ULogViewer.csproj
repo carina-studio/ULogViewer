@@ -112,6 +112,7 @@
 		</PackageReference>
 		<PackageReference Include="System.Diagnostics.EventLog" Version="$(DotNetLibVersion)" />
 		<PackageReference Include="System.Drawing.Common" Version="$(DotNetLibVersion)" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="$(DotNetLibVersion)" /> <!-- 9.0.18 has a known high severity vulnerability -->
 		<PackageReference Include="Xaml.Behaviors" Version="$(AvaloniaXamlBehaviorsVersion)" />
 	</ItemGroup>
 	
