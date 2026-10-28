@@ -2,7 +2,7 @@
     <PropertyGroup>
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <AppSuiteVersion>4.0.0.1025-dev</AppSuiteVersion>
+        <AppSuiteVersion>4.0.0.1028-dev</AppSuiteVersion>
         <Authors>Carina Studio</Authors>
         <AvaloniaVersion>12.1.3</AvaloniaVersion>
         <AvaloniaXamlBehaviorsVersion>12.0.7</AvaloniaXamlBehaviorsVersion>
