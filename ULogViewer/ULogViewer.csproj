@@ -34,7 +34,7 @@
 		<CFBundlePackageType>APPL</CFBundlePackageType>
 		<NSPrincipalClass>NSApplication</NSPrincipalClass>
 		<NSHighResolutionCapable>True</NSHighResolutionCapable>
-		<NSHumanReadableCopyright>©2021-$([System.DateTime]::Now.Year) Carina Studio</NSHumanReadableCopyright>
+		<NSHumanReadableCopyright>© 2021-$([System.DateTime]::Now.Year) Carina Studio</NSHumanReadableCopyright>
 	</PropertyGroup>
 
 	<ItemGroup>

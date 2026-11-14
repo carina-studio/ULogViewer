@@ -2,12 +2,12 @@
     <PropertyGroup>
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <AppSuiteVersion>4.0.0.1110-dev</AppSuiteVersion>
+        <AppSuiteVersion>4.0.0.1114-dev</AppSuiteVersion>
         <Authors>Carina Studio</Authors>
         <AvaloniaVersion>12.1.6</AvaloniaVersion>
         <AvaloniaXamlBehaviorsVersion>12.1.5</AvaloniaXamlBehaviorsVersion>
         <Company>Carina Studio</Company>
-        <Copyright>©2021-$([System.DateTime]::Now.Year) Carina Studio</Copyright>
+        <Copyright>© 2021-$([System.DateTime]::Now.Year) Carina Studio</Copyright>
         <DotNetLibVersion>11.0.0</DotNetLibVersion>
         <NoWin32Manifest>true</NoWin32Manifest>
         <Nullable>enable</Nullable>
