@@ -52,7 +52,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     
     // Constants.
     const string ScriptLogDataSourceProviderNameForUsageTracking = "Script";
-    const int MaxSuggestedProfileCount = 5;
+    const int MaxSuggestedProfileCount = 4;
     const int RecentlyUsedProfileCount = 8;
 
 

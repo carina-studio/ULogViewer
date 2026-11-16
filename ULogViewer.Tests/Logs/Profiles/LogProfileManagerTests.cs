@@ -279,29 +279,29 @@ class LogProfileManagerTests : ApplicationBasedTests
 			// recently used log profiles are suggested before default ones
 			manager.SetAsRecentlyUsed(profiles[0]);
 			manager.SetAsRecentlyUsed(profiles[1]);
-			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[1], profiles[0], defaultProfiles[0], defaultProfiles[1], defaultProfiles[2] ]));
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[1], profiles[0], defaultProfiles[0], defaultProfiles[1] ]));
 
 			// pinned log profiles which are not recently used are suggested after recently used ones
 			profiles[2].IsPinned = true;
-			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[1], profiles[0], profiles[2], defaultProfiles[0], defaultProfiles[1] ]));
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[1], profiles[0], profiles[2], defaultProfiles[0] ]));
 
 			// pinned and recently used log profiles are suggested first
 			profiles[0].IsPinned = true;
-			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[0], profiles[1], profiles[2], defaultProfiles[0], defaultProfiles[1] ]));
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[0], profiles[1], profiles[2], defaultProfiles[0] ]));
 
 			// number of suggested log profiles is limited
 			foreach (var profile in profiles)
 				manager.SetAsRecentlyUsed(profile);
-			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[2], profiles[0], profiles[5], profiles[4], profiles[3] ]));
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[2], profiles[0], profiles[5], profiles[4] ]));
 
 			// template log profiles are not suggested
 			profiles[5].IsTemplate = true;
-			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[2], profiles[0], profiles[4], profiles[3], profiles[1] ]));
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[2], profiles[0], profiles[4], profiles[3] ]));
 
 			// removed log profiles are not suggested
 			manager.RemoveProfile(profiles[2]);
 			this.addedProfiles.Remove(profiles[2]);
-			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[0], profiles[4], profiles[3], profiles[1], defaultProfiles[0] ]));
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[0], profiles[4], profiles[3], profiles[1] ]));
 
 			// default log profiles are suggested again after resetting
 			profiles[0].IsPinned = false;
