@@ -247,4 +247,66 @@ class LogProfileManagerTests : ApplicationBasedTests
 			manager.ResetRecentlyUsedProfiles();
 		});
 	}
+
+
+	/// <summary>
+	/// Test for suggested log profiles.
+	/// </summary>
+	[Test]
+	public void SuggestedProfilesTest()
+	{
+		this.TestOnApplicationThread(() =>
+		{
+			// default log profiles are suggested without pinned and recently used log profiles
+			var manager = LogProfileManager.Default;
+			manager.ResetRecentlyUsedProfiles();
+			Assert.That(manager.PinnedProfiles, Is.Empty, "Pinned log profiles were left by other tests.");
+			string[] defaultIds = Platform.IsWindows ? [ "AndroidDeviceLog", "AndroidFileLog", "RawFile" ]
+				: Platform.IsMacOS ? [ "AndroidDeviceLog", "RawFile", "AndroidFileLog" ]
+				: [ "LinuxSystemLogFile", "AndroidDeviceLog", "AndroidFileLog" ];
+			var defaultProfiles = defaultIds.Select(id => manager.GetProfileOrDefault(id).AsNonNull()).ToArray();
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo(defaultProfiles));
+
+			// prepare log profiles
+			var profiles = new LogProfile[6];
+			for (var i = 0; i < profiles.Length; ++i)
+			{
+				profiles[i] = this.CreateProfile();
+				manager.AddProfile(profiles[i]);
+				this.addedProfiles.Add(profiles[i]);
+			}
+
+			// recently used log profiles are suggested before default ones
+			manager.SetAsRecentlyUsed(profiles[0]);
+			manager.SetAsRecentlyUsed(profiles[1]);
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[1], profiles[0], defaultProfiles[0], defaultProfiles[1], defaultProfiles[2] ]));
+
+			// pinned log profiles which are not recently used are suggested after recently used ones
+			profiles[2].IsPinned = true;
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[1], profiles[0], profiles[2], defaultProfiles[0], defaultProfiles[1] ]));
+
+			// pinned and recently used log profiles are suggested first
+			profiles[0].IsPinned = true;
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[0], profiles[1], profiles[2], defaultProfiles[0], defaultProfiles[1] ]));
+
+			// number of suggested log profiles is limited
+			foreach (var profile in profiles)
+				manager.SetAsRecentlyUsed(profile);
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[2], profiles[0], profiles[5], profiles[4], profiles[3] ]));
+
+			// template log profiles are not suggested
+			profiles[5].IsTemplate = true;
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[2], profiles[0], profiles[4], profiles[3], profiles[1] ]));
+
+			// removed log profiles are not suggested
+			manager.RemoveProfile(profiles[2]);
+			this.addedProfiles.Remove(profiles[2]);
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo([ profiles[0], profiles[4], profiles[3], profiles[1], defaultProfiles[0] ]));
+
+			// default log profiles are suggested again after resetting
+			profiles[0].IsPinned = false;
+			manager.ResetRecentlyUsedProfiles();
+			Assert.That(manager.SuggestedProfiles, Is.EqualTo(defaultProfiles));
+		});
+	}
 }

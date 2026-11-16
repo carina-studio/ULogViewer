@@ -1,4 +1,5 @@
 using CarinaStudio.AppSuite.Data;
+using CarinaStudio.AppSuite.Product;
 using CarinaStudio.Collections;
 using CarinaStudio.Configuration;
 using CarinaStudio.Logging;
@@ -51,6 +52,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     
     // Constants.
     const string ScriptLogDataSourceProviderNameForUsageTracking = "Script";
+    const int MaxSuggestedProfileCount = 5;
     const int RecentlyUsedProfileCount = 8;
 
 
@@ -90,6 +92,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "WindowsEventLogFiles",
     };
     static LogProfileManager? defaultInstance;
+    static readonly IList<string> defaultSuggestedProfileIDs = [];
     static readonly SettingKey<string> recentlyUsedProfilesKey = new("LogProfileManager.RecentlyUsedProfiles", "");
 
 
@@ -97,6 +100,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     readonly HashSet<LogProfile> newlyAddedProfiles = new();
     readonly SortedObservableList<LogProfile> pinnedProfiles;
     readonly ObservableList<LogProfile> recentlyUsedProfiles = new(RecentlyUsedProfileCount);
+    readonly ObservableList<LogProfile> suggestedProfiles = new(MaxSuggestedProfileCount);
 
 
     // Static initializer.
@@ -109,6 +113,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
             builtInProfileIDs.Add("WindowsSecurityEventLogs");
             builtInProfileIDs.Add("WindowsSetupEventLogs");
             builtInProfileIDs.Add("WindowsSystemEventLogs");
+            defaultSuggestedProfileIDs.Add("AndroidDeviceLog");
+            defaultSuggestedProfileIDs.Add("AndroidFileLog");
+            defaultSuggestedProfileIDs.Add("RawFile");
         }
         else if (Platform.IsLinux)
         {
@@ -123,6 +130,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
                     builtInProfileIDs.Add("LinuxSystemLog");
                     break;
             }
+            defaultSuggestedProfileIDs.Add("LinuxSystemLogFile");
+            defaultSuggestedProfileIDs.Add("AndroidDeviceLog");
+            defaultSuggestedProfileIDs.Add("AndroidFileLog");
         }
         else if (Platform.IsMacOS)
         {
@@ -131,6 +141,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
             builtInProfileIDs.Add("MacOSInstallationLog");
             builtInProfileIDs.Add("MacOSRealtimeLog");
             builtInProfileIDs.Add("SpecificAppleDeviceSimulatorLog");
+            defaultSuggestedProfileIDs.Add("AndroidDeviceLog");
+            defaultSuggestedProfileIDs.Add("RawFile");
+            defaultSuggestedProfileIDs.Add("AndroidFileLog");
         }
     }
 
@@ -142,6 +155,8 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         this.pinnedProfiles = new(this.CompareProfiles);
         this.PinnedProfiles = (IReadOnlyList<LogProfile>)ListExtensions.AsReadOnly(this.pinnedProfiles);
         this.RecentlyUsedProfiles = ListExtensions.AsReadOnly(this.recentlyUsedProfiles);
+        this.SuggestedProfiles = (IReadOnlyList<LogProfile>)ListExtensions.AsReadOnly(this.suggestedProfiles);
+        app.ProductManager.ProductActivationChanged += this.OnProductActivationChanged;
         app.StringsUpdated += this.OnApplicationStringsUpdated;
     }
 
@@ -208,6 +223,13 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     }
 
 
+    // Check whether given log profile can be suggested or not.
+    bool IsSuggestable(LogProfile profile) =>
+        !profile.IsTemplate
+        && profile != this.EmptyProfile
+        && (!profile.IsProVersionOnly || this.Application.ProductManager.IsProductActivated(Products.Professional));
+
+
     // Called when application string resources updated.
     void OnApplicationStringsUpdated(object? sender, EventArgs e)
     {
@@ -223,7 +245,10 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         if (profile.IsDataUpgraded)
             this.ScheduleSavingProfile(profile);
         if (profile.IsPinned)
+        {
             this.pinnedProfiles.Add(profile);
+            this.UpdateSuggestedProfiles();
+        }
     }
 
 
@@ -272,6 +297,9 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
             }
             this.Logger.LogDebug("{count} recently used log profile(s) found", this.recentlyUsedProfiles.Count);
         }
+
+        // update suggested log profiles
+        this.UpdateSuggestedProfiles();
     }
 
 
@@ -293,16 +321,33 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         LogProfile.LoadAsync(this.Application, fileName);
 
 
+    // Called when activation state of product changed.
+    void OnProductActivationChanged(IProductManager productManager, string productId, bool isActivated)
+    {
+        if (productId == Products.Professional)
+            this.UpdateSuggestedProfiles();
+    }
+
+
     /// <inheritdoc/>
     protected override void OnProfilePropertyChanged(LogProfile profile, PropertyChangedEventArgs e)
     {
         base.OnProfilePropertyChanged(profile, e);
-        if (e.PropertyName == nameof(LogProfile.IsPinned))
+        switch (e.PropertyName)
         {
-            if (profile.IsPinned)
-                this.pinnedProfiles.Add(profile);
-            else
-                this.pinnedProfiles.Remove(profile);
+            case nameof(LogProfile.DataSourceOptions):
+            case nameof(LogProfile.DataSourceProvider):
+            case nameof(LogProfile.IsTemplate):
+            case nameof(LogProfile.Name):
+                this.UpdateSuggestedProfiles();
+                break;
+            case nameof(LogProfile.IsPinned):
+                if (profile.IsPinned)
+                    this.pinnedProfiles.Add(profile);
+                else
+                    this.pinnedProfiles.Remove(profile);
+                this.UpdateSuggestedProfiles();
+                break;
         }
     }
 
@@ -375,6 +420,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         {
             if (this.recentlyUsedProfiles.Remove(profile))
                 this.SaveRecentlyUsedProfiles();
+            this.UpdateSuggestedProfiles();
             var properties = this.PrepareLogProfileUsageProperties(profile, true);
             this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileRemoved, properties);
             return true;
@@ -393,6 +439,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         {
             this.recentlyUsedProfiles.Clear();
             this.SaveRecentlyUsedProfiles();
+            this.UpdateSuggestedProfiles();
         }
     }
 
@@ -444,7 +491,17 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
 
         // update persistent state
         this.SaveRecentlyUsedProfiles();
+
+        // update suggested log profiles
+        this.UpdateSuggestedProfiles();
     }
+
+
+    /// <summary>
+    /// Get list of suggested log profiles.
+    /// </summary>
+    /// <remarks>The list will implement <see cref="System.Collections.Specialized.INotifyCollectionChanged"/> interface.</remarks>
+    public IReadOnlyList<LogProfile> SuggestedProfiles { get; }
     
     
     /// <summary>
@@ -479,5 +536,42 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
     {
         var properties = this.PrepareLogProfileUsageProperties(logProfile, false);
         this.Application.UsageManager.TrackEvent(UsageEvents.LogProfileSelected, properties);
+    }
+
+
+    // Update list of suggested log profiles.
+    void UpdateSuggestedProfiles()
+    {
+        // collect candidates: pinned and recently used, recently used, pinned, then defaults
+        var candidates = new List<LogProfile>();
+        foreach (var profile in this.recentlyUsedProfiles)
+        {
+            if (profile.IsPinned)
+                candidates.Add(profile);
+        }
+        foreach (var profile in this.recentlyUsedProfiles)
+        {
+            if (!profile.IsPinned)
+                candidates.Add(profile);
+        }
+        candidates.AddRange(this.pinnedProfiles);
+        foreach (var id in defaultSuggestedProfileIDs)
+            this.GetProfileOrDefault(id)?.Let(candidates.Add);
+
+        // select log profiles
+        var newSuggestedProfiles = new List<LogProfile>(MaxSuggestedProfileCount);
+        foreach (var profile in candidates)
+        {
+            if (newSuggestedProfiles.Count >= MaxSuggestedProfileCount)
+                break;
+            if (this.IsSuggestable(profile) && !newSuggestedProfiles.Contains(profile))
+                newSuggestedProfiles.Add(profile);
+        }
+
+        // update list
+        if (this.suggestedProfiles.SequenceEqual(newSuggestedProfiles))
+            return;
+        this.suggestedProfiles.Clear();
+        this.suggestedProfiles.AddAll(newSuggestedProfiles);
     }
 }
