@@ -1281,9 +1281,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HasPartialDataSourceErrors">部分数据来源发生错误</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">没有日志可以展示</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">您必须以系统管理员身份运行应用程序以使用 “{0}”。</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">或将文件拖放至此。</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">点一下工具列的</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">来选择日志类型以开始使用。</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">将文件拖放至此</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.More">更多日志类型…</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Or">或</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs">高度内存使用</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">因为高度内存使用而暂时停用日志读取。</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">忽略文字筛选的大小写</sys:String>

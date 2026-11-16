@@ -1321,9 +1321,9 @@ return None</sys:String>
 	<sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">Logs reading has been disabled temporarily because of high memory usage.</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.NoLogToShow">No Log to Show</sys:String>
 	<sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">You need to run the application as administrator to use '{0}'.</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">Or drop files to here.</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">Click</sys:String>
-	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">on the toolbar to select log profile to start.</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">Drop files to here.</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.More">More Profiles…</sys:String>
+	<sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Or">or</sys:String>
 	<sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">Ignore Text Filter Cases</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsFilteringDuration">Filtering Took {0}</sys:String>
 	<sys:String x:Key="String/SessionView.LastLogsReadingDuration">Reading Took {0}</sys:String>

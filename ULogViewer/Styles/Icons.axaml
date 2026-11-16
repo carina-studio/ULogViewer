@@ -726,6 +726,9 @@
 	<DrawingImage x:Key="Image/LogProfile.GCP.Light">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Light}" Geometry="{StaticResource Geometry/GCP}"/>
 	</DrawingImage>
+	<DrawingImage x:Key="Image/LogProfile.Gradient">
+		<GeometryDrawing Brush="{DynamicResource Brush/Icon.Gradient.L2R}" Geometry="{StaticResource Geometry/LogProfile}"/>
+	</DrawingImage>
 	<DrawingImage x:Key="Image/LogProfile.Image">
 		<GeometryDrawing Brush="{DynamicResource Brush/Icon.LogProfile.Image}" Geometry="{StaticResource Geometry/Image}"/>
 	</DrawingImage>

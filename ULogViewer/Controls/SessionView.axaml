@@ -20,6 +20,7 @@
 			 xmlns:appCtxlBased="using:CarinaStudio.ULogViewer.ViewModels.Analysis.ContextualBased"
 			 xmlns:appInput="using:CarinaStudio.ULogViewer.Input"
              xmlns:appLogs="using:CarinaStudio.ULogViewer.Logs"
+             xmlns:appProfiles="using:CarinaStudio.ULogViewer.Logs.Profiles"
              xmlns:appViewModels="using:CarinaStudio.ULogViewer.ViewModels"
 			 xmlns:cs="using:CarinaStudio"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
@@ -597,6 +598,41 @@
 		</Style>
 		<Style Selector="ListBox.Log > ListBoxItem:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogListBox.Item.Background.Pressed}"/>
+		</Style>
+		<Style Selector="Button.SuggestedLogProfile">
+			<Setter Property="Background" Value="{DynamicResource Brush/Toolbar.Button.Background.Transparent}"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+			<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.Hint.SuggestedLogProfile.Margin}"/>
+			<Setter Property="Padding" Value="{StaticResource Thickness/SessionView.Hint.SuggestedLogProfile.Padding}"/>
+			<Setter Property="VerticalAlignment" Value="Stretch"/>
+			<Setter Property="VerticalContentAlignment" Value="Top"/>
+			<Setter Property="Width" Value="{StaticResource Double/SessionView.Hint.SuggestedLogProfile.Width}"/>
+		</Style>
+		<Style Selector="Button.SuggestedLogProfile:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource Brush/Toolbar.Button.Background.PointerOver}"/>
+		</Style>
+		<Style Selector="Button.SuggestedLogProfile:pressed /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{DynamicResource Brush/Toolbar.Button.Background.Pressed}"/>
+		</Style>
+		<Style Selector="Border.SelectLogProfileHint_OrSeparator">
+			<Setter Property="Background" Value="{DynamicResource Brush/Separator.Background}"/>
+			<Setter Property="Height" Value="{StaticResource Double/SessionView.Hint.SelectLogProfile.Or.Separator.Height}"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="Width" Value="{StaticResource Double/SessionView.Hint.SelectLogProfile.Or.Separator.Width}"/>
+		</Style>
+		<Style Selector="Image.SuggestedLogProfile_Icon">
+			<Setter Property="Height" Value="{StaticResource Double/SessionView.Hint.SuggestedLogProfile.Icon.Size}"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.Hint.SuggestedLogProfile.Icon.Margin}"/>
+			<Setter Property="Width" Value="{StaticResource Double/SessionView.Hint.SuggestedLogProfile.Icon.Size}"/>
+		</Style>
+		<Style Selector="TextBlock.SuggestedLogProfile_Name">
+			<Setter Property="FontSize" Value="{StaticResource Double/SessionView.Hint.SuggestedLogProfile.FontSize}"/>
+			<Setter Property="MaxLines" Value="2"/>
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
 		</Style>
 	</UserControl.Styles>
 	
@@ -1288,7 +1324,6 @@
 			<!-- Hints -->
 			<Viewbox Grid.Row="1" 
 			         Margin="{StaticResource Thickness/SessionView.Hint.Margin}" 
-			         Opacity="{StaticResource Double/SessionView.Hint.Opacity}" 
 			         Stretch="Uniform" StretchDirection="DownOnly">
 				<Panel>
 
@@ -1297,7 +1332,8 @@
 					                       {Binding !HasLogs},
 					                       {Binding !#selectLogProfileHint.IsVisible},
 					                       {Binding !#runAsAdminNeededHint.IsVisible}
-					                   }">
+					                   }"
+					        Opacity="{StaticResource Double/SessionView.Hint.Opacity}">
 						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.NoLogToShow.FontSize}"
 						           HorizontalAlignment="Center" IsVisible="{Binding #root.HasLogProfile}" 
 						           Text="{asXaml:StringResource SessionView.Hint.NoLogToShow}" 
@@ -1309,32 +1345,74 @@
 					<StackPanel Name="selectLogProfileHint"
 					            HorizontalAlignment="Center" 
 					            IsVisible="{Binding !#root.HasLogProfile}">
-						<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-							<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
-							           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.Section1}" 
-							           TextWrapping="NoWrap" 
-							           VerticalAlignment="Center"/>
-							<Border Height="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
-							        Margin="{StaticResource Thickness/SessionView.Hint.SelectLogProfile.Icon.Margin}" 
-							        VerticalAlignment="Center" 
-							        Width="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}">
-								<Image Classes="Icon" Source="{StaticResource Image/LogProfile.Outline}"/>
-							</Border>
-							<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
-							           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.Section2}"
-							           TextWrapping="NoWrap" 
-							           VerticalAlignment="Center"/>
+
+						<!-- Suggested log profiles -->
+						<StackPanel HorizontalAlignment="Center" 
+						            Margin="{StaticResource Thickness/SessionView.Hint.SuggestedLogProfiles.Margin}" 
+						            Orientation="Horizontal">
+							<ItemsControl ItemsSource="{Binding #root.SuggestedLogProfiles}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<StackPanel Orientation="Horizontal"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate x:DataType="appProfiles:LogProfile">
+										<Button Classes="SuggestedLogProfile" 
+										        Command="{Binding #root.SetLogProfileCommand}" 
+										        CommandParameter="{Binding}" 
+										        ToolTip.Tip="{Binding Description}">
+											<StackPanel>
+												<Image Classes="Icon SuggestedLogProfile_Icon" 
+												       Source="{asXaml:MultiBinding
+												             {Binding Icon},
+												                   {Binding IconColor},
+												                   Converter={x:Static appConverters:LogProfileIconConverter.Default}
+												               }"/>
+												<TextBlock Classes="SuggestedLogProfile_Name" Text="{Binding Name}"/>
+											</StackPanel>
+										</Button>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+							<Button Classes="SuggestedLogProfile" Command="{Binding #root.SelectAndSetLogProfileCommand}">
+								<StackPanel>
+									<Image Classes="Icon SuggestedLogProfile_Icon" Source="{StaticResource Image/LogProfile.Gradient}"/>
+									<TextBlock Classes="SuggestedLogProfile_Name" 
+									           Opacity="{StaticResource Double/SessionView.Hint.Opacity}" 
+									           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.More}"/>
+								</StackPanel>
+							</Button>
 						</StackPanel>
+
+						<!-- Or -->
+						<StackPanel HorizontalAlignment="Center"
+						            Margin="{StaticResource Thickness/SessionView.Hint.SelectLogProfile.Or.Margin}" 
+						            Opacity="{StaticResource Double/SessionView.Hint.Opacity}" 
+						            Orientation="Horizontal">
+							<Border Classes="SelectLogProfileHint_OrSeparator"/>
+							<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.Or.FontSize}" 
+							           Margin="{StaticResource Thickness/SessionView.Hint.SelectLogProfile.Or.Text.Margin}" 
+							           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.Or}"
+							           TextWrapping="NoWrap"
+							           VerticalAlignment="Center"/>
+							<Border Classes="SelectLogProfileHint_OrSeparator"/>
+						</StackPanel>
+
+						<!-- Drop files -->
 						<TextBlock FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 
 						           HorizontalAlignment="Center"
+						           Opacity="{StaticResource Double/SessionView.Hint.Opacity}" 
 						           Text="{asXaml:StringResource SessionView.Hint.SelectLogProfile.DropFiles}"
 						           TextWrapping="NoWrap"/>
+
 					</StackPanel>
 					
 					<!-- Hint: run as admin needed -->
 					<StackPanel Name="runAsAdminNeededHint"
 					            HorizontalAlignment="Center"
 					            IsVisible="{Binding IsRestartAsAdministratorNeeded}"
+					            Opacity="{StaticResource Double/SessionView.Hint.Opacity}" 
 					            Orientation="Vertical">
 						<abControls:FormattedTextBlock Arg1="{Binding LogProfile.Name, FallbackValue={}}"
 						                               FontSize="{StaticResource Double/SessionView.Hint.SelectLogProfile.FontSize}" 

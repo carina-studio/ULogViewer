@@ -461,6 +461,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.SelectAndSetProcessNameCommand = new Command(this.SelectAndSetProcessNameAsync, this.canSetProcessName);
 			this.SelectAndSetUriCommand = new Command(this.SelectAndSetUriAsync, this.canSetUri);
 			this.SelectAndSetWorkingDirectoryCommand = new Command(this.SelectAndSetWorkingDirectoryAsync, this.canSetWorkingDirectory);
+			this.SetLogProfileCommand = new Command<LogProfile>(this.SetLogProfileAsync, this.canSetLogProfile);
 			this.ShowFileInExplorerCommand = new Command(this.ShowFileInExplorer, this.canShowFileInExplorer);
 			this.ShowLogFileInExplorerCommand = new Command<string>(this.ShowLogFileInExplorer);
 			this.ShowLogStringPropertyCommand = new Command(this.ShowLogStringProperty, this.canShowLogProperty);
@@ -5611,6 +5612,13 @@ namespace CarinaStudio.ULogViewer.Controls
 		}
 
 
+		/// <summary>
+		/// Command to set given log profile.
+		/// </summary>
+		/// <remarks>Type of parameter is <see cref="LogProfile"/>.</remarks>
+		public ICommand SetLogProfileCommand { get; }
+
+
 		// Show file in system file explorer.
 		void ShowFileInExplorer()
 		{
@@ -6035,6 +6043,12 @@ namespace CarinaStudio.ULogViewer.Controls
 		/// Get current state of status bar.
 		/// </summary>
 		public SessionViewStatusBarState StatusBarState => this.GetValue(StatusBarStateProperty);
+
+
+		/// <summary>
+		/// Get list of suggested log profiles.
+		/// </summary>
+		public IReadOnlyList<LogProfile> SuggestedLogProfiles => LogProfileManager.Default.SuggestedProfiles;
 
 
 		/// <summary>

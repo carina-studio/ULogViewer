@@ -1379,9 +1379,9 @@
     <sys:String x:Key="String/SessionView.HighMemoryUsageToStopReadingLogs.Description">メモリ使用量が高いため、ログの読み込みが一時的に無効になっています。</sys:String>
     <sys:String x:Key="String/SessionView.Hint.NoLogToShow">表示するログがありません</sys:String>
     <sys:String x:Key="String/SessionView.Hint.RunningAsAdminNeeded">「{0}」を使用するには、アプリケーションを管理者として実行する必要があります。</sys:String>
-    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">または、ここにファイルをドロップしてください。</sys:String>
-    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section1">ツールバーの</sys:String>
-    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Section2">をクリックして、ログプロファイルを選択して開始します。</sys:String>
+    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.DropFiles">ここにファイルをドロップしてください</sys:String>
+    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.More">その他のプロファイル…</sys:String>
+    <sys:String x:Key="String/SessionView.Hint.SelectLogProfile.Or">または</sys:String>
     <sys:String x:Key="String/SessionView.IgnoreLogTextFilterCase">テキストフィルタの大文字小文字を区別しない</sys:String>
     <sys:String x:Key="String/SessionView.LastLogsFilteringDuration">フィルタリングに {0} かかりました</sys:String>
     <sys:String x:Key="String/SessionView.LastLogsReadingDuration">読込に {0} かかりました</sys:String>

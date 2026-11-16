@@ -5,7 +5,7 @@
 +
 
 ## Improvement
-+ 
++ Added suggested log profiles to empty tabs for quick selection.
 
 ## Behavior Changes
 + 
