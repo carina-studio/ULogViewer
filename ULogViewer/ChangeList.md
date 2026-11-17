@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+
++ Added more log profile icons.
 
 ## Improvement
 + Added suggested log profiles to empty tabs for quick selection.

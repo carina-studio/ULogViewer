@@ -49,6 +49,10 @@
 				<GradientStop Color="#a075f2" Offset="0"/>
 				<GradientStop Color="#654a99" Offset="1"/>
 			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Agent" EndPoint="70%,90%" StartPoint="30%,10%">
+				<GradientStop Color="#e64595" Offset="0"/>
+				<GradientStop Color="#a3205f" Offset="1"/>
+			</LinearGradientBrush>
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Apple" EndPoint="75%,75%" StartPoint="25%,25%">
 				<GradientStop Color="#999999" Offset="0"/>
 				<GradientStop Color="#666666" Offset="1"/>
@@ -85,6 +89,10 @@
 				<GradientStop Color="#ffd919" Offset="0"/>
 				<GradientStop Color="#b39500" Offset="1"/>
 			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Intelligence" EndPoint="95%,0%" StartPoint="5%,0%">
+				<GradientStop Color="#1aa6d9" Offset="0"/>
+				<GradientStop Color="#7a45e6" Offset="1"/>
+			</LinearGradientBrush>
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Layers" EndPoint="0%,95%" StartPoint="0%,5%">
 				<GradientStop Color="#b173f2" Offset="0"/>
 				<GradientStop Color="#704999" Offset="1"/>
@@ -112,6 +120,10 @@
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Power" EndPoint="0%,95%" StartPoint="0%,5%">
 				<GradientStop Color="#f2dc73" Offset="0"/>
 				<GradientStop Color="#a69542" Offset="1"/>
+			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Robot" EndPoint="0%,100%" StartPoint="0%,0%">
+				<GradientStop Color="#7d93b8" Offset="0"/>
+				<GradientStop Color="#475a7a" Offset="1"/>
 			</LinearGradientBrush>
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Security" EndPoint="80%,0%" StartPoint="20%,0%">
 				<GradientStop Color="#009999" Offset="0"/>

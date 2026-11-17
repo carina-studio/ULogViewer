@@ -550,6 +550,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">Sequentially</sys:String>
 
 	<!-- LogProfileIcon -->
+	<sys:String x:Key="String/LogProfileIcon.Agent">Agent</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Analysis">Analysis</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Android">Android</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Apple">Apple</sys:String>
@@ -579,6 +580,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Image">Image</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Information">Information</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Inspiration">Inspiration</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Intelligence">Intelligence</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Json">JSON</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Launch">Launch</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Layers">Layers</sys:String>
@@ -599,6 +601,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">Mobile Phone</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Power">Power</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.RAM">Memory</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Robot">Robot</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Screen">Screen</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Script">Script</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">Security</sys:String>

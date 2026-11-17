@@ -527,6 +527,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogPatternMatchingMode.Sequential">循序比對</sys:String>
 
 	<!-- LogProfileIcon -->
+	<sys:String x:Key="String/LogProfileIcon.Agent">代理人</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Analysis">分析</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.ArtificialIntelligence">人工智慧</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Audio">音訊</sys:String>
@@ -551,6 +552,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Image">影像</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Information">資訊</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Inspiration">靈感</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Intelligence">智慧</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Launch">啟動</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Layers">階層</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Location">位置</sys:String>
@@ -563,6 +565,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Phone">手機</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Power">電力</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.RAM">記憶體</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Robot">機器人</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Screen">螢幕</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Script">腳本</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Security">安全性</sys:String>

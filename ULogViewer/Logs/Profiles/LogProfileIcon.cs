@@ -6,6 +6,10 @@
 enum LogProfileIcon
 {
 	/// <summary>
+	/// Agent.
+	/// </summary>
+	Agent,
+	/// <summary>
 	/// Analysis.
 	/// </summary>
 	Analysis,
@@ -122,6 +126,10 @@ enum LogProfileIcon
 	/// </summary>
 	Inspiration,
 	/// <summary>
+	/// Intelligence.
+	/// </summary>
+	Intelligence,
+	/// <summary>
 	/// JSON.
 	/// </summary>
 	Json,
@@ -201,6 +209,10 @@ enum LogProfileIcon
 	/// RAM.
 	/// </summary>
 	RAM,
+	/// <summary>
+	/// Robot.
+	/// </summary>
+	Robot,
 	/// <summary>
 	/// Screen.
 	/// </summary>

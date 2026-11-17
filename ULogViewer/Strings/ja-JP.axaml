@@ -566,6 +566,7 @@
     <sys:String x:Key="String/LogPatternMatchingMode.Sequential">順次</sys:String>
 
     <!-- LogProfileIcon -->
+    <sys:String x:Key="String/LogProfileIcon.Agent">エージェント</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Analysis">分析</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Android">Android</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Apple">Apple</sys:String>
@@ -595,6 +596,7 @@
     <sys:String x:Key="String/LogProfileIcon.Image">画像</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Information">情報</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Inspiration">インスピレーション</sys:String>
+    <sys:String x:Key="String/LogProfileIcon.Intelligence">インテリジェンス</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Json">JSON</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Launch">起動</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Layers">レイヤー</sys:String>
@@ -615,6 +617,7 @@
     <sys:String x:Key="String/LogProfileIcon.Phone">携帯電話</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Power">電源</sys:String>
     <sys:String x:Key="String/LogProfileIcon.RAM">メモリ</sys:String>
+    <sys:String x:Key="String/LogProfileIcon.Robot">ロボット</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Screen">画面</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Script">スクリプト</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Security">セキュリティ</sys:String>
