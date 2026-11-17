@@ -3,6 +3,7 @@ using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -48,6 +49,35 @@ class LogProfileManagerTests : ApplicationBasedTests
 
 			// removing log profile which has been removed is a no-op
 			Assert.That(manager.RemoveProfile(profile), Is.False);
+		});
+	}
+
+
+	/// <summary>
+	/// Test for parsing timestamps of logs read by built-in log profile of Apple devices.
+	/// </summary>
+	[Test]
+	public void BuiltInAppleDevicesLogTimestampTest()
+	{
+		this.TestOnApplicationThread(() =>
+		{
+			// get formats of timestamp
+			var profile = LogProfileManager.Default.GetProfileOrDefault("AppleDevicesLog");
+			Assert.That(profile, Is.Not.Null);
+			var formats = profile!.TimestampFormatsForReading.ToArray();
+			var cultureInfo = profile.TimestampCultureInfoForReading;
+
+			// parse timestamps with and without fractional seconds, and with day padded by space
+			foreach (var (value, expected) in ((string, DateTime)[])[
+				("Nov 17 16:14:11.122288", new DateTime(DateTime.Now.Year, 11, 17, 16, 14, 11).AddTicks(1222880)),
+				("Nov 17 16:14:11", new DateTime(DateTime.Now.Year, 11, 17, 16, 14, 11)),
+				("Nov  5 08:01:02.000001", new DateTime(DateTime.Now.Year, 11, 5, 8, 1, 2).AddTicks(10)),
+				("Nov  5 08:01:02", new DateTime(DateTime.Now.Year, 11, 5, 8, 1, 2)),
+			])
+			{
+				Assert.That(DateTime.TryParseExact(value, formats, cultureInfo, DateTimeStyles.None, out var timestamp), $"Unable to parse '{value}'.");
+				Assert.That(timestamp, Is.EqualTo(expected));
+			}
 		});
 	}
 

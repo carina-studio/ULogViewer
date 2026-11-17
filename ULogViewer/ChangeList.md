@@ -11,4 +11,5 @@
 + 
 
 ## Bug Fixing
++ Fixed an issue that timestamps of logs read by the 'Apple Devices Log' log profile cannot be parsed.
 + Minor bug fixing.
