@@ -228,10 +228,10 @@
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.FontSize">20</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.Or.FontSize">15</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.Or.Separator.Height">1</sys:Double>
-	<sys:Double x:Key="Double/SessionView.Hint.SelectLogProfile.Or.Separator.Width">40</sys:Double>
-	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfile.FontSize">14</sys:Double>
-	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfile.Icon.Size">32</sys:Double>
-	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfile.Width">100</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfile.FontSize">15</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfile.Icon.Size">24</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfiles.MaxWidth">340</sys:Double>
+	<sys:Double x:Key="Double/SessionView.Hint.SuggestedLogProfiles.MinWidth">240</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.Icon.Size">14</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.SubInfo.Icon.Size">10</sys:Double>
 	<sys:Double x:Key="Double/SessionView.LogAnalysisResult.SubInfo.FontSize">12</sys:Double>
@@ -279,9 +279,9 @@
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Or.Margin">0,0,0,16</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Or.Text.Margin">12,0,12,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfile.Icon.Margin">0,0,0,6</Thickness>
-	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfile.Margin">2,0,2,0</Thickness>
-	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfile.Padding">6,10,6,8</Thickness>
+	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfile.Icon.Margin">0,0,8,0</Thickness>
+	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfile.Margin">0,2,0,2</Thickness>
+	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfile.Padding">10,8,10,8</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SuggestedLogProfiles.Margin">0,0,0,16</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Icon.Margin">3,4,5,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogAnalysisResult.Message.Margin">0,1,20,1</Thickness>

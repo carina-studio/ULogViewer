@@ -44,7 +44,7 @@
 			</Border>
 
 			<!-- Property value -->
-			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" BorderBrush="{x:Static Brushes.Transparent}" BorderThickness="0" Grid.Row="1" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch">
+			<asControls:SyntaxHighlightingTextBox Name="propertyValueTextBox" BorderBrush="{x:Static Brushes.Transparent}" BorderThickness="0" CornerRadius="0" Grid.Row="1" HorizontalAlignment="Stretch" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" VerticalAlignment="Stretch">
 				<asControls:SyntaxHighlightingTextBox.Styles>
 					<Style Selector=":is(TextBox):focus /template/ Border#PART_BorderElement">
 						<Setter Property="Background" Value="{DynamicResource TextControlBackground}"/>
