@@ -116,6 +116,10 @@
     <sys:String x:Key="String/BuiltInProfile.LinuxSystemLog.Description">syslog デーモンが存在する Linux からのシステムログの最新部分。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile">Linux システムログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">Linux からのシステムログを含むファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.LMStudioServerLog">LM Studio サーバーログ</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.LMStudioServerLog.Description">LM Studio のローカルサーバーからのリアルタイムログ。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile">LM Studio サーバーログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile.Description">LM Studio のローカルサーバーによって生成された、サーバーの状態、モデルの読み込み、プラグインのメッセージを含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS インストールログ</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">macOS からのインストールログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS リアルタイムシステム全体ログ</sys:String>
@@ -291,6 +295,7 @@
     <sys:String x:Key="String/ExternalDependency.Git.Description">「Git Log」および「Git Log (Simple)」組み込みログプロファイルは、Git を使用してコミットログを読み取ります。</sys:String>
     <sys:String x:Key="String/ExternalDependency.LibIMobileDevice">libimobiledevice</sys:String>
     <sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple Devices Log」および「Specific Apple Device Log」組み込みログプロファイルは、libimobiledevice の一部である idevicesyslog ツールを使用してデバイスに接続し、ログを取得します。インストール後に 'idevicesyslog' コマンドを含むフォルダのパスを PATH 環境変数に追加してください。</sys:String>
+    <sys:String x:Key="String/ExternalDependency.LMStudio.Description">「LM Studio サーバーログ」組み込みログプロファイルは、LM Studio に付属する 'lms' コマンドを使用して、LM Studio のローカルサーバーからログを読み取ります。</sys:String>
     <sys:String x:Key="String/ExternalDependency.TraceConv">Trace Conversion Tool</sys:String>
     <sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android Device System Trace」および「Specific Android Device System Trace」組み込みログプロファイルは、Perfetto が提供する Trace Conversion Tool を使用して、キャプチャしたデータを Android Systrace 形式に変換します。インストール後に 'traceconv' コマンドを含むフォルダのパスを PATH 環境変数に追加してください。</sys:String>
     <sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Xcode 用コマンドラインツール</sys:String>
@@ -808,8 +813,10 @@
     <sys:String x:Key="String/LogProperty.Category">カテゴリ</sys:String>
     <sys:String x:Key="String/LogProperty.Child">子</sys:String>
     <sys:String x:Key="String/LogProperty.Children">子要素</sys:String>
+    <sys:String x:Key="String/LogProperty.Client">クライアント</sys:String>
     <sys:String x:Key="String/LogProperty.Code">コード</sys:String>
     <sys:String x:Key="String/LogProperty.Commit">コミット</sys:String>
+    <sys:String x:Key="String/LogProperty.Consumer">コンシューマー</sys:String>
     <sys:String x:Key="String/LogProperty.Content">内容</sys:String>
     <sys:String x:Key="String/LogProperty.Count">カウント</sys:String>
     <sys:String x:Key="String/LogProperty.Cpu">CPU</sys:String>
@@ -877,6 +884,7 @@
     <sys:String x:Key="String/LogProperty.Path">パス</sys:String>
     <sys:String x:Key="String/LogProperty.ProcessId">PID</sys:String>
     <sys:String x:Key="String/LogProperty.ProcessName">プロセス</sys:String>
+    <sys:String x:Key="String/LogProperty.Producer">プロデューサー</sys:String>
     <sys:String x:Key="String/LogProperty.RawData">Raw データ</sys:String>
     <sys:String x:Key="String/LogProperty.ReadTime">ログ読込タイムスタンプ</sys:String>
     <sys:String x:Key="String/LogProperty.ReadTimeString">ログ読込タイムスタンプ</sys:String>
@@ -888,6 +896,7 @@
     <sys:String x:Key="String/LogProperty.Request">リクエスト</sys:String>
     <sys:String x:Key="String/LogProperty.Response">レスポンス</sys:String>
     <sys:String x:Key="String/LogProperty.Result">結果</sys:String>
+    <sys:String x:Key="String/LogProperty.Server">サーバー</sys:String>
     <sys:String x:Key="String/LogProperty.ShortName">短縮名</sys:String>
     <sys:String x:Key="String/LogProperty.Size">サイズ</sys:String>
     <sys:String x:Key="String/LogProperty.SourceName">ソース</sys:String>

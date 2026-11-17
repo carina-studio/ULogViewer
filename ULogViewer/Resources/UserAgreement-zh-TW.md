@@ -1,7 +1,7 @@
 # ULogViewer 使用者協議
  ---
-+ 版本：2.8
-+ 更新時間：2026/8/13
++ 版本：2.9
++ 更新時間：2026/11/17
 
 這是 ULogViewer 的使用者協議，您應該要在使用 ULogViewer 之前詳細閱讀本協議。 使用者協議可能會在未來有所更新，您可以在 ULogViewer 網站中查看。 當您開始使用 ULogViewer 表示您同意本使用者協議。
 
@@ -38,6 +38,9 @@ ULogViewer 包含預設關閉的內建偵錯模式，您可以透過 **「關於
 + [Windows 使用者](https://github.com/iFred09/libimobiledevice-windows)
 + [macOS 使用者](https://formulae.brew.sh/formula/libimobiledevice)
 + [Linux 使用者](https://command-not-found.com/idevicesyslog)
+
+### LM Studio
+若要使用 **「LM Studio 伺服器日誌」** 日誌類型，您必須先安裝 [LM Studio](https://lmstudio.ai/)。
 
 ### Trace 轉換工具
 若要在 **macOS/Linux** 上使用 **「Android 裝置系統追蹤」** 及 **「特定 Android 裝置系統追蹤」** 日誌類型，您必須先安裝 [Trace 轉換工具](https://perfetto.dev/docs/quickstart/traceconv)。

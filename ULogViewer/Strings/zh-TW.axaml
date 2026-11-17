@@ -116,6 +116,10 @@
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLog.Description">帶有 syslog 常駐程式的 Linux 產生之系統日誌的最新部分。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile">Linux 系統日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxSystemLogFile.Description">在 Linux 上產生的系統日誌檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLog">LM Studio 伺服器日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLog.Description">由 LM Studio 本機伺服器產生的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile">LM Studio 伺服器日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile.Description">由 LM Studio 本機伺服器產生之檔案，其中包括伺服器狀態、模型載入及外掛程式訊息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS 安裝日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">在 macOS 上產生的安裝日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS 即時全域系統日誌</sys:String>
@@ -279,6 +283,7 @@
 	<sys:String x:Key="String/ExternalDependency.Git">Git</sys:String>
 	<sys:String x:Key="String/ExternalDependency.Git.Description">「Git 提交紀錄」及「Git 提交紀錄 (精簡)」內建日誌類型會使用 Git 讀取提交紀錄。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.LibIMobileDevice.Description">「Apple 裝置日誌」及「特定 Apple 裝置日誌」內建日誌類型會使用 libimobiledevice 中的 idevicesyslog 工具與裝置通訊並取得日誌。安裝完成後請將包含 'idevicesyslog' 指令之資料夾路徑加至 PATH 環境變數。</sys:String>
+	<sys:String x:Key="String/ExternalDependency.LMStudio.Description">「LM Studio 伺服器日誌」內建日誌類型會使用 LM Studio 提供的 'lms' 指令讀取 LM Studio 本機伺服器之日誌。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.TraceConv">Trace 轉換工具</sys:String>
 	<sys:String x:Key="String/ExternalDependency.TraceConv.Description">「Android 裝置系統追蹤」及「特定 Android 裝置系統追蹤」內建日誌類型使用由 Perfetto 提供的 Trace 轉換工具將自裝置擷取的資料轉換成為 Android 系統追蹤格式。安裝完成後請將包含 'traceconv' 指令之資料夾路徑加至 PATH 環境變數。</sys:String>
 	<sys:String x:Key="String/ExternalDependency.XcodeCommandLineTools">Xcode 命令列工具</sys:String>
@@ -743,8 +748,10 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Category">分類</sys:String>
 	<sys:String x:Key="String/LogProperty.Child">子代</sys:String>
 	<sys:String x:Key="String/LogProperty.Children">子代</sys:String>
+	<sys:String x:Key="String/LogProperty.Client">客戶端</sys:String>
 	<sys:String x:Key="String/LogProperty.Code">編碼</sys:String>
 	<sys:String x:Key="String/LogProperty.Commit">提交</sys:String>
+	<sys:String x:Key="String/LogProperty.Consumer">消費端</sys:String>
 	<sys:String x:Key="String/LogProperty.Content">內容</sys:String>
 	<sys:String x:Key="String/LogProperty.Count">個數</sys:String>
 	<sys:String x:Key="String/LogProperty.Cpu">處理器</sys:String>
@@ -810,6 +817,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Parent">父代</sys:String>
 	<sys:String x:Key="String/LogProperty.Path">路徑</sys:String>
 	<sys:String x:Key="String/LogProperty.ProcessName">處理程序</sys:String>
+	<sys:String x:Key="String/LogProperty.Producer">生產端</sys:String>
 	<sys:String x:Key="String/LogProperty.RawData">原始資料</sys:String>
 	<sys:String x:Key="String/LogProperty.ReadTime">日誌讀取時間</sys:String>
 	<sys:String x:Key="String/LogProperty.ReadTimeString">日誌讀取時間</sys:String>
@@ -821,6 +829,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Request">請求</sys:String>
 	<sys:String x:Key="String/LogProperty.Response">回應</sys:String>
 	<sys:String x:Key="String/LogProperty.Result">結果</sys:String>
+	<sys:String x:Key="String/LogProperty.Server">伺服器</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">簡短名稱</sys:String>
 	<sys:String x:Key="String/LogProperty.Size">大小</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">來源</sys:String>

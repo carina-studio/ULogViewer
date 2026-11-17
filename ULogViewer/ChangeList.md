@@ -2,7 +2,9 @@
  ---
 
 ## New Features
++ Added `LM Studio Server Log` and `LM Studio Server Log Files` built-in log profiles.
 + Added more log profile icons.
++ Added more log property names.
 
 ## Improvement
 + Added suggested log profiles to empty tabs for quick selection.

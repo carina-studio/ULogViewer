@@ -41,4 +41,10 @@ static class FallbackCommandSearchPaths
         }
         return ImmutableHashSet<string>.Empty;
     });
+
+
+    /// <summary>
+    /// Fall-back paths to search CLI of LM Studio.
+    /// </summary>
+    public static readonly ISet<string> LMStudio = ImmutableHashSet.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".lmstudio", "bin"));
 }

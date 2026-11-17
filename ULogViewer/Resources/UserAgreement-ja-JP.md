@@ -1,7 +1,7 @@
 # ULogViewer 利用規約
  ---
-+ バージョン: 2.8
-+ 更新日: 2026/8/13
++ バージョン: 2.9
++ 更新日: 2026/11/17
 
 これは ULogViewer の利用規約であり、ULogViewer をご使用になる前にお読みいただく必要があります。利用規約は今後更新される場合があり、ULogViewer の Web サイトでご確認いただけます。ULogViewer の使用を開始した時点で、本利用規約に同意したものとみなされます。
 
@@ -38,6 +38,9 @@ ULogViewer には、既定で無効になっているデバッグモードが組
 + [Windows をご使用の場合](https://github.com/iFred09/libimobiledevice-windows)
 + [macOS をご使用の場合](https://formulae.brew.sh/formula/libimobiledevice)
 + [Linux をご使用の場合](https://command-not-found.com/idevicesyslog)
+
+### LM Studio
+**「LM Studio サーバーログ」** のログプロファイルを使用するには、あらかじめお使いのデバイスに [LM Studio](https://lmstudio.ai/) をインストールする必要があります。
 
 ### Trace Conversion Tool
 **macOS/Linux** 上で **「Android デバイスシステムトレース」** および **「特定 Android デバイスシステムトレース」** の組み込みログプロファイルを使用するには、あらかじめお使いのデバイスに [Trace Conversion Tool](https://perfetto.dev/docs/quickstart/traceconv) をインストールする必要があります。

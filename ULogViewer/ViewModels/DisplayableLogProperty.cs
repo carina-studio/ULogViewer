@@ -105,8 +105,10 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("BeginningValue");
 					it.Add("Child");
 					it.Add("Children");
+					it.Add("Client");
 					it.Add("Code");
 					it.Add("Commit");
+					it.Add("Consumer");
 					it.Add("Content");
 					it.Add("Count");
 					it.Add("Cpu");
@@ -140,6 +142,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Parameter9");
 					it.Add("Parent");
 					it.Add("Path");
+					it.Add("Producer");
 					it.Add("RawData");
 					it.Add("Referer");
 					it.Add("RelativeBeginningTimestamp");
@@ -149,6 +152,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Request");
 					it.Add("Response");
 					it.Add("Result");
+					it.Add("Server");
 					it.Add("ShortName");
 					it.Add("Size");
 					it.Add("Speed");

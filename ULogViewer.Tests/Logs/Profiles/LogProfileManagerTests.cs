@@ -1,4 +1,5 @@
 using CarinaStudio.Collections;
+using CarinaStudio.ComponentModel;
 using CarinaStudio.ULogViewer.Logs.DataSources;
 using NUnit.Framework;
 using System;
@@ -77,6 +78,114 @@ class LogProfileManagerTests : ApplicationBasedTests
 			{
 				Assert.That(DateTime.TryParseExact(value, formats, cultureInfo, DateTimeStyles.None, out var timestamp), $"Unable to parse '{value}'.");
 				Assert.That(timestamp, Is.EqualTo(expected));
+			}
+		});
+	}
+
+
+	/// <summary>
+	/// Test for built-in log profile of real-time LM Studio server log.
+	/// </summary>
+	[Test]
+	public void BuiltInLMStudioServerLogTest()
+	{
+		this.TestOnApplicationThread(() =>
+		{
+			// get log profiles
+			var manager = LogProfileManager.Default;
+			var profile = manager.GetProfileOrDefault("LMStudioServerLog");
+			var fileProfile = manager.GetProfileOrDefault("LMStudioServerLogFile");
+			Assert.That(profile, Is.Not.Null);
+			Assert.That(fileProfile, Is.Not.Null);
+
+			// check data source
+			Assert.That(profile!.DataSourceProvider.Name, Is.EqualTo("StandardOutput"));
+			Assert.That(profile.DataSourceOptions.Command, Is.EqualTo("lms log stream --source server"));
+			Assert.That(profile.IsContinuousReading);
+			Assert.That(profile.Icon, Is.EqualTo(LogProfileIcon.Intelligence));
+
+			// logs are parsed in the same way as log files
+			Assert.That(profile.LogPatterns.Select(it => it.Regex.ToString()), Is.EqualTo(fileProfile!.LogPatterns.Select(it => it.Regex.ToString())));
+			Assert.That(profile.LogLevelMapForReading, Is.EquivalentTo(fileProfile.LogLevelMapForReading));
+			Assert.That(profile.TimestampFormatsForReading, Is.EqualTo(fileProfile.TimestampFormatsForReading));
+		});
+	}
+
+
+	/// <summary>
+	/// Test for reading logs by built-in log profile of LM Studio server log files.
+	/// </summary>
+	[Test]
+	public void BuiltInLMStudioServerLogFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// get log profile and data source provider
+			var profile = LogProfileManager.Default.GetProfileOrDefault("LMStudioServerLogFile");
+			Assert.That(profile, Is.Not.Null);
+			Assert.That(profile!.Icon, Is.EqualTo(LogProfileIcon.Intelligence));
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+
+			// prepare log file
+			var filePath = Path.GetTempFileName();
+			try
+			{
+				File.WriteAllText(filePath, string.Join('\n', (string[])[
+					"[2026-05-25 15:19:39][DEBUG][LMSAuthenticator][Client=plugin:installed:mcp/filesystem] Client created.",
+					"[2026-05-25 15:19:40][ERROR][Plugin(mcp/filesystem)] stderr: Secure MCP Filesystem Server running on stdio",
+					"",
+					"[2026-05-25 15:19:40][DEBUG][LMSAuthenticator][Client=plugin:installed:mcp/filesystem][Endpoint=setToolsProvider] Registering tools provider.",
+					"[2026-05-25 15:21:00][INFO] Server stopped.",
+					"[2026-05-25 15:21:42][DEBUG] LlamaV4::load called with model path: /models/gemma.gguf",
+					"LlamaV4::load config: n_parallel=4 n_ctx=4096 kv_unified=true",
+					"[2025-09-15 15:07:55][INFO][LM STUDIO SERVER] Success! HTTP server listening on port 1234",
+					"[2025-09-15 15:07:55][WARN] Just-in-time model loading active.",
+					"[2026-11-17 18:12:58][DEBUG] Received request: POST to /v1/chat/completions with body {",
+					"  \"model\": \"none\"",
+					"}",
+				]));
+
+				// read logs
+				using var source = provider.CreateSource(new LogDataSourceOptions { FileName = filePath });
+				using var logReader = new LogReader(null, source).Setup(it =>
+				{
+					it.LogLevelMap = profile.LogLevelMapForReading;
+					it.LogPatterns = profile.LogPatterns;
+					it.TimestampEncoding = profile.TimestampEncodingForReading;
+					it.TimestampFormats = profile.TimestampFormatsForReading;
+				});
+				logReader.Start();
+				await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(10000).Token);
+
+				// check logs
+				var logs = logReader.Logs;
+				Assert.That(logs.Count, Is.EqualTo(8));
+				Assert.That(logs[0].Timestamp, Is.EqualTo(new DateTime(2026, 5, 25, 15, 19, 39)));
+				Assert.That(logs[0].Level, Is.EqualTo(LogLevel.Debug));
+				Assert.That(logs[0].SourceName?.ToString(), Is.EqualTo("LMSAuthenticator"));
+				Assert.That(logs[0].Extra1?.ToString(), Is.EqualTo("plugin:installed:mcp/filesystem"));
+				Assert.That(logs[0].Message?.ToString(), Is.EqualTo("Client created."));
+				Assert.That(logs[1].Level, Is.EqualTo(LogLevel.Error));
+				Assert.That(logs[1].SourceName?.ToString(), Is.EqualTo("Plugin(mcp/filesystem)"));
+				Assert.That(logs[1].Message?.ToString(), Is.EqualTo("stderr: Secure MCP Filesystem Server running on stdio"));
+				Assert.That(logs[2].Extra2?.ToString(), Is.EqualTo("setToolsProvider"));
+				Assert.That(logs[3].Level, Is.EqualTo(LogLevel.Info));
+				Assert.That(logs[3].SourceName, Is.Null);
+				Assert.That(logs[3].Message?.ToString(), Is.EqualTo("Server stopped."));
+				Assert.That(logs[4].Message?.ToString(), Does.StartWith("LlamaV4::load called with model path: /models/gemma.gguf"));
+				Assert.That(logs[4].Message?.ToString(), Does.EndWith("LlamaV4::load config: n_parallel=4 n_ctx=4096 kv_unified=true"));
+				Assert.That(logs[5].SourceName?.ToString(), Is.EqualTo("LM STUDIO SERVER"));
+				Assert.That(logs[6].Level, Is.EqualTo(LogLevel.Warn));
+				Assert.That(logs[6].Extra3, Is.Null);
+				Assert.That(logs[7].Extra3?.ToString(), Is.EqualTo("POST"));
+				Assert.That(logs[7].Extra4?.ToString(), Is.EqualTo("/v1/chat/completions"));
+				Assert.That(logs[7].Message?.ToString(), Does.StartWith("Received request: POST to /v1/chat/completions with body {"));
+				Assert.That(logs[7].Message?.ToString(), Does.EndWith("}"));
+			}
+			finally
+			{
+				File.Delete(filePath);
 			}
 		});
 	}

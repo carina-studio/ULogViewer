@@ -560,6 +560,7 @@ namespace CarinaStudio.ULogViewer
 						return new Uri("https://command-not-found.com/idevicesyslog");
 					return null;
 				})));
+				it.Add(new ExecutableExternalDependency(this, "LMStudio", ExternalDependencyPriority.RequiredByFeatures, FallbackCommandSearchPaths.LMStudio, "lms", new Uri("https://lmstudio.ai/"), new Uri("https://lmstudio.ai/download")));
 				if (Platform.IsNotWindows)
 					it.Add(new ExecutableExternalDependency(this, "TraceConv", ExternalDependencyPriority.RequiredByFeatures, "traceconv", new Uri("https://perfetto.dev/docs/quickstart/traceconv"), new Uri("https://perfetto.dev/docs/quickstart/traceconv#setup")));
 				if (Platform.IsMacOS)
@@ -948,6 +949,6 @@ namespace CarinaStudio.ULogViewer
 
 
 		/// <inheritdoc/>
-		public override Version UserAgreementVersion => new(2, 8);
+		public override Version UserAgreementVersion => new(2, 9);
     }
 }

@@ -77,6 +77,8 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "GitLogSimple",
         "LinuxKernelLogFile",
         "LinuxSystemLogFile",
+        "LMStudioServerLog",
+        "LMStudioServerLogFile",
         "MacOSSystemLogFile",
         "RawFile",
         "RawHttp",

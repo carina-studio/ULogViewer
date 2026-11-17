@@ -1,7 +1,7 @@
 # ULogViewer User Agreement
  ---
-+ Version: 2.8
-+ Update: 2026/8/13
++ Version: 2.9
++ Update: 2026/11/17
 
 This is the ULogViewer User Agreement which you need to read before using ULogViewer. The User Agreement may be updated in the future and you can check it on the ULogViewer website. It means that you have agreed to this User Agreement once you start using ULogViewer.
 
@@ -38,6 +38,9 @@ In order to use **'Apple Devices Log'** and **'Specific Apple Device Log'** log 
 + [For Windows User](https://github.com/iFred09/libimobiledevice-windows)
 + [For macOS User](https://formulae.brew.sh/formula/libimobiledevice)
 + [For Linux User](https://command-not-found.com/idevicesyslog)
+
+### LM Studio
+In order to use **'LM Studio Server Log'** log profile, you need to install [LM Studio](https://lmstudio.ai/) on your device first.
 
 ### Trace Conversion Tool
 In order to use **'Android Device System Trace'** and **'Specific Android Device System Trace'** built-in log profile on **macOS/Linux**, you need to install [Trace Conversion Tool](https://perfetto.dev/docs/quickstart/traceconv) on your device first.

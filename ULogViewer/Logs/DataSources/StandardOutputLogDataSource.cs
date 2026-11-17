@@ -350,6 +350,7 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 		{
 			"adb" or "fastboot" or "hprof-conv" => FallbackCommandSearchPaths.AndroidSdkPlatformTools,
 			"git" => FallbackCommandSearchPaths.Git,
+			"lms" => FallbackCommandSearchPaths.LMStudio,
 			_ => ImmutableHashSet<string>.Empty,
 		};
 		
