@@ -102,6 +102,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "SpecificAppleDeviceLog",
         "SpringBootLogFile",
         "TcpNLog",
+        "UdpNLog",
         "ULogViewerLog",
         "ULogViewerMemoryLog",
         "WindowsEventLogFiles",

@@ -204,6 +204,7 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 			&& this.FormatXmlData == options.FormatXmlData
 			&& this.IncludeStandardError == options.IncludeStandardError
 			&& Equals(this.IPEndPoint, options.IPEndPoint)
+			&& this.IsLineAcrossDatagramsAllowed == options.IsLineAcrossDatagramsAllowed
 			&& this.IsResourceOnAzure == options.IsResourceOnAzure
 			&& this.Password == options.Password
 			&& this.ProcessId == options.ProcessId
@@ -289,6 +290,13 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 		/// Get or set IP end point.
 		/// </summary>
 		public IPEndPoint? IPEndPoint { get; set; }
+
+
+		/// <summary>
+		/// Get or set whether a line can continue across multiple datagrams or not.
+		/// </summary>
+		/// <remarks>When it is False, the end of each datagram is treated as the end of a line.</remarks>
+		public bool IsLineAcrossDatagramsAllowed { get; set; }
 
 
 		/// <summary>
@@ -410,6 +418,9 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 							}
 							else
 								throw new JsonException($"JSON element of {nameof(IPEndPoint)} is not an object.");
+							break;
+						case nameof(IsLineAcrossDatagramsAllowed):
+							options.IsLineAcrossDatagramsAllowed = jsonProperty.Value.ValueKind == JsonValueKind.True;
 							break;
 						case nameof(IsResourceOnAzure):
 							options.IsResourceOnAzure = jsonProperty.Value.GetBoolean();
@@ -566,6 +577,8 @@ namespace CarinaStudio.ULogViewer.Logs.DataSources
 					jsonWriter.WriteNumber(nameof(System.Net.IPEndPoint.Port), it.Port);
 					jsonWriter.WriteEndObject();
 				});
+				if (this.IsLineAcrossDatagramsAllowed)
+					jsonWriter.WriteBoolean(nameof(IsLineAcrossDatagramsAllowed), true);
 				if (this.IsResourceOnAzure)
 					jsonWriter.WriteBoolean(nameof(IsResourceOnAzure), true);
 				this.Password?.Let(it =>

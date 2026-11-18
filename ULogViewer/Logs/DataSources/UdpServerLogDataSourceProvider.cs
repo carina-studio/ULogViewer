@@ -16,6 +16,7 @@ class UdpServerLogDataSourceProvider(IULogViewerApplication app) : BaseLogDataSo
 	);
 	public override ISet<string> SupportedSourceOptions { get; } = ImmutableHashSet.Create(
 		nameof(LogDataSourceOptions.Encoding),
-		nameof(LogDataSourceOptions.IPEndPoint)
+		nameof(LogDataSourceOptions.IPEndPoint),
+		nameof(LogDataSourceOptions.IsLineAcrossDatagramsAllowed)
 	);
 }

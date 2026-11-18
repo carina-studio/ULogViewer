@@ -2,9 +2,10 @@
  ---
 
 ## New Features
-+ Added `glog/klog Log Files`, `Go slog/logrus Log Files`, `LM Studio Server Log`, `LM Studio Server Log Files`, `Log4j/Logback Log Files`, `Loguru Log Files`, `Monolog Log Files`, `Nginx Error Log Files`, `NLog Log Files`, `Ollama Server Log`, `Ollama Server Log Files`, `Ollama Service Log`, `Ruby Logger Log Files`, `Rust env_logger/tracing Log Files`, `Serilog Log Files`, `spdlog Log Files` and `Spring Boot Log Files` built-in log profiles.
++ Added `glog/klog Log Files`, `Go slog/logrus Log Files`, `LM Studio Server Log`, `LM Studio Server Log Files`, `Log4j/Logback Log Files`, `Loguru Log Files`, `Monolog Log Files`, `Nginx Error Log Files`, `NLog (UDP)`, `NLog Log Files`, `Ollama Server Log`, `Ollama Server Log Files`, `Ollama Service Log`, `Ruby Logger Log Files`, `Rust env_logger/tracing Log Files`, `Serilog Log Files`, `spdlog Log Files` and `Spring Boot Log Files` built-in log profiles.
 + Added more log profile icons.
 + Added more log property names.
++ Added `Allow Data Across Multiple Datagrams` log data source option.
 
 ## Improvement
 + Added suggested log profiles to empty tabs for quick selection.

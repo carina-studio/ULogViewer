@@ -2,9 +2,10 @@
  ---
 
 ## 新功能
-+ 新增 `glog/klog 日志文件`、`Go slog/logrus 日志文件`、`LM Studio 服务器日志`、`LM Studio 服务器日志文件`、`Log4j/Logback 日志文件`、`Loguru 日志文件`、`Monolog 日志文件`、`Nginx 服务器错误日志文件`、`NLog 日志文件`、`Ollama 服务器日志`、`Ollama 服务器日志文件`、`Ollama 服务日志`、`Ruby Logger 日志文件`、`Rust env_logger/tracing 日志文件`、`Serilog 日志文件`、`spdlog 日志文件` 及 `Spring Boot 日志文件` 内建日志类型。
++ 新增 `glog/klog 日志文件`、`Go slog/logrus 日志文件`、`LM Studio 服务器日志`、`LM Studio 服务器日志文件`、`Log4j/Logback 日志文件`、`Loguru 日志文件`、`Monolog 日志文件`、`Nginx 服务器错误日志文件`、`NLog (UDP)`、`NLog 日志文件`、`Ollama 服务器日志`、`Ollama 服务器日志文件`、`Ollama 服务日志`、`Ruby Logger 日志文件`、`Rust env_logger/tracing 日志文件`、`Serilog 日志文件`、`spdlog 日志文件` 及 `Spring Boot 日志文件` 内建日志类型。
 + 新增更多日志类型图标。
 + 新增更多日志属性名称。
++ 新增 `允许数据横跨多个数据包` 日志数据源选项。
 
 ## 优化
 + 在空白标签页中显示建议的日志类型以便快速选择。

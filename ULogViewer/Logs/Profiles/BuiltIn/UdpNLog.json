@@ -1,0 +1,70 @@
+{
+	"DataSource": {
+		"Name": "UDP Server"
+	},
+	"Icon": "Code",
+	"IsContinuousReading": true,
+	"LogLevelMapForReading": {
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"FATAL": "Fatal",
+		"INFO": "Info",
+		"TRACE": "Trace",
+		"WARN": "Warn"
+	},
+	"LogLevelMapForWriting": {
+		"Undefined": ""
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^\\<log4j\\:event\\s+logger=\"(?<SourceName>[^\"]*)\"\\s+level=\"(?<Level>[^\"]+)\"\\s+timestamp=\"(?<Timestamp>[^\"]+)\"\\s+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)(\\</log4j\\:message\\>\\<log4j\\:throwable\\>(?<Message>[^\\<]*))?$",
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^\\<log4j\\:event\\s+logger=\"(?<SourceName>[^\"]*)\"\\s+level=\"(?<Level>[^\"]+)\"\\s+timestamp=\"(?<Timestamp>[^\"]+)\"\\s+thread=\"(?<ThreadId>[^\"]+)\"\\>.*\\<log4j\\:message\\>(?<Message>[^\\<]*)\\<.*\\<log4j\\:data\\s+name=\"log4japp\"\\s+value=\".*\\((?<ProcessId>\\d+)\\)\".*\\<log4j\\:data\\s+name=\"log4jmachinename\"\\s+value=\"(?<DeviceName>[^\"]*)\"",
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^(?<Message>[^\\<]+)$",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		},
+		{
+			"Regex": "^(?<Message>[^\\<]*)\\<(?!log4j\\:event).*\\<log4j\\:data\\s+name=\"log4japp\"\\s+value=\".*\\((?<ProcessId>\\d+)\\)\".*\\<log4j\\:data\\s+name=\"log4jmachinename\"\\s+value=\"(?<DeviceName>[^\"]*)\"",
+			"IsSkippable": true
+		}
+	],
+	"LogStringEncodingForReading": "Xml",
+	"LogWritingFormats": [
+		"{Timestamp} {DeviceName} {ProcessId,5} {ThreadId,5} {Level,5} {SourceName}: {Message}"
+	],
+	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampEncodingForReading": "UnixMilliseconds",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 210
+		},
+		{
+			"Name": "DeviceName",
+			"Width": 150
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"Name": "ThreadId",
+			"Width": 80
+		},
+		{
+			"Name": "SourceName",
+			"Width": 100
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

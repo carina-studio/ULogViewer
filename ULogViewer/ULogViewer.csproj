@@ -247,6 +247,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceSimulatorLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpringBootLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/UdpNLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />

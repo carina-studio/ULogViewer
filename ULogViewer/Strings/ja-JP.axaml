@@ -176,6 +176,8 @@
     <sys:String x:Key="String/BuiltInProfile.SpringBootLogFile.Description">Java の Spring Boot によって既定の形式で生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.TcpNLog">NLog (TCP)</sys:String>
     <sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">NLog が TCP 経由で「NLogViewer」形式で出力するリアルタイムログ。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.UdpNLog">NLog (UDP)</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.UdpNLog.Description">NLog が UDP 経由で「NLogViewer」形式で出力するリアルタイムログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer ログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">ULogViewer または他の Carina Studio アプリケーションからのログファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer リアルタイムログ</sys:String>
@@ -547,6 +549,8 @@
     <sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP アドレス</sys:String>
     <sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Address">IPv4/IPv6 アドレス</sys:String>
     <sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Port">ポート</sys:String>
+    <sys:String x:Key="String/LogDataSourceOptions.IsLineAcrossDatagramsAllowed">複数のデータグラムにまたがるデータを許可</sys:String>
+    <sys:String x:Key="String/LogDataSourceOptions.IsLineAcrossDatagramsAllowed.Description">各ログ行が次のデータグラムに続くことができるかどうか。</sys:String>
     <sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">これは Azure 上のリソースです</sys:String>
     <sys:String x:Key="String/LogDataSourceOptions.Password">パスワード</sys:String>
     <sys:String x:Key="String/LogDataSourceOptions.ProcessId">プロセス識別子 (PID)</sys:String>

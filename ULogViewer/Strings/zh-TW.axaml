@@ -175,6 +175,7 @@
 	<sys:String x:Key="String/BuiltInProfile.SpringBootLogFile">Spring Boot 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpringBootLogFile.Description">由 Java 的 Spring Boot 以預設格式產生之日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以「NLogViewer」格式輸出，並透過 TCP 傳輸的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.UdpNLog.Description">使用 NLog 以「NLogViewer」格式輸出，並透過 UDP 傳輸的即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 應用程式輸出的日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌</sys:String>
@@ -509,6 +510,8 @@ return False</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint">IP 位址</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Address">IPv4/IPv6 位址</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IPEndPoint.Port">連接埠</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IsLineAcrossDatagramsAllowed">允許資料橫跨多個封包</sys:String>
+	<sys:String x:Key="String/LogDataSourceOptions.IsLineAcrossDatagramsAllowed.Description">每一筆日誌行是否可以延續至下一個封包。</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.IsResourceOnAzure">這是 Azure 上的資源</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.Password">密碼</sys:String>
 	<sys:String x:Key="String/LogDataSourceOptions.ProcessId">處理程序識別碼 (PID)</sys:String>

@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -1032,6 +1035,91 @@ class LogProfileManagerTests : ApplicationBasedTests
 			Assert.That(logs[5].Timestamp, Is.EqualTo(new DateTime(2026, 11, 18, 17, 31, 57, 715)));
 			Assert.That(logs[5].ProcessId, Is.EqualTo(79788));
 			Assert.That(logs[5].Message?.ToString(), Is.EqualTo("Spring Boot 2"));
+		});
+	}
+
+
+	/// <summary>
+	/// Test for reading logs by built-in log profile of NLog through UDP.
+	/// </summary>
+	[Test]
+	public void BuiltInUdpNLogTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// get log profiles
+			var manager = LogProfileManager.Default;
+			var profile = manager.GetProfileOrDefault("UdpNLog");
+			var tcpProfile = manager.GetProfileOrDefault("TcpNLog");
+			Assert.That(profile, Is.Not.Null);
+			Assert.That(tcpProfile, Is.Not.Null);
+			Assert.That(profile!.DataSourceProvider.Name, Is.EqualTo("UDP Server"));
+			Assert.That(profile.DataSourceOptions.IsLineAcrossDatagramsAllowed, Is.False);
+			Assert.That(profile.IsContinuousReading);
+			Assert.That(profile.Icon, Is.EqualTo(LogProfileIcon.Code));
+
+			// logs are parsed in the same way as NLog through TCP
+			Assert.That(profile.LogPatterns.Select(it => it.Regex.ToString()), Is.EqualTo(tcpProfile!.LogPatterns.Select(it => it.Regex.ToString())));
+
+			// find available port
+			int port;
+			using (var probingClient = new UdpClient(new IPEndPoint(IPAddress.Loopback, 0)))
+				port = ((IPEndPoint)probingClient.Client.LocalEndPoint.AsNonNull()).Port;
+			var endPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+			// start reading logs
+			var options = profile.DataSourceOptions;
+			options.IPEndPoint = endPoint;
+			using var source = profile.DataSourceProvider.CreateSource(options);
+			using var logReader = new LogReader(null, source).Setup(it =>
+			{
+				it.IsContinuousReading = true;
+				it.LogLevelMap = profile.LogLevelMapForReading;
+				it.LogPatterns = profile.LogPatterns;
+				it.LogStringEncoding = profile.LogStringEncodingForReading;
+				it.TimestampEncoding = profile.TimestampEncodingForReading;
+			});
+			logReader.Start();
+			await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.ReadingLogs, new CancellationTokenSource(10000).Token);
+
+			// send each log in a datagram without trailing line break, as NLog does
+			using (var client = new UdpClient())
+			{
+				foreach (var datagram in (string[])[
+					"<log4j:event logger=\"MyApp.OrderService\" level=\"TRACE\" timestamp=\"1794994434798\" thread=\"1\"><log4j:message>Entering PlaceOrder</log4j:message><log4j:properties><log4j:data name=\"log4japp\" value=\"app(80279)\"/><log4j:data name=\"log4jmachinename\" value=\"my-host\"/></log4j:properties></log4j:event>",
+					"<log4j:event logger=\"MyApp.OrderService\" level=\"INFO\" timestamp=\"1794994434807\" thread=\"1\"><log4j:message>Order 1001 placed</log4j:message><log4j:properties><log4j:data name=\"log4japp\" value=\"app(80279)\"/><log4j:data name=\"log4jmachinename\" value=\"my-host\"/></log4j:properties></log4j:event>",
+					"<log4j:event logger=\"MyApp.OrderService\" level=\"WARN\" timestamp=\"1794994434808\" thread=\"1\"><log4j:message>Multi-line message:\nline 2</log4j:message><log4j:properties><log4j:data name=\"log4japp\" value=\"app(80279)\"/><log4j:data name=\"log4jmachinename\" value=\"my-host\"/></log4j:properties></log4j:event>",
+					"<log4j:event logger=\"MyApp.OrderService\" level=\"ERROR\" timestamp=\"1794994434808\" thread=\"1\"><log4j:message>Failed to charge order</log4j:message><log4j:throwable>System.InvalidOperationException: Gateway timed out\n   at Program.&lt;Main&gt;$(String[] args) in /src/app/Program.cs:line 14</log4j:throwable><log4j:properties><log4j:data name=\"log4japp\" value=\"app(80279)\"/><log4j:data name=\"log4jmachinename\" value=\"my-host\"/></log4j:properties></log4j:event>",
+					"<log4j:event logger=\"MyApp.OrderService\" level=\"FATAL\" timestamp=\"1794994434812\" thread=\"1\"><log4j:message>Shutting down &lt;now&gt; &amp; &quot;quoted&quot;</log4j:message><log4j:properties><log4j:data name=\"log4japp\" value=\"app(80279)\"/><log4j:data name=\"log4jmachinename\" value=\"my-host\"/></log4j:properties></log4j:event>",
+					"<log4j:event logger=\"MyApp.Program\" level=\"INFO\" timestamp=\"1794994434813\" thread=\"1\"><log4j:message>Exited</log4j:message><log4j:properties><log4j:data name=\"log4japp\" value=\"app(80279)\"/><log4j:data name=\"log4jmachinename\" value=\"my-host\"/></log4j:properties></log4j:event>",
+				])
+				{
+					await client.SendAsync(Encoding.UTF8.GetBytes(datagram), endPoint, CancellationToken.None);
+				}
+			}
+
+			// wait for logs
+			var deadline = DateTime.Now.AddSeconds(10);
+			while (logReader.Logs.Count < 5 && DateTime.Now < deadline)
+				await Task.Delay(100, CancellationToken.None);
+
+			// check logs
+			var logs = logReader.Logs;
+			Assert.That(logs.Count, Is.GreaterThanOrEqualTo(5));
+			Assert.That(logs[0].Timestamp, Is.EqualTo(DateTimeOffset.FromUnixTimeMilliseconds(1794994434798).LocalDateTime));
+			Assert.That(logs[0].Level, Is.EqualTo(LogLevel.Trace));
+			Assert.That(logs[0].SourceName?.ToString(), Is.EqualTo("MyApp.OrderService"));
+			Assert.That(logs[0].ProcessId, Is.EqualTo(80279));
+			Assert.That(logs[0].DeviceName?.ToString(), Is.EqualTo("my-host"));
+			Assert.That(logs[0].Message?.ToString(), Is.EqualTo("Entering PlaceOrder"));
+			Assert.That(logs[1].Message?.ToString(), Is.EqualTo("Order 1001 placed"));
+			Assert.That(logs[2].Level, Is.EqualTo(LogLevel.Warn));
+			Assert.That(logs[2].Message?.ToString(), Does.EndWith("line 2"));
+			Assert.That(logs[3].Level, Is.EqualTo(LogLevel.Error));
+			Assert.That(logs[3].Message?.ToString(), Does.Contain("Gateway timed out"));
+			Assert.That(logs[3].Message?.ToString(), Does.EndWith("Program.cs:line 14"));
+			Assert.That(logs[4].Level, Is.EqualTo(LogLevel.Fatal));
+			Assert.That(logs[4].Message?.ToString(), Is.EqualTo("Shutting down <now> & \"quoted\""));
 		});
 	}
 

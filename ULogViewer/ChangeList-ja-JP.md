@@ -2,9 +2,10 @@
  ---
 
 ## 新機能
-+ `glog/klog ログファイル`、`Go slog/logrus ログファイル`、`LM Studio サーバーログ`、`LM Studio サーバーログファイル`、`Log4j/Logback ログファイル`、`Loguru ログファイル`、`Monolog ログファイル`、`Nginx エラーログファイル`、`NLog ログファイル`、`Ollama サーバーログ`、`Ollama サーバーログファイル`、`Ollama サービスログ`、`Ruby Logger ログファイル`、`Rust env_logger/tracing ログファイル`、`Serilog ログファイル`、`spdlog ログファイル` および `Spring Boot ログファイル` 組み込みログプロファイルを追加しました。
++ `glog/klog ログファイル`、`Go slog/logrus ログファイル`、`LM Studio サーバーログ`、`LM Studio サーバーログファイル`、`Log4j/Logback ログファイル`、`Loguru ログファイル`、`Monolog ログファイル`、`Nginx エラーログファイル`、`NLog (UDP)`、`NLog ログファイル`、`Ollama サーバーログ`、`Ollama サーバーログファイル`、`Ollama サービスログ`、`Ruby Logger ログファイル`、`Rust env_logger/tracing ログファイル`、`Serilog ログファイル`、`spdlog ログファイル` および `Spring Boot ログファイル` 組み込みログプロファイルを追加しました。
 + ログプロファイルのアイコンを追加しました。
 + ログプロパティ名を追加しました。
++ `複数のデータグラムにまたがるデータを許可` ログデータソースオプションを追加しました。
 
 ## 改善
 + 空のタブにおすすめのログプロファイルを表示し、すばやく選択できるようにしました。

@@ -260,6 +260,18 @@
 							<Separator asControls:DialogElement.SeparatorType="Item"/>
 						</StackPanel>
 
+						<!-- Allow line across datagrams -->
+						<StackPanel IsVisible="{Binding #window.IsLineAcrossDatagramsAllowedSupported}">
+							<asControls:DialogItem>
+								<StackPanel>
+									<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.IsLineAcrossDatagramsAllowed}" asControls:DialogElement.TextRole="Label"/>
+									<TextBlock Text="{asXaml:StringResource LogDataSourceOptions.IsLineAcrossDatagramsAllowed.Description}" asControls:DialogElement.TextRole="DescriptionBelowLabel"/>
+								</StackPanel>
+								<ToggleSwitch Name="isLineAcrossDatagramsAllowedSwitch" asControls:DialogElement.IsDialogItemInput="True"/>
+							</asControls:DialogItem>
+							<Separator asControls:DialogElement.SeparatorType="Item"/>
+						</StackPanel>
+
 						<!-- Format JSON data -->
 						<StackPanel IsVisible="{Binding #window.IsFormatJsonDataSupported}">
 							<asControls:DialogItem ItemSize="Small">

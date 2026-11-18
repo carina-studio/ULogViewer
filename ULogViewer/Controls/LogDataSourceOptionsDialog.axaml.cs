@@ -59,6 +59,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	static readonly StyledProperty<bool> IsFormatXmlDataSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsFormatXmlDataSupported));
 	static readonly StyledProperty<bool> IsIncludeStandardErrorSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIncludeStandardErrorSupported));
 	static readonly StyledProperty<bool> IsIPEndPointSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsIPEndPointSupported));
+	static readonly StyledProperty<bool> IsLineAcrossDatagramsAllowedSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsLineAcrossDatagramsAllowedSupported));
 	static readonly StyledProperty<bool> IsPasswordRequiredProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordRequired));
 	static readonly StyledProperty<bool> IsPasswordSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsPasswordSupported));
 	static readonly StyledProperty<bool> IsProcessIdSupportedProperty = AvaloniaProperty.Register<LogDataSourceOptionsDialog, bool>(nameof(IsProcessIdSupported));
@@ -95,6 +96,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	readonly ToggleSwitch includeStderrSwitch;
 	Control? initFocusedControl;
 	readonly IPAddressTextBox ipAddressTextBox;
+	readonly ToggleSwitch isLineAcrossDatagramsAllowedSwitch;
 	readonly ToggleSwitch isResourceOnAzureSwitch;
 	readonly TextBox passwordTextBox;
 	readonly IntegerTextBox portTextBox;
@@ -162,6 +164,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 		});
 		this.includeStderrSwitch = this.Get<ToggleSwitch>(nameof(includeStderrSwitch));
 		this.ipAddressTextBox = this.Get<IPAddressTextBox>(nameof(ipAddressTextBox));
+		this.isLineAcrossDatagramsAllowedSwitch = this.Get<ToggleSwitch>(nameof(isLineAcrossDatagramsAllowedSwitch));
 		this.isResourceOnAzureSwitch = this.Get<ToggleSwitch>(nameof(isResourceOnAzureSwitch));
 		this.passwordTextBox = this.Get<TextBox>(nameof(passwordTextBox));
 		this.portTextBox = this.Get<IntegerTextBox>(nameof(portTextBox));
@@ -499,6 +502,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 				options.IPEndPoint = new IPEndPoint(address, (int)this.portTextBox.Value.GetValueOrDefault());
 			});
 		}
+		if (this.IsLineAcrossDatagramsAllowedSupported)
+			options.IsLineAcrossDatagramsAllowed = this.isLineAcrossDatagramsAllowedSwitch.IsChecked.GetValueOrDefault();
 		if (this.IsQueryStringSupported)
 			options.QueryString = this.queryStringTextBox.Text?.Trim();
 		if (this.IsPasswordSupported)
@@ -542,6 +547,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 	internal bool IsFormatXmlDataSupported => this.GetValue(IsFormatXmlDataSupportedProperty);
 	internal bool IsIncludeStandardErrorSupported => this.GetValue(IsIncludeStandardErrorSupportedProperty);
 	internal bool IsIPEndPointSupported => this.GetValue(IsIPEndPointSupportedProperty);
+	internal bool IsLineAcrossDatagramsAllowedSupported => this.GetValue(IsLineAcrossDatagramsAllowedSupportedProperty);
 	internal bool IsPasswordRequired => this.GetValue(IsPasswordRequiredProperty);
 	internal bool IsPasswordSupported => this.GetValue(IsPasswordSupportedProperty);
 	internal bool IsProcessIdSupported => this.GetValue(IsProcessIdSupportedProperty);
@@ -743,6 +749,8 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			});
 			this.initFocusedControl ??= this.ipAddressTextBox;
 		}
+		if (this.IsLineAcrossDatagramsAllowedSupported)
+			this.isLineAcrossDatagramsAllowedSwitch.IsChecked = options.IsLineAcrossDatagramsAllowed;
 		if (this.GetValue(IsResourceOnAzureSupportedProperty))
 			this.isResourceOnAzureSwitch.IsChecked = options.IsResourceOnAzure;
 		if (this.IsUriSupported)
@@ -876,6 +884,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsFormatXmlDataSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.FormatXmlData)));
 			this.SetValue(IsIncludeStandardErrorSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IncludeStandardError)));
 			this.SetValue(IsIPEndPointSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IPEndPoint)));
+			this.SetValue(IsLineAcrossDatagramsAllowedSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.IsLineAcrossDatagramsAllowed)));
 			this.SetValue(IsPasswordRequiredProperty, !isTemplate && provider.IsSourceOptionRequired(nameof(LogDataSourceOptions.Password)));
 			this.SetValue(IsPasswordSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.Password)));
 			this.SetValue(IsProcessIdSupportedProperty, provider.IsSourceOptionSupported(nameof(LogDataSourceOptions.ProcessId)));
@@ -910,6 +919,7 @@ class LogDataSourceOptionsDialog : AppSuite.Controls.InputDialog<IULogViewerAppl
 			this.SetValue(IsFormatXmlDataSupportedProperty, false);
 			this.SetValue(IsIncludeStandardErrorSupportedProperty, false);
 			this.SetValue(IsIPEndPointSupportedProperty, false);
+			this.SetValue(IsLineAcrossDatagramsAllowedSupportedProperty, false);
 			this.SetValue(IsPasswordRequiredProperty, false);
 			this.SetValue(IsPasswordSupportedProperty, false);
 			this.SetValue(IsProcessIdSupportedProperty, false);

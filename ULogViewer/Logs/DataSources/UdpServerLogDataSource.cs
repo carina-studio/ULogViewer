@@ -21,6 +21,7 @@ class UdpServerLogDataSource : BaseLogDataSource
 		readonly Encoding encoding;
 		volatile bool hasNewLine;
 		volatile bool isDisposed;
+		readonly bool isLineAcrossDatagramsAllowed;
 		readonly object readingLock = new();
 		readonly UdpClient udpClient;
 		readonly IPEndPoint serverEndPoint;
@@ -28,9 +29,10 @@ class UdpServerLogDataSource : BaseLogDataSource
 		readonly StringBuilder stringBuffer = new();
 
 		// Constructor.
-		public ReaderImpl(UdpServerLogDataSource source, UdpClient udpClient, IPEndPoint serverEndPoint, Encoding encoding)
+		public ReaderImpl(UdpServerLogDataSource source, UdpClient udpClient, IPEndPoint serverEndPoint, Encoding encoding, bool isLineAcrossDatagramsAllowed)
 		{
 			this.encoding = encoding;
+			this.isLineAcrossDatagramsAllowed = isLineAcrossDatagramsAllowed;
 			this.serverEndPoint = serverEndPoint;
 			this.source = source;
 			this.udpClient = udpClient;
@@ -78,7 +80,16 @@ class UdpServerLogDataSource : BaseLogDataSource
 					{
 						if (!this.isDisposed)
 						{
+							// append data and treat the end of datagram as the end of line if needed
 							this.stringBuffer.Append(s);
+							if (!this.isLineAcrossDatagramsAllowed)
+							{
+								var lastChar = s[^1];
+								if (lastChar != '\n' && lastChar != '\r')
+									this.stringBuffer.Append('\n');
+							}
+
+							// notify reading
 							this.hasNewLine = true;
 							Monitor.PulseAll(this.readingLock);
 						}
@@ -189,7 +200,7 @@ class UdpServerLogDataSource : BaseLogDataSource
 		var udpClient = new UdpClient(endPoint);
 
 		// create reader
-		return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened,new ReaderImpl(this, udpClient, endPoint, encoding)));
+		return Task.FromResult<(LogDataSourceState, TextReader?)>((LogDataSourceState.ReaderOpened,new ReaderImpl(this, udpClient, endPoint, encoding, options.IsLineAcrossDatagramsAllowed)));
 	}
 
 
