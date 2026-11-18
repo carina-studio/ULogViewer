@@ -662,8 +662,10 @@ partial class SessionView
     public ICommand RenamePredefinedLogTextFilterGroupCommand { get; }
 
 
-    // Whether help button on log text filter should be shown or not.
-    bool ShowHelpButtonOnLogTextFilter => this.GetValue(ShowHelpButtonOnLogTextFilterProperty);
+    /// <summary>
+    /// Check whether help button on log text filter should be shown or not.
+    /// </summary>
+    public bool ShowHelpButtonOnLogTextFilter => this.GetValue(ShowHelpButtonOnLogTextFilterProperty);
 
 
     /// <summary>
