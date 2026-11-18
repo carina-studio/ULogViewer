@@ -1,54 +1,94 @@
 {
-  "AllowMultipleFiles": true,
-  "DataSource": {
-    "Name": "File",
-    "Options": {}
-  },
-  "ColorIndicator": "None",
-  "Icon": "Server",
-  "LogLevelMapForReading": {
-    "alert": "Error",
-    "crit": "Fatal",
-    "debug": "Debug",
-    "emerg": "Fatal",
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File",
+		"Options": {}
+	},
+	"ColorIndicator": "None",
+	"Icon": "Server",
+	"LogLevelMapForReading": {
+		"alert": "Error",
+		"crit": "Fatal",
+		"debug": "Debug",
+		"emerg": "Fatal",
 		"error": "Error",
-    "info": "Info",
+		"info": "Info",
 		"notice": "Info",
+		"trace1": "Trace",
+		"trace2": "Trace",
+		"trace3": "Trace",
+		"trace4": "Trace",
+		"trace5": "Trace",
+		"trace6": "Trace",
+		"trace7": "Trace",
+		"trace8": "Trace",
 		"warn": "Warn"
 	},
-  "LogPatterns": [
-    {
-      "Regex": "\\[(?<Timestamp>[^\\]]+)\\]\\s+\\[(?<Extra1>\\w+)\\](\\s+\\[client\\s*(?<SourceName>[a-zA-Z\\d\\.\\:]+)\\])?\\s(?<Message>.*)",
-      "IgnoreCase": true
-    }
-  ],
-  "LogStringEncodingForReading": "Plain",
-  "LogStringEncodingForWriting": "Plain",
-  "LogWritingFormats": [
-		"[{Timestamp}] [{Extra1}] [client {SourceName}] {Message}",
-    "[{Timestamp}] [{Extra1}] {Message}"
+	"LogPatterns": [
+		{
+			"Regex": "^\\[(?<Timestamp>\\w{3}\\s+\\w{3}\\s+\\d{1,2}\\s+\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?\\s+\\d{4})\\]\\s+\\[((?<Extra2>[\\w\\-]+):)?(?<Extra1>\\w+)\\](\\s+\\[pid\\s+(?<ProcessId>\\d+)(:tid\\s+(?<Extra6>\\d+))?\\])?(\\s+\\S+\\(\\d+\\):)?(\\s+\\[client\\s+(?<Extra3>[^\\]]+)\\])?\\s+(?=((?<Extra4>AH\\d{5}):)?)(?=(.*,\\s+referer:\\s+(?<Extra5>\\S+)$)?)(?<Message>.*)$",
+			"IgnoreCase": true
+		},
+		{
+			"Regex": "^(?!\\[\\w{3}\\s+\\w{3}\\s+\\d{1,2}\\s+\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?\\s+\\d{4}\\]\\s+\\[)(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
 	],
-  "RawLogLevelPropertyName": "Extra1",
-  "SortDirection": "Ascending",
-  "SortKey": "Timestamp",
-  "TimeSpanEncodingForReading": "Custom",
-  "TimestampCategoryGranularity": "Day",
-  "TimestampEncodingForReading": "Custom",
-  "TimestampFormatForWriting": "ddd MMM dd HH:mm:ss yyyy",
-  "TimestampFormatsForReading": [
-    "ddd MMM dd HH:mm:ss yyyy"
-  ],
-  "VisibleLogProperties": [
-    {
-      "Name": "Timestamp",
-      "Width": 190
-    },
-    {
-      "Name": "SourceName",
-      "Width": 150
-    },
-    {
-      "Name": "Message"
-    }
-  ]
+	"LogStringEncodingForReading": "Plain",
+	"LogStringEncodingForWriting": "Plain",
+	"LogWritingFormats": [
+		"[{Timestamp}] [{Extra2}:{Extra1}] [pid {ProcessId}:tid {Extra6}] [client {Extra3}] {Message}",
+		"[{Timestamp}] [{Extra2}:{Extra1}] [pid {ProcessId}:tid {Extra6}] {Message}",
+		"[{Timestamp}] [{Extra2}:{Extra1}] [pid {ProcessId}] [client {Extra3}] {Message}",
+		"[{Timestamp}] [{Extra2}:{Extra1}] [pid {ProcessId}] {Message}",
+		"[{Timestamp}] [{Extra1}] [client {Extra3}] {Message}",
+		"[{Timestamp}] [{Extra1}] {Message}"
+	],
+	"RawLogLevelPropertyName": "Extra1",
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimeSpanEncodingForReading": "Custom",
+	"TimestampCategoryGranularity": "Day",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffffff",
+	"TimestampFormatForWriting": "ddd MMM dd HH:mm:ss.ffffff yyyy",
+	"TimestampFormatsForReading": [
+		"ddd MMM dd HH:mm:ss yyyy",
+		"ddd MMM dd HH:mm:ss.ffffff yyyy"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 220
+		},
+		{
+			"DisplayName": "Module",
+			"Name": "Extra2",
+			"Width": 110
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 70
+		},
+		{
+			"DisplayName": "ThreadId",
+			"Name": "Extra6",
+			"Width": 130
+		},
+		{
+			"DisplayName": "Client",
+			"Name": "Extra3",
+			"Width": 150
+		},
+		{
+			"DisplayName": "Code",
+			"Name": "Extra4",
+			"Width": 80
+		},
+		{
+			"Name": "Message"
+		}
+	]
 }

@@ -55,6 +55,95 @@ class LogProfileManagerTests : ApplicationBasedTests
 
 
 	/// <summary>
+	/// Test for reading logs of Apache 2.2 and 2.4 by built-in log profile of Apache error log files.
+	/// </summary>
+	[Test]
+	public void BuiltInApacheErrorLogFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// get log profile and data source provider
+			var profile = LogProfileManager.Default.GetProfileOrDefault("ApacheErrorLogFile");
+			Assert.That(profile, Is.Not.Null);
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+
+			// prepare log file
+			var filePath = Path.GetTempFileName();
+			try
+			{
+				File.WriteAllText(filePath, string.Join('\n', (string[])[
+					"[Fri Dec 16 01:46:23 2005] [error] [client 1.2.3.4] Directory index forbidden by rule: /home/test/",
+					"[Fri Sep 09 10:42:29.902022 2011] [core:error] [pid 35708:tid 4328636416] [client 72.15.99.187:52032] AH00128: File does not exist: /usr/local/apache2/htdocs/favicon.ico",
+					"[Wed Oct 11 14:32:52.123456 2000] [mpm_prefork:notice] [pid 1234] AH00163: Apache/2.4.41 (Ubuntu) configured -- resuming normal operations",
+					"[Sun Nov 17 10:00:00 2024] [php7:error] [pid 123] [client 1.2.3.4:5678] PHP Fatal error: oops, referer: http://example.com/",
+					"Stack trace:",
+					"#0 {main}",
+					"[Mon Nov 18 09:00:00.000001 2024] [ssl:trace3] [pid 1:tid 2] ssl_engine_kernel.c(2283): [client ::1:58619] Handshake done",
+				]));
+
+				// read logs
+				using var source = provider.CreateSource(new LogDataSourceOptions { FileName = filePath });
+				using var logReader = new LogReader(null, source).Setup(it =>
+				{
+					it.LogLevelMap = profile.LogLevelMapForReading;
+					it.LogPatterns = profile.LogPatterns;
+					it.RawLogLevelPropertyName = profile.RawLogLevelPropertyName;
+					it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
+					it.TimestampEncoding = profile.TimestampEncodingForReading;
+					it.TimestampFormats = profile.TimestampFormatsForReading;
+				});
+				logReader.Start();
+				await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(10000).Token);
+
+				// check log of Apache 2.2
+				var logs = logReader.Logs;
+				Assert.That(logs.Count, Is.EqualTo(5));
+				Assert.That(logs[0].Timestamp, Is.EqualTo(new DateTime(2005, 12, 16, 1, 46, 23)));
+				Assert.That(logs[0].Level, Is.EqualTo(LogLevel.Error));
+				Assert.That(logs[0].Extra2, Is.Null);
+				Assert.That(logs[0].Extra3?.ToString(), Is.EqualTo("1.2.3.4"));
+				Assert.That(logs[0].Message?.ToString(), Is.EqualTo("Directory index forbidden by rule: /home/test/"));
+
+				// check log of Apache 2.4 with thread ID
+				Assert.That(logs[1].Timestamp, Is.EqualTo(new DateTime(2011, 9, 9, 10, 42, 29).AddTicks(9020220)));
+				Assert.That(logs[1].Level, Is.EqualTo(LogLevel.Error));
+				Assert.That(logs[1].Extra2?.ToString(), Is.EqualTo("core"));
+				Assert.That(logs[1].ProcessId, Is.EqualTo(35708));
+				Assert.That(logs[1].Extra6?.ToString(), Is.EqualTo("4328636416"));
+				Assert.That(logs[1].Extra3?.ToString(), Is.EqualTo("72.15.99.187:52032"));
+				Assert.That(logs[1].Extra4?.ToString(), Is.EqualTo("AH00128"));
+				Assert.That(logs[1].Message?.ToString(), Is.EqualTo("AH00128: File does not exist: /usr/local/apache2/htdocs/favicon.ico"));
+
+				// check log of Apache 2.4 without thread ID and client
+				Assert.That(logs[2].Level, Is.EqualTo(LogLevel.Info));
+				Assert.That(logs[2].Extra2?.ToString(), Is.EqualTo("mpm_prefork"));
+				Assert.That(logs[2].ProcessId, Is.EqualTo(1234));
+				Assert.That(logs[2].Extra6, Is.Null);
+				Assert.That(logs[2].Extra3, Is.Null);
+				Assert.That(logs[2].Extra4?.ToString(), Is.EqualTo("AH00163"));
+
+				// check log with referer and multiple lines
+				Assert.That(logs[3].Timestamp, Is.EqualTo(new DateTime(2024, 11, 17, 10, 0, 0)));
+				Assert.That(logs[3].Extra4, Is.Null);
+				Assert.That(logs[3].Extra5?.ToString(), Is.EqualTo("http://example.com/"));
+				Assert.That(logs[3].Message?.ToString(), Does.StartWith("PHP Fatal error: oops, referer: http://example.com/"));
+				Assert.That(logs[3].Message?.ToString(), Does.EndWith("#0 {main}"));
+
+				// check log of trace level with source file
+				Assert.That(logs[4].Level, Is.EqualTo(LogLevel.Trace));
+				Assert.That(logs[4].Extra3?.ToString(), Is.EqualTo("::1:58619"));
+				Assert.That(logs[4].Message?.ToString(), Is.EqualTo("Handshake done"));
+			}
+			finally
+			{
+				File.Delete(filePath);
+			}
+		});
+	}
+
+
+	/// <summary>
 	/// Test for parsing timestamps of logs read by built-in log profile of Apple devices.
 	/// </summary>
 	[Test]

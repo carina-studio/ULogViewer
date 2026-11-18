@@ -14,5 +14,6 @@
 + 
 
 ## Bug Fixing
-+ Fixed an issue that timestamps of logs read by the 'Apple Devices Log' log profile cannot be parsed.
++ Fixed an issue that timestamps of logs read by the `Apple Devices Log` log profile cannot be parsed.
++ Fixed an issue that logs in the format of Apache 2.4 cannot be read by the `Apache Error Log Files` log profile.
 + Minor bug fixing.
