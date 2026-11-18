@@ -89,8 +89,8 @@
     <sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android システムのリアルタイムシステムメモリ情報。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android システムトレースファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">システムトレースファイル (*.html)を解析して、Android デバイス上のシステムおよびアプリケーションのパフォーマンスを分析します。</sys:String>
-    <sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache アクセスログファイル</sys:String>
-    <sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">Apache によって生成された、Web サーバーが受信したリクエストに関する情報を含むファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache/Nginx アクセスログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">Apache または Nginx によって生成された、Web サーバーが受信したリクエストに関する情報を含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache エラーログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">Apache によって生成された、Web サーバーが遭遇したエラーに関する情報を含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.AppleDevicesLog">Apple デバイスログ</sys:String>
@@ -126,6 +126,8 @@
     <sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">macOS からのリアルタイムシステム全体のログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS システムログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">macOS からのシステムログを含むファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.NginxErrorLogFile">Nginx エラーログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.NginxErrorLogFile.Description">Nginx によって生成された、Web サーバーが遭遇したエラーに関する情報を含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.OllamaServerLog">Ollama サーバーログ</sys:String>
     <sys:String x:Key="String/BuiltInProfile.OllamaServerLog.Description">Ollama アプリのサーバーからのリアルタイムログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile">Ollama サーバーログファイル</sys:String>
@@ -822,6 +824,7 @@
     <sys:String x:Key="String/LogProperty.Client">クライアント</sys:String>
     <sys:String x:Key="String/LogProperty.Code">コード</sys:String>
     <sys:String x:Key="String/LogProperty.Commit">コミット</sys:String>
+    <sys:String x:Key="String/LogProperty.Connection">接続</sys:String>
     <sys:String x:Key="String/LogProperty.Consumer">コンシューマー</sys:String>
     <sys:String x:Key="String/LogProperty.Content">内容</sys:String>
     <sys:String x:Key="String/LogProperty.Count">カウント</sys:String>

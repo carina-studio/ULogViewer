@@ -192,6 +192,107 @@ class LogProfileManagerTests : ApplicationBasedTests
 
 
 	/// <summary>
+	/// Test for reading logs by built-in log profile of Nginx error log files.
+	/// </summary>
+	[Test]
+	public void BuiltInNginxErrorLogFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// get log profile and data source provider
+			var profile = LogProfileManager.Default.GetProfileOrDefault("NginxErrorLogFile");
+			Assert.That(profile, Is.Not.Null);
+			Assert.That(profile!.Icon, Is.EqualTo(LogProfileIcon.Server));
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+
+			// prepare log file
+			var filePath = Path.GetTempFileName();
+			try
+			{
+				File.WriteAllText(filePath, string.Join('\n', (string[])[
+					"2016/10/25 14:49:34 [error] 54053#0: *1 open() \"/usr/local/Cellar/nginx/1.10.2_1/html/favicon.ico\" failed (2: No such file or directory), client: 127.0.0.1, server: localhost, request: \"GET /favicon.ico HTTP/1.1\", host: \"localhost:8080\", referrer: \"http://localhost:8080/\"",
+					"2026/11/18 10:00:00 [notice] 1234#1234: signal process started",
+					"2026/11/18 10:01:02 [error] 1234#0: *5 connect() failed (111: Connection refused) while connecting to upstream, client: 192.168.0.10, server: example.com, request: \"POST /api/login HTTP/1.1\", upstream: \"http://127.0.0.1:8080/api/login\", host: \"example.com\"",
+					"2019/10/30 23:26:34 [error] 205860#205860: *180289 FastCGI sent in stderr: \"PHP message: PHP Warning:  Declaration of A::wrap() should be compatible",
+					"PHP message: PHP Warning:  Declaration of B::wrap() should be compatible",
+					"",
+					"2026/11/18 10:02:00 [warn] 1234#0: *7 a client request body is buffered to a temporary file /var/cache/nginx/client_temp/0000000001, client: 10.0.0.1, server: example.com, request: \"hello\"",
+					"2026/11/18 10:03:00 [emerg] 1234#0: unknown directive \"foo\" in /etc/nginx/nginx.conf:12",
+					"2026/11/18 10:04:00 [crit] 1234#0: *9 SSL_do_handshake() failed (SSL: error:0A00006C:SSL routines::bad key share) while SSL handshaking, client: 10.0.0.2, server: 0.0.0.0:443",
+				]));
+
+				// read logs
+				using var source = provider.CreateSource(new LogDataSourceOptions { FileName = filePath });
+				using var logReader = new LogReader(null, source).Setup(it =>
+				{
+					it.LogLevelMap = profile.LogLevelMapForReading;
+					it.LogPatterns = profile.LogPatterns;
+					it.RawLogLevelPropertyName = profile.RawLogLevelPropertyName;
+					it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
+					it.TimestampEncoding = profile.TimestampEncodingForReading;
+					it.TimestampFormats = profile.TimestampFormatsForReading;
+				});
+				logReader.Start();
+				await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(10000).Token);
+
+				// check log with request context
+				var logs = logReader.Logs;
+				Assert.That(logs.Count, Is.EqualTo(7));
+				Assert.That(logs[0].Timestamp, Is.EqualTo(new DateTime(2016, 10, 25, 14, 49, 34)));
+				Assert.That(logs[0].Level, Is.EqualTo(LogLevel.Error));
+				Assert.That(logs[0].ProcessId, Is.EqualTo(54053));
+				Assert.That(logs[0].ThreadId, Is.EqualTo(0));
+				Assert.That(logs[0].Extra2?.ToString(), Is.EqualTo("1"));
+				Assert.That(logs[0].Extra1?.ToString(), Is.EqualTo("127.0.0.1"));
+				Assert.That(logs[0].Extra6?.ToString(), Is.EqualTo("localhost"));
+				Assert.That(logs[0].Extra3?.ToString(), Is.EqualTo("GET"));
+				Assert.That(logs[0].Extra4?.ToString(), Is.EqualTo("/favicon.ico"));
+				Assert.That(logs[0].Message?.ToString(), Does.StartWith("open() \"/usr/local/Cellar/nginx/1.10.2_1/html/favicon.ico\" failed (2: No such file or directory)"));
+				Assert.That(logs[0].Message?.ToString(), Does.Contain("client: 127.0.0.1, server: localhost"));
+				Assert.That(logs[0].Message?.ToString(), Does.EndWith("referrer: \"http://localhost:8080/\""));
+
+				// check log without connection and context
+				Assert.That(logs[1].Level, Is.EqualTo(LogLevel.Info));
+				Assert.That(logs[1].ThreadId, Is.EqualTo(1234));
+				Assert.That(logs[1].Extra1, Is.Null);
+				Assert.That(logs[1].Extra2, Is.Null);
+				Assert.That(logs[1].Message?.ToString(), Is.EqualTo("signal process started"));
+
+				// check log of upstream error
+				Assert.That(logs[2].Extra2?.ToString(), Is.EqualTo("5"));
+				Assert.That(logs[2].Extra3?.ToString(), Is.EqualTo("POST"));
+				Assert.That(logs[2].Extra4?.ToString(), Is.EqualTo("/api/login"));
+				Assert.That(logs[2].Message?.ToString(), Does.StartWith("connect() failed (111: Connection refused) while connecting to upstream"));
+				Assert.That(logs[2].Message?.ToString(), Does.Contain("upstream: \"http://127.0.0.1:8080/api/login\""));
+
+				// check log with multiple lines
+				Assert.That(logs[3].Extra2?.ToString(), Is.EqualTo("180289"));
+				Assert.That(logs[3].Message?.ToString(), Does.StartWith("FastCGI sent in stderr:"));
+				Assert.That(logs[3].Message?.ToString(), Does.EndWith("Declaration of B::wrap() should be compatible"));
+
+				// check log of malformed request
+				Assert.That(logs[4].Level, Is.EqualTo(LogLevel.Warn));
+				Assert.That(logs[4].Extra1?.ToString(), Is.EqualTo("10.0.0.1"));
+				Assert.That(logs[4].Extra3, Is.Null);
+				Assert.That(logs[4].Extra4, Is.Null);
+
+				// check logs of fatal levels
+				Assert.That(logs[5].Level, Is.EqualTo(LogLevel.Fatal));
+				Assert.That(logs[5].Message?.ToString(), Is.EqualTo("unknown directive \"foo\" in /etc/nginx/nginx.conf:12"));
+				Assert.That(logs[6].Level, Is.EqualTo(LogLevel.Fatal));
+				Assert.That(logs[6].Extra6?.ToString(), Is.EqualTo("0.0.0.0:443"));
+				Assert.That(logs[6].Extra3, Is.Null);
+			}
+			finally
+			{
+				File.Delete(filePath);
+			}
+		});
+	}
+
+
+	/// <summary>
 	/// Test for reading logs by built-in log profile of Ollama server log files.
 	/// </summary>
 	[Test]

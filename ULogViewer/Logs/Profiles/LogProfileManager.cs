@@ -80,6 +80,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "LMStudioServerLog",
         "LMStudioServerLogFile",
         "MacOSSystemLogFile",
+        "NginxErrorLogFile",
         "OllamaServerLogFile",
         "RawFile",
         "RawHttp",

@@ -89,8 +89,8 @@
 	<sys:String x:Key="String/BuiltInProfile.AndroidSystemMemoryInfo.Description">Android 系统的实时内存信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile">Android 系统追踪文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AndroidTraceFile.Description">用于追踪及分析 Android 系统及应用程序性能的文件。</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache 服务器存取日志文件</sys:String>
-	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">由 Apache 产生之文件，其中包括传送至服务器之请求信息。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile">Apache/Nginx 服务器存取日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.ApacheAccessLogFile.Description">由 Apache 或 Nginx 产生之文件，其中包括传送至服务器之请求信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile">Apache 服务器错误日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ApacheErrorLogFile.Description">由 Apache 产生之文件，其中包括服务器所发生之错误信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.AppleDevicesLog">Apple 设备日志</sys:String>
@@ -126,6 +126,8 @@
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">在 macOS 上产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS 系统日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">在 macOS 上产生的系统日志文件。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.NginxErrorLogFile">Nginx 服务器错误日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.NginxErrorLogFile.Description">由 Nginx 产生之文件，其中包括服务器所发生之错误信息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLog">Ollama 服务器日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLog.Description">由 Ollama 应用程序服务器产生的实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile">Ollama 服务器日志文件</sys:String>
@@ -764,6 +766,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Client">客户端</sys:String>
 	<sys:String x:Key="String/LogProperty.Code">编码</sys:String>
 	<sys:String x:Key="String/LogProperty.Commit">提交</sys:String>
+	<sys:String x:Key="String/LogProperty.Connection">连接</sys:String>
 	<sys:String x:Key="String/LogProperty.Consumer">消费端</sys:String>
 	<sys:String x:Key="String/LogProperty.Content">内容</sys:String>
 	<sys:String x:Key="String/LogProperty.Count">个数</sys:String>

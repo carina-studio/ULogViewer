@@ -222,6 +222,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/NginxErrorLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServerLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServiceLog.json" />

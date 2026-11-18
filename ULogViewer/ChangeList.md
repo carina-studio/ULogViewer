@@ -2,12 +2,13 @@
  ---
 
 ## New Features
-+ Added `LM Studio Server Log`, `LM Studio Server Log Files`, `Ollama Server Log`, `Ollama Server Log Files` and `Ollama Service Log` built-in log profiles.
++ Added `LM Studio Server Log`, `LM Studio Server Log Files`, `Nginx Error Log Files`, `Ollama Server Log`, `Ollama Server Log Files` and `Ollama Service Log` built-in log profiles.
 + Added more log profile icons.
 + Added more log property names.
 
 ## Improvement
 + Added suggested log profiles to empty tabs for quick selection.
++ Renamed `Apache Access Log Files` built-in log profile to `Apache/Nginx Access Log Files`.
 
 ## Behavior Changes
 + 

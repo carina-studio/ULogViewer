@@ -108,6 +108,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Client");
 					it.Add("Code");
 					it.Add("Commit");
+					it.Add("Connection");
 					it.Add("Consumer");
 					it.Add("Content");
 					it.Add("Count");
