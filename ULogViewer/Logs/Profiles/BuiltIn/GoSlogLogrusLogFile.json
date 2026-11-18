@@ -1,0 +1,56 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Code",
+	"LogLevelMapForReading": {
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"FATAL": "Fatal",
+		"INFO": "Info",
+		"PANIC": "Fatal",
+		"TRACE": "Trace",
+		"WARN": "Warn",
+		"WARNING": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^time=\"?(?<Timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[\\+\\-]\\d{2}:\\d{2}))\"?\\s+level=(?<Extra3>(?<Level>[A-Za-z]+)[\\+\\-]?\\d*)(\\s+source=(?<SourceName>\\S+))?\\s+msg=(\"(?<Message>(\\\\.|[^\"\\\\])*)\"|(?<Message>\\S*))(\\s+(?<Message>\\S.*))?$"
+		},
+		{
+			"Regex": "^(?!time=\"?\\d{4}-\\d{2}-\\d{2}T)(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"{Timestamp} [{Extra3}] {SourceName}: {Message}",
+		"{Timestamp} [{Extra3}] {Message}"
+	],
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"TimestampFormatForWriting": "yyyy-MM-dd'T'HH:mm:ss.fffzzz",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd'T'HH:mm:ss.fffK",
+		"yyyy-MM-dd'T'HH:mm:ssK"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"Name": "SourceName",
+			"Width": 200
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

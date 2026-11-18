@@ -212,6 +212,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GoSlogLogrusLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxRealtimeLog.json" />
@@ -222,7 +223,9 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MonologLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/NginxErrorLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/NLogLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServerLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServiceLog.json" />
@@ -230,6 +233,8 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawStandardOutput.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RubyLoggerLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SerilogLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceEventLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceTrace.json" />

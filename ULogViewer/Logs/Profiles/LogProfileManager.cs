@@ -70,6 +70,11 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "ApacheErrorLogFile",
         "AppleDevicesLog",
         "AzureWebappLogFile",
+        "GoSlogLogrusLogFile",
+        "MonologLogFile",
+        "NLogLogFile",
+        "RubyLoggerLogFile",
+        "SerilogLogFile",
 #if DEBUG
         "DummyLog",
 #endif

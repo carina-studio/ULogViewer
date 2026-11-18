@@ -1,0 +1,54 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Code",
+	"LogLevelMapForReading": {
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"FATAL": "Fatal",
+		"INFO": "Info",
+		"TRACE": "Trace",
+		"WARN": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{4})\\|(?<Extra2>[A-Za-z]+)\\|(?<Extra1>[^|]*)\\|(?<Message>.*)$"
+		},
+		{
+			"Regex": "^(?!\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{4}\\|)(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"{Timestamp}|{Extra2}|{Extra1}|{Message}"
+	],
+	"RawLogLevelPropertyName": "Extra2",
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffff",
+	"TimestampFormatForWriting": "yyyy-MM-dd HH:mm:ss.ffff",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd HH:mm:ss.ffff"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"DisplayName": "Logger",
+			"Name": "Extra1",
+			"Width": 250
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

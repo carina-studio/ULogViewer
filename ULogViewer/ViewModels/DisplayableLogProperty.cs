@@ -122,6 +122,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("ID");
 					it.Add("Invalid");
 					it.Add("Key");
+					it.Add("Logger");
 					it.Add("Maximum");
 					it.Add("Method");
 					it.Add("Minimum");

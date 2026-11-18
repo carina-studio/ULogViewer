@@ -1,0 +1,59 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Code",
+	"LogLevelMapForReading": {
+		"ANY": "Undefined",
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"FATAL": "Fatal",
+		"INFO": "Info",
+		"WARN": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Extra3>[DIWEFA]),\\s+\\[(?<Timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6})\\s+#(?<ProcessId>\\d+)\\]\\s+(?<Extra2>[A-Z]+)\\s+--\\s+(?<Extra1>.*?):\\s(?<Message>.*)$"
+		},
+		{
+			"Regex": "^(?![DIWEFA], \\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6} #\\d+\\])(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"{Extra3}, [{Timestamp} #{ProcessId}] {Extra2} -- {Extra1}: {Message}",
+		"{Extra3}, [{Timestamp} #{ProcessId}] {Extra2} -- : {Message}"
+	],
+	"RawLogLevelPropertyName": "Extra2",
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffffff",
+	"TimestampFormatForWriting": "yyyy-MM-dd'T'HH:mm:ss.ffffff",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd'T'HH:mm:ss.ffffff"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 220
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 70
+		},
+		{
+			"DisplayName": "Logger",
+			"Name": "Extra1",
+			"Width": 200
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

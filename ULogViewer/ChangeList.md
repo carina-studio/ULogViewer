@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+ Added `LM Studio Server Log`, `LM Studio Server Log Files`, `Nginx Error Log Files`, `Ollama Server Log`, `Ollama Server Log Files` and `Ollama Service Log` built-in log profiles.
++ Added `Go slog/logrus Log Files`, `LM Studio Server Log`, `LM Studio Server Log Files`, `Monolog Log Files`, `Nginx Error Log Files`, `NLog Log Files`, `Ollama Server Log`, `Ollama Server Log Files`, `Ollama Service Log`, `Ruby Logger Log Files` and `Serilog Log Files` built-in log profiles.
 + Added more log profile icons.
 + Added more log property names.
 

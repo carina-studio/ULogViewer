@@ -106,6 +106,8 @@
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">显示指定仓库中的 Git 提交列表。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git 提交记录 (精简)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">以较少内容显示指定仓库中的 Git 提交列表。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile">Go slog/logrus 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile.Description">由 Go 的 slog 包或 logrus 库以文本格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux 核心日志 (Debian/Ubuntu)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">带有 syslog 守护进程的 Linux 产生之核心日志的最新部分。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux 核心日志文件</sys:String>
@@ -126,8 +128,12 @@
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">在 macOS 上产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS 系统日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">在 macOS 上产生的系统日志文件。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MonologLogFile">Monolog 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.MonologLogFile.Description">由 PHP 的 Monolog 产生之日志文件，包括 Laravel 的日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.NginxErrorLogFile">Nginx 服务器错误日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.NginxErrorLogFile.Description">由 Nginx 产生之文件，其中包括服务器所发生之错误信息。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.NLogLogFile">NLog 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.NLogLogFile.Description">由 .NET 的 NLog 以默认布局产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLog">Ollama 服务器日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLog.Description">由 Ollama 应用程序服务器产生的实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile">Ollama 服务器日志文件</sys:String>
@@ -142,6 +148,10 @@
 	<sys:String x:Key="String/BuiltInProfile.RawStandardOutput.Description">执行指令并读取来自其标准输出 (stdout) 及标准错误 (stderr) 的原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer">TCP 客户端原始内容</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RubyLoggerLogFile">Ruby Logger 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RubyLoggerLogFile.Description">由 Ruby 的 Logger 产生之日志文件，包括 Rails 的日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SerilogLogFile">Serilog 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SerilogLogFile.Description">由 .NET 的 Serilog 文件接收器以默认格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">特定 Android 设备事件日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">通过 ADB 获取特定 Android 设备实时事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog">特定 Android 设备日志</sys:String>
@@ -811,6 +821,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Level">等级</sys:String>
 	<sys:String x:Key="String/LogProperty.LevelString">等级</sys:String>
 	<sys:String x:Key="String/LogProperty.LineNumber">行号</sys:String>
+	<sys:String x:Key="String/LogProperty.Logger">记录器</sys:String>
 	<sys:String x:Key="String/LogProperty.Maximum">最大值</sys:String>
 	<sys:String x:Key="String/LogProperty.Message">消息</sys:String>
 	<sys:String x:Key="String/LogProperty.Method">方法</sys:String>

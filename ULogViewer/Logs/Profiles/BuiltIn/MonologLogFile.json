@@ -1,0 +1,58 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Code",
+	"LogLevelMapForReading": {
+		"ALERT": "Error",
+		"CRITICAL": "Fatal",
+		"DEBUG": "Debug",
+		"EMERGENCY": "Fatal",
+		"ERROR": "Error",
+		"INFO": "Info",
+		"NOTICE": "Info",
+		"WARNING": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^\\[(?<Timestamp>\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[\\+\\-]\\d{2}:\\d{2})?)\\]\\s+(?<Extra1>\\S+?)\\.(?<Extra2>[A-Z]+):\\s(?<Message>.*)$"
+		},
+		{
+			"Regex": "^(?!\\[\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[\\+\\-]\\d{2}:\\d{2})?\\]\\s+\\S+?\\.[A-Z]+:\\s)(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"[{Timestamp}] {Extra1}.{Extra2}: {Message}"
+	],
+	"RawLogLevelPropertyName": "Extra2",
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.ffffff",
+	"TimestampFormatForWriting": "yyyy-MM-dd'T'HH:mm:ss.ffffffzzz",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd'T'HH:mm:ss.ffffffK",
+		"yyyy-MM-dd'T'HH:mm:ssK",
+		"yyyy-MM-dd HH:mm:ss"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 220
+		},
+		{
+			"DisplayName": "Logger",
+			"Name": "Extra1",
+			"Width": 120
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}
