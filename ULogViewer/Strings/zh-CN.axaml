@@ -106,6 +106,8 @@
 	<sys:String x:Key="String/BuiltInProfile.GitLog.Description">显示指定仓库中的 Git 提交列表。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git 提交记录 (精简)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">以较少内容显示指定仓库中的 Git 提交列表。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile">glog/klog 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile.Description">由 C++ 的 glog、Kubernetes 的 klog 或 Abseil 的日志库以默认格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile">Go slog/logrus 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile.Description">由 Go 的 slog 包或 logrus 库以文本格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux 核心日志 (Debian/Ubuntu)</sys:String>
@@ -122,6 +124,10 @@
 	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLog.Description">由 LM Studio 本地服务器产生的实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile">LM Studio 服务器日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile.Description">由 LM Studio 本地服务器产生之文件，其中包括服务器状态、模型加载及插件消息。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.Log4jLogbackLogFile">Log4j/Logback 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.Log4jLogbackLogFile.Description">由 Java 的 Log4j 或 Logback 以默认格式产生之日志文件，包括以类似格式产生之 log4net 日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LoguruLogFile">Loguru 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.LoguruLogFile.Description">由 Python 的 Loguru 以默认格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS 安装日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">由 macOS 产生的安装日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS 实时全局系统日志</sys:String>
@@ -150,8 +156,12 @@
 	<sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">建立 TCP 服务器并读取来自 TCP 客户端传输的内原始文字内容。通常用于测试及调试时使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RubyLoggerLogFile">Ruby Logger 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RubyLoggerLogFile.Description">由 Ruby 的 Logger 产生之日志文件，包括 Rails 的日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RustEnvLoggerTracingLogFile">Rust env_logger/tracing 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.RustEnvLoggerTracingLogFile.Description">由 Rust 的 env_logger 或 tracing 包以默认格式产生且不包含 ANSI 转义序列之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SerilogLogFile">Serilog 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SerilogLogFile.Description">由 .NET 的 Serilog 文件接收器以默认格式产生之日志文件。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpdlogLogFile">spdlog 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpdlogLogFile.Description">由 C++ 的 spdlog 以默认格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">特定 Android 设备事件日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">通过 ADB 获取特定 Android 设备实时事件日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog">特定 Android 设备日志</sys:String>
@@ -162,6 +172,8 @@
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">由特定之 Apple 设备产生的实时全局系统日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog">特定 Apple 设备模拟器日志</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog.Description">由特定 Apple 设备模拟器产生的实时全局系统日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpringBootLogFile">Spring Boot 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.SpringBootLogFile.Description">由 Java 的 Spring Boot 以默认格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">使用 NLog 以 'NLogViewer' 格式输出，并通过 TCP 传输实时日志。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 应用程序输出的日志文件。</sys:String>
@@ -765,6 +777,7 @@ return False</sys:String>
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String/LogProperty.Action">动作</sys:String>
+	<sys:String x:Key="String/LogProperty.Application">应用程序</sys:String>
 	<sys:String x:Key="String/LogProperty.Author">作者</sys:String>
 	<sys:String x:Key="String/LogProperty.Available">可使用</sys:String>
 	<sys:String x:Key="String/LogProperty.Average">平均</sys:String>
@@ -861,6 +874,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">简短名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Size">大小</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">来源</sys:String>
+	<sys:String x:Key="String/LogProperty.Span">跨度</sys:String>
 	<sys:String x:Key="String/LogProperty.Speed">速度</sys:String>
 	<sys:String x:Key="String/LogProperty.Start">开始</sys:String>
 	<sys:String x:Key="String/LogProperty.Status">状态</sys:String>

@@ -1,0 +1,69 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Code",
+	"LogLevelMapForReading": {
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"FATAL": "Fatal",
+		"INFO": "Info",
+		"TRACE": "Trace",
+		"WARN": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(Z|[\\+\\-]\\d{2}:\\d{2})?)\\s+(?<Extra4>[A-Z]+)\\s+(?<ProcessId>\\d+)\\s+---\\s+(\\[(?<Extra2>[^\\]]*)\\]\\s+(?=\\[(?!(\\s*|[0-9a-f]{32}-[0-9a-f]{16})\\])))?\\[\\s*(?<ThreadName>[^\\]]*?)\\s*\\]\\s+(\\[(\\s*|(?<Extra3>[0-9a-f]{32}-[0-9a-f]{16}))\\]\\s+)?(?<Extra1>\\S+)\\s*:\\s(?<Message>.*)$"
+		},
+		{
+			"Regex": "^(?!\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}\\.\\d{3})(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"{Timestamp} {Extra4} {ProcessId} --- [{Extra2}] [{ThreadName}] {Extra1} : {Message}",
+		"{Timestamp} {Extra4} {ProcessId} --- [{ThreadName}] {Extra1} : {Message}"
+	],
+	"RawLogLevelPropertyName": "Extra4",
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"TimestampFormatForWriting": "yyyy-MM-dd'T'HH:mm:ss.fffzzz",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd'T'HH:mm:ss.fffK",
+		"yyyy-MM-dd HH:mm:ss.fff"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 80
+		},
+		{
+			"DisplayName": "Application",
+			"Name": "Extra2",
+			"Width": 120
+		},
+		{
+			"Name": "ThreadName",
+			"Width": 150
+		},
+		{
+			"DisplayName": "Logger",
+			"Name": "Extra1",
+			"Width": 300
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

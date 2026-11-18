@@ -106,6 +106,8 @@
     <sys:String x:Key="String/BuiltInProfile.GitLog.Description">指定されたリポジトリからの Git コミットの一覧。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.GitLogSimple">Git ログ (簡易)</sys:String>
     <sys:String x:Key="String/BuiltInProfile.GitLogSimple.Description">指定されたリポジトリからの、より少ない情報を含む Git コミットの一覧。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile">glog/klog ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile.Description">C++ の glog、Kubernetes の klog、または Abseil のロギングライブラリによって既定の形式で生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile">Go slog/logrus ログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile.Description">Go の slog パッケージまたは logrus ライブラリによってテキスト形式で生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux カーネルログ (Debian/Ubuntu)</sys:String>
@@ -122,6 +124,10 @@
     <sys:String x:Key="String/BuiltInProfile.LMStudioServerLog.Description">LM Studio のローカルサーバーからのリアルタイムログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile">LM Studio サーバーログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LMStudioServerLogFile.Description">LM Studio のローカルサーバーによって生成された、サーバーの状態、モデルの読み込み、プラグインのメッセージを含むファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.Log4jLogbackLogFile">Log4j/Logback ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.Log4jLogbackLogFile.Description">Java の Log4j または Logback によって既定のパターンで生成されたファイル（同様のパターンの log4net のログを含む）。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.LoguruLogFile">Loguru ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.LoguruLogFile.Description">Python の Loguru によって既定の形式で生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog">macOS インストールログ</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSInstallationLog.Description">macOS からのインストールログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog">macOS リアルタイムシステム全体ログ</sys:String>
@@ -150,8 +156,12 @@
     <sys:String x:Key="String/BuiltInProfile.RawTcpServer.Description">TCP サーバーを起動し、クライアントから Raw テキストを解析せずに読み取ります。通常はテストおよびデバッグ用に使用されます。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RubyLoggerLogFile">Ruby Logger ログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RubyLoggerLogFile.Description">Ruby の Logger によって生成されたファイル（Rails のログを含む）。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.RustEnvLoggerTracingLogFile">Rust env_logger/tracing ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.RustEnvLoggerTracingLogFile.Description">Rust の env_logger または tracing クレートによって既定の形式で生成された、ANSI エスケープコードを含まないファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SerilogLogFile">Serilog ログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SerilogLogFile.Description">.NET の Serilog のファイルシンクによって既定の形式で生成されたファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.SpdlogLogFile">spdlog ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.SpdlogLogFile.Description">C++ の spdlog によって既定のパターンで生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog">特定 Android デバイスイベントログ</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceEventLog.Description">ADB 経由の特定 Android デバイスからのリアルタイムイベントログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SpecificAndroidDeviceLog">特定 Android デバイスログ</sys:String>
@@ -162,6 +172,8 @@
     <sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceLog.Description">特定の Apple デバイスからのリアルタイムシステム全体のログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog">特定 Apple デバイスシミュレータログ</sys:String>
     <sys:String x:Key="String/BuiltInProfile.SpecificAppleDeviceSimulatorLog.Description">特定の Apple デバイスシミュレータからのリアルタイムシステム全体のログ。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.SpringBootLogFile">Spring Boot ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.SpringBootLogFile.Description">Java の Spring Boot によって既定の形式で生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.TcpNLog">NLog (TCP)</sys:String>
     <sys:String x:Key="String/BuiltInProfile.TcpNLog.Description">NLog が TCP 経由で「NLogViewer」形式で出力するリアルタイムログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.ULogViewerLog">ULogViewer ログファイル</sys:String>
@@ -823,6 +835,7 @@
 
     <!-- LogProperty -->
     <sys:String x:Key="String/LogProperty.Action">アクション</sys:String>
+    <sys:String x:Key="String/LogProperty.Application">アプリケーション</sys:String>
     <sys:String x:Key="String/LogProperty.Author">作成者</sys:String>
     <sys:String x:Key="String/LogProperty.Available">利用可能</sys:String>
     <sys:String x:Key="String/LogProperty.Average">平均</sys:String>
@@ -921,6 +934,7 @@
     <sys:String x:Key="String/LogProperty.ShortName">短縮名</sys:String>
     <sys:String x:Key="String/LogProperty.Size">サイズ</sys:String>
     <sys:String x:Key="String/LogProperty.SourceName">ソース</sys:String>
+    <sys:String x:Key="String/LogProperty.Span">スパン</sys:String>
     <sys:String x:Key="String/LogProperty.Speed">速度</sys:String>
     <sys:String x:Key="String/LogProperty.Start">開始</sys:String>
     <sys:String x:Key="String/LogProperty.Status">ステータス</sys:String>

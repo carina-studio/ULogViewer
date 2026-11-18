@@ -2,7 +2,7 @@
  ---
 
 ## 新功能
-+ 新增 `Go slog/logrus 日誌檔案`、`LM Studio 伺服器日誌`、`LM Studio 伺服器日誌檔案`、`Monolog 日誌檔案`、`Nginx 伺服器錯誤日誌檔案`、`NLog 日誌檔案`、`Ollama 伺服器日誌`、`Ollama 伺服器日誌檔案`、`Ollama 服務日誌`、`Ruby Logger 日誌檔案` 及 `Serilog 日誌檔案` 內建日誌類型。
++ 新增 `glog/klog 日誌檔案`、`Go slog/logrus 日誌檔案`、`LM Studio 伺服器日誌`、`LM Studio 伺服器日誌檔案`、`Log4j/Logback 日誌檔案`、`Loguru 日誌檔案`、`Monolog 日誌檔案`、`Nginx 伺服器錯誤日誌檔案`、`NLog 日誌檔案`、`Ollama 伺服器日誌`、`Ollama 伺服器日誌檔案`、`Ollama 服務日誌`、`Ruby Logger 日誌檔案`、`Rust env_logger/tracing 日誌檔案`、`Serilog 日誌檔案`、`spdlog 日誌檔案` 及 `Spring Boot 日誌檔案` 內建日誌類型。
 + 新增更多日誌類型圖示。
 + 新增更多日誌屬性名稱。
 

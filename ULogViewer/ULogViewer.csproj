@@ -212,6 +212,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/DummyLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GlogKlogLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GoSlogLogrusLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
@@ -220,6 +221,8 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxSystemLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LMStudioServerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LMStudioServerLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/Log4jLogbackLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LoguruLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSInstallationLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSRealtimeLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/MacOSSystemLogFile.json" />
@@ -234,12 +237,15 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawStandardOutput.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawTcpServer.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RubyLoggerLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RustEnvLoggerTracingLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SerilogLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpdlogLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceEventLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAndroidDeviceTrace.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpecificAppleDeviceSimulatorLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/SpringBootLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/TcpNLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />

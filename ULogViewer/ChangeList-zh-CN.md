@@ -2,7 +2,7 @@
  ---
 
 ## 新功能
-+ 新增 `Go slog/logrus 日志文件`、`LM Studio 服务器日志`、`LM Studio 服务器日志文件`、`Monolog 日志文件`、`Nginx 服务器错误日志文件`、`NLog 日志文件`、`Ollama 服务器日志`、`Ollama 服务器日志文件`、`Ollama 服务日志`、`Ruby Logger 日志文件` 及 `Serilog 日志文件` 内建日志类型。
++ 新增 `glog/klog 日志文件`、`Go slog/logrus 日志文件`、`LM Studio 服务器日志`、`LM Studio 服务器日志文件`、`Log4j/Logback 日志文件`、`Loguru 日志文件`、`Monolog 日志文件`、`Nginx 服务器错误日志文件`、`NLog 日志文件`、`Ollama 服务器日志`、`Ollama 服务器日志文件`、`Ollama 服务日志`、`Ruby Logger 日志文件`、`Rust env_logger/tracing 日志文件`、`Serilog 日志文件`、`spdlog 日志文件` 及 `Spring Boot 日志文件` 内建日志类型。
 + 新增更多日志类型图标。
 + 新增更多日志属性名称。
 

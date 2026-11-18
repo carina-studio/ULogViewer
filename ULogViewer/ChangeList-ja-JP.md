@@ -2,7 +2,7 @@
  ---
 
 ## 新機能
-+ `Go slog/logrus ログファイル`、`LM Studio サーバーログ`、`LM Studio サーバーログファイル`、`Monolog ログファイル`、`Nginx エラーログファイル`、`NLog ログファイル`、`Ollama サーバーログ`、`Ollama サーバーログファイル`、`Ollama サービスログ`、`Ruby Logger ログファイル` および `Serilog ログファイル` 組み込みログプロファイルを追加しました。
++ `glog/klog ログファイル`、`Go slog/logrus ログファイル`、`LM Studio サーバーログ`、`LM Studio サーバーログファイル`、`Log4j/Logback ログファイル`、`Loguru ログファイル`、`Monolog ログファイル`、`Nginx エラーログファイル`、`NLog ログファイル`、`Ollama サーバーログ`、`Ollama サーバーログファイル`、`Ollama サービスログ`、`Ruby Logger ログファイル`、`Rust env_logger/tracing ログファイル`、`Serilog ログファイル`、`spdlog ログファイル` および `Spring Boot ログファイル` 組み込みログプロファイルを追加しました。
 + ログプロファイルのアイコンを追加しました。
 + ログプロパティ名を追加しました。
 
