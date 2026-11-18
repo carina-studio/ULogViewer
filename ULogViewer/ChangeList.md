@@ -2,7 +2,7 @@
  ---
 
 ## New Features
-+ Added `LM Studio Server Log` and `LM Studio Server Log Files` built-in log profiles.
++ Added `LM Studio Server Log`, `LM Studio Server Log Files`, `Ollama Server Log`, `Ollama Server Log Files` and `Ollama Service Log` built-in log profiles.
 + Added more log profile icons.
 + Added more log property names.
 

@@ -80,6 +80,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "LMStudioServerLog",
         "LMStudioServerLogFile",
         "MacOSSystemLogFile",
+        "OllamaServerLogFile",
         "RawFile",
         "RawHttp",
         "RawStandardOutput",
@@ -132,6 +133,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
                     builtInProfileIDs.Add("LinuxSystemLog");
                     break;
             }
+            builtInProfileIDs.Add("OllamaServiceLog");
             defaultSuggestedProfileIDs.Add("LinuxSystemLogFile");
             defaultSuggestedProfileIDs.Add("AndroidDeviceLog");
             defaultSuggestedProfileIDs.Add("AndroidFileLog");
@@ -142,6 +144,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
             builtInProfileIDs.Add("BootedAppleDeviceSimulatorsRealtimeLog");
             builtInProfileIDs.Add("MacOSInstallationLog");
             builtInProfileIDs.Add("MacOSRealtimeLog");
+            builtInProfileIDs.Add("OllamaServerLog");
             builtInProfileIDs.Add("SpecificAppleDeviceSimulatorLog");
             defaultSuggestedProfileIDs.Add("AndroidDeviceLog");
             defaultSuggestedProfileIDs.Add("RawFile");

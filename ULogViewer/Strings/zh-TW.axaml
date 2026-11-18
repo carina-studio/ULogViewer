@@ -126,6 +126,12 @@
 	<sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">在 macOS 上產生的即時全域系統日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS 系統日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">在 macOS 上產生的系統日誌檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OllamaServerLog">Ollama 伺服器日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OllamaServerLog.Description">由 Ollama 應用程式伺服器產生的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile">Ollama 伺服器日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile.Description">由 Ollama 伺服器產生之檔案，其中包括伺服器狀態、模型載入及 HTTP 請求訊息。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OllamaServiceLog">Ollama 服務日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OllamaServiceLog.Description">由 systemd 管理之 Ollama 服務產生的即時日誌。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawFile">檔案原始文字</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">從一個或多個檔案中讀取未分析的原始文字內容。通常於測試及偵錯時使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp">HTTP/HTTPS 原始回應內容</sys:String>

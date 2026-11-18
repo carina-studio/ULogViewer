@@ -126,6 +126,12 @@
     <sys:String x:Key="String/BuiltInProfile.MacOSRealtimeLog.Description">macOS からのリアルタイムシステム全体のログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile">macOS システムログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.MacOSSystemLogFile.Description">macOS からのシステムログを含むファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OllamaServerLog">Ollama サーバーログ</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OllamaServerLog.Description">Ollama アプリのサーバーからのリアルタイムログ。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile">Ollama サーバーログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile.Description">Ollama のサーバーによって生成された、サーバーの状態、モデルの読み込み、HTTP リクエストのメッセージを含むファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OllamaServiceLog">Ollama サービスログ</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OllamaServiceLog.Description">systemd によって管理される Ollama サービスからのリアルタイムログ。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RawFile">ファイル内の Raw テキスト</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RawFile.Description">解析せずに 1 つ以上のファイルから Raw テキストを読み取ります。通常はテストおよびデバッグ用に使用されます。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RawHttp">Raw HTTP/HTTPS レスポンス</sys:String>

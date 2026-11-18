@@ -192,6 +192,154 @@ class LogProfileManagerTests : ApplicationBasedTests
 
 
 	/// <summary>
+	/// Test for reading logs by built-in log profile of Ollama server log files.
+	/// </summary>
+	[Test]
+	public void BuiltInOllamaServerLogFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// get log profile and data source provider
+			var profile = LogProfileManager.Default.GetProfileOrDefault("OllamaServerLogFile");
+			Assert.That(profile, Is.Not.Null);
+			Assert.That(profile!.Icon, Is.EqualTo(LogProfileIcon.Intelligence));
+			if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
+				throw new AssertionException("Cannot find file log data source provider.");
+
+			// prepare log file
+			var filePath = Path.GetTempFileName();
+			try
+			{
+				File.WriteAllText(filePath, string.Join('\n', (string[])[
+					"Couldn't find '/Users/user/.ollama/id_ed25519'. Generating new private key.",
+					"",
+					"time=2026-11-18T10:59:26.790+08:00 level=INFO source=routes.go:2476 msg=\"Ollama cloud disabled: false\"",
+					"time=2026-11-18T10:59:27.728+08:00 level=INFO source=model_recommendations.go:177 msg=\"model recommendations cache sleep scheduled\" wait=3h23m40.931989267s consecutive_failures=0",
+					"time=2026-11-18T03:01:03.385Z level=WARN source=server.go:260 msg=starting path=/models",
+					"time=2026-11-18T11:01:03.388+08:00 level=INFO source=llama_server.go:1406 msg=\"waiting for llama-server to become available\" status=\"llm server not responding\"",
+					"srv  llama_server: initializing ...",
+					"slot launch_slot_: id  0 | task -1 | sampler params: ",
+					"\trepeat_last_n = 64, repeat_penalty = 1.000",
+					"time=2026-11-18T11:01:04.146+08:00 level=DEBUG source=sched.go:775 msg=\"escaped \\\"quote\\\"\"",
+					"[GIN] 2026/11/18 - 11:01:04 | 200 | 961.81ms |       127.0.0.1 | POST     \"/api/generate\"",
+					"[GIN] 2026/11/18 - 11:01:04 | 404 | 271.791µs |       127.0.0.1 | POST     \"/api/chat\"",
+					"[GIN] 2026/11/18 - 11:01:04 | 501 |   1.25ms |       127.0.0.1 | GET      \"/api/embed\"",
+				]));
+
+				// read logs
+				using var source = provider.CreateSource(new LogDataSourceOptions { FileName = filePath });
+				using var logReader = new LogReader(null, source).Setup(it =>
+				{
+					it.LogLevelMap = profile.LogLevelMapForReading;
+					it.LogPatterns = profile.LogPatterns;
+					it.TimestampCultureInfo = profile.TimestampCultureInfoForReading;
+					it.TimestampEncoding = profile.TimestampEncodingForReading;
+					it.TimestampFormats = profile.TimestampFormatsForReading;
+				});
+				logReader.Start();
+				await logReader.WaitForPropertyChangeAsync(nameof(LogReader.State), it => it.State == LogReaderState.Stopped, new CancellationTokenSource(10000).Token);
+
+				// check slog logs
+				var logs = logReader.Logs;
+				Assert.That(logs.Count, Is.EqualTo(8));
+				Assert.That(logs[0].Timestamp, Is.EqualTo(DateTimeOffset.Parse("2026-11-18T10:59:26.790+08:00", CultureInfo.InvariantCulture).LocalDateTime));
+				Assert.That(logs[0].Level, Is.EqualTo(LogLevel.Info));
+				Assert.That(logs[0].SourceName?.ToString(), Is.EqualTo("routes.go:2476"));
+				Assert.That(logs[0].Message?.ToString(), Is.EqualTo("Ollama cloud disabled: false"));
+				Assert.That(logs[1].Message?.ToString(), Does.StartWith("model recommendations cache sleep scheduled"));
+				Assert.That(logs[1].Message?.ToString(), Does.EndWith("wait=3h23m40.931989267s consecutive_failures=0"));
+				Assert.That(logs[2].Timestamp, Is.EqualTo(DateTimeOffset.Parse("2026-11-18T03:01:03.385Z", CultureInfo.InvariantCulture).LocalDateTime));
+				Assert.That(logs[2].Level, Is.EqualTo(LogLevel.Warn));
+				Assert.That(logs[2].Message?.ToString(), Does.StartWith("starting"));
+				Assert.That(logs[2].Message?.ToString(), Does.EndWith("path=/models"));
+				Assert.That(logs[3].Message?.ToString(), Does.StartWith("waiting for llama-server to become available"));
+				Assert.That(logs[3].Message?.ToString(), Does.Contain("srv  llama_server: initializing ..."));
+				Assert.That(logs[3].Message?.ToString(), Does.EndWith("repeat_last_n = 64, repeat_penalty = 1.000"));
+				Assert.That(logs[3].Extra5, Is.Null);
+				Assert.That(logs[4].Level, Is.EqualTo(LogLevel.Debug));
+				Assert.That(logs[4].Message?.ToString(), Is.EqualTo("escaped \\\"quote\\\""));
+
+				// check HTTP request logs
+				Assert.That(logs[5].Timestamp, Is.EqualTo(new DateTime(2026, 11, 18, 11, 1, 4)));
+				Assert.That(logs[5].Level, Is.EqualTo(LogLevel.Info));
+				Assert.That(logs[5].SourceName, Is.Null);
+				Assert.That(logs[5].Extra1?.ToString(), Is.EqualTo("127.0.0.1"));
+				Assert.That(logs[5].Extra3?.ToString(), Is.EqualTo("POST"));
+				Assert.That(logs[5].Extra4?.ToString(), Is.EqualTo("/api/generate"));
+				Assert.That(logs[5].Extra5?.ToString(), Is.EqualTo("200"));
+				Assert.That(logs[5].Extra6?.ToString(), Is.EqualTo("961.81ms"));
+				Assert.That(logs[5].Message?.ToString(), Does.StartWith("POST"));
+				Assert.That(logs[6].Level, Is.EqualTo(LogLevel.Warn));
+				Assert.That(logs[6].Extra5?.ToString(), Is.EqualTo("404"));
+				Assert.That(logs[6].Extra6?.ToString(), Is.EqualTo("271.791µs"));
+				Assert.That(logs[7].Level, Is.EqualTo(LogLevel.Error));
+				Assert.That(logs[7].Extra3?.ToString(), Is.EqualTo("GET"));
+				Assert.That(logs[7].Extra4?.ToString(), Is.EqualTo("/api/embed"));
+			}
+			finally
+			{
+				File.Delete(filePath);
+			}
+		});
+	}
+
+
+	/// <summary>
+	/// Test for built-in log profiles of real-time Ollama server log.
+	/// </summary>
+	[Test]
+	public void BuiltInOllamaServerLogTest()
+	{
+		this.TestOnApplicationThread(() =>
+		{
+			// get log profiles
+			var manager = LogProfileManager.Default;
+			var serverProfile = manager.GetProfileOrDefault("OllamaServerLog");
+			var serviceProfile = manager.GetProfileOrDefault("OllamaServiceLog");
+			var fileProfile = manager.GetProfileOrDefault("OllamaServerLogFile");
+			Assert.That(fileProfile, Is.Not.Null);
+			if (Platform.IsMacOS)
+			{
+				Assert.That(serverProfile, Is.Not.Null);
+				Assert.That(serviceProfile, Is.Null);
+			}
+			else if (Platform.IsLinux)
+			{
+				Assert.That(serverProfile, Is.Null);
+				Assert.That(serviceProfile, Is.Not.Null);
+			}
+			else
+			{
+				Assert.That(serverProfile, Is.Null);
+				Assert.That(serviceProfile, Is.Null);
+				return;
+			}
+			var profile = (serverProfile ?? serviceProfile).AsNonNull();
+
+			// check data source
+			Assert.That(profile.DataSourceProvider.Name, Is.EqualTo("StandardOutput"));
+			if (Platform.IsMacOS)
+			{
+				Assert.That(profile.DataSourceOptions.Command, Is.EqualTo("tail -F -n 0 ~/.ollama/logs/server.log"));
+				Assert.That(profile.DataSourceOptions.UseTextShell);
+			}
+			else
+			{
+				Assert.That(profile.DataSourceOptions.Command, Is.EqualTo("journalctl -u ollama -f -n 0 -o cat"));
+				Assert.That(profile.DataSourceOptions.UseTextShell, Is.False);
+			}
+			Assert.That(profile.IsContinuousReading);
+			Assert.That(profile.Icon, Is.EqualTo(LogProfileIcon.Intelligence));
+
+			// logs are parsed in the same way as log files
+			Assert.That(profile.LogPatterns.Select(it => it.Regex.ToString()), Is.EqualTo(fileProfile!.LogPatterns.Select(it => it.Regex.ToString())));
+			Assert.That(profile.LogLevelMapForReading, Is.EquivalentTo(fileProfile.LogLevelMapForReading));
+			Assert.That(profile.TimestampFormatsForReading, Is.EqualTo(fileProfile.TimestampFormatsForReading));
+		});
+	}
+
+
+	/// <summary>
 	/// Test for built-in log profiles.
 	/// </summary>
 	[Test]

@@ -1,0 +1,82 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Intelligence",
+	"LogLevelMapForReading": {
+		"2": "Info",
+		"3": "Info",
+		"4": "Warn",
+		"5": "Error",
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"INFO": "Info",
+		"TRACE": "Trace",
+		"WARN": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(time=(?<Timestamp>\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(Z|[\\+\\-]\\d{2}:\\d{2}))\\s+level=(?<Level>[\\w\\-\\+]+)(\\s+source=(?<SourceName>\\S+))?\\s+msg=(\"(?<Message>(\\\\.|[^\"\\\\])*)\"|(?<Message>\\S*))(\\s+(?<Message>\\S.*))?|\\[GIN\\]\\s+(?<Timestamp>\\d{4}/\\d{2}/\\d{2}\\s+\\-\\s+\\d{2}:\\d{2}:\\d{2})\\s*\\|\\s*(?=(?<Level>\\d))(?<Extra5>\\d{3})\\s*\\|\\s*(?<Extra6>\\S+)\\s*\\|\\s*(?<Extra1>\\S*)\\s*\\|\\s*(?<Message>(?<Extra3>[A-Z]+)\\s+\"(?<Extra4>[^\"]*)\".*))$"
+		},
+		{
+			"Regex": "^(?!time=\\d{4}\\-\\d{2}\\-\\d{2}T|\\[GIN\\]\\s)(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"{Timestamp} [{Level}] {SourceName}: {Message}",
+		"{Timestamp} [{Level}] {Message}"
+	],
+	"SortDirection": "Ascending",
+	"SortKey": "Timestamp",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"TimestampFormatForWriting": "yyyy-MM-dd HH:mm:ss.fff",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd'T'HH:mm:ss.fffK",
+		"yyyy'/'MM'/'dd' - 'HH:mm:ss"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"Name": "SourceName",
+			"Width": 180
+		},
+		{
+			"DisplayName": "Status",
+			"Name": "Extra5",
+			"Width": 70
+		},
+		{
+			"DisplayName": "Duration",
+			"Name": "Extra6",
+			"Width": 100
+		},
+		{
+			"DisplayName": "Client",
+			"Name": "Extra1",
+			"Width": 120
+		},
+		{
+			"DisplayName": "Method",
+			"Name": "Extra3",
+			"Width": 80
+		},
+		{
+			"DisplayName": "Path",
+			"Name": "Extra4",
+			"Width": 200
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}
