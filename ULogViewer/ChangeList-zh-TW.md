@@ -18,6 +18,7 @@
     + `Ollama 伺服器日誌`
     + `Ollama 伺服器日誌檔案`
     + `Ollama 服務日誌`
+    + `OpenClaw 日誌檔案`
     + `Ruby Logger 日誌檔案`
     + `Rust env_logger/tracing 日誌檔案`
     + `Serilog 日誌檔案`

@@ -150,6 +150,8 @@
     <sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile.Description">Ollama のサーバーによって生成された、サーバーの状態、モデルの読み込み、HTTP リクエストのメッセージを含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.OllamaServiceLog">Ollama サービスログ</sys:String>
     <sys:String x:Key="String/BuiltInProfile.OllamaServiceLog.Description">systemd によって管理される Ollama サービスからのリアルタイムログ。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OpenClawLogFile">OpenClaw ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.OpenClawLogFile.Description">OpenClaw のゲートウェイによって生成された、ゲートウェイ、エージェント、プラグイン、チャネルのメッセージを含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RawFile">ファイル内の Raw テキスト</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RawFile.Description">解析せずに 1 つ以上のファイルから Raw テキストを読み取ります。通常はテストおよびデバッグ用に使用されます。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.RawHttp">Raw HTTP/HTTPS レスポンス</sys:String>
@@ -844,6 +846,7 @@
 
     <!-- LogProperty -->
     <sys:String x:Key="String/LogProperty.Action">アクション</sys:String>
+    <sys:String x:Key="String/LogProperty.Agent">エージェント</sys:String>
     <sys:String x:Key="String/LogProperty.Application">アプリケーション</sys:String>
     <sys:String x:Key="String/LogProperty.Author">作成者</sys:String>
     <sys:String x:Key="String/LogProperty.Available">利用可能</sys:String>
@@ -852,6 +855,7 @@
     <sys:String x:Key="String/LogProperty.BeginningTimestamp">開始タイムスタンプ</sys:String>
     <sys:String x:Key="String/LogProperty.BeginningValue">開始値</sys:String>
     <sys:String x:Key="String/LogProperty.Category">カテゴリ</sys:String>
+    <sys:String x:Key="String/LogProperty.Channel">チャネル</sys:String>
     <sys:String x:Key="String/LogProperty.Child">子</sys:String>
     <sys:String x:Key="String/LogProperty.Children">子要素</sys:String>
     <sys:String x:Key="String/LogProperty.Client">クライアント</sys:String>

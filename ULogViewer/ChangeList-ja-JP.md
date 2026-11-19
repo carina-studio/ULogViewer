@@ -18,6 +18,7 @@
     + `Ollama サーバーログ`
     + `Ollama サーバーログファイル`
     + `Ollama サービスログ`
+    + `OpenClaw ログファイル`
     + `Ruby Logger ログファイル`
     + `Rust env_logger/tracing ログファイル`
     + `Serilog ログファイル`

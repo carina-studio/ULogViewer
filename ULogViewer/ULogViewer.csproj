@@ -234,6 +234,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServerLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OllamaServiceLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/OpenClawLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawHttp.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/RawStandardOutput.json" />

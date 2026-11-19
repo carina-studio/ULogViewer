@@ -150,6 +150,8 @@
 	<sys:String x:Key="String/BuiltInProfile.OllamaServerLogFile.Description">由 Ollama 伺服器產生之檔案，其中包括伺服器狀態、模型載入及 HTTP 請求訊息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServiceLog">Ollama 服務日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.OllamaServiceLog.Description">由 systemd 管理之 Ollama 服務產生的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OpenClawLogFile">OpenClaw 日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.OpenClawLogFile.Description">由 OpenClaw 閘道產生之檔案，其中包括閘道、代理程式、外掛程式及頻道訊息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawFile">檔案原始文字</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawFile.Description">從一個或多個檔案中讀取未分析的原始文字內容。通常於測試及偵錯時使用。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.RawHttp">HTTP/HTTPS 原始回應內容</sys:String>
@@ -778,6 +780,7 @@ return False</sys:String>
 
 	<!-- LogProperty -->
 	<sys:String x:Key="String/LogProperty.Action">動作</sys:String>
+	<sys:String x:Key="String/LogProperty.Agent">代理程式</sys:String>
 	<sys:String x:Key="String/LogProperty.Application">應用程式</sys:String>
 	<sys:String x:Key="String/LogProperty.Author">作者</sys:String>
 	<sys:String x:Key="String/LogProperty.Available">可使用</sys:String>
@@ -786,6 +789,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningTimestamp">起始時間</sys:String>
 	<sys:String x:Key="String/LogProperty.BeginningValue">起始值</sys:String>
 	<sys:String x:Key="String/LogProperty.Category">分類</sys:String>
+	<sys:String x:Key="String/LogProperty.Channel">頻道</sys:String>
 	<sys:String x:Key="String/LogProperty.Child">子代</sys:String>
 	<sys:String x:Key="String/LogProperty.Children">子代</sys:String>
 	<sys:String x:Key="String/LogProperty.Client">客戶端</sys:String>

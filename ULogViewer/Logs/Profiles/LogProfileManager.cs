@@ -89,6 +89,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "NginxErrorLogFile",
         "NLogLogFile",
         "OllamaServerLogFile",
+        "OpenClawLogFile",
         "RawFile",
         "RawHttp",
         "RawStandardOutput",

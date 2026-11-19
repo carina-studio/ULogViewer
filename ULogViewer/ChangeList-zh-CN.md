@@ -18,6 +18,7 @@
     + `Ollama 服务器日志`
     + `Ollama 服务器日志文件`
     + `Ollama 服务日志`
+    + `OpenClaw 日志文件`
     + `Ruby Logger 日志文件`
     + `Rust env_logger/tracing 日志文件`
     + `Serilog 日志文件`

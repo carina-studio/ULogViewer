@@ -99,11 +99,13 @@ namespace CarinaStudio.ULogViewer.ViewModels
 				displayNames ??= new List<string>(Log.PropertyNames).Also(it =>
 				{
 					it.Add("Action");
+					it.Add("Agent");
 					it.Add("Application");
 					it.Add("Author");
 					it.Add("Available");
 					it.Add("Average");
 					it.Add("BeginningValue");
+					it.Add("Channel");
 					it.Add("Child");
 					it.Add("Children");
 					it.Add("Client");
