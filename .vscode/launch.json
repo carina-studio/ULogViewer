@@ -29,18 +29,6 @@
             "stopAtEntry": false
         },
         {
-            "name": "TextShellHost",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-TextShellHost",
-            "program": "${workspaceFolder}/TextShellHost/bin/Debug/net8.0/TextShellHost.dll",
-            "args": [
-            ],
-            "cwd": "${workspaceFolder}/TextShellHost",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
