@@ -77,6 +77,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "GitLogSimple",
         "GlogKlogLogFile",
         "GoSlogLogrusLogFile",
+        "HermesAgentLogFile",
         "LinuxKernelLogFile",
         "LinuxSystemLogFile",
         "LMStudioServerLog",
@@ -136,6 +137,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         else if (Platform.IsLinux)
         {
             builtInProfileIDs.Add("AndroidDeviceTrace");
+            builtInProfileIDs.Add("HermesAgentLog");
             switch (Platform.LinuxDistribution)
             {
                 case LinuxDistribution.Fedora:
@@ -155,6 +157,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         {
             builtInProfileIDs.Add("AndroidDeviceTrace");
             builtInProfileIDs.Add("BootedAppleDeviceSimulatorsRealtimeLog");
+            builtInProfileIDs.Add("HermesAgentLog");
             builtInProfileIDs.Add("MacOSInstallationLog");
             builtInProfileIDs.Add("MacOSRealtimeLog");
             builtInProfileIDs.Add("OllamaServerLog");

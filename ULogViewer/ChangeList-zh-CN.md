@@ -5,6 +5,8 @@
 + 新增内建日志类型：
     + `glog/klog 日志文件`
     + `Go slog/logrus 日志文件`
+    + `Hermes Agent 日志`
+    + `Hermes Agent 日志文件`
     + `LM Studio 服务器日志`
     + `LM Studio 服务器日志文件`
     + `Log4j/Logback 日志文件`

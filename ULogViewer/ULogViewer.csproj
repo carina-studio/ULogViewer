@@ -214,6 +214,8 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GitLogSimple.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GlogKlogLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/GoSlogLogrusLogFile.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/HermesAgentLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/HermesAgentLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxKernelLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/LinuxRealtimeLog.json" />

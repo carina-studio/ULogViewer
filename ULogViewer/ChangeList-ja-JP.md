@@ -5,6 +5,8 @@
 + 次の組み込みログプロファイルを追加しました：
     + `glog/klog ログファイル`
     + `Go slog/logrus ログファイル`
+    + `Hermes Agent ログ`
+    + `Hermes Agent ログファイル`
     + `LM Studio サーバーログ`
     + `LM Studio サーバーログファイル`
     + `Log4j/Logback ログファイル`

@@ -110,6 +110,10 @@
 	<sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile.Description">由 C++ 的 glog、Kubernetes 的 klog 或 Abseil 的日志库以默认格式产生之日志文件。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile">Go slog/logrus 日志文件</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile.Description">由 Go 的 slog 包或 logrus 库以文本格式产生之日志文件。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLog">Hermes Agent 日志</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLog.Description">由 Hermes Agent 产生的实时日志。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLogFile">Hermes Agent 日志文件</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLogFile.Description">由 Hermes Agent 产生之文件，其中包括智能体、工具、会话及消息网关消息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux 核心日志 (Debian/Ubuntu)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">带有 syslog 守护进程的 Linux 产生之核心日志的最新部分。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux 核心日志文件</sys:String>
@@ -875,6 +879,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Response">响应</sys:String>
 	<sys:String x:Key="String/LogProperty.Result">结果</sys:String>
 	<sys:String x:Key="String/LogProperty.Server">服务器</sys:String>
+	<sys:String x:Key="String/LogProperty.Session">会话</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">简短名称</sys:String>
 	<sys:String x:Key="String/LogProperty.Size">大小</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">来源</sys:String>

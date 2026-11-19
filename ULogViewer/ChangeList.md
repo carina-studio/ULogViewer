@@ -5,6 +5,8 @@
 + Added built-in log profiles:
     + `glog/klog Log Files`
     + `Go slog/logrus Log Files`
+    + `Hermes Agent Log`
+    + `Hermes Agent Log Files`
     + `LM Studio Server Log`
     + `LM Studio Server Log Files`
     + `Log4j/Logback Log Files`

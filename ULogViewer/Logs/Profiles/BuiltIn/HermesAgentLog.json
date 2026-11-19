@@ -1,0 +1,63 @@
+{
+	"DataSource": {
+		"Name": "StandardOutput",
+		"Options": {
+			"Command": "tail -F -n 0 ~/.hermes/logs/agent.log",
+			"UseTextShell": true
+		}
+	},
+	"ColorIndicator": "None",
+	"Icon": "Agent",
+	"IsContinuousReading": true,
+	"LogLevelMapForReading": {
+		"CRITICAL": "Fatal",
+		"DEBUG": "Debug",
+		"ERROR": "Error",
+		"INFO": "Info",
+		"WARNING": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^(?<Timestamp>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2},\\d{3}) (?<Extra2>DEBUG|INFO|WARNING|ERROR|CRITICAL)( \\[(?<Extra3>[^\\]]+)\\])? (?<Extra1>\\S+?): (?<Message>.*)$"
+		},
+		{
+			"Regex": "^(?!\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2},\\d{3} (DEBUG|INFO|WARNING|ERROR|CRITICAL) )(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"{Timestamp} {Extra2} [{Extra3}] {Extra1}: {Message}",
+		"{Timestamp} {Extra2} {Extra1}: {Message}"
+	],
+	"RawLogLevelPropertyName": "Extra2",
+	"SortDirection": "Ascending",
+	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "yyyy/MM/dd HH:mm:ss.fff",
+	"TimestampFormatForWriting": "yyyy-MM-dd HH:mm:ss,fff",
+	"TimestampFormatsForReading": [
+		"yyyy-MM-dd HH:mm:ss,fff"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 200
+		},
+		{
+			"DisplayName": "Session",
+			"Name": "Extra3",
+			"Width": 480
+		},
+		{
+			"DisplayName": "Logger",
+			"Name": "Extra1",
+			"Width": 250
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

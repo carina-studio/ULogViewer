@@ -156,6 +156,7 @@ namespace CarinaStudio.ULogViewer.ViewModels
 					it.Add("Response");
 					it.Add("Result");
 					it.Add("Server");
+					it.Add("Session");
 					it.Add("ShortName");
 					it.Add("Size");
 					it.Add("Span");

@@ -110,6 +110,10 @@
 	<sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile.Description">由 C++ 的 glog、Kubernetes 的 klog 或 Abseil 的日誌函式庫以預設格式產生之日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile">Go slog/logrus 日誌檔案</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile.Description">由 Go 的 slog 套件或 logrus 函式庫以文字格式產生之日誌檔案。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLog">Hermes Agent 日誌</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLog.Description">由 Hermes Agent 產生的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLogFile">Hermes Agent 日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.HermesAgentLogFile.Description">由 Hermes Agent 產生之檔案，其中包括代理程式、工具、工作階段及訊息閘道訊息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux 核心日誌 (Debian/Ubuntu)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">帶有 syslog 常駐程式的 Linux 產生之核心日誌的最新部分。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux 核心日誌檔案</sys:String>
@@ -868,6 +872,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProperty.Response">回應</sys:String>
 	<sys:String x:Key="String/LogProperty.Result">結果</sys:String>
 	<sys:String x:Key="String/LogProperty.Server">伺服器</sys:String>
+	<sys:String x:Key="String/LogProperty.Session">工作階段</sys:String>
 	<sys:String x:Key="String/LogProperty.ShortName">簡短名稱</sys:String>
 	<sys:String x:Key="String/LogProperty.Size">大小</sys:String>
 	<sys:String x:Key="String/LogProperty.SourceName">來源</sys:String>

@@ -110,6 +110,10 @@
     <sys:String x:Key="String/BuiltInProfile.GlogKlogLogFile.Description">C++ の glog、Kubernetes の klog、または Abseil のロギングライブラリによって既定の形式で生成されたファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile">Go slog/logrus ログファイル</sys:String>
     <sys:String x:Key="String/BuiltInProfile.GoSlogLogrusLogFile.Description">Go の slog パッケージまたは logrus ライブラリによってテキスト形式で生成されたファイル。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.HermesAgentLog">Hermes Agent ログ</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.HermesAgentLog.Description">Hermes Agent からのリアルタイムログ。</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.HermesAgentLogFile">Hermes Agent ログファイル</sys:String>
+    <sys:String x:Key="String/BuiltInProfile.HermesAgentLogFile.Description">Hermes Agent によって生成された、エージェント、ツール、セッション、メッセージングゲートウェイのメッセージを含むファイル。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LinuxKernelLog">Linux カーネルログ (Debian/Ubuntu)</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LinuxKernelLog.Description">syslog デーモンが存在する Linux からのカーネルログの最新部分。</sys:String>
     <sys:String x:Key="String/BuiltInProfile.LinuxKernelLogFile">Linux カーネルログファイル</sys:String>
@@ -936,6 +940,7 @@
     <sys:String x:Key="String/LogProperty.Response">レスポンス</sys:String>
     <sys:String x:Key="String/LogProperty.Result">結果</sys:String>
     <sys:String x:Key="String/LogProperty.Server">サーバー</sys:String>
+    <sys:String x:Key="String/LogProperty.Session">セッション</sys:String>
     <sys:String x:Key="String/LogProperty.ShortName">短縮名</sys:String>
     <sys:String x:Key="String/LogProperty.Size">サイズ</sys:String>
     <sys:String x:Key="String/LogProperty.SourceName">ソース</sys:String>
