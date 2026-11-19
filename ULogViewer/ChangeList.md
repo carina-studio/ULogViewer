@@ -24,6 +24,7 @@
     + `Serilog Log Files`
     + `spdlog Log Files`
     + `Spring Boot Log Files`
+    + `vLLM Server Log Files`
 + Added more log profile icons.
 + Added more log property names.
 + Added `Allow Data Across Multiple Datagrams` log data source option.

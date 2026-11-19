@@ -191,6 +191,8 @@
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">Log file from ULogViewer or other Carina Studio applications.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer Real-time Log</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">Real-time logs from ULogViewer in memory.</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.VllmServerLogFile">vLLM Server Log Files</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.VllmServerLogFile.Description">Files saved from the output of the vLLM server, which contain server status, engine and HTTP request messages.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows Event Logs (Application)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">Windows events belonging to the 'Application' category of the local machine.</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows Event Log Files</sys:String>

@@ -107,6 +107,7 @@ class LogProfileManager : BaseProfileManager<IULogViewerApplication, LogProfile>
         "UdpNLog",
         "ULogViewerLog",
         "ULogViewerMemoryLog",
+        "VllmServerLogFile",
         "WindowsEventLogFiles",
     };
     static LogProfileManager? defaultInstance;

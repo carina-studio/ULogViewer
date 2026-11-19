@@ -1263,6 +1263,86 @@ class LogProfileManagerTests : ApplicationBasedTests
 
 
 	/// <summary>
+	/// Test for reading logs by built-in log profile of log files saved from the output of vLLM server.
+	/// </summary>
+	[Test]
+	public void BuiltInVllmServerLogFileTest()
+	{
+		this.TestOnApplicationThread(async () =>
+		{
+			// read logs
+			var logs = await ReadLogsAsync("VllmServerLogFile", [
+				"W1119 17:40:35.367000 60031 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead",
+				"objc[60031]: Class AVFFrameReceiver is implemented in both /opt/homebrew/Cellar/ffmpeg/8.1.2/lib/libavdevice.62.3.102.dylib (0x121ebc328) and /Users/demo/vllm-venv/lib/python3.12/site-packages/cv2/.dylibs/libavdevice.63.1.102.dylib (0x1220a8328). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.",
+				"(APIServer pid=60031) INFO 11-19 17:40:42 [startup.py:96] non-default args: {'model_tag': 'facebook/opt-125m', 'port': 18800, 'model': 'facebook/opt-125m', 'max_model_len': 1024}",
+				"(APIServer pid=60031) WARNING 11-19 17:40:44 [config.py:1577] Could not retrieve safetensors metadata for facebook/opt-125m (Hub fetch failed and the cached snapshot holds no weights yet).",
+				"Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]",
+				"(EngineCore pid=60170) INFO 11-19 17:40:51 [core.py:153] Initializing a V1 LLM engine (v0.34.0) with config: model='facebook/opt-125m', speculative_config=None, tokenizer='facebook/opt-125m', skip_tokenizer_init=False, tokenizer_mode=auto, revision=main, tokenizer_revision=main, trust_remote_code=False, dtype=torch.float16, max_seq_len=1024, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=True, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cpu, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=facebook/opt-125m, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.DYNAMO_TRACE_ONCE: 2>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none', '+gelu', '+gelu_tanh', '+gelu_and_mul'], 'ir_enable_torch_wrap': False, 'splitting_ops': [], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_token_budget': 5120, 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': None, 'compile_ranges_endpoints': [2048], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'dce': True, 'size_asserts': False, 'nan_asserts': False, 'epilogue_fusion': True, 'cpp.dynamic_threads': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.NONE: 0>, 'use_breakable_cudagraph': False, 'cudagraph_num_of_warmups': 0, 'cudagraph_capture_sizes': [], 'prefill_cudagraph_capture_token_sizes': None, 'max_prefill_cudagraph_capture_tokens': None, 'decode_cudagraph_capture_request_sizes': None, 'max_decode_cudagraph_capture_requests': None, 'max_decode_cudagraph_capture_tokens': None, 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': None, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_rocm_aiter_gemm_warmup=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None, rdna_hybrid_w4a16_prefill_dequant='disable')",
+				"INFO:     Started server process [60031]",
+				"INFO:     127.0.0.1:63159 - \"POST /v1/completions HTTP/1.1\" 200 OK",
+				"INFO:     127.0.0.1:63160 - \"POST /v1/chat/completions HTTP/1.1\" 400 Bad Request",
+				"INFO:     127.0.0.1:63161 - \"GET /v1/nope HTTP/1.1\" 404 Not Found",
+				"(Worker pid=59900) ERROR 11-19 17:40:23 [multiproc_executor.py:1223]     raise ValueError(",
+				"(Worker pid=59900) ERROR 11-19 17:40:23 [multiproc_executor.py:1223] ValueError: Available memory on node 0 (4.64/24.0 GiB) on kv cache allocation is less than requested memory for kv (21.2/22.08 GiB). Reduce CPU memory used by other processes.",
+				"CRITICAL 11-19 17:40:23 [api_server.py:1234] Old format without process name",
+				"(APIServer pid=1) INFO:     127.0.0.1:5000 - \"GET /health HTTP/1.1\" 200 OK",
+			], LogProfileIcon.Intelligence);
+
+			// check log of PyTorch with output of other library
+			Assert.That(logs.Count, Is.EqualTo(12));
+			Assert.That(logs[0].Timestamp?.ToString("MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture), Is.EqualTo("11-19 17:40:35.367000"));
+			Assert.That(logs[0].Level, Is.EqualTo(LogLevel.Warn));
+			Assert.That(logs[0].ProcessId, Is.EqualTo(60031));
+			Assert.That(logs[0].ProcessName, Is.Null);
+			Assert.That(logs[0].SourceName?.ToString(), Is.EqualTo("torch/_opaque_base.py:6"));
+			Assert.That(logs[0].Message?.ToString(), Does.StartWith("torch._opaque_base is deprecated"));
+			Assert.That(logs[0].Message?.ToString(), Does.Contain("objc[60031]: Class AVFFrameReceiver"));
+
+			// check logs of vLLM
+			Assert.That(logs[1].Timestamp?.ToString("MM-dd HH:mm:ss", CultureInfo.InvariantCulture), Is.EqualTo("11-19 17:40:42"));
+			Assert.That(logs[1].Level, Is.EqualTo(LogLevel.Info));
+			Assert.That(logs[1].ProcessName?.ToString(), Is.EqualTo("APIServer"));
+			Assert.That(logs[1].ProcessId, Is.EqualTo(60031));
+			Assert.That(logs[1].SourceName?.ToString(), Is.EqualTo("startup.py:96"));
+			Assert.That(logs[1].Message?.ToString(), Does.StartWith("non-default args: "));
+			Assert.That(logs[2].Level, Is.EqualTo(LogLevel.Warn));
+			Assert.That(logs[2].Message?.ToString(), Does.EndWith("Fetching 9 files:   0%|          | 0/9 [00:00<?, ?it/s]"));
+			Assert.That(logs[3].ProcessName?.ToString(), Is.EqualTo("EngineCore"));
+			Assert.That(logs[3].ProcessId, Is.EqualTo(60170));
+
+			// check logs of uvicorn
+			Assert.That(logs[4].Timestamp, Is.Null);
+			Assert.That(logs[4].Level, Is.EqualTo(LogLevel.Info));
+			Assert.That(logs[4].ProcessName, Is.Null);
+			Assert.That(logs[4].Message?.ToString(), Is.EqualTo("Started server process [60031]"));
+			Assert.That(logs[4].Extra6, Is.Null);
+			Assert.That(logs[5].Extra3?.ToString(), Is.EqualTo("127.0.0.1:63159"));
+			Assert.That(logs[5].Extra4?.ToString(), Is.EqualTo("POST"));
+			Assert.That(logs[5].Extra5?.ToString(), Is.EqualTo("/v1/completions"));
+			Assert.That(logs[5].Extra6?.ToString(), Is.EqualTo("200"));
+			Assert.That(logs[6].Extra6?.ToString(), Is.EqualTo("400"));
+			Assert.That(logs[7].Extra4?.ToString(), Is.EqualTo("GET"));
+			Assert.That(logs[7].Extra6?.ToString(), Is.EqualTo("404"));
+
+			// each line of traceback is a log
+			Assert.That(logs[8].Level, Is.EqualTo(LogLevel.Error));
+			Assert.That(logs[8].ProcessName?.ToString(), Is.EqualTo("Worker"));
+			Assert.That(logs[8].Message?.ToString(), Does.Contain("raise ValueError("));
+			Assert.That(logs[9].Message?.ToString(), Does.StartWith("ValueError: Available memory"));
+
+			// check log in the format before vLLM 0.10
+			Assert.That(logs[10].Level, Is.EqualTo(LogLevel.Fatal));
+			Assert.That(logs[10].ProcessName, Is.Null);
+			Assert.That(logs[10].SourceName?.ToString(), Is.EqualTo("api_server.py:1234"));
+
+			// check log of uvicorn with process of vLLM 0.10 to 0.12
+			Assert.That(logs[11].ProcessName?.ToString(), Is.EqualTo("APIServer"));
+			Assert.That(logs[11].Extra5?.ToString(), Is.EqualTo("/health"));
+		});
+	}
+
+
+	/// <summary>
 	/// Test for adding log profile with duplicate ID.
 	/// </summary>
 	[Test]

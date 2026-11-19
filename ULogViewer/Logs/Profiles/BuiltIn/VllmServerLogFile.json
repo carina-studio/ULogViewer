@@ -1,0 +1,88 @@
+{
+	"AllowMultipleFiles": true,
+	"DataSource": {
+		"Name": "File"
+	},
+	"ColorIndicator": "None",
+	"Icon": "Intelligence",
+	"LogLevelMapForReading": {
+		"CRITICAL": "Fatal",
+		"DEBUG": "Debug",
+		"E": "Error",
+		"ERROR": "Error",
+		"F": "Fatal",
+		"I": "Info",
+		"INFO": "Info",
+		"TRACE": "Trace",
+		"W": "Warn",
+		"WARNING": "Warn"
+	},
+	"LogPatterns": [
+		{
+			"Regex": "^((\\((?<ProcessName>[^\\s()]+) pid=(?<ProcessId>\\d+)\\) )?((?<Extra2>DEBUG|INFO|WARNING|ERROR|CRITICAL) (?<Timestamp>\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) \\[(?<SourceName>[^\\]]+)\\] (?<Message>.*)|(?<Extra2>TRACE|DEBUG|INFO|WARNING|ERROR|CRITICAL):\\s+(?<Message>((?<Extra3>\\S+) - \"(?<Extra4>[A-Z]+) (?<Extra5>\\S+) HTTP/[\\d\\.]+\" (?<Extra6>\\d{3}).*|.*)))|(?<Extra2>[IWEF])(?<Timestamp>\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d{6}) (?<ProcessId>\\d+) (?<SourceName>[^\\]\\s]+:\\d+)\\] (?<Message>.*))$"
+		},
+		{
+			"Regex": "^(?!(\\([^\\s()]+ pid=\\d+\\) )?((DEBUG|INFO|WARNING|ERROR|CRITICAL) \\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} \\[|(TRACE|DEBUG|INFO|WARNING|ERROR|CRITICAL):\\s)|[IWEF]\\d{4} \\d{2}:\\d{2}:\\d{2}\\.\\d{6} \\d+ )(\\s*$|(?<Message>.*))",
+			"IsRepeatable": true,
+			"IsSkippable": true
+		}
+	],
+	"LogWritingFormats": [
+		"({ProcessName} pid={ProcessId}) {Extra2} {Timestamp} [{SourceName}] {Message}",
+		"{Extra2} {Timestamp} [{SourceName}] {Message}",
+		"{Extra2}: {Message}"
+	],
+	"RawLogLevelPropertyName": "Extra2",
+	"SortDirection": "Ascending",
+	"SortKey": "Id",
+	"TimestampCategoryGranularity": "Minute",
+	"TimestampCultureInfoForReading": "en-US",
+	"TimestampEncodingForReading": "Custom",
+	"TimestampFormatForDisplaying": "MM/dd HH:mm:ss",
+	"TimestampFormatForWriting": "MM-dd HH:mm:ss",
+	"TimestampFormatsForReading": [
+		"MM-dd HH:mm:ss",
+		"MMdd HH:mm:ss.ffffff"
+	],
+	"VisibleLogProperties": [
+		{
+			"Name": "Timestamp",
+			"Width": 140
+		},
+		{
+			"Name": "ProcessName",
+			"Width": 130
+		},
+		{
+			"Name": "ProcessId",
+			"Width": 70
+		},
+		{
+			"Name": "SourceName",
+			"Width": 180
+		},
+		{
+			"DisplayName": "Client",
+			"Name": "Extra3",
+			"Width": 130
+		},
+		{
+			"DisplayName": "Method",
+			"Name": "Extra4",
+			"Width": 80
+		},
+		{
+			"DisplayName": "Path",
+			"Name": "Extra5",
+			"Width": 200
+		},
+		{
+			"DisplayName": "Status",
+			"Name": "Extra6",
+			"Width": 70
+		},
+		{
+			"Name": "Message"
+		}
+	]
+}

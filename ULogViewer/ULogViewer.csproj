@@ -253,6 +253,7 @@
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/UdpNLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerLog.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/ULogViewerMemoryLog.json" />
+		<EmbeddedResource Include="Logs/Profiles/BuiltIn/VllmServerLogFile.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsApplicationEventLogs.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsEventLogFiles.json" />
 		<EmbeddedResource Include="Logs/Profiles/BuiltIn/WindowsEventLogs.json" />

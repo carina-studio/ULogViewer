@@ -186,6 +186,8 @@
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerLog.Description">由 ULogViewer 或其他 Carina Studio 應用程式輸出的日誌檔案。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog">ULogViewer 即時日誌</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.ULogViewerMemoryLog.Description">來自 ULogViewer 位於記憶體中的即時日誌。</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.VllmServerLogFile">vLLM 伺服器日誌檔案</sys:String>
+	<sys:String x:Key="String/BuiltInProfile.VllmServerLogFile.Description">由 vLLM 伺服器之輸出儲存的檔案，其中包括伺服器狀態、引擎及 HTTP 請求訊息。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs">Windows 事件記錄 (應用程式)</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsApplicationEventLogs.Description">位於本機上分類為「Application」的 Windows 事件記錄。</sys:String>
 	<sys:String x:Key="String/BuiltInProfile.WindowsEventLogFiles">Windows 事件記錄檔案</sys:String>
