@@ -602,6 +602,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Launch">启动</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Layers">阶层</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Location">位置</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Log">日志</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Login">登录</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Logout">退出</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Mark">标记</sys:String>

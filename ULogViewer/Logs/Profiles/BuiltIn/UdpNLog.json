@@ -2,7 +2,7 @@
 	"DataSource": {
 		"Name": "UDP Server"
 	},
-	"Icon": "Code",
+	"Icon": "Log",
 	"IsContinuousReading": true,
 	"LogLevelMapForReading": {
 		"DEBUG": "Debug",

@@ -648,6 +648,7 @@
     <sys:String x:Key="String/LogProfileIcon.Linux_MX">MX Linux</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Linux_Ubuntu">Ubuntu</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Location">位置</sys:String>
+    <sys:String x:Key="String/LogProfileIcon.Log">ログ</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Login">ログイン</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Logout">ログアウト</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Mark">マーク</sys:String>

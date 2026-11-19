@@ -174,6 +174,10 @@ enum LogProfileIcon
 	/// </summary>
 	Location,
 	/// <summary>
+	/// Log.
+	/// </summary>
+	Log,
+	/// <summary>
 	/// Login.
 	/// </summary>
 	Login,

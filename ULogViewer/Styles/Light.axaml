@@ -105,6 +105,10 @@
 				<GradientStop Color="#93e642" Offset="0"/>
 				<GradientStop Color="#62992c" Offset="1"/>
 			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Log" EndPoint="0%,95%" StartPoint="0%,5%">
+				<GradientStop Color="#f2b13d" Offset="0"/>
+				<GradientStop Color="#a66a0a" Offset="1"/>
+			</LinearGradientBrush>
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Login" EndPoint="95%,0%" StartPoint="5%,0%">
 				<GradientStop Color="#54bf25" Offset="0"/>
 				<GradientStop Color="#2d6614" Offset="1"/>

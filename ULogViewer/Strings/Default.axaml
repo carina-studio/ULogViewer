@@ -633,6 +633,7 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Linux_MX">MX Linux</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Linux_Ubuntu">Ubuntu</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Location">Location</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Log">Log</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Login">Login</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Logout">Logout</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Mark">Mark</sys:String>

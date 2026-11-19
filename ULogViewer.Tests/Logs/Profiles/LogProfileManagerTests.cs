@@ -1056,7 +1056,7 @@ class LogProfileManagerTests : ApplicationBasedTests
 			Assert.That(profile!.DataSourceProvider.Name, Is.EqualTo("UDP Server"));
 			Assert.That(profile.DataSourceOptions.IsLineAcrossDatagramsAllowed, Is.False);
 			Assert.That(profile.IsContinuousReading);
-			Assert.That(profile.Icon, Is.EqualTo(LogProfileIcon.Code));
+			Assert.That(profile.Icon, Is.EqualTo(LogProfileIcon.Log));
 
 			// logs are parsed in the same way as NLog through TCP
 			Assert.That(profile.LogPatterns.Select(it => it.Regex.ToString()), Is.EqualTo(tcpProfile!.LogPatterns.Select(it => it.Regex.ToString())));
@@ -1217,7 +1217,7 @@ class LogProfileManagerTests : ApplicationBasedTests
 		// get log profile and data source provider
 		var profile = LogProfileManager.Default.GetProfileOrDefault(profileId);
 		Assert.That(profile, Is.Not.Null);
-		Assert.That(profile!.Icon, Is.EqualTo(LogProfileIcon.Code));
+		Assert.That(profile!.Icon, Is.EqualTo(LogProfileIcon.Log));
 		if (!LogDataSourceProviders.TryFindProviderByName("File", out var provider))
 			throw new AssertionException("Cannot find file log data source provider.");
 

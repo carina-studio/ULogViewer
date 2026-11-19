@@ -171,6 +171,10 @@
 				<GradientStop Color="#ff6666" Offset="0"/>
 				<GradientStop Color="#992e2e" Offset="1"/>
 			</LinearGradientBrush>
+			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Log" EndPoint="0%,95%" StartPoint="0%,5%">
+				<GradientStop Color="#ffcc66" Offset="0"/>
+				<GradientStop Color="#d98e1a" Offset="1"/>
+			</LinearGradientBrush>
 			<LinearGradientBrush x:Key="Brush/Icon.LogProfile.Login" EndPoint="95%,0%" StartPoint="5%,0%">
 				<GradientStop Color="#64e62d" Offset="0"/>
 				<GradientStop Color="#378019" Offset="1"/>

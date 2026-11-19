@@ -4,7 +4,7 @@
 		"Name": "File"
 	},
 	"ColorIndicator": "None",
-	"Icon": "Code",
+	"Icon": "Log",
 	"LogLevelMapForReading": {
 		"DBG": "Debug",
 		"ERR": "Error",
