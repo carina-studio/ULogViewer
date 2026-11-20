@@ -625,11 +625,13 @@
     <sys:String x:Key="String/LogProfileIcon.Azure">Azure</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Battery">バッテリー</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Book">本</sys:String>
+    <sys:String x:Key="String/LogProfileIcon.Chat">チャット</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Checklist">チェックリスト</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Cloud">クラウド</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Code">コード</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Computer">コンピュータ</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Configuration">構成</sys:String>
+    <sys:String x:Key="String/LogProfileIcon.Container">コンテナ</sys:String>
     <sys:String x:Key="String/LogProfileIcon.CPU">プロセッサ</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Database">データベース</sys:String>
     <sys:String x:Key="String/LogProfileIcon.Debug">デバッグ</sys:String>

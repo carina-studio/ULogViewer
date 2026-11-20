@@ -581,11 +581,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Automation">自動化</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Battery">電池</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Book">書籍</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Chat">聊天</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Checklist">核對列表</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Cloud">雲端</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">程式碼</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Computer">電腦</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Configuration">組態</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Container">容器</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.CPU">處理器</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">資料庫</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">偵錯</sys:String>

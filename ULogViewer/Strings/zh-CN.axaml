@@ -588,11 +588,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Automation">自动化</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Battery">电池</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Book">书籍</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Chat">聊天</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Checklist">核对列表</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Cloud">云端</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">代码</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Computer">电脑</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Configuration">配置</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Container">容器</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.CPU">处理器</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">数据库</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">调试</sys:String>

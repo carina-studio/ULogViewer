@@ -610,11 +610,13 @@ return False</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Azure">Azure</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Battery">Battery</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Book">Book</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Chat">Chat</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Checklist">Checklist</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Cloud">Cloud</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Code">Code</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Computer">Computer</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Configuration">Configuration</sys:String>
+	<sys:String x:Key="String/LogProfileIcon.Container">Container</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.CPU">Processor</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Database">Database</sys:String>
 	<sys:String x:Key="String/LogProfileIcon.Debug">Debug</sys:String>

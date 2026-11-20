@@ -50,6 +50,10 @@ enum LogProfileIcon
 	/// </summary>
 	Book,
 	/// <summary>
+	/// Chat.
+	/// </summary>
+	Chat,
+	/// <summary>
 	/// Checklist.
 	/// </summary>
 	Checklist,
@@ -69,6 +73,10 @@ enum LogProfileIcon
 	/// Configuration.
 	/// </summary>
 	Configuration,
+	/// <summary>
+	/// Container.
+	/// </summary>
+	Container,
 	/// <summary>
 	/// CPU.
 	/// </summary>
