@@ -1,72 +1,72 @@
 {
   "Name": "ULogViewer",
-  "Version": "5.2.3.1019",
-  "InformationalVersion": "2026.2.3",
-  "PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/2026.2.3",
+  "Version": "5.2.4.1122",
+  "InformationalVersion": "2026.2.4",
+  "PageUri": "https://github.com/carina-studio/ULogViewer/releases/tag/2026.2.4",
   "Packages": [
     {
       "Architecture": "Arm64",
-      "BaseVersion": "5.2.2.919",
+      "BaseVersion": "5.2.3.1019",
       "OperatingSystem": "Linux",
-      "SHA256": "757DC43675875DB40A48DF070F7F8947DF5139ED011B5F34B1E0A12DFE65E294",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.2-2026.2.3-linux-arm64.zip"
+      "SHA256": "35D3CF3D1A486811CD2CECDB0E2AC10EA06B7D930DFB436934CA6C0F820EE230",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.3-2026.2.4-linux-arm64.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "5.2.2.919",
+      "BaseVersion": "5.2.3.1019",
       "OperatingSystem": "Linux",
-      "SHA256": "742039D8B019A47BC59D9BE716EA98DF5DB997483E94F1E2235DF6C799F2E9AB",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.2-2026.2.3-linux-x64.zip"
+      "SHA256": "1FF86DCC88B0B9059BCF203A7471D35D64035EA619761EEC65B8BC4013982F5C",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.3-2026.2.4-linux-x64.zip"
     },
     {
       "Architecture": "Arm64",
-      "BaseVersion": "5.2.2.919",
+      "BaseVersion": "5.2.3.1019",
       "OperatingSystem": "Windows",
-      "SHA256": "DAF919661D5A88B8B9341198C00D742294134E9229C1237FD8E13AE16DDAD6E0",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.2-2026.2.3-win-arm64.zip"
+      "SHA256": "A197899D3E8BA604C88F1D3E6BA9F89E25445B80FE2183664FB2F3BEC9AB7677",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.3-2026.2.4-win-arm64.zip"
     },
     {
       "Architecture": "X64",
-      "BaseVersion": "5.2.2.919",
+      "BaseVersion": "5.2.3.1019",
       "OperatingSystem": "Windows",
-      "SHA256": "3A49AF51DAA13A2BF1DD52877E8D396C2FF010F0D3F0AD063A27CEEF1E3958D0",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.2-2026.2.3-win-x64.zip"
+      "SHA256": "2BA1C2B1C712298D35643E51E56F9CCD7A043B56DBF99B810D5D19EECB3CFC1A",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.3-2026.2.4-win-x64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Linux",
-      "SHA256": "B3346453D00B1285031F6F2EB0144D258F6F9F28AA6AFB5252AC84F9C7F348D0",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.3-linux-arm64.zip"
+      "SHA256": "00CFAAE4D009998EE1C4D5564CB1E774C8AF9A24BDC269A0606D41F892E9F7CC",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.4-linux-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Linux",
-      "SHA256": "9A4A03554F1F07D076D475A8075934126122EF54411C7D8543DB49115AE1A187",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.3-linux-x64.zip"
+      "SHA256": "1D7AEAACB6CFF471A41BB54B7A61B9DB0E6116DDF07A68592D335D5D470512F1",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.4-linux-x64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "OSX",
-      "SHA256": "FA2C0A3F9103778EB61FC117D99DB078A0257F0853D962B89885F388896A959A",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.3-osx-arm64.zip"
+      "SHA256": "47983AF467425AC74D331DF4B284D3D08A579F162B48870CA155D06D1147E850",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.4-osx-arm64.zip"
     },
     {
       "Architecture": "Arm64",
       "OperatingSystem": "Windows",
-      "SHA256": "1A6737946149B8B32673BF7B876E878E2BE440217F719FD4872AF922BED56C70",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.3-win-arm64.zip"
+      "SHA256": "4ADF81C2000A018F0949E53C3E436310A1845CA3A10135C4B39EE2B38C9D07EF",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.4-win-arm64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "OSX",
-      "SHA256": "A5575423AC6995FAFEF7AAF78BE2BC56A3949940060F38ADFCC48F7BDAF0C712",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.3-osx-x64.zip"
+      "SHA256": "7BB4F1FE599C78F5DFAFB12E7C862876BE058CDBE23F086C0E8C643BF513D2A5",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.4-osx-x64.zip"
     },
     {
       "Architecture": "X64",
       "OperatingSystem": "Windows",
-      "SHA256": "8F84B92396DD0AED05F40739166A1EE89E58C18BFCEB18C3F7C30AB6A5AA38C7",
-      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.3/ULogViewer-2026.2.3-win-x64.zip"
+      "SHA256": "50A667D83CCB9A246AF94E6D6FA5503E287253681966A4DF230B55672B099FA4",
+      "Uri": "https://packages.carinastudio.net/ULogViewer/2026.2.4/ULogViewer-2026.2.4-win-x64.zip"
     }
   ]
 }
