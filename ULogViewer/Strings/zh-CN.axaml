@@ -18,7 +18,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">已从数据库中清除 {0} 个单词。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">加入大型文件时确认最大日志读取数量</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">连续读取时的日志更新时距 (毫秒)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">默认执行指令之命令行壳层 (Command-line Shell)</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">文字筛选单词输入辅助</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">根据文字筛选历史纪录帮助您输入文字筛选单词。</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">在重新加载日志后滚动到最新的日志</sys:String>
@@ -1553,9 +1552,6 @@ return None</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP 服务器</sys:String>
-
-	<!-- TextShell -->
-	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows 命令提示符)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
 	<sys:String x:Key="String/TextShellCommandInputDialog.Message">欲执行之指令</sys:String>

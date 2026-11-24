@@ -382,11 +382,11 @@
 
 								<!-- Default text shell -->
 								<asControls:DialogItem Name="defaultTextShellItem">
-									<TextBlock Text="{asXaml:StringResource AppOptionsDialog.DefaultTextShell}" asControls:DialogElement.TextRole="Label"/>
-									<ComboBox asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding InstalledTextShells, Source={x:Static app:TextShellManager.Default}}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
+									<TextBlock Text="{asXaml:StringResource ApplicationOptions.DefaultTextShell}" asControls:DialogElement.TextRole="Label"/>
+									<ComboBox asControls:DialogElement.IsDialogItemInput="True" ItemsSource="{Binding InstalledTextShells}" SelectedItem="{Binding DefaultTextShell, Mode=TwoWay}">
 										<ComboBox.ItemTemplate>
-											<DataTemplate x:DataType="app:TextShell" DataType="{x:Type app:TextShell}">
-												<TextBlock Text="{Binding Converter={x:Static appControls:AppOptionsDialog.TextShellConverter}}"/>
+											<DataTemplate x:DataType="as:TextShell" DataType="{x:Type as:TextShell}">
+												<TextBlock Text="{Binding Converter={x:Static asViewModels:ApplicationOptions.TextShellConverter}}"/>
 											</DataTemplate>
 										</ComboBox.ItemTemplate>
 									</ComboBox>

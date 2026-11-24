@@ -23,17 +23,6 @@ static class SettingKeys
 	/// </summary>
 	public static readonly SettingKey<string> DefaultSearchProvider = new(nameof(DefaultSearchProvider), "");
 	/// <summary>
-	/// Default text shell to be used by ULogViewer.
-	/// </summary>
-	public static readonly SettingKey<TextShell> DefaultTextShell = new(nameof(TextShell), Global.Run(() =>
-	{
-		if (Platform.IsWindows)
-			return TextShell.PowerShell;
-		if (Platform.IsMacOS)
-			return TextShell.ZShell;
-		return TextShell.BourneAgainShell;
-	}));
-	/// <summary>
 	/// Enable assistance of log text filter phrase input.
 	/// </summary>
 	public static readonly SettingKey<bool> EnableLogTextFilterPhraseInputAssistance = new(nameof(EnableLogTextFilterPhraseInputAssistance), true);

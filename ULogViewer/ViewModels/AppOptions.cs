@@ -54,9 +54,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 
 		// add event handlers
 		((INotifyCollectionChanged)LogProfileManager.Default.Profiles).CollectionChanged += this.OnLogProfilesChanged;
-
-		// refresh installed text shells
-		TextShellManager.Default.RefreshInstalledTextShellsAsync();
 	}
 
 
@@ -102,16 +99,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 	{
 		get => this.Settings.GetValueOrDefault(SettingKeys.ContinuousLogReadingUpdateInterval);
 		set => this.Settings.SetValue(SettingKeys.ContinuousLogReadingUpdateInterval, value);
-	}
-
-
-	/// <summary>
-	/// Get or set default text shell to run commands.
-	/// </summary>
-	public TextShell DefaultTextShell
-	{
-		get => this.Settings.GetValueOrDefault(SettingKeys.DefaultTextShell);
-		set => this.Settings.SetValue(SettingKeys.DefaultTextShell, value);
 	}
 
 
@@ -354,8 +341,6 @@ class AppOptions : AppSuite.ViewModels.ApplicationOptions
 			this.OnPropertyChanged(nameof(ConfirmMaxLogReadingCountForLargeFiles));
 		else if (key == SettingKeys.ContinuousLogReadingUpdateInterval)
 			this.OnPropertyChanged(nameof(ContinuousLogReadingUpdateInterval));
-		else if (key == SettingKeys.DefaultTextShell)
-			this.OnPropertyChanged(nameof(DefaultTextShell));
 		else if (key == SettingKeys.EnableLogTextFilterPhraseInputAssistance)
 			this.OnPropertyChanged(nameof(EnableLogTextFilterPhraseInputAssistance));
 		else if (key == SettingKeys.EnableScrollingToLatestLogAfterReloadingLogs)

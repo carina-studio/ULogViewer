@@ -3937,7 +3937,7 @@ class Session : ViewModel<IULogViewerApplication>
 			if (this.LogProfile?.IsContinuousReading == true && this.logReaders.IsNotEmpty())
 				this.logReaders.First().UpdateInterval = this.ContinuousLogReadingUpdateInterval;
 		}
-		else if (e.Key == SettingKeys.DefaultTextShell)
+		else if (e.Key == AppSuite.SettingKeys.DefaultTextShell)
 		{
 			this.LogProfile?.Let(profile =>
 			{

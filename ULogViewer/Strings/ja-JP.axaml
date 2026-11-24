@@ -15,7 +15,6 @@
     <sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">データベースから {0} 個のフレーズをクリアしました。</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">大容量ファイル追加時に読み込む最大ログ数を確認する</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">継続読込中のログ更新間隔 (ミリ秒)</sys:String>
-    <sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">コマンド実行時のデフォルトコマンドラインシェル</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">テキストフィルタでのフレーズ入力補助</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">テキストフィルタの履歴に基づいてフレーズ入力を補助します。</sys:String>
     <sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">ログ再読込後に最新ログまでスクロール</sys:String>
@@ -1654,15 +1653,6 @@
 
     <!-- TcpServerLogDataSourceProvider -->
     <sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP サーバー</sys:String>
-
-    <!-- TextShell -->
-    <sys:String x:Key="String/TextShell.BourneAgainShell">bash (Bourne-Again Shell)</sys:String>
-    <sys:String x:Key="String/TextShell.BourneShell">sh (Bourne Shell)</sys:String>
-    <sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows コマンドプロンプト)</sys:String>
-    <sys:String x:Key="String/TextShell.CShell">csh (C Shell)</sys:String>
-    <sys:String x:Key="String/TextShell.FriendlyInteractiveShell">fish (Friendly Interactive Shell)</sys:String>
-    <sys:String x:Key="String/TextShell.PowerShell">PowerShell</sys:String>
-    <sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
     <!-- TextShellCommandInputDialog -->
     <sys:String x:Key="String/TextShellCommandInputDialog.Message">実行するコマンド</sys:String>

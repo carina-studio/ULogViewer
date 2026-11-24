@@ -1,3 +1,4 @@
+using CarinaStudio.AppSuite;
 using CarinaStudio.Threading;
 using CarinaStudio.ULogViewer.ViewModels;
 using CarinaStudio.ULogViewer.ViewModels.Analysis;

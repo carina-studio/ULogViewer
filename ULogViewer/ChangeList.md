@@ -32,9 +32,10 @@
 ## Improvement
 + Added suggested log profiles to empty tabs for quick selection.
 + Renamed `Apache Access Log Files` built-in log profile to `Apache/Nginx Access Log Files`.
++ Added support for running commands by PowerShell 7 and command-line shells installed by Homebrew.
 
 ## Behavior Changes
-+ 
++ Changed to prefer PowerShell 7 on Windows.
 
 ## Bug Fixing
 + Fixed an issue that timestamps of logs read by the `Apple Devices Log` log profile cannot be parsed.

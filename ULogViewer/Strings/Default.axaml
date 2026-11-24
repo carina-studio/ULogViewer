@@ -15,7 +15,6 @@
 	<sys:String x:Key="String/AppOptionsDialog.ClearLogTextFilterPhrasesDatabase.Result">{0} phrases cleared from database.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ConfirmMaxLogReadingCountForLargeFiles">Confirm Maximum Logs to Read when Adding Large Files</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.ContinuousLogReadingUpdateInterval">Log Update Interval during Continuous Reading (Milliseconds)</sys:String>
-	<sys:String x:Key="String/AppOptionsDialog.DefaultTextShell">Default Command-Line Shell for Command Execution</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance">Phrase Input Assistance in Text Filter</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableLogTextFilterPhraseInputAssistance.Description">Helps you type phrases for the text filter based on its history.</sys:String>
 	<sys:String x:Key="String/AppOptionsDialog.EnableScrollingToLatestLogAfterReloadingLogs">Scroll to the Latest Log after Reloading Logs</sys:String>
@@ -1593,15 +1592,6 @@ return None</sys:String>
 
 	<!-- TcpServerLogDataSourceProvider -->
 	<sys:String x:Key="String/TcpServerLogDataSourceProvider.DisplayName">TCP Server</sys:String>
-
-	<!-- TextShell -->
-	<sys:String x:Key="String/TextShell.BourneAgainShell">bash (Bourne-Again Shell)</sys:String>
-	<sys:String x:Key="String/TextShell.BourneShell">sh (Bourne Shell)</sys:String>
-	<sys:String x:Key="String/TextShell.CommandPrompt">Cmd (Windows Command Prompt)</sys:String>
-	<sys:String x:Key="String/TextShell.CShell">csh (C Shell)</sys:String>
-	<sys:String x:Key="String/TextShell.FriendlyInteractiveShell">fish (Friendly Interactive Shell)</sys:String>
-	<sys:String x:Key="String/TextShell.PowerShell">PowerShell</sys:String>
-	<sys:String x:Key="String/TextShell.ZShell">zsh (Z Shell)</sys:String>
 
 	<!-- TextShellCommandInputDialog -->
 	<sys:String x:Key="String/TextShellCommandInputDialog.Message">Command to Execute</sys:String>

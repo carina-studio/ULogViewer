@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using CarinaStudio.AppSuite.Controls;
 using CarinaStudio.AppSuite.ViewModels;
@@ -30,12 +29,6 @@ class AppOptionsDialog : BaseApplicationOptionsDialog
 	/// Name of section of automatic log profile matching.
 	/// </summary>
 	public const string LogProfileMatchingSection = "LogProfileMatching";
-
-
-	/// <summary>
-	/// Converter to convert from <see cref="TextShell"/> to string.
-	/// </summary>
-	public static readonly IValueConverter TextShellConverter = new AppSuite.Converters.EnumConverter(IAppSuiteApplication.CurrentOrNull, typeof(TextShell));
 
 
 	// Static fields.

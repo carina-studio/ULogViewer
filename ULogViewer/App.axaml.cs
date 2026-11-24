@@ -634,9 +634,6 @@ namespace CarinaStudio.ULogViewer
 				});
 			}
 
-			// start initializing text shell manager
-			var initTextShellManagerTask = TextShellManager.InitializeAsync(this);
-
 			// initialize log data source providers
 			this.UpdateSplashWindowMessage(this.GetStringNonNull("SplashWindow.InitializeLogProfiles"));
 			await LogDataSourceProviders.InitializeAsync(this);
@@ -663,9 +660,6 @@ namespace CarinaStudio.ULogViewer
 			// initialize log profiles
 			await LogProfileManager.InitializeAsync(this);
 			this.UpdateSplashWindowProgress(0.85);
-
-			// complete initializing text shell manager
-			await initTextShellManagerTask;
 
 			// show main window
 			if (!this.IsRestoringMainWindowsRequested)

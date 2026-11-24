@@ -1,4 +1,5 @@
-﻿using CarinaStudio.AppSuite.IO;
+﻿using CarinaStudio.AppSuite;
+using CarinaStudio.AppSuite.IO;
 using CarinaStudio.Collections;
 using CarinaStudio.Logging;
 using CarinaStudio.Threading;
@@ -86,7 +87,7 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 				{
 					if (useTextShell && TextShellManager.Default.TryGetDefaultTextShellPath(out var shell, out var shellPath))
 					{
-						it.Arguments = PrepareTextShellArguments(shell, command);
+						it.Arguments = TextShellManager.CreateCommandArguments(shell, command);
 						it.FileName = shellPath;
 						it.RedirectStandardInput = true;
 					}
@@ -368,15 +369,6 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 	}
 
 
-	// Prepare arguments for running command by text shell.
-	static string PrepareTextShellArguments(TextShell shell, string command) => shell switch
-	{
-		TextShell.CommandPrompt => $"/c {command}",
-		TextShell.PowerShell => $"-NoLogo -Command {command}",
-		_ => $"-c \"{command}\"",
-	};
-
-
 	// Prepare core.
 	protected override Task<LogDataSourceState> PrepareCoreAsync(CancellationToken cancellationToken) => this.TaskFactory.StartNew(() =>
 	{
@@ -385,7 +377,7 @@ class StandardOutputLogDataSource(StandardOutputLogDataSourceProvider provider, 
 			if (TextShellManager.Default.TryGetDefaultTextShellPath(out var shell, out var shellPath))
 			{
 				this.commandFileOnReady = shellPath;
-				this.arguments = PrepareTextShellArguments(shell, this.CreationOptions.Command.AsNonNull());
+				this.arguments = TextShellManager.CreateCommandArguments(shell, this.CreationOptions.Command.AsNonNull());
 				return LogDataSourceState.ReadyToOpenReader;
 			}
 			this.Logger.LogError("No text shell on system to run commands");
