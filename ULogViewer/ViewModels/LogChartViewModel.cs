@@ -114,6 +114,7 @@ class LogChartViewModel : SessionComponent
     
     
     // Constants.
+    const string PanelSizeStateKey = $"LogChartViewModel.{nameof(PanelSize)}";
     const int ReportMinMaxSeriesValuesDelay = 500;
     const int ReportMinMaxStackedSeriesValuesDelay = 800;
     const string TempChartTypeStateKey = "LogChartViewModel.TempChartType";
@@ -132,6 +133,7 @@ class LogChartViewModel : SessionComponent
     readonly MutableObservableBoolean canSetChartType = new();
     DisplayableLogChartSeriesGenerator? emptySeriesGenerator;
     DisplayableLogChartSeriesGenerator? filteredLogsSeriesGenerator;
+    bool isRestoringState;
     readonly DisplayableLogChartSeriesGenerator markedLogsSeriesGenerator;
     readonly ScheduledAction reportMaxSeriesValueAction;
     readonly ScheduledAction reportMinSeriesValueAction;
@@ -664,7 +666,7 @@ class LogChartViewModel : SessionComponent
                 this.ResetValue(IsPanelVisibleProp);
             this.UpdateCanSetChartType();
         }
-        else if (property == PanelSizeProp)
+        else if (property == PanelSizeProp && !this.isRestoringState)
             this.PersistentState.SetValue(LatestPanelSizeKey, (int)((double)newValue! + 0.5));
     }
 
@@ -698,6 +700,14 @@ class LogChartViewModel : SessionComponent
             this.SetValue(AreAllSeriesSourcesVisibleProp, this.visibleSeriesSources.Count == this.seriesSources.Count);
             this.RefreshVisibleSeries();
         }
+        if (element.TryGetProperty(PanelSizeStateKey, out jsonProperty)
+            && jsonProperty.TryGetDouble(out var panelSize)
+            && PanelSizeProp.ValidationFunction(panelSize))
+        {
+            this.isRestoringState = true;
+            this.SetValue(PanelSizeProp, panelSize);
+            this.isRestoringState = false;
+        }
     }
 
 
@@ -705,6 +715,7 @@ class LogChartViewModel : SessionComponent
     protected override void OnSaveState(Utf8JsonWriter writer)
     {
         base.OnSaveState(writer);
+        writer.WriteNumber(PanelSizeStateKey, this.GetValue(PanelSizeProp));
         this.LogProfile?.Let(it =>
         {
             if (it.IsBuiltIn && it.LogChartType != this.GetValue(ChartTypeProp))

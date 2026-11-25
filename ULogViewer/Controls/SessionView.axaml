@@ -1222,7 +1222,7 @@
 				<RowDefinition Height="Auto"/> <!-- Header -->
 				<RowDefinition Height="*" MinHeight="100"/> <!-- Logs -->
 				<RowDefinition Height="Auto"/> <!-- Separator -->
-				<RowDefinition Height="0"/> <!-- Chart -->
+				<RowDefinition Height="0"/> <!-- Bottom panel -->
 				<RowDefinition Height="Auto"/> <!-- Time information -->
 			</Grid.RowDefinitions>
 
@@ -1439,9 +1439,11 @@
 				</Panel>
 			</Viewbox>
 			
-			<!-- Chart -->
+			<!-- Bottom panel -->
 			<Border Grid.Row="2" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="0,0,0,1" IsHitTestVisible="False" IsVisible="{Binding LogChart.IsPanelVisible}"/>
 			<GridSplitter Classes="GridSplitter_Horizontal" Background="{x:Static Brushes.Transparent}" Grid.Row="2" IsVisible="False"/>
+			
+			<!-- Chart -->
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
 				
 				<!-- Tool bar -->
@@ -1529,7 +1531,7 @@
 					                       {Binding !IsShowingRawLogLinesTemporarily}
 					                   }">
 						<TextBlock HorizontalAlignment="Center" 
-						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
+						           Margin="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}" 
 						           Text="{asXaml:StringResource SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}" 
 						           TextWrapping="WrapWithOverflow" 
 						           VerticalAlignment="Center"/>
@@ -1539,14 +1541,14 @@
 					                       {Binding IsShowingRawLogLinesTemporarily}
 					                   }">
 						<TextBlock HorizontalAlignment="Center" 
-						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
+						           Margin="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}" 
 						           Text="{asXaml:StringResource SessionView.LogChartPanel.ShowingRawLogLines}" 
 						           TextWrapping="WrapWithOverflow" 
 						           VerticalAlignment="Center"/>
 					</Border>
 					<Border IsVisible="{Binding !IsProVersionActivated}">
 						<TextBlock HorizontalAlignment="Center" 
-						           Margin="{StaticResource Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin}" 
+						           Margin="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}" 
 						           Text="{asXaml:StringResource SessionView.LogChartPanel.ProVersionNeeded}" 
 						           TextWrapping="WrapWithOverflow" 
 						           VerticalAlignment="Center"/>

@@ -240,6 +240,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		readonly ScheduledAction autoSetUriAction;
 		readonly ScheduledAction autoSetWorkingDirectoryAction;
 		INotifyCollectionChanged? attachedLogs;
+		readonly RowDefinition bottomPanelGridRow;
 		readonly ForwardedObservableBoolean canAddLogFiles;
 		readonly ObservableCommandState<Session.LogFileParams> canAddLogFilesToSession = new();
 		readonly ForwardedObservableBoolean canAddOrSelectLogFiles;
@@ -299,6 +300,7 @@ namespace CarinaStudio.ULogViewer.Controls
 		DisplayableLog? latestSelectedDisplayableLog;
 		int latestTargetLogRangeScrollingDirection;
 		readonly ContextMenu logActionMenu;
+		IDisposable? logChartPanelVisibilityObserverToken = EmptyDisposable.Default;
 		readonly ContextMenu logFileActionMenu;
 		readonly AppSuite.Controls.ListBox logFileListBox;
 		IDisposable? logFilesPanelVisibilityObserverToken = EmptyDisposable.Default;
@@ -593,12 +595,20 @@ namespace CarinaStudio.ULogViewer.Controls
 				it.AddHandler(PointerTouchPadGestureMagnifyEvent, this.OnLogChartPointerTouchPadGestureMagnify, RoutingStrategies.Bubble);
 				it.AddHandler(PointerWheelChangedEvent, this.OnLogChartPointerWheelChanged, RoutingStrategies.Tunnel);
 				it.PropertyChanged += (_, e) => this.OnLogChartPropertyChanged(e);
-				it.SizeChanged += (_, e) => this.OnLogChartSizeChanged(e);
 				it.Legend = new LogChartLegend(this);
 				this.logChartXAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 				this.logChartYAxis.PropertyChanged += this.OnLogChartAxisPropertyChanged;
 			});
-			this.logChartGridRow = this.Get<Panel>("logChartPanel").Let(it => it.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(it)]);
+			this.bottomPanelGridRow = this.Get<Panel>("logChartPanel").Let(it => it.FindLogicalAncestorOfType<Grid>().AsNonNull().RowDefinitions[Grid.GetRow(it)]).Also(it =>
+			{
+				it.GetObservable(RowDefinition.HeightProperty).Subscribe(length =>
+				{
+					if (!length.IsAbsolute || this.DataContext is not Session session)
+						return;
+					if (session.LogChart.IsPanelVisible)
+						session.LogChart.PanelSize = length.Value;
+				});
+			});
 			this.logChartTypeButton = this.toolBarContainer.FindControl<ToggleButton>(nameof(logChartTypeButton)).AsNonNull();
 			this.logFileListBox = this.Get<AppSuite.Controls.ListBox>(nameof(logFileListBox)).Also(it =>
 			{
@@ -1338,6 +1348,11 @@ namespace CarinaStudio.ULogViewer.Controls
 				if (!isAttaching)
 					this.UpdateSidePanelState(LogCategorizingViewModel.IsTimestampCategoriesPanelVisibleProp);
 			});
+			this.logChartPanelVisibilityObserverToken = session.LogChart.GetValueAsObservable(LogChartViewModel.IsPanelVisibleProp).Subscribe(_ =>
+			{
+				if (!isAttaching)
+					this.UpdateBottomPanelState(LogChartViewModel.IsPanelVisibleProp);
+			});
 			isAttaching = false;
 
 			// check profile
@@ -1412,6 +1427,9 @@ namespace CarinaStudio.ULogViewer.Controls
 				sidePanelColumn.Width = new GridLength(0);
 				Grid.SetColumnSpan(this.logListBoxContainer, 3);
 			}
+			
+			// sync bottom panel state
+			this.UpdateBottomPanelState(null);
 
 			// update properties
 			this.updateCanEditCurrentScriptLogDataSourceProviderAction.Schedule();
@@ -2479,6 +2497,7 @@ namespace CarinaStudio.ULogViewer.Controls
 			this.logFilesPanelVisibilityObserverToken = this.logFilesPanelVisibilityObserverToken.DisposeAndReturnNull();
 			this.markedLogsPanelVisibilityObserverToken = this.markedLogsPanelVisibilityObserverToken.DisposeAndReturnNull();
 			this.timestampCategoryPanelVisibilityObserverToken = this.timestampCategoryPanelVisibilityObserverToken.DisposeAndReturnNull();
+			this.logChartPanelVisibilityObserverToken = this.logChartPanelVisibilityObserverToken.DisposeAndReturnNull();
 
 			// detach from commands
 			this.canAddLogFilesToSession.Unbind();
@@ -6119,6 +6138,11 @@ namespace CarinaStudio.ULogViewer.Controls
 		public ICommand UnmarkSelectedLogsCommand { get; }
 		
 		
+		// Update state of panel at bottom of logs.
+		void UpdateBottomPanelState(ObservableProperty<bool>? changedProperty)
+		{ }
+
+
 		// Check whether log files can be selected to let the application match log profile for them or not.
 		void UpdateCanSelectLogFilesWithoutLogProfile() =>
 			this.SetValue(CanSelectLogFilesWithoutLogProfileProperty, this.DataContext is Session { LogProfile: null }

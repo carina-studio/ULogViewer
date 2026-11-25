@@ -362,9 +362,7 @@ partial class SessionView
     INotifyCollectionChanged? attachedRawVisibleLogChartSeries;
     bool isLogChartDoubleTapped;
     bool isPointerPressedOnLogChart;
-    bool isSyncingLogChartPanelSize;
     readonly CartesianChart logChart;
-    readonly RowDefinition logChartGridRow;
     Cursor? logChartHandCursor;
     IDisposable? logChartHandCursorValueToken;
     ChartPoint[] logChartPointerDownData = [];
@@ -413,7 +411,6 @@ partial class SessionView
         // update log chart
         this.areLogChartAxesReady = false;
         this.UpdateLogChartAxes();
-        this.UpdateLogChartPanelVisibility();
     }
     
     
@@ -1128,21 +1125,6 @@ partial class SessionView
     }
 
 
-    // Called when size of log chart changed.
-    void OnLogChartSizeChanged(SizeChangedEventArgs e)
-    {
-        if (this.isSyncingLogChartPanelSize
-            || this.DataContext is not Session session
-            || !session.LogChart.IsPanelVisible)
-        {
-            return;
-        }
-        this.isSyncingLogChartPanelSize = true;
-        session.LogChart.PanelSize = e.NewSize.Height;
-        this.isSyncingLogChartPanelSize = false;
-    }
-    
-    
     // Called when property of view-model of log chart changed.
     void OnLogChartViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -1163,7 +1145,6 @@ partial class SessionView
                     _ = this.PromptForMaxLogChartSeriesValueCountReached();
                 break;
             case nameof(LogChartViewModel.IsPanelVisible):
-                this.UpdateLogChartPanelVisibility();
                 this.ShowLogChartTutorial();
                 break;
             case nameof(LogChartViewModel.IsXAxisInverted):
@@ -1179,14 +1160,6 @@ partial class SessionView
                 this.updateLogChartXAxisLimitAction.Schedule();
                 if (viewModel.MaxSeriesValueCount == 0)
                     this.ResetLogChartZoom();
-                break;
-            case nameof(LogChartViewModel.PanelSize):
-                if (!this.isSyncingLogChartPanelSize && viewModel.IsPanelVisible)
-                {
-                    this.isSyncingLogChartPanelSize = true;
-                    this.logChartGridRow.Height = new(viewModel.PanelSize);
-                    this.isSyncingLogChartPanelSize = false;
-                }
                 break;
             case nameof(LogChartViewModel.Series):
                 this.AttachToRawLogChartSeries(viewModel.Series, true);
@@ -1852,11 +1825,6 @@ partial class SessionView
         // update zoom mode
         this.UpdateLogChartZoomMode();
     }
-    
-    
-    // Update visibility of log chart panel.
-    void UpdateLogChartPanelVisibility()
-    { }
     
     
     // Update tooltip of log chart.

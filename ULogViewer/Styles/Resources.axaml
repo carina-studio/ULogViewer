@@ -276,6 +276,7 @@
 	<sys:Double x:Key="Double/SessionView.Toolbar.LogLevelFilter.Width">140</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Toolbar.LogProcessIdFilter.Width">95</sys:Double>
 	<sys:Double x:Key="Double/SessionView.Toolbar.LogTextFilterItemsPanel.MinWidth">250</sys:Double>
+	<Thickness x:Key="Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.Margin">20</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Or.Margin">0,0,0,16</Thickness>
 	<Thickness x:Key="Thickness/SessionView.Hint.SelectLogProfile.Or.Text.Margin">12,0,12,0</Thickness>
@@ -302,7 +303,6 @@
 	<Thickness x:Key="Thickness/SessionView.LogChart.Legend.Padding">10,2,10,2</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.ToolTip.Item.Margin">5,0,0,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogChart.ToolTip.Padding">10,2,10,2</Thickness>
-	<Thickness x:Key="Thickness/SessionView.LogChartPanel.FullPanelHint.Text.Margin">10</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.FileName.Margin">0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Icon.Margin">0,3,6,0</Thickness>
 	<Thickness x:Key="Thickness/SessionView.LogFileInfo.Indicator.Margin">3,1,0,3</Thickness>
