@@ -309,7 +309,7 @@ Three reference sources settle wording, in this order of precedence:
 - **When an entry lists a shortcut for more than one platform, order the platforms Windows/Linux first, then macOS** — e.g. `Ctrl+V` on Windows/Linux, `⌘V` on macOS.
 - English entries use past tense (`Added`, `Improved`, `Prevented`, `Fixed`).
 - Each new bullet must be mirrored in all four locale files; do not update one without updating the others.
-- **Keep the existing order of entries** — when adding a bullet, append it (or place it beside a directly related entry) without resorting or regrouping the entries already present in a section. Do not reorder existing items by importance.
+- **Order entries by importance and group them by function** — within each section, more important entries come first, and entries about the same function stay together. A new bullet goes where that order puts it, not simply at the end of the section, and takes the same position in all four locale files.
 
 ---
 
