@@ -1447,7 +1447,7 @@
 			<DockPanel Name="logChartPanel" Grid.Row="3" IsVisible="False">
 				
 				<!-- Tool bar -->
-				<Border Name="logChartToolBar" Classes="Toolbar_Small" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" DockPanel.Dock="Right" IsEnabled="{Binding #logChart.IsVisible}">
+				<Border Name="logChartToolBar" Classes="Toolbar_Small" BorderBrush="{DynamicResource Brush/WorkingArea.Panel.Border}" BorderThickness="1,0,0,0" DockPanel.Dock="Right" IsEnabled="{Binding #logChart.IsVisible}" IsVisible="{Binding IsProVersionActivated}">
 					<StackPanel>
 						
 						<!-- Reset zoom -->
@@ -1530,28 +1530,19 @@
 					                       {Binding LogChart.IsMaxTotalSeriesValueCountReached},
 					                       {Binding !IsShowingRawLogLinesTemporarily}
 					                   }">
-						<TextBlock HorizontalAlignment="Center" 
-						           Margin="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}" 
-						           Text="{asXaml:StringResource SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}" 
-						           TextWrapping="WrapWithOverflow" 
-						           VerticalAlignment="Center"/>
+						<TextBlock Classes="SessionView_BottomPanel_FullPanelHint" 
+						           Text="{asXaml:StringResource SessionView.LogChartPanel.MaxTotalSeriesValueCountReached}"/>
 					</Border>
 					<Border IsVisible="{asXaml:AndBindings 
 					                       {Binding IsProVersionActivated},
 					                       {Binding IsShowingRawLogLinesTemporarily}
 					                   }">
-						<TextBlock HorizontalAlignment="Center" 
-						           Margin="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}" 
-						           Text="{asXaml:StringResource SessionView.LogChartPanel.ShowingRawLogLines}" 
-						           TextWrapping="WrapWithOverflow" 
-						           VerticalAlignment="Center"/>
+						<TextBlock Classes="SessionView_BottomPanel_FullPanelHint" 
+						           Text="{asXaml:StringResource SessionView.LogChartPanel.ShowingRawLogLines}"/>
 					</Border>
 					<Border IsVisible="{Binding !IsProVersionActivated}">
-						<TextBlock HorizontalAlignment="Center" 
-						           Margin="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}" 
-						           Text="{asXaml:StringResource SessionView.LogChartPanel.ProVersionNeeded}" 
-						           TextWrapping="WrapWithOverflow" 
-						           VerticalAlignment="Center"/>
+						<TextBlock Classes="SessionView_BottomPanel_FullPanelHint" 
+						           Text="{asXaml:StringResource SessionView.LogChartPanel.ProVersionNeeded}"/>
 					</Border>
 					
 				</Panel>

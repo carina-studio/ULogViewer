@@ -418,6 +418,13 @@
 	</Style>
 
 	<!-- SessionView -->
+	<Style Selector="TextBlock.SessionView_BottomPanel_FullPanelHint">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+		<Setter Property="Margin" Value="{StaticResource Thickness/SessionView.BottomPanel.FullPanelHint.Text.Margin}"/>
+		<Setter Property="Opacity" Value="{StaticResource Double/SessionView.BottomPanel.FullPanelHint.Opacity}"/>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
 	<Style Selector="Border.SessionView_SidePanel_Header">
 		<Setter Property="Background" Value="{DynamicResource Brush/SessionView.LogHeader.Background}"/>
 		<Setter Property="ClipToBounds" Value="True"/>
